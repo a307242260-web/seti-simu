@@ -1,0 +1,50 @@
+{
+  "baseCommit": "03e58e0de42f09c4e9c19298c9595330beb02999",
+  "files": {
+    "adhoc/audit-v151-teacher-choices-20261104-v1.js": "0c7c88301098bf5ef7a6126bfd6a553b34017ffb2734564730bc877edbba711e",
+    "adhoc/deliver-human405-v151-first2-result-20261104-v1.py": "34dc7f94c9183609d0897084a1c0205000b58b9f74a1f94c6b7c2be750dc6bac",
+    "adhoc/human405-two-rounds-progress-20261104-v10.json": "e3dc7f5acda9af8abbebd252811ff9744605f574250c37653b7719c9f8b478a9",
+    "adhoc/prepare-v151-first2-root-overlays-20261104-v1.js": "1f50f1a57cd98c62e373aa439fb357fe9b81f97acaa162348e1129a3d06a4522",
+    "adhoc/verify-human405-v151-first2-20261104-v1.js": "68d399b4da4d26860037f400266ebf212fb924278827ebea7bc482d722775856",
+    "docs/ai-design.md": "2291c40c1086b4909c2a6b6590ab1112be2265952152d1312be8fac652e41874",
+    "docs/ai-ready-analysis-capital-20261104.md": "d40468d3590a070f17e95745ade883571165f67f63acea4e9a29bbfbc3567300",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-first2-live-20261104-v1.log": "30bf7482e1c2cf4e01d884dafb21c46ac537c7433486342cf2f9fb40ea97ff43",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-first2-native-verification-20261104-v1.json": "f79627f1d83e4c14b798c39cbb09e35c5706d78c4b8d95535d40a01a1224e815",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-first2-native-verification-20261104-v1.log": "70220bf41cf73d190be8ba8a0f83a2ccde018a2c7403d2a7fd49c841964ff5aa",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-first2-record-inventory-20261104-v1.log": "e307e36d6de43050970cb01d0a151a918e13b32f99127076963122bc206bb287",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-first2-result-source-check-20261104-v1.json": "90d2117279387b3473752959068c43bf7ed61e114e0187d66687d3d0f5fb131b",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-teacher-node-choice-audit-20261104-v1.json": "d5174517e98649c2de392603ca788bad029bf6349a43f3fed58942609e9f024b",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-teacher-node-choice-audit-20261104-v1.log": "5313cb035502967375c182c0dd8258200e9e441693100fb713b8413b2aea5f46",
+    "reports/iteration/ai-search-v151-white-first2-20261104/61749811.03e58e0d.quick-400.action-log.html": "52dd92db38e0651909ba7cfea85a1c6236497be5029b9dc887c85a5f875d502b",
+    "reports/iteration/registry.json": "15b917047591c28c3a236023b7b4abc2688e1747b4c9586a38e683f9edfcf63f",
+    "reports/iteration/versions.json": "5aba224ace1bebb4f7e2ab6d595908703b43a5f4d908bf188c37809307588901",
+    "reports/research/61749811.03e58e0d.quick-400.json": "5ee62f2925eaa5bfdbc8e755ee21e74a475c6035547c0632a41bfe59e4865acc",
+    "reports/research/61749811.03e58e0d.quick-400.json.decisions.jsonl": "be32e022d83921446cbc93ab97496d0e9dfe5c5968a2e29d1f72962362bbbbea",
+    "reports/research/61749811.03e58e0d.quick-400.json.round-end-1.checkpoint.json": "a31add1db54b8bdd149dddf6d4397bf2aa39351f679babd97b8b685099886b6c",
+    "reports/research/61749811.03e58e0d.quick-400.json.round-end-2.checkpoint.json": "067e608df0fc54640e057877409d7b9eca1173bf7e7a3ccdad0754d81e4b9259",
+    "reports/research/61749811.03e58e0d.quick-400.json.round-ends.jsonl": "8cda8cb6e9a0658b6604fd92215038a1c24c0313f0be769b0f481d3f522fc871",
+    "reports/robot-iteration.html": "20017f775c02a02fe7fa472c0e9403c8675b2d6343d743f95ba190310e3327f2",
+    "seti-saves/seti-save-research-ai-search-v151-white-first2-20261104-03e58e0d-quick-400-v38.json": "81dfc8504e7aa83103101e2112493ca21e2dc0d5c8c54ff49cdf8ad7739b7db7"
+  },
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "5c23d5891d70e3a004746af4621abf01c573a9630c937f2d2b8712e96db1025d",
+      "path": "/private/tmp/seti-v151-first2-root-overlays-20261104/versions.json",
+      "sha256": "53b42eae5234b7e45163622f24b39bd1fdc8b67902b608ce802a8620ab38a038"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "eddd8cceb0a957a9747eb8b385131f0036c66ad3f143a759534c818c5d47edf1",
+      "path": "/private/tmp/seti-v151-first2-root-overlays-20261104/registry.json",
+      "sha256": "c220bcf268cbdb3d32d7ba0457e11672f77cc4e151160485a7da129459c2e3ee"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "3af352922c36a994b9190c8b1c28e2ee0c7d5e5f6560c4c31866f162c3adfa0c",
+      "path": "/private/tmp/seti-v151-first2-root-overlays-20261104/robot-iteration.html",
+      "sha256": "2ec64087b0d94c24b3eebbf71eacc69a76e14bd838b50100e5d412158afbcfc3"
+    }
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "goalStatus": "active",
+  "goalAchieved": false
+}

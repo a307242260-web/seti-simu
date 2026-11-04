@@ -82,13 +82,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const ALL_REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-11-04T10:39:54.959Z",
+  "builtAt": "2026-11-04T12:03:10.535Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "7da81a85",
+  "headCommit": "03e58e0d",
   "defaultGeneration": "v2",
   "generations": {
     "v1": {
@@ -335,8 +335,8 @@ const ALL_REGISTRY = {
           }
         ]
       },
-      "versionCount": 33,
-      "recordCount": 32
+      "versionCount": 34,
+      "recordCount": 33
     }
   },
   "currentBaseline": "ai-search-v41-baseline-20261029",
@@ -471,6 +471,662 @@ const ALL_REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "ai-search-v151-white-first2-20261104",
+      "aiGeneration": "v2",
+      "name": "ai-search-v151-white-first2-20261104",
+      "date": "2026-11-04",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "03e58e0d",
+      "commits": [
+        {
+          "hash": "f24600c7",
+          "date": "2026-10-29",
+          "subject": "登记用户确认的v41开发基线与冻结配置"
+        },
+        {
+          "hash": "5d1cae64",
+          "date": "2026-10-29",
+          "subject": "建立405分教师轨迹证据并修复搜索终局边界"
+        },
+        {
+          "hash": "8c715275",
+          "date": "2026-10-29",
+          "subject": "学习405分轨迹并收敛公司换牌固定规划"
+        },
+        {
+          "hash": "0a4a2d08",
+          "date": "2026-10-30",
+          "subject": "明确405分学习计划并诊断科技估值与单白席开局"
+        },
+        {
+          "hash": "e8327698",
+          "date": "2026-10-30",
+          "subject": "修复第一轮移动与收入计划冲突并归档逐节点对照"
+        },
+        {
+          "hash": "b90f9ae4",
+          "date": "2026-10-30",
+          "subject": "修正移动目的恢复与时机并加入仅白席第一轮验证"
+        },
+        {
+          "hash": "852263bb",
+          "date": "2026-10-30",
+          "subject": "补齐科技奖励结算与原地行动候选并归档白席首轮实验"
+        },
+        {
+          "hash": "f99faaa6",
+          "date": "2026-10-30",
+          "subject": "归档v51白席首轮复查并保留现有基线"
+        },
+        {
+          "hash": "692bdf03",
+          "date": "2026-10-30",
+          "subject": "补充受保护主牌的收入资助计划与固定选牌目的"
+        },
+        {
+          "hash": "6ffd2746",
+          "date": "2026-10-30",
+          "subject": "归档收入资助策略的首轮试跑与逐节点对照"
+        },
+        {
+          "hash": "fc8296f0",
+          "date": "2026-10-30",
+          "subject": "继续结算屏障后的已知扫描与收入奖励"
+        },
+        {
+          "hash": "e48a17cc",
+          "date": "2026-10-30",
+          "subject": "精简AI估值投影并归档已知尾部的准入差异"
+        },
+        {
+          "hash": "7e3fc757",
+          "date": "2026-10-30",
+          "subject": "接入已知回合尾部与固定收入计划值证明"
+        },
+        {
+          "hash": "5855b219",
+          "date": "2026-10-30",
+          "subject": "归档已知窗口版本的白席首轮与能力价值差异"
+        },
+        {
+          "hash": "5322ac7e",
+          "date": "2026-10-30",
+          "subject": "归档科技用途估值候选与原生计划证明并保留准入门槛"
+        },
+        {
+          "hash": "7422f755",
+          "date": "2026-10-30",
+          "subject": "归档蓝列固定计划优化与四十四节点验证并记录回归缺口"
+        },
+        {
+          "hash": "9d707d66",
+          "date": "2026-10-30",
+          "subject": "接入科技用途估值与蓝列固定计划并校验生产回归"
+        },
+        {
+          "hash": "306ab81c",
+          "date": "2026-10-30",
+          "subject": "归档科技用途版本的白席首轮并保留策略差异"
+        },
+        {
+          "hash": "f2cde3d2",
+          "date": "2026-10-30",
+          "subject": "修正承诺收入的固定选牌目的并验证原生策略"
+        },
+        {
+          "hash": "b671ee7d",
+          "date": "2026-10-30",
+          "subject": "归档收入选牌修复的首轮对照与移动顺序证据"
+        },
+        {
+          "hash": "a11ea9dc",
+          "date": "2026-10-31",
+          "subject": "修正已有数据收入选牌资金目的并归档原生差异"
+        },
+        {
+          "hash": "109c898f",
+          "date": "2026-10-31",
+          "subject": "归档已有收入选牌首轮对照与探测用途验证计划"
+        },
+        {
+          "hash": "225966dd",
+          "date": "2026-10-31",
+          "subject": "增加B117原生前缀受控首轮实验并隔离决策证据"
+        },
+        {
+          "hash": "004c39e1",
+          "date": "2026-10-31",
+          "subject": "归档B117受控首轮对照与原生科技价值分析"
+        },
+        {
+          "hash": "cad56459",
+          "date": "2026-10-31",
+          "subject": "修复PASS估值输入并加入已筹资科技用途及剪枝投影提速"
+        },
+        {
+          "hash": "88af65db",
+          "date": "2026-10-31",
+          "subject": "归档筹资科技首轮试跑与原生PASS窗口反例"
+        },
+        {
+          "hash": "0dc7785d",
+          "date": "2026-10-31",
+          "subject": "修正原生PASS链投资窗口并统一持牌与宣传研究计价"
+        },
+        {
+          "hash": "67c36b92",
+          "date": "2026-10-31",
+          "subject": "归档PASS窗口修复首轮对照并保留教师策略差异"
+        },
+        {
+          "hash": "1cd44bde",
+          "date": "2026-10-31",
+          "subject": "修正教师节点归因及指定席位登陆费用并归档任务用途原型"
+        },
+        {
+          "hash": "5d250c4b",
+          "date": "2026-10-31",
+          "subject": "归档探测任务估值候选与首轮节点证据，保留未通过的性能门槛"
+        },
+        {
+          "hash": "2fb2b091",
+          "date": "2026-10-31",
+          "subject": "接入探测用途估值并收束准备计划，完成白席首轮试跑准入"
+        },
+        {
+          "hash": "9fa77f5c",
+          "date": "2026-10-31",
+          "subject": "记录白席首轮回退与移动计划恢复反例，保留旧基线"
+        },
+        {
+          "hash": "85e94cc4",
+          "date": "2026-10-31",
+          "subject": "保留获胜收入计划的原生执行前缀，修复逐输入恢复改路"
+        },
+        {
+          "hash": "aeb6462c",
+          "date": "2026-10-31",
+          "subject": "记录白席首轮27分与逐节点复盘，补充PASS已知牌遮蔽反例"
+        },
+        {
+          "hash": "94530144",
+          "date": "2026-10-31",
+          "subject": "保留PASS已知选牌及科技用途，减少轮盘字段重复构造"
+        },
+        {
+          "hash": "36e5cc8d",
+          "date": "2026-10-31",
+          "subject": "完成405分教师首轮逐节点学习验收，登记v123白席27分复盘"
+        },
+        {
+          "hash": "1a78d5d3",
+          "date": "2026-11-04",
+          "subject": "新增白席整局原档续跑与逐轮检查点，隔离四AI榜单"
+        },
+        {
+          "hash": "7b7b2e5e",
+          "date": "2026-11-04",
+          "subject": "实验列表忽略轮末检查点，保留白席整局去重与恢复证据"
+        },
+        {
+          "hash": "66dff952",
+          "date": "2026-11-04",
+          "subject": "记录v123白席整局80分与四轮发展，归档完整重放和超标节点"
+        },
+        {
+          "hash": "752c4de8",
+          "date": "2026-11-04",
+          "subject": "修正条件科技资本，新增前两轮PASS前资产对照与独立验收"
+        },
+        {
+          "hash": "38259e7e",
+          "date": "2026-11-04",
+          "subject": "前两轮轮末摘要只记盘面分，独立保留终局预估收益"
+        },
+        {
+          "hash": "1cdfdb00",
+          "date": "2026-11-04",
+          "subject": "记录v124前两轮选牌收入前资产，继续投入价值对齐"
+        },
+        {
+          "hash": "4ec5d3d7",
+          "date": "2026-11-04",
+          "subject": "修复条件扫描漏目标与重复次数，重放教师前两轮并验证v125"
+        },
+        {
+          "hash": "013730ec",
+          "date": "2026-11-04",
+          "subject": "登记v125自主两轮与原生对照，定位DLC37仍被舍弃的估值差"
+        },
+        {
+          "hash": "28f4e95c",
+          "date": "2026-11-04",
+          "subject": "计入在途探测器已筹资任务价值，证明固定收尾并通过v129验收"
+        },
+        {
+          "hash": "07a657a6",
+          "date": "2026-11-04",
+          "subject": "登记v129自主两轮及原生资产对照，定位首轮蓝科技一分估值差"
+        },
+        {
+          "hash": "7f5dbc08",
+          "date": "2026-11-04",
+          "subject": "新增免电分析教学局2盘面入口并验证公司选项"
+        },
+        {
+          "hash": "6eff6f3d",
+          "date": "2026-11-04",
+          "subject": "新增随机免电分析教学局3并保留上一局盘面"
+        },
+        {
+          "hash": "ec6b09f0",
+          "date": "2026-11-04",
+          "subject": "新增20个免电分析随机盘面并逐局验证浏览器开局"
+        },
+        {
+          "hash": "7da81a85",
+          "date": "2026-11-04",
+          "subject": "按实际支付轮次评估持牌科技，统一收入准备并验收v148"
+        },
+        {
+          "hash": "83699787",
+          "date": "2026-11-04",
+          "subject": "登记v148自主两轮16与44分，核验科技收入及剩余资产差距"
+        },
+        {
+          "hash": "26a583b4",
+          "date": "2026-11-04",
+          "subject": "核对教师67处白席决策并补首轮发射与收入时机原生账本"
+        },
+        {
+          "hash": "99a23861",
+          "date": "2026-11-04",
+          "subject": "定位已就绪分析估值缺口并验证192组原生控制，保持生产策略不变"
+        },
+        {
+          "hash": "03e58e0d",
+          "date": "2026-11-04",
+          "subject": "统一已就绪分析与研究资金估值，验证原生次序及v151搜索门槛"
+        }
+      ],
+      "summary": "V9统一已就绪分析、研究和探测资金用途；84冷根、162单元及完整流程、Chrome14通过。仅一次自主两轮，轮末不含选牌和下一轮收入，不晋升baseline。",
+      "diffStat": "6400 files changed, 4130911 insertions(+), 1166 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-learning-v1/v42-step093-timing-white-20261029-v1.json",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-002-20261029-v1.json",
+          "insertions": 7626,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-024-20261029-v1.json",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-035-20261029-v1.json",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-036-20261029-v1.json",
+          "insertions": 6386,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-039-20261029-v1.json",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-072-20261029-v1.json",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-078-20261029-v1.json",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-092-20261029-v1.json",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-093-20261029-v1.json",
+          "insertions": 7073,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-098-20261029-v1.json",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-113-20261029-v1.json",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-127-20261029-v1.json",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-128-20261029-v1.json",
+          "insertions": 7508,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-141-20261029-v1.json",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-160-20261029-v1.json",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v45-compat-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v47-compat-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v49-compat-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v50-compat-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v51-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v51-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v51-compat-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "61749811.03e58e0d.quick-400.json",
+          "recordPath": "reports/research/61749811.03e58e0d.quick-400.json",
+          "mode": "quick-400",
+          "steps": 89,
+          "stepsLimit": 400,
+          "terminal": false,
+          "wallMs": 3009,
+          "flags": {
+            "compactReplay": true,
+            "scenario": "human405-white-first2-v1"
+          },
+          "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v151/seti-purpose-capital-state-value-v9/human405-white-first2-v1/seti-human405-pass-only-v1",
+          "agentType": "search",
+          "aiGeneration": "v2",
+          "gitCommit": "03e58e0d",
+          "createdAt": "2026-11-04T12:02:15.410Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "comparisonScope": "white-only-first-two-rounds",
+          "note": null,
+          "scores": {
+            "player-blue": 7,
+            "player-green": 7,
+            "player-brown": 8,
+            "player-white": 44
+          },
+          "avgScore": 16.5,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-ai-search-v151-white-first2-20261104-03e58e0d-quick-400-v38.json",
+          "reportPath": "reports/iteration/ai-search-v151-white-first2-20261104/61749811.03e58e0d.quick-400.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "baselineEligible": false,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "61749811.03e58e0d.quick-400",
+            "path": "reports/iteration/ai-search-v151-white-first2-20261104/61749811.03e58e0d.quick-400.action-log.html",
+            "mode": "quick-400"
+          }
+        ]
+      }
+    },
     {
       "id": "ai-search-v148-white-first2-20261104",
       "aiGeneration": "v2",
