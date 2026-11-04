@@ -229,6 +229,31 @@ const smokes = [
     counterexample: "只改显示名却仍使用旧种子、不能选到免电分析，或新教学局盘面无法复现",
   }),
   Object.freeze({
+    id: "production-fixed-board-teaching-3",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-fixed-board'))",
+    actionExpression: `(async () => {
+      const fixed = document.querySelector("#start-fixed-board"), seed = document.querySelector("#start-seed-input");
+      fixed.value = "seti-teaching-437b8c7956";
+      if (fixed.selectedOptions[0]?.textContent !== "免电分析教学局3") throw new Error("教学局3入口缺失");
+      fixed.dispatchEvent(new Event("change", { bubbles: true }));
+      if (!seed.disabled || seed.value !== fixed.value) throw new Error("教学局3种子未绑定");
+      if (!document.querySelector("#start-record-trajectory").checked) throw new Error("教学局未启用轨迹录制");
+      document.querySelector("#start-screen-start-button").click();
+      const deadline = Date.now() + 12000;
+      while (!document.querySelector(".initial-selection-card-button")) {
+        if (Date.now() >= deadline) throw new Error("教学局3未进入初始选择");
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      const companies = [...document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry")].map(img => img.alt);
+      if (!["深空探测","层云核心"].every(name => companies.some(c => c.includes(name)))) throw new Error("教学局3白席公司不一致");
+      window.__setiTeaching3Smoke = { ok: true };
+    })()`,
+    successExpression: "window.__setiTeaching3Smoke?.ok === true",
+    obligation: "随机教学局3按名称打开独立种子，白席能选免电分析且默认录制轨迹",
+    counterexample: "菜单复用教学局2的种子、没有免电公司或关闭了轨迹录制",
+  }),
+  Object.freeze({
     id: "production-browser-full-parity",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",

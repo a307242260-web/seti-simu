@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-04",
+  "seed": "seti-teaching-437b8c7956",
+  "displayName": "免电分析教学局3",
+  "activePlayerCount": 4,
+  "whiteCompanies": [
+    "深空探测.png",
+    "层云核心.png"
+  ],
+  "selectionRule": "random seed; only require white DeepSpace option, no hand or board-quality filtering",
+  "worldFingerprint": "54381295559b94f208f22017438c40b34107115646dd0759bba40c66cb10f0f7",
+  "sourceCommit": "7f5dbc08653da5506eebcdc4baad121be93bf518"
+}
