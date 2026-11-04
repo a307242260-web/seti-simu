@@ -119,8 +119,10 @@
     const immutable=Object.isFrozen(p)&&Object.isFrozen(state)&&immutableCapitalInput(p)&&immutableCapitalInput(state);
     let quotes=immutable?planningCapitalQuotes.get(state):null;
     if(quotes?.has(p))return quotes.get(p);
-    const investment=(hand,publicity,funding)=>heldAndResearchCapital(state,{...p,hand,income:funding.income,resources:{...p.resources,...funding.resources,publicity}});
-    const value=heldAndResearchCapital(state,p)+probeCapital.fromState(state,p,stateValue.DEFAULT_WEIGHTS,investment).value;
+    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),
+      computerSlots:data.listComputerPlacedTokens({...p}).map(t=>t.placementSlot),reservedCards:p.reservedCards,
+      analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST};
+    const value=stateValue.purposeCapital(facts).total;
     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
     return value;
   }

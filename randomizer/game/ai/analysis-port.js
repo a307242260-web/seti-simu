@@ -2010,12 +2010,23 @@
         const offered=Math.max(heldUpper,stateValue.handCapital(state.cards.publicCards.filter(Boolean),owner.techState,state.tech,state.turn.roundNumber));
         const currentResearch=resourceDemand.heldAndResearchCapital(state,owner)-current;
         const researchCost=techResolver.getResearchPublicityCost(owner);
-        const researchUpper=result.maximumPublicity<researchCost?0:stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,
+        // Fixed post-main data goals reach computer4 for income, or an
+        // existing blue prerequisite. They cannot invent computer6 unless a
+        // blue slot actually requires it; raw unplanned data retains the ceiling.
+        const analysisReachable=!resourcePlanning||data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.ANALYZE_REQUIRED_COMPUTER_SLOT)
+          ||Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]
+            &&data.getRequiredComputerSlotForBlueBonus(slot)===data.ANALYZE_REQUIRED_COMPUTER_SLOT);
+        const analysisUpper=state.turn.roundNumber<4&&analysisReachable?stateValue.readyAnalysisUpperBound(node.observation.publicState.board.aliens.slots):{linear:0,publicity:0};
+        const researchUpper=result.maximumPublicity+analysisUpper.publicity<researchCost?0:stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,
           researchCost});
-        const capitalUpperIncrease=Math.max(0,offered-current)+Math.max(0,researchUpper-currentResearch);
-        bound=freeze({...result,proof:"seti-post-main-capital-upper-v2",linearSourceProof:result.proof,
+        // With no live mission, a ready analysis can only add its known trace
+        // and one blue resource tail plus these same held/research ceilings.
+        // Ignore its costs for the upper bound, but subtract source capital.
+        const sourceAnalysis=resourceDemand.planningCapital(state,owner)-current-currentResearch;
+        const capitalUpperIncrease=Math.max(0,offered-current+researchUpper-currentResearch+analysisUpper.linear-sourceAnalysis);
+        bound=freeze({...result,proof:"seti-post-main-capital-upper-v3",linearSourceProof:result.proof,
           maximumValueIncrease:result.maximumValueIncrease+capitalUpperIncrease,capitalUpperIncrease,
-          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,
+          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,sourceAnalysisCapital:sourceAnalysis,maximumAnalysisLinear:analysisUpper.linear,maximumAnalysisPublicity:analysisUpper.publicity,analysisReachableByFixedDataPolicy:analysisReachable,
           permanentTechnologyGainAdmitted:false});
       }
       postMainValueBounds.set(node, bound);

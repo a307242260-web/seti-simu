@@ -1,0 +1,10 @@
+{
+  "source": "randomizer/game/ai/ready-analysis-capital.js",
+  "sourceSha256": "8bff61fe9246a8da4e7f2e05e0e5af035341949734d7aee913a1b4259671bd8d",
+  "archive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-missed-column-score-red-source-20261104-v1.js",
+  "test": "randomizer/game/ai/ready-analysis-capital.test.js",
+  "testSha256": "26a38f704e4d9183c3773e583d231c1833d140ef978f9f0bbe38401ec008a217",
+  "failureLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-missed-column-score-red-20261104-v1.log",
+  "failure": "Prototype scalar rewrite counted only selected blue column, omitted earlier owned column crossed on the same prerequisite path; independently native-verified payoff dominance caught omission",
+  "productionAdmitted": false
+}

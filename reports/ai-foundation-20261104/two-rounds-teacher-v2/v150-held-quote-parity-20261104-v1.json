@@ -1,0 +1,13 @@
+{
+  "beforeEvidence": "reports/ai-foundation-20261023/human405-v149-cold-serial-case-105-20261104-v1.json",
+  "afterEvidence": "reports/ai-foundation-20261023/human405-v150-cold-serial-case-105-20261104-v1.json",
+  "beforeRawSha256": "d673ea96fa31dd0b5feab14505595f685f8551dd994942c8467ad7db5fb81675",
+  "afterRawSha256": "a942298b02a3c3ef85b31a426ad76f905abd75e71d9da3968e29ea4c45463cdb",
+  "allRootsEqual": true,
+  "allLinesEqual": true,
+  "beforeInputs": 256,
+  "afterInputs": 256,
+  "beforeMilliseconds": 629.5654169999999,
+  "afterMilliseconds": 584.706666,
+  "scope": "One loaded case; direct research quote removes repeated same held quote. This does not claim all old/new V8/V9 policy outputs are equal."
+}

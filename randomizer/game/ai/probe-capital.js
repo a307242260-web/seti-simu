@@ -247,27 +247,29 @@
     return choices[0] || null;
   }
 
-  function fromObservation(observation, seatId, weights, investment) {
+  function factsFromObservation(observation, seatId) {
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
-    return quote({ player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
+    return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
       extraUnknownCount: 0, round: pub.roundNumber, passing: pub.passingPlayerIds.includes(seatId),
-      terminal: observation.terminal ?? observation.outcomeProjection?.terminal, investment }, weights);
+      terminal: observation.terminal ?? observation.outcomeProjection?.terminal };
   }
 
   // Only the selected player's public resources/owned technology and known
   // hand are used. Hidden alien identities and replacement cards are omitted.
-  function fromState(state, player, weights, investment) {
+  function factsFromState(state, player) {
     const slots = Object.entries(state.aliens?.aliens || {}).map(([slotId, slot]) => ({
       slotId: Number(slotId), revealed: Boolean(slot.revealed), traces: slot.traces,
     }));
-    return quote({ player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
+    return { player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem,
         publicCards: state.cards?.publicCards, aliens: { slots } }, hand: player.hand,
       extraUnknownCount: Math.max(0, (player.resources.handSize || 0) - player.hand.length), round: state.turn.roundNumber,
       passing: (state.passingPlayerIds || state.turn.passedPlayerIds).includes(player.id) || player.passCompletionPending === true,
-      terminal: state.turn.gameEnded === true, investment }, weights);
+      terminal: state.turn.gameEnded === true };
   }
 
-  return Object.freeze({ ownedProbes, funding, fromObservation, fromState });
+  function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
+  function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
+  return Object.freeze({ ownedProbes, funding, quote, factsFromObservation, factsFromState, fromObservation, fromState });
 });

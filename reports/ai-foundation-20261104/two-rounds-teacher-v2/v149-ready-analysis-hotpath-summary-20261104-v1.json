@@ -1,0 +1,128 @@
+{
+  "sourceEvidence": "reports/ai-foundation-20261023/human405-v149-cold-profile-case105-20261104-v1.json",
+  "profileSha256": "01645f4fa518b98ac564c378014357500030ab58b6c9795e14bdb87d2cd46ca9",
+  "samples": 747,
+  "topSelfSamples": [
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 42
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 18
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 9
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 9
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 8
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "game/ai/analysis-port.js",
+      "samples": 7
+    },
+    {
+      "function": "readFileSync",
+      "url": "node:fs",
+      "samples": 6
+    },
+    {
+      "function": "getSectorOccupancy",
+      "url": "game/rockets.js",
+      "samples": 6
+    },
+    {
+      "function": "searchDecision",
+      "url": "game/ai/decision-search.js",
+      "samples": 6
+    },
+    {
+      "function": "normalize",
+      "url": "game/ai/analysis-port.js",
+      "samples": 5
+    },
+    {
+      "function": "normalize",
+      "url": "game/ai/analysis-port.js",
+      "samples": 5
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 5
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "url": "game/production-kernel.js",
+      "samples": 5
+    },
+    {
+      "function": "",
+      "url": "game/production-kernel.js",
+      "samples": 4
+    },
+    {
+      "function": "",
+      "url": "file:///private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/benchmark-human405-decision-20261104-v1.js",
+      "samples": 4
+    },
+    {
+      "function": "normalize",
+      "url": "game/ai/analysis-port.js",
+      "samples": 4
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "game/ai/analysis-port.js",
+      "samples": 4
+    },
+    {
+      "function": "normalize",
+      "url": "game/ai/analysis-port.js",
+      "samples": 4
+    },
+    {
+      "function": "normalize",
+      "url": "game/ai/analysis-port.js",
+      "samples": 4
+    },
+    {
+      "function": "stableSerialize",
+      "url": "game/state/state-store.js",
+      "samples": 4
+    },
+    {
+      "function": "buildTopologyBody",
+      "url": "game/production-kernel.js",
+      "samples": 4
+    },
+    {
+      "function": "canMoveFromCoordinate",
+      "url": "game/rockets.js",
+      "samples": 4
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "solar-system/core.js",
+      "samples": 4
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "samples": 3
+    }
+  ],
+  "scope": "Instrumented profile, not cold admission; profile and cold source hashes agree"
+}

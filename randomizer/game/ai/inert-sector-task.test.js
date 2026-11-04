@@ -14,8 +14,9 @@ const kernel = createSimulationRuleComposition({ seed, random: createSeededRando
   trustedProjectionReader: true, projectCounterfactualState: (state, viewer) => buildRuleObservation(state, seed, viewer?.playerId) });
 kernel.newGame({ seed });
 const comp = kernel.composition, evaluate = createStateValueEvaluator(seatId), rows = [];
-for (const cardId of ["b_114.webp", "dlc_9.png"]) {
-  assert(comp.lifecycle.restore(fixture.compositionEnvelope).ok);
+for (const round of [1,4]) for (const cardId of ["b_114.webp", "dlc_9.png"]) {
+  const envelope=structuredClone(fixture.compositionEnvelope),source=JSON.parse(envelope.committedState);source.turn.roundNumber=round;envelope.committedState=JSON.stringify(source);
+  assert(comp.lifecycle.restore(envelope).ok);
   const state = JSON.parse(fixture.compositionEnvelope.committedState), player = state.players.players.find(p => p.id === seatId);
   const id = player.hand.find(card => card.cardId === cardId).id;
   assert(comp.inputPort.submitAction(comp.inputPort.enumerateActions({}).find(a => a.family === "play_card"
@@ -44,7 +45,11 @@ for (const cardId of ["b_114.webp", "dlc_9.png"]) {
   const raw = run(false), reduced = run(true);
   assert.equal(reduced.actionId, raw.actionId); assert.equal(reduced.value, raw.value);
   assert.equal(reduced.lines[0].distance, raw.lines[0].distance);
-  assert(reduced.diagnostics.transitions < raw.diagnostics.transitions);
+  // Early-round analysis capital can keep the conservative bound above the
+  // incumbent, so equal work is valid. The final-round linear window must
+  // still demonstrate actual pruning, in addition to exact behavior parity.
+  assert(reduced.diagnostics.transitions <= raw.diagnostics.transitions);
+  if(round===4)assert(reduced.diagnostics.transitions < raw.diagnostics.transitions);
   const ready = structuredClone(actual);
   ready.data.sectorSettlements.winsByPlayerId[seatId] = [
     { nebulaId: "sector-2-a", sectorId: "sector-2-a" },
@@ -59,7 +64,7 @@ for (const cardId of ["b_114.webp", "dlc_9.png"]) {
   const root = port.openRoot();
   assert.equal(port.postMainPlanSpec(root), null, "已经可完成的任务必须保留实际选择，不能以不活动任务省略");
   port.close();
-  rows.push({ cardId, rawInputs: raw.diagnostics.transitions, prunedInputs: reduced.diagnostics.transitions, value: reduced.value });
+  rows.push({ round,cardId, rawInputs: raw.diagnostics.transitions, prunedInputs: reduced.diagnostics.transitions, value: reduced.value });
 }
 comp.dispose();
 console.log(JSON.stringify({ inertSectorTasks: "passed", rows }));

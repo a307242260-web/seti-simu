@@ -8,6 +8,7 @@ const finalScoring = require("../final-scoring");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
 const { createStateValueEvaluator } = require("./state-value");
+const agent = require("./search-agent");
 const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
   "../../../adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json")));
 const source = JSON.parse(fixture.compositionEnvelope.committedState), seed = fixture.source.seed, seatId = fixture.seatId;
@@ -38,7 +39,9 @@ function run(state, enabled, cache = 0) {
       const card = root.observation.selfState.hand.find(c => c.id === action.target.cardInstanceId);
       if (cards.getDiscardActionCodeForCard(card) === 1) assert(proof.retainedActionIds.includes(action.actionId));
     }
-    const result = searchDecision({ port, root, evaluate, postMainPruning: enabled, resourceDominance: true,
+    // Exercise the actual fixed preparation policy. Unplanned early-round
+    // enumeration is not the Production income decision contract.
+    const result = searchDecision({ port, root, evaluate, ...agent.OPTIONS, postMainPruning: enabled, resourceDominance: true,
       budget: semanticBudget });
     assert(result.complete, result.stopReason);
     assert.deepEqual(comp.lifecycle.save().envelope, before);
@@ -50,7 +53,8 @@ assert.equal(cached.actionId, pruned.actionId);
 assert.equal(cached.value, pruned.value);
 assert.equal(cached.lines[0].distance, pruned.lines[0].distance);
 assert.equal(cached.diagnostics.transitions, pruned.diagnostics.transitions);
-assert(pruned.lines.some(line => line.status === "information-barrier"), "合法盲抽收入选择仍真实展开到信息边界");
+assert(pruned.roots.some(row=>row.goal?.kind==='income')||pruned.lines.some(line=>line.status==='income-plan-value'),
+  "生产固定计划必须保留可执行收入用途；实际盲抽或标量证书由各自的原生恢复测试覆盖");
 
 function configure(choices, { round = 1, pool = 1, placed = 3, blue = null } = {}) {
   const state = structuredClone(source), owner = ownerOf(state);
@@ -90,7 +94,10 @@ for (const state of [configure([[0, 0]]), configure([[0, 0]], { round: 4 }),
 const paymentCases = [];
 for (const tradeId of ["cards-for-credit", "cards-for-energy"]) {
   function payment(enabled) {
-    const { port, root, before } = open(source);
+    // A committed native payment has three real exits. The final-round
+    // scalar model isolates this transaction/recovery test from future assets.
+    const paymentState=structuredClone(source);paymentState.turn.roundNumber=4;
+    const { port, root, before } = open(paymentState);
     try {
       const pending = step(port, root, a => a.target?.tradeId === tradeId);
       const result = searchDecision({ port, root: pending, evaluate, postMainPruning: enabled,

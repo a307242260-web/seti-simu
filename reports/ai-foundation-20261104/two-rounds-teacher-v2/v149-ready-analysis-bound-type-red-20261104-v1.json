@@ -1,0 +1,8 @@
+{
+  "source": "randomizer/game/ai/ready-analysis-capital.js",
+  "sourceSha256": "aeb2f60c0e0aaa0ce0b0bcbd0bf26f493069a3e987406ee322e7092936f8edc5",
+  "archive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-bound-type-red-20261104-v1.js",
+  "failureLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-shared-capital-focused-20261104-v2.log",
+  "failure": "blue bonus metadata type string entered numeric upper-bound sum; NaN correctly rejected by search",
+  "productionAdmitted": false
+}

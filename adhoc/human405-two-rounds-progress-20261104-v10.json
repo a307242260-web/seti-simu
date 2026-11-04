@@ -2,29 +2,30 @@
   "date": "2026-11-04",
   "goalStatus": "active",
   "goalAchieved": false,
-  "phase": "ready-analysis-capital-prototype-native-192-controls-passed-production-v148-unchanged",
-  "sourceVersion": "v148 / V8 funded hand timing, shared post-income ranking, actual fixed movement budget",
-  "draftUncommitted": false,
-  "baseCommit": "ec6b09f0056c6bf0d1cf299e543c3f1f991c70f9",
-  "coldGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-current-teacher-serial-gate-20261104-v1.json",
+  "phase": "v151-V9-all-gates-passed-awaiting-isolated-admission",
+  "sourceVersion": "v151 / V9 shared ready-analysis capital",
+  "draftUncommitted": true,
+  "baseCommit": "99a23861f4e38200ee8609f3bb9c5d89b6b96b9c",
+  "coldGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v151-current-teacher-serial-gate-20261104-v1.json",
   "actualColdRoots": [
-    "reports/ai-foundation-20261023/human405-v148-cold-actual044-funding-20261104-v1.json",
-    "reports/ai-foundation-20261023/human405-v148-cold-actual050-funding-20261104-v1.json"
+    "reports/ai-foundation-20261023/human405-v151-cold-actual044-funding-20261104-v1.json",
+    "reports/ai-foundation-20261023/human405-v151-cold-actual050-funding-20261104-v1.json",
+    "reports/ai-foundation-20261023/human405-v151-cold-actual-v148-077-ready-analysis-20261104-v1.json"
   ],
   "maxColdInputs": 256,
-  "maxColdMilliseconds": 575.558708,
+  "maxColdMilliseconds": 577.620083,
   "productionBudgets": "allnull unchanged",
   "lastAutonomousRecord": "reports/research/d421cdf5.7da81a85.quick-400.json",
-  "noNewAutonomousRun": false,
+  "noNewAutonomousRun": true,
   "baselinePreserved": "v41",
   "userBoundary": "Round end excludes both PASS card pick and next income; both belong to next round start.",
   "finalChecksPending": false,
   "chromeSession": 99824,
-  "nextAction": "Integrate ready-analysis purpose only after shared state/observation contract and all native value/bound proofs are audited; avoid local-decision-plans/state-value circular import. Production V148 unchanged; no repeat autonomous run. Explicit global256/600 gate stays.",
+  "nextAction": "All84coldsourcegates+162unit+1fullflow+Chrome14 passed, auditonlylegacyfrozenaomomo. Complete admissionhelper preflight andcommitpush, then onceofficialv151 first2. New autonomous notyet run.",
   "sourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
-  "unitPassed": 161,
+  "unitPassed": 162,
   "fullFlowPassed": 1,
-  "chromePassed": 13,
+  "chromePassed": 14,
   "officialRunSession": null,
   "scores": [
     16,
@@ -64,5 +65,6 @@
     "researchThenAnalyze": 90,
     "analyzeThenResearch": 89.5,
     "missingReadyAnalysisCapital": 8.5
-  }
+  },
+  "finalNodeSession": null
 }
