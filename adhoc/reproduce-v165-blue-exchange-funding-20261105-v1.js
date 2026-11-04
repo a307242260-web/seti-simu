@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation');
+const demand=require('../randomizer/game/ai/resource-demand'),effects=require('../randomizer/game/cards/effects');
+const folder='reports/ai-foundation-20261104/two-rounds-teacher-v2/',source=folder+'v165-public-refill-funding-native-20261105-v2.json',control=JSON.parse(fs.readFileSync(source)),plan=control.plans.find(p=>p.incomeCode===0&&!p.useSwap);
+const original=JSON.parse(plan.rootEnvelope.committedState),seed=original.meta.seed,seatId='player-white',k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(plan.rootEnvelope).ok);
+const out=folder+'v165-blue-exchange-funding-reproduction-20261105-v1.json',fixture=folder+'v165-post-orbit-computer-funding-root-20261105-v1.json';assert(!fs.existsSync(out)&&!fs.existsSync(fixture));
+function submit(a){const d=c.inspect().session?.decision,legal=d?.choices||c.inputPort.enumerateActions({});assert(legal.some(x=>x.actionId===a.actionId));const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
+try{
+ for(const a of plan.steps.slice(0,14))submit(a);
+ const root=c.lifecycle.save().envelope,s=JSON.parse(root.committedState),p=s.players.players.find(p=>p.id===seatId),card=p.hand.find(c=>c.id==='card-15-0'),goal={id:'effect:tech:card:'+card.id,kind:'effect-purpose',purpose:'tech',cardId:card.id,sourceFamily:'play_card',required:effects.getCardPlayCost(card)};
+ const report={source,sourceSha256:crypto.createHash('sha256').update(fs.readFileSync(source)).digest('hex'),scope:'Native continuation after root-known orbit, income and computer4; the newly public card is never consumed.',runtime:demand.VERSION,goal,wallet:p.resources,oldCapacity:demand.capacity(s,seatId,goal),oldBlueFunding:demand.blueFunding(s,seatId,goal),nativeSteps:plan.steps.slice(14),expectedEndpoint:plan.endpointEnvelope,goalStatus:'active',goalAchieved:false};
+ assert.equal(report.oldCapacity,false);assert.equal(report.oldBlueFunding,null);assert.equal(p.resources.credits,2);assert.equal(p.resources.energy,1);assert.equal(p.resources.availableData,1);
+ fs.writeFileSync(fixture,JSON.stringify({source:{seed,evidence:out},seatId,compositionEnvelope:root},null,2)+'\n');
+ for(const a of report.nativeSteps)submit(a);assert.deepEqual(c.lifecycle.save().envelope,plan.endpointEnvelope);report.nativeResearchSucceeded=true;report.nativeInputs=report.nativeSteps.length;
+ assert(c.lifecycle.restore(root).ok);assert.deepEqual(c.lifecycle.save().envelope,root);report.rootAndRngRestored=true;fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({oldCapacity:report.oldCapacity,oldBlueFunding:report.oldBlueFunding,nativeInputs:report.nativeInputs,nativeResearchSucceeded:true,fixture}));
+}finally{c.dispose();}

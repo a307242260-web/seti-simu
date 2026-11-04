@@ -11,6 +11,29 @@ const goal={id:'play:card-target',kind:'play_card',cardId:'card-target',required
 const trade=(id,cost,gain)=>({actionId:id,family:'quick_trade',target:{tradeId:id},payload:{cost,gain}});
 const money=trade('energy-for-credit',{energy:2},{credits:1}),pair=trade('cards-for-credit',{handSize:2},{credits:1});
 const corner=(c)=>({actionId:'corner:'+c.id,family:'card_corner',target:{cardInstanceId:c.id},payload:{kind:'resource',multiplier:1}});
+// Native counterexample:2 credits and1 energy cannot pay DLC9's3 credits,
+// but the unspent energy blue slot supplies the second energy for a2:1 trade.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+ const before=c.lifecycle.save().envelope,s=JSON.parse(before.committedState),p=s.players.players.find(p=>p.id===f.seatId),target={kind:'effect-purpose',id:'effect:tech:card:card-15-0',purpose:'tech',sourceFamily:'play_card',cardId:'card-15-0',required:{credits:3}};
+ assert.equal(p.resources.credits,2);assert.equal(p.resources.energy,1);assert.equal(p.resources.availableData,1);assert.equal(p.hand.length,1);
+ assert(demand.capacity(s,f.seatId,target));assert.equal(demand.blueFunding(s,f.seatId,target).blueSlot,1);
+ const unchanged=structuredClone(s);for(const cost of [{credits:3,energy:1},{credits:4},{energy:4}])assert.equal(demand.capacity(s,f.seatId,{...target,required:cost}),false,'the same wallet must reserve both costs and cannot count the blue energy twice');
+ const empty=structuredClone(s);empty.players.players.find(p=>p.id===f.seatId).resources.availableData=0;assert.equal(demand.capacity(empty,f.seatId,target),false);assert.deepEqual(s,unchanged);
+ const disabled=structuredClone(s);disabled.players.players.find(p=>p.id===f.seatId).techState.disabledTiles.blue2=true;assert.equal(demand.capacity(disabled,f.seatId,target),false,'disabled blue technology cannot finance an exchange');
+ const port=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});port.setResourcePlanning(true);port.setCardPickPlanning(true);
+ try{
+  const root=port.openRoot(),plan=port.resourceSpec(root).plans.find(p=>p.goal.kind==='effect-purpose'&&p.goal.cardId===target.cardId);assert(plan,'funded research must be retained as a candidate');
+  const result=port.expandResourcePlan(root,plan,()=>null);assert(result.complete);assert.equal(result.submissions,4);assert.deepEqual(result.prefixes.map(p=>p.action.family),['place_data','choose_target','quick_trade','play_card']);assert.equal(result.prefixes[1].action.target.blueSlot,1);assert.equal(result.prefixes[2].action.target.tradeId,'energy-for-credit');assert.equal(result.prefixes[3].action.target.cardInstanceId,target.cardId);assert.deepEqual(c.lifecycle.save().envelope,before);
+  for(const prefix of result.prefixes){
+   const cold=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});cold.setResourcePlanning(true);cold.setCardPickPlanning(true);
+   try{const n=cold.openRoot(),recovered=cold.resourceSpec(n).plans.find(p=>p.goal.id===target.id);assert(recovered,'a cold restart must retain the same concrete purpose');const continuation=cold.expandResourcePlan(n,recovered,()=>null);assert(continuation.complete);assert.equal(continuation.prefixes[0].action.actionId,prefix.action.actionId);}finally{cold.close();}
+   const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===prefix.action.actionId);assert(a);const applied=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(applied.ok);
+  }
+  const d=c.inspect().session.decision,a=d.choices.find(a=>a.target?.tileId==='purple4');assert(a);assert(c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}).ok);const after=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===f.seatId);assert(after.techState.ownedTiles.purple4);assert.equal(after.resources.credits,0);assert.equal(after.resources.energy,0);assert.equal(after.hand.length,0);assert(c.lifecycle.restore(before).ok);assert.deepEqual(c.lifecycle.save().envelope,before);
+ }finally{port.close();c.dispose();}
+}
 // A source is admitted only for an unmet concrete requirement; the beneficiary card stays protected.
 {
  const s=state(),before=structuredClone(s),actions=[money,pair,...own(s).hand.map(corner)];

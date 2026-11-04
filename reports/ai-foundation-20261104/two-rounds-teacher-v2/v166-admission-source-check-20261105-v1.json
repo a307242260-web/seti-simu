@@ -1,0 +1,57 @@
+{
+  "baseCommit": "9854966767cb748a69c69ca0190df378fd3eae25",
+  "runtimeChanges": [
+    "randomizer/game/ai/card-pick-planning.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/resource-demand.test.js",
+    "randomizer/index.html",
+    "tools/browser-smoke-inventory.js"
+  ],
+  "otherRuntimeToolsAssetsUnchanged": 901,
+  "coldRoots": 95,
+  "maxNativeInputs": 240,
+  "maxRootAndSearchMs": 533.088583,
+  "fullUnitOriginal": {
+    "passed": 166,
+    "failed": 1,
+    "total": 167
+  },
+  "currentUnitCoverage": {
+    "passed": 167,
+    "total": 167,
+    "focusedReplacements": [
+      "card-pick-planning.test.js",
+      "resource-demand.test.js"
+    ],
+    "reason": "Original company-start test now disables blue2 to require the income source; active blue2 can fund research through exchange. Current resource-demand includes native execution, cold recovery and disabled/short-wallet controls."
+  },
+  "fullFlowWithGit": 1,
+  "chromePassed": 20,
+  "newValueInputs": false,
+  "valueModel": "v15",
+  "productionBudgets": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "catalogIncomeCounts": {
+    "0": 62,
+    "1": 62,
+    "2": 58
+  },
+  "nativeRefillControls": 105,
+  "nativeCounterexampleInputs": 6,
+  "earliestRoot39ActionStillPlaceData": true,
+  "developmentAligned": false,
+  "autonomousRuns": 0,
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "foreignWorkingHashes": {
+    "reports/iteration/versions.json": "c3a7619140ff487e281c0fe5fbbb7a72ed0c80c819516cc32ce9964ebb859b35",
+    "reports/iteration/registry.json": "477cf6db35f6c16c5e8d31687f057c1ab29dddda0b952c18ad2eb30bdd35a5da",
+    "reports/robot-iteration.html": "f4d4b1da0450f499d6b52507ff78e2df9fd4cfc7f97ca572b2fe2a5b9e87131e"
+  }
+}

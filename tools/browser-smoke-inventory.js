@@ -1013,6 +1013,30 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按请求席位计算登陆费用，跨viewer缓存隔离，第3轮决策完整闭合并复用几何时机，权威状态只读",
   counterexample: "误用当前行动者的科技折扣、跨viewer缓存串用、重复几何推演或冻结观察复用污染根/RNG",
 }), Object.freeze({
+  id: "production-blue-exchange-funding",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiResourceDemand && window.SetiAnalysisPort)",
+  actionExpression: `(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('exchange funding root restore');
+    const before=c.lifecycle.save().envelope,p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{
+      p.setResourcePlanning(true);p.setCardPickPlanning(true);const root=p.openRoot(),plan=p.resourceSpec(root).plans.find(p=>p.goal.kind==='effect-purpose'&&p.goal.cardId==='card-15-0');
+      if(!plan)throw Error('energy blue funding lost the research candidate');const r=p.expandResourcePlan(root,plan,()=>null);
+      if(!r.complete||r.submissions!==4||r.prefixes.map(p=>p.action.family).join(',')!=='place_data,choose_target,quick_trade,play_card'||r.prefixes[1].action.target.blueSlot!==1||r.prefixes[2].action.target.tradeId!=='energy-for-credit')throw Error('exchange funding plan differs from native source');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==JSON.stringify(before))throw Error('exchange funding changed the original root');
+      const submit=a=>{const d=c.inspect().session?.decision,result=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!result.ok)throw Error('exchange funding native rejection');};
+      for(const prefix of r.prefixes){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===prefix.action.actionId);if(!a)throw Error('exchange funding stale action');submit(a);}
+      const a=c.inspect().session.decision.choices.find(a=>a.target?.tileId==='purple4');if(!a)throw Error('funded research choice missing');submit(a);const player=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===f.seatId);
+      if(!player.techState.ownedTiles.purple4||player.resources.credits!==0||player.resources.energy!==0||player.hand.length)throw Error('exchange funding native endpoint differs');
+      if(!c.lifecycle.restore(before).ok||JSON.stringify(c.lifecycle.save().envelope)!==JSON.stringify(before))throw Error('exchange funding RNG restoration failed');window.__blueExchangeFunding={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__blueExchangeFunding?.ok === true",
+  obligation: "蓝槽提供的电可以在保留两种支付成本后兑换为钱，真实页面保留免费研究候选并原生兑现及恢复",
+  counterexample: "只按奖励同名资源判断筹资、重复使用钱包、未实际执行研究或污染原根RNG",
+}), Object.freeze({
   id: "production-six-greedy-plans",
   file: "randomizer/index.html",
   readyExpression: "Boolean(window.SetiLocalDecisionPlans?.pureOptional && window.SetiResidualDomainSession?.queryCardSettlement)",

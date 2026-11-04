@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step039-20261105-v1.json",
+  "sourceSha256": "0f743a7b7f1334ce7cad2ff0308c40613cea24ad880ee516afea08532dcfc072",
+  "sourceCommit": "9854966767cb748a69c69ca0190df378fd3eae25",
+  "scope": "Finite native controls, not autonomous search or experiment. Swap the next hidden draw with an existing same-pile card of each income class, preserving the multiset and every visible root fact. Compare one known funding continuation with an optional newly public credit/energy income swap. No unknown identity is passed to a production planner.",
+  "catalogCounts": {
+    "0": 62,
+    "1": 62,
+    "2": 58
+  },
+  "catalogCount": 182,
+  "limits": {
+    "nativeInputsPerPlan": 32,
+    "totalNativeInputs": 160
+  },
+  "nativeInputs": 0,
+  "plans": [],
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "error": "TypeError: cards.getCatalogEntryByCardId is not a function\n    at /Users/bilibili/code/seti-simu/adhoc/witness-v165-public-refill-funding-20261105-v1.js:25:37\n    at Array.findIndex (<anonymous>)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/witness-v165-public-refill-funding-20261105-v1.js:25:17)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+}

@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v5';
+  const VERSION='seti-goal-resource-preparation-v6';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -60,7 +60,13 @@
     for(const slot of Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number)){
       if(!data.hasBlueTechInBoardSlot(p,slot)||data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===slot))continue;
       const reward=data.getBlueBonusPlacementReward(p,slot),required=data.getRequiredComputerSlotForBlueBonus(slot);
-      if(!reward||!['credits','energy','publicity'].includes(reward.type)||!(d[reward.type]>0))continue;
+      if(!reward||!['credits','energy','publicity'].includes(reward.type))continue;
+      // A known currency reward can also meet the other currency's deficit
+      // through the ordinary2:1 trade. Reserve both costs in one wallet.
+      const cost={credits:goal.required?.credits||0,energy:goal.required?.energy||0};
+      const indirect=goal.kind!=='route'&&['credits','energy'].includes(reward.type)
+        &&!probeCapital.funding(p.resources,cost,stateValue.DEFAULT_WEIGHTS);
+      if(!(d[reward.type]>0)&&!indirect)continue;
       const remaining=bluePrerequisites(p,slot);
       // Crossing slot4 would require an additional native income-card choice;
       // leave that case to its existing explicit goal instead of guessing it.
@@ -77,7 +83,8 @@
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
       if(!capacity(next,seatId,goal,false))continue;
       const reduction=deficit(d)-deficit(needs(next,seatId,goal));
-      if(reduction>0)choices.push({blueSlot:slot,remainingComputerPlacements:remaining,reduction});
+      const conversionFunded=indirect&&Boolean(probeCapital.funding(copy.resources,cost,stateValue.DEFAULT_WEIGHTS));
+      if(reduction>0||conversionFunded)choices.push({blueSlot:slot,remainingComputerPlacements:remaining,reduction:Math.max(reduction,Number(conversionFunded))});
     }
     choices.sort((a,b)=>b.reduction-a.reduction||a.remainingComputerPlacements-b.remainingComputerPlacements||a.blueSlot-b.blueSlot);
     return choices[0]||null;
