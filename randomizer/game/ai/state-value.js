@@ -16,7 +16,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v18";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v20";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -235,7 +235,9 @@
   function capitalWithoutMission(facts,weights){
     const investment=dataInvestmentFor(facts,weights),base=investment(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
     const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>dataInvestmentFor({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}},weights)(facts.hand,wallet.publicity,{resources:wallet,income:wallet.income,startingIncome:Number(facts.passing)}),base);
-    return arithmetic.sum([base,analysis.value],weights);
+    // Both quotes share the same wallet/data: preserve the better funded use,
+    // without adding duplicate claims or missions on an unexecuted sector reset.
+    return Math.max(arithmetic.sum([base,analysis.value],weights),incomeAllocationCapital(facts,weights).total);
   }
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
@@ -290,10 +292,16 @@
     if (typeof seatId !== "string" || !seatId) throw new TypeError("VALUE_VIEWER_INVALID");
     const weights = Object.freeze(valueWeights(options));
     trustedWeights.add(weights);
-    const evaluate = observation => evaluateStateValue(observation, seatId, { weights }).total;
+    const details = observation => {
+      const result = evaluateStateValue(observation, seatId, { weights }), c = result.components;
+      return Object.freeze({ value: result.total, unrealizedPurposeValue: arithmetic.sum([
+        c.handPotential,c.researchPotential,c.probePotential,c.analysisPotential,c.researchIncomePotential,c.dataPotential],weights) });
+    };
+    const evaluate = observation => details(observation).value;
     Object.defineProperties(evaluate, {
       modelKey: { value: JSON.stringify({ version: MODEL_VERSION, seatId, weights }) },
       seatId: { value: seatId },
+      details: { value: details },
     });
     evaluatorWeights.set(evaluate, weights);
     return Object.freeze(evaluate);

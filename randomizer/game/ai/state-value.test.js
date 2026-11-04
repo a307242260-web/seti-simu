@@ -34,6 +34,8 @@ const configured = { weights: { credits: 2 } };
 const evaluator = createStateValueEvaluator("p1", configured);
 const configuredValue = evaluateStateValue(start, "p1", configured).total;
 assert.equal(evaluator(start), configuredValue);
+assert.equal(evaluator.details(start).value,configuredValue);
+assert.equal(evaluator.details(start).unrealizedPurposeValue,0);
 configured.weights.credits = 100;
 assert.equal(evaluator(start), configuredValue, "已签发估值函数固定配置，外部修改不能改变证明前提");
 assert.equal(isMoneyMonotoneEvaluator(evaluator), true);

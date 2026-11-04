@@ -1,0 +1,11 @@
+{
+  "actionId": "play_card:684d5f30",
+  "selectedFamily": "play_card",
+  "value": 85.08333333333333,
+  "realization": -0.5833333333333334,
+  "nativeInputs": 12,
+  "milliseconds": 91.964125,
+  "complete": true,
+  "rootAndRngUnchanged": true,
+  "sourceEvidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-cold-controlled-after-analysis-20261105-v1.json"
+}

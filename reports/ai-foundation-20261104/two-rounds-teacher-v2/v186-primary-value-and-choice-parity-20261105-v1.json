@@ -1,0 +1,67 @@
+{
+  "all225NamedPrimaryValuesUnchanged": true,
+  "uniqueRoots": 189,
+  "changedActions": [
+    {
+      "label": "teacher-043",
+      "value": 69.16666666666667,
+      "actionBefore": "end_turn:b2f9b29d",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 10,
+      "inputsAfter": 10
+    },
+    {
+      "label": "actual-v178-043",
+      "value": 69.16666666666667,
+      "actionBefore": "end_turn:b2f9b29d",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 10,
+      "inputsAfter": 10
+    },
+    {
+      "label": "actual-v178-087",
+      "value": 88.58333333333333,
+      "actionBefore": "place_data:8fd12fd3",
+      "actionAfter": "card_corner:782ed1f3",
+      "inputsBefore": 46,
+      "inputsAfter": 46
+    },
+    {
+      "label": "actual-v178-091",
+      "value": 88.58333333333333,
+      "actionBefore": "end_turn:b2f9b29d",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 4,
+      "inputsAfter": 4
+    },
+    {
+      "label": "actual-v178-094",
+      "value": 88.58333333333333,
+      "actionBefore": "end_turn:b2f9b29d",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 4,
+      "inputsAfter": 4
+    },
+    {
+      "label": "actual-v184-043",
+      "value": 69.16666666666667,
+      "actionBefore": "end_turn:b2f9b29d",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 10,
+      "inputsAfter": 10
+    },
+    {
+      "label": "actual-v184-091",
+      "value": 85.08333333333333,
+      "actionBefore": "pass:a1f33c73",
+      "actionAfter": "place_data:8fd12fd3",
+      "inputsBefore": 20,
+      "inputsAfter": 20
+    }
+  ],
+  "changedNativeInputs": [],
+  "maximumNativeInputs": 252,
+  "maximumColdMs": 589.347875,
+  "originalRootAndRngUnchanged": true,
+  "noAutonomousRunYet": true
+}

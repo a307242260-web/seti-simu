@@ -23,5 +23,47 @@ try{
   for(let credits=0;credits<=6;credits++)for(let energy=0;energy<=3;energy++)for(const [c,e]of [[credits+1,energy],[credits,energy+1]])if(totals.has(`${c}:${e}`))assert(totals.get(`${c}:${e}`)>=totals.get(`${credits}:${energy}`)-1e-9,'known sector/analysis max must preserve positive-money dominance');
  }
  assert.equal(moneyControls,84);
+ // The independent sector card must preserve the already-funded blue data tail.
+ const actual=read(folder+'v184-round2-purpose-realization-native-20261105-v1.json');
+ const endpoint=name=>actual.rows.find(row=>row.name===name).endpoint;
+ const totalAt=envelope=>{assert(c.lifecycle.restore(envelope).ok);return values.evaluateStateValue(observe(),seat).total;};
+ const initialValue=totalAt(actual.before.envelope),analyzedValue=totalAt(endpoint('prepared-analysis').envelope);
+ const afterAnalysis=c.lifecycle.save().envelope,analysisCapital=values.purposeCapital(facts(observe()));
+ assert(analysisCapital.dataPotential>0,'two remaining pool data have an independently funded blue tail');
+ const beforeCard=observe(),beforePlayer=beforeCard.publicState.players.find(p=>p.playerId===seat),plan=analysisCapital.sectorCardPlan.selected;
+ assert(plan&&plan.targets.length,'the known sector purpose remains executable after analysis');
+ const submit=a=>{assert(a);const decision=c.inspect().session?.decision;assert((decision?c.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a)).ok);nativeInputs++;};
+ const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+ submit(legal().find(a=>a.family==='play_card'&&a.target?.cardInstanceId===plan.cardId));
+ for(let i=0;c.inspect().session;i++){assert(i<8);submit(legal().find(a=>plan.targets.includes(a.target?.nebulaId)));}
+ submit(legal().find(a=>a.family==='end_turn'));
+ const afterCard=observe(),afterPlayer=afterCard.publicState.players.find(p=>p.playerId===seat),afterCapital=values.purposeCapital(facts(afterCard));
+ assert.equal(afterPlayer.availableData,beforePlayer.availableData,'playing this no-data sector card does not spend the existing data tail');
+ const realizedNet=values.sumValueParts([afterPlayer.score-beforePlayer.score,-values.DEFAULT_WEIGHTS.handSize],values.DEFAULT_WEIGHTS);
+ assert.equal(analysisCapital.sectorCardPlan.value,realizedNet,'the sector quote must not subtract an unchanged blue-data portfolio');
+ assert.equal(afterCapital.dataPotential,analysisCapital.dataPotential);
+ assert.equal(values.evaluateStateValue(afterCard,seat).total,analyzedValue,'the funded card cashes its quoted capital without losing unconsumed data');
+ assert.equal(analyzedValue,initialValue,'known prepared analysis and known sector card can be realized in either order');
+ assert.equal(totalAt(endpoint('both').envelope),analyzedValue);
+ assert.deepEqual(afterCard.selfState.hand,observe().selfState.hand);
+ const bothPlayer=observe().publicState.players.find(p=>p.playerId===seat);
+ for(const key of ['score','credits','energy','publicity','availableData','dataProgress','techState','income'])assert.deepEqual(afterPlayer[key],bothPlayer[key],key+' must be independent of main-purpose realization order');
+ assert(c.lifecycle.restore(afterAnalysis).ok);assert.deepEqual(c.lifecycle.save().envelope,afterAnalysis);
+ assert(c.lifecycle.restore(original).ok);
+ // Reference graph wiring uses saved native observations, not new game states.
+ const observationAt=envelope=>{assert(c.lifecycle.restore(envelope).ok);return observe();};
+ const tieObservations={before:observationAt(actual.before.envelope),pass:observationAt(endpoint('pass').envelope),play:observationAt(endpoint('known-sector').envelope),analysis:observationAt(endpoint('prepared-analysis').envelope)};
+ const {searchDecision}=require('./decision-search');
+ const tieGraph=(passObservation=tieObservations.pass,summary=false)=>{
+  const spec={root:{next:{pass:'passed',play:'card',analysis:'prepare',cycle:'loop'}},card:{next:{end:'played'}},prepare:{next:{fill:'ready'}},ready:{next:{analyze:'analyzed'}},loop:{next:{back:'root',repeat:'loop'}},passed:{status:'turn-boundary',observation:passObservation},played:{status:'turn-boundary',observation:tieObservations.play},analyzed:{status:summary?'turn-tail-value':'turn-boundary',observation:tieObservations.analysis}};
+  const names=new Map(),read=name=>{const item=spec[name],node={status:item.status||'stable',legalActions:Object.keys(item.next||{}).map(actionId=>({actionId,actorId:seat})),observation:item.observation||tieObservations.before};if(summary&&name==='analyzed'){node.planSummary={netGain:0,observationAvailable:false,successorEnvelopeAvailable:false};Object.defineProperty(node,'observation',{get(){throw Error('no invented summary observation');}});}names.set(node,name);return node;};
+  const port={identity:node=>names.get(node),expand:(node,id)=>read(spec[names.get(node)].next[id]),turnTailBase:()=>({observation:tieObservations.analysis})};
+  return{port,root:read('root'),evaluate:values.createStateValueEvaluator(seat),budget:{transitions:null,nodes:null,frontier:null,milliseconds:null}};
+ };
+ const tied=searchDecision(tieGraph());assert(tied.complete);assert.equal(tied.actionId,'analysis','strict scalar ties prefer actual purpose realization ahead of the shorter PASS');assert.equal(tied.value,initialValue);assert.deepEqual(tied.unresolved,[]);
+ const legacyTie=tieGraph();legacyTie.evaluate=o=>values.evaluateStateValue(o,seat).total;assert.equal(searchDecision(legacyTie).actionId,'pass','custom scalar evaluators preserve shortest-distance ties');
+ const higher=structuredClone(tieObservations.pass),higherPlayer=higher.publicState.players.find(p=>p.playerId===seat);higherPlayer.score++;higherPlayer.finalScore++;assert.equal(searchDecision(tieGraph(higher)).actionId,'pass','a strictly higher scalar always precedes realization preference');
+ const summaryTie=searchDecision(tieGraph(tieObservations.pass,true));assert(summaryTie.complete);assert.equal(summaryTie.actionId,'analysis','an unobserved summary retains only its latest native realization evidence');assert.equal(summaryTie.value,tied.value);
+ assert(c.lifecycle.restore(original).ok);
  assert.deepEqual(base,before);assert.deepEqual(c.lifecycle.save().envelope,original);console.log(JSON.stringify({knownSectorAndAnalysis:'passed',nativeInputs,stablePrefixes,moneyControls,value:75.5,sectorCapital:14,preparedAnalysisCapital:4.5,duplicateClaimsPrevented:true,hiddenAndDiscoveryGuards:true,stateObservationParity:true,rootAndRngRestored:true}));
 }finally{c.dispose();}

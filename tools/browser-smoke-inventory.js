@@ -1441,6 +1441,14 @@ module.exports = Object.freeze([...smokes, Object.freeze({
  obligation:'浏览器加载统一估值账本，保留四格、准备及清空三个原生检查点与状态准备一致，无重复计价或原根/RNG变更',
  counterexample:'Node新增电脑资产但页面漏装依赖、分析清空后仍认领预投入或浮点求和导致状态/观察分歧',
 }), Object.freeze({
+ id:'production-purpose-realization',file:'randomizer/index.html',
+ readyExpression:'Boolean(window.SetiDecisionSearch && window.SetiStateValue && window.SetiAnalysisPort)',
+ actionExpression:`(async()=>{const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step091-20261105-v1.json').then(r=>r.json()),seat=f.seatId,seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('realization root restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+ try{const evaluate=window.SetiStateValue.createStateValueEvaluator(seat),root=p.openRoot(),options={port:p,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET},r=window.SetiDecisionSearch.searchDecision({...options,root}),a=root.legalActions.find(a=>a.actionId===r.actionId),pass=r.roots.find(row=>root.legalActions.find(a=>a.actionId===row.actionId)?.family==='pass');if(!r.complete||a?.family!=='place_data'||r.value!==85.08333333333333||pass?.value!==r.value||!(r.realization>pass.realization)||r.diagnostics.nativeExecutions>256)throw Error('same-value current purpose still deferred or scalar changed');const saved=p.exportPlan(r.planContinuation);if(!saved||!saved.rows.every(row=>Number.isFinite(row.realization)))throw Error('realization plan evidence missing');p.close();const token=p.importPlan(saved),reopened=p.openRoot(),again=window.SetiDecisionSearch.searchDecision({...options,root:reopened,planContinuation:token});if(!again.complete||again.actionId!==r.actionId||again.value!==r.value||again.realization!==r.realization||again.diagnostics.nativeExecutions!==0)throw Error('saved realization plan not reused');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('realization search changed root/RNG');window.__purposeRealizationSmoke={ok:true};}finally{p.close();c.dispose();}})()`,
+ successExpression:'window.__purposeRealizationSmoke?.ok === true',
+ obligation:'真实第91根标量同值时落实分析准备，保存恢复仍复用相同目的/兑现证据且零新模拟，原根/RNG不变',
+ counterexample:'页面仍在同值时PASS、额外调整标量、用伪造后继计算排序，或计划恢复丢失兑现证据',
+}), Object.freeze({
   ...smokes.find(smoke=>smoke.id==='production-browser-full-parity'),
   id:'production-search-agent-parity',file:'randomizer/index.html',query:'agent=search',
   obligation:'新search AI在真实页面经共享factory完成初始选择、正式提交和保存恢复',

@@ -322,6 +322,23 @@ const reusePort = createAnalysisPort({ composition: comp, seatId: actions[0].act
 const modelKey = `state-value-v1/default/${SEARCH_VERSION}`;
 const searchOptions = { evaluate: observation => evaluateStateValue(observation, actions[0].actorId).total,
   budget: { transitions: 256, nodes: 257, frontier: 256, milliseconds: 2000 }, modelKey };
+// Complete selection evidence must keep the same lexicographic winner on reuse.
+{
+  const evidencePort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId });
+  const nativeBefore = comp.lifecycle.save().envelope, evidenceRoot = evidencePort.openRoot();
+  const plans = [...evidencePort.selectionPlans(evidenceRoot)];
+  assert(plans.length > 1);
+  const entries = plans.map((plan,i) => ({ selectedIds: plan.selectedIds, value: 1,
+    realization: i === plans.length-1 ? 1 : 0, distance: i === plans.length-1 ? 100 : 0 }));
+  const token = evidencePort.rememberSelection(evidenceRoot, entries, 'realization-evidence-v1');
+  const selected = evidencePort.reuseSelection(evidenceRoot, token, 'realization-evidence-v1');
+  assert(selected.hit);assert.deepEqual(selected.selectedIds, plans.at(-1).selectedIds);
+  assert.equal(selected.realization,1,'a shorter stale tie must not replace the realization winner');
+  evidencePort.close();const restoredRoot=evidencePort.openRoot();
+  assert.deepEqual(evidencePort.reuseSelection(restoredRoot,token,'realization-evidence-v1').selectedIds,selected.selectedIds);
+  assert.throws(()=>evidencePort.rememberSelection(restoredRoot,entries.map((entry,i)=>i?entry:{...entry,realization:NaN}),'invalid'),/EVIDENCE_INVALID/);
+  assert.deepEqual(comp.lifecycle.save().envelope,nativeBefore);evidencePort.close();
+}
 let current = searchDecision({ ...searchOptions, port: reusePort, root: reusePort.openRoot() });
 assert.equal(current.complete, true);
 const certificate = current.selectionContinuation;

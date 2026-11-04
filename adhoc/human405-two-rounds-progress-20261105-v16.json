@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V185 isolated data-tail continuity fix,170unit/189cold pass; autonomousV184 failure preserved",
+  "thisGoalTurnClassification": "progress: V186 strict-scalar-tie realization implemented; all225primaryvalues/nativecounts unchanged,7namedchoices differ;170unit/fullFlow,190coldroots,24Chrome pass; actual91 nowanalysis, controlled nextroot nowplay; sourceadmissionready",
+  "productionBeforeDelivery": "V184/V18",
+  "candidateRuntime": "V186/V20",
+  "candidateSourceBaseCommit": "b27a537503a1bcb9ea7aeb3649ad514a36ab997b",
+  "candidateSourceAdmissionReady": true,
+  "candidateOfficialRuns": 0,
+  "coldNamedCases": 225,
+  "coldUniqueRoots": 189,
+  "additionalDifferentColdRoots": 1,
+  "maxNativeInputs": 252,
+  "maxRootAndSearchMs": 589.347875,
+  "unitPassed": 170,
+  "fullFlowPassed": 1,
+  "chromePassed": 24,
+  "independentInputAuditPasses": 45,
+  "legacyAuditFailureUnchanged": true,
+  "actualRecord": "reports/research/ea6138c1.11437f11.quick-400.json",
+  "actualScores": [
+    15,
+    25
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 3823,
+  "bothRoundsTechnologyAndSixIncomesEqual": true,
+  "developmentFullyAligned": false,
+  "nativeSelectedLineVerifiedInputs": 11,
+  "totalControlledReplayInputsIncludingFailedToolAttempt": 22,
+  "controlledSelectedEndpointScore": 32,
+  "controlsAreNotAutonomousScores": true,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "baseline": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "Commit and push the verified source with private index, retaining foreign registry/index and baseline.",
+    "Run exactly one standard V186 autonomousfirst2, native-replay allinputs and compare both rounds score/exacttech/sixincomes plus resources/probes/scans/traces. Preserve failure and new roots; do not infer completion from controlled score."
+  ]
+}

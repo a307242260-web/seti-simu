@@ -1305,7 +1305,7 @@
       if (!Array.isArray(entries) || entries.length !== expected.size) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INCOMPLETE");
       for (const entry of entries) {
         const key = selectionTargetKey(entry.selectedIds, spec.unordered);
-        if (!expected.delete(key) || (entry.value === null ? entry.distance !== null
+        if (!expected.delete(key) || entry.realization!==undefined&&entry.realization!==null&&!Number.isFinite(entry.realization) || (entry.value === null ? entry.distance !== null
           : !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 0)) {
           throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
         }
@@ -1329,9 +1329,11 @@
         const entry = byTarget.get(selectionTargetKey(plan.selectedIds, spec.unordered));
         if (entry.value == null) continue;
         const distance = plan.submissions + entry.distance;
+        const realization = entry.realization ?? 0;
         if (!best || entry.value > best.value || (entry.value === best.value
-          && (distance < best.distance || (distance === best.distance && plan.firstActionId < best.actionId)))) {
-          best = { actionId: plan.firstActionId, selectedIds: plan.selectedIds, value: entry.value, distance };
+          && (realization > best.realization || realization === best.realization
+            && (distance < best.distance || (distance === best.distance && plan.firstActionId < best.actionId))))) {
+          best = { actionId: plan.firstActionId, selectedIds: plan.selectedIds, value: entry.value, realization, distance };
         }
       }
       if (!best) return { hit: false, reason: "no-reachable-boundary" };
@@ -1370,7 +1372,7 @@
         const stored = nodes.get(entry.node);
         if (!fork || !stored || !["stable", "decision"].includes(entry.node.status)
           || !entry.node.legalActions.some(action => action.actionId === entry.actionId)
-          || !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 1
+          || !Number.isFinite(entry.value) || entry.realization!==undefined&&!Number.isFinite(entry.realization) || !Number.isSafeInteger(entry.distance) || entry.distance < 1
           || !Array.isArray(entry.roots) || entry.roots.length !== entry.node.legalActions.length
           || new Set(entry.roots.map(row => row.actionId)).size !== entry.roots.length
           || entry.node.legalActions.some(action => !entry.roots.some(row => row.actionId === action.actionId))) {
@@ -1380,7 +1382,7 @@
         return { key: entry.committedGoal ? stored.physicalKey : policyDependencyKey(stored),
           ...(entry.committedGoal?{committedGoal:entry.committedGoal}:{}), actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
           ...(!entry.committedGoal&&savedMovementIntent(stored.intent)?{movementIntent:freeze(structuredClone(stored.intent))}:{}),
-          value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
+          value: entry.value, ...(entry.realization!==undefined?{realization:entry.realization}:{}), distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
       const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
       planCertificate = { token, modelKey, rows, evidenceId, source: freeze(structuredClone(source)) };
@@ -1417,7 +1419,7 @@
         }
       }
       if (!row) return { hit: false, reason: "dependencies-changed" };
-      return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
+      return freeze({ hit: true, actionId: row.actionId, value: row.value, realization: row.realization ?? 0, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
         sourceNode: row.sourceNode, source: saved.source, ...(row.committedGoal?{committedGoal:row.committedGoal}:{}) });
     }
@@ -1435,7 +1437,7 @@
         || !Array.isArray(saved.rows) || !saved.rows.length || saved.rows.length > 32
         || !Number.isSafeInteger(saved.source?.nodeCount) || saved.source.nodeCount < 1
         || saved.rows.some(row=>typeof row.key!=="string" || typeof row.actions!=="string" || typeof row.actionId!=="string"
-          || !Number.isFinite(row.value) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
+          || !Number.isFinite(row.value) || row.realization!==undefined&&!Number.isFinite(row.realization) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
           || row.committedGoal!==undefined&&(typeof row.committedGoal!=="string"||!row.committedGoal)
           || row.movementIntent!==undefined&&!savedMovementIntent(row.movementIntent))) {
         throw new Error("ANALYSIS_PLAN_CHECKPOINT_INVALID");
