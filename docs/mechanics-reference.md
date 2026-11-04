@@ -355,6 +355,8 @@ PASS 提交后（`passCompletionPending` 置位或已计入 `passedPlayerIds`）
 
 扫描 effect 由 `randomizer/game/actions/scan-effects.js` 构建，并由 `randomizer/game/effects/science-session.js` 在公共 Effect Session 中编排。**所有「往扇区放信号」的节点统一为一个 `SCAN_STEP`**（`science_domain_scan_step`）：按 `mode` 枚举目标（`specified` 指定星云/扇区、`any` 任意、`color` 颜色族、`planet` 行星扇区、`probe` 探测器扇区、`landing` 刚登陆扇区、`conditional` 条件扇区、`hand` 手牌扫描、`public` 公共牌扫描），共享扫描结算（`scanNebula` → `placeNebulaToken`）；固定单目标自动直接扫描，多目标/可跳过/公共牌提升为标准决策；`hand`/`public` 模式含弃牌与公共牌延迟补牌多步流。**扇区结算统一由扫描流串尾的 `SCAN_FINALIZE` 节点触发一次 `SETTLE`**（P13：不逐节点结算，同一 flow 内完成扇区不提前重置）；每个扫描流 spawn 源都在自己的 SCAN_STEP 串之后追加一个 `SCAN_FINALIZE`。扫描主行动（`scanQueue`）、行星奖励扫描、卡牌扫描家族（任意/颜色/固定/行星/登陆/探测器/条件/公共牌）全部收敛到该节点；`DRAW_THEN_SCAN`（盲抽后扫描）与 `SCAN_ACTION_4`（紫4 发射/移动，非放信号）保留独立流程（`DRAW_THEN_SCAN` 单节点扫描流同样追加 `SCAN_FINALIZE`；紫4 在流内，被串尾 `SCAN_FINALIZE` 覆盖）。
 
+条件扫描须保留模型的 `allMatching` 与 `repeat`：DLC37在效果开始时固定所有符合条件的扇区，各扫描一次；原生会话中的 `conditionalFlow.remaining` 记录剩余次数，恢复时不得重新扩大目标集合。DLC22先选择一个自己至少3个信号的扇区，在同一flow内扫描两次。固定单目标自动执行，多个未完成目标可选择顺序；全部义务完成后才由原有串尾统一结算，不逐步重置扇区，不获得数据。
+
 - 标准扫描主行动开始时先支付扫描费用（受公司/被动修正影响），费用是行动触发条件，不作为效果队列节点；该支付仍随行动历史可撤销。
 - 无紫色科技：地球所在扇区扫描 + 公共牌区扫描。
 - 公共牌区扫描默认弃 1 张选 2 选 1 星云；玩家每有 1 个 `additionalPublicScan` 可多选 1 张公共牌（最多 2 个，即最多弃 3 张），弃牌后按张数依次弹出多组 2 选 1 星云（可重复）。扫描行动内的公共牌区扫描只弃牌并留下空牌位，不立刻补牌。

@@ -1,0 +1,11 @@
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"allMatchingNativeTeacher":true,"repeatWithinOneSector":true,"noDataGain":true,"settleOnce":true,"coldRestoreAndRng":true}
+card play domain production composition tests passed
+science scan and blue reward tests passed
+SUMMARY unit passed=5 failed=0 total=5 time=5.12s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
+OWNER rules/data tests=1

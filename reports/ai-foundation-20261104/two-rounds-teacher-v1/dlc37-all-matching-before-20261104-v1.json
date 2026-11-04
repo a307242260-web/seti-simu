@@ -1,0 +1,68 @@
+{
+  "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-084-20261104-v1.json",
+  "fixtureSha256": "c50c0ff80e9ff266e8be4ac135e025d1d2ef81efab556df349e13126a5c33af1",
+  "cardEffect": [
+    {
+      "id": "dlc37-all-owned-signal-sectors",
+      "type": "card_conditional_sector_scan",
+      "label": "每个有自己信号的扇区各扫描1次（不获得数据）",
+      "icon": "scan",
+      "options": {
+        "condition": {
+          "type": "hasPlayerSignal"
+        },
+        "repeat": 1,
+        "gainData": false,
+        "allMatching": true,
+        "noAutoRepeatExpansion": true
+      },
+      "status": "pending"
+    }
+  ],
+  "eligible": [
+    {
+      "nebulaId": "sector-2-a",
+      "summary": "扫描 天狼星A"
+    },
+    {
+      "nebulaId": "sector-4-b",
+      "summary": "扫描 绘架座β"
+    }
+  ],
+  "steps": [
+    {
+      "actionId": "choose_target:6b287122",
+      "nebulaId": "sector-2-a",
+      "available": [
+        "sector-2-a",
+        "sector-4-b"
+      ],
+      "queue": [
+        {
+          "type": "science_domain_scan_step",
+          "options": {
+            "mode": "conditional",
+            "condition": {
+              "type": "hasPlayerSignal"
+            },
+            "gainData": false,
+            "label": "每个有自己信号的扇区各扫描1次（不获得数据）"
+          }
+        },
+        {
+          "type": "science_domain_scan_finalize"
+        }
+      ]
+    }
+  ],
+  "status": "awaiting_input",
+  "actualScans": 1,
+  "goalStatus": "active",
+  "interpretation": "allMatching must scan each initially eligible physical sector once; check native flow, not a valuation assumption",
+  "sourceCommit": "1cdfdb0021512c02a967af1cfa503634986cfa75",
+  "sourceHashes": {
+    "randomizer/game/cards/play-domain.js": "964c5735c9d61fe6c87fcb711f94acf52416a5e0385b5608319985b9ad53a689",
+    "randomizer/game/effects/science-session.js": "c22870d31fd6a115b1aba72d592892c7cc1c58871bdcf8a9ebdb70e7af79224c",
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9"
+  }
+}

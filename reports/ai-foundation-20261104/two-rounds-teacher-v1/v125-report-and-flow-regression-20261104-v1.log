@@ -1,0 +1,6 @@
+{"allMatchingNativeTeacher":true,"repeatWithinOneSector":true,"noDataGain":true,"settleOnce":true,"coldRestoreAndRng":true}
+{"compactReport":"passed","steps":167,"rounds":4,"richParity":true,"sourceSaveUnchanged":true}
+SUMMARY unit passed=2 failed=0 total=2 time=6.95s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER rules/card-play tests=1
+OWNER training/reporting tests=1

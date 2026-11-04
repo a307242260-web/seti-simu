@@ -32,6 +32,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/post-main-movement.test.js", "policy/decision-search", "主行动后真实移动、付款与到达奖励保持，完整原生最优一致；不适用模型不沿用旧线性路径删除", "遗漏到达宣传或移动事件奖励，错误省略有净收益的移动准备链"),
     entry("randomizer/game/ai/inert-reservation.test.js", "policy/decision-search", "B44主行动后证明保留访问收益；对手与计分保留牌的交易数值界按独立局部闭包验证", "无探测器时拒绝整条无收益准备链或有探测器时删掉木星数据解锁蓝列的净收益"),
     entry("randomizer/game/ai/inert-sector-task.test.js", "policy/decision-search", "未达成扇区任务在主行动后不能增加扇区胜利时不改变局部最优，已可完成的任务仍拒绝剪枝", "把已达成任务或仍能改变条件的事件链当作无效保留牌，省略实际任务选择"),
+    entry("randomizer/game/cards/conditional-sector-flow.test.js", "rules/card-play", "条件扫描保留allMatching与repeat，每个初始匹配扇区履行一次义务，冷恢复与单次串尾结算一致", "DLC37只扫一个匹配扇区、DLC22只扫一次、获得不应有的数据或恢复重复扫描"),
     entry("randomizer/game/cards/public-pick-barrier.test.js", "rules/card-play", "通用与B48公共选牌实际补出新牌时报告隐藏屏障，保留剩余奖励、已知牌及恢复重放", "补牌后继续窥探后续路线、误遮已知取得牌或牌堆空时虚构新信息"),
     entry("randomizer/game/initial-information-barrier.test.js", "rules/initial-setup", "初始发选项、结算盲抽和插收入牌报告实际新信息，移出集合去重并保持恢复重放", "搜索继续使用未知起始牌或收入盲抽牌，或空堆与非盲抽错误生成新屏障"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),

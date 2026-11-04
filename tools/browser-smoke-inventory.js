@@ -1020,6 +1020,24 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-conditional-sector-flow',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiProductionKernel && window.SetiRuleObservation && window.SetiData)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-084-20261104-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({}),state=()=>{const e=c.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState);};
+    const count=s=>window.SetiData.getSectorRanking(s.data,'sector-4-b').find(p=>p.playerId===f.seatId)?.count||0;
+    function submit(a){if(!a)throw Error('条件扫描缺少原生输入');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitAction(a);if(!r.ok)throw Error(JSON.stringify(r));}
+    try{if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('教师扫描根恢复失败');const s=state(),p=s.players.players.find(p=>p.id===f.seatId),n=count(s),d=p.resources.availableData,card=p.hand.find(c=>c.cardId==='dlc_37.png');submit(legal().find(a=>a.family==='play_card'&&a.target.cardInstanceId===card.id));
+      const pending=JSON.parse(JSON.stringify(c.lifecycle.save().envelope));if(!c.lifecycle.restore(pending).ok)throw Error('条件扫描冷恢复失败');submit(legal().find(a=>a.target?.nebulaId==='sector-2-a'));
+      if(count(state())!==n+1||state().players.players.find(p=>p.id===f.seatId).resources.availableData!==d)throw Error('DLC37漏扫匹配扇区或错误获得数据');
+      if(legal().some(a=>a.target?.nebulaId))throw Error('已完成扫描重复选择');window.__conditionalSectorFlow={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__conditionalSectorFlow?.ok === true',
+  obligation:'真实页面DLC37完成两个初始匹配扇区，冷恢复保留义务且不获得数据',
+  counterexample:'Browser旧脚本丢失allMatching，仿真已修复但页面仍只扫描一次或恢复重扫',
+}), Object.freeze({
   id:'production-conditional-research-capital',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiStateValue && window.SetiAnalysisPort && window.SetiDecisionSearch)',
   actionExpression:`(async()=>{

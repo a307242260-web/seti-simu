@@ -1,7 +1,13 @@
 "use strict";
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {createReportSave}=require('./robot-report-fixture'),{REPO_ROOT,buildActionLogReport,replaySaveEnriched}=require('./robot-iteration-lib');
-const savePath='seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json';
+// The archived v122 trace predates the conditional-sector rule correction.
+// Keep its explicit replay failure; never restore that bug to render a report.
+const obsolete='seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json';
+const obsoleteBytes=fs.readFileSync(path.join(REPO_ROOT,obsolete));
+assert.throws(()=>replaySaveEnriched(obsolete),/REPORT_REPLAY_CHOICE_MISSING/);
+assert.deepEqual(fs.readFileSync(path.join(REPO_ROOT,obsolete)),obsoleteBytes);
+const savePath='seti-saves/seti-save-research-ai-search-v123-white-full-20261104-1a78d5d3-full-v80.json';
 const original=fs.readFileSync(path.join(REPO_ROOT,savePath)),save=JSON.parse(original);assert(save.replaySteps.every(step=>step.after===null));
 const html=buildActionLogReport({savePath,versionId:'compact-report-regression',mode:'full'});
 assert(!html.includes('R?·T?'),'精简存档必须从真实重放恢复轮次，不能把所有动作合为一回合');

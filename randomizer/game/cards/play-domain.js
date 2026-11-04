@@ -433,7 +433,9 @@
         case cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN:
           return { ...clone(e.options), mode: "probe", label: e.label, selectedRocketIds: [] };
         case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
-          return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label };
+          return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label,
+            ...(e.options?.allMatching ? { allMatching: true, repeat: e.options.repeat ?? 1 }
+              : { sameSectorRemaining: e.options?.repeat ?? 1 }) };
         default:
           return null;
       }

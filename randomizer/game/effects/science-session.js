@@ -1177,6 +1177,17 @@
       // 同一 flow 内完成扇区不提前重置，后续信号只能放额外标记。
       const spawnedEffects = [];
       const events = clone(result.events || []);
+      if (opts.conditionalFlow) {
+        // Snapshot the matching sectors once. Consuming an obligation must not
+        // discover new sectors or rescan a completed one after cold restore.
+        const remaining = clone(opts.conditionalFlow.remaining);
+        const scanned = remaining.find(item => item.nebulaId === legal.target.nebulaId);
+        if (!scanned || scanned.count < 1) throw new TypeError("CONDITIONAL_SCAN_OBLIGATION_MISSING");
+        scanned.count -= 1;
+        const next = remaining.filter(item => item.count > 0);
+        if (next.length) spawnedEffects.push(probeScanStep(effect, { ...clone(opts),
+          nebulaIds: next.map(item => item.nebulaId), conditionalFlow: { remaining: next } }));
+      }
       if (opts.sameSectorRemaining > 1) {
         // 任意扫描先选扇区，再逐次完成同一扇区的标记；链尾统一结算不在此新增。
         spawnedEffects.push({ priority: "direct", effect: {
@@ -1248,6 +1259,18 @@
         const mode = opts.mode || "specified";
         const actor = getActor(root, effect.ownerId);
         if (!actor) return fail("SCIENCE_SCAN_STEP_STALE", "扫描玩家已失效");
+        if (mode === "conditional" && opts.allMatching) {
+          const remaining = scanStepChoices(root, actor, opts)
+            .filter(choice => choice.target?.nebulaId)
+            .map(choice => ({ nebulaId: choice.target.nebulaId, count: opts.repeat || 1 }));
+          return scienceResult(state, root, `${EFFECT_TYPES.SCAN_STEP}:matching`, {
+            spawnedEffects: remaining.length ? [probeScanStep(effect, {
+              mode: "specified", gainData: opts.gainData, label: opts.label,
+              nebulaIds: remaining.map(item => item.nebulaId), conditionalFlow: { remaining },
+            })] : [],
+            events: remaining.length ? [] : [{ type: "scanStepSkipped", reason: "no_matching_sector" }],
+          });
+        }
         if (mode === "public") {
           // 公共牌扫描多步流：prepare → 决策（选牌/结束）→ 结束统一补牌。
           const choices = publicScanChoices(root);

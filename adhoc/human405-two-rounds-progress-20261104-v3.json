@@ -1,0 +1,18 @@
+{
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "parentCommit": "1cdfdb0021512c02a967af1cfa503634986cfa75",
+  "phase": "v125-rule-fix-admitted-first2-run-pending",
+  "scopeOverride": "User: round end excludes PASS card and next income; both next start. Compare resources and invested assets in addition to board/tech/income.",
+  "fixed": "DLC37 allMatching and DLC22 repeat dropped in native scan conversion",
+  "teacherReference": "reports/ai-foundation-20261104/two-rounds-teacher-v2/conditional-scan-teacher-replay-20261104-v1.json",
+  "teacherBoardScores": [
+    15,
+    34
+  ],
+  "historicalTeacherV1Preserved": true,
+  "coldGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v125-current-teacher-serial-gate-20261104-v1.json",
+  "parallelOverrunSampleRetained": true,
+  "newAutonomousFirst2Pending": true,
+  "nextAction": "One source-bound standard first2 run after commit; compare native round-end score/tech/income/current money-energy-data/positioned probes/scans/alien pending rewards. Do not treat rule correction or higher score alone as goal completion."
+}
