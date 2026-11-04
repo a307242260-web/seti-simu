@@ -306,9 +306,12 @@ function seatScores(obs) {
   return scores;
 }
 
-function summaryOf(obs) {
+function summaryOf(obs, { boardOnly = false } = {}) {
   const players = obs?.publicState?.players || [];
-  const scores = seatScores(obs);
+  const scores = boardOnly ? Object.fromEntries(players.map(p => {
+    if (!Number.isFinite(p.score)) throw new Error("ROUND_END_BOARD_SCORE_MISSING");
+    return [p.playerId || p.id, p.score];
+  })) : seatScores(obs);
   const avg = players.length
     ? Object.values(scores).reduce((sum, score) => sum + score, 0) / players.length
     : 0;
@@ -565,7 +568,7 @@ function runValidation(options) {
     }
     terminal = env.isTerminal();
     const finalObs = env.observe();
-    const summary = summaryOf(lastRoundEndObservation || finalObs);
+    const summary = summaryOf(lastRoundEndObservation || finalObs, { boardOnly: Boolean(lastRoundEndObservation) });
     const wallMs = Date.now() - startedAt;
 
     // ---- 存档（快速验证存档供全盘续跑；全盘存档供复盘/快进）----
@@ -794,4 +797,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { createCollector, collectBudgetHits, seedCollectorFrom, checkpointFromSave, buildIdentity, fingerprintOf };
+module.exports = { summaryOf, createCollector, collectBudgetHits, seedCollectorFrom, checkpointFromSave, buildIdentity, fingerprintOf };
