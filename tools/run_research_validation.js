@@ -171,7 +171,7 @@ function listRecords() {
         return null;
       }
     })
-    .filter(Boolean)
+    .filter(record => record?.schemaVersion === RECORD_SCHEMA_VERSION)
     .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
 }
 
