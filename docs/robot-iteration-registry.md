@@ -41,6 +41,14 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 
 受控开局另用 `scenario=human405-white-round1-b117-prefix-v1`：先恢复同一23输入开局，再通过原生 `env.step` 执行教师24—27步（B117、能量换移动、向外移动、结束回合），之后才由共享AI决策。`controlledPrefix` 记录教师存档及动作SHA、输入区间和4步数量，`originalOpeningInputs=23`、`openingInputs=27`；其独立指纹、输入计数和决策轨迹明确区分固定输入与AI选择。对手、轮末停止和256/600门槛与原场景一致。该场景用于开局因果对照，不是自主开局成绩或新基线。
 
+## 仅白席整局续跑（2026-11-04）
+
+`robot_iterate run --full --config agentType=search,scenario=human405-white-full-v1,compactReplay=true`从已验证的v123首轮存档继续：前64次输入、原生状态/RNG和AI证书原样恢复，不重跑第一轮。原23输入开局SHA及首轮记录、存档、轨迹、源码证明的SHA进入独立实验身份；当前Production策略源码必须与v123证明逐文件一致。其余三席保持原PASS与强制选择策略。原首轮入口继续拒绝full，不改变其256次/600ms强制门槛。
+
+整局入口使用当前Production的四项null搜索预算，256次/600ms作测量门槛，完整搜索超限会记录而不替代动作；未闭合、规则或估值错误仍显式失败。每轮奖励队列完全结算后写`*.rounds.jsonl`与`*.round-N.checkpoint.json`，同步分数、科技、收入、资源和白席手牌。轮末状态口径为本轮奖励及下一轮收入结算后；终轮另保留正式终局总分。续跑耗时与包含历史首轮1.664秒的累计耗时分别记账。
+
+仅白席整局自然终局成绩不混入四AI成绩/速度榜，也不更换四AIbaseline；场景版本自动标记`baselineEligible:false`。失败也保留已完成轮次、未提交决策与完整检查点，去重禁止重跑相同指纹。
+
 ## 1. 数据流与文件
 
 ```text

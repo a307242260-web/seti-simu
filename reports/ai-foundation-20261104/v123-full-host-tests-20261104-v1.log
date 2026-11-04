@@ -1,0 +1,13 @@
+{"whiteFullContinuation":true,"sourceNativeRngAndAICheckpointUnchanged":true,"first64NotRerun":true,"roundAccountingAndFailureCheckpoint":true,"duplicateRefused":true}
+{"whiteOnlyScenario":"passed","controlledOpening":true,"passiveNativeDecisions":3,"scenarioIdentitySeparated":true}
+research search statistics tests passed
+[搜索触限] 步42 p1 strategic #0 frontier={"enabled":true,"limit":256,"reached":true,"truncated":true,"trimCount":3} action=scan:<a>
+[搜索触限] 步42 p1 strategic #0 execution={"enabled":true,"limit":4096,"reached":true,"truncated":false} action=scan:<a>
+research world resume tests passed
+{"incompleteSearchAttempts":16,"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchCompleteGames":2,"templateQueries":3,"registrationRejects":2}
+robot report record links passed
+robot report world comparison passed
+SUMMARY unit passed=6 failed=0 total=6 time=5.79s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=5
+OWNER training/research-statistics tests=1

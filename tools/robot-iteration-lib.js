@@ -299,6 +299,7 @@ function resolveVersionResults(version, recordsByFile) {
       resumeStep: rec.resumeStep,
       seed: rec.seed,
       world: rec.world || null,
+      ...(rec.scenario ? { comparisonScope: rec.scenario.comparisonScope } : {}),
       note: meta?.note || null,
     };
     // 分数来源优先级：save-final（完整终局）> record-summary；键统一为 player-<color>
@@ -346,6 +347,7 @@ function computeBestOf(versions, resolvedMap) {
     for (const r of resolvedMap[v.id] || []) {
       if (r.missingRecord) continue;
       if (r.mode !== "full") continue;
+      if (r.comparisonScope && r.comparisonScope !== "four-ai") continue;
       if (!r.terminal) continue;
       if (world && r.world?.fingerprint !== world.fingerprint) continue;
       fullRuns.push({ version: v, result: r });

@@ -183,6 +183,7 @@ async function cmdRun(opts) {
   if (!result.recordFile) die("[失败] 未从输出解析到记录文件");
 
   // 自动登记版本
+  const controlledScenario = opts.config.some(config => config.split(",").some(pair => pair.split("=")[0].trim() === "scenario"));
   const commits = gitRangeCommits(baselineVersion?.head || null, head);
   const newestCommit = gitCommitInfo(head);
   const summary = opts.summary || (newestCommit ? `（自动登记 ${newestCommit.date}）${newestCommit.subject}` : "");
@@ -197,6 +198,7 @@ async function cmdRun(opts) {
     commits: commits.length ? commits : [head],
     summary,
     records: { [result.recordFile]: {} },
+    ...(controlledScenario ? { baselineEligible: false } : {}),
     roadmap: null,
   };
   const idx = versions.findIndex((v) => v.id === vid);

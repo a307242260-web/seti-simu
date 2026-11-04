@@ -29,6 +29,9 @@ const run=(score)=>({mode:"full",terminal:true,avgScore:score,scores:{"player-wh
 const versions=[{id:"old",aiGeneration:"v1"},{id:"new",aiGeneration:"v2"}],resolved={old:[run(999)],new:[run(10)]};
 assert.equal(computeBestOf(versions.filter(v=>v.aiGeneration==="v2"),resolved).bestAvg.value,10);
 assert.equal(computeBestOf(versions.filter(v=>v.aiGeneration==="v1"),resolved).bestAvg.value,999);
+const controlledVersions=[{id:"passive",aiGeneration:"v2"},versions[1]],controlledRuns={...resolved,passive:[{...run(9999),comparisonScope:"white-only-full-game"}]};
+assert.equal(computeBestOf(controlledVersions,controlledRuns).bestAvg.value,10,"仅白席整局不能进入四AI最高分和速度榜");
+assert(!computeBestOf(controlledVersions,controlledRuns).topByAvg.some(x=>x.versionId==="passive"));
 // Render the real template script with a minimal DOM; switching URL selects every displayed summary and row.
 const fixture={board:{},builtAt:"test",headCommit:"abc",defaultGeneration:"v2",generations:{
  v1:{versionCount:1,recordCount:1,currentBaseline:"old",bestOf:computeBestOf([versions[0]],resolved)},

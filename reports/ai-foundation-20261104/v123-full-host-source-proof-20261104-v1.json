@@ -1,0 +1,24 @@
+{
+  "baseCommit": "36e5cc8d602577fec07f163b569caeb7310d60e5",
+  "unchangedTrackedCodeDataFiles": 886,
+  "changes": {
+    "adhoc/deliver-v123-full-host-20261104-v1.py": "614a3816ec572b000aed6e482a1033fb4cd23c4998c504c36b70007ce77c32ce",
+    "docs/robot-iteration-registry.md": "65000e6f1bbe0216c320195c0b8d2833edf3363fc5523fd37ca38c03e48e0ccd",
+    "reports/ai-foundation-20261104/v123-full-final-resume-test-20261104-v1.log": "466001be0a9e9f4c387c334d71b657f4600ba4867b93432a0c49eaeb73ea55a9",
+    "reports/ai-foundation-20261104/v123-full-host-tests-20261104-v1.log": "97e616d82d76eff4df90f0473147a9a62bd1eb630aa774d46b859d3f99f5e951",
+    "tools/node-test-inventory.js": "b48a7950be9f805b9146230f3d38d6ce0b8175138ec75a3f204d9a2c9c4f2b7d",
+    "tools/research-human405-full.js": "423c3c5d0824be4ceb7164590842cd24a4ebc8f7c6bb3c46ea907f8f92f41dff",
+    "tools/research-human405-full.test.js": "f0c968d505919c11b93ddab71aab87da911058f0a4c05795f13eb8bfe8638ae2",
+    "tools/robot-ai-generation.test.js": "c1ed5d6b3e5665b8b0c5c3861e3fc4afdbac8bf53a16032aa2678297c3c58370",
+    "tools/robot-iteration-lib.js": "8ecc312e7e0c1ad8d77a9987331522f744bb4d004e844a4d5afe4a99961ff594",
+    "tools/robot_iterate.js": "1c1a6799f8dca0c8134b676924f3e7f2089282661b96c0de656afa149c54e506",
+    "tools/run_research_validation.js": "012f31fe4637a18acec2f55c1cb9770be37cbc2063a2acc4bff583ae1d9531ed"
+  },
+  "strategyUnchangedFromV123": true,
+  "resumeSource": "reports/research/19bd7474.94530144.quick-200.json",
+  "first64InputsNotRerun": true,
+  "nodeTests": 6,
+  "finalResumeTest": 1,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30"
+}

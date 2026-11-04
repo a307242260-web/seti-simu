@@ -46,6 +46,7 @@ const searchAgent = require("../randomizer/game/ai/search-agent");
 const { createStepProgressReporter } = require("./progress");
 const { buildWorldIdentity } = require("./fixed-world-identity");
 const whiteRound1 = require("./research-human405-round1");
+const whiteFull = require("./research-human405-full");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
 const DEFAULT_SEED = "seti-free-analyze-v1";
@@ -129,7 +130,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = whiteRound1.describe(identity, options);
+    identity.scenario = (config.scenario === whiteFull.ID ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -413,9 +414,13 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
+  const scenario = identity.scenario?.id === whiteFull.ID ? whiteFull : whiteRound1;
+  const fullWhite = scenario === whiteFull;
+  const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
+  let nextRoundToRecord = 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
   let failedTrace = null;
-  const env = identity.scenario ? whiteRound1.createEnvironment({ onAgentDecision(trace) {
+  const env = identity.scenario ? scenario.createEnvironment({ onAgentDecision(trace) {
     if (trace.actionId == null) {
       failedTrace = trace;
       fs.mkdirSync(RECORDS_DIR, { recursive: true });
@@ -454,9 +459,14 @@ function runValidation(options) {
       seedCollectorFrom(collector, quickRecord.metrics);
       console.log(`[resume] 存档加载完成，当前：R${env.observe()?.publicState?.roundNumber ?? "?"} 步 ${steps}`);
     } else if (identity.scenario) {
-      const opening = whiteRound1.initialize(env, resetConfig, identity.scenario);
+      const opening = scenario.initialize(env, resetConfig, identity.scenario, { checkpointFromSave });
       steps = opening.length;
-      opening.forEach((entry, i) => collectStep(collector, i + 1, {
+      if (fullWhite) {
+        const source = whiteFull.continuation();
+        resumedFrom = source.provenance.savePath; resumeStep = steps;
+        seedCollectorFrom(collector, source.record.metrics);
+        fs.writeFileSync(agentTracePath, fs.readFileSync(path.join(__dirname, "..", source.provenance.tracePath)));
+      } else opening.forEach((entry, i) => collectStep(collector, i + 1, {
         policyDecision: { seatId: entry.actorPlayerId, actionId: entry.action.actionId },
       }));
       console.log(`[scenario] ${identity.scenario.id} opening=${steps} learner=${identity.scenario.learnerSeat} opponents=PASS`);
@@ -465,6 +475,19 @@ function runValidation(options) {
     }
     initialized = true;
 
+    function recordRound(round) {
+      const checkpoint = env.createCheckpoint();
+      const checkpointPath = `${recordPath}.round-${round}.checkpoint.json`;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`);
+      const row = whiteFull.roundSummary(env, round, Date.now() - startedAt);
+      row.checkpointPath = path.relative(path.join(__dirname, ".."), checkpointPath);
+      row.checkpointSha256 = sha256(fs.readFileSync(checkpointPath));
+      row.cumulativeWallMsIncludingSourceRound1 = row.elapsedMs + identity.scenario.continuation.sourceRoundWallMs;
+      roundSummaries.push(row); fs.appendFileSync(roundSummariesPath, `${JSON.stringify(row)}\n`);
+      console.log(`[轮末] ${JSON.stringify(row)}`);
+    }
+    if (fullWhite) { recordRound(1); nextRoundToRecord = 2; }
+
     const unboundedSearch = identity.agentType === "search" && Object.values(searchAgent.BUDGET).every(value => value === null);
     const limit = options.full ? (unboundedSearch ? null : MAX_DECISIONS) : options.steps;
     // 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"；
@@ -472,7 +495,7 @@ function runValidation(options) {
     const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
     while (!env.isTerminal() && (limit === null || steps < limit)) {
       const obsBefore = env.observe();
-      if (identity.scenario && whiteRound1.settled(obsBefore)) break;
+      if (identity.scenario && scenario.settled(obsBefore)) break;
       const seat = obsBefore?.decision?.actorPlayerId || null;
       decisionStartSteps = steps;
       const result = env.runAgentDecision();
@@ -483,6 +506,16 @@ function runValidation(options) {
       const obsAfter = result?.observation || env.observe();
       collectAliens(collector, steps, obsAfter, seat);
       const ps = obsAfter?.publicState || {};
+      if (fullWhite) {
+        for (const evidence of result.searches || []) if (evidence.diagnostics.nativeExecutions > 256 || evidence.rootAndSearchMilliseconds > 600) {
+          console.log(`[单点超标] step=${steps} native=${evidence.diagnostics.nativeExecutions} ms=${evidence.rootAndSearchMilliseconds} complete=${evidence.complete}`);
+        }
+        const completed = env.isTerminal() ? ps.roundNumber : ps.roundNumber - 1;
+        if (completed >= nextRoundToRecord && !env.createCheckpoint().coreState.compositionEnvelope.session) {
+          if (completed !== nextRoundToRecord) throw Error("ROUND_SUMMARY_SKIPPED_BOUNDARY");
+          recordRound(nextRoundToRecord++);
+        }
+      }
       progress.report({
         steps,
         maxSteps: limit,
@@ -533,8 +566,8 @@ function runValidation(options) {
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       ...(identity.scenario ? { scenario: identity.scenario,
-        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs },
-        stopReason: whiteRound1.settled(finalObs) ? "first-round-settled" : "step-limit",
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: roundSummaries.map(r => r.round) } : {}) },
+        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (whiteRound1.settled(finalObs) ? "first-round-settled" : "step-limit"),
         scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
       gitCommit: gitCommit(),
@@ -542,6 +575,7 @@ function runValidation(options) {
       stepsLimit: options.full ? null : options.steps,
       terminal,
       wallMs,
+      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), wallMsIncludingSourceRound1: wallMs + identity.scenario.continuation.sourceRoundWallMs } : {}),
       resumedFrom,
       resumeStep,
       savePath,
@@ -569,7 +603,8 @@ function runValidation(options) {
       // same fingerprint or to substitute a PASS. Preserve its unchanged root.
       const checkpointPath = `${recordPath}.failed-checkpoint.json`;
       const checkpoint = env.createCheckpoint();
-      const failedDecisionCommitted = decisionStartSteps == null ? null : checkpoint.replayCursor.stepIndex > decisionStartSteps;
+      const checkpointSteps = fullWhite ? whiteFull.inputCount(checkpoint) : checkpoint.replayCursor.stepIndex;
+      const failedDecisionCommitted = decisionStartSteps == null ? null : checkpointSteps > decisionStartSteps;
       fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`, "utf8");
       if (!options.noSave) {
         const payload = env.saveBrowserSave({ name: `${options.name}-failed` });
@@ -585,9 +620,10 @@ function runValidation(options) {
         seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
         aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
         agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
-        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: false, openingInputs: identity.scenario.openingInputs },
-        createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpoint.replayCursor.stepIndex, stepsLimit: options.steps,
+        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: whiteRound1.settled(env.observe()), openingInputs: identity.scenario.openingInputs },
+        createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpointSteps, stepsLimit: options.steps,
         terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
+        ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath) } : {}),
         summary: { round: env.observe().publicState.roundNumber, terminal: false, scores: {}, avgScore: null },
         metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
           whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,
