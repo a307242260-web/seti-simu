@@ -1,0 +1,19 @@
+{
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-first-divergence-audit-20261104-v1.json",
+  "sourceSha256": "55302911b1903ed86e4f5311383df819a367d27999379835d54f8145d297fba1",
+  "aiFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v158-step035-20261104-v1.json",
+  "aiFixtureSha256": "cb88b4103a5049b852f5ce5dc4816ee472cb7897eb0d6912ec5c25cbc591f073",
+  "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+  "teacherFixtureSha256": "6c1abc63b0bb6c5741772b9943283b655dadb55efd50c99a8b94d48783e2f249",
+  "beforeInput": 35,
+  "allCanonicalFieldsExceptDecisionVersionEqual": true,
+  "sessionAndEnvelopeMetadataEqual": true,
+  "decisionVersions": {
+    "ai": 0,
+    "teacher": 1
+  },
+  "meaning": "Teacher prepaid quick-trade/move versus AI move/payment at25/26 yields identical canonical game facts through input34, including all serialized RNG state, except the formal decision-version counter. This is strategy-value equivalence at35, not permission to merge complete dependency/cache keys.",
+  "firstStrategicDivergence": 36,
+  "goalStatus": "active",
+  "goalAchieved": false
+}

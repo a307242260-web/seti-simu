@@ -1,0 +1,1711 @@
+{
+  "record": "reports/research/7c48459b.02f630d5.quick-400.json",
+  "recordSha256": "6b95c153247dc95af70f6a1e89694821503582203ce2d1d6a61c3efa69918db3",
+  "actualNativeInputsReplayed": 105,
+  "rows": [
+    {
+      "input": 35,
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "teacherActionId": "research_tech:806ccfc8",
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v158-step035-20261104-v1.json",
+      "fixtureSha256": "cb88b4103a5049b852f5ce5dc4816ee472cb7897eb0d6912ec5c25cbc591f073",
+      "actual": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 157.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": false,
+        "round": 1,
+        "turn": 5
+      },
+      "teacher": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 157.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": false,
+        "round": 1,
+        "turn": 5
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 36,
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:ad894514",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:blue3:slot:1",
+          "tileId": "blue3",
+          "blueSlot": 1
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue3（蓝槽 1）"
+      },
+      "teacherActionId": "choose_target:3fcecb14",
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v158-step036-20261104-v1.json",
+      "fixtureSha256": "1b4db17e8ad2c2a76bf653ef8f23b887e4f81a3899467584727be71b34dc99ad",
+      "actual": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 157.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": false,
+        "round": 1,
+        "turn": 5
+      },
+      "teacher": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 157.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": false,
+        "round": 1,
+        "turn": 5
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 37,
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:56497dc2",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "pick:card-18-0",
+          "cardInstanceId": "card-18-0",
+          "publicSlotIndex": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_48.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_48.webp",
+          "imageAlt": "b_48.webp"
+        }
+      },
+      "teacherActionId": "choose_card:56497dc2",
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v158-step037-20261104-v1.json",
+      "fixtureSha256": "f7a727c344d382872aa7f252b1a8474beaa27369e30e29ebccfc4b9493a2d57c",
+      "actual": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue3": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue3": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 112.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": true,
+        "round": 1,
+        "turn": 5
+      },
+      "teacher": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 112.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": true,
+        "round": 1,
+        "turn": 5
+      },
+      "differentFacts": [
+        "technology"
+      ]
+    },
+    {
+      "input": 38,
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "teacherActionId": "end_turn:b2f9b29d",
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v158-step038-20261104-v1.json",
+      "fixtureSha256": "eb77b563f5bae2b5816a8daf32a0a8bda1e36685d59d40d4bc9dddf5709669eb",
+      "actual": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue3": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue3": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": true,
+        "round": 1,
+        "turn": 5
+      },
+      "teacher": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "mainActionCompleted": true,
+        "round": 1,
+        "turn": 5
+      },
+      "differentFacts": [
+        "technology"
+      ]
+    }
+  ],
+  "researchAt35": [
+    {
+      "goal": {
+        "id": "tech:blue1:1",
+        "kind": "research_tech",
+        "tileId": "blue1",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:509236e8"
+      ],
+      "value": 57.5,
+      "distance": 7,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:blue:1",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "policy": "seti-greedy-blue-resource-tail-v1",
+            "available": true,
+            "selected": true,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:blue2:1",
+        "kind": "research_tech",
+        "tileId": "blue2",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:3fcecb14",
+        "choose_card:56497dc2"
+      ],
+      "value": 60,
+      "distance": 13,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:income:4",
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-18-0",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 6.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "policy": "seti-greedy-blue-resource-tail-v1",
+            "available": true,
+            "selected": true,
+            "netGain": 5,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "card_corner:33692f4e",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:blue3:1",
+        "kind": "research_tech",
+        "tileId": "blue3",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:ad894514",
+        "choose_card:56497dc2"
+      ],
+      "value": 60,
+      "distance": 13,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:income:4",
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-18-0",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 6.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "available": false,
+            "reason": "blue-tail-needs-native-choice"
+          }
+        ],
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "card_corner:33692f4e",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:blue4:1",
+        "kind": "research_tech",
+        "tileId": "blue4",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d9ba91f0"
+      ],
+      "value": 58.5,
+      "distance": 7,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:blue:1",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "policy": "seti-greedy-blue-resource-tail-v1",
+            "available": true,
+            "selected": true,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:122c43fc",
+          "quick_trade:df811f99",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:orange1:",
+        "kind": "research_tech",
+        "tileId": "orange1",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:03fdb62d",
+        "choose_card:56497dc2"
+      ],
+      "value": 50.5,
+      "distance": 13,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:income:4",
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-18-0",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 4.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "move:967b2b4c",
+          "move:93048118",
+          "move:f89b84a0",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "card_corner:33692f4e",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:orange2:",
+        "kind": "research_tech",
+        "tileId": "orange2",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:70b9a53f"
+      ],
+      "value": 49,
+      "distance": 3,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": false,
+          "netGain": -1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:49c75492",
+          "quick_trade:122c43fc",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "end_turn:b2f9b29d"
+        ],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "quick_trade:df811f99",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:orange3:",
+        "kind": "research_tech",
+        "tileId": "orange3",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:22eefebd"
+      ],
+      "value": 55,
+      "distance": 3,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": false,
+          "netGain": -1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:49c75492",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "end_turn:b2f9b29d"
+        ],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:orange4:",
+        "kind": "research_tech",
+        "tileId": "orange4",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:a16882e3"
+      ],
+      "value": 49,
+      "distance": 3,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": false,
+          "netGain": -1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:49c75492",
+          "quick_trade:122c43fc",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "end_turn:b2f9b29d"
+        ],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "quick_trade:df811f99",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:purple1:",
+        "kind": "research_tech",
+        "tileId": "purple1",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:405d1e5d"
+      ],
+      "value": 46,
+      "distance": 3,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": false,
+          "netGain": -0.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:49c75492",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "end_turn:b2f9b29d"
+        ],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:purple2:",
+        "kind": "research_tech",
+        "tileId": "purple2",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:66c1a4bb"
+      ],
+      "value": 45.5,
+      "distance": 3,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": false,
+          "netGain": -1,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:49c75492",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "end_turn:b2f9b29d"
+        ],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:purple3:",
+        "kind": "research_tech",
+        "tileId": "purple3",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d57e0409",
+        "choose_card:56497dc2"
+      ],
+      "value": 50.5,
+      "distance": 13,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:income:4",
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-18-0",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 4.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "card_corner:33692f4e",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "goal": {
+        "id": "tech:purple4:",
+        "kind": "research_tech",
+        "tileId": "purple4",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d0b75b83"
+      ],
+      "value": 50.5,
+      "distance": 11,
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v5",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:income:4",
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-15-0",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v1",
+          "selected": true,
+          "netGain": 1.5,
+          "placements": 4,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "move:e0158279",
+          "move:75e0e1ed",
+          "move:ddf0bb75",
+          "move:c488b99f",
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:be9dd0cd",
+          "industry:e887dc52",
+          "card_corner:f9d602d7",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    }
+  ],
+  "conclusions": {
+    "teacherBlue2WasCandidate": true,
+    "blue2Value": 60,
+    "blue3Value": 60,
+    "blue2TotalDistance": 13,
+    "blue3TotalDistance": 13,
+    "teacherFirstLaterActionAt38": "end_turn",
+    "actualActionAt38": "place_data",
+    "nextQuestions": [
+      "Native equivalence of teacher quick_trade/move and AI paid move/payment at25/26.",
+      "Blue2 vs blue3 tied value and distance is only current model equivalence; compare exact downstream money funding, income and card-purpose differences.",
+      "At38 fixed income tail excludes end_turn; compare native teacher orbit+selected income path with immediate energy income/data commitment before changing policy."
+    ]
+  },
+  "goalStatus": "active",
+  "goalAchieved": false
+}

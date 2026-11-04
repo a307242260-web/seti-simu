@@ -1,0 +1,138 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: admitted v158 with84cold gates,164unit+1flow+16Chrome; one autonomous run and105 native replay expose exact36/38 divergence and development shortfall",
+  "scope": "first two rounds; whiteDeepSpace autonomous; othersPASS/mandatory; compare score/exacttech/sixincome/resources/probes/scan/prepaidalienmarks",
+  "userBoundary": "End excludes PASS pick and next income; both next-round start",
+  "productionRuntime": "v158 / V10",
+  "productionSourceCommit": "02f630d555b365f8b504a7510a91a6d5c388c35b",
+  "baseArtifactCommit": "d2c62aad60760b6ce02c6bee4bea8de7423876ab",
+  "lastActualRecord": "reports/research/7c48459b.02f630d5.quick-400.json",
+  "lastActualScores": [
+    26,
+    45
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "incomeTeacher": [
+    6,
+    2,
+    1,
+    0,
+    0,
+    1
+  ],
+  "nativeControls": {
+    "artifact": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-native-controls-20261104-v2.json",
+    "roots": 120,
+    "funded": 66,
+    "plans": 408,
+    "nativeInputs": 4896,
+    "allEndpointValuesAndAssetsMatch": true,
+    "rootRngUnchanged": true
+  },
+  "typedParity": {
+    "artifact": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-typed-parity-20261104-v1.json",
+    "moneyControls": 648,
+    "stateFormalObservationParity": true
+  },
+  "candidate152": {
+    "archive": "reports/ai-foundation-20261104/rejected-v152-runtime-20261104-v1/manifest.json",
+    "coldRoots": 81,
+    "allComplete": true,
+    "maxInputs": 256,
+    "maxMs": 672.418167,
+    "admitted": false,
+    "earliest24": {
+      "action": "play_card:124d76d3",
+      "equalsTeacher": true,
+      "value": 60,
+      "inputs": 80,
+      "milliseconds": 175.216
+    },
+    "onlyActionChangeIn81Roots": "teacher-024",
+    "officialRuns": 0
+  },
+  "candidate153": {
+    "archive": "reports/ai-foundation-20261104/rejected-v153-runtime-20261104-v1/manifest.json",
+    "coldRoots": 1,
+    "allComplete": true,
+    "maxInputs": 256,
+    "maxMs": 635.844584,
+    "admitted": false,
+    "rootsLinesAndPrefixesIdenticalTo152": true,
+    "focusedUnitTestsPassed": 2,
+    "fullRegressionDone": false,
+    "browserDone": false,
+    "officialRuns": 0
+  },
+  "profile": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-case105-profile-summary-20261104-v1.json",
+  "workingDraft": "v153 sources remain isolated stage only; artifact publication excludes all active runtime paths",
+  "next": "Profile/check remaining native restore copies in case105 and perform next specific optimization with invariant proof; archive failed source before a new candidate. No repeated cold sample for same source. Need<=256/600 all81+requiredactual roots and fullNode/Chrome/audit before sourceadmission and exactlyone officialnewtwoRoundrun. Preserve v41baseline. Teacher98 PASS/analyze timing remains unproved.",
+  "candidateRuntime": "v158 / V10",
+  "candidateAdmitted": true,
+  "candidateOfficialRuns": 1,
+  "stage": "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n",
+  "candidate156": {
+    "gate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v156-current-teacher-serial-gate-20261104-v1.json",
+    "coldRoots": 84,
+    "maxInputs": 243,
+    "maxMs": 520.377125,
+    "regression": "157/164 unit;1 fullFlow pass;not admitted",
+    "archive": "reports/ai-foundation-20261104/rejected-v156-runtime-20261104-v1/manifest.json"
+  },
+  "candidate157": {
+    "freeLaunchTrace": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v157-free-launch-plan-reuse-20261104-v1.json",
+    "result": "4 native inputs;first80simulations,threecoldhitszero;remaining paid route still lost between sessions",
+    "archive": "reports/ai-foundation-20261104/rejected-v157-runtime-20261104-v1/manifest.json"
+  },
+  "candidate158": {
+    "focusedIncomeLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-winning-income-regression-20261104-v3.log",
+    "incomeControl": "actual native ordinary launch+movement prefix, controlled publicity5,13 native inputs;subsequent12 exactcertificate hits zero simulations",
+    "fullRegressionLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-node-full-20261104-v2.log",
+    "status": "admitted source02f630d5; one official autonomous run completed and all105 native inputs replayed; result publication prepared",
+    "unitPassed": 164,
+    "fullFlowPassed": 1,
+    "chromePassed": 16,
+    "coldRoots": 84,
+    "maxNativeInputs": 243,
+    "maxMilliseconds": 547.3535,
+    "knownLegacyAuditFailureUnchanged": true,
+    "actualRecord": "reports/research/7c48459b.02f630d5.quick-400.json",
+    "officialRuns": 1,
+    "developmentAligned": false
+  },
+  "nextActions": [
+    "publish verified actual results and V2 registry preservingforeignV1/v41",
+    "native known-path controls blue2vsblue3 and computer-income-now vs end-turn/orbit/income-next; do not use revealed replacementcards as prior knowledge",
+    "fix only proven valuation/policy defects; new-source singlepointgates before next unique autonomous run"
+  ],
+  "incomeAIByRound": [
+    [
+      4,
+      3,
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      4,
+      3,
+      2,
+      0,
+      0,
+      1
+    ]
+  ],
+  "actualWallMs": 3297,
+  "actualSearches": 66,
+  "actualMaxNativeInputs": 81,
+  "actualMaxMilliseconds": 167.50241699999998,
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-first2-native-verification-20261104-v1.json",
+  "developmentComparison": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-first2-development-comparison-20261104-v1.json",
+  "firstNewDivergence": "36: blue2 and blue3 both60/distance13,actualblue3;38:fixeddata/income policy excludes teacherendturn"
+}
