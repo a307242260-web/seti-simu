@@ -1,0 +1,3467 @@
+{
+  "record": "reports/research/3d794d7d.b7cd4c9a.quick-400.json",
+  "recordSha256": "b42acbf6e7ab337672770bd72aac6bc6b67740dee13bfa4f93a54a744e2e836e",
+  "actualNativeInputsReplayed": 93,
+  "rows": [
+    {
+      "input": 35,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step035-20261105-v1.json",
+      "fixtureSha256": "64b42ad52771b339e4edd5c102e21b174a7fc36723e08c037e199a18dbe2b0d3",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 157.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "orbit:44937d1f",
+          "target": 4,
+          "value": 61,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 3,
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 3,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 5.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+              "source": "planetRewards.orbit:mars"
+            },
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "target": 6,
+          "value": 64.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "tech:blue2:1",
+            "kind": "research_tech",
+            "tileId": "blue2",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "resourceGoalCount": 12,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 1,
+          "value": 56,
+          "completion": "complete"
+        },
+        {
+          "actionId": "move:e0158279",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:75e0e1ed",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:ddf0bb75",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:c488b99f",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": {
+            "kind": "data",
+            "id": "data:analyze:6",
+            "amount": 1,
+            "priority": 4
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": 2,
+          "value": 49.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": {
+            "kind": "data",
+            "id": "data:analyze:6",
+            "amount": 1,
+            "priority": 4
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": 3,
+          "value": 56.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-15-0",
+            "incomeBefore": 8,
+            "required": {}
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        }
+      ],
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "teacherFacts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 157.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": false
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 36,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step036-20261105-v1.json",
+      "fixtureSha256": "61cd01fe0aedf5fe8d2325b63ea1cd612ee055e33f4d01f7371b286f57778dbe",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:3fcecb14",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:blue2:slot:1",
+          "tileId": "blue2",
+          "blueSlot": 1
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue2（蓝槽 1）"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 157.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "choose_target:509236e8",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:0cbf059c",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:bdea2e94",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:36a6b668",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:3fcecb14",
+          "value": 64.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:9b661234",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:2b1149ac",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:e55cdd44",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:ad894514",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:c86683cc",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:c737d1d0",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:2fa94938",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:d9ba91f0",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:d4a9f494",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:89054c28",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:7b13c554",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:03fdb62d",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:70b9a53f",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:22eefebd",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:a16882e3",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:405d1e5d",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:66c1a4bb",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:d57e0409",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:d0b75b83",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:blue2:1",
+          "isEquivalence": false
+        }
+      ],
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "teacherFacts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 6
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "probes": [
+          {
+            "id": 3,
+            "playerId": "player-white",
+            "color": "white",
+            "surface": "solar-board",
+            "sectorX": 5,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "radius": 156.26,
+            "angleDegrees": 157.5,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerSequence": 1
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": false
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 38,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step038-20261105-v1.json",
+      "fixtureSha256": "9932a45c843d5639596d1c89a601de28d00e81b70507d73b4f5c0ad871eae7ce",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": true
+      },
+      "rootValues": [
+        {
+          "actionId": "move:e0158279",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:75e0e1ed",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:ddf0bb75",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:c488b99f",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:33692f4e",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "target": 1,
+          "value": 64.5,
+          "valueType": "proved-plan-value",
+          "turnTailPlanValue": {
+            "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+            "kind": "end-turn",
+            "firstActionId": "end_turn:b2f9b29d",
+            "netGain": 0,
+            "requiredNativeInputs": 1,
+            "markedTiles": [],
+            "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+            "observationAvailable": false,
+            "successorEnvelopeAvailable": false
+          },
+          "completion": "proved-plan-value"
+        }
+      ],
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "teacherFacts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 5,
+        "mainActionCompleted": true
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 39,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step039-20261105-v1.json",
+      "fixtureSha256": "0f743a7b7f1334ce7cad2ff0308c40613cea24ad880ee516afea08532dcfc072",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 10,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 6,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "orbit:44937d1f",
+          "target": 7,
+          "value": 64.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 3,
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 3,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 5.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+              "source": "planetRewards.orbit:mars"
+            },
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "play_card:8225c3f9",
+          "target": 1,
+          "value": 61,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 2,
+          "value": 56.5,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "move:e0158279",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:75e0e1ed",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:ddf0bb75",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:c488b99f",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": 3,
+          "value": 51,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": {
+            "kind": "data",
+            "id": "data:analyze:6",
+            "amount": 1,
+            "priority": 4
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "orbit",
+            "label": "orbit mars",
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "timing": "current-turn",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": 4,
+          "value": 64.5,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:33692f4e",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": 5,
+          "value": 64.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-18-0",
+            "incomeBefore": 8,
+            "required": {}
+          },
+          "resourceGoalCount": 5,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        }
+      ],
+      "teacherFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "teacherFacts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 8
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 3,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 6,
+        "mainActionCompleted": false
+      },
+      "differentFacts": []
+    },
+    {
+      "input": 48,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step048-20261105-v1.json",
+      "fixtureSha256": "7175e3535625ae01d4634d0e3d2139a7a76a21dd966e7fa8ef044498f7391879",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 21
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 2
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "slotIndex": 2
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp"
+          }
+        ],
+        "probes": [],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 6,
+        "mainActionCompleted": true
+      },
+      "rootValues": [
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:33692f4e",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 64.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        }
+      ]
+    },
+    {
+      "input": 54,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step054-20261105-v1.json",
+      "fixtureSha256": "dd10784d2d04d7feaab0ed70c236b728f19d0d89a2d1b994974f7f6680b98c9c",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 3,
+          "score": 21
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          }
+        ],
+        "probes": [],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 1,
+        "turn": 7,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 1,
+          "value": 64.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": 2,
+          "value": 62,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        }
+      ]
+    },
+    {
+      "input": 65,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step065-20261105-v1.json",
+      "fixtureSha256": "313f248e11fc7d48a9054530f4279b091091367063724346f11b3df6f882d78b",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 1,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 21
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-20-pass-1-1",
+            "cardId": "dlc_4.png"
+          },
+          {
+            "id": "card-41-0",
+            "cardId": "dlc_39.png"
+          }
+        ],
+        "probes": [],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 2,
+        "turn": 4,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "target": 1,
+          "value": 63,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "target": 7,
+          "value": 63,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 3,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "play_card:8faf8ead",
+          "target": 6,
+          "value": 63,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "play_card:29f55acb",
+          "target": 2,
+          "value": null,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "play_card:9413cc19",
+          "target": 3,
+          "value": 63,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 4,
+          "value": 59,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:122c43fc",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:df811f99",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": 5,
+          "value": 60.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "resourceGoalCount": 1,
+          "completion": "covered-by-global-value-bound",
+          "valueType": "attained-lower-bound"
+        },
+        {
+          "actionId": "card_corner:c8a181ae",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:544f2ae4",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        }
+      ]
+    },
+    {
+      "input": 67,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step067-20261105-v1.json",
+      "fixtureSha256": "dc6f42d480136a20515d97c43d41d805455cba163e161ed4f6ce9caf9fc79b65",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:f9d602d7",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_9.png：弃牌角标"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 21
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "slotIndex": 4
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-15-0",
+            "cardId": "dlc_9.png"
+          },
+          {
+            "id": "card-20-pass-1-1",
+            "cardId": "dlc_4.png"
+          },
+          {
+            "id": "card-41-0",
+            "cardId": "dlc_39.png"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 35.1,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 2,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 2,
+        "turn": 5,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "scan:2d21a323",
+          "target": 7,
+          "value": 57,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 3,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:29f55acb",
+          "target": 1,
+          "value": 62.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:9413cc19",
+          "target": 2,
+          "value": 58,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 3,
+          "value": 62,
+          "completion": "complete"
+        },
+        {
+          "actionId": "move:967b2b4c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:93048118",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:f89b84a0",
+          "target": 6,
+          "value": null,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 4,
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 9,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 11.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+              "source": "planetRewards.orbit:venus"
+            },
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "path": [
+              {
+                "from": {
+                  "x": 2,
+                  "y": 1
+                },
+                "to": {
+                  "x": 1,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 1,
+                  "y": 1
+                },
+                "to": {
+                  "x": 0,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 2
+              }
+            ],
+            "movementPoints": 3,
+            "required": {
+              "credits": 1
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "unreachable"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:122c43fc",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:df811f99",
+          "target": 5,
+          "value": 60,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "target": 4,
+          "value": 64.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        },
+        {
+          "actionId": "card_corner:c8a181ae",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:544f2ae4",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        }
+      ]
+    },
+    {
+      "input": 76,
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step076-20261105-v1.json",
+      "fixtureSha256": "f03862b0ef3bac40af214e3b4685dff82f0e234964c47b314fcb703dea4506f2",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:544f2ae4",
+        "actorId": "player-white",
+        "stateVersion": 29,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-41-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_39.png：弃牌角标"
+      },
+      "facts": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "id": "card-20-pass-1-1",
+            "cardId": "dlc_4.png"
+          },
+          {
+            "id": "card-41-0",
+            "cardId": "dlc_39.png"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 35.1,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 2,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "round": 2,
+        "turn": 6,
+        "mainActionCompleted": false
+      },
+      "rootValues": [
+        {
+          "actionId": "scan:2d21a323",
+          "target": 16,
+          "value": 63,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 3,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:ea39cd4a",
+          "target": 1,
+          "value": 64,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:9dd820fc",
+          "target": 2,
+          "value": 59.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 3,
+          "value": 63.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "move:967b2b4c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:93048118",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "move:f89b84a0",
+          "target": 4,
+          "value": null,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 4,
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 9,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 11.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+              "source": "planetRewards.orbit:venus"
+            },
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "path": [
+              {
+                "from": {
+                  "x": 2,
+                  "y": 1
+                },
+                "to": {
+                  "x": 1,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 1,
+                  "y": 1
+                },
+                "to": {
+                  "x": 0,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 2
+              }
+            ],
+            "movementPoints": 3,
+            "required": {
+              "credits": 1
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "unreachable"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:122c43fc",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:df811f99",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-movement-policy",
+          "policy": "seti-goal-movement-policy-v4",
+          "chosenGoal": {
+            "id": "rocket:4:orbit:venus:planet:",
+            "kind": "orbit",
+            "label": "orbit venus",
+            "coordinate": {
+              "x": 0,
+              "y": 1
+            },
+            "timing": "current-turn",
+            "planetId": "venus",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            }
+          },
+          "isEquivalence": false
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-card-pick-policy",
+          "policy": "seti-purpose-card-pick-policy-v9",
+          "goal": null,
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:c8a181ae",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-resource-policy",
+          "policy": "seti-goal-resource-preparation-v5",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "card_corner:544f2ae4",
+          "target": 11,
+          "value": 76.5,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "tech:orange4:",
+            "kind": "research_tech",
+            "tileId": "orange4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "resourceGoalCount": 11,
+          "completion": "complete"
+        }
+      ]
+    }
+  ],
+  "root39Choices": [
+    {
+      "actionId": "play_card:8225c3f9",
+      "value": 61,
+      "totalDistance": 3,
+      "cost": 1
+    },
+    {
+      "actionId": "pass:a1f33c73",
+      "value": 56.5,
+      "totalDistance": 1,
+      "cost": 1
+    },
+    {
+      "actionId": "quick_trade:49c75492",
+      "value": 51,
+      "totalDistance": 2,
+      "cost": 2
+    },
+    {
+      "actionId": "industry:e887dc52",
+      "value": 64.5,
+      "totalDistance": 18,
+      "cost": 3
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "goalId": "data:income:4",
+      "value": 64.5,
+      "totalDistance": 15,
+      "cost": 9
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "goalId": "rocket:3:land:mars:planet:",
+      "value": 64.5,
+      "totalDistance": 15,
+      "cost": 6
+    },
+    {
+      "actionId": "orbit:44937d1f",
+      "goalId": "rocket:3:orbit:mars:planet:",
+      "value": 64.5,
+      "totalDistance": 16,
+      "cost": 2
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "goalId": "scan:sector:sector-1-a",
+      "value": 59.5,
+      "totalDistance": 15,
+      "cost": 7
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "goalId": "scan:sector:sector-2-a",
+      "value": 59.5,
+      "totalDistance": 15,
+      "cost": 7
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "goalId": "scan:sector:sector-4-a",
+      "value": 59.5,
+      "totalDistance": 15,
+      "cost": 7
+    }
+  ],
+  "conclusions": {
+    "firstLaterDivergence": 39,
+    "teacherAction": "orbit",
+    "actualAction": "place_data",
+    "root39FactsMatchTeacher": true,
+    "root39IncomeAndOrbitValuesEqual": 64.5,
+    "incomeTotalDistance": 15,
+    "orbitTotalDistance": 16,
+    "shorterCompleteWindowSelected": true,
+    "fullStrategicEquivalenceProved": false,
+    "dlc9DiscardedForDataAt67": true,
+    "orange4ObtainedByPaidResearchAt78": true,
+    "freeResearchWasNotUsedForOrange4": true,
+    "next": "Compare native complete income/landing versus orbit/data/research endpoints and later funding, plus the effect of retaining flexibility through public refill; do not infer that equal V means strategic equivalence or hardcode the teacher action."
+  },
+  "goalStatus": "active",
+  "goalAchieved": false
+}

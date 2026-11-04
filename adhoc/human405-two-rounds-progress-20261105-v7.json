@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V161autonomousnativecomparisonandpublication; current turnadmitsV165,oneactualfirst2,native93inputsandallassets,root39proofand37inputsame-rootteachercontrol",
+  "baseCommit": "ad1033609639f165adcbc1e74df72e8659bfd743",
+  "productionRuntime": "v165 / V15",
+  "productionSourceCommit": "b7cd4c9afea2fc4165c7201633039735e5c0b5ac",
+  "actualRecord": "reports/research/3d794d7d.b7cd4c9a.quick-400.json",
+  "actualScores": [
+    21,
+    54
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualTechnologyCount": [
+    1,
+    2
+  ],
+  "teacherTechnologyCount": [
+    2,
+    3
+  ],
+  "actualIncomeBothRounds": [
+    4,
+    3,
+    1,
+    0,
+    0,
+    1
+  ],
+  "teacherIncomeBothRounds": [
+    6,
+    2,
+    1,
+    0,
+    0,
+    1
+  ],
+  "roundEnd": "before-PASS-card-and-next-income",
+  "candidateRuntime": null,
+  "candidateAdmitted": false,
+  "candidateOfficialRuns": 0,
+  "rejected": {
+    "v162": "complete known chain64.5 but greedyforecast61.5; no officialrun",
+    "v163": "161/167unit+1flow; spendingblue suppresses stillfeasiblecomputerincome",
+    "v164": "80roots75nativeplans pass, source firstcasepasses; income catalog reused immediate-income ranking before consumingcomputer4"
+  },
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "publishoneactualfirst2andassets preservingv41andforeignV1",
+    "test public-refill funding flexibility fromactual39 using publicly justified income-category distribution, never hiddenorder or hardcodedteacher action",
+    "compare actual65/67 launch and research/discard opportunity costs; freshgates before next newsourceexperiment"
+  ],
+  "actualWallMs": 3127,
+  "actualSteps": 93,
+  "actualSearches": 54,
+  "actualMaxNativeInputs": 241,
+  "actualMaxMilliseconds": 295.060792,
+  "developmentAligned": false,
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-first2-native-verification-20261105-v1.json",
+  "developmentComparison": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-first2-development-comparison-20261105-v1.json",
+  "actualAudit": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-actual-development-audit-20261105-v1.json",
+  "sameRootRound1Control": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-round1-branch-endpoints-native-20261105-v1.json",
+  "firstLaterDivergence": 39,
+  "root39Quotes": {
+    "incomeLand": 64.5,
+    "orbit": 64.5,
+    "incomeDistance": 15,
+    "orbitDistance": 16
+  },
+  "nativeRound1Endpoints": {
+    "actual": 64.5,
+    "teacher": 65.5,
+    "nativeInputs": 37,
+    "teacherUsesDLC39OnlyAfterPublic": true
+  },
+  "dlc9DiscardedAt67": true,
+  "orange4PaidResearchAt78": true,
+  "lastAdmittedValidation": {
+    "nativeRoots": 80,
+    "nativeAlternatives": 75,
+    "nativePlanInputs": 555,
+    "integrationAndGreedyInputs": 580,
+    "knownCompleteMissionCapital": 64.5,
+    "firstSlowCase": {
+      "nativeInputs": 198,
+      "milliseconds": 541.229208,
+      "complete": true
+    },
+    "chromePassed": 19,
+    "fullNodePending": false,
+    "coldGatePending": false,
+    "inputAudit": "only known legacy frozen aomomo; newtypedinputpass",
+    "unitCovered": 167,
+    "fullSuiteUnitPassed": 166,
+    "fullSuiteUnitFailed": 1,
+    "resolvedByFocusedNative": "funded-movement-tail:20plans,122native,currentquote/input/valueparity",
+    "fullFlowPassed": 1,
+    "coldRoots": 90,
+    "coldMaxInputs": 241,
+    "coldMaxMilliseconds": 541.229208,
+    "sourceAdmissionReady": false,
+    "sourceAdmitted": true,
+    "runtime": "v165 / V15"
+  },
+  "officialRuns": 1
+}
