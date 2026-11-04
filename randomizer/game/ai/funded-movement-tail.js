@@ -49,8 +49,7 @@ function movementTail({state,seatId,intent}){
  };
  const tail=local.dataTailCompletion({state:future,seatId,canLeaveProbeStationary:closedDataPolicy});
  if(!tail.available)return zero(tail.reason);
- const net=finalScore(future,copy)-finalScore(state,p)+weighted(copy)-weighted(p)
-  +demand.planningCapital(future,copy)-demand.planningCapital(state,p)+tail.netGain;
+ const net=values.sumValueParts([finalScore(future,copy),-finalScore(state,p),weighted(copy),-weighted(p),demand.planningCapital(future,copy),-demand.planningCapital(state,p),tail.netGain]);
  if(!Number.isFinite(net))throw new Error('MOVEMENT_TAIL_VALUE_INVALID');
  return{available:true,nativeMoveQueries,netGain:net,movementNetGain:net-tail.netGain,moves,tail,requiredNativeInputs:moves.length*2+tail.requiredNativeInputs,
   scope:'Entire fixed paid prefix with energy-only payments, no matching movement triggers or paid-pick purpose, then the existing fixed currency/data/end policy. Requires the caller quiet-turn proof. Scalar only; not a native successor or general movement equivalence.'};

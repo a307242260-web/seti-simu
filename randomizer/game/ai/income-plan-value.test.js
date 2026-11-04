@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),values=require('./state-value'),agent=require('./search-agent'),local=require('./local-decision-plans');
+const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),values=require('./state-value'),agent=require('./search-agent'),local=require('./local-decision-plans'),demand=require('./resource-demand'),data=require('../data');
 const read=p=>JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../..',p)));
 const f=read('adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition,evaluate=values.createStateValueEvaluator(f.seatId),budget={transitions:256,nodes:1024,frontier:256,milliseconds:5000};
 // Keep the valuable research card and fund income with the actual newly picked
@@ -11,15 +11,19 @@ assert(c.inputPort.submitDecision({decisionId:pickDecision.decisionId,decisionVe
 f.compositionEnvelope=c.lifecycle.save().envelope;
 function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),root=p.openRoot();return{before,p,root};}
 
+// Execute the native blue alternative independently of whether the greedy
+// idle-tail policy currently selects it. The current portfolio may already
+// price its benefit through a later mission and therefore defer a flat tail.
+function expandNativeBlue(port,root,envelope){const state=JSON.parse(envelope.committedState),owner=state.players.players.find(p=>p.id===f.seatId),goal=demand.catalog({state,seatId:f.seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(owner)}}).find(g=>g.kind==='blue-data');assert(goal);const first=demand.step({state,seatId:f.seatId,goal,actions:root.legalActions,status:root.status});assert(first.actionId);const actual=port.expandResourcePlan(root,{goal,operation:{},firstActionId:first.actionId,mode:'greedy'},()=>null);assert(actual.complete);return actual;}
+
 // Real deployed-probe control: the shared value now prefers the energy blue
 // plan (+1) over an already forecast blind income (+0). Native cold recovery must see that same
 // opportunity; the old probe-sensitive income-only shortcut is declined.
 {
  const {before,p,root}=open();try{
   const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete);
-  const policy=p.resourceSpec(root);assert(policy.plans.every(plan=>plan.goal.kind==='blue-data'));
-  assert.equal(policy.incomeTail.netGain,0);assert.equal(policy.blueTails[0].netGain,1);assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);
-  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert(r.value>=evaluate(nativeBlue.node.observation),'complete search retains profitable continuations after the fixed blue preparation');assert.equal(evaluate(nativeBlue.node.observation),58.5+(values.FORECAST.usefulScansPerLaterRound-2)*2);assert.equal(r.value,64.5);assert(r.diagnostics.nativeExecutions>0);
+  const policy=p.resourceSpec(root);assert.equal(policy.incomeTail.netGain,0);assert.equal(policy.blueTails[0].netGain,0);assert.equal(policy.blueTails[0].selected,false,'the greedy idle tail need not realize a flat later-mission alternative immediately');
+  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=expandNativeBlue(p,root,before);assert(nativeBlue.complete);assert(r.value>=evaluate(nativeBlue.node.observation),'complete search retains profitable continuations after the fixed blue preparation');const raw=searchDecision({port:{...p,turnTailSummary:()=>null,incomePlanSummary:()=>null,postMainValueBound:()=>null},root,evaluate,...agent.OPTIONS,budget});assert(raw.complete);assert.equal(r.actionId,raw.actionId);assert.equal(r.value,raw.value);assert(r.diagnostics.nativeExecutions>0);
   assert.deepEqual(c.lifecycle.save().envelope,before);
   const first=root.legalActions.find(a=>a.actionId===r.actionId);assert(c.inputPort.submitQuickAction(first).ok);
   const changed=c.lifecycle.save().envelope;p.close();const n=p.openRoot();
@@ -38,10 +42,13 @@ function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelop
  // window. A positive income tail cannot hide that better fixed preparation.
  // A known company swap may improve the portfolio before that preparation;
  // compare the whole decision with native expansion, not just the blue leaf.
- const check=open(controlled);try{const r=searchDecision({port:check.p,root:check.root,evaluate,...agent.OPTIONS,budget}),policy=check.p.resourceSpec(check.root);assert(r.complete);assert(policy.plans.every(p=>p.goal.kind==='blue-data'));assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);assert.equal(check.p.incomePlanSummary(check.root),null);const actual=check.p.expandResourcePlan(check.root,policy.plans[0],()=>null);assert(actual.complete);assert(r.value>=evaluate(actual.node.observation));const native=searchDecision({port:{...check.p,turnTailSummary:()=>null,incomePlanSummary:()=>null,postMainValueBound:()=>null},root:check.root,evaluate,...agent.OPTIONS,budget});assert(native.complete);assert.equal(r.actionId,native.actionId);assert.equal(r.value,native.value);assert.deepEqual(c.lifecycle.save().envelope,check.before);}finally{check.p.close();}
+ const check=open(controlled);try{const r=searchDecision({port:check.p,root:check.root,evaluate,...agent.OPTIONS,budget}),policy=check.p.resourceSpec(check.root);assert(r.complete);assert.equal(check.p.incomePlanSummary(check.root),null);const actual=expandNativeBlue(check.p,check.root,check.before);assert(actual.complete);assert(r.value>=evaluate(actual.node.observation));const native=searchDecision({port:{...check.p,turnTailSummary:()=>null,incomePlanSummary:()=>null,postMainValueBound:()=>null},root:check.root,evaluate,...agent.OPTIONS,budget});assert(native.complete);assert.equal(r.actionId,native.actionId);assert.equal(r.value,native.value);assert.deepEqual(c.lifecycle.save().envelope,check.before);}finally{check.p.close();}
  // Add one energy in this already-controlled state. The held card is now
  // funded without the blue slot, so blind income is genuinely the better tail.
  s.players.players.find(p=>p.id===f.seatId).resources.energy++;
+ // Isolate the positive half-unit certificate from the fractional DeepSpace
+ // model checked by the actual native alternatives above.
+ s.players.players.find(p=>p.id===f.seatId).initialSelection.industry='图灵系统';
  controlled.committedState=JSON.stringify(s);f.compositionEnvelope=controlled;
 }
 try{

@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: native prepaid asset evidence, V181 finite-value fix and623ms failure with CPU diagnosis preserved",
+  "thisGoalTurnClassification": "progress: V182 exact identity reuse; V183 two real income input omissions fixed and408native plans verified; V184 final-round scope fixed,170unit/fullFlow/23Chrome/169cold roots passed; preparing sole standard autonomous first2",
+  "productionRuntime": "v184 / V18 after source admission",
+  "productionSourceCommit": "pending source commit",
+  "actualRecord": "reports/research/e987ead2.9491f13b.quick-400.json",
+  "actualScores": [
+    15,
+    43
+  ],
+  "actualWallMs": 4180,
+  "specificTechnologyAndSixIncomesEqualBothRounds": true,
+  "candidateRuntime": "v184 / V18",
+  "candidateAdmitted": true,
+  "candidateSnapshot": null,
+  "candidateNamedColdCases": 172,
+  "candidateUniqueColdRoots": 169,
+  "candidateMaxInputs": 252,
+  "candidateMaxMs": 594.4456670000001,
+  "candidateAllSearchesComplete": true,
+  "candidateFullNode": {
+    "version": "v184",
+    "passed": 170,
+    "failed": 0,
+    "total": 170,
+    "fullFlowPassed": 1
+  },
+  "candidateOfficialRuns": 0,
+  "candidateChromeRun": true,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "Commit and push the validated V184 source with private index; preserve foreign V1 and shared staging.",
+    "Run one registered human405-white-first2-v1 at that source; no rerun of the same fingerprint.",
+    "Native replay all actions/RNG and compare both pre-PASS round checkpoints including score, exact tech, six incomes and prepaid/deployed assets; keep goal active unless full objective is proved."
+  ],
+  "candidateColdOverruns": 0,
+  "candidateChromePassed": 23,
+  "candidateFocusedPassed": 4,
+  "candidateInputParityCheckpoints": 3,
+  "candidatePerformanceAdmitted": true,
+  "cpuProfile": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v181-case105-profile-summary-20261105-v1.json",
+  "sourceAdmissionReady": true,
+  "fullAuditPassed": false,
+  "legacyAuditFailure": "same preexisting expected-score-evaluator frozen aomomo object"
+}

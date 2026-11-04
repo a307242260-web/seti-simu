@@ -149,7 +149,7 @@
   // 重建执行意图并加入搜索控制身份；不把整份历史日志或撤销帧当成规则差异。
   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
-  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null) {
+  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null, subtreeCache = null) {
     const session = envelope.session?.session;
     const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);
     function buildState() {
@@ -200,7 +200,11 @@
     const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
     const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
     const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g");
+    let unstableSubtrees=0;
     function normalize(value, key = "") {
+      // Cached children must be independent of every Session prefix, including
+      // a different future prefix. Shallow freezing cannot protect a child.
+      if(subtreeCache&&typeof value==="string"&&referenceKeys.has(key)&&/effect-session-[0-9]+:(?:effect|group):[0-9]+/.test(value))unstableSubtrees++;
       if (typeof value === "string" && prefix && referenceKeys.has(key)) {
         // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。
         const parts = value.split(referencePattern);
@@ -211,6 +215,14 @@
         });
       }
       if (!value || typeof value !== "object") return value;
+      const before=unstableSubtrees,immutable=subtreeCache&&Object.isFrozen(value);
+      if(subtreeCache&&!immutable)unstableSubtrees++;
+      if(immutable&&subtreeCache.values.has(value)){subtreeCache.hits++;return subtreeCache.values.get(value);}
+      const result=normalizeObject(value);
+      if(immutable&&unstableSubtrees===before){subtreeCache.values.set(value,result);subtreeCache.stores++;}
+      return result;
+    }
+    function normalizeObject(value) {
       // Most canonical slices already have sorted keys and need no change.
       // Keep them read-only; allocate only when normalization actually differs.
       if (Array.isArray(value)) {
@@ -292,6 +304,7 @@
     let nodes = new WeakMap();
     let observationReleasers = new WeakMap(), observationReleases = 0;
     let normalizedIdentityStates = new Map();
+    const identitySubtrees={values:new WeakMap(),hits:0,stores:0};
     const identities = new Map(), physicalIdentityKeys = new Map();
     // Intern exact full-state bytes once. Search control keys need only the
     // collision-free local integer; durable plan dependencies retain the
@@ -456,7 +469,7 @@
       let physicalKey,identity;
       nodes.set(node, { envelope, serial: nodeCount,
         get physicalKey(){
-          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates);identityMaterializations++;}
+          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates,identitySubtrees);identityMaterializations++;}
           return physicalKey;
         },
         get identity(){
@@ -2076,7 +2089,8 @@
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
-      if(hasUnprovedProbeCapital(readPlanningState(stored))){postMainValueBounds.set(node,null);return null;}
+      const sourceState=readPlanningState(stored),sourceOwner=sourceState.players.players.find(p=>p.id===seatId);
+      if(hasUnprovedProbeCapital(sourceState)||sourceState.turn.roundNumber<4&&stateValue.hasKnownSectorTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)])){postMainValueBounds.set(node,null);return null;}
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.
       const policyNode=resourcePlanning?{status:node.status,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;
@@ -2099,10 +2113,12 @@
         // Fixed post-main data goals reach computer4 for income, or an
         // existing blue prerequisite. They cannot invent computer6 unless a
         // blue slot actually requires it; raw unplanned data retains the ceiling.
-        const analysisReachable=!resourcePlanning||data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.ANALYZE_REQUIRED_COMPUTER_SLOT)
+        const computerSlots=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot);
+        const analysisReachable=!resourcePlanning||computerSlots.includes(4)
           ||Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]
-            &&data.getRequiredComputerSlotForBlueBonus(slot)===data.ANALYZE_REQUIRED_COMPUTER_SLOT);
-        const analysisUpper=state.turn.roundNumber<4&&analysisReachable?stateValue.readyAnalysisUpperBound(node.observation.publicState.board.aliens.slots):{linear:0,publicity:0};
+            &&data.getRequiredComputerSlotForBlueBonus(slot)>=4)
+          ||resourceSpec(node)?.plans.some(p=>p.goal.kind==="income");
+        const analysisUpper=state.turn.roundNumber<4&&analysisReachable?stateValue.readyAnalysisUpperBound(node.observation.publicState.board.aliens.slots,{techState:owner.techState,computerSlots}):{linear:0,publicity:0};
         const researchUpper=result.maximumPublicity+analysisUpper.publicity<researchCost?0:stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,
           researchCost});
         // With no live mission, a ready analysis can only add its known trace
@@ -2111,11 +2127,13 @@
         const sourceCapital=resourceDemand.planningCapital(state,owner),sourceAnalysis=sourceCapital-current-currentResearch;
         const bridge=stateValue.researchIncomeUpperBound({round:state.turn.roundNumber,computerSlots:data.listComputerPlacedTokens(owner).map(t=>t.placementSlot),techState:owner.techState,supply:state.tech,publicCards:state.cards.publicCards,maximumPublicity:result.maximumPublicity,researchCost});
         const secondResearch=bridge.secondResearchPossible?stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,researchCost}):0;
-        const maximumCapital=Math.max(offered+researchUpper+analysisUpper.linear,offered+bridge.linear+secondResearch);
+        const prepaidUpper=state.turn.roundNumber<4&&industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId==="deepspace_swap_cards"
+          ?Math.max(0,...node.observation.publicState.board.aliens.slots.flatMap(slot=>slot.revealed?[]:[alienState.getExtraTraceReward().gain,alienState.getFirstTraceRewardForSlot(slot.slotId).gain].map(g=>(g.score||0)+(g.publicity||0)*stateValue.DEFAULT_WEIGHTS.publicity)))*5/6:0;
+        const maximumCapital=Math.max(offered+researchUpper+analysisUpper.linear,offered+bridge.linear+secondResearch,offered+researchUpper+prepaidUpper);
         const capitalUpperIncrease=Math.max(0,maximumCapital-sourceCapital);
         bound=freeze({...result,proof:"seti-post-main-capital-upper-v4",linearSourceProof:result.proof,
           maximumValueIncrease:result.maximumValueIncrease+capitalUpperIncrease,capitalUpperIncrease,
-          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,sourceAnalysisCapital:sourceAnalysis,maximumAnalysisLinear:analysisUpper.linear,maximumAnalysisPublicity:analysisUpper.publicity,analysisReachableByFixedDataPolicy:analysisReachable,
+          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,sourceAnalysisCapital:sourceAnalysis,maximumAnalysisLinear:analysisUpper.linear,maximumAnalysisPublicity:analysisUpper.publicity,maximumPrepaidAnalysisCapital:prepaidUpper,analysisReachableByFixedDataPolicy:analysisReachable,
           maximumResearchIncomeLinear:bridge.linear,maximumResearchAfterIncome:secondResearch,sourcePurposeCapital:sourceCapital,maximumPurposeCapital:maximumCapital,
           permanentTechnologyGainAdmitted:false});
       }
@@ -2834,6 +2852,7 @@
       movementValueBounds=new WeakMap();movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       observationReleasers = new WeakMap();
       normalizedIdentityStates = new Map();
+      identitySubtrees.values=new WeakMap();
       movementPolicies = new WeakMap();
       movementRouteCache.clear();
       movementTimingCache.clear();
@@ -2883,7 +2902,7 @@
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
         committedDecodeCount, committedDecodeHits, committedReferenceCount,

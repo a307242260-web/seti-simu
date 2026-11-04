@@ -107,7 +107,7 @@
   const delta=endScoring.computePlayerFinalScore(context,preview.player).totalScore-endScoring.computePlayerFinalScore(context,p).totalScore;
   const beforeCapital=demand.planningCapital(state,p);
   const afterCapital=demand.planningCapital(state,preview.player);
-  const net=preview.netGain+delta-preview.immediateScoreGain+afterCapital-beforeCapital;
+  const net=stateValue.sumValueParts([preview.netGain,delta,-preview.immediateScoreGain,afterCapital,-beforeCapital]);
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.incomeCardId===goal.incomeCardId;
   return{policy:'seti-greedy-income-tail-v2',selected:net>0||realizesForecast,realizesForecast,netGain:net,placements:preview.placements,assumption:preview.assumption};
  }
@@ -155,7 +155,7 @@
   const resource=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+((copy.resources[k]||0)-(p.resources[k]||0))*w,0);
   const option=demand.planningCapital(state,copy)-demand.planningCapital(state,p);
   const income=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+((copy.income[k]||0)-(p.income[k]||0))*w,0)*(4-state.turn.roundNumber);
-  const net=score+resource+option+income;if(!Number.isFinite(net))throw new Error('BLUE_TAIL_VALUE_INVALID');
+  const net=stateValue.sumValueParts([score,resource,option,income]);if(!Number.isFinite(net))throw new Error('BLUE_TAIL_VALUE_INVALID');
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.blueSlot===goal.blueSlot;
   return{policy:'seti-greedy-blue-resource-tail-v2',available:true,selected:net>0||realizesForecast,realizesForecast,netGain:net,blueSlot:goal.blueSlot,dataCornerId:dataCornerIds[0]||null,dataCornerIds,incomeCardId,computerPlacements,requiredNativeInputs:2*(computerPlacements+1)+dataCornerIds.length+(incomeCardId?1:0),immediateScoreGain:copy.resources.score-p.resources.score,player:copy,assumption:'known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity'};
  }

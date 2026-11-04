@@ -1,0 +1,1043 @@
+{
+  "status": "complete",
+  "scope": "All172 named cases,169different native roots: final-round scope correction preserves exact action/value/completeness/native root and RNG; no extra simulations or timing samples",
+  "sourceBefore": "v183-current-teacher-serial-gate-20261105-v1.json",
+  "sourceAfter": "v184-current-teacher-serial-gate-20261105-v1.json",
+  "changedInputCounts": [],
+  "maxInputs": 252,
+  "maxFirstMilliseconds": 594.4456670000001,
+  "rows": [
+    {
+      "label": "case-105",
+      "beforeInputs": 198,
+      "afterInputs": 198,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-024",
+      "beforeInputs": 116,
+      "afterInputs": 116,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-025",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-026",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-027",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-035",
+      "beforeInputs": 82,
+      "afterInputs": 82,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-036",
+      "beforeInputs": 65,
+      "afterInputs": 65,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-037",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-038",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-039",
+      "beforeInputs": 252,
+      "afterInputs": 252,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-040",
+      "beforeInputs": 7,
+      "afterInputs": 7,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-041",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-042",
+      "beforeInputs": 11,
+      "afterInputs": 11,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-043",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-044",
+      "beforeInputs": 173,
+      "afterInputs": 173,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-045",
+      "beforeInputs": 77,
+      "afterInputs": 77,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-046",
+      "beforeInputs": 76,
+      "afterInputs": 76,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-047",
+      "beforeInputs": 75,
+      "afterInputs": 75,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-048",
+      "beforeInputs": 46,
+      "afterInputs": 46,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-049",
+      "beforeInputs": 69,
+      "afterInputs": 69,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-050",
+      "beforeInputs": 44,
+      "afterInputs": 44,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-051",
+      "beforeInputs": 63,
+      "afterInputs": 63,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-052",
+      "beforeInputs": 42,
+      "afterInputs": 42,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-053",
+      "beforeInputs": 57,
+      "afterInputs": 57,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-054",
+      "beforeInputs": 40,
+      "afterInputs": 40,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-055",
+      "beforeInputs": 28,
+      "afterInputs": 28,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-056",
+      "beforeInputs": 27,
+      "afterInputs": 27,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-057",
+      "beforeInputs": 8,
+      "afterInputs": 8,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-058",
+      "beforeInputs": 17,
+      "afterInputs": 17,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-059",
+      "beforeInputs": 5,
+      "afterInputs": 5,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-060",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-061",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-062",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-072",
+      "beforeInputs": 25,
+      "afterInputs": 25,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-073",
+      "beforeInputs": 17,
+      "afterInputs": 17,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-074",
+      "beforeInputs": 16,
+      "afterInputs": 16,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-075",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-076",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-077",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-078",
+      "beforeInputs": 41,
+      "afterInputs": 41,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-079",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-080",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-081",
+      "beforeInputs": 55,
+      "afterInputs": 55,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-082",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-083",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-084",
+      "beforeInputs": 52,
+      "afterInputs": 52,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-085",
+      "beforeInputs": 6,
+      "afterInputs": 6,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-086",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-087",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-088",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-089",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-090",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-091",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-092",
+      "beforeInputs": 39,
+      "afterInputs": 39,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-093",
+      "beforeInputs": 24,
+      "afterInputs": 24,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-094",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-095",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-096",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-097",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-098",
+      "beforeInputs": 17,
+      "afterInputs": 17,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-099",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-100",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-101",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-102",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-103",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-104",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-105",
+      "beforeInputs": 25,
+      "afterInputs": 25,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "teacher-106",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-001",
+      "beforeInputs": 144,
+      "afterInputs": 144,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-003",
+      "beforeInputs": 26,
+      "afterInputs": 26,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-008",
+      "beforeInputs": 108,
+      "afterInputs": 108,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-011",
+      "beforeInputs": 9,
+      "afterInputs": 9,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-009",
+      "beforeInputs": 41,
+      "afterInputs": 41,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-062",
+      "beforeInputs": 71,
+      "afterInputs": 71,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "case-152",
+      "beforeInputs": 240,
+      "afterInputs": 240,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "baseline-r1-t8-blue",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "baseline-r2-t9-white",
+      "beforeInputs": 131,
+      "afterInputs": 131,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "step317",
+      "beforeInputs": 190,
+      "afterInputs": 190,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "terminal",
+      "beforeInputs": 86,
+      "afterInputs": 86,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "autonomous-pass",
+      "beforeInputs": 32,
+      "afterInputs": 32,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-pass095",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual044-funding",
+      "beforeInputs": 60,
+      "afterInputs": 60,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual050-funding",
+      "beforeInputs": 24,
+      "afterInputs": 24,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v148-077-ready-analysis",
+      "beforeInputs": 71,
+      "afterInputs": 71,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v158-048",
+      "beforeInputs": 44,
+      "afterInputs": 44,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v158-055",
+      "beforeInputs": 9,
+      "afterInputs": 9,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v161-66",
+      "beforeInputs": 60,
+      "afterInputs": 60,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v161-75",
+      "beforeInputs": 20,
+      "afterInputs": 20,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v161-77",
+      "beforeInputs": 29,
+      "afterInputs": 29,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v161-99",
+      "beforeInputs": 11,
+      "afterInputs": 11,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v165-39",
+      "beforeInputs": 252,
+      "afterInputs": 252,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v165-65",
+      "beforeInputs": 27,
+      "afterInputs": 27,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v165-67",
+      "beforeInputs": 33,
+      "afterInputs": 33,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v165-76",
+      "beforeInputs": 60,
+      "afterInputs": 60,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "blue-exchange-funding",
+      "beforeInputs": 27,
+      "afterInputs": 27,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-024",
+      "beforeInputs": 116,
+      "afterInputs": 116,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-025",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-026",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-027",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-035",
+      "beforeInputs": 82,
+      "afterInputs": 82,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-036",
+      "beforeInputs": 65,
+      "afterInputs": 65,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-037",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-038",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-039",
+      "beforeInputs": 252,
+      "afterInputs": 252,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-040",
+      "beforeInputs": 7,
+      "afterInputs": 7,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-041",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-042",
+      "beforeInputs": 11,
+      "afterInputs": 11,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-043",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-044",
+      "beforeInputs": 173,
+      "afterInputs": 173,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-045",
+      "beforeInputs": 77,
+      "afterInputs": 77,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-046",
+      "beforeInputs": 76,
+      "afterInputs": 76,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-047",
+      "beforeInputs": 75,
+      "afterInputs": 75,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-048",
+      "beforeInputs": 46,
+      "afterInputs": 46,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-049",
+      "beforeInputs": 69,
+      "afterInputs": 69,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-050",
+      "beforeInputs": 44,
+      "afterInputs": 44,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-051",
+      "beforeInputs": 63,
+      "afterInputs": 63,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-052",
+      "beforeInputs": 42,
+      "afterInputs": 42,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-053",
+      "beforeInputs": 57,
+      "afterInputs": 57,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-054",
+      "beforeInputs": 40,
+      "afterInputs": 40,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-055",
+      "beforeInputs": 28,
+      "afterInputs": 28,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-056",
+      "beforeInputs": 27,
+      "afterInputs": 27,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-057",
+      "beforeInputs": 5,
+      "afterInputs": 5,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-058",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-059",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-060",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-061",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-062",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-072",
+      "beforeInputs": 25,
+      "afterInputs": 25,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-073",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-074",
+      "beforeInputs": 34,
+      "afterInputs": 34,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-075",
+      "beforeInputs": 33,
+      "afterInputs": 33,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-076",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-077",
+      "beforeInputs": 31,
+      "afterInputs": 31,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-078",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-079",
+      "beforeInputs": 48,
+      "afterInputs": 48,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-080",
+      "beforeInputs": 8,
+      "afterInputs": 8,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-081",
+      "beforeInputs": 54,
+      "afterInputs": 54,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-082",
+      "beforeInputs": 6,
+      "afterInputs": 6,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-083",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-084",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-085",
+      "beforeInputs": 48,
+      "afterInputs": 48,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-086",
+      "beforeInputs": 14,
+      "afterInputs": 14,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-087",
+      "beforeInputs": 46,
+      "afterInputs": 46,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-088",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-089",
+      "beforeInputs": 44,
+      "afterInputs": 44,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-090",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-091",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-092",
+      "beforeInputs": 117,
+      "afterInputs": 117,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-093",
+      "beforeInputs": 49,
+      "afterInputs": 49,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-094",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-095",
+      "beforeInputs": 46,
+      "afterInputs": 46,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-096",
+      "beforeInputs": 18,
+      "afterInputs": 18,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-097",
+      "beforeInputs": 36,
+      "afterInputs": 36,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-098",
+      "beforeInputs": 16,
+      "afterInputs": 16,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-099",
+      "beforeInputs": 26,
+      "afterInputs": 26,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-100",
+      "beforeInputs": 14,
+      "afterInputs": 14,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-101",
+      "beforeInputs": 13,
+      "afterInputs": 13,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-102",
+      "beforeInputs": 12,
+      "afterInputs": 12,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-103",
+      "beforeInputs": 14,
+      "afterInputs": 14,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-104",
+      "beforeInputs": 10,
+      "afterInputs": 10,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-105",
+      "beforeInputs": 8,
+      "afterInputs": 8,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-106",
+      "beforeInputs": 4,
+      "afterInputs": 4,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-107",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-108",
+      "beforeInputs": 5,
+      "afterInputs": 5,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-109",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-110",
+      "beforeInputs": 3,
+      "afterInputs": 3,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-111",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-112",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-113",
+      "beforeInputs": 0,
+      "afterInputs": 0,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-114",
+      "beforeInputs": 1,
+      "afterInputs": 1,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "actual-v178-115",
+      "beforeInputs": 2,
+      "afterInputs": 2,
+      "sameActionAndValue": true
+    },
+    {
+      "label": "controlled-dlc5-r2-opening",
+      "beforeInputs": 25,
+      "afterInputs": 25,
+      "sameActionAndValue": true
+    }
+  ]
+}

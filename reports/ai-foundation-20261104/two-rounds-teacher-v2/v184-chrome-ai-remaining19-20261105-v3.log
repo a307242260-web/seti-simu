@@ -1,0 +1,21 @@
+{"reused":["production-search-agent-entry","production-goal-movement-plan","production-search-hotpath","production-blue-exchange-funding"],"executing":19}
+PASS production-six-greedy-plans http://127.0.0.1:57160/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:57160/randomizer/index.html
+PASS production-funded-travel-capital http://127.0.0.1:57160/randomizer/index.html
+PASS production-conditional-sector-flow http://127.0.0.1:57160/randomizer/index.html
+PASS production-conditional-research-capital http://127.0.0.1:57160/randomizer/index.html
+PASS production-known-pass-card http://127.0.0.1:57160/randomizer/index.html
+PASS production-winning-income-recovery http://127.0.0.1:57160/randomizer/index.html
+PASS production-free-launch-plan-recovery http://127.0.0.1:57160/randomizer/index.html
+PASS production-funded-movement-tail http://127.0.0.1:57160/randomizer/index.html
+PASS production-funded-research-value http://127.0.0.1:57160/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:57160/randomizer/index.html
+PASS production-funded-hand-timing http://127.0.0.1:57160/randomizer/index.html
+PASS production-mission-data-continuation http://127.0.0.1:57160/randomizer/index.html
+PASS production-teacher-development http://127.0.0.1:57160/randomizer/index.html
+PASS production-settled-tech-funding http://127.0.0.1:57160/randomizer/index.html
+PASS production-ready-analysis-capital http://127.0.0.1:57160/randomizer/index.html
+PASS production-public-income-option http://127.0.0.1:57160/randomizer/index.html
+PASS production-known-sector-analysis http://127.0.0.1:57160/randomizer/index.html
+PASS production-computer-preinvestment http://127.0.0.1:57160/randomizer/index.html
+SUMMARY browserSmoke passed=19 failed=0 total=19

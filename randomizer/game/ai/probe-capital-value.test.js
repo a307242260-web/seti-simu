@@ -33,7 +33,7 @@ try {
   assert.deepEqual(probe.fromState(state, own, values.DEFAULT_WEIGHTS, investment), forecast);
   const beforeValue=values.evaluateStateValue(obs,seatId);
   assert(beforeValue.components.researchIncomePotential>0,'the separately native-verified funded research-income alternative remains represented');
-  assert.equal(demand.planningCapital(state, own), demand.heldAndResearchCapital(state, own) + forecast.value+beforeValue.components.researchIncomePotential);
+  assert.equal(demand.planningCapital(state, own), values.sumValueParts([demand.heldAndResearchCapital(state, own),forecast.value,beforeValue.components.researchIncomePotential]));
 
   // Four actual native inputs consume the quoted probe, public card, scan slot
   // and income card. The analysis branch preserves its blind-draw boundary.
@@ -44,8 +44,8 @@ try {
     next = port.expand(next, a.actionId);
   }
   const completedValue=values.evaluateStateValue(next.observation,seatId);
-  assert.equal(completedValue.total-completedValue.components.researchIncomePotential,
-    beforeValue.total-beforeValue.components.researchIncomePotential,
+  assert.equal(values.sumValueParts([completedValue.total,-completedValue.components.researchIncomePotential]),
+    values.sumValueParts([beforeValue.total,-beforeValue.components.researchIncomePotential]),
     'the native mission matches its base quote; the independently verified research-income alternative is separate');
   assert.equal(quote(next.observation).value, 0, 'consumed probe must not retain a mission');
   assert.equal(quote({ ...obs, terminal: true }).value, 0);
@@ -109,12 +109,12 @@ try {
   assert(c.lifecycle.restore({...original,committedState:JSON.stringify(controlled)}).ok);
   const controlBefore=c.lifecycle.save().envelope,q=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try{
-    q.setResourcePlanning(true);q.setCardPickPlanning(true);const root=q.openRoot(),spec=q.incomePlanSummary(root);assert(spec);
+    q.setResourcePlanning(true);q.setCardPickPlanning(true);const root=q.openRoot(),spec=q.incomePlanSummary(root),policy=q.resourceSpec(root);assert.equal(spec,null,'non-half-unit income gain must execute its native preparation');
     assert(values.evaluateStateValue(root.observation,seatId).components.probePotential>0);
-    const actual=q.expandResourcePlan(root,q.resourceSpec(root).plans[0],()=>null);assert(actual.complete);
-    assert.equal(actual.submissions,spec.requiredNativeInputs);
+    const actual=q.expandResourcePlan(root,policy.plans.find(p=>p.goal.kind==='income'),()=>null);assert(actual.complete);
+    assert.equal(actual.submissions,9);
     assert.equal(values.evaluateStateValue(actual.node.observation,seatId).total,
-      values.evaluateStateValue(root.observation,seatId).total+spec.netGain);
+      values.sumValueParts([values.evaluateStateValue(root.observation,seatId).total,policy.incomeTail.netGain]));
     assert.deepEqual(c.lifecycle.save().envelope,controlBefore);
   }finally{q.close();}
 } finally { port.close(); c.dispose(); }

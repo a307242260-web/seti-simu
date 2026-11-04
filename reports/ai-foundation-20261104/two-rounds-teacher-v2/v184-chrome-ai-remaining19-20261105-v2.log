@@ -1,0 +1,7 @@
+{"reused":["production-search-agent-entry","production-goal-movement-plan","production-search-hotpath","production-blue-exchange-funding"],"executing":19}
+Error: production-six-greedy-plans 操作异常：TypeError: Cannot convert undefined or null to object
+    at Object.entries (<anonymous>)
+    at Object.catalog (http://127.0.0.1:55853/randomizer/game/ai/resource-demand.js?computer-preinvestment-v184:217:17)
+    at <anonymous>:36:173
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:294:11)

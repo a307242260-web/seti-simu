@@ -3,9 +3,9 @@
  const api=factory(common?require('../data/placement'):root.SetiDataPlacement,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../players'):root.SetiPlayers,common?require('../tech/catalog'):root.SetiTechCatalog,
-  common?require('../../solar-system/core'):root.SetiSolarSystem,common?require('../abilities/rocket'):root.SetiAbilityRocket);
+  common?require('../../solar-system/core'):root.SetiSolarSystem,common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('./value-arithmetic'):root.SetiValueArithmetic);
  if(common)module.exports=api;else root.SetiResearchIncomeCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(placement,cards,effects,players,tech,solar,rocketAbility){
+})(typeof globalThis!=='undefined'?globalThis:window,function(placement,cards,effects,players,tech,solar,rocketAbility,arithmetic){
  'use strict';
 const zero = reason => ({ value: 0, selected: null, reason });
 const quiet = cards => (cards || []).every(c => {
@@ -74,7 +74,7 @@ function quote(facts, weights, portfolio, baseValue, technologyCapital) {
       const incomeValue = Object.entries(gain).reduce((n, [key, amount]) => n + amount * (weights[key] || 0), 0) * (4 - facts.round);
       const linear = wallet.score - facts.player.score + resourceDelta + incomeValue
         + technologyCapital(nextTech, facts.round, weights) - oldCapability;
-      const afterValue = portfolio(after), netGain = linear + afterValue - baseValue;
+      const afterValue = portfolio(after), netGain = arithmetic.sum([linear,afterValue,-baseValue],weights);
       candidates.push({ tileId, blueSlot: type === 'blue' ? blueSlot : null,
         incomeCardId: card.id, incomeCardIdentity: card.cardId, gain, linear, afterValue, netGain,
         wallet, computerSlots: after.computerSlots });
@@ -119,7 +119,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
  const active=Object.entries(facts.player.techState.blueBoardSlots).map(([tileId,slot])=>({tileId,slot:Number(slot),occupied:blues.some(b=>b.slot===Number(slot)&&b.occupied)})).filter(b=>b.slot<=2&&facts.player.techState.ownedTiles[b.tileId]&&!facts.player.techState.disabledTiles[b.tileId]&&['blue1','blue2','blue4'].includes(b.tileId));
  if(!active.length)return zero('currency-blue-unavailable');
  const available=active.filter(b=>!b.occupied);
- const base=investment(hand,wallet.publicity,{resources:wallet,income,startingIncome:0}),candidates=[];
+ const base=investment(hand,wallet.publicity,{resources:wallet,income,startingIncome:0},{computerSlots:slots,blueSlots:blues}),candidates=[];
  const incomeCards=slots.includes(4)?[]:hand.filter(c=>!c.hidden&&c.cardId&&(()=>{const gain=incomeGainFor(c);return gain&&Object.keys(gain).every(k=>['credits','energy'].includes(k));})());
  for(const blue of [null,...available]){
   if(!blue&&slots.includes(4))continue;
@@ -139,7 +139,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
    if(incomeCard){const gain=incomeGainFor(incomeCard);remaining=hand.filter(c=>c.id!==incomeCard.id);players.gainResources({resources:next},gain);for(const[k,n]of Object.entries(gain))nextIncome[k]+=n;linearIncome=Object.entries(gain).reduce((n,[k,x])=>n+x*weights[k],0)*(4-facts.round)-weights.handSize;}
    if(blue)players.gainResources({resources:next},{[bonus.type]:bonus[bonus.type]});
    const linear=score+linearIncome+['credits','energy','publicity','availableData'].reduce((n,k)=>n+(next[k]-wallet[k])*weights[k],0);
-   const after=investment(remaining,next.publicity,{resources:next,income:nextIncome,startingIncome:0}),value=linear+after-base;
+   const after=investment(remaining,next.publicity,{resources:next,income:nextIncome,startingIncome:0},{computerSlots:[...slots,...missing].sort((a,b)=>a-b),blueSlots:blues}),value=arithmetic.sum([linear,after,-base],weights);
    candidates.push({blueSlot:blue?.slot||null,blueTileId:blue?.tileId||null,incomeCardId:incomeCard?.id||null,neededData:need,computerSlots:[...slots,...missing].sort((a,b)=>a-b),wallet:next,income:nextIncome,handIds:remaining.map(c=>c.id),scoreGain:score,linear,baseCapital:base,afterCapital:after,value});
   }
  }
@@ -157,7 +157,7 @@ for(const entry of cards.CARD_CATALOG)if(!entry.set.startsWith('alien:')){
 }
 function incomeOptions({facts,investment,baseCapital},weights){
  const ctx={facts,hand:facts.hand,wallet:facts.player,income:facts.player.income,investment};
- const fixed=missionDataContinuation(ctx,weights),baseline=baseCapital+fixed.value;
+ const fixed=missionDataContinuation(ctx,weights),baseline=arithmetic.sum([baseCapital,fixed.value],weights);
  const result={total:baseline,baseline,knownSwapCapital:baseline,knownSwapPlan:null,fixed,classes:[]};
  if(facts.terminal||facts.passing||facts.round>=4||facts.computerSlots.includes(4)
    ||facts.companyState?.abilityId!=='deepspace_swap_cards'||facts.companyState.roundMarkRound===facts.round)return result;
@@ -173,8 +173,8 @@ function incomeOptions({facts,investment,baseCapital},weights){
   let best={total:baseline,plan:null};
   for(const card of suppliers){
    const q=missionDataContinuation({...ctx,incomeGains:{[card.id]:{[key]:1}}},weights);
-   for(const plan of q.candidates||[])if(plan.incomeCardId===card.id&&baseCapital+plan.value>best.total)
-    best={total:baseCapital+plan.value,plan:{outgoingCardId:card.id,continuation:plan}};
+   for(const plan of q.candidates||[])if(plan.incomeCardId===card.id&&arithmetic.sum([baseCapital,plan.value],weights)>best.total)
+    best={total:arithmetic.sum([baseCapital,plan.value],weights),plan:{outgoingCardId:card.id,continuation:plan}};
   }
   categories.set(key,best);return best;
  }
@@ -187,7 +187,7 @@ function incomeOptions({facts,investment,baseCapital},weights){
  if(facts.board.publicCards.some(c=>c?.hidden===true)){
   const count=Object.values(incomeCounts).reduce((n,x)=>n+x,0);
   for(const [key,n]of Object.entries(incomeCounts))result.classes.push({gain:key,count:n,probability:n/count,total:key==='handSize'?result.knownSwapCapital:Math.max(result.knownSwapCapital,bestFor(key).total)});
-  result.total=result.classes.reduce((n,c)=>n+c.probability*c.total,0);
+  result.total=arithmetic.normalize(result.classes.reduce((n,c)=>n+c.probability*c.total,0),weights);
  }
  return result;
 }

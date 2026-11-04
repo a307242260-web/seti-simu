@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const values=require('./state-value'),probe=require('./probe-capital'),demand=require('./resource-demand'),data=require('../data'),cards=require('../cards/deck'),tech=require('../tech/resolver');
+const values=require('./state-value'),probe=require('./probe-capital'),demand=require('./resource-demand'),data=require('../data'),cards=require('../cards/deck'),tech=require('../tech/resolver'),industry=require('../industry/passives');
 const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),rules=require('../rule-composition');
 const {createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),agent=require('./search-agent');
 const read=p=>JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../'+p)));
@@ -16,10 +16,10 @@ function control(spec){
 const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition,legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});let nativeInputs=0,matchedPlans=0,funded=0;
 function submit(a){assert(a);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));nativeInputs++;}
 try{
- for(const row of native.rows){const s=control(row.spec),p=s.players.players.find(p=>p.id===seatId),unchanged=JSON.stringify(s),facts={...probe.factsFromState(s,p),supply:s.tech,researchCost:tech.getResearchPublicityCost(p),computerSlots:data.listComputerPlacedTokens(p).map(t=>t.placementSlot),reservedCards:p.reservedCards},capital=values.purposeCapital(facts),q=capital.researchIncomePlan;
+ for(const row of native.rows){const s=control(row.spec),p=s.players.players.find(p=>p.id===seatId),unchanged=JSON.stringify(s),facts={...probe.factsFromState(s,p),supply:s.tech,researchCost:tech.getResearchPublicityCost(p),computerSlots:data.listComputerPlacedTokens(p).map(t=>t.placementSlot),reservedCards:p.reservedCards,analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST},capital=values.purposeCapital(facts),q=capital.researchIncomePlan;
   assert.equal(demand.planningCapital(s,p),capital.total);assert.equal(JSON.stringify(s),unchanged);
   const e={...w.freeFirstTurn.envelope,committedState:JSON.stringify(s)},restored=c.lifecycle.restore(e);assert(restored.ok,JSON.stringify(restored));const original=c.lifecycle.save().envelope,view=c.projection({role:'player',playerId:seatId}).state,before=values.evaluateStateValue(view,seatId);
-  assert.equal(before.components.researchIncomePotential,q.value);assert.equal(before.components.handPotential+before.components.researchPotential+before.components.probePotential+before.components.analysisPotential+before.components.researchIncomePotential,capital.total);
+  assert.equal(before.components.researchIncomePotential,q.value);assert.equal(values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>before.components[k])),capital.total);
   const nativeGains=[];
   // Historical values belong to V9. Retain every physical plan, including
   // negative payoffs, and revalue its actual native endpoint under this model.
@@ -32,7 +32,7 @@ try{
    submit(legal().find(a=>a.family==='choose_card'&&a.target?.cardInstanceId===plan.incomeCardId));assert(!c.inspect().session);
    assert.equal(crypto.createHash('sha256').update(JSON.stringify(c.lifecycle.save().envelope)).digest('hex'),witnessed.finalEnvelopeSha256,'forecast changes cannot alter the native endpoint or RNG');
    const after=values.evaluateStateValue(rules.sanitizeHiddenInformationObservation(view,c.projection({role:'player',playerId:seatId}).state,{code:'hidden_research_income_control'}),seatId);
-   const actualGain=after.total-(before.total-q.value);assert.equal(actualGain,plan.netGain);assert.equal(after.components.researchIncomePotential,0);nativeGains.push(actualGain);
+   const actualGain=values.sumValueParts([after.total,-before.total,q.value]);assert.equal(actualGain,plan.netGain);assert.equal(after.components.researchIncomePotential,0);nativeGains.push(actualGain);
    assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
   }
   assert.equal(q.value,Math.max(0,...nativeGains));

@@ -1,21 +1,42 @@
 (function(root,factory){
  'use strict';const common=typeof module==='object'&&module.exports;
  const api=factory(common?require('../data/placement'):root.SetiDataPlacement,common?require('../data'):root.SetiData,common?require('../aliens/state'):root.SetiAlienState,
-  common?require('../players'):root.SetiPlayers,common?require('../cards/effects'):root.SetiCardEffects,common?require('./probe-capital'):root.SetiProbeCapital);
+  common?require('../players'):root.SetiPlayers,common?require('../cards/effects'):root.SetiCardEffects,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic);
  if(common)module.exports=api;else root.SetiReadyAnalysisCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(placement,data,aliens,players,effects,probe){
+})(typeof globalThis!=='undefined'?globalThis:window,function(placement,data,aliens,players,effects,probe,arithmetic){
  'use strict';
  const zero=reason=>({value:0,selected:null,reason});
  const weighted=(gain,w)=>Object.entries(gain).reduce((n,[k,v])=>n+v*(k==='score'?1:w[k]||0),0);
  function quiet(cards){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&!m.endGameScoring&&!m?.triggers?.length&&!m?.temporaryTasks?.length;});}
+ function prepaidCapital(facts,weights){
+  if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards))return 0;
+  const slots=[...(facts.computerSlots||[])].sort((a,b)=>a-b);
+  if(!slots.length||slots.length>=data.ANALYZE_REQUIRED_COMPUTER_SLOT||slots.some((s,i)=>s!==i+1))return 0;
+  if(!Array.isArray(facts.board?.aliens?.slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
+  const rewards=facts.board.aliens.slots.flatMap(slot=>{
+   if(slot.revealed)return[];const first=!slot.traces?.blue?.firstPlaced;
+   if(first&&['yellow','pink'].every(type=>slot.traces?.[type]?.firstPlaced))return[];
+   const gain=(first?aliens.getFirstTraceRewardForSlot(slot.slotId):aliens.getExtraTraceReward()).gain;
+   if(Object.keys(gain).some(k=>!['score','publicity'].includes(k)))return[];
+   const wallet={...facts.player};players.gainResources({resources:wallet},gain);
+   return[wallet.score-facts.player.score+(wallet.publicity-facts.player.publicity)*weights.publicity];
+  });
+  return arithmetic.normalize(Math.max(0,...rewards)*slots.length/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
+ }
  function quote(facts,weights,portfolio,baseValue){
   if(facts.terminal||facts.round+Number(facts.passing)>=4)return zero('analysis-window-closed');
-  if(!facts.computerSlots?.includes(6))return zero('analysis-not-ready');
+  const placed=[...(facts.computerSlots||[])].sort((a,b)=>a-b),needed=[1,2,3,4,5,6].filter(slot=>!placed.includes(slot));
+  if(needed.length&&(placed.length<4||placed.some((slot,index)=>slot!==index+1)
+    ||needed.some(slot=>slot<5)||facts.player.availableData<needed.length))return zero('analysis-not-ready');
   if(!quiet(facts.reservedCards))return zero('analysis-reservation-needs-native-value');
   const payment=probe.funding(facts.player,{energy:facts.analyzeEnergyCost},weights);
   if(!payment)return zero('analysis-not-funded');
   if(!Array.isArray(facts.board?.aliens?.slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
-  const initial={...facts.player},paid={...initial,credits:initial.credits-payment.spend.credits,energy:initial.energy-payment.spend.energy};
+  const initial={...facts.player},paid={...initial,credits:initial.credits-payment.spend.credits,energy:initial.energy-payment.spend.energy,
+   availableData:initial.availableData-needed.length};
+  const newColumns=Object.entries(initial.techState.blueBoardSlots).filter(([id,slot])=>initial.techState.ownedTiles[id]
+   &&!initial.techState.disabledTiles[id]&&needed.includes(placement.getRequiredComputerSlotForBlueBonus(slot))).length;
+  players.gainResources({resources:paid},{score:newColumns*placement.getBlueColumnScoreBonus().score});
   const candidates=facts.board.aliens.slots.flatMap(slot=>{
    if(slot.revealed)return[];const first=!slot.traces?.blue?.firstPlaced;
    if(first&&['yellow','pink'].every(type=>slot.traces?.[type]?.firstPlaced))return[];
@@ -40,13 +61,16 @@
    return[{blueSlot:Number(slot),wallet,value:delta(wallet)+portfolio(wallet,slots,{computerSlots:[1,2,3].filter(n=>n<=required),blueSlots:cleared.blueSlots.map(b=>({...b,occupied:b.slot===Number(slot),unlocked:placement.getRequiredComputerSlotForBlueBonus(b.slot)<=required}))})-baseValue}];
   }).sort((a,b)=>b.value-a.value||a.blueSlot-b.blueSlot);
   const tail=tails[0]?.value>base?tails[0]:null,net=tail?.value??base;
-  return{value:Math.max(0,net),selected:{slotId:selected.slot.slotId,traceType:'blue',payment,blueSlot:tail?.blueSlot||null,planNetGain:net},reason:net>0?'funded-ready-analysis':'analysis-plan-not-profitable',scope:'One funded ready analysis and at most one known currency blue tail; no new income/card identity/species, native state transition or pruning guarantee'};
+  return{value:arithmetic.normalize(Math.max(0,net),weights),selected:{slotId:selected.slot.slotId,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:tail?.blueSlot||null,planNetGain:arithmetic.normalize(net,weights)},reason:net>0?'funded-ready-analysis':'analysis-plan-not-profitable',scope:'One existing-data-funded preparation of computer5/6, analysis and at most one known currency blue tail; no new income/card identity/species, native state transition or pruning guarantee'};
  }
- function upperBound(slots,weights){
+ function upperBound(slots,weights,progress=null){
   const gains=[aliens.getExtraTraceReward().gain,...(slots||[]).map(s=>aliens.getFirstTraceRewardForSlot(s.slotId)?.gain).filter(Boolean)];
   const trace=Math.max(0,...gains.map(g=>weighted(g,weights))),tracePublicity=Math.max(0,...gains.map(g=>g.publicity||0));
   const blue=Math.max(0,...['blue1','blue2','blue4'].map(id=>(()=>{const b=placement.getBlueTileDataBonus(id);return b[b.type]*(weights[b.type]||0);})()));
-  return{linear:trace+[1,2,3].filter(slot=>placement.getBlueBoardSlotForComputerSlot(slot)!=null).length*placement.getBlueColumnScoreBonus().score+blue+placement.getComputerSlotBonus(2).publicity*weights.publicity,publicity:tracePublicity+placement.getBlueTileDataBonus('blue4').publicity+placement.getComputerSlotBonus(2).publicity};
+  const preparationColumns=progress?Object.entries(progress.techState.blueBoardSlots).filter(([id,slot])=>progress.techState.ownedTiles[id]
+   &&!progress.techState.disabledTiles[id]&&placement.getRequiredComputerSlotForBlueBonus(slot)>=5
+   &&!progress.computerSlots.includes(placement.getRequiredComputerSlotForBlueBonus(slot))).length:2;
+  return{linear:preparationColumns*placement.getBlueColumnScoreBonus().score+trace+[1,2,3].filter(slot=>placement.getBlueBoardSlotForComputerSlot(slot)!=null).length*placement.getBlueColumnScoreBonus().score+blue+placement.getComputerSlotBonus(2).publicity*weights.publicity,publicity:tracePublicity+placement.getBlueTileDataBonus('blue4').publicity+placement.getComputerSlotBonus(2).publicity};
  }
- return Object.freeze({quote,upperBound,energyCost:abilityId=>abilityId==='deepspace_swap_cards'?0:data.ANALYZE_ENERGY_COST});
+ return Object.freeze({quote,prepaidCapital,upperBound,energyCost:abilityId=>abilityId==='deepspace_swap_cards'?0:data.ANALYZE_ENERGY_COST});
 });

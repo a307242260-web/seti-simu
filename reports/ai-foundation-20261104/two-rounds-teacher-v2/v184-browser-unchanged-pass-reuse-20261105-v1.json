@@ -1,0 +1,47 @@
+{
+  "status": "complete",
+  "scope": "Reuse four identical browser checks; only the failed sixth-plan definition changed; execute remaining19 once",
+  "reused": [
+    {
+      "id": "production-search-agent-entry",
+      "definitionSha256": "6d57fb8b3c9fefba504e55d0e5af2d43ee621a0ef2f5c792a7e35843b4146f7c",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-twentythree-20261105-v1.log"
+    },
+    {
+      "id": "production-goal-movement-plan",
+      "definitionSha256": "816bbf2ed19034b189a203d7f4bcdc6480ffaa4a435b5ba6b001fe385b3541fc",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-twentythree-20261105-v1.log"
+    },
+    {
+      "id": "production-search-hotpath",
+      "definitionSha256": "a0a23e4e98ef0edcf1f29efd7031d34f8adffad06f2fb5eb8cfa3f54cde637d7",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-twentythree-20261105-v1.log"
+    },
+    {
+      "id": "production-blue-exchange-funding",
+      "definitionSha256": "8ea69fd095a25dd8472c3b84336d118896991ccb190df3f42301c6fc17eb9df7",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-twentythree-20261105-v1.log"
+    }
+  ],
+  "remaining": [
+    "production-six-greedy-plans",
+    "production-shared-resource-prefix",
+    "production-funded-travel-capital",
+    "production-conditional-sector-flow",
+    "production-conditional-research-capital",
+    "production-known-pass-card",
+    "production-winning-income-recovery",
+    "production-free-launch-plan-recovery",
+    "production-funded-movement-tail",
+    "production-funded-research-value",
+    "production-quiet-data-tail",
+    "production-funded-hand-timing",
+    "production-mission-data-continuation",
+    "production-teacher-development",
+    "production-settled-tech-funding",
+    "production-ready-analysis-capital",
+    "production-public-income-option",
+    "production-known-sector-analysis",
+    "production-computer-preinvestment"
+  ]
+}

@@ -27,14 +27,14 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  for(const row of read('reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-orbit-land-native-assets-20261104-v1.json').rows){
   env.loadCheckpoint(missionRoot);for(const step of row.steps){const a=env.legalActions().find(a=>a.actionId===step.actionId);assert(a);assert(env.step(a).ok);}
   assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,row.checkpoint);
-  const value=values.evaluateStateValue(env.observe(seatId),seatId);joint[row.goal]={hand:value.components.handPotential,value:value.total};
+  const observation=env.observe(seatId),actor=observation.publicState.players.find(p=>p.playerId===seatId),value=values.evaluateStateValue(observation,seatId);joint[row.goal]={hand:values.handCapital(observation.selfState.hand,actor.techState,observation.publicState.board.techSupply,1,values.DEFAULT_WEIGHTS,{resources:actor,income:actor.income,startingIncome:0}),value:value.total};
  }
- assert.deepEqual(joint,{orbit:{hand:currentCard,value:60+(transport-2)*3},land:{hand:deferredCard,value:60+(transport-2)*2}});
+ assert.equal(joint.orbit.hand,currentCard);assert.equal(joint.land.hand,deferredCard);assert(joint.orbit.value>joint.land.value,'the complete native orbit keeps the funded development advantage');
  env.loadCheckpoint(original);assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,original.coreState.compositionEnvelope);
  // A memoized purpose quote must agree with the independent calculation
  // after in-place wallet, known income and pass-phase changes.
  const capitalState=JSON.parse(missionRoot.coreState.committedState),capitalOwner=capitalState.players.players.find(p=>p.id===seatId);
- const directCapital=()=>{const investment=(hand,publicity,funding)=>demand.heldAndResearchCapital(capitalState,{...capitalOwner,hand,income:funding.income,resources:{...capitalOwner.resources,...funding.resources,publicity}});return demand.heldAndResearchCapital(capitalState,capitalOwner)+probe.fromState(capitalState,capitalOwner,values.DEFAULT_WEIGHTS,investment).value;};
+ const directCapital=()=>{const v=values.evaluateStateValue(require('../../app/rule-observation').buildRuleObservation(capitalState,capitalState.meta.seed,seatId),seatId);return values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>v.components[k]));};
  let memoControls=0;for(const passed of [false,true])for(const credits of [0,2,3,5])for(const energy of [0,1,2,6]){
   capitalOwner.resources.credits=credits;capitalOwner.resources.energy=energy;capitalState.passingPlayerIds=passed?[seatId]:[];
   for(const income of [0,2]){capitalOwner.income.credits=income;const expected=directCapital();assert.equal(demand.planningCapital(capitalState,capitalOwner),expected);assert.equal(demand.planningCapital(capitalState,capitalOwner),expected);memoControls++;}

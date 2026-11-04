@@ -8,17 +8,17 @@
     common ? require("../actions/scan-effects") : root.SetiScanEffects,
     common ? require("./probe-capital") : root.SetiProbeCapital,
     common ? require("./ready-analysis-capital") : root.SetiReadyAnalysisCapital,
-    common ? require("./research-income-capital") : root.SetiResearchIncomeCapital);
+    common ? require("./research-income-capital") : root.SetiResearchIncomeCapital,
+    common ? require("./sector-card-capital") : root.SetiSectorCardCapital,
+    common ? require("./value-arithmetic") : root.SetiValueArithmetic);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v16";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v18";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
-  const DEFAULT_WEIGHTS = Object.freeze({
-    credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
-  });
+  const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
 
   function number(value, path) {
@@ -195,7 +195,7 @@
   function probePotential(observation, seatId, weights = DEFAULT_WEIGHTS) {
     const pub=observation.publicState,player=pub.players.find(p=>p.playerId===seatId);
     return basePurposeCapital({...probeCapital.factsFromObservation(observation,seatId),
-      supply:pub.board.techSupply,researchCost:player.researchPublicityCost,
+      supply:pub.board.techSupply,researchCost:player.researchPublicityCost,analyzeEnergyCost:readyAnalysis.energyCost(player.industryAbilityId),
       reservedCards:observation.selfState.reservedCards},weights).probePotential;
   }
 
@@ -204,34 +204,46 @@
     return(hand,publicity,funding)=>handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
       +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
   }
+  function dataInvestmentFor(facts,weights){
+    const investment=investmentFor(facts,weights);
+    return(hand,publicity,funding,progress={})=>arithmetic.sum([investment(hand,publicity,funding),readyAnalysis.prepaidCapital({
+      ...facts,...progress,player:{...facts.player,...funding.resources,publicity,income:funding.income},
+      board:progress.traceSlots?{...facts.board,aliens:{slots:progress.traceSlots}}:facts.board},weights)],weights);
+  }
   const NO_INCOME_ALLOCATION=Object.freeze({total:0,knownSwapPlan:null});
   function incomeAllocationCapital(facts,weights=DEFAULT_WEIGHTS) {
     if(!facts.blueSlots?.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId)))return NO_INCOME_ALLOCATION;
-    const investment=investmentFor(facts,weights),funding={resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)};
+    const investment=dataInvestmentFor(facts,weights),funding={resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)};
     const base=investment(facts.hand,facts.player.publicity,funding);
     return researchIncome.incomeOptions({facts,investment,baseCapital:base},weights);
   }
   function incomePreparationCapital(facts,weights=DEFAULT_WEIGHTS) {
     const allocation=incomeAllocationCapital(facts,weights);
     if(allocation.total)return allocation.total;
-    return investmentFor(facts,weights)(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
+    return dataInvestmentFor(facts,weights)(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
   }
   function basePurposeCapital(facts, weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
-    const investment=investmentFor(facts,weights);
+    const investment=dataInvestmentFor(facts,weights),computer=readyAnalysis.prepaidCapital(facts,weights);
     const funding={resources:player,income:player.income,startingIncome:Number(passing)};
     const held=handCapital(facts.hand,player.techState,supply,round+Number(passing),weights,funding);
     const paid=researchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
     const mission=probeCapital.quote({...facts,investment,
-      dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment},weights)},weights).value;
-    return{handPotential:held,researchPotential:paid,probePotential:mission,total:held+paid+mission};
+      dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights)},weights).value;
+    return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,total:arithmetic.sum([held,paid,mission,computer],weights)};
+  }
+  function capitalWithoutMission(facts,weights){
+    const investment=dataInvestmentFor(facts,weights),base=investment(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
+    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>dataInvestmentFor({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}},weights)(facts.hand,wallet.publicity,{resources:wallet,income:wallet.income,startingIncome:Number(facts.passing)}),base);
+    return arithmetic.sum([base,analysis.value],weights);
   }
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
     const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>portfolio({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
-    const current=base.total+analysis.value+income.value,dataPlan=incomeAllocationCapital(facts,weights),dataPotential=Math.max(0,dataPlan.total-current);
-    return{...base,analysisPotential:analysis.value,analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:current+dataPotential};
+    const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
+    const sector=sectorCard.quote(facts,weights,next=>capitalWithoutMission(next,weights),arithmetic.sum([current,dataPotential],weights));
+    return{...base,handPotential:arithmetic.sum([base.handPotential,sector.value],weights),sectorCardPlan:sector,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential,sector.value],weights)};
   }
 
   function evaluateStateValue(observation, seatId, options = {}) {
@@ -269,7 +281,7 @@
       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
       handPotential:capital.handPotential,researchPotential:capital.researchPotential,
       probePotential:capital.probePotential,analysisPotential:capital.analysisPotential,researchIncomePotential:capital.researchIncomePotential,dataPotential:capital.dataPotential });
-    const total = Object.values(components).reduce((sum, value) => sum + value, 0);
+    const total = arithmetic.sum(Object.values(components),weights);
     number(total, "total");
     return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
   }
@@ -302,7 +314,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, readyAnalysisUpperBound:slots=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

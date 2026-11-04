@@ -1,0 +1,6 @@
+trusted analysis fork isolation and exact reuse passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+SUMMARY unit passed=2 failed=0 total=2 time=2.34s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=1

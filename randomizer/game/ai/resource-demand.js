@@ -142,7 +142,7 @@
     return capital.dataPotential>0?capital.dataPlan:null;
   }
   function incomeSwapPlan(state,p,committed=false){
-    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),reservedCards:p.reservedCards};
+    const facts=valueFacts(state,p);
     // In a native pending swap the mark is already spent by this very flow.
     // Quote its remaining selection with the live wallet, without refunding
     // the mark in any native state or admitting a second company action.
@@ -151,13 +151,13 @@
   }
   function incomeOpportunityCost(state,p,card,beforeCapital=planningCapital(state,p)){
     const hand=p.hand.filter(c=>c.id!==card.id);
-    return beforeCapital-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
+    return stateValue.sumValueParts([beforeCapital,-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}})]);
   }
   function incomePreparationCapital(state,p,projectedData=0){
     const current=planningCapital(state,p);
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]
       &&["blue1","blue2","blue4"].includes(id)))return current;
-    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),reservedCards:p.reservedCards};
+    const facts=valueFacts(state,p);
     facts.player={...facts.player,availableData:Math.min(players.RESOURCE_LIMITS.availableData,facts.player.availableData+projectedData)};
     // Current mission and immediate fixed-data preparation are alternatives,
     // never two uses of the same wallet. This is a greedy ranking utility.
@@ -187,7 +187,7 @@
     const linear=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber);
     const overflow=(gain.publicity?gain.publicity-next.resources.publicity+p.resources.publicity:0)*.5
       +(gain.availableData?gain.availableData-next.resources.availableData+p.resources.availableData:0)*.5;
-    return linear-overflow+incomePreparationCapital(state,next,projectedData)-beforeCapital;
+    return stateValue.sumValueParts([linear,-overflow,incomePreparationCapital(state,next,projectedData),-beforeCapital]);
   }
   function cardOpportunityCost(state,seatId,card){return incomeOpportunityCost(state,owner(state,seatId),card);}
   function dataCornerCards({state,seatId,goal}){

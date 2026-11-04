@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "sourceBefore": "v181-cold-serial-case-105-20261105-v1.json",
+  "sourceAfter": "v182-cold-serial-case-105-20261105-v1.json",
+  "sameGraphFields": [
+    "complete",
+    "actionId",
+    "value",
+    "stopReason",
+    "scope",
+    "roots",
+    "lines",
+    "unresolved",
+    "candidates",
+    "sharedPrefixGraph"
+  ],
+  "nativeInputsBefore": 198,
+  "nativeInputsAfter": 198,
+  "firstMsBefore": 623.224334,
+  "firstMsAfter": 568.29725,
+  "identitySubtreeCacheHits": 0,
+  "identitySubtreeCacheStores": 63652,
+  "rootAndRngUnchanged": true
+}

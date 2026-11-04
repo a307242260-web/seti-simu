@@ -1,0 +1,49 @@
+{
+  "status": "complete",
+  "passed": 23,
+  "failed": 0,
+  "uniqueChecks": [
+    "production-search-agent-entry",
+    "production-goal-movement-plan",
+    "production-search-hotpath",
+    "production-blue-exchange-funding",
+    "production-six-greedy-plans",
+    "production-shared-resource-prefix",
+    "production-funded-travel-capital",
+    "production-conditional-sector-flow",
+    "production-conditional-research-capital",
+    "production-known-pass-card",
+    "production-winning-income-recovery",
+    "production-free-launch-plan-recovery",
+    "production-funded-movement-tail",
+    "production-funded-research-value",
+    "production-quiet-data-tail",
+    "production-funded-hand-timing",
+    "production-mission-data-continuation",
+    "production-teacher-development",
+    "production-settled-tech-funding",
+    "production-ready-analysis-capital",
+    "production-public-income-option",
+    "production-known-sector-analysis",
+    "production-computer-preinvestment"
+  ],
+  "reusedUnchangedChecks": [
+    "production-search-agent-entry",
+    "production-goal-movement-plan",
+    "production-search-hotpath",
+    "production-blue-exchange-funding"
+  ],
+  "reuseProof": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-browser-unchanged-pass-reuse-20261105-v1.json",
+  "evidence": [
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-twentythree-20261105-v1.log",
+      "sha256": "8fb3d9b64b64d2e8bdfeb404a6dac5387849fc5b115d4423c868725615add6b3"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-chrome-ai-remaining19-20261105-v3.log",
+      "sha256": "ccffadf160c494feab012542bf6d1df20af825afc4bd1849d6f09f21370decff"
+    }
+  ],
+  "runtimeChangedBetweenBrowserAttempts": false,
+  "scope": "All23 current browser obligations; failure logs retained; passed definitions verified unchanged before reuse"
+}

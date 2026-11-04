@@ -1,0 +1,8 @@
+PASS production-search-agent-entry http://127.0.0.1:53885/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:53885/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:53885/randomizer/index.html
+PASS production-blue-exchange-funding http://127.0.0.1:53885/randomizer/index.html
+Error: production-six-greedy-plans 操作异常：Error: 探测任务仍使用未证明的收入捷径
+    at <anonymous>:34:133
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:294:11)

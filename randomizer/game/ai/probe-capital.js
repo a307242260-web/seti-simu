@@ -13,10 +13,11 @@
     common ? require("../players") : root.SetiPlayers,
     common ? require("../rockets") : root.SetiRocketActions,
     common ? require("../abilities/rocket") : root.SetiAbilityRocket,
-    common ? require("../industry/catalog") : root.SetiIndustryCatalog);
+    common ? require("../industry/catalog") : root.SetiIndustryCatalog,
+    common ? require("./value-arithmetic") : root.SetiValueArithmetic);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -109,9 +110,9 @@
     if (!goals.length) return zero();
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
     const capitalValues = new Map();
-    const capital = (hand, wallet, income) => {
-      const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, income.credits, income.energy, hand.map(card => card.id)]);
-      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) }));
+    const capital = (hand, wallet, income, traceSlots = null) => {
+      const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
+      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}));
       return capitalValues.get(key);
     };
     const initialCapital = capital(knownHand, player, player.income);
@@ -136,10 +137,10 @@
         if(immediate.availableData)immediate.availableData=Math.min(immediate.availableData,players.RESOURCE_LIMITS.availableData-wallet.availableData);
         for(const [key,amount]of Object.entries(immediate))if(key!=='handSize')nextWallet[key]=(nextWallet[key]||0)+amount;
         for(const [key,amount]of Object.entries(gain))nextIncome[key]=(nextIncome[key]||0)+amount;
-        const after=capital(availableHand.filter(c=>c!==card),nextWallet,nextIncome);
+        const after=capital(availableHand.filter(c=>c!==card),nextWallet,nextIncome,traceSlots);
         const linear=weighted(immediate)+weighted(gain)*(4-planningRound)-weights.handSize;
         const following=facts.dataContinuation?facts.dataContinuation({hand:availableHand.filter(c=>c!==card),wallet:nextWallet,income:nextIncome,traceSlots}):null;
-        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:linear+after+(following?.value||0)-capital(availableHand,wallet,income)};
+        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:arithmetic.sum([linear,after,following?.value||0,-capital(availableHand,wallet,income,traceSlots)],weights)};
       };
       for (let index = 0; index < effects.length && supported; index++) {
         const effect = effects[index], options = effect.options || {};
@@ -160,7 +161,7 @@
           const following=effects.slice(index+1),incomeAt=following.findIndex(e=>e.type==='income'),incomeLater=incomeAt>=0;
           const projectedData=incomeLater?knownScanData(root,actor,following.slice(0,incomeAt),usedTokens):0;
           const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomePurpose(card, [...hand, card],projectedData).value
-            : capital([...hand, card], wallet, income) - capital(hand, wallet, income) }))
+            : arithmetic.sum([capital([...hand, card], wallet, income,traceSlots),-capital(hand, wallet, income,traceSlots)],weights) }))
             .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           const picked = ranked[0]?.card;
           if (picked) { hand.push(picked); publicCards.splice(publicCards.indexOf(picked), 1); } else unknownCount++;
@@ -168,7 +169,7 @@
             policy: 'one fixed known income or held-purpose quote; not a claim of native card identity equivalence' });
         } else if (effect.type === 'income') {
           if ((options.count || 1) !== 1) { supported = false; break; }
-          const before = capital(hand, wallet, income);
+          const before = capital(hand, wallet, income,traceSlots);
           const ranked = hand.filter(card=>cards.getIncomeGainForCard(card)).map(card=>incomePurpose(card,hand))
             .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           if (!ranked.length) {
@@ -181,7 +182,7 @@
           Object.assign(wallet,chosen.wallet);Object.assign(income,chosen.income);
           const linear = chosen.linear;
           delta += linear; ledger.push({ type: effect.type, cardId: chosen.card.cardId, gain: chosen.gain, value: linear,
-            handPurposeCost: before - capital(hand, wallet, income) });
+            handPurposeCost: arithmetic.sum([before,-capital(hand, wallet, income,traceSlots)],weights) });
         } else if (['scan_planet_sector', 'choose_nebula_scan', 'choose_colored_nebula_scan'].includes(effect.type)) {
           const opts = effect.type === 'scan_planet_sector' ? { mode: 'planet', planetId: options.planetId }
             : effect.type === 'choose_colored_nebula_scan' ? { mode: 'color', color: options.color }
@@ -221,14 +222,14 @@
           }
         } else { supported = false; ledger.push({ type: effect.type, unsupported: true }); }
       }
-      const capitalDelta = capital(hand, wallet, income) - initialCapital;
+      const capitalDelta = arithmetic.sum([capital(hand, wallet, income, traceSlots),-initialCapital],weights);
       // One fixed, existing-data continuation belongs to this mission's
       // shared wallet. It is an optional forecast, never a native node/bound.
       const dataContinuation = supported && facts.dataContinuation
         ? facts.dataContinuation({ hand, wallet, income, traceSlots }) : null;
       candidates.push({ id: goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
         supported, payment, route: goal.route, ledger, capitalDelta, dataContinuation,
-        value: supported ? Math.max(0, delta + capitalDelta + (dataContinuation?.value || 0)) : 0 });
+        value: supported ? Math.max(0, arithmetic.sum([delta,capitalDelta,dataContinuation?.value||0],weights)) : 0 });
     }
     const ranked = candidates.filter(c => c.funded && c.supported).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
     return { value: ranked[0]?.value || 0, selected: ranked[0] || null, candidates,

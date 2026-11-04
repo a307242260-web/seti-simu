@@ -28,9 +28,9 @@ try {
   assert.equal(player.publicity, 7);
   const before = values.evaluateStateValue(observation, seatId);
   assert.equal(before.components.researchPotential, 9.5);
-  assert.equal(before.components.researchIncomePotential, 5,
+  assert.equal(before.components.researchIncomePotential, values.sumValueParts([5,11/3]),
     'known selection reward and existing four data can fund an income before future held and probe purposes');
-  assert.equal(before.total, 60.5 + (values.FORECAST.usefulScansPerLaterRound - 2) * 2);
+  assert.equal(before.total, values.sumValueParts([60.5,(values.FORECAST.usefulScansPerLaterRound - 2) * 2,11/3]));
   assert.equal(before.components.handPotential, 2 * values.FORECAST.usefulScansPerLaterRound - 1.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
   assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
@@ -38,7 +38,7 @@ try {
   const choice = started.legalActions.find(a => a.target.tileId === 'blue1' && a.target.blueSlot === 1);
   assert(choice);
   const after = port.expand(started, choice.actionId), taken = values.evaluateStateValue(after.observation, seatId);
-  assert.equal(taken.total, before.total-before.components.researchIncomePotential+2,
+  assert.equal(taken.total, values.sumValueParts([before.total,-before.components.researchIncomePotential,2,11/12]),
     'the newly owned currency blue also carries its native-verified future data purpose');
   assert.equal(taken.components.researchPotential, 0);
   assert.notDeepEqual(after.observation.publicState.board.rockets, observation.publicState.board.rockets,
@@ -120,7 +120,7 @@ try {
 for (const [name, legacyValue, windows] of [['autonomous', 54.5, 3], ['teacher58', 57.5, 2]]) {
   // The first fixture already owns purple4; the second can fund heldDLC9
   // only after PASS income, so its card forecast has one fewer usage window.
-  const expected=legacyValue+(values.FORECAST.usefulScansPerLaterRound-2)*windows;
+  const expected=values.sumValueParts([legacyValue,(values.FORECAST.usefulScansPerLaterRound-2)*windows,11/3]);
   const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
     `../../../adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/${name}-before-pass-20261031-v1.json`)));
   const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,
@@ -160,8 +160,9 @@ for (const [name, legacyValue, windows] of [['autonomous', 54.5, 3], ['teacher58
     assert.equal(next.publicState.roundNumber, 2);
     assert(!next.publicState.passingPlayerIds.includes(seatId), 'new round must reopen without a second window shift');
     const owner = next.publicState.players.find(p => p.playerId === seatId), nextValue = values.evaluateStateValue(next, seatId);
+    const nextCapital=values.purposeCapital({...require('./probe-capital').factsFromObservation(next,seatId),supply:next.publicState.board.techSupply,reservedCards:next.selfState.reservedCards,researchCost:owner.researchPublicityCost,analyzeEnergyCost:require('./ready-analysis-capital').energyCost(owner.industryAbilityId)});
     assert.equal(nextValue.components.handPotential,
-      values.handCapital(next.selfState.hand, owner.techState, next.publicState.board.techSupply, 2, values.DEFAULT_WEIGHTS, { resources: owner, income: owner.income, startingIncome: 0 }));
+      values.sumValueParts([values.handCapital(next.selfState.hand, owner.techState, next.publicState.board.techSupply, 2, values.DEFAULT_WEIGHTS, { resources: owner, income: owner.income, startingIncome: 0 }),nextCapital.sectorCardPlan.value]));
     assert.equal(nextValue.components.researchPotential,
       values.researchCapital({ hand: next.selfState.hand, techState: owner.techState, supply: next.publicState.board.techSupply,
         round: 2, publicity: owner.publicity, researchCost: owner.researchPublicityCost, funding: { resources: owner, income: owner.income, startingIncome: 0 } }));

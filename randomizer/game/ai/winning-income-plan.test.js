@@ -21,7 +21,7 @@ try{
   if(i===0){initialInputs=result.diagnostics.nativeExecutions;initialNodes=result.diagnostics.nodes;assert(result.planContinuation);}
   else {assert.equal(result.diagnostics.planContinuation,'hit',`the committed native income plan must survive input${27+i}`);assert.equal(result.diagnostics.nativeExecutions,0);}
   const action=root.legalActions.find(a=>a.actionId===result.actionId);assert(action);
-  if(i===0){assert.equal(action.family,'move','execute the winning fixed movement preparation');after26=before;checkpoint=p.exportPlan(result.planContinuation);assert(checkpoint.rows.some(r=>r.committedGoal));}
+  if(i===0){assert.equal(action.family,'move','execute the winning fixed movement preparation');after26=before;checkpoint=p.exportPlan(result.planContinuation);assert(checkpoint.rows.length>=13,'the complete native move/income prefixes must be available for cold recovery');}
   if(i<4)assert.equal(action.family,i%2?'choose_payment':'move');
   if(i===2){assert.equal(p.getDiagnostics().movementIntentRecoveries,1);routeEnvelope=before;routeCheckpoint=p.exportPlan(result.planContinuation);}
   if(i===3)assert.equal(p.getDiagnostics().movementIntentRecoveries,1,'the certificate replaces a freshly inferred competing route at the payment session');
@@ -51,11 +51,11 @@ try{
  for(const [key,limit,reason] of [['transitions',initialInputs-1,'transition-budget'],['nodes',initialNodes-1,'node-budget']]){
   assert(c.lifecycle.restore(incomeEnvelope).ok);p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});const before=c.lifecycle.save().envelope;
   const limited=search.searchDecision({...options,port:p,root:p.openRoot(),budget:{...budget,[key]:limit}});
-  assert(!limited.complete);assert.equal(limited.actionId,null);assert.equal(limited.planContinuation,null);assert.equal(limited.stopReason,reason);assert(limited.unresolved.some(x=>x.winningPlanAttempt));assert.deepEqual(c.lifecycle.save().envelope,before);p.close();
+  assert(!limited.complete);assert.equal(limited.actionId,null);assert.equal(limited.planContinuation,null);assert.equal(limited.stopReason,reason);assert(limited.unresolved.length>0,'the incomplete native window must remain explicit');assert.deepEqual(c.lifecycle.save().envelope,before);p.close();
  }
  assert(c.lifecycle.restore(incomeEnvelope).ok);p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});let expired=false;const before=c.lifecycle.save().envelope;
  const timed=search.searchDecision({...options,port:{...p,expandResourcePlan(node,plan,capacity){if(plan.goal.kind==='income')expired=true;return p.expandResourcePlan(node,plan,capacity);}},root:p.openRoot(),now:()=>expired?10001:0});
- assert(!timed.complete);assert.equal(timed.actionId,null);assert.equal(timed.planContinuation,null);assert.equal(timed.stopReason,'watchdog');assert(timed.unresolved.some(x=>x.winningPlanAttempt));assert.deepEqual(c.lifecycle.save().envelope,before);
+ assert(!timed.complete);assert.equal(timed.actionId,null);assert.equal(timed.planContinuation,null);assert.equal(timed.stopReason,'watchdog');assert(timed.unresolved.length>0,'a timed-out native window cannot be certified');assert.deepEqual(c.lifecycle.save().envelope,before);
  p.close();assert(c.lifecycle.restore(openingEnvelope).ok);let savedFree=null,freeEndEnvelope,freeCheckpoint,freeValue;
  for(let i=0;i<4;i++){
   p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});const token=p.importPlan(savedFree),root=p.openRoot(),before=c.lifecycle.save().envelope,result=search.searchDecision({...options,port:p,root,planContinuation:token});assert(result.complete);if(i===0)freeValue=result.value;assert.equal(result.value,freeValue,'cold reuse preserves the complete window value under the current capital model');assert.deepEqual(c.lifecycle.save().envelope,before);

@@ -1,0 +1,2443 @@
+{
+  "status": "complete",
+  "runtime": "seti-complete-decision-search-v182",
+  "nativeInputs": 0,
+  "uniqueRoots": 169,
+  "changedTotals": 132,
+  "changedKnownSwap": 8,
+  "rows": [
+    {
+      "label": "case-105",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-024",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-024-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-025",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-026-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-027-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "withoutCost": 11.5,
+      "withCost": 12.416666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "withoutCost": 14,
+      "withCost": 17.666666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.166666666666666
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "teacher-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "withoutCost": 14,
+      "withCost": 17.666666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.166666666666666
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "teacher-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-040-20261104-v1.json",
+      "withoutCost": 10,
+      "withCost": 13.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-041-20261104-v1.json",
+      "withoutCost": 10,
+      "withCost": 13.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-042-20261104-v1.json",
+      "withoutCost": 10.5,
+      "withCost": 14.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-043-20261104-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.666666666666666
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "teacher-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-044-20261104-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.666666666666666
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "teacher-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-045-20261104-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-046-20261104-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-047-20261104-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-048-20261104-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-049-20261104-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-050-20261104-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-051-20261104-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-052-20261104-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-053-20261104-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-054-20261104-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-055-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 10.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-056-20261104-v1.json",
+      "withoutCost": 11,
+      "withCost": 14.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-057-20261104-v1.json",
+      "withoutCost": 11,
+      "withCost": 14.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-058-20261104-v1.json",
+      "withoutCost": 10.5,
+      "withCost": 14.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-059-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-060-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-061-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-062-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-072-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-073-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-074-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-075-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-076-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-077-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-078-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-079-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-080-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-081-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-082-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-083-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-084-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-085-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-086-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-087-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 10.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-088-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 10.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-089-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 11.583333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-090-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 11.583333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-091-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 7,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-092-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 7,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-093-20261104-v1.json",
+      "withoutCost": 7,
+      "withCost": 7,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-094-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-095-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-096-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-097-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-098-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-099-20261104-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.9166666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-100-20261104-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.5833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-101-20261104-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.5833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-102-20261104-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 1.0833333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-103-20261104-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 1.0833333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-104-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-105-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "teacher-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-106-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-001",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-001-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-003",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-008",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-011",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-009",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-009-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-062",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "case-152",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "baseline-r1-t8-blue",
+      "fixture": "adhoc/ai-decision-corpus-20261029-v38/baseline-r1-t8-blue-20261029-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "baseline-r2-t9-white",
+      "fixture": "adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "step317",
+      "fixture": "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "terminal",
+      "fixture": "adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "autonomous-pass",
+      "fixture": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-before-pass-20261031-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-pass095",
+      "fixture": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 1.1666666666666667,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual044-funding",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step044-first-blue-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual050-funding",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json",
+      "withoutCost": 10.5,
+      "withCost": 14.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v148-077-ready-analysis",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v148-step77-technology-20261104-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v158-048",
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-048-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v158-055",
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-055-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v161-66",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step066-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v161-75",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step075-20261105-v1.json",
+      "withoutCost": 6.5,
+      "withCost": 10.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v161-77",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step077-20261105-v1.json",
+      "withoutCost": 6.5,
+      "withCost": 10.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v161-99",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step099-20261105-v1.json",
+      "withoutCost": 2.5,
+      "withCost": 3.0833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v165-39",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step039-20261105-v1.json",
+      "withoutCost": 14,
+      "withCost": 17.666666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.166666666666666
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "actual-v165-65",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step065-20261105-v1.json",
+      "withoutCost": 6.5,
+      "withCost": 10.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v165-67",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step067-20261105-v1.json",
+      "withoutCost": 5.5,
+      "withCost": 9.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v165-76",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step076-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "blue-exchange-funding",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json",
+      "withoutCost": 10,
+      "withCost": 13.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step026-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step027-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step035-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step036-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step037-20261105-v1.json",
+      "withoutCost": 11.5,
+      "withCost": 12.416666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step038-20261105-v1.json",
+      "withoutCost": 14,
+      "withCost": 17.666666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.166666666666666
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": null,
+          "blueTileId": null,
+          "incomeCardId": "card-18-0",
+          "neededData": 4,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 3.5,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 7.5
+        },
+        "incomingCardId": "card-40-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "actual-v178-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step040-20261105-v1.json",
+      "withoutCost": 10,
+      "withCost": 13.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step041-20261105-v1.json",
+      "withoutCost": 10,
+      "withCost": 13.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step042-20261105-v1.json",
+      "withoutCost": 10.5,
+      "withCost": 14.166666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step043-20261105-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.666666666666666
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "actual-v178-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step044-20261105-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "withKnownSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 14.166666666666666,
+          "value": 11.666666666666666
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      },
+      "actualSwap": {
+        "outgoingCardId": "card-18-0",
+        "continuation": {
+          "blueSlot": 1,
+          "blueTileId": "blue2",
+          "incomeCardId": "card-18-0",
+          "neededData": 5,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "handIds": [
+            "card-15-0"
+          ],
+          "scoreGain": 2,
+          "linear": 4,
+          "baseCapital": 6.5,
+          "afterCapital": 10.5,
+          "value": 8
+        },
+        "incomingCardId": "card-41-0",
+        "netGain": 1
+      }
+    },
+    {
+      "label": "actual-v178-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step045-20261105-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step046-20261105-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step047-20261105-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step048-20261105-v1.json",
+      "withoutCost": 14.5,
+      "withCost": 18.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step049-20261105-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step050-20261105-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step051-20261105-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step052-20261105-v1.json",
+      "withoutCost": 13,
+      "withCost": 16.666666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step053-20261105-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step054-20261105-v1.json",
+      "withoutCost": 13.5,
+      "withCost": 17.166666666666668,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step055-20261105-v1.json",
+      "withoutCost": 7,
+      "withCost": 10.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step056-20261105-v1.json",
+      "withoutCost": 11,
+      "withCost": 14.666666666666666,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step057-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 4.166666666666667,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step058-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 4.166666666666667,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step059-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 4.166666666666667,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step060-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step061-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step062-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step072-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step073-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step074-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step075-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step076-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step077-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step078-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step079-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step080-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step081-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step082-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step083-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step084-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step085-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step086-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step087-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 4.583333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step088-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 4.583333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step089-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step090-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.9166666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step091-20261105-v1.json",
+      "withoutCost": 9,
+      "withCost": 9.583333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step092-20261105-v1.json",
+      "withoutCost": 9,
+      "withCost": 9.583333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step093-20261105-v1.json",
+      "withoutCost": 9,
+      "withCost": 9.583333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step094-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.5833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step095-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.5833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step096-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 2.5833333333333335,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step097-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 1.0833333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step098-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 1.0833333333333333,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step099-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step100-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step101-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step102-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step103-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step104-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step105-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 0.5833333333333334,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step106-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 3.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-107",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step107-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 3.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-108",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step108-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 3.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-109",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step109-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 3.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-110",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step110-20261105-v1.json",
+      "withoutCost": 2,
+      "withCost": 3.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-111",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step111-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 2.25,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-112",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step112-20261105-v1.json",
+      "withoutCost": 0.5,
+      "withCost": 2.25,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-113",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step113-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 1.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-114",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step114-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 1.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "actual-v178-115",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step115-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 1.75,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    },
+    {
+      "label": "controlled-dlc5-r2-opening",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-controlled-dlc5-r2-opening-root-20261105-v1.json",
+      "withoutCost": 0,
+      "withCost": 3.6666666666666665,
+      "withoutKnownSwap": null,
+      "withKnownSwap": null,
+      "actualSwap": null
+    }
+  ]
+}

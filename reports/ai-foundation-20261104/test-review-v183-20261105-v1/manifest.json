@@ -1,0 +1,10 @@
+{
+  "status": "rejected test rewrite attempt",
+  "sourceHashes": {
+    "randomizer/game/ai/income-plan-value.test.js": "286387aeeb3607282914b9048a68afaffbbdffcfb83d825b9a69509a4abc89af",
+    "randomizer/game/ai/winning-income-plan.test.js": "51ebd81ac7d469c8652011df399362e3277f311071dd237013cfc668c4896233",
+    "randomizer/game/ai/public-income-option.test.js": "adbf6354b1b6e897a601d9180739a9802ff8d157cb1df696fc75dd060918c704"
+  },
+  "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v183-five-obligations-20261105-v3.log",
+  "reason": "Blanket11/3 delta is false for masked partial prefixes; changing the isolated company does not restore the old committed-income winner. Keep original obligations and investigate actual native policy instead of forcing updated assertions."
+}

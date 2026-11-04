@@ -1,0 +1,8 @@
+trusted analysis fork isolation and exact reuse passed
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":17,"value":17},{"name":"one-energy","raw":163,"bounded":108,"prunes":27,"upper":18,"value":18},{"name":"two-energy","raw":563,"bounded":153,"prunes":36,"upper":19,"value":19},{"name":"cash-income","raw":1373,"bounded":135,"prunes":45,"upper":20,"value":20},{"name":"reachable-mercury","raw":35,"bounded":32,"prunes":3,"upper":18.5,"value":18.5},{"name":"neutral-data-visits","raw":409,"bounded":301,"prunes":53,"upper":18.5,"value":18}]}
+{"knownSectorAndAnalysis":"passed","nativeInputs":10,"stablePrefixes":5,"moneyControls":84,"value":75.5,"sectorCapital":14,"preparedAnalysisCapital":4.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+SUMMARY unit passed=3 failed=0 total=3 time=8.16s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=1
