@@ -1,0 +1,1201 @@
+[
+  {
+    "plan": "known-purple4",
+    "nativeInputs": 5,
+    "snapshots": [
+      {
+        "label": "root",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76,
+          "components": {
+            "realizedScore": 26,
+            "currentEndGameBonus": 7,
+            "resources": 8.5,
+            "hand": 1,
+            "income": 17,
+            "technologyPotential": 10,
+            "handPotential": 6.5,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "launch",
+            "target": null,
+            "payload": {}
+          },
+          {
+            "family": "scan",
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {}
+          },
+          {
+            "family": "play_card",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            }
+          },
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {}
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            }
+          }
+        ]
+      },
+      {
+        "label": "after-research",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 6,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "end_turn",
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {}
+          }
+        ]
+      },
+      {
+        "label": "turn-end",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 6,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "launch",
+            "target": null,
+            "payload": {}
+          },
+          {
+            "family": "scan",
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {}
+          },
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "label": "after-research-and-launch",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 74,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 4,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          },
+          {
+            "family": "end_turn",
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {}
+          }
+        ]
+      },
+      {
+        "label": "second-turn-end",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 74,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 4,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "plan": "ordinary-launch",
+    "nativeInputs": 5,
+    "snapshots": [
+      {
+        "label": "root",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76,
+          "components": {
+            "realizedScore": 26,
+            "currentEndGameBonus": 7,
+            "resources": 8.5,
+            "hand": 1,
+            "income": 17,
+            "technologyPotential": 10,
+            "handPotential": 6.5,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "launch",
+            "target": null,
+            "payload": {}
+          },
+          {
+            "family": "scan",
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {}
+          },
+          {
+            "family": "play_card",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            }
+          },
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {}
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            }
+          }
+        ]
+      },
+      {
+        "label": "after-launch",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76.5,
+          "components": {
+            "realizedScore": 26,
+            "currentEndGameBonus": 7,
+            "resources": 6.5,
+            "hand": 1,
+            "income": 17,
+            "technologyPotential": 10,
+            "handPotential": 6.5,
+            "researchPotential": 0,
+            "probePotential": 2.5,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {}
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            }
+          },
+          {
+            "family": "end_turn",
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {}
+          }
+        ]
+      },
+      {
+        "label": "turn-end",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 76.5,
+          "components": {
+            "realizedScore": 26,
+            "currentEndGameBonus": 7,
+            "resources": 6.5,
+            "hand": 1,
+            "income": 17,
+            "technologyPotential": 10,
+            "handPotential": 6.5,
+            "researchPotential": 0,
+            "probePotential": 2.5,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "scan",
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {}
+          },
+          {
+            "family": "play_card",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            }
+          },
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "credits-for-card"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {}
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            }
+          }
+        ]
+      },
+      {
+        "label": "after-launch-and-research",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 74,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 4,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          },
+          {
+            "family": "end_turn",
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {}
+          }
+        ]
+      },
+      {
+        "label": "second-turn-end",
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v11",
+          "total": 74,
+          "components": {
+            "realizedScore": 28,
+            "currentEndGameBonus": 7,
+            "resources": 4,
+            "hand": 0,
+            "income": 17,
+            "technologyPotential": 18,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0
+          },
+          "terminal": false
+        },
+        "legal": [
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {}
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "move",
+            "target": {
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "energy": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            }
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-move"
+            },
+            "payload": {
+              "cost": {
+                "energy": 1
+              },
+              "gain": {}
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

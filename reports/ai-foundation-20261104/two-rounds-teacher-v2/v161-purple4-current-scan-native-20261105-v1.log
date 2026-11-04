@@ -1,0 +1,132 @@
+{
+  "status": "complete",
+  "nativeInputs": 5,
+  "steps": [
+    [
+      "scan",
+      {
+        "kind": "standard-scan"
+      }
+    ],
+    [
+      "choose_target",
+      {
+        "choiceId": "nebula:sector-3-b",
+        "nebulaId": "sector-3-b",
+        "sectorX": 0
+      }
+    ],
+    [
+      "choose_card",
+      {
+        "choiceId": "public:card-40-0:sector-2-a",
+        "cardInstanceId": "card-40-0",
+        "publicSlotIndex": 1,
+        "nebulaId": "sector-2-a"
+      }
+    ],
+    [
+      "choose_card",
+      {
+        "choiceId": "public:card-19-0:sector-2-a",
+        "cardInstanceId": "card-19-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-2-a"
+      }
+    ],
+    [
+      "choose_target",
+      {
+        "choiceId": "scan4:launch",
+        "mode": "launch"
+      }
+    ]
+  ],
+  "values": [
+    {
+      "label": "before-scan",
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v11",
+        "total": 76,
+        "components": {
+          "realizedScore": 28,
+          "currentEndGameBonus": 7,
+          "resources": 6,
+          "hand": 0,
+          "income": 17,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "terminal": false
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 3,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 28
+      },
+      "probes": []
+    },
+    {
+      "label": "after-scan-or-pending",
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v11",
+        "total": 73,
+        "components": {
+          "realizedScore": 28,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 0,
+          "income": 17,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "terminal": false
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 28
+      },
+      "probes": [
+        {
+          "angleDegrees": -54.9,
+          "color": "white",
+          "id": 4,
+          "launchGrid": {
+            "x": 0,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 69.42,
+          "sectorX": 0,
+          "sectorY": 1,
+          "slotIndex": 2,
+          "surface": "solar-board"
+        }
+      ]
+    }
+  ]
+}

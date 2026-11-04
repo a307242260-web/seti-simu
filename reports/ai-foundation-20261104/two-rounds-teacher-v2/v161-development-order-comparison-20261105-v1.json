@@ -1,0 +1,27 @@
+{
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-actual075-development-native-20261105-v2.json",
+  "sourceSha256": "fd465b7c8f0501607b616f30f3a66ea381d16c563423e4a024dd89108e702641",
+  "nativeInputs": 10,
+  "finalValues": [
+    74,
+    74
+  ],
+  "allOtherCanonicalFieldsAndEnvelopeRngEqual": true,
+  "remainingDifferences": [
+    {
+      "path": "/pieces/rockets/2/launchGrid/x",
+      "a": 0,
+      "b": 1
+    },
+    {
+      "path": "/pieces/rockets/2/launchSectorCoordinate/x",
+      "a": 0,
+      "b": 1
+    }
+  ],
+  "fullStateEquivalenceProved": false,
+  "permissionToMergeSearchStates": false,
+  "scope": "Research and launch have equal final wallets, income, owned technology, current rocket location and scalar in this named two-turn control. Launch-origin metadata remains different; no production identity key is weakened.",
+  "goalStatus": "active",
+  "goalAchieved": false
+}
