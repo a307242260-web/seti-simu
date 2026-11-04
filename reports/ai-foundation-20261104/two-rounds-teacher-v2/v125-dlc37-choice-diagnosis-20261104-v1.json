@@ -1,0 +1,35 @@
+{
+  "goalStatus": "active",
+  "productionFixed": false,
+  "sourceEvidence": "reports/ai-foundation-20261023/human405-v125-cold-actual083-research-preparation-20261104-v1.json",
+  "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v125-step083-research-preparation-20261104-v1.json",
+  "knownCardCandidatePresent": true,
+  "dlc37Play": {
+    "actionId": "play_card:1965d049",
+    "target": 4,
+    "value": 66,
+    "completion": "complete"
+  },
+  "selectedResearch": {
+    "actionId": "card_corner:544f2ae4",
+    "target": 15,
+    "value": 68.5,
+    "kind": "resource-goal-plan",
+    "goal": {
+      "id": "tech:blue4:2",
+      "kind": "research_tech",
+      "tileId": "blue4",
+      "blueSlot": 2,
+      "required": {
+        "publicity": 6
+      },
+      "publicityData": true,
+      "targetComputerSlot": 2
+    },
+    "resourceGoalCount": 11,
+    "completion": "complete"
+  },
+  "nativeInputs": 102,
+  "milliseconds": 194.40412500000002,
+  "scope": "Both complete in current turn under existing fixed policies; this does not prove global future superiority or that teacher must be imitated. Next compare native residual assets and purpose-specific next-turn rewards."
+}

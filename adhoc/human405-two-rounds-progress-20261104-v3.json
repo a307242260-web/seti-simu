@@ -2,7 +2,7 @@
   "goalStatus": "active",
   "goalAchieved": false,
   "parentCommit": "1cdfdb0021512c02a967af1cfa503634986cfa75",
-  "phase": "v125-rule-fix-admitted-first2-run-pending",
+  "phase": "v125-first2-completed-invested-asset-gap-remains",
   "scopeOverride": "User: round end excludes PASS card and next income; both next start. Compare resources and invested assets in addition to board/tech/income.",
   "fixed": "DLC37 allMatching and DLC22 repeat dropped in native scan conversion",
   "teacherReference": "reports/ai-foundation-20261104/two-rounds-teacher-v2/conditional-scan-teacher-replay-20261104-v1.json",
@@ -13,6 +13,17 @@
   "historicalTeacherV1Preserved": true,
   "coldGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v125-current-teacher-serial-gate-20261104-v1.json",
   "parallelOverrunSampleRetained": true,
-  "newAutonomousFirst2Pending": true,
-  "nextAction": "One source-bound standard first2 run after commit; compare native round-end score/tech/income/current money-energy-data/positioned probes/scans/alien pending rewards. Do not treat rule correction or higher score alone as goal completion."
+  "newAutonomousFirst2Pending": false,
+  "nextAction": "At actual AI input83, compare native closed DLC37 play value66 against funded research blue4 value68.5, residual scan progress/technology/income/resources and next-turn mission opportunities; candidate is present. Add purpose-specific future value only with native support, consistent previews/proofs; no weights chosen to force imitation. Never rerun v125 same source scenario.",
+  "sourceCommit": "4ec5d3d723826c5a4784c08f96daae998d434081",
+  "record": "reports/research/756a2bff.4ec5d3d7.quick-400.json",
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v125-first2-native-verification-20261104-v1.json",
+  "nativeActionsAndAssetsUnchangedFromV124": true,
+  "aiScores": [
+    27,
+    35
+  ],
+  "actualWallMs": 2834,
+  "nextFixture": "adhoc/human405-two-rounds-20261104-v2/ai-v125-step083-research-preparation-20261104-v1.json",
+  "nextDiagnostic": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v125-dlc37-choice-diagnosis-20261104-v1.json"
 }

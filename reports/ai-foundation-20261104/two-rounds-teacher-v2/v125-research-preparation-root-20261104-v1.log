@@ -1,0 +1,2 @@
+{"fixture":"adhoc/human405-two-rounds-20261104-v2/ai-v125-step083-research-preparation-20261104-v1.json","knownDlc37PlayPresent":true,"resources":{"additionalPublicScan":0,"aomomoFossils":0,"availableData":1,"credits":4,"energy":0,"handSize":4,"publicity":2,"score":31},"hand":["dlc_9.png","dlc_4.png","dlc_39.png","dlc_37.png"]}
+{"label":"actual083-research-preparation","inputs":102,"ms":194.40412500000002,"complete":true,"value":68.5}
