@@ -1,0 +1,42 @@
+{
+  "baseCommit": "a3a5cb95d348e17fc5b318a64b92d88de6aa85d0",
+  "productionUnchanged": true,
+  "productionRuntime": "v178 / V16",
+  "productionTrackedRuntimeToolsAssetsChecked": 908,
+  "candidates": [
+    "v180 / V18",
+    "v181 / V18"
+  ],
+  "candidateAdmitted": false,
+  "officialRuns": 0,
+  "v180Cold": {
+    "uniqueRoots": 169,
+    "maxInputs": 252,
+    "maxMs": 550.3635830000001,
+    "overruns": 0
+  },
+  "v181Cold": {
+    "uniqueRoots": 169,
+    "maxInputs": 252,
+    "maxMs": 623.224334,
+    "overruns": 1
+  },
+  "v180FullNode": {
+    "passed": 157,
+    "failed": 13,
+    "fullFlowPassed": 1
+  },
+  "v181FocusedPassed": 4,
+  "v181ChromePassed": 2,
+  "v181InputParityCheckpoints": 3,
+  "fullAuditPassed": false,
+  "versionAndRecordCountsUnchanged": true,
+  "foreignV1Preserved": true,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "whitespaceExemptions": [
+    "reports/ai-foundation-20261104/candidate-v180-computer-preinvestment-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/candidate-v181-computer-preinvestment-20261105-v1/randomizer/game/ai/decision-search.js"
+  ],
+  "goalStatus": "active",
+  "goalAchieved": false
+}

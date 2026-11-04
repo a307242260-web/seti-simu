@@ -1,0 +1,8 @@
+{"computerPreinvestment":"passed","nativeInputs":6,"retainedCredit":3.6666666666666665,"retainedTeacherTotal":69.16666666666667,"consumedAnalysisTotal":68.5,"commonNativeSuffixInputs":46,"noImmediateAnalysisInvented":true,"noDoubleClaimAfterClear":true,"stateObservationParity":true,"rootAndRngRestored":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"missionDataContinuation":"passed","controlledRoots":80,"nativePlans":75,"nativeInputs":580,"fullMissionValue":68.16666666666667,"occupiedAndUnknownRewardsExcluded":true,"rootAndRngRestored":true}
+{"knownSectorAndAnalysis":"passed","nativeInputs":10,"stablePrefixes":5,"moneyControls":84,"value":75.5,"sectorCapital":14,"preparedAnalysisCapital":4.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+SUMMARY unit passed=4 failed=0 total=4 time=4.66s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=3

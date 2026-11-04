@@ -1,0 +1,109 @@
+{
+  "scope": "Diagnostic CPU profile; not acceptance timing and never substitutes the first623.224334ms sample",
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v181-case105-cpu-profile-20261105-v1.json.gz",
+  "samples": 612,
+  "topSelfFunctions": [
+    {
+      "file": "js_transferable",
+      "function": "structuredClone",
+      "samples": 58
+    },
+    {
+      "file": "analysis-port.js",
+      "function": "normalize",
+      "samples": 36
+    },
+    {
+      "file": "",
+      "function": "(garbage collector)",
+      "samples": 35
+    },
+    {
+      "file": "state-store.js",
+      "function": "stableSerialize",
+      "samples": 20
+    },
+    {
+      "file": "realm",
+      "function": "compileForInternalLoader",
+      "samples": 14
+    },
+    {
+      "file": "core.js",
+      "function": "getNebulaLocations",
+      "samples": 12
+    },
+    {
+      "file": "low-coupling-slices.js",
+      "function": "visit",
+      "samples": 11
+    },
+    {
+      "file": "loader",
+      "function": "wrapSafe",
+      "samples": 10
+    },
+    {
+      "file": "rule-composition.js",
+      "function": "deepFreeze",
+      "samples": 10
+    },
+    {
+      "file": "state-store.js",
+      "function": "validateSerializableGraph",
+      "samples": 9
+    },
+    {
+      "file": "core.js",
+      "function": "getWheelCellAtDisplayCoordinate",
+      "samples": 9
+    },
+    {
+      "file": "rockets.js",
+      "function": "getSectorOccupancy",
+      "samples": 8
+    },
+    {
+      "file": "analysis-port.js",
+      "function": "forwardIdentity",
+      "samples": 8
+    },
+    {
+      "file": "high-coupling-slices.js",
+      "function": "scanForbidden",
+      "samples": 7
+    },
+    {
+      "file": "production-kernel.js",
+      "function": "",
+      "samples": 6
+    },
+    {
+      "file": "production-kernel.js",
+      "function": "buildTopologyBody",
+      "samples": 6
+    },
+    {
+      "file": "session-runtime.js",
+      "function": "stableSerialize",
+      "samples": 6
+    },
+    {
+      "file": "resource-demand.js",
+      "function": "immutableCapitalInput",
+      "samples": 6
+    },
+    {
+      "file": "low-coupling-slices.js",
+      "function": "validateForbiddenFields",
+      "samples": 5
+    },
+    {
+      "file": "probe-capital.js",
+      "function": "requirements",
+      "samples": 5
+    }
+  ],
+  "arithmeticSelfSamples": 2,
+  "nextInvestigation": "Identity normalization and immutable state copying dominate this profile; do not attribute the overrun to arithmetic without evidence. Preserve exact identity/session-reference relations while considering immutable-subtree reuse."
+}

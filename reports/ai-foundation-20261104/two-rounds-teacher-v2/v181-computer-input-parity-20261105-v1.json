@@ -1,0 +1,30 @@
+{
+  "status": "complete",
+  "runtime": "seti-complete-decision-search-v181",
+  "valueModel": "seti-purpose-capital-state-value-v18",
+  "nativeInputs": 0,
+  "scope": "Existing native envelopes only; raw/formal/compact/state-backed parity of retained, prepared and consumed computer assets; no search or new game experiment",
+  "rows": [
+    {
+      "name": "retained",
+      "total": 69.16666666666667,
+      "analysisPotential": 3.6666666666666665,
+      "formalAndCompactAndStateEqual": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "name": "prepared",
+      "total": 68.5,
+      "analysisPotential": 4.5,
+      "formalAndCompactAndStateEqual": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "name": "consumed",
+      "total": 68.5,
+      "analysisPotential": 0,
+      "formalAndCompactAndStateEqual": true,
+      "rootAndRngUnchanged": true
+    }
+  ]
+}

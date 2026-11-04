@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V179 native tradeoff and169-root evidence preserved; intervening user request delivered20boards without changing goal runtime",
+  "thisGoalTurnClassification": "progress:46-input native suffix proves paid computer asset; V180 restores root39 orbit,169cold roots pass,fullNode157/170; V181 fixes real finite-value range regression,4focused units and3native input paths and2Chrome pass;169cold roots reveal one623ms overrun and CPU profile changes next performance investigation",
+  "productionRuntime": "v178 / V16",
+  "productionSourceCommit": "9491f13ba33be484b737123b8c25172602b67b00",
+  "actualRecord": "reports/research/e987ead2.9491f13b.quick-400.json",
+  "actualScores": [
+    15,
+    43
+  ],
+  "actualWallMs": 4180,
+  "specificTechnologyAndSixIncomesEqualBothRounds": true,
+  "candidateRuntime": "v181 / V18",
+  "candidateAdmitted": false,
+  "candidateSnapshot": "reports/ai-foundation-20261104/candidate-v181-computer-preinvestment-20261105-v1/manifest.json",
+  "candidateNamedColdCases": 172,
+  "candidateUniqueColdRoots": 169,
+  "candidateMaxInputs": 252,
+  "candidateMaxMs": 623.224334,
+  "candidateAllSearchesComplete": true,
+  "candidateFullNode": {
+    "version": "v180",
+    "passed": 157,
+    "failed": 13,
+    "total": 170,
+    "fullFlowPassed": 1,
+    "v181RecheckedRangeFix": true,
+    "otherTwelveObligationsPending": true
+  },
+  "candidateOfficialRuns": 0,
+  "candidateChromeRun": true,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "Resolve measured identity normalization/copying overhead without changing exact native/session/RNG equivalence. Keep first623.224ms failure; do not resample.",
+    "Review12 remaining V180 regression obligations and four new independent-input audit failures; validate asset attribution and fixed-plan recovery natively instead of replacing expected numbers mechanically.",
+    "Only after performance and required current behaviors pass, run one registered autonomous first2 and compare all teacher assets. ProductionV17815/43 and V41baseline remain authoritative."
+  ],
+  "candidateColdOverruns": 1,
+  "candidateChromePassed": 2,
+  "candidateFocusedPassed": 4,
+  "candidateInputParityCheckpoints": 3,
+  "candidatePerformanceAdmitted": false,
+  "cpuProfile": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v181-case105-profile-summary-20261105-v1.json"
+}
