@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress:V178 admission and unique115-input autonomous first2 matched technology and six incomes, isolated next reserve-tool tie",
+  "thisGoalTurnClassification": "progress: disproved reserve-only fix with25-input cold root; proved24-input analysis-prep,10-input known-tool continuation plus retained6-input prefix; candidate V179 changes R2first action to scan but also R1root39;169 distinct cold roots pass;169unit six failures retained;19-input R1tradeoff exposes spent computer preparation as next asset question",
+  "productionRuntime": "v178 / V16",
+  "productionSourceCommit": "9491f13ba33be484b737123b8c25172602b67b00",
+  "actualRecord": "reports/research/e987ead2.9491f13b.quick-400.json",
+  "actualScores": [
+    15,
+    43
+  ],
+  "actualWallMs": 4180,
+  "specificTechnologyAndSixIncomesEqualBothRounds": true,
+  "candidateRuntime": "v179 / V17",
+  "candidateAdmitted": false,
+  "candidateSnapshot": "reports/ai-foundation-20261104/candidate-v179-known-sector-analysis-20261105-v1/manifest.json",
+  "candidateNamedColdCases": 172,
+  "candidateUniqueColdRoots": 169,
+  "candidateMaxInputs": 240,
+  "candidateMaxMs": 532.9394580000001,
+  "candidateAllSearchesComplete": true,
+  "candidateFullNode": {
+    "passed": 163,
+    "failed": 6,
+    "total": 169,
+    "fullFlowPassed": 1
+  },
+  "candidateOfficialRuns": 0,
+  "candidateChromeRun": false,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "Reconcile the value of retained computer1-4 preparation against consuming six computer data for real analysis. The new payoff is native-valid; do not hardcode teacher root39 or change old assertions solely to admit.",
+    "Review all six regression obligations: distinguish scope refusal, model amount changes and first-round strategy change. Candidate169-root gate passed but quality admission did not.",
+    "Keep V178 production, existing15/43 record and V41 baseline. Start next genuine changed candidate atV180; preserve V179 full overlay and first samples. No new autonomous run until required checks and asset-value evidence are ready."
+  ]
+}

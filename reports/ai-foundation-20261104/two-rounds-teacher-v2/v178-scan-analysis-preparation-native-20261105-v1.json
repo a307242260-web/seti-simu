@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-round2-reserve-choice-native-20261105-v1.json",
+  "sourceSha256": "24fd5c0d6b31ebab9d1869eacdf89a302e45cfc01a69f1bbfbfdac4b02e9f2e3",
+  "scope": "Finite native scan with known purple4 launch, then two existing-data preparation placements and analysis. Reuses saved controlled R2 roots; no game or new search.",
+  "maximumNativeInputs": 48,
+  "rows": [],
+  "nativeInputs": 12,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 10\n\n    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/witness-v178-scan-analysis-preparation-20261105-v1.js:8:411)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+}

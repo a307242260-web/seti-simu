@@ -1,0 +1,5 @@
+{"nativeFundedControls":176,"unfunded":16,"nativeInputs":824,"moneyMonotone":true,"stateObservationParity":true,"rootAndRngUnchanged":true}
+ready analysis and research ordering share funded portfolio value with immutable native inputs
+SUMMARY unit passed=1 failed=0 total=1 time=6.65s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

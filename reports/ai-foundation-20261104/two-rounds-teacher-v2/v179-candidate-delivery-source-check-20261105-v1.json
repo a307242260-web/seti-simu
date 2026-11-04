@@ -1,0 +1,29 @@
+{
+  "baseCommit": "0f67d6269e4fab877e046bca496791f7375b99ad",
+  "productionUnchanged": true,
+  "productionRuntime": "v178 / V16",
+  "productionTrackedRuntimeToolsAssetsChecked": 908,
+  "candidateOnly": "v179 / V17",
+  "candidateAdmitted": false,
+  "candidateSourceModules": 93,
+  "candidateOverlayFiles": 12,
+  "namedColdCases": 172,
+  "uniqueColdRoots": 169,
+  "maxInputs": 240,
+  "maxMs": 532.9394580000001,
+  "fullNodePassed": 163,
+  "fullNodeFailed": 6,
+  "fullFlowPassed": 1,
+  "candidateChromeRun": false,
+  "candidateOfficialRuns": 0,
+  "actualV178RecordUnchanged": "e987ead2.9491f13b.quick-400.json",
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "versionAndRecordCountsUnchanged": true,
+  "foreignV1Preserved": true,
+  "exactArchiveWhitespaceExemptions": [
+    "reports/ai-foundation-20261104/candidate-v179-known-sector-analysis-20261105-v1/randomizer/game/ai/decision-search.js"
+  ],
+  "archiveWhitespaceReason": "Two inherited blank-line spaces in exact decision-search source; preserve runtime SHA. All other new artifacts retain strict diff check.",
+  "goalStatus": "active",
+  "goalAchieved": false
+}
