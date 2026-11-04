@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "phase": "v129-first2-completed-unchanged-native-route",
+  "scopeOverride": "Round end excludes PASS card selection AND next income; both next start. Compare board, exact technology, permanent income, resources and invested assets.",
+  "sourceCommit": "28f4e95ca1e9022f9db49342ada94c37b6f4f98f",
+  "record": "reports/research/35f648b3.28f4e95c.quick-400.json",
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-native-verification-20261104-v1.json",
+  "aiBoardScores": [
+    27,
+    35
+  ],
+  "teacherCurrentRulesScores": [
+    15,
+    34
+  ],
+  "aiIncomeCHE": [
+    4,
+    2,
+    2
+  ],
+  "teacherIncomeCHE": [
+    6,
+    2,
+    1
+  ],
+  "actualWallMs": 2859,
+  "actualMaxNativeInputs": 102,
+  "actualMaxMilliseconds": 169.907584,
+  "all95ActionsAndEndStateRngIdenticalToV125": true,
+  "newAutonomousFirst2Pending": false,
+  "nextFixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json",
+  "nextNativeWitness": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-orbit-land-native-assets-20261104-v1.json",
+  "nextAction": "ActualAI input44 has12technology edges: blue1=62, blue2=61; blue2 not omitted. Native-reconstruct both research routes and fixed own-turn continuations, then audit first-take/known-card purpose/blue-slot fulfillment and information barrier. Do not force teacher future-refill card into current market. v129 same-scenario rerun prohibited.",
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "nextDiagnostic": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first-blue-choice-diagnosis-20261104-v1.json"
+}

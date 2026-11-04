@@ -1,0 +1,249 @@
+{
+  "sourceCommit": "28f4e95ca1e9022f9db49342ada94c37b6f4f98f",
+  "record": "reports/research/35f648b3.28f4e95c.quick-400.json",
+  "recordSha256": "b0a66807b86bd626ca0446a4f548403292d81927a30b5b122f1b3cd93ee620ea",
+  "input": 44,
+  "searchComplete": true,
+  "unresolved": [],
+  "selectedBlue1": 62,
+  "teacherStyleBlue2": 61,
+  "blue2CandidatePresent": true,
+  "choices": [
+    {
+      "tileId": "blue1",
+      "goal": {
+        "id": "tech:blue1:1",
+        "kind": "research_tech",
+        "tileId": "blue1",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:509236e8"
+      ],
+      "childNode": 11,
+      "value": 62,
+      "status": "stable"
+    },
+    {
+      "tileId": "blue2",
+      "goal": {
+        "id": "tech:blue2:1",
+        "kind": "research_tech",
+        "tileId": "blue2",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:3fcecb14",
+        "choose_card:ecb525ad"
+      ],
+      "childNode": 12,
+      "value": 61,
+      "status": "stable"
+    },
+    {
+      "tileId": "blue3",
+      "goal": {
+        "id": "tech:blue3:1",
+        "kind": "research_tech",
+        "tileId": "blue3",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:ad894514",
+        "choose_card:ecb525ad"
+      ],
+      "childNode": 13,
+      "value": 58,
+      "status": "stable"
+    },
+    {
+      "tileId": "blue4",
+      "goal": {
+        "id": "tech:blue4:1",
+        "kind": "research_tech",
+        "tileId": "blue4",
+        "blueSlot": 1,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d9ba91f0"
+      ],
+      "childNode": 14,
+      "value": 61,
+      "status": "stable"
+    },
+    {
+      "tileId": "orange1",
+      "goal": {
+        "id": "tech:orange1:",
+        "kind": "research_tech",
+        "tileId": "orange1",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:03fdb62d",
+        "choose_card:ecb525ad"
+      ],
+      "childNode": 15,
+      "value": 50.5,
+      "status": "stable"
+    },
+    {
+      "tileId": "orange2",
+      "goal": {
+        "id": "tech:orange2:",
+        "kind": "research_tech",
+        "tileId": "orange2",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:70b9a53f"
+      ],
+      "childNode": 16,
+      "value": 53.5,
+      "status": "stable"
+    },
+    {
+      "tileId": "orange3",
+      "goal": {
+        "id": "tech:orange3:",
+        "kind": "research_tech",
+        "tileId": "orange3",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:22eefebd"
+      ],
+      "childNode": 17,
+      "value": 59.5,
+      "status": "stable"
+    },
+    {
+      "tileId": "orange4",
+      "goal": {
+        "id": "tech:orange4:",
+        "kind": "research_tech",
+        "tileId": "orange4",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:a16882e3"
+      ],
+      "childNode": 18,
+      "value": 53.5,
+      "status": "stable"
+    },
+    {
+      "tileId": "purple1",
+      "goal": {
+        "id": "tech:purple1:",
+        "kind": "research_tech",
+        "tileId": "purple1",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:405d1e5d"
+      ],
+      "childNode": 19,
+      "value": 51,
+      "status": "stable"
+    },
+    {
+      "tileId": "purple2",
+      "goal": {
+        "id": "tech:purple2:",
+        "kind": "research_tech",
+        "tileId": "purple2",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:66c1a4bb"
+      ],
+      "childNode": 20,
+      "value": 50,
+      "status": "stable"
+    },
+    {
+      "tileId": "purple3",
+      "goal": {
+        "id": "tech:purple3:",
+        "kind": "research_tech",
+        "tileId": "purple3",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d57e0409",
+        "choose_card:ecb525ad"
+      ],
+      "childNode": 21,
+      "value": 50.5,
+      "status": "stable"
+    },
+    {
+      "tileId": "purple4",
+      "goal": {
+        "id": "tech:purple4:",
+        "kind": "research_tech",
+        "tileId": "purple4",
+        "blueSlot": null,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "steps": [
+        "research_tech:806ccfc8",
+        "choose_target:d0b75b83"
+      ],
+      "childNode": 22,
+      "value": 51.5,
+      "status": "stable"
+    }
+  ],
+  "productionFixed": false,
+  "goalStatus": "active",
+  "nextAction": "Reconstruct both native research paths and their complete own-turn value/remaining assets. Audit first-take reward, known picked-card purpose, blue-slot fulfillment, and the information barrier before changing forecasts. Root summaries aggregate12goals under one first action; inspect actual edges, not only roots.",
+  "limitation": "AI input44 and teacher research input35 differ in prior actions and resources. A1point current-turn value gap is not proof of whole-round superiority."
+}

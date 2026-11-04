@@ -1,0 +1,60 @@
+{
+  "baseCommit": "28f4e95ca1e9022f9db49342ada94c37b6f4f98f",
+  "files": {
+    "adhoc/capture-v129-mission-choice-root-20261104-v1.js": "434465ebc5cae2e8bd65c70be72392e3d14adc944ad13bb7d6bde7f04ced07e2",
+    "adhoc/deliver-human405-v129-first2-result-20261104-v1.py": "6f7a3c6e039850fea31603df551d4093246a976c49e614d12ee275f55f72786b",
+    "adhoc/diagnose-v129-first-blue-choice-20261104-v1.js": "6109d8ab6b322d04beefd49ec4f1a31523ae94133426f6ed82d14e52877eeb58",
+    "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json": "50b7665513420d033739440bf535200f6187ca5fafed77cd4623cdb266f55326",
+    "adhoc/human405-two-rounds-progress-20261104-v6.json": "5c250e39e82656477f60a3bf5160bec3ac731fac1883d076a1362da9339271d5",
+    "adhoc/prepare-v129-first2-root-overlays-20261104-v1.js": "b3293ac1d720d97602354740961f0977b5af2f68c8c5b08d35b8833500164248",
+    "adhoc/verify-human405-v129-first2-20261104-v1.js": "3975c96b018d08d6747e27ca6c4f24ee2858a3db0aa4052e9806bf8435a7be5f",
+    "adhoc/witness-v129-mission-assets-20261104-v1.js": "a76088f7f1c7cde85f75fa234f113c66446a85dc4253116f4e60b50742ace56a",
+    "docs/ai-design.md": "10ed09c63761a7b79a8c8563ea51a9667c242256cad84a90e67df41cfb7e4e14",
+    "docs/ai-funded-travel-v129-20261104.md": "346ff21072f356109243f9bfedd43cc2ebe688dc147f0c9882e58143e4e26d0c",
+    "reports/ai-foundation-20261023/human405-v129-cold-actual050-mission-choice-20261104-v1.json": "4d56aebb6f6aad15ec7627ce80d726565e4ca009ca16e0f69fa7b20f1623f59a",
+    "reports/ai-foundation-20261023/human405-v129-cold-actual050-mission-choice-20261104-v1.raw.json.gz": "d358e8d12668322fd4e2fb51b4d5a7d23359d7c589794130fcf21abf6d631486",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first-blue-choice-diagnosis-20261104-v1.json": "bfd6ebff996a941ae5713fdfe9a3dbdaac30b6e036cb7b6241fff008891efb0d",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first-blue-choice-diagnosis-20261104-v1.log": "1ff8f6df5c587610d4116f5067276a2ac1726881cfac29eaa2cef1d4b6f9a55b",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-live-20261104-v1.log": "9698657b26d879c48ee2cde8cf3726ea09ae40806f7375716de373a394b41c7e",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-native-verification-20261104-v1.json": "9f19c1fe08941e4b01f50a2fe7805c57e836de8e5f1ad59873d291c0b36d1039",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-native-verification-20261104-v1.log": "cd5d10cf515296d20f1eab94e08ffc02a3af59ffd999712da36cf0751fa3ca05",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-record-inventory-20261104-v1.log": "92d01d836f266359830f38f65003b99af06b5e5951f42c3ee1abc2140ad2b723",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-registry-build-20261104-v1.log": "0f6a13b9beb0602fd4904acaeefefc084538358ca14065fa368de10b4786fd8f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-first2-result-source-check-20261104-v1.json": "1f540da859bd326fe0f3c6fc8e5908038419dcde3539659b33e831908e2eea57",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-mission-choice-cold-20261104-v1.log": "aae3ae25a0f1d8d22d0b2e7f147853c4d3c204be3bb02313399db13e2f5f062e",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-mission-choice-root-20261104-v1.log": "4af1e06a43c4c5f3cee0ac96bce2620bb070e84e19cc3eb4940ab7c9c6a676bf",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-orbit-land-native-assets-20261104-v1.json": "52afaf13d168eead0ec923d5c14652603f7c74d438833c213eb926f2547ed90d",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-orbit-land-native-assets-20261104-v1.log": "91bf7365325762f5fb53ed8a97d8c70267fbefcad594d86ff16a88b0e1be808a",
+    "reports/iteration/ai-search-v129-white-first2-20261104/35f648b3.28f4e95c.quick-400.action-log.html": "2a1bcd29ddba914cfae619dcbc06cfd21f5573e6da95bb1e1058b0dd78f116ee",
+    "reports/iteration/registry.json": "41c15a728e880a54355f8bcea1b3306c40d36d3ea725a278353feaaca00cff62",
+    "reports/iteration/versions.json": "ea7b55d8e05bd33fac5f731cf1b7ec7a6fe58a1ec775bb7283df2bfb906a57d1",
+    "reports/research/35f648b3.28f4e95c.quick-400.json": "b0a66807b86bd626ca0446a4f548403292d81927a30b5b122f1b3cd93ee620ea",
+    "reports/research/35f648b3.28f4e95c.quick-400.json.decisions.jsonl": "a17c533fa7c7b9271ea3326f3f1da4997d405016805b00eaf4b651b040e3ad7a",
+    "reports/research/35f648b3.28f4e95c.quick-400.json.round-end-1.checkpoint.json": "329a2b6cd61ce8b7747e282f36397a5040b27c35a5cd6256f5373c78dac57917",
+    "reports/research/35f648b3.28f4e95c.quick-400.json.round-end-2.checkpoint.json": "9c0f0b12d63fca1df50cfcb7b387586b973ca0b1d91c36ce350887acd45c5c68",
+    "reports/research/35f648b3.28f4e95c.quick-400.json.round-ends.jsonl": "b3d5a09b4b6c133d3a7b27252e7fd0c2ee0dd870444536ab6f7944b25004cb83",
+    "reports/robot-iteration.html": "ba82e016847533eafdc341a039468a263b0a31b716a5258082d5ac02e09ffe3e",
+    "seti-saves/seti-save-research-ai-search-v129-white-first2-20261104-28f4e95c-quick-400-v41.json": "c111896fec9c19f983f0a251d775f7bf728e59f321cd20f34c565779b756461e"
+  },
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "9afc870e97faf49eba1acf658c1e295a66a6ae6e87a49ade248545358a76fab5",
+      "path": "/private/tmp/seti-v129-first2-root-overlays-20261104/versions.json",
+      "sha256": "5fa81fa1ead2cce236bc61d1cf33f2fae380c7f14206b980d506208e7d991021"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "350002660b2ee44d36cb2e1ac61c80ce33767d38632cb7a39cb1d58f416e4d3e",
+      "path": "/private/tmp/seti-v129-first2-root-overlays-20261104/registry.json",
+      "sha256": "cdc0262e274076bd43fbefc47f0391a83febaf43271ce54f5fb6e43b11fb96d4"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "996796d8d409e555a369125923907acbbb5bcb009a591627bfadb2300f57c018",
+      "path": "/private/tmp/seti-v129-first2-root-overlays-20261104/robot-iteration.html",
+      "sha256": "c19b0e4dc84f35f60e8aa382e086534ef1005afa9bca8ab56b03b9efa073df34"
+    }
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "goalStatus": "active",
+  "goalAchieved": false
+}
