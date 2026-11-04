@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "baseCommit": "66dff952852a88499a7cd4b7a062a25040e799ef",
+  "scope": "Align first2 rounds score, exact technology and income, plus current resources and invested assets. Do not force teacher action imitation.",
+  "userBoundary": "Round end EXCLUDES PASS card selection AND next income. Both belong to next round start. Native pre-PASS snapshots provide the canonical end state.",
+  "canonicalEvidence": "reports/ai-foundation-20261104/two-rounds-teacher-v1/canonical-round-end-assets-20261104-v1.json",
+  "teacherNativeRoots": 67,
+  "teacherRound2NativeRoots": 35,
+  "teacherRound2": {
+    "score": 32,
+    "technology": [
+      "blue1",
+      "blue2",
+      "purple4"
+    ],
+    "incomeMoneyEnergyCards": [
+      6,
+      2,
+      1
+    ],
+    "endMoneyEnergyData": [
+      4,
+      1,
+      0
+    ],
+    "liveProbe": 1,
+    "sectorWins": 1,
+    "alienSlot1OwnColors": [
+      "blue",
+      "pink"
+    ]
+  },
+  "aiV123Round2": {
+    "score": 35,
+    "technology": [
+      "blue1",
+      "blue4",
+      "purple4"
+    ],
+    "incomeMoneyEnergyCards": [
+      4,
+      2,
+      2
+    ],
+    "endMoneyEnergyData": [
+      1,
+      1,
+      0
+    ],
+    "liveProbe": 0,
+    "sectorWins": 0,
+    "alienSlot1OwnColors": [
+      "blue",
+      "yellow"
+    ]
+  },
+  "nextStartSeparate": {
+    "teacherMoneyAfterIncome": 10,
+    "aiMoneyAfterIncome": 5
+  },
+  "investigations": [
+    "probe positioning and scan completion/preparation value",
+    "placed computer data and native reachable rewards",
+    "alien-card pending rewards and missing trace color accessibility; do not leak unknown species",
+    "PASS next-start card DLC18 is valued as unconditional free research despite requireCondition and researchedByOthersOnly"
+  ],
+  "firstProvenBugCandidate": {
+    "fixture": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+    "card": "dlc_18.png",
+    "nativeConditions": "publicity0 and another player owns the technology; other3 never research",
+    "valueV5WrongCapitalAtR2": 5,
+    "teacherAlternative": "b_101.webp",
+    "alternativeCapitalAtR2": 3,
+    "fixed": true
+  },
+  "thirdRoundContext": {
+    "teacherArchivedScore": 105,
+    "aiScore": 42,
+    "teacherReplayCurrentlyStopsAtInput": 163,
+    "currentRulesVerifiedToR3End": false,
+    "withinGoalRounds1and2ReplayValid": true
+  },
+  "nextSafeAction": "Complete full Node regression and value-input audit, isolate commit with existing tests and canonical baseline, then one standard first2 autonomous run with pre-PASS end snapshots. Goal remains active; investigate preparation assets and known mission/card/sector option value next.",
+  "candidate": {
+    "search": "v124",
+    "value": "V6",
+    "admitted": true,
+    "benchmarkRoots": 81,
+    "overruns": [],
+    "maxInputs": 243,
+    "maxMilliseconds": 588.654458,
+    "unitFocused": 7,
+    "chrome": 10,
+    "fullNode": {
+      "unit": 158,
+      "fullFlow": 1,
+      "passed": true
+    }
+  },
+  "scopeOverride": "Latest user boundary supersedes original goal-tool wording: round end excludes both PASS pick and next income; all assets/markers must be compared in addition to score/tech/income."
+}

@@ -12,7 +12,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v5";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v6";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
@@ -78,7 +78,11 @@
     if (round >= 4 || !card?.cardId || card.hidden) return [];
     const play = cardEffects.buildPlayEffects(card);
     if (play.length !== 1 || play[0].type !== "card_research_tech" || !play[0].options?.skipCost
-      || play[0].options.afterResearchReward) return [];
+      || play[0].options.afterResearchReward || play[0].options.requireCondition
+      || play[0].options.researchedByOthersOnly || play[0].options.skipBonus) return [];
+    // This forecast covers unconditional research with the ordinary reward.
+    // Conditional cards remain legal native plans; their future prerequisites
+    // and altered rewards are not proven by the held-card capital model.
     const types = play[0].options.techTypes || techCatalog.TECH_TYPES;
     const cost = Object.entries(cardEffects.getCardPlayCost(card)).reduce((n, [key, amount]) => n + amount * (weights[key] || 0), 0);
     // Paid and held-card options use the same visible one-time stack reward.

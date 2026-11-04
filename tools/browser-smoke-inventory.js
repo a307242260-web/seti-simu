@@ -1020,6 +1020,21 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-conditional-research-capital',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiStateValue && window.SetiAnalysisPort && window.SetiDecisionSearch)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('条件选牌状态恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot();for(const a of root.legalActions){const child=p.expand(root,a.actionId),v=window.SetiStateValue.evaluateStateValue(child.observation,f.seatId);if(a.target.cardId==='dlc_18.png'&&v.components.handPotential!==0)throw Error('条件科技被当成无条件收益');if(a.target.cardId==='b_101.webp'&&v.components.handPotential<=0)throw Error('普通科技用途丢失');}
+      const evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId),r=window.SetiDecisionSearch.searchDecision({...window.SetiSearchAgent.OPTIONS,port:p,root,evaluate,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});
+      if(!r.complete||root.legalActions.find(a=>a.actionId===r.actionId)?.target.cardId!=='b_101.webp'||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('真实页面选牌或原根隔离失败');window.__conditionalResearch={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__conditionalResearch?.ok === true',
+  obligation:'真实页面的条件科技牌不领取尚未证明的普通科技资本，保留原生合法候选并选择可兑现用途',
+  counterexample:'DLC18条件未满足却获得无条件科技奖励，脚本缓存未更新或B101用途被误删',
+}), Object.freeze({
   id:'production-known-pass-card',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiCards && window.SetiStateValue)',
   actionExpression:`(async()=>{

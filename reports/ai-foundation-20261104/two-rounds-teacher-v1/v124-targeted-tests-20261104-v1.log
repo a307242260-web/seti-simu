@@ -1,0 +1,12 @@
+{"conditionalResearchForecast":"passed","rows":[{"cardId":"dlc_18.png","value":62.5,"handCapital":0,"nativeChoices":[]},{"cardId":"b_101.webp","value":64.5,"handCapital":2,"nativeChoices":["orange1","orange2","orange3","orange4"]}],"nativeInputs":4,"searchMs":11.562749999999994,"allChoicesEntered":true,"rootAndRngUnchanged":true}
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+independent state value accounting and strict inputs passed
+{"firstTwoRoundsScenario":true,"endBeforePassCardAndIncome":true,"nativeBeforeExecutionCallback":true,"sourceEndMoney":1,"nextStartMoney":5,"independentIdentityAndDuplicateGuard":true}
+{"frozenV123Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR1":true}
+{"whiteOnlyScenario":"passed","controlledOpening":true,"passiveNativeDecisions":3,"scenarioIdentitySeparated":true}
+{"incompleteSearchAttempts":16,"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchCompleteGames":3,"templateQueries":3,"registrationRejects":2}
+SUMMARY unit passed=7 failed=0 total=7 time=4.86s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=2
+OWNER training/reporting tests=4

@@ -420,7 +420,33 @@ function runValidation(options) {
   let nextRoundToRecord = 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
   let failedTrace = null;
+  const roundEnds = [];
+  let lastRoundEndObservation = null;
   const env = identity.scenario ? scenario.createEnvironment({ onAgentDecision(trace) {
+    const action = trace.context.legalActions.find(a => a.actionId === trace.actionId);
+    if (identity.scenario.roundEndPhase === "before-pass-card-and-income"
+      && trace.context.seatId === identity.scenario.learnerSeat && action?.family === "pass") {
+      const observation = trace.context.observation, round = observation.publicState.roundNumber;
+      const checkpoint = env.createCheckpoint(), checkpointPath = `${recordPath}.round-end-${round}.checkpoint.json`;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`);
+      const state = checkpoint.coreState.compositionEnvelope.session?.session?.workingState
+        || JSON.parse(checkpoint.coreState.committedState);
+      const owner = state.players.players.find(p => p.id === identity.scenario.learnerSeat);
+      const row = { round, phase: identity.scenario.roundEndPhase, beforeInput: steps + 1,
+        checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
+        checkpointSha256: sha256(fs.readFileSync(checkpointPath)), score: owner.resources.score,
+        resources: owner.resources, income: owner.income, technology: owner.techState,
+        hand: owner.hand.map(c => c.cardId), playedCards: owner.reservedCards.map(c => c.cardId),
+        data: owner.dataState, probes: state.pieces.rockets.filter(p => p.playerId === owner.id),
+        sectorWins: state.data.sectorSettlements.winsByPlayerId[owner.id] || [],
+        scanProgress: Object.entries(state.data.nebulae).map(([id, bucket]) => ({ sectorId: id,
+          ownedSlots: bucket.tokens.filter(t => t.replacedByPlayerId === owner.id).map(t => t.slotIndex),
+          capacity: bucket.tokens.length })).filter(p => p.ownedSlots.length),
+        alienTraceSlots: observation.publicState.board.aliens.slots };
+      roundEnds.push(row); lastRoundEndObservation = observation;
+      fs.appendFileSync(`${recordPath}.round-ends.jsonl`, `${JSON.stringify(row)}\n`);
+      console.log(`[轮末-选牌收入前] ${JSON.stringify(row)}`);
+    }
     if (trace.actionId == null) {
       failedTrace = trace;
       fs.mkdirSync(RECORDS_DIR, { recursive: true });
@@ -495,7 +521,7 @@ function runValidation(options) {
     const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
     while (!env.isTerminal() && (limit === null || steps < limit)) {
       const obsBefore = env.observe();
-      if (identity.scenario && scenario.settled(obsBefore)) break;
+      if (identity.scenario && scenario.settled(obsBefore, identity.scenario)) break;
       const seat = obsBefore?.decision?.actorPlayerId || null;
       decisionStartSteps = steps;
       const result = env.runAgentDecision();
@@ -539,7 +565,7 @@ function runValidation(options) {
     }
     terminal = env.isTerminal();
     const finalObs = env.observe();
-    const summary = summaryOf(finalObs);
+    const summary = summaryOf(lastRoundEndObservation || finalObs);
     const wallMs = Date.now() - startedAt;
 
     // ---- 存档（快速验证存档供全盘续跑；全盘存档供复盘/快进）----
@@ -566,8 +592,8 @@ function runValidation(options) {
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       ...(identity.scenario ? { scenario: identity.scenario,
-        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: roundSummaries.map(r => r.round) } : {}) },
-        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (whiteRound1.settled(finalObs) ? "first-round-settled" : "step-limit"),
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: roundSummaries.map(r => r.round) } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
+        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
         scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
       gitCommit: gitCommit(),
@@ -575,6 +601,7 @@ function runValidation(options) {
       stepsLimit: options.full ? null : options.steps,
       terminal,
       wallMs,
+      ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
       ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), wallMsIncludingSourceRound1: wallMs + identity.scenario.continuation.sourceRoundWallMs } : {}),
       resumedFrom,
       resumeStep,
@@ -624,6 +651,7 @@ function runValidation(options) {
         createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpointSteps, stepsLimit: options.steps,
         terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
         ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath) } : {}),
+        ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
         summary: { round: env.observe().publicState.roundNumber, terminal: false, scores: {}, avgScore: null },
         metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
           whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,

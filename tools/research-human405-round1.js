@@ -11,6 +11,7 @@ const cards = require("../randomizer/game/cards/deck");
 const effects = require("../randomizer/game/cards/effects");
 
 const ID = "human405-white-round1-v1";
+const TWO_ROUND_ID = "human405-white-first2-v1";
 const B117_PREFIX_ID = "human405-white-round1-b117-prefix-v1";
 const TEACHER_SAVE = "seti-saves/seti-save-537-merged.json";
 const LEARNER = "player-white";
@@ -49,17 +50,20 @@ function teacherPrefix() {
 }
 
 function describe(identity, options = {}) {
-  if (![ID, B117_PREFIX_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
+  if (![ID, B117_PREFIX_ID, TWO_ROUND_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
   if (options.full) throw new Error("WHITE_ONLY_ROUND1_REQUIRES_QUICK_MODE");
   if (identity.agentType !== "search" || identity.activePlayerCount !== 4
     || identity.seed !== "seti-free-analyze-v1") throw new Error("WHITE_ONLY_ROUND1_CONFIGURATION_INVALID");
   const source = opening();
+  const twoRounds = identity.flags.scenario === TWO_ROUND_ID;
   return {
     id: identity.flags.scenario, learnerSeat: LEARNER, learnerAgentType: "search", hostAgentFactory: "custom-seat-roles",
     opponentPolicyVersion: OPPONENT_VERSION, opponentReserveRule: "historical-preference-if-offered-otherwise-stable-action-id",
     roles: { "player-white": "shared-search", "player-green": "pass-only", "player-blue": "pass-only", "player-brown": "pass-only" },
-    openingInputs: 23, openingCheckpointSha256: source.sha256, stopAfterRound: 1,
-    comparisonScope: "white-only-first-round", scoreSemantics: "provisional-after-round1-settlement",
+    openingInputs: 23, openingCheckpointSha256: source.sha256, stopAfterRound: twoRounds ? 2 : 1,
+    comparisonScope: twoRounds ? "white-only-first-two-rounds" : "white-only-first-round",
+    scoreSemantics: twoRounds ? "provisional-before-end-card-and-next-income" : "provisional-after-round1-settlement",
+    ...(twoRounds ? { roundEndPhase: "before-pass-card-and-income" } : {}),
     decisionGate: { nativeInputs: 256, milliseconds: 600 },
     ...(identity.flags.scenario === B117_PREFIX_ID ? {
       openingInputs: 27, originalOpeningInputs: 23, controlledPrefix: teacherPrefix().provenance,
@@ -150,10 +154,10 @@ function initialize(env, config, metadata) {
     assert.equal(env.observe().publicState.currentPlayerId, "player-green");
     return env.createCheckpoint().replaySteps;
   }
-  assert.equal(metadata.id, ID, "RESEARCH_SCENARIO_UNKNOWN");
+  assert([ID, TWO_ROUND_ID].includes(metadata.id), "RESEARCH_SCENARIO_UNKNOWN");
   return checkpoint.replaySteps;
 }
 
-function settled(observation) { return observation.publicState.roundNumber > 1; }
+function settled(observation, metadata = {}) { return observation.publicState.roundNumber > (metadata.stopAfterRound || 1); }
 
-module.exports = { ID, B117_PREFIX_ID, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };
+module.exports = { ID, TWO_ROUND_ID, B117_PREFIX_ID, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };

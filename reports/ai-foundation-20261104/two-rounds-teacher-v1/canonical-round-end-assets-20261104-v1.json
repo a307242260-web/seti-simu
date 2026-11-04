@@ -1,0 +1,677 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "boundaryDefinition": "User20261104: round end excludes PASS-card selection AND next-round income; both belong to next round start. Native snapshots are taken immediately before white PASS, no subtraction or fabricated successor.",
+  "sources": {
+    "teacher": {
+      "source": "seti-saves/seti-save-537-merged.json",
+      "sourceSha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+      "rounds": [
+        {
+          "phase": "round-action-end-before-pass-card-and-next-income",
+          "round": 1,
+          "score": 15,
+          "technology": {
+            "blueBoardSlots": {
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue2": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 3,
+            "score": 15
+          },
+          "hand": [],
+          "playedCards": [
+            {
+              "id": "card-13-0",
+              "cardId": "b_117.webp"
+            },
+            {
+              "id": "card-15-0",
+              "cardId": "dlc_9.png"
+            }
+          ],
+          "data": {
+            "pool": [],
+            "computer": [
+              {
+                "id": "data-token-1",
+                "index": 1,
+                "placementKind": "computer",
+                "placementSlot": 1
+              },
+              {
+                "id": "data-token-2",
+                "index": 2,
+                "placementKind": "computer",
+                "placementSlot": 2
+              },
+              {
+                "id": "data-token-3",
+                "index": 3,
+                "placementKind": "computer",
+                "placementSlot": 3
+              },
+              {
+                "id": "data-token-4",
+                "index": 4,
+                "placementKind": "computer",
+                "placementSlot": 4
+              }
+            ],
+            "blue": [
+              {
+                "blueSlot": 1,
+                "id": "data-token-11",
+                "index": 5,
+                "placementKind": "blueBonus"
+              }
+            ],
+            "discarded": 0
+          },
+          "probes": [],
+          "planetMarkers": [
+            {
+              "planet": "jupiter",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            },
+            {
+              "planet": "mars",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            }
+          ],
+          "scanProgress": [
+            {
+              "sectorId": "sector-2-a",
+              "ownedSlots": [
+                1,
+                2
+              ],
+              "capacity": 6
+            },
+            {
+              "sectorId": "sector-4-b",
+              "ownedSlots": [
+                1
+              ],
+              "capacity": 5
+            }
+          ],
+          "sectorWins": [],
+          "alienTraceSlots": [
+            {
+              "slotId": 1,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                }
+              }
+            },
+            {
+              "slotId": 2,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "neutral": false,
+                  "ownerPlayerColor": "blue"
+                }
+              }
+            }
+          ],
+          "beforeInput": 61,
+          "checkpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-round1-end-before-pick-income-20261104-v1.checkpoint.json",
+          "checkpointSha256": "b961447987ddec07a6037b292180d4a79eacbd491781afe878d6787d6b39394a"
+        },
+        {
+          "phase": "round-action-end-before-pass-card-and-next-income",
+          "round": 2,
+          "score": 32,
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 32
+          },
+          "hand": [],
+          "playedCards": [
+            {
+              "id": "card-13-0",
+              "cardId": "b_117.webp"
+            },
+            {
+              "id": "card-15-0",
+              "cardId": "dlc_9.png"
+            }
+          ],
+          "data": {
+            "pool": [],
+            "computer": [
+              {
+                "id": "data-token-16",
+                "index": 9,
+                "placementKind": "computer",
+                "placementSlot": 1
+              }
+            ],
+            "blue": [
+              {
+                "blueSlot": 1,
+                "id": "data-token-17",
+                "index": 10,
+                "placementKind": "blueBonus"
+              }
+            ],
+            "discarded": 0
+          },
+          "probes": [
+            {
+              "angleDegrees": -22.5,
+              "color": "white",
+              "id": 4,
+              "launchGrid": {
+                "x": 1,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 1,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 227.66,
+              "sectorX": 1,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "planetMarkers": [
+            {
+              "planet": "jupiter",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            },
+            {
+              "planet": "mars",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            }
+          ],
+          "scanProgress": [
+            {
+              "sectorId": "sector-4-b",
+              "ownedSlots": [
+                1
+              ],
+              "capacity": 5
+            }
+          ],
+          "sectorWins": [
+            {
+              "sectorId": "sector-2-a",
+              "settlementNumber": 1
+            }
+          ],
+          "alienTraceSlots": [
+            {
+              "slotId": 1,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                }
+              }
+            },
+            {
+              "slotId": 2,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "neutral": false,
+                  "ownerPlayerColor": "blue"
+                }
+              }
+            }
+          ],
+          "beforeInput": 105,
+          "checkpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json",
+          "checkpointSha256": "b96f13e6feba70d81b20e8a9014679989e7bda5934fc1318547eb3b5ae2171e7"
+        }
+      ]
+    },
+    "aiV123": {
+      "source": "seti-saves/seti-save-research-ai-search-v123-white-full-20261104-1a78d5d3-full-v80.json",
+      "sourceSha256": "ac6411749ee994ed644eec84cbce94e8311123f21d1b6c56173fee4f377bd96f",
+      "rounds": [
+        {
+          "phase": "round-action-end-before-pass-card-and-next-income",
+          "round": 1,
+          "score": 27,
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 27
+          },
+          "hand": [
+            {
+              "id": "card-15-0",
+              "cardId": "dlc_9.png"
+            }
+          ],
+          "playedCards": [],
+          "data": {
+            "pool": [],
+            "computer": [],
+            "blue": [],
+            "discarded": 0
+          },
+          "probes": [],
+          "planetMarkers": [
+            {
+              "planet": "jupiter",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            },
+            {
+              "planet": "mars",
+              "type": "landingMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            }
+          ],
+          "scanProgress": [
+            {
+              "sectorId": "sector-2-a",
+              "ownedSlots": [
+                1,
+                2
+              ],
+              "capacity": 6
+            }
+          ],
+          "sectorWins": [],
+          "alienTraceSlots": [
+            {
+              "slotId": 1,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                }
+              }
+            },
+            {
+              "slotId": 2,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "neutral": false,
+                  "ownerPlayerColor": "blue"
+                }
+              }
+            }
+          ],
+          "beforeInput": 63,
+          "checkpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v1/aiV123-round1-end-before-pick-income-20261104-v1.checkpoint.json",
+          "checkpointSha256": "cb55b08ab45d8a5ceee1e75f8571bc95b410d44a1a812ce5d2c7def6fd0c4027"
+        },
+        {
+          "phase": "round-action-end-before-pass-card-and-next-income",
+          "round": 2,
+          "score": 35,
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 1,
+              "blue4": 2
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue4": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 35
+          },
+          "hand": [],
+          "playedCards": [
+            {
+              "id": "card-15-0",
+              "cardId": "dlc_9.png"
+            }
+          ],
+          "data": {
+            "pool": [],
+            "computer": [
+              {
+                "id": "data-token-15",
+                "index": 1,
+                "placementKind": "computer",
+                "placementSlot": 1
+              },
+              {
+                "id": "data-token-17",
+                "index": 3,
+                "placementKind": "computer",
+                "placementSlot": 2
+              }
+            ],
+            "blue": [
+              {
+                "blueSlot": 1,
+                "id": "data-token-16",
+                "index": 2,
+                "placementKind": "blueBonus"
+              }
+            ],
+            "discarded": 0
+          },
+          "probes": [],
+          "planetMarkers": [
+            {
+              "planet": "jupiter",
+              "type": "orbitMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            },
+            {
+              "planet": "mars",
+              "type": "landingMarkers",
+              "marker": {
+                "color": "white",
+                "playerId": "player-white"
+              }
+            }
+          ],
+          "scanProgress": [
+            {
+              "sectorId": "sector-1-a",
+              "ownedSlots": [
+                1,
+                2
+              ],
+              "capacity": 5
+            },
+            {
+              "sectorId": "sector-2-a",
+              "ownedSlots": [
+                1,
+                2
+              ],
+              "capacity": 6
+            },
+            {
+              "sectorId": "sector-2-b",
+              "ownedSlots": [
+                1
+              ],
+              "capacity": 5
+            }
+          ],
+          "sectorWins": [],
+          "alienTraceSlots": [
+            {
+              "slotId": 1,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "ownerPlayerColor": "white",
+                  "neutral": false
+                }
+              }
+            },
+            {
+              "slotId": 2,
+              "revealed": false,
+              "alienId": null,
+              "traces": {
+                "blue": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "pink": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                },
+                "yellow": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": true,
+                  "neutral": false,
+                  "ownerPlayerColor": "blue"
+                }
+              }
+            }
+          ],
+          "beforeInput": 94,
+          "checkpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v1/aiV123-round2-end-before-pick-income-20261104-v1.checkpoint.json",
+          "checkpointSha256": "034f4d8a9e64804c42872ecaec21a561801ff27a27672479617c554c55f59009"
+        }
+      ]
+    }
+  }
+}
