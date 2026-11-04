@@ -1,0 +1,2139 @@
+{
+  "status": "complete",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-native-controls-20261104-v2.json",
+  "evidenceSha256": "da36f40c38a438a4a2621f9f57f839b294ecfea930853c79362023c920f21442",
+  "prototypeSha256": "bb8c8dda64c59e7f87899615111e4c2eadc1ff3da3cf20da57bbecc71b22c899",
+  "rows": [
+    {
+      "index": 0,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 1.2553330000000074,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 1,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.07558300000000884,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 2,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.1039999999999992,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 3,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 8.897165999999999,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 4,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.47620799999999974,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 5,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.03195800000000304,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 6,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.04979200000001072,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 7,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 0.5748329999999982,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 8,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.029207999999997014,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 9,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.02637500000000159,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 10,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.04395900000000097,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 11,
+      "spec": {
+        "round": 1,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.9057499999999976,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 12,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.04941599999999369,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 13,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.03558400000000006,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 14,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.04287500000000932,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 15,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.0217919999999907,
+      "value": 7,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 8
+      }
+    },
+    {
+      "index": 16,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.13787499999999397,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 17,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.12437500000000057,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 18,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.16541700000000503,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 19,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.4348329999999976,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 11
+      }
+    },
+    {
+      "index": 20,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.146583000000021,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 21,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.164874999999995,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 22,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.19208399999999415,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 23,
+      "spec": {
+        "round": 1,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.2607089999999914,
+      "value": 2.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 24,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.08291699999998059,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 25,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.08916700000000333,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 26,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.1275410000000079,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 27,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.118791999999985,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 10
+      }
+    },
+    {
+      "index": 28,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.10912500000000591,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 29,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.10329200000001038,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 30,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.1443749999999966,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 31,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.4634590000000003,
+      "value": 2.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 11
+      }
+    },
+    {
+      "index": 32,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.11216600000000199,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 33,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.09812499999998181,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 34,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.14116699999999582,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 35,
+      "spec": {
+        "round": 1,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.5151249999999834,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 14
+      }
+    },
+    {
+      "index": 36,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.04441700000000992,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 37,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.0072499999999990905,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 38,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.01300000000000523,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 39,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 0.34070800000000645,
+      "value": 0.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 7.5,
+        "afterValue": 0.5
+      }
+    },
+    {
+      "index": 40,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.02070800000001327,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 41,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.01887499999997999,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 42,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.03033400000001052,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 43,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 0.29187500000000455,
+      "value": 0.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 7.5,
+        "afterValue": 0.5
+      }
+    },
+    {
+      "index": 44,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.0191250000000025,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 45,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.018541999999996506,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 46,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.0297079999999994,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 47,
+      "spec": {
+        "round": 2,
+        "credits": 0,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 0.6411249999999882,
+      "value": 10,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 10
+      }
+    },
+    {
+      "index": 48,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.022958999999985963,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 49,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.01995900000000006,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 50,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.03170799999998053,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 51,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 0.6826250000000016,
+      "value": 5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 5
+      }
+    },
+    {
+      "index": 52,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.08074999999999477,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 53,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.07779200000001651,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 54,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.12258399999998915,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 55,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.006208000000015,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 9
+      }
+    },
+    {
+      "index": 56,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.10533300000000168,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 57,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.09933399999999892,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 58,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.14179099999998357,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 59,
+      "spec": {
+        "round": 2,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.2290840000000003,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 10
+      }
+    },
+    {
+      "index": 60,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.07758400000000165,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 61,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.07562500000000227,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 62,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.3669999999999902,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 63,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 0,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.0167080000000226,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 8
+      }
+    },
+    {
+      "index": 64,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.16645900000000324,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 65,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.10908399999999574,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 66,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.14137499999998226,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 67,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 1,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.1057910000000106,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 9
+      }
+    },
+    {
+      "index": 68,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.09474999999997635,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 69,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 5,
+        "stock": 4
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.09420900000000643,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 70,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 3
+      },
+      "nativePlans": 0,
+      "quoteMs": 0.15079099999999812,
+      "value": 0,
+      "selected": null
+    },
+    {
+      "index": 71,
+      "spec": {
+        "round": 2,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 7,
+        "stock": 4
+      },
+      "nativePlans": 12,
+      "quoteMs": 1.2894159999999886,
+      "value": 3.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 7.5,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 72,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.10679199999998445,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 73,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.11787499999999795,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 74,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.32270800000000577,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 5.5
+      }
+    },
+    {
+      "index": 75,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.39441700000000424,
+      "value": 14,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 15
+      }
+    },
+    {
+      "index": 76,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.2817090000000064,
+      "value": 3.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 77,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.4339580000000183,
+      "value": 13,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 14
+      }
+    },
+    {
+      "index": 78,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.3674999999999784,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 5.5
+      }
+    },
+    {
+      "index": 79,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.443333999999993,
+      "value": 8.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 11,
+        "afterValue": 15
+      }
+    },
+    {
+      "index": 80,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.22937500000000455,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 81,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.10000000000002274,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 82,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.2664580000000001,
+      "value": 3,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 3.5
+      }
+    },
+    {
+      "index": 83,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.4612079999999992,
+      "value": 7.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 8
+      }
+    },
+    {
+      "index": 84,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.2601669999999956,
+      "value": 2,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 85,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.32354099999997743,
+      "value": 6.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 7
+      }
+    },
+    {
+      "index": 86,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.3117499999999893,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 3.5
+      }
+    },
+    {
+      "index": 87,
+      "spec": {
+        "onlyIncomeCode": 0,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.4372500000000059,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-20-pass-1-1",
+        "linear": 4,
+        "afterValue": 8
+      }
+    },
+    {
+      "index": 88,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.14766700000001265,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 89,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.16466700000000856,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 90,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.14287500000000364,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 91,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.1888749999999959,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 92,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.2699580000000026,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 5.5
+      }
+    },
+    {
+      "index": 93,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.30716599999999517,
+      "value": 14,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 15
+      }
+    },
+    {
+      "index": 94,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.5052920000000256,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 11
+      }
+    },
+    {
+      "index": 95,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.40170899999998255,
+      "value": 14,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 11,
+        "afterValue": 20.5
+      }
+    },
+    {
+      "index": 96,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.11912499999999682,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 97,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.14295800000002146,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 98,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.12629100000000903,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 99,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.16191600000001927,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 100,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.24704099999999585,
+      "value": 3,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 3.5
+      }
+    },
+    {
+      "index": 101,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.33499999999997954,
+      "value": 7.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 8
+      }
+    },
+    {
+      "index": 102,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.48554200000000947,
+      "value": 4.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 8.5
+      }
+    },
+    {
+      "index": 103,
+      "spec": {
+        "onlyIncomeCode": 1,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.45220800000001304,
+      "value": 9,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-18-0",
+        "linear": 4,
+        "afterValue": 13
+      }
+    },
+    {
+      "index": 104,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.08575000000001864,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 105,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.09495799999999122,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 106,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.1302919999999972,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 107,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.16191599999999085,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 108,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.12154100000000767,
+      "value": 1.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 2.5
+      }
+    },
+    {
+      "index": 109,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.1775000000000091,
+      "value": 11,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 12
+      }
+    },
+    {
+      "index": 110,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.34199999999998454,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 5.5
+      }
+    },
+    {
+      "index": 111,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 1,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.3432080000000042,
+      "value": 8.5,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 11,
+        "afterValue": 15
+      }
+    },
+    {
+      "index": 112,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.0716250000000116,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 113,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.11220800000000963,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 114,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.14483300000000554,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 115,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 0,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.17687499999999545,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 116,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.12208400000000097,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 0
+      }
+    },
+    {
+      "index": 117,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.15254199999998264,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 4.5
+      }
+    },
+    {
+      "index": 118,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 6,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.29666699999998514,
+      "value": 0,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 3.5
+      }
+    },
+    {
+      "index": 119,
+      "spec": {
+        "onlyIncomeCode": 2,
+        "round": 3,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 12,
+        "stock": 4
+      },
+      "nativePlans": 4,
+      "quoteMs": 0.35933299999999235,
+      "value": 4,
+      "selected": {
+        "tileId": "blue2",
+        "incomeCardId": "card-17-0",
+        "linear": 4,
+        "afterValue": 8
+      }
+    }
+  ],
+  "nativePlans": 408,
+  "originalInputsUnchanged": true,
+  "stateAndFormalObservationParity": true,
+  "moneyControls": 648,
+  "maxQuoteMs": 8.897165999999999,
+  "sourceHashes": {
+    "randomizer/app/rule-observation.js": "b98b3a95fcced1af9d9fb9ae5a152d7df9cb4124c4aceaeb227f076f21509fa4",
+    "randomizer/app/simulation-contract.js": "03a7a363fdc5a32b4ea0602013e0567113db795ae3758f1be68f622280fe1080",
+    "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+    "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+    "randomizer/game/abilities/planet.js": "8cd0f6ee13c2e429e7a159c5020b1de2795b9239f124df9fd865ad96520fd13a",
+    "randomizer/game/abilities/rocket.js": "51a6794b70e42b075bb82252b34ad33e5e420c612ce9924535a0f4ed8ff0d78f",
+    "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+    "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+    "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+    "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+    "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+    "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+    "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+    "randomizer/game/actions/standard-action.js": "9bfd8d8a1bd6120807dfeb7f3a4364ae7c39bba9443b243821a6d3789ca93b7d",
+    "randomizer/game/ai/probe-capital.js": "32652ae10994c41d97b0358178edaba937ec0e374f69f0075f6705ed3dd86574",
+    "randomizer/game/ai/ready-analysis-capital.js": "325b741806f65cbb14e775c63a7cb7c1b7f9ed559b456c95752c83757c18cb31",
+    "randomizer/game/ai/state-value.js": "eb029d34d268100e79efaab7aac158e883582383ce0010f3981f1191fd3cf969",
+    "randomizer/game/aliens/amiba.js": "81eefb293c298fd194d2570854c980b17606ff79fa765db5d0cfbfb9761b0648",
+    "randomizer/game/aliens/aomomo.js": "986413d7da56665ac423b507f92832dce83519a6f94aa79280caa6d4377e4a3d",
+    "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+    "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+    "randomizer/game/aliens/chong.js": "de65614f5aae989b2d79902fe51724a6ed85c2292a2d7677decbfff85f120838",
+    "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+    "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+    "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+    "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+    "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+    "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+    "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+    "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+    "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+    "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9",
+    "randomizer/game/data/index.js": "593b159683ca184bf610c0d1097fc8a4c99306c3a664a9fc06d8d24ea1d6c903",
+    "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+    "randomizer/game/data/nebula-state.js": "d7ac07b41e1317cf15ba019482165558a6e39060b1a76abd4d402be792995a88",
+    "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+    "randomizer/game/data/state.js": "e1fa0c53f628c0d1651b6460b8e47f4126307904bbdd8d8445e6136da5686645",
+    "randomizer/game/effects/science-session.js": "b1a228a09da4a18280cb27b72098fde3428fc25b51fcae29963caac2c660138e",
+    "randomizer/game/end-game-scoring.js": "13c2989df4f601cc5677544f925e0dccc46e8775b64516e5027cd8e50ab8458f",
+    "randomizer/game/final-scoring.js": "4770b83ca0153b7ba0490fd10dc821334b9a36b3e559b1671b9b7b1328f943f3",
+    "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+    "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+    "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+    "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+    "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+    "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+    "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+    "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+    "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+    "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+    "randomizer/game/rockets.js": "a3924ee4ee1392a20671699b51b1e25b40fd08d0536c38acff4f882bba76ca74",
+    "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+    "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+    "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+    "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+    "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/tech/resolver.js": "e52c3dc535c85ecef2c288e6fcf821f18611c2c2bae1ee30970c82574efbac03",
+    "randomizer/solar-system/core.js": "d967dd46e6c1215d79d2e6c98f6c2733aa3d7a70948f12ecf7656f89e2e6bd44",
+    "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477"
+  }
+}

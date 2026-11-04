@@ -1,0 +1,34 @@
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"memoControls":64,"shallowFrozenWalletInvalidation":true,"nativeIncomeInputs":9,"sameRoundFundedResearch":true,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+60 !== 55.5
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-research-value.test.js:31:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 60,
+  expected: 55.5,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"nativeFundedControls":176,"unfunded":16,"nativeInputs":824,"moneyMonotone":true,"stateObservationParity":true,"rootAndRngUnchanged":true}
+ready analysis and research ordering share funded portfolio value with immutable native inputs
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":792,"stateObservationParity":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=3 failed=1 total=4 time=12.89s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=4
+FAIL randomizer/game/ai/funded-research-value.test.js status=1 signal=none

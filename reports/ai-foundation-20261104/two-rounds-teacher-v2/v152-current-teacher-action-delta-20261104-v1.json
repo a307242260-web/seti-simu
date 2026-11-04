@@ -1,0 +1,33 @@
+{
+  "oldSource": "seti-complete-decision-search-v151",
+  "candidate": "seti-complete-decision-search-v152",
+  "candidateAdmitted": false,
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "roots": 81,
+  "overruns": [
+    {
+      "label": "case-105",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "evidence": "reports/ai-foundation-20261023/human405-v152-cold-serial-case-105-20261104-v1.json",
+      "nativeInputs": 256,
+      "milliseconds": 672.418167,
+      "value": 71,
+      "actionId": "place_data:01c038e2",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "changedActions": [
+    {
+      "label": "teacher-024",
+      "oldAction": "launch:c94cda79",
+      "newAction": "play_card:124d76d3",
+      "oldValue": 58,
+      "newValue": 60,
+      "teacherActionId": "play_card:124d76d3",
+      "equalsTeacher": true
+    }
+  ],
+  "note": "Same native fixture roots, values and actions from existing cold evidence only. These are not an autonomous run or proof that all different actions are mistakes."
+}

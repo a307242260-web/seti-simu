@@ -1,0 +1,7 @@
+{"checkedControls":20,"nativePlans":60,"nativeInputs":720}
+{"checkedControls":40,"nativePlans":120,"nativeInputs":1440}
+{"checkedControls":60,"nativePlans":180,"nativeInputs":2160}
+{"checkedControls":80,"nativePlans":248,"nativeInputs":2976}
+{"checkedControls":100,"nativePlans":328,"nativeInputs":3936}
+{"checkedControls":120,"nativePlans":408,"nativeInputs":4896}
+{"status":"complete","controls":120,"funded":66,"nativePlans":408,"nativeInputs":4896,"maxQuoteMs":6.617250000000013,"allKnownEndpointValuesAndAssetsEqual":true,"originalRootAndRngUnchanged":true}

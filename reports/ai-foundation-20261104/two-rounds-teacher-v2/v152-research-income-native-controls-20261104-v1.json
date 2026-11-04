@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "03e58e0de42f09c4e9c19298c9595330beb02999",
+  "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json",
+  "sourceSha256": "26780d39cf689ccd1370197d14b6363a4fc9b0da65d6c6b3914b7454c85c206f",
+  "prototypeSha256": "151c66a5b0928ab782a2944ecb4166b4a271c9ee3414ae93586d07dcdf06212d",
+  "status": "failed",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "rows": [],
+  "scope": "Independent scalar prototype and individually submitted native research/pick/data/income controls. Official hidden-information sanitizer masks all new cards and uncovered bonuses. No autonomous game, production edit or pruning claim.",
+  "nativeInputs": 0,
+  "error": "TypeError: c.counterfactualPort.advanceFocalPlanningTurn is not a function\n    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v152-research-income-native-controls-20261104-v1.js:74:33)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+}

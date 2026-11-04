@@ -1,0 +1,14 @@
+{
+  "rootsEqual": true,
+  "allLinesAndPoliciesEqual": true,
+  "allNativePrefixEdgesEqual": true,
+  "actionId": "place_data:01c038e2",
+  "value": 71,
+  "nativeInputs": 256,
+  "beforeMs": 672.418167,
+  "afterMs": 635.8445839999999,
+  "beforeEvidenceSha256": "9d15ba32f9b84251daf0e9b4482d277c92ffb066cfff5b9dd3c94ef3489cd0d2",
+  "afterEvidenceSha256": "e828688c9d2a68bd647062fc4ad038097e2e0fcbea3ae4d888db53bf4426383c",
+  "timingPass": false,
+  "goalStatus": "active"
+}

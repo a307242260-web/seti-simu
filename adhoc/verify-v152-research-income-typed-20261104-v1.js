@@ -1,0 +1,35 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const values=require('../randomizer/game/ai/state-value'),probe=require('../randomizer/game/ai/probe-capital'),data=require('../randomizer/game/data'),tech=require('../randomizer/game/tech/resolver'),cards=require('../randomizer/game/cards/deck');
+const typed=require('./prototype-v152-research-income-typed-20261104-v1');
+const {buildRuleObservation}=require('../randomizer/app/rule-observation');
+const read=p=>JSON.parse(fs.readFileSync(p)),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const evidence='reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-native-controls-20261104-v2.json',native=read(evidence),w=read(native.source),seed=read(w.fixture).source.seed,seatId='player-white';
+const out='reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-typed-parity-20261104-v1.json';assert(!fs.existsSync(out));assert.equal(native.status,'complete');
+for(const[p,h]of Object.entries(native.sourceHashes))assert.equal(sha(p),h,p);
+function stateFor(spec){
+ const s=JSON.parse(w.freeFirstTurn.envelope.committedState),p=s.players.players.find(p=>p.id===seatId);s.turn.roundNumber=spec.round;s.turn.currentPlayerId=seatId;
+ Object.assign(p.resources,{credits:spec.credits,energy:spec.energy,publicity:spec.publicity});for(const k of Object.keys(p.blueBonusResources||{}))p.blueBonusResources[k]=Math.min(p.blueBonusResources[k],p.resources[k]);
+ while(p.dataState.poolTokens.length>spec.stock){p.dataState.poolTokens.pop();p.dataState.discardedCount++;}p.resources.availableData=p.dataState.poolTokens.length;
+ if(spec.onlyIncomeCode!=null){const zones=[s.cards.publicCards,s.cards.discardPile,...Object.values(s.cards.passReservePiles)],card=zones.flat().find(c=>c&&cards.getIncomeCodeForCard(c)===spec.onlyIncomeCode),zone=zones.find(z=>z.some(c=>c?.id===card.id)),at=zone.findIndex(c=>c?.id===card.id);zone[at]=s.cards.publicCards[0];s.cards.publicCards[0]=card;s.cards.discardPile.push(...s.cards.publicCards.slice(1).filter(Boolean));s.cards.publicCards=[card,null,null];}
+ return s;
+}
+function factsFromState(s){const p=s.players.players.find(p=>p.id===seatId);return{...probe.factsFromState(s,p),supply:s.tech,researchCost:tech.getResearchPublicityCost(p),computerSlots:data.listComputerPlacedTokens(p).map(t=>t.placementSlot),reservedCards:p.reservedCards};}
+function factsFromObservation(o){const p=o.publicState.players.find(p=>p.playerId===seatId);return{...probe.factsFromObservation(o,seatId),supply:o.publicState.board.techSupply,researchCost:p.researchPublicityCost,computerSlots:p.dataProgress.computerSlots,reservedCards:o.selfState.reservedCards};}
+const quote=(f,weights=values.DEFAULT_WEIGHTS)=>typed.quote(f,weights,next=>values.purposeCapital(next,weights).total,values.purposeCapital(f,weights).total,values.technologyCapital);
+const report={status:'running',goalStatus:'active',goalAchieved:false,evidence,evidenceSha256:sha(evidence),prototypeSha256:sha('adhoc/prototype-v152-research-income-typed-20261104-v1.js'),rows:[]},persist=()=>fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');
+try{
+ for(const row of native.rows){const s=stateFor(row.spec),before=JSON.stringify(s),f=factsFromState(s),start=performance.now(),q=quote(f),quoteMs=performance.now()-start,visible=factsFromObservation(buildRuleObservation(s,seed,seatId)),publicQuote=quote(visible);assert.equal(JSON.stringify(s),before);assert.equal(q.value,row.netGain);assert.equal(q.selected?.tileId,row.selected?.tileId);assert.equal(q.selected?.incomeCardId,row.selected?.incomeCardId);assert.equal(publicQuote.value,q.value);assert.equal(publicQuote.selected?.incomeCardId,q.selected?.incomeCardId);assert.equal(q.candidates?.length||0,row.nativePlans.length);
+  for(const c of q.candidates||[]){const actual=row.nativePlans.find(n=>n.tileId===c.tileId&&n.blueSlot===c.blueSlot&&n.incomeCardId===c.incomeCardId);assert(actual);assert.equal(c.netGain,actual.netGain);const nativeEnd=row.selected?.tileId===c.tileId&&row.selected?.incomeCardId===c.incomeCardId?row.selected.assets:null;if(nativeEnd){for(const[k,v]of Object.entries(nativeEnd.resources))assert.equal(c.wallet[k],v);assert.deepEqual(c.wallet.income,nativeEnd.income);assert.deepEqual(c.wallet.techState,nativeEnd.tech);}}
+  report.rows.push({index:row.index,spec:row.spec,nativePlans:row.nativePlans.length,quoteMs,value:q.value,selected:q.selected&&{tileId:q.selected.tileId,incomeCardId:q.selected.incomeCardId,linear:q.selected.linear,afterValue:q.selected.afterValue}});persist();
+ }
+ let moneyControls=0;for(const weights of [values.DEFAULT_WEIGHTS,{...values.DEFAULT_WEIGHTS,credits:.1,energy:5},{...values.DEFAULT_WEIGHTS,credits:5,energy:.1}])for(const round of [1,3])for(const publicity of [6,12]){
+  const totals=new Map();for(let credits=0;credits<=8;credits++)for(let energy=0;energy<=5;energy++){const s=stateFor({round,publicity,credits,energy,stock:4}),f=factsFromState(s),base=values.purposeCapital(f,weights).total,q=quote(f,weights);totals.set(`${credits}:${energy}`,credits*weights.credits+energy*weights.energy+base+q.value);moneyControls++;}
+  for(let credits=0;credits<=8;credits++)for(let energy=0;energy<=5;energy++){const current=totals.get(`${credits}:${energy}`);for(const[c,e]of[[credits+1,energy],[credits,energy+1]])if(totals.has(`${c}:${e}`))assert(totals.get(`${c}:${e}`)>=current-1e-9,JSON.stringify({weights,round,publicity,credits,energy,current,next:totals.get(`${c}:${e}`)}));}
+ }
+ const baseState=stateFor({round:1,credits:2,energy:1,publicity:7,stock:4}),f=factsFromState(baseState),original=JSON.stringify(f);assert.equal(quote(f).value,4.5);
+ for(const id of ['blue2','blue3','orange1','purple3']){const a=structuredClone(f);a.supply.stacks[id].bonusHidden=true;const b=structuredClone(a);b.supply.stacks[id].bonusId='bonus_3f';assert.equal(quote(a).value,quote(b).value);}
+ for(const card of [null,{hidden:true}]){const a=structuredClone(f);a.board.publicCards=a.board.publicCards.map(()=>card);assert.equal(quote(a).value,0);}
+ assert.equal(quote({...f,passing:true}).value,0);assert.equal(quote({...f,round:4}).value,0);assert.equal(quote({...f,terminal:true}).value,0);assert.equal(quote({...f,computerSlots:[1,2,3,4]}).value,0);assert.equal(JSON.stringify(f),original);
+ report.status='complete';report.nativePlans=native.nativePlans;report.originalInputsUnchanged=true;report.stateAndFormalObservationParity=true;report.moneyControls=moneyControls;report.maxQuoteMs=Math.max(...report.rows.map(r=>r.quoteMs));report.sourceHashes=Object.fromEntries(Object.keys(require.cache).filter(p=>p.startsWith(process.cwd()+'/randomizer/')).sort().map(p=>[p.slice(process.cwd().length+1),sha(p)]));persist();console.log(JSON.stringify({status:report.status,controls:report.rows.length,nativePlans:report.nativePlans,moneyControls,stateAndFormalObservationParity:true,noNewCardOrBonusIdentity:true,maxQuoteMs:report.maxQuoteMs}));
+}catch(e){report.status='failed';report.error=e.stack;persist();throw e;}
