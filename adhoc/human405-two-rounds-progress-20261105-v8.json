@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V165 official two-round comparison and public-refill diagnostic; this turn produced 105 native category controls, reproduced a six-input reachable research falsely rejected by the planner, admitted V166 after95 cold roots, and verified the unique autonomous93-input continuation",
+  "productionRuntime": "v166 / V15",
+  "productionSourceCommit": "92dc86691c903f7876102af13e5dcb4133e4a8b2",
+  "actualRecord": "reports/research/8b8b00a9.92dc8669.quick-400.json",
+  "actualScores": [
+    21,
+    54
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualTechnologyCount": [
+    1,
+    2
+  ],
+  "teacherTechnologyCount": [
+    2,
+    3
+  ],
+  "actualIncomeCreditsEnergyCards": [
+    4,
+    3,
+    1
+  ],
+  "teacherIncomeCreditsEnergyCards": [
+    6,
+    2,
+    1
+  ],
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "wallMs": 3113,
+  "nativeInputs": 93,
+  "allNativeInputsStateAndRngVerified": true,
+  "allActionsAndFinalStateIdenticalToV165": true,
+  "actualMaxNativeInputs": 186,
+  "actualMaxRootAndSearchMs": 235.78437499999995,
+  "coldRoots": 95,
+  "coldMaxNativeInputs": 240,
+  "coldMaxRootAndSearchMs": 533.088583,
+  "nodeUnitCoverage": 167,
+  "fullFlowPassed": 1,
+  "chromePassed": 20,
+  "candidateRuntime": null,
+  "candidateAdmitted": false,
+  "developmentAligned": false,
+  "nextActions": [
+    "Model the retained public-refill funding option without reading actual hidden order:105 native controls show1unit benefit only for the tested credit-income case; full-catalog prior0.340659 is not a guaranteed reward or conditional remaining-deck probability.",
+    "Expose/check observable DeepSpace once-per-round availability and distinguish unknown replacement slots from empty public slots before adding any option quote; reserve income, blue reward and held research wallet once.",
+    "Revisit root39 value64.5 tie versus native distance15/16 and actual65/67 launch then research-card discard. Preserve complete-search certificates and do not silently replace the tie objective.",
+    "For any new runtime: native controls, serial256/600 gates, then exactly one registered autonomous first2. Preserve v41 whole-game baseline and foreign V1 records."
+  ]
+}
