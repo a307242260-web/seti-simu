@@ -1,0 +1,9 @@
+{
+  "allRootsLinesAndNativePrefixesEqual": true,
+  "cacheHits": 71,
+  "beforeMs": 619.92925,
+  "afterMs": 666.907917,
+  "accepted": false,
+  "reason": "71memo hits do not cover allocation overhead; remove candidate memo, preserve native behavior",
+  "goalStatus": "active"
+}

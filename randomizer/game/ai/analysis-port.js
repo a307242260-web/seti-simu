@@ -23,10 +23,11 @@
     common ? require("./card-pick-planning") : root.SetiCardPickPlanning,
     common ? require("./resource-demand") : root.SetiResourceDemand,
     common ? require("./local-decision-plans") : root.SetiLocalDecisionPlans,
-    common ? require("./state-value") : root.SetiStateValue);
+    common ? require("./state-value") : root.SetiStateValue,
+    common ? require("./funded-movement-tail") : root.SetiFundedMovementTail);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -322,6 +323,7 @@
     let scanValueBounds = new WeakMap();
     let incomeProofSpecs = new WeakMap(), incomeProofNodes = new WeakMap();
     let turnTailSpecs=new WeakMap(),turnTailNodes=new WeakMap();
+    let movementValueBounds=new WeakMap(),movementBoundQueries=0,movementRuleQueries=0,movementIntentRecoveries=0,completedMovementRecoveries=0;
     let postMainValueBounds = new WeakMap();
     let postMainOptimalPlans = new WeakMap();
     const resourceGroups = new Map();
@@ -395,6 +397,7 @@
       const comp = fork.composition || fork;
       const restored = comp.lifecycle.restore(envelope, {
         silent: true, inPlace: true, trustedFork: true, skipProjection: true,
+        readOnly: !forWrite,
         trustedState: readCommittedState(envelope),
       });
       milliseconds.restore += now() - restoreAt;
@@ -508,6 +511,7 @@
       goalMovementGeometryNodes = 0;
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
+      movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       submissionCount = 0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
@@ -1314,6 +1318,19 @@
       return Array.isArray(ids) ? JSON.stringify(unordered ? [...ids].sort() : ids) : null;
     }
 
+    function savedMovementIntent(intent){
+      const coordinate=p=>Number.isSafeInteger(p?.x)&&Number.isSafeInteger(p?.y);
+      if(!intent||!Array.isArray(intent.path)||typeof intent.goal?.id!=="string"
+        ||!Number.isSafeInteger(intent.rocketId)||intent.rocketId<=0
+        ||!Number.isSafeInteger(intent.startedRound)||intent.startedRound<=0||!Number.isSafeInteger(intent.startedTurn)||intent.startedTurn<=0
+        ||typeof intent.free!=="boolean"||typeof intent.prefixOnly!=="boolean"||!coordinate(intent.goal.coordinate))return false;
+      return intent.path.every((step,i)=>coordinate(step.from)&&coordinate(step.to)
+        &&Number.isSafeInteger(step.deltaX)&&Number.isSafeInteger(step.deltaY)&&Math.abs(step.deltaX)+Math.abs(step.deltaY)===1
+        &&Number.isSafeInteger(step.requiredMovePoints)&&step.requiredMovePoints>0
+        &&(!i||step.from.x===intent.path[i-1].to.x&&step.from.y===intent.path[i-1].to.y))
+        &&(!intent.path.length||intent.path.at(-1).to.x===intent.goal.coordinate.x&&intent.path.at(-1).to.y===intent.goal.coordinate.y);
+    }
+
     function rememberPlan(entries, modelKey, source) {
       if (typeof modelKey !== "string" || !modelKey || !Array.isArray(entries) || !entries.length
         || !Number.isSafeInteger(source?.nodeCount) || source.nodeCount < 1) throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
@@ -1330,6 +1347,7 @@
         if(entry.committedGoal!==undefined&&(typeof entry.committedGoal!=="string"||!entry.committedGoal))throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
         return { key: entry.committedGoal ? stored.physicalKey : policyDependencyKey(stored),
           ...(entry.committedGoal?{committedGoal:entry.committedGoal}:{}), actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
+          ...(!entry.committedGoal&&savedMovementIntent(stored.intent)?{movementIntent:freeze(structuredClone(stored.intent))}:{}),
           value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
       const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
@@ -1343,7 +1361,29 @@
       const saved = token && planCertificate?.token === token ? planCertificate : null;
       if (!saved) return { hit: false, reason: "unknown-evidence" };
       if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
-      const row = saved.rows.find(entry => entry.key === (entry.committedGoal?stored.physicalKey:policyDependencyKey(stored)) && entry.actions === actionSetKey(node.legalActions));
+      const actions=actionSetKey(node.legalActions);
+      let row = saved.rows.find(entry => entry.key === (entry.committedGoal?stored.physicalKey:policyDependencyKey(stored)) && entry.actions === actions);
+      // Between native movement sessions a cold root has no pending session
+      // from which to recover the selected route. Restore the saved policy
+      // only after exact physical/RNG, menu, turn, position and model matching.
+      if(!row&&movementPlanning){
+        const state=readPlanningState(stored);
+        row=saved.rows.find(entry=>{
+          const intent=entry.movementIntent;if(entry.committedGoal||!savedMovementIntent(intent)||entry.actions!==actions
+            ||intent.startedRound!==state.turn.roundNumber||intent.startedTurn!==state.turn.turnNumber)return false;
+          const ship=state.pieces.rockets.find(r=>r.id===intent.rocketId&&r.playerId===seatId),at=ship&&rockets.getRocketSectorCoordinate(ship);
+          const expected=intent.path[0]?.from||intent.goal.coordinate;
+          if(!at||at.x!==expected.x||at.y!==expected.y)return false;
+          const key=JSON.stringify([stored.physicalKey,intent]);
+          return entry.key===(stored.cardControl?JSON.stringify([key,stored.cardControl]):key);
+        });
+        if(row){
+          stored.intent=freeze(structuredClone(row.movementIntent));stored.policyKey=undefined;
+          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl);
+          movementPolicies.delete(node);movementValueBounds.delete(node);turnTailSpecs.delete(node);turnTailNodes.delete(node);resourceSpecs.delete(node);movementIntentRecoveries++;
+          if(!stored.intent.path.length)completedMovementRecoveries++;
+        }
+      }
       if (!row) return { hit: false, reason: "dependencies-changed" };
       return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
@@ -1364,7 +1404,8 @@
         || !Number.isSafeInteger(saved.source?.nodeCount) || saved.source.nodeCount < 1
         || saved.rows.some(row=>typeof row.key!=="string" || typeof row.actions!=="string" || typeof row.actionId!=="string"
           || !Number.isFinite(row.value) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
-          || row.committedGoal!==undefined&&(typeof row.committedGoal!=="string"||!row.committedGoal))) {
+          || row.committedGoal!==undefined&&(typeof row.committedGoal!=="string"||!row.committedGoal)
+          || row.movementIntent!==undefined&&!savedMovementIntent(row.movementIntent))) {
         throw new Error("ANALYSIS_PLAN_CHECKPOINT_INVALID");
       }
       const token=Object.freeze({});
@@ -1838,6 +1879,27 @@
     // The quiet contract below changes no probe/planet/scan/tech/known-card
     // facts on native end-turn and forbids round advancement. Income/blue
     // previews include the shared mission delta before this unchanged tail.
+    function movementPlanValueBound(node){
+      const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      if(!resourcePlanning||!cardPickPlanning||!movementPlanning||!finalMarkPlanning||node.status!=="stable"||stored.envelope.session)return null;
+      if(movementValueBounds.has(node))return movementValueBounds.get(node);
+      let bound=null;
+      const end=turnTailSummary(node,"end-turn"),state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
+      if(end&&state.turn.roundNumber<4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
+        &&[...owner.hand,...owner.reservedCards].every(c=>knownRootCardIds.has(c.id))){
+        const policy=goalMovementSpec(node),action=node.legalActions.find(a=>a.actionId===policy?.selectedActionId);
+        if(action?.family==="move"&&policy.intent?.path.length){
+          movementBoundQueries++;
+          const preview=fundedMovement.quote({state,seatId,intent:policy.intent});movementRuleQueries+=preview.nativeMoveQueries||0;
+          if(preview.available)bound=freeze({proof:"seti-fixed-funded-movement-tail-upper-v1",firstActionId:action.actionId,
+            valueDelta:preview.netGain,requiredNativeInputs:preview.requiredNativeInputs,movementPlan:policy.plan,
+            nativeMovementRuleQueries:preview.nativeMoveQueries,scope:preview.scope,sourceQuietProof:end.proof,
+            observationAvailable:false,successorEnvelopeAvailable:false});
+        }
+      }
+      movementValueBounds.set(node,bound);return bound;
+    }
+
     function turnTailSummary(node,kind="end-turn") {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
@@ -2022,11 +2084,15 @@
         // With no live mission, a ready analysis can only add its known trace
         // and one blue resource tail plus these same held/research ceilings.
         // Ignore its costs for the upper bound, but subtract source capital.
-        const sourceAnalysis=resourceDemand.planningCapital(state,owner)-current-currentResearch;
-        const capitalUpperIncrease=Math.max(0,offered-current+researchUpper-currentResearch+analysisUpper.linear-sourceAnalysis);
-        bound=freeze({...result,proof:"seti-post-main-capital-upper-v3",linearSourceProof:result.proof,
+        const sourceCapital=resourceDemand.planningCapital(state,owner),sourceAnalysis=sourceCapital-current-currentResearch;
+        const bridge=stateValue.researchIncomeUpperBound({round:state.turn.roundNumber,computerSlots:data.listComputerPlacedTokens(owner).map(t=>t.placementSlot),techState:owner.techState,supply:state.tech,publicCards:state.cards.publicCards,maximumPublicity:result.maximumPublicity,researchCost});
+        const secondResearch=bridge.secondResearchPossible?stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,researchCost}):0;
+        const maximumCapital=Math.max(offered+researchUpper+analysisUpper.linear,offered+bridge.linear+secondResearch);
+        const capitalUpperIncrease=Math.max(0,maximumCapital-sourceCapital);
+        bound=freeze({...result,proof:"seti-post-main-capital-upper-v4",linearSourceProof:result.proof,
           maximumValueIncrease:result.maximumValueIncrease+capitalUpperIncrease,capitalUpperIncrease,
           capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,sourceAnalysisCapital:sourceAnalysis,maximumAnalysisLinear:analysisUpper.linear,maximumAnalysisPublicity:analysisUpper.publicity,analysisReachableByFixedDataPolicy:analysisReachable,
+          maximumResearchIncomeLinear:bridge.linear,maximumResearchAfterIncome:secondResearch,sourcePurposeCapital:sourceCapital,maximumPurposeCapital:maximumCapital,
           permanentTechnologyGainAdmitted:false});
       }
       postMainValueBounds.set(node, bound);
@@ -2741,6 +2807,7 @@
       decodedStates.clear(); decodedStateCacheBytes = 0;
       envelopeObservations = new WeakMap();valueObservations=new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
       nodes = new WeakMap();
+      movementValueBounds=new WeakMap();movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       observationReleasers = new WeakMap();
       normalizedIdentityStates = new Map();
       movementPolicies = new WeakMap();
@@ -2794,7 +2861,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
-        observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
+        observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
         committedDecodeCount, committedDecodeHits, committedReferenceCount,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
@@ -2815,7 +2882,7 @@
 
     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

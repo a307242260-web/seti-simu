@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v151";
+  const VERSION = "seti-complete-decision-search-v158";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -95,7 +95,7 @@
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
-        postMainValuePrunes: 0, scanValuePrunes: 0, scanActionPrunes: 0,
+        postMainValuePrunes: 0, scanValuePrunes: 0, scanActionPrunes: 0,movementValuePrunes:0,
         cardTradePrunes: 0, cardTradePruning: cardTradePruning
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
@@ -133,7 +133,7 @@
     let dominancePrunes = 0;
     let moneyCapacityPrunes = 0;
     let cardTradePrunes = 0;
-    let postMainValuePrunes = 0;
+    let postMainValuePrunes = 0,movementValuePrunes=0;
     let scanValuePrunes = 0, scanActionPrunes = 0;
     let certificateNodes = 0, postMainOptimalPlans = 0, postMainOptimalPlanSteps = 0;
     let postMainProofNodes = 0, postMainExcludedActions = 0;
@@ -479,6 +479,18 @@
       }
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
+        if(alternative.goalPlan&&incumbent&&resourcePlanning&&movementPlanning&&cardPickPlanning&&finalMarkPlanning
+          &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)){
+          if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
+          const bound=port.movementPlanValueBound?.(entry.node);
+          if(bound&&bound.firstActionId===alternative.firstActionId){
+            const currentValue=valueForNode(entry.node),upperBound=currentValue+bound.valueDelta;
+            if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_MOVEMENT_BOUND_INVALID");
+            if(incumbent.value>upperBound){
+              (entry.actionBounds||=[]).push({actionId:alternative.firstActionId,...incumbent,upperBound,proof:bound.proof,modelKey:evaluate.modelKey,boundKind:"fixed-paid-movement-tail",currentValue,bound});movementValuePrunes++;continue;
+            }
+          }
+        }
         const tailKind=alternative.resourcePlan?.goal.kind==="blue-data"?"blue-end-turn"
           :alternative.resourcePlan?.goal.kind==="income"?"data-end-turn"
           :entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="end_turn")?"end-turn":null;
@@ -731,9 +743,9 @@
         ...(edge?.resourcePlan?{kind:"resource-goal-plan",goal:edge.resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&e.resourcePlan).length}:{}),
         ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
         completion: stopReason || !edge ? "pending" : edge.knownIncomePlan||edge.turnTailPlanValue?"proved-plan-value":edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
-          : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
+          : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes||movementValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
-        ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes || scanValuePrunes || scanActionPrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
+        ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes ||movementValuePrunes|| scanValuePrunes || scanActionPrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
@@ -872,7 +884,7 @@
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
       diagnostics: { valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
-        incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,
+        incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,movementValuePrunes,
         winningIncomePlans,winningIncomeInputs,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
         localFinalMarkStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-final-mark").length,

@@ -1,0 +1,7 @@
+trusted analysis fork isolation and exact reuse passed
+{"openingMoneyCapacity":"passed","results":[{"cardId":null,"value":28.5,"raw":734,"capacityOnly":592,"pruned":506,"capacityPrunes":4},{"cardId":"dlc_27.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":1140,"capacityPrunes":8},{"cardId":"b_44.webp","value":33,"raw":3386,"capacityOnly":3042,"pruned":2312,"capacityPrunes":8},{"cardId":"b_23.webp","value":29.5,"raw":1744,"capacityOnly":1284,"pruned":1094,"capacityPrunes":8},{"cardId":"dlc_22.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":1140,"capacityPrunes":8},{"cardId":"b_48.webp","value":29.5,"raw":1600,"capacityOnly":1260,"pruned":1070,"capacityPrunes":8}]}
+{"resourceDominance":"passed","rawInputs":318,"prunedInputs":150,"proofPrunes":6}
+SUMMARY unit passed=3 failed=0 total=3 time=46.52s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=2

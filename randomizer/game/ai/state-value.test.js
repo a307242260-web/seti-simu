@@ -7,6 +7,7 @@ function observation(round = 1) {
   return { terminal: false, publicState: { roundNumber: round, passingPlayerIds: [], players: [{
     playerId: "p1", score: 10, finalScore: 14, credits: 2, energy: 3,
     publicity: 4, availableData: 2, additionalPublicScan: 0,
+    dataProgress: { computerSlots: [] },
     income: { credits: 1, energy: 0, publicity: 0, availableData: 0, handSize: 0, additionalPublicScan: 0 },
   }] }, selfState: { playerId: "p1", hand: [{ id: "known" }, { hidden: true }] } };
 }
@@ -22,6 +23,9 @@ assert.equal(evaluateStateValue(observation(4), "p1").components.income, 0);
 const end = { ...start, terminal: true };
 assert.equal(evaluateStateValue(end, "p1").total, 14, "正式最终分不叠资源或未来收入");
 assert.deepEqual(start, observation(), "估值不得修改来源");
+const missingComputer = structuredClone(start);
+delete missingComputer.publicState.players[0].dataProgress;
+assert.throws(() => evaluateStateValue(missingComputer, "p1"), /VALUE_COMPUTER_SLOTS_MISSING/);
 const missingPassing = structuredClone(start);
 delete missingPassing.publicState.passingPlayerIds;
 assert.throws(() => evaluateStateValue(missingPassing, "p1"), /VALUE_PASSING_PLAYERS_MISSING/);

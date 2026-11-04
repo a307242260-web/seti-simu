@@ -134,6 +134,56 @@ function actionGroup(effects) {
   }
 })();
 
+(function trustedRestoreSharesOnlyFrozenJournalEntries() {
+  const freeze = value => {
+    if (value && typeof value === "object" && !Object.isFrozen(value)) {
+      Object.values(value).forEach(freeze); Object.freeze(value);
+    }
+    return value;
+  };
+  const runtime = createRuntime({ trustedIsolatedOwnership: true });
+  runtime.registerExecutor("gain", state => ({ ok: true, nextState: { ...state, value: state.value + 1 },
+    events: [{ nested: { value: 1 } }], history: [{ before: state.value }], rng: [{ cursor: 1, result: 7 }] }));
+  runtime.registerExecutor("choose", { getLegalChoices: () => [{ value: 2 }],
+    resolveDecision: (state, effect, choice) => ({ ok: true, nextState: { ...state, value: state.value + choice.value }, events: [{ chosen: choice.value }] }) });
+  const dispatched = runtime.dispatchAction({ version: 1, value: 0, marker: [] }, { family: "test" },
+    actionGroup([{ type: "gain" }, { type: "choose", kind: "decision", ownerId: "p1" }]));
+  assert(runtime.drain(dispatched.session).ok);
+  const checkpoint = freeze(runtime.createCheckpoint(dispatched.session, { trustedReference: true }).checkpoint);
+  const original = JSON.stringify(checkpoint), fast = runtime.restoreCheckpoint(checkpoint, { trustedFrozenState: true }), slow = runtime.restoreCheckpoint(checkpoint);
+  assert(fast.ok && slow.ok); assert.deepEqual(fast.session, slow.session);
+  const readOnly = runtime.restoreCheckpoint(checkpoint, { trustedFrozenState: true, readOnly: true });
+  assert(readOnly.ok); assert.equal(readOnly.session.workingState, checkpoint.session.workingState);
+  assert.deepEqual(runtime.observe(readOnly.session, { playerId: "p1" }), runtime.observe(slow.session, { playerId: "p1" }));
+  assert.equal(JSON.stringify(checkpoint), original);
+  assert.notEqual(fast.session.journal, checkpoint.session.journal);
+  for (const [key, entries] of Object.entries(checkpoint.session.journal)) {
+    assert.notEqual(fast.session.journal[key], entries);
+    if (entries.length) assert.equal(fast.session.journal[key][0], entries[0]);
+  }
+  assert.notEqual(slow.session.journal.events[0], checkpoint.session.journal.events[0]);
+  assert.notEqual(fast.session.workingState, checkpoint.session.workingState);
+  fast.session.workingState.marker.push("private");
+  assert.deepEqual(checkpoint.session.workingState.marker, []);
+  assert.deepEqual(slow.session.workingState.marker, []);
+  fast.session.workingState.marker.pop();
+  for (const restored of [fast, slow]) {
+    const d = runtime.inspect(restored.session).decision;
+    assert(runtime.resolveDecision(restored.session, { decisionId: d.decisionId, decisionVersion: d.decisionVersion,
+      ownerId: d.ownerId, choice: d.choices[0] }).ok);
+    assert(runtime.drain(restored.session).ok);
+  }
+  assert.deepEqual(fast.session, slow.session);
+  assert.equal(fast.session.committedState.value, 3);
+  assert.equal(JSON.stringify(checkpoint), original);
+  // Ordinary restores retain their full mutable, independent journal entries.
+  const ordinary = createRuntime().restoreCheckpoint(checkpoint, { trustedFrozenState: true, readOnly: true });
+  assert(ordinary.ok); assert.notEqual(ordinary.session.journal.events[0], checkpoint.session.journal.events[0]);
+  assert.notEqual(ordinary.session.workingState, checkpoint.session.workingState);
+  ordinary.session.journal.events[0].nested.value = 9;
+  assert.equal(checkpoint.session.journal.events[0].nested.value, 1);
+})();
+
 (function testEmptyEffectGroupFailsClosed() {
   const { runtime } = createHarness();
   const committed = { version: 1, value: 0, legalTechs: [] };

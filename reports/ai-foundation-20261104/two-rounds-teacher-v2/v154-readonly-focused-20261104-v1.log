@@ -1,0 +1,8 @@
+trusted analysis fork isolation and exact reuse passed
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":792,"postMainFundingBounds":3,"stateObservationParity":true,"rootAndRngUnchanged":true}
+effect session runtime tests passed
+SUMMARY unit passed=3 failed=0 total=3 time=7.44s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1
+OWNER architecture/policy-host tests=1
+OWNER policy/state-value tests=1

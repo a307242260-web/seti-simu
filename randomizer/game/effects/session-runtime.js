@@ -903,7 +903,15 @@
       const source=checkpoint.session;
       const shareBase=options.trustedFrozenState===true&&trustedIsolatedOwnership
         &&source&&Object.isFrozen(source)&&Object.isFrozen(source.baseState)&&(!source.committedState||Object.isFrozen(source.committedState));
-      const restored=shareBase?{...clone({...source,baseState:null,committedState:null}),baseState:source.baseState,committedState:source.committedState}:clone(source);
+      // Confirmed journal entries are append-only. Trusted in-memory forks
+      // copy their containers while retaining the frozen historic entries;
+      // working state, queue and all other writable session fields stay private.
+      const shareJournal=shareBase&&source.journal&&Object.isFrozen(source.journal)
+        &&Object.values(source.journal).every(entries=>Array.isArray(entries)&&Object.isFrozen(entries)
+          &&entries.every(entry=>entry===null||typeof entry!=="object"||Object.isFrozen(entry)));
+      const shareWorking=shareBase&&options.readOnly===true&&Object.isFrozen(source.workingState);
+      const restored=shareBase?{...clone({...source,baseState:null,committedState:null,...(shareJournal?{journal:null}:{}),...(shareWorking?{workingState:null}:{})}),baseState:source.baseState,committedState:source.committedState,
+        ...(shareJournal?{journal:Object.fromEntries(Object.entries(source.journal).map(([key,entries])=>[key,entries.slice()]))}:{}),...(shareWorking?{workingState:source.workingState}:{})}:clone(source);
       if (!restored || restored.schemaVersion !== SCHEMA_VERSION) {
         return fail("EFFECT_CHECKPOINT_SESSION_INVALID", "checkpoint 缺少合法 session");
       }

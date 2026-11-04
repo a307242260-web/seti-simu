@@ -1,0 +1,212 @@
+{
+  "input": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v153-case105-profile-20261104-v1.cpuprofile.gz",
+  "inputSha256": "6ad0445bc1e5380df3b620dfd0d3d5022413bd3a59b5b1cdde4396da5f8a5836",
+  "timingScope": "Instrumented whole-process CPU samples, not a cold decision admission sample",
+  "profileMs": 801.708,
+  "withinResearchIncomeMs": 1.25,
+  "withinPurposeMs": 44.706,
+  "self": [
+    {
+      "key": "node:internal/worker/js_transferable:structuredClone",
+      "milliseconds": 130.086
+    },
+    {
+      "key": ":(garbage collector)",
+      "milliseconds": 49.958
+    },
+    {
+      "key": "game/ai/analysis-port.js:normalize",
+      "milliseconds": 24.417
+    },
+    {
+      "key": "game/state/state-store.js:stableSerialize",
+      "milliseconds": 24.295
+    },
+    {
+      "key": "node:internal/bootstrap/realm:compileForInternalLoader",
+      "milliseconds": 20.334
+    },
+    {
+      "key": "modules/cjs/loader:wrapSafe",
+      "milliseconds": 20.126
+    },
+    {
+      "key": "randomizer/solar-system/core.js:getBaseWheelCell",
+      "milliseconds": 17.041
+    },
+    {
+      "key": "randomizer/game/rockets.js:getSectorOccupancy",
+      "milliseconds": 10.832
+    },
+    {
+      "key": "randomizer/game/production-kernel.js:buildProbeRouteRequirements",
+      "milliseconds": 10.708
+    },
+    {
+      "key": "game/ai/analysis-port.js:snapshot",
+      "milliseconds": 10
+    },
+    {
+      "key": "randomizer/game/production-kernel.js:",
+      "milliseconds": 9.459
+    },
+    {
+      "key": "game/state/low-coupling-slices.js:visit",
+      "milliseconds": 8.958
+    },
+    {
+      "key": "game/ai/resource-demand.js:immutableCapitalInput",
+      "milliseconds": 8.708
+    },
+    {
+      "key": "game/ai/decision-search.js:searchDecision",
+      "milliseconds": 7.499
+    },
+    {
+      "key": "game/state/state-store.js:deepFreeze",
+      "milliseconds": 7.417
+    },
+    {
+      "key": "game/ai/analysis-port.js:",
+      "milliseconds": 7.125
+    },
+    {
+      "key": "game/state/high-coupling-slices.js:",
+      "milliseconds": 7.042
+    },
+    {
+      "key": "randomizer/game/production-kernel.js:buildProbeCandidateStructures",
+      "milliseconds": 6.834
+    },
+    {
+      "key": "game/ai/analysis-port.js:forwardIdentity",
+      "milliseconds": 6.499
+    },
+    {
+      "key": "randomizer/game/rule-composition.js:deepFreeze",
+      "milliseconds": 6.291
+    },
+    {
+      "key": "randomizer/solar-system/core.js:mod8",
+      "milliseconds": 6.166
+    },
+    {
+      "key": "game/ai/analysis-port.js:readCommittedState",
+      "milliseconds": 6.125
+    },
+    {
+      "key": "randomizer/game/rockets.js:getOccupiedSlotIndices",
+      "milliseconds": 6.001
+    },
+    {
+      "key": "node:fs:readFileSync",
+      "milliseconds": 6
+    },
+    {
+      "key": "game/state/state-store.js:validateSerializableGraph",
+      "milliseconds": 5.75
+    }
+  ],
+  "structuredCloneCallers": [
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:restoreCheckpoint <- game/rule-composition.js:restore <- ai/analysis-port.js:restoreEnvelope",
+      "milliseconds": 38
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:beginWorkingCopy <- effects/session-runtime.js:dispatchStandardAction <- game/rule-composition.js:submitAction",
+      "milliseconds": 27.875
+    },
+    {
+      "key": "game/production-kernel.js:clone <- game/production-kernel.js:cloneMovementPreview <- game/production-kernel.js:comparePlannedMovementTiming <- ai/analysis-port.js:movementTiming",
+      "milliseconds": 5.042
+    },
+    {
+      "key": "app/rule-observation.js:clone <- app/rule-observation.js:buildRuleObservation <- adhoc/benchmark-human405-decision-20261104-v1.js:projectCounterfactualState <- game/production-kernel.js:projectState",
+      "milliseconds": 5.001
+    },
+    {
+      "key": "abilities/rocket.js:settleRocketsAfterSolarRotation <- effects/science-session.js:context.rotateSolarOrbit <- tech/resolver.js:rotateForResearch <- tech/resolver.js:executeTakeTech",
+      "milliseconds": 4.125
+    },
+    {
+      "key": "game/turn-flow.js:rotateSolarSystem <- game/production-kernel.js:afterRotation <- game/production-kernel.js:comparePlannedMovementTiming <- ai/analysis-port.js:movementTiming",
+      "milliseconds": 3.833
+    },
+    {
+      "key": "ai/local-decision-plans.js:incomeCompletion <- ai/analysis-port.js:resourceSpec <- ai/decision-search.js:add <- ai/decision-search.js:searchDecision",
+      "milliseconds": 3.833
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:executeRegisteredAction <- effects/standard-action-session.js: <- game/rule-composition.js:",
+      "milliseconds": 2.542
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:validate <- state/state-store.js:loadCurrent <- state/state-store.js:createStateStore",
+      "milliseconds": 2.541
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:validate <- state/state-store.js:serialize <- game/rule-composition.js:save",
+      "milliseconds": 2.541
+    },
+    {
+      "key": "game/production-kernel.js:buildProbeCandidateStructures <- game/production-kernel.js:buildProbeRouteRequirements <- game/production-kernel.js:getProbeRouteRequirements <- ai/analysis-port.js:endpoints",
+      "milliseconds": 2.541
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:dispatchStandardAction <- game/rule-composition.js:submitAction <- game/rule-composition.js:submitQuickAction",
+      "milliseconds": 2.5
+    },
+    {
+      "key": "ai/local-decision-plans.js:pureOptional <- ai/analysis-port.js:localDecisionSpec <- ai/decision-search.js:add <- ai/decision-search.js:searchDecision",
+      "milliseconds": 2.5
+    },
+    {
+      "key": "ai/local-decision-plans.js:incomeCompletion <- ai/local-decision-plans.js:dataTailCompletion <- ai/analysis-port.js:turnTailSummary <- ai/decision-search.js:searchDecision",
+      "milliseconds": 2.416
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:validate <- game/rule-composition.js:save <- adhoc/benchmark-human405-decision-20261104-v1.js:",
+      "milliseconds": 1.792
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:publish <- game/rule-composition.js:finishIfTerminal <- game/rule-composition.js:advanceSession",
+      "milliseconds": 1.292
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:loadCurrent <- state/state-store.js:deserialize <- game/rule-composition.js:validateRestore",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "effects/standard-action-session.js:clone <- effects/standard-action-session.js:resolveDecision <- game/rule-composition.js: <- game/production-kernel.js:runWithWorkingState",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision <- ai/analysis-port.js:executeCurrent",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:commit <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:appendReplayStep <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "app/rule-observation.js:clone <- app/rule-observation.js: <- app/rule-observation.js:buildRuleObservation <- adhoc/benchmark-human405-decision-20261104-v1.js:projectCounterfactualState",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:finishIfTerminal <- game/rule-composition.js:advanceSession <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:getDecisionSnapshot <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.25
+    },
+    {
+      "key": "ai/resource-demand.js:previewIncomeTail <- ai/local-decision-plans.js:incomeCompletion <- ai/analysis-port.js:resourceSpec <- ai/decision-search.js:add",
+      "milliseconds": 1.25
+    }
+  ]
+}

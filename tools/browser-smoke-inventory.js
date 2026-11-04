@@ -1182,25 +1182,66 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const f=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json').then(r=>r.json()),seed=f.source.seed;
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('获胜收入开局恢复失败');
     let checkpoint=null,inputs=0,expectedValue;
+    const legacy=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json').then(r=>r.json());
+    for(const step of legacy.paidSteps.slice(0,3)){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===step.actionId);if(!a)throw Error('收入控制前缀缺失');const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('收入控制前缀失败');}
+    const control=structuredClone(c.lifecycle.save().envelope),state=JSON.parse(control.committedState);state.players.players.find(p=>p.id===f.seatId).resources.publicity=5;control.committedState=JSON.stringify(state);if(!c.lifecycle.restore(control).ok)throw Error('研究费以下的收入控制恢复失败');
     const knownAtRoot=new Set(c.projection({role:'player',playerId:f.seatId}).state.selfState.hand.map(c=>c.id));
-    try{for(let i=0;i<12;i++){
+    try{for(let i=0;i<13;i++){
       const saved=JSON.parse(JSON.stringify(c.lifecycle.save().envelope));if(!c.lifecycle.restore(saved).ok)throw Error('逐输入原生保存恢复失败');
       const d=c.inspect().session?.decision,actions=d?.choices||c.inputPort.enumerateActions({}),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:f.seatId,analysisPort:p});
       ai.loadCheckpoint(checkpoint);const before=JSON.stringify(c.lifecycle.save().envelope),r=ai.decide({seatId:f.seatId,legalActions:actions}),a=actions.find(a=>a.actionId===r.actionId);
       if(i===0)expectedValue=r.search.value;if(!a||r.search.value!==expectedValue||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('计划值改变或搜索污染原根');
       if(i===0){inputs=r.search.diagnostics.nativeExecutions;if(inputs<1||inputs>256||r.search.diagnostics.winningIncomePlans!==1)throw Error('获胜尾部没有按原生输入完整计费');}
       else if(r.search.diagnostics.planContinuation!=='hit'||r.search.diagnostics.nativeExecutions!==0)throw Error('保存恢复后丢失既定目的');
-      if(i===3&&a.family!=='place_data')throw Error('完成火星必要前移后又改去金星');
+      if(i<4&&a.family!==(i%2?'choose_payment':'move'))throw Error('固定移动准备偏离证书');
+      if(i>=4&&i<12&&a.family!==(i%2?'choose_target':'place_data'))throw Error('固定收入准备偏离证书');
+      if(i===12&&(a.family!=='choose_card'||a.target.cardInstanceId!=='card-15-0'))throw Error('没有保留移动支付后的收入供应牌');
+      if((i===2||i===3)&&r.search.analysis.movementIntentRecoveries!==1)throw Error('剩余路线未从完整证书恢复');
       checkpoint=JSON.parse(JSON.stringify(ai.createCheckpoint()));
       const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('既定输入未通过原生验证');
     }
     const observed=c.projection({role:'player',playerId:f.seatId}).state,masked={...observed,selfState:{...observed.selfState,hand:observed.selfState.hand.map(card=>knownAtRoot.has(card.id)?card:{id:card.id,hidden:true})}};if(window.SetiStateValue.evaluateStateValue(masked,f.seatId).total!==expectedValue||window.SetiStateValue.evaluateStateValue(observed,f.seatId).total<expectedValue)throw Error('盲抽前用途预测与真实兑现不一致，或提前使用了新牌身份');
-    window.__winningIncomeRecovery={ok:true,inputs,restoredNativeSteps:12};
+    window.__winningIncomeRecovery={ok:true,inputs,restoredNativeSteps:13};
     }finally{c.dispose();}
   })()`,
   successExpression:'window.__winningIncomeRecovery?.ok === true',
-  obligation:'真实页面的获胜收入计划逐输入保存原生状态与AI证书，恢复后维持已选目的和值且额外见证计入预算',
-  counterexample:'火星必要前缀完成后冷恢复改去金星、证书复用虚构后继、固定见证不计费或真实兑现值不同',
+  obligation:'真实页面的研究费以下受控收入计划逐输入保存原生状态与AI证书，恢复后维持已选目的和值且额外见证计入预算',
+  counterexample:'付费移动之间或收入前缀完成后冷恢复偏离原计划、证书复用虚构后继、固定见证不计费或真实兑现值不同',
+}), Object.freeze({
+  id:'production-free-launch-plan-recovery',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiResearchIncomeCapital && window.SetiSearchAgent?.createSearchAgent)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('免费发射根恢复失败');let checkpoint=null;
+    try{for(let i=0;i<4;i++){
+      const saved=structuredClone(c.lifecycle.save().envelope);if(!c.lifecycle.restore(saved).ok)throw Error('免费发射逐步原生恢复失败');
+      const d=c.inspect().session?.decision,actions=d?.choices||c.inputPort.enumerateActions({}),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:f.seatId,analysisPort:p});ai.loadCheckpoint(checkpoint);
+      const before=JSON.stringify(c.lifecycle.save().envelope),r=ai.decide({seatId:f.seatId,legalActions:actions}),a=actions.find(a=>a.actionId===r.actionId);
+      if(!a||a.family!==['play_card','move','choose_payment','end_turn'][i]||r.search.value!==60||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('免费发射用途、固定路线或根隔离错误');
+      if(!i&&(a.target.cardInstanceId!=='card-13-0'||r.search.diagnostics.nativeExecutions>256))throw Error('教师首个免费发射没有进入获胜候选');
+      if(i&&(r.search.diagnostics.planContinuation!=='hit'||r.search.diagnostics.nativeExecutions!==0))throw Error('免费发射证书冷恢复失效');
+      if(i===3&&r.search.analysis.completedMovementRecoveries!==1)throw Error('已完成移动目的未恢复');
+      checkpoint=JSON.parse(JSON.stringify(ai.createCheckpoint()));const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('免费发射原生输入失败');
+    }window.__freeLaunchRecovery={ok:true,restoredNativeSteps:4};}finally{c.dispose();}
+  })()`,
+  successExpression:'window.__freeLaunchRecovery?.ok === true',
+  obligation:'实际教师首个分流选择免费发射，已知研究收入共同用途计值60，四个原生输入冷恢复且后续零模拟',
+  counterexample:'Node中首个分流已修复但页面未装配、完成移动后目标丢失或跨输入泄漏随机状态',
+}), Object.freeze({
+  id:'production-funded-movement-tail',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiFundedMovementTail && window.SetiDecisionSearch)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json').then(r=>r.json()),seed=f.source.seed,reference=await fetch('/reports/ai-foundation-20261023/human405-v155-cold-serial-case-105-20261104-v1.json').then(r=>r.json());
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('固定移动尾部根恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});
+      if(!r.complete||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>=256||r.diagnostics.movementValuePrunes<=0||p.getDiagnostics().movementRuleQueries<=0)throw Error('原生固定移动上界未保持同动作同值或没有节约组合执行');
+      const bounds=r.lines.flatMap(l=>l.actionBounds||[]).filter(b=>b.boundKind==='fixed-paid-movement-tail');if(!bounds.length||bounds.some(b=>b.value<=b.upperBound))throw Error('固定移动上界错误剪除同值路线');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('固定移动上界污染根或RNG');window.__movementTail={ok:true,nativeInputs:r.diagnostics.nativeExecutions};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__movementTail?.ok === true',
+  obligation:'实际页面用原生移动规则计算固定准备尾部上界，仅严格劣势路线免组合执行，保留完整参考动作和值',
+  counterexample:'浏览器缺少新模块、上界使用假观察、同值路线被剪除或移动查询写入真实状态',
 }), Object.freeze({
   id:'production-funded-research-value',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiStateValue?.researchCapital && window.SetiTechResolver)',
@@ -1209,16 +1250,16 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('科技用途恢复失败');
     const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
     try{const root=p.openRoot(),value=window.SetiStateValue.evaluateStateValue(root.observation,f.seatId),player=root.observation.publicState.players.find(p=>p.playerId===f.seatId);
-      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.components.probePotential!==5.5||value.components.handPotential!==2.5||value.total!==55.5)throw Error('公开费用或科技用途估值缺失');
+      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.components.probePotential!==5.5||value.components.handPotential!==2.5||value.total!==60||value.components.researchIncomePotential!==4.5)throw Error('公开费用或科技用途估值缺失');
       if(JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),f.seatId))!==JSON.stringify(value))throw Error('完整与紧凑用途估值不同');
       const start=p.expand(root,root.legalActions.find(a=>a.family==='research_tech').actionId),choice=start.legalActions.find(a=>a.target.tileId==='blue1'&&a.target.blueSlot===1),end=p.expand(start,choice.actionId),actual=window.SetiStateValue.evaluateStateValue(end.observation,f.seatId);
-      if(actual.total!==value.total||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
+      if(actual.total!==value.total-value.components.researchIncomePotential||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('科技用途验证污染根或RNG');
       p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});
       const witness=await fetch('/reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json').then(r=>r.json());
       let mission=root;for(const step of witness.rows.find(r=>r.name==='student-best').steps){const a=mission.legalActions.find(a=>a.actionId===step.actionId);if(!a)throw Error('任务原生输入不可达');mission=p.expand(mission,a.actionId);}
       const completed=window.SetiStateValue.evaluateStateValue(mission.observation,f.seatId);
-      if(completed.total!==value.total||completed.components.probePotential!==0)throw Error('探测任务完整奖励链不连续或消耗探测器后仍重复估值');
+      if(completed.total-completed.components.researchIncomePotential!==value.total-value.components.researchIncomePotential||completed.components.probePotential!==0)throw Error('探测任务完整奖励链不连续或消耗探测器后仍重复估值');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('探测任务污染原根或RNG');
     }finally{p.close();c.dispose();}
     for(const [name,expected] of [['autonomous',54.5],['teacher58',57.5]]){

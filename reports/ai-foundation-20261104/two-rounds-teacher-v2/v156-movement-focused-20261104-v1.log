@@ -1,0 +1,23 @@
+trusted analysis fork isolation and exact reuse passed
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/final-scoring.js:74
+        state.tileVariants[normalized] = normalizeTileVariant(state.tileVariants[normalized]);
+                                       ^
+
+TypeError: Cannot assign to read only property 'a' of object '#<Object>'
+    at Object.ensureFinalScoringState (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/final-scoring.js:74:40)
+    at computePlayerTileScore (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/end-game-scoring.js:779:18)
+    at Object.computePlayerFinalScore (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/end-game-scoring.js:857:24)
+    at finalScore (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-movement-tail.js:18:41)
+    at Object.movementTail [as quote] (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-movement-tail.js:52:12)
+    at Object.movementPlanValueBound (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/analysis-port.js:1856:40)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-movement-tail.test.js:24:42)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+
+Node.js v22.22.0
+SUMMARY unit passed=1 failed=1 total=2 time=2.40s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=1
+FAIL randomizer/game/ai/funded-movement-tail.test.js status=1 signal=none

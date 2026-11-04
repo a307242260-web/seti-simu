@@ -28,7 +28,9 @@ try {
   assert.equal(player.publicity, 7);
   const before = values.evaluateStateValue(observation, seatId);
   assert.equal(before.components.researchPotential, 9.5);
-  assert.equal(before.total, 55.5);
+  assert.equal(before.components.researchIncomePotential, 4.5,
+    'known selection reward and existing four data can fund an income before future held and probe purposes');
+  assert.equal(before.total, 60);
   assert.equal(before.components.handPotential, 2.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
   assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
@@ -36,7 +38,8 @@ try {
   const choice = started.legalActions.find(a => a.target.tileId === 'blue1' && a.target.blueSlot === 1);
   assert(choice);
   const after = port.expand(started, choice.actionId), taken = values.evaluateStateValue(after.observation, seatId);
-  assert.equal(taken.total, before.total, 'funded forecast matches this native acquisition before later blue data rewards');
+  assert.equal(taken.total, before.total-before.components.researchIncomePotential,
+    'blue1 retains the original single-research value, while blue2 has the separate verified income bridge');
   assert.equal(taken.components.researchPotential, 0);
   assert.notDeepEqual(after.observation.publicState.board.rockets, observation.publicState.board.rockets,
     'research really rotates geometry; this model does not claim unchanged probe routes');

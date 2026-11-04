@@ -56,7 +56,14 @@ for(let i=0;i<32;i++) {
   result=searchDecision({ ...options,port,root,planReuse:true,planContinuation:token });
   const recovered=kernel();assert(recovered.composition.lifecycle.restore(actualBefore).ok);
   const reference=createAnalysisPort({composition:recovered.composition,seatId:f.seatId,maxCacheEntries:0});
-  const cold=searchDecision({ ...options,port:reference,root:reference.openRoot() });
+  const referenceRoot=reference.openRoot();reference.setMovementPlanning(true);
+  // A route is policy state, also saved in the AI sidecar. Recompute the full
+  // native window with that same exact-state-certified purpose; a bare rule
+  // restore may legitimately select another movement goal at this new root.
+  const savedPurpose=port.exportPlan(token),referenceToken=reference.importPlan(savedPurpose);
+  const samePurpose=reference.reusePlan(referenceRoot,referenceToken,savedPurpose.modelKey);
+  if(result.diagnostics.planContinuation==="hit")assert(samePurpose.hit);
+  const cold=searchDecision({ ...options,port:reference,root:referenceRoot,planReuse:false });
   assert(cold.complete);assert.equal(result.actionId,cold.actionId);assert.equal(result.value,cold.value);
   if(result.diagnostics.planContinuation==="hit"){
     assert.equal(result.reusedCoverage.distance,cold.lines[0].distance);assert.equal(result.diagnostics.transitions,0);hits+=1;

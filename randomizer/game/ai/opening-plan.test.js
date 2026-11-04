@@ -7,7 +7,7 @@ const { createSeededRandom } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
-const { createStateValueEvaluator } = require("./state-value");
+const values = require("./state-value"), { createStateValueEvaluator } = values;
 const { PASS_HAND_LIMIT } = require("../effects/probe-turn-session");
 
 const initial = JSON.parse(fs.readFileSync(path.resolve(__dirname,
@@ -199,8 +199,9 @@ for (let i = 0; i < pairs.length; i += 1) {
   const { upper, lower } = pairs[i];
   assert.equal(upper.status, lower.status);
   if (upper.status !== "decision") {
-    assert.equal(evaluate(upper.observation) - evaluate(lower.observation), 0.5,
-      "同一真实主行动全部已结算/边界出口保持半分差，蓝科技不追补已放首数据");
+    const a=values.evaluateStateValue(upper.observation,seatId),b=values.evaluateStateValue(lower.observation,seatId);
+    assert.equal(a.total-a.components.researchIncomePotential-(b.total-b.components.researchIncomePotential),0.5,
+      "原生首数据仍不追补未来蓝列；新研究收入资本另计，不能继续声称早期完整V恒差半分");
     dataAuditLeaves += 1; continue;
   }
   assert.equal(upper.legalActions.length, lower.legalActions.length);

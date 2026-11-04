@@ -1,0 +1,35 @@
+{
+  "baseCommit": "d2c62aad60760b6ce02c6bee4bea8de7423876ab",
+  "searchVersion": "seti-complete-decision-search-v157",
+  "valueModel": "seti-purpose-capital-state-value-v10",
+  "reason": "Completed movement recovery passes actual free-launch four-input trace, but controlled positive income route loses nonempty remaining intent between paid movement sessions at input29; regression failed. No cold admission or official run.",
+  "overlayFiles": {
+    "randomizer/game/ai/analysis-port.js": "7b1015916c74f2774204bab8a9637e267120b7dbaeb2989be79400b71ee8cd1a",
+    "randomizer/game/ai/decision-search.js": "d2434062fb9c4abb07f1bfbd5dfc1d675a5227bc57f2259decaf76e97039d0ed",
+    "randomizer/game/ai/funded-movement-tail.js": "ebf855515f989c0f503a64a436d5e2d82b9fc04c488d35f25c2984b46cf8d491",
+    "randomizer/game/ai/research-income-capital.js": "d1f9dbef1ae8132522187a37f1cb8d0cb7190efcb3e698ccb6e4aafead44ffd1",
+    "randomizer/game/ai/state-value.js": "d828c9335c597d841eebac2be9dee9e27fb52f2ae54720189b757f408fad4452",
+    "randomizer/game/effects/session-runtime.js": "a0f675fc9a20d18b3c26240cdd82e481db840303bf274659d7858981c7dc0379",
+    "randomizer/game/rule-composition.js": "b34c3c7a27a5e9b8b0c9703411f5c1d6c49bb7251950d4f343db28abd81b2742",
+    "randomizer/index.html": "1632cdb9e3b7b5494f1e05d36f2d630959a68719801ca72b08f72b85b45e4bfb",
+    "tools/node-test-inventory.js": "5516413573aba02eae9493354d134e6fc86a9ab3d3f7bf39f3bdd40ee987f457",
+    "randomizer/game/ai/research-income-capital.test.js": "157918a63f43089caf34d7a835f369f1b6b1c1a9ff3e5b92bb36cfd33092f0c2",
+    "randomizer/game/ai/funded-movement-tail.test.js": "8fc3321244f47a252e1ff6d0f4a39b09a665981c4e62bb6b4d4633e49ee190b5",
+    "randomizer/game/ai/funded-research-value.test.js": "5e2afa88ee5bfb885224e9a3523b46cd9e0f756c4b85367d8b0c2c53b0edef81",
+    "randomizer/game/effects/session-runtime.test.js": "a3e62e9e10586ad71fcaa812383ef93761945282aa06803253e21de3d8a3866b",
+    "randomizer/game/ai/winning-income-plan.test.js": "9df5753262b694254b77cddc8e34f5bef9e0c904241f0b7e5fa564475bab9802",
+    "randomizer/game/ai/probe-capital-value.test.js": "17099ca8a99c00cb2132a12503df11dbe8ef3ef5cb30c5d7947870dc5e67d71b",
+    "randomizer/game/ai/opening-plan.test.js": "ee24fe2442303e76d600a17ffa04a09a7b2c8dc5cc6927e0309ffb001dce4563",
+    "randomizer/game/ai/card-pick-planning.test.js": "7010ad1b6395cd06e48a55456243dd79a888ea64afa3dbddd67611626e0fb751",
+    "randomizer/game/ai/state-value.test.js": "fdfaf248cbc72a8835ee64a342d1755c24387dce4cdf78eae83b93c00f1467b9",
+    "randomizer/game/ai/probe-travel-tail.test.js": "df75a22dc9adf8b5b830faf258b6520e15b292f1e1c4651c2b76b5d4493961d9"
+  },
+  "evidence": {
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v157-winning-income-regression-20261104-v3.log": "2631f6f5f25ba004e093f10e6191faf069f95448331f038192d82388dde94fd5",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v157-income-control-inspection-20261104-v1.json": "ccb40ba5b0d0477203a2f82dcbfd8507a449f2c1cefa36fbf6ff33c0b1aff86b",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v157-free-launch-plan-reuse-20261104-v1.json": "e84f8f3da8d166eeabcedd02b8323e1089313d3fef08edd141eb8cea51127c07"
+  },
+  "admitted": false,
+  "goalStatus": "active",
+  "goalAchieved": false
+}

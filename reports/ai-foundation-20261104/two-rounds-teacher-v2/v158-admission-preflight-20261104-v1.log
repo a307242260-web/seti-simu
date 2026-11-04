@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/deliver-human405-v158-admission-20261104-v1.py", line 16, in <module>
+    directory=stage/f'reports/ai-foundation-20261104/rejected-v{version}-runtime-20261104-v1';m=read(str(directory.relative_to(stage))+'/manifest.json');assert m['baseCommit']==base and not m['admitted'];archives[version]=(directory,m)
+KeyError: 'admitted'

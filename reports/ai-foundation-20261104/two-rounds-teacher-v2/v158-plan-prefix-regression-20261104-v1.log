@@ -1,0 +1,4 @@
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[107,0,0,0]}
+SUMMARY unit passed=1 failed=0 total=1 time=0.59s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

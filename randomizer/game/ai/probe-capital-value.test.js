@@ -31,7 +31,9 @@ try {
   const state = JSON.parse(original.committedState), own = state.players.players.find(p => p.id === seatId);
   const investment = (hand, publicity, funding) => demand.heldAndResearchCapital(state, { ...own, hand, income: funding.income, resources: { ...own.resources, ...funding.resources, publicity } });
   assert.deepEqual(probe.fromState(state, own, values.DEFAULT_WEIGHTS, investment), forecast);
-  assert.equal(demand.planningCapital(state, own), demand.heldAndResearchCapital(state, own) + forecast.value);
+  const beforeValue=values.evaluateStateValue(obs,seatId);
+  assert.equal(beforeValue.components.researchIncomePotential,4.5);
+  assert.equal(demand.planningCapital(state, own), demand.heldAndResearchCapital(state, own) + forecast.value+beforeValue.components.researchIncomePotential);
 
   // Four actual native inputs consume the quoted probe, public card, scan slot
   // and income card. The analysis branch preserves its blind-draw boundary.
@@ -41,7 +43,10 @@ try {
     const a = next.legalActions.find(a => a.actionId === step.actionId); assert(a, step.summary);
     next = port.expand(next, a.actionId);
   }
-  assert.equal(values.evaluateStateValue(next.observation, seatId).total, values.evaluateStateValue(obs, seatId).total);
+  const completedValue=values.evaluateStateValue(next.observation,seatId);
+  assert.equal(completedValue.total-completedValue.components.researchIncomePotential,
+    beforeValue.total-beforeValue.components.researchIncomePotential,
+    'the native mission matches its base quote; the independently verified research-income alternative is separate');
   assert.equal(quote(next.observation).value, 0, 'consumed probe must not retain a mission');
   assert.equal(quote({ ...obs, terminal: true }).value, 0);
   const round4 = structuredClone(obs); round4.publicState.roundNumber = 4; delete round4.publicState.board.data;
@@ -93,6 +98,14 @@ try {
   const index=controlled.cards.publicCards.findIndex(c=>c?.cardId==='b_2.webp');assert(index>=0);
   recipient.hand.push(controlled.cards.publicCards[index]);controlled.cards.publicCards[index]=null;
   recipient.resources.handSize=recipient.hand.length;recipient.mainActionCompleted=true;
+  // With funded research, the known public research-income alternative makes
+  // this blind-income plan unprofitable. It must not receive a certificate.
+  assert(c.lifecycle.restore({...original,committedState:JSON.stringify(controlled)}).ok);
+  const deferred=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{deferred.setResourcePlanning(true);deferred.setCardPickPlanning(true);const root=deferred.openRoot();assert.equal(deferred.incomePlanSummary(root),null);assert.equal(deferred.resourceSpec(root).incomeTail.selected,false);}finally{deferred.close();}
+  // Below the research fee, the same native income plan funds publicity via
+  // computer2 and is positive. Keep its deployed probe and shared-wallet quote.
+  recipient.resources.publicity=5;
   assert(c.lifecycle.restore({...original,committedState:JSON.stringify(controlled)}).ok);
   const controlBefore=c.lifecycle.save().envelope,q=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try{

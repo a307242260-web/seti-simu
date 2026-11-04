@@ -244,8 +244,9 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 ### 可信分析fork的冻结根恢复
 
 `restoreCheckpoint(checkpoint, { trustedFrozenState: true })` 仅在可信隔离runtime且checkpoint Session/起始根已经冻结时共享只读 `baseState`/`committedState`；
-其余working state、queue、journal等仍复制。普通恢复保持完整复制语义，checkpoint schema不变。
-共享规则composition只在其trusted fork路径传入该选项，不把此能力暴露给机器策略。冻结历史不得成为可写工作副本，原生逐输入回放和失败回滚继续适用。
+在可信隔离fork中，已冻结的journal记录允许共享，但journal对象及各数组容器仍独立复制；新增记录不能写入来源容器。queue和其他可写Session字段继续复制。
+
+v158的观察恢复可再传`readOnly:true`：只有来源workingState已冻结时才借用该只读对象。执行输入的恢复不传该选项，必须先取得独立workingState。普通宿主即使收到这两个选项也保持完整复制语义，checkpoint schema不变；规则composition仅在trusted fork路径转发选项。冻结历史不得成为可写工作副本，原生逐输入回放、完整journal/replay对照和失败回滚继续适用。
 
 ### 触发结算的只读查询
 
