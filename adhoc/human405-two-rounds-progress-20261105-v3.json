@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: verified20randomboards; sourceV161admitted,oneuniqueautonomousfirst2,native100inputverification,and actualdevelopmentcounterevidence",
+  "scope": "same23opening,whiteDeepSpace autonomous,otherPASSmandatory; first2 score,exacttech,sixincome,andallassets",
+  "roundEnd": "before-PASS-card-and-next-income",
+  "productionRuntime": "v161 / V11",
+  "sourceCommit": "b961ce2911a08573f11ed04ad975935ec594c253",
+  "record": "reports/research/bc76a417.b961ce29.quick-400.json",
+  "officialRuns": 1,
+  "wallMs": 3056,
+  "steps": 100,
+  "searches": 61,
+  "actualScores": [
+    21,
+    43
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualTechnologyCount": [
+    1,
+    2
+  ],
+  "teacherTechnologyCount": [
+    2,
+    3
+  ],
+  "actualIncomeByRound": [
+    {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    }
+  ],
+  "teacherIncome": {
+    "credits": 6,
+    "energy": 2,
+    "handSize": 1,
+    "publicity": 0,
+    "availableData": 0,
+    "additionalPublicScan": 1
+  },
+  "actualMaxNativeInputs": 81,
+  "actualMaxMilliseconds": 162.86625000000004,
+  "developmentAligned": false,
+  "gates": {
+    "unit": 166,
+    "fullFlow": 1,
+    "chrome": 18,
+    "coldRoots": 86,
+    "maxNativeInputs": 252,
+    "maxMilliseconds": 517.062541,
+    "knownLegacyAuditFailure": "frozen aomomo"
+  },
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-first2-native-verification-20261105-v1.json",
+  "developmentComparison": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-first2-development-comparison-20261105-v1.json",
+  "actualRootAudit": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-actual-development-audit-20261105-v1.json",
+  "nextActions": [
+    "native endpoints atactual75:freeResearch76vslaunch76.5; decompose sharedfunding/heldpurpose/probe and current-round timing",
+    "continue knownblue2/income chainat36/38, distinguishmissingpreparationfromvaluation",
+    "freshsinglepointgate before nextofficialexperiment; preservefullbaselinev41andforeignV1"
+  ],
+  "baselineUnchanged": "ai-search-v41-baseline-20261029"
+}
