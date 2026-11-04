@@ -253,6 +253,36 @@ const smokes = [
     obligation: "随机教学局3按名称打开独立种子，白席能选免电分析且默认录制轨迹",
     counterexample: "菜单复用教学局2的种子、没有免电公司或关闭了轨迹录制",
   }),
+  ...[{"name":"免电分析随机盘面01","seed":"seti-analyze-a2d78cbc07cf","companies":["深空探测","图灵系统"],"publicCards":["b_63.webp","b_43.webp","b_136.webp"],"number":1},{"name":"免电分析随机盘面02","seed":"seti-analyze-9a90ce3372d6","companies":["芬威克研究中心","深空探测"],"publicCards":["b_4.webp","b_38.webp","b_82.webp"],"number":2},{"name":"免电分析随机盘面03","seed":"seti-analyze-702b3104145a","companies":["哨兵探测网络","深空探测"],"publicCards":["b_16.webp","dlc_26.png","b_17.webp"],"number":3},{"name":"免电分析随机盘面04","seed":"seti-analyze-bef76f5fe6ae","companies":["深空探测","哨兵探测网络"],"publicCards":["b_10.webp","b_21.webp","b_8.webp"],"number":4},{"name":"免电分析随机盘面05","seed":"seti-analyze-5001578c1141","companies":["宇宙战略集团","深空探测"],"publicCards":["b_27.webp","b_98.webp","b_115.webp"],"number":5},{"name":"免电分析随机盘面06","seed":"seti-analyze-421f46598209","companies":["深空探测","寰宇动力"],"publicCards":["b_3.webp","b_91.webp","b_66.webp"],"number":6},{"name":"免电分析随机盘面07","seed":"seti-analyze-a4886c19154b","companies":["图灵系统","深空探测"],"publicCards":["b_107.webp","b_108.webp","dlc_1.png"],"number":7},{"name":"免电分析随机盘面08","seed":"seti-analyze-9c11af934643","companies":["深空探测","芬威克研究中心"],"publicCards":["b_72.webp","dlc_23.png","b_132.webp"],"number":8},{"name":"免电分析随机盘面09","seed":"seti-analyze-24169115909d","companies":["深空探测","异星实验室"],"publicCards":["b_45.webp","b_97.webp","b_123.webp"],"number":9},{"name":"免电分析随机盘面10","seed":"seti-analyze-2ec4582df1f6","companies":["任务中继站","深空探测"],"publicCards":["b_35.webp","b_69.webp","b_115.webp"],"number":10},{"name":"免电分析随机盘面11","seed":"seti-analyze-8cf6f23cc7c1","companies":["深空探测","未来跨度研究所"],"publicCards":["b_74.webp","b_7.webp","b_137.webp"],"number":11},{"name":"免电分析随机盘面12","seed":"seti-analyze-bd83842179ca","companies":["深空探测","未来跨度研究所"],"publicCards":["b_28.webp","b_10.webp","b_43.webp"],"number":12},{"name":"免电分析随机盘面13","seed":"seti-analyze-5c5ff536a8da","companies":["深空探测","宇宙战略集团"],"publicCards":["b_113.webp","b_49.webp","dlc_30.png"],"number":13},{"name":"免电分析随机盘面14","seed":"seti-analyze-ed3824aaebd6","companies":["图灵系统","深空探测"],"publicCards":["dlc_24.png","dlc_26.png","dlc_8.png"],"number":14},{"name":"免电分析随机盘面15","seed":"seti-analyze-3cf8ee390c56","companies":["深空探测","异星实验室"],"publicCards":["b_112.webp","b_121.webp","b_126.webp"],"number":15},{"name":"免电分析随机盘面16","seed":"seti-analyze-92c262b1b98c","companies":["深空探测","未来跨度研究所"],"publicCards":["b_14.webp","b_24.webp","dlc_36.png"],"number":16},{"name":"免电分析随机盘面17","seed":"seti-analyze-8c7ca70c141f","companies":["深空探测","哨兵探测网络"],"publicCards":["b_81.webp","b_63.webp","b_51.webp"],"number":17},{"name":"免电分析随机盘面18","seed":"seti-analyze-1466261ceeec","companies":["深空探测","哨兵探测网络"],"publicCards":["dlc_37.png","dlc_1.png","b_28.webp"],"number":18},{"name":"免电分析随机盘面19","seed":"seti-analyze-f54bea5e6f9c","companies":["任务中继站","深空探测"],"publicCards":["b_8.webp","b_127.webp","b_30.webp"],"number":19},{"name":"免电分析随机盘面20","seed":"seti-analyze-6b38bd2b8e98","companies":["未来跨度研究所","深空探测"],"publicCards":["b_9.webp","b_32.webp","b_88.webp"],"number":20}].map(board => Object.freeze({
+    id: "production-fixed-board-random20-" + String(board.number).padStart(2, "0"),
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-fixed-board'))",
+    actionExpression: `(async () => {
+      const board = ${JSON.stringify(board)}, fixed = document.querySelector("#start-fixed-board"), seed = document.querySelector("#start-seed-input");
+      const group = [...fixed.querySelectorAll("optgroup")].find(g => g.label === "免电分析随机盘面（20局）");
+      if (!group || group.children.length !== 20 || new Set([...group.children].map(o => o.value)).size !== 20) throw new Error("随机盘面必须恰有20个独立入口");
+      fixed.value = board.seed;
+      if (fixed.selectedOptions[0]?.textContent !== board.name) throw new Error("随机盘面名称或种子不匹配");
+      fixed.dispatchEvent(new Event("change", { bubbles: true }));
+      if (!seed.disabled || seed.value !== board.seed) throw new Error("随机盘面种子未绑定");
+      if (!document.querySelector("#start-record-trajectory").checked) throw new Error("随机盘面默认轨迹录制未启用");
+      document.querySelector("#start-screen-start-button").click();
+      const deadline = Date.now() + 12000;
+      while (!document.querySelector(".initial-selection-card-button")) {
+        if (Date.now() >= deadline) throw new Error("随机盘面未进入初始选择");
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      const companies = [...document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry")].map(img => img.alt);
+      if (!board.companies.every(name => companies.some(c => c.includes(name))) || !companies.some(c => c.includes("深空探测"))) throw new Error("随机盘面白席公司与原生种子不一致");
+      const render = window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render || {};
+      const faces = (render.cardPanels?.publicCards || []).map(c => String(c.imageSrc || ""));
+      if (!board.publicCards.every(f => faces.some(src => src.endsWith(f)))) throw new Error("随机盘面公共牌与原生种子不一致");
+      window.__setiRandom20Smoke = { ok: true };
+    })()`,
+    successExpression: "window.__setiRandom20Smoke?.ok === true",
+    obligation: "随机盘面按名称进入唯一原生种子，白席可选免电分析、公共牌一致且默认录制轨迹",
+    counterexample: "随机编号串种子、免电公司缺失或浏览器随机世界与原生开局不一致",
+  })),
   Object.freeze({
     id: "production-browser-full-parity",
     file: "randomizer/index.html",

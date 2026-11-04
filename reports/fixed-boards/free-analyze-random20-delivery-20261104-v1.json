@@ -1,0 +1,25 @@
+{
+  "baseCommit": "6eff6f3da26e2d680e2963184def68fb387d3d5a",
+  "files": {
+    "randomizer/index.html": "453b77e28c50de33af560829034b93e61e420217c0b6acc022a73611792dbbc0",
+    "tools/browser-smoke-inventory.js": "77a791226678a8eaba2c946f945463086b5a1f0e02687381c26b804083d2fcd0",
+    "docs/fixed-boards.md": "4ea9d016a3f742c53f3535d64a6beef1e0939c0e29fc505cbfbdc54f050b1780",
+    "adhoc/generate-free-analyze-random20-20261104-v1.js": "746d1080cfc2a321a49434b5b18c396af33cb735a15637788e2f23449e315fd2",
+    "adhoc/deliver-free-analyze-random20-20261104-v1.py": "bb0c848a5f42f56437482c9f6319007217dc5aec1e1aa40386adfe4025f0b689",
+    "reports/fixed-boards/free-analyze-random20-20261104-v1.json": "239799d9128900f67d0d847283e5133d56826ec9e23dbeab6ab00f3d5ed6cda3",
+    "reports/fixed-boards/free-analyze-random20-generation-20261104-v1.log": "68d34f0de89b74802005457137521e93972a4fe742b79852a6addf2bcd6a1f2e",
+    "reports/fixed-boards/free-analyze-random20-browser-20261104-v1.log": "fef0066161d3d2dbef9978e32e3dbd12f92d9e0ea609444a244a488255dc2adf"
+  },
+  "nativeRecreatedBoards": 20,
+  "chromePassed": 20,
+  "selection": "white DeepSpace availability only; no card/income/board-quality filtering",
+  "sourceModulesVerified": 79,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "foreignRegistryHashes": {
+    "reports/iteration/versions.json": "5fa81fa1ead2cce236bc61d1cf33f2fae380c7f14206b980d506208e7d991021",
+    "reports/iteration/registry.json": "cdc0262e274076bd43fbefc47f0391a83febaf43271ce54f5fb6e43b11fb96d4",
+    "reports/robot-iteration.html": "c19b0e4dc84f35f60e8aa382e086534ef1005afa9bca8ab56b03b9efa073df34"
+  },
+  "scope": "20 additional menu presets; current AI runtime untouched"
+}

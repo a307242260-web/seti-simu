@@ -1,0 +1,21 @@
+PASS production-fixed-board-random20-01 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-02 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-03 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-04 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-05 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-06 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-07 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-08 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-09 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-10 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-11 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-12 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-13 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-14 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-15 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-16 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-17 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-18 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-19 http://127.0.0.1:55623/randomizer/index.html
+PASS production-fixed-board-random20-20 http://127.0.0.1:55623/randomizer/index.html
+SUMMARY browserSmoke passed=20 failed=0 total=20
