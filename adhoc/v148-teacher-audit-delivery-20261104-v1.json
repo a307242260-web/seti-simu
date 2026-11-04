@@ -1,0 +1,24 @@
+{
+  "baseCommit": "836997878184f1f5d8e0be6b8987eb581b904236",
+  "sourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
+  "files": {
+    "adhoc/audit-v148-teacher-choices-20261104-v2.js": "d63b2060dbf0ef170c87f47d03cba166f1d2163bf0e3f33af887dabde72520ae",
+    "adhoc/deliver-v148-teacher-audit-20261104-v1.py": "1c408d3e44965d30b0f68627b996e6dc450268dbe87df19db2799e4f20beb34f",
+    "adhoc/human405-two-rounds-progress-20261104-v10.json": "9f4f042f54dd466ffe54c29db122a0f706497cf915886857573fe2aa7558c600",
+    "adhoc/witness-v148-first-launch-timing-20261104-v1.js": "3449b3b9d3aebd3e4c0d41af533292afcebad376d1daa64161c08a27845d8952",
+    "docs/ai-funded-hand-timing-v148-20261104.md": "cad70ab9629e2d5212f9acd7f90523510a72c6c9996703c04ec84d888ed43a67",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-audit-field-error-20261104-v1.log": "42c21bb62b720db9f618ed0f8b083a65f2c5be9fb18c4ee363808bdebd0680fd",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json": "26780d39cf689ccd1370197d14b6363a4fc9b0da65d6c6b3914b7454c85c206f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.log": "900d3f7a9e624a4b3e208e44be0c61ae4e7feaa5a7fa727ca1745711153319f3",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-teacher-node-choice-audit-20261104-v2.json": "4a941553ca3d435d1ac7393ab7644fee561a5a5f6112881bc48248c1dfd90803",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-teacher-node-choice-audit-20261104-v2.log": "e9b3302b9aeaf1261b79c02bcb9d787e7964cde9e7f90827114ddb148649b70e"
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "foreignRegistryHashes": {
+    "reports/iteration/versions.json": "5c23d5891d70e3a004746af4621abf01c573a9630c937f2d2b8712e96db1025d",
+    "reports/iteration/registry.json": "eddd8cceb0a957a9747eb8b385131f0036c66ad3f143a759534c818c5d47edf1",
+    "reports/robot-iteration.html": "3af352922c36a994b9190c8b1c28e2ee0c7d5e5f6560c4c31866f162c3adfa0c"
+  },
+  "goalStatus": "active",
+  "goalAchieved": false
+}

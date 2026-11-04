@@ -2,7 +2,7 @@
   "date": "2026-11-04",
   "goalStatus": "active",
   "goalAchieved": false,
-  "phase": "v148-first2-native-verified-awaiting-result-publication",
+  "phase": "v148-first2-published-teacher67-audited-native-launch-timing",
   "sourceVersion": "v148 / V8 funded hand timing, shared post-income ranking, actual fixed movement budget",
   "draftUncommitted": false,
   "baseCommit": "ec6b09f0056c6bf0d1cf299e543c3f1f991c70f9",
@@ -20,7 +20,7 @@
   "userBoundary": "Round end excludes both PASS card pick and next income; both belong to next round start.",
   "finalChecksPending": false,
   "chromeSession": 99824,
-  "nextAction": "Publish verified first2 result. Native audit first blue1/blue260vs59 and R2 orange4/blue2 72.5vs68 including income, resources and prepaid alien rights. No weight change without witness.",
+  "nextAction": "Native equality/counterfactual audit teacher inputs38/43 data timing and R2 72/78/81/84/92; quantify known-card income opportunities and longterm capital. Preserve information reveal timing. No new production change or repeat autonomous run.",
   "sourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
   "unitPassed": 161,
   "fullFlowPassed": 1,
@@ -36,5 +36,14 @@
   ],
   "wallMs": 3060,
   "maxActualInputs": 89,
-  "maxActualMilliseconds": 170.197292
+  "maxActualMilliseconds": 170.197292,
+  "artifactCommit": "836997878184f1f5d8e0be6b8987eb581b904236",
+  "teacherAudit": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-teacher-node-choice-audit-20261104-v2.json",
+  "teacherChoiceCounts": {
+    "same-native-action": 49,
+    "different-reported-value": 9,
+    "same-reported-value-different-action": 2,
+    "teacher-action-policy-excluded": 5,
+    "teacher-value-not-established": 2
+  }
 }
