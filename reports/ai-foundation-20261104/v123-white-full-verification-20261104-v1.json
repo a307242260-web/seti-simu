@@ -1,0 +1,204 @@
+{
+  "sourceCommit": "1a78d5d35d76c42855c922ec0c44901039392780",
+  "record": "reports/research/788d8a64.1a78d5d3.full.json",
+  "recordSha256": "84dc3d573093232f097d20144564bc020fe2e079d3ab475befcee008fd87f411",
+  "save": "seti-saves/seti-save-research-ai-search-v123-white-full-20261104-1a78d5d3-full-v80.json",
+  "saveSha256": "ac6411749ee994ed644eec84cbce94e8311123f21d1b6c56173fee4f377bd96f",
+  "sameFirst64InputsAndAICheckpoint": true,
+  "all103ContinuationNativeInputsReplayed": true,
+  "allRoundNativeStateSessionRngMatched": true,
+  "allTracesMatched": true,
+  "naturalTerminal": true,
+  "whiteFinalScore": 80,
+  "whiteBaseScore": 66,
+  "whiteTileScore": 14,
+  "whiteCardScore": 0,
+  "teacherRecordedScore": 405,
+  "teacherRecordedBase": 249,
+  "teacherRecordedTiles": 118,
+  "teacherRecordedCards": 38,
+  "wallMsContinuation": 6498,
+  "wallMsIncludingSourceRound1": 8162,
+  "searches": 113,
+  "maxNativeInputs": 396,
+  "maxRootAndSearchMs": 605.7771250000005,
+  "overruns": [
+    {
+      "step": 138,
+      "native": 283,
+      "ms": 429.8054169999996
+    },
+    {
+      "step": 140,
+      "native": 396,
+      "ms": 605.7771250000005
+    },
+    {
+      "step": 142,
+      "native": 355,
+      "ms": 565.8296250000003
+    }
+  ],
+  "allSearchGraphsComplete": true,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "comparisonScope": "white-only-full-game",
+  "rounds": [
+    {
+      "round": 1,
+      "steps": 64,
+      "seat": "player-white",
+      "score": 27,
+      "finalScore": 27,
+      "technology": [
+        "blue1"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 27
+      },
+      "handCount": 4,
+      "reservedCount": 0,
+      "hand": [
+        "dlc_9.png",
+        "dlc_4.png",
+        "dlc_39.png",
+        "dlc_37.png"
+      ],
+      "reserved": []
+    },
+    {
+      "round": 2,
+      "steps": 95,
+      "seat": "player-white",
+      "score": 35,
+      "finalScore": 35,
+      "technology": [
+        "blue1",
+        "blue4",
+        "purple4"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 1,
+        "score": 35
+      },
+      "handCount": 3,
+      "reservedCount": 1,
+      "hand": [
+        "dlc_18.png",
+        "dlc_31.png",
+        "dlc_30.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ]
+    },
+    {
+      "round": 3,
+      "steps": 130,
+      "seat": "player-white",
+      "score": 42,
+      "finalScore": 42,
+      "technology": [
+        "blue1",
+        "blue4",
+        "purple4"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 4,
+        "score": 42
+      },
+      "handCount": 4,
+      "reservedCount": 1,
+      "hand": [
+        "dlc_18.png",
+        "b_111.webp",
+        "dlc_24.png",
+        "dlc_20.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ]
+    },
+    {
+      "round": 4,
+      "steps": 167,
+      "seat": "player-white",
+      "score": 66,
+      "finalScore": 80,
+      "technology": [
+        "blue1",
+        "blue4",
+        "orange3",
+        "purple4"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 66
+      },
+      "handCount": 1,
+      "reservedCount": 1,
+      "hand": [
+        "dlc_24.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ]
+    }
+  ]
+}

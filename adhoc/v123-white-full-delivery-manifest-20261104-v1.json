@@ -1,0 +1,48 @@
+{
+  "baseCommit": "7b7b2e5eadc907111b1cf9baeeb1840d0d828a54",
+  "files": {
+    "adhoc/deliver-v123-white-full-result-20261104-v1.py": "e5380bf60c2062bc91c1600364ececc6fcfb32db98ce4aeb0da0bd22d31f2f0e",
+    "adhoc/prepare-v123-full-root-overlays-20261104-v1.js": "a4d0aa7cdf4294d205a00895e24070f148e2eb02c29d4da01773d97bb4121840",
+    "adhoc/verify-v123-white-full-20261104-v1.js": "fa9e519b8132c87774562f94417bdb9232621861bf772a831a9e6805c58ae23e",
+    "docs/ai-v123-white-full-20261104.md": "23fce3eeedf912d910978ccc4c11c61f4ae7a1181cec7512a26964638524c3f0",
+    "reports/ai-foundation-20261104/v123-full-record-inventory-20261104-v1.log": "24ff77fad557d256daaa11aa6f1ab04f89570afc61caf14359ff2a3825b0e7a9",
+    "reports/ai-foundation-20261104/v123-full-result-source-check-20261104-v1.json": "b895ca32fa20976e81bce5f8fbe2630317f4073fc8cf253f1f4d32aa96a68e1d",
+    "reports/ai-foundation-20261104/v123-white-full-live-20261104-v1.log": "c2474174f861b96dadcab583487328ca3c857882b3177a094561e7e5dbf18288",
+    "reports/ai-foundation-20261104/v123-white-full-registry-20261104-v1.log": "b83edef33d219ace942d203be4dd58269a4af42b1faf525463f4b7dc543fc430",
+    "reports/ai-foundation-20261104/v123-white-full-verification-20261104-v1.json": "f9c79a1db4a170dce271fbb27af06849dfaabeae4d09adeb140db701e59d75dd",
+    "reports/ai-foundation-20261104/v123-white-full-verification-20261104-v1.log": "3c20f4983e87a634008b37724ace43d93cd10c2b8e4e15b0271ec2f27b800e2f",
+    "reports/iteration/ai-search-v123-white-full-20261104/788d8a64.1a78d5d3.full.action-log.html": "97d363979c061c7597d5cf2a05c316bcaff522e265e8c582b9c36cb573f8b7cb",
+    "reports/iteration/registry.json": "5fa4b18778c79d0bb5079fd8d02ff306c0f62b3083ec6266ab1d901722321ca0",
+    "reports/iteration/versions.json": "315f3e5187293ceea933eb2dd04322c171e6e691fb20b9a876f70330683f9995",
+    "reports/research/788d8a64.1a78d5d3.full.json": "84dc3d573093232f097d20144564bc020fe2e079d3ab475befcee008fd87f411",
+    "reports/research/788d8a64.1a78d5d3.full.json.decisions.jsonl": "c422ae21ddc6a261de1ca2d1c07833cb304edae816f63df2a80bbada3ef276ca",
+    "reports/research/788d8a64.1a78d5d3.full.json.round-1.checkpoint.json": "64f559a5ad4d306ea9fb814d457d9597ce26ef0df3b2e64fe04763b3b741e5ce",
+    "reports/research/788d8a64.1a78d5d3.full.json.round-2.checkpoint.json": "cac7faec35c3e39a11928e432d9a46cc1fb9e4e217b20af364e7b2c198c1d1d4",
+    "reports/research/788d8a64.1a78d5d3.full.json.round-3.checkpoint.json": "da10debf60f5271d6831b90e18827a75796e2b4485ef6db21038987e8361fb73",
+    "reports/research/788d8a64.1a78d5d3.full.json.round-4.checkpoint.json": "cb3c9ee99b2aba50aa89981922fdc7c82e30c0dada6afc2e8b4dc386ade4b05e",
+    "reports/research/788d8a64.1a78d5d3.full.json.rounds.jsonl": "84c2d321c8533cb79090c4c323114bd59781762f35f06c1b5858b50a23f8bd54",
+    "reports/robot-iteration.html": "5d336db087a2855128ea5679ad7bbe9698b0319d200f0477a60c55de0d4f0d6d",
+    "seti-saves/seti-save-research-ai-search-v123-white-full-20261104-1a78d5d3-full-v80.json": "ac6411749ee994ed644eec84cbce94e8311123f21d1b6c56173fee4f377bd96f"
+  },
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "79f34e765874fd040521acca1c76d613344ce95510bc5b63d9d045d6e0c948a5",
+      "path": "/private/tmp/seti-v123-full-root-overlays-20261104/versions.json",
+      "sha256": "5a37097315321a4bcc116a021d8d97281f60156871f1761c70ed677ccbfe8f92"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "138fc6f5c740e5b18e312a317678b7dc5a984d15a407312f798347d27cc8b4f5",
+      "path": "/private/tmp/seti-v123-full-root-overlays-20261104/registry.json",
+      "sha256": "487db0cd67b9438b982cf0663a6e5b7d3de7e43b8605f1f890d1b62b24586e64"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "0056b27da9627f64e0e67a86c2bf3c67380ac05c45c98ef3c659aa0144d6c73d",
+      "path": "/private/tmp/seti-v123-full-root-overlays-20261104/robot-iteration.html",
+      "sha256": "b17d48d61b001113702423055f7b16534966e11c513746ae2fdceab206df892e"
+    }
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "strategyFrozen": true,
+  "experimentComplete": true
+}
