@@ -1,0 +1,51 @@
+{
+  "before": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v160-cold-serial-teacher-039-20261105-v1.json",
+  "after": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-cold-serial-teacher-039-20261105-v1.json",
+  "recordHashes": {
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v160-cold-serial-teacher-039-20261105-v1.json": "139af55b5c75ff72402affb5e8f8280084c44a7dfe4fa92aa1f96b14a6af5750",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v161-cold-serial-teacher-039-20261105-v1.json": "11be05f4f0cb73a17d194e0fd326091553c5ff5526c30957581fc747a04d2380"
+  },
+  "allRootValuesAndCompletionMetadataEqual": true,
+  "rootActionAndValueEqual": true,
+  "rootDistance": 15,
+  "nativeInputsBefore": 257,
+  "nativeInputsAfter": 252,
+  "allBranchesClosed": true,
+  "productionBudgets": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "logicalPrefixFamiliesBefore": {
+    "play_card": 4,
+    "pass": 6,
+    "quick_trade": 9,
+    "choose_card": 53,
+    "industry": 1,
+    "place_data": 60,
+    "choose_target": 102,
+    "land": 5,
+    "orbit": 6,
+    "scan": 6,
+    "card_corner": 4,
+    "analyze": 1
+  },
+  "logicalPrefixFamiliesAfter": {
+    "play_card": 4,
+    "pass": 6,
+    "quick_trade": 9,
+    "choose_card": 52,
+    "industry": 1,
+    "place_data": 60,
+    "choose_target": 98,
+    "land": 5,
+    "orbit": 6,
+    "scan": 6,
+    "card_corner": 4,
+    "analyze": 1
+  },
+  "scope": "Equivalent paid-effect control contexts share one graph node. Full original rule/RNG keys remain; this does not claim identical graph indices or all private preparation labels.",
+  "goalStatus": "active",
+  "goalAchieved": false
+}

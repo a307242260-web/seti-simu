@@ -1,0 +1,230 @@
+[
+  {
+    "technology": "blue2",
+    "plan": "immediate-energy-income",
+    "inputs": 9,
+    "value": 60,
+    "delta": 6.5,
+    "components": {
+      "realizedScore": 10,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 1,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 3.5,
+      "researchPotential": 0,
+      "probePotential": 7.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 2,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 2,
+      "score": 10
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    }
+  },
+  {
+    "technology": "blue2",
+    "plan": "swap-to-known-credit-income",
+    "inputs": 12,
+    "value": 57,
+    "delta": 3.5,
+    "components": {
+      "realizedScore": 10,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 1,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 4.5,
+      "researchPotential": 0,
+      "probePotential": 3.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 3,
+      "energy": 1,
+      "handSize": 1,
+      "publicity": 2,
+      "score": 10
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    }
+  },
+  {
+    "technology": "blue2",
+    "plan": "end-orbit-known-credit-income",
+    "inputs": 5,
+    "value": 53.5,
+    "delta": 0,
+    "components": {
+      "realizedScore": 11,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 2,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 2.5,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 5,
+      "credits": 2,
+      "energy": 0,
+      "handSize": 2,
+      "publicity": 1,
+      "score": 11
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    }
+  },
+  {
+    "technology": "blue3",
+    "plan": "immediate-energy-income",
+    "inputs": 9,
+    "value": 60,
+    "delta": 6.5,
+    "components": {
+      "realizedScore": 10,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 1,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 3.5,
+      "researchPotential": 0,
+      "probePotential": 7.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 2,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 2,
+      "score": 10
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    }
+  },
+  {
+    "technology": "blue3",
+    "plan": "swap-to-known-credit-income",
+    "inputs": 12,
+    "value": 57,
+    "delta": 3.5,
+    "components": {
+      "realizedScore": 10,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 1,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 4.5,
+      "researchPotential": 0,
+      "probePotential": 3.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 3,
+      "energy": 1,
+      "handSize": 1,
+      "publicity": 2,
+      "score": 10
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    }
+  },
+  {
+    "technology": "blue3",
+    "plan": "end-orbit-known-credit-income",
+    "inputs": 5,
+    "value": 53.5,
+    "delta": 0,
+    "components": {
+      "realizedScore": 11,
+      "currentEndGameBonus": 0,
+      "resources": 5,
+      "hand": 2,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 2.5,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0
+    },
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 5,
+      "credits": 2,
+      "energy": 0,
+      "handSize": 2,
+      "publicity": 1,
+      "score": 11
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    }
+  }
+]

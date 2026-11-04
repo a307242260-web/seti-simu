@@ -1,0 +1,4 @@
+{"nativeControlledPlans":20,"nativeControlledInputs":117,"rejectedNativeChoices":9,"rootValue":71,"actionIdenticalToFullReference":true,"nativeInputs":198,"movementValuePrunes":20,"ruleMoveQueries":31,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=1.25s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

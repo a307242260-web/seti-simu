@@ -1,0 +1,16 @@
+{
+  "baseCommit": "bb7da4e1193f0de2497dde3b99e253100abc4fad",
+  "proofs": [
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-teacher024-20261105-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-actual055-20261105-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-actual035-20261105-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-case105-20261105-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-actual048-20261105-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/activity4-prototype-actual038-20261105-v1.json"
+  ],
+  "allOriginalSourceHashesMatchBase": true,
+  "modules": 92,
+  "noProductionModification": true,
+  "goalStatus": "active",
+  "goalAchieved": false
+}

@@ -30,8 +30,8 @@ try {
   assert.equal(before.components.researchPotential, 9.5);
   assert.equal(before.components.researchIncomePotential, 4.5,
     'known selection reward and existing four data can fund an income before future held and probe purposes');
-  assert.equal(before.total, 60);
-  assert.equal(before.components.handPotential, 2.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
+  assert.equal(before.total, 60 + (values.FORECAST.usefulScansPerLaterRound - 2) * 2);
+  assert.equal(before.components.handPotential, 2 * values.FORECAST.usefulScansPerLaterRound - 1.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
   assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
   const started = port.expand(root, root.legalActions.find(a => a.family === 'research_tech').actionId);
@@ -117,7 +117,10 @@ try {
 } finally { port.close(); c.dispose(); }
 // Native PASS choices begin before both completion flags change. A future
 // investment must lose the current-round window while its rewards settle.
-for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
+for (const [name, legacyValue, windows] of [['autonomous', 54.5, 3], ['teacher58', 57.5, 2]]) {
+  // The first fixture already owns purple4; the second can fund heldDLC9
+  // only after PASS income, so its card forecast has one fewer usage window.
+  const expected=legacyValue+(values.FORECAST.usefulScansPerLaterRound-2)*windows;
   const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
     `../../../adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/${name}-before-pass-20261031-v1.json`)));
   const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,

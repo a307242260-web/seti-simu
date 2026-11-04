@@ -1,0 +1,9 @@
+PASS production-search-agent-entry http://127.0.0.1:62403/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:62403/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:62403/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:62403/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:62403/randomizer/index.html
+Error: production-funded-travel-capital 操作异常：Error: 完整路线未扣除持牌资金机会成本
+    at <anonymous>:7:138
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:294:11)

@@ -1,0 +1,15 @@
+{
+  "record": "reports/research/7c48459b.02f630d5.quick-400.json",
+  "rows": [
+    {
+      "input": 48,
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-048-20261105-v1.json"
+    },
+    {
+      "input": 55,
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-055-20261105-v1.json"
+    }
+  ],
+  "all105NativeInputsReplayed": true,
+  "noAiSearch": true
+}

@@ -744,7 +744,8 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
   const { createAnalysisPort } = require('../randomizer/game/ai/analysis-port');
   const values = require('../randomizer/game/ai/state-value'), demand = require('../randomizer/game/ai/resource-demand');
   const nativePass = require('../randomizer/game/effects/probe-turn-session');
-  for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
+  for (const [name, legacyValue, windows] of [['autonomous', 54.5, 3], ['teacher58', 57.5, 2]]) {
+   const expected=legacyValue+(values.FORECAST.usefulScansPerLaterRound-2)*windows;
    const f = JSON.parse(fs.readFileSync('adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/'+name+'-after-pass-20261031-v1.json'));
    const seed = f.source.seed;
    kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,

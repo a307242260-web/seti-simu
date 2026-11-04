@@ -1,0 +1,379 @@
+{
+  "source": "seti-saves/seti-save-537-merged.json",
+  "sourceSha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+  "rows": [
+    {
+      "input": 76,
+      "round": 2,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:5bb27a70",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:launch",
+          "mode": "launch"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "发射探测器"
+      },
+      "validatedCurrentRuleFirst2": true
+    },
+    {
+      "input": 145,
+      "round": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:5bb27a70",
+        "actorId": "player-white",
+        "stateVersion": 58,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:launch",
+          "mode": "launch"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "发射探测器"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 189,
+      "round": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a008f4d7",
+        "actorId": "player-white",
+        "stateVersion": 76,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:5:out",
+          "mode": "move",
+          "rocketId": 5,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 5 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 205,
+      "round": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:2b379eff",
+        "actorId": "player-white",
+        "stateVersion": 83,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:5:ccw",
+          "mode": "move",
+          "rocketId": 5,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 5 逆时针"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 226,
+      "round": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a008f4d7",
+        "actorId": "player-white",
+        "stateVersion": 92,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:5:out",
+          "mode": "move",
+          "rocketId": 5,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 5 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 269,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:f4c617ab",
+        "actorId": "player-white",
+        "stateVersion": 108,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:7:out",
+          "mode": "move",
+          "rocketId": 7,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 7 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 283,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:f4c617ab",
+        "actorId": "player-white",
+        "stateVersion": 114,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:7:out",
+          "mode": "move",
+          "rocketId": 7,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 7 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 314,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:ded93c0b",
+        "actorId": "player-white",
+        "stateVersion": 123,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:move:8:in",
+          "mode": "move",
+          "rocketId": 8,
+          "deltaX": 0,
+          "deltaY": -1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 8 向内"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 345,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:e1dbac27",
+        "actorId": "player-white",
+        "stateVersion": 138,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:move:9:ccw",
+          "mode": "move",
+          "rocketId": 9,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 9 逆时针"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 351,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:43d1120f",
+        "actorId": "player-white",
+        "stateVersion": 140,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:move:6:in",
+          "mode": "move",
+          "rocketId": 6,
+          "deltaX": 0,
+          "deltaY": -1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 6 向内"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 386,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:402fa10f",
+        "actorId": "player-white",
+        "stateVersion": 157,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:move:9:out",
+          "mode": "move",
+          "rocketId": 9,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 9 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 408,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:402fa10f",
+        "actorId": "player-white",
+        "stateVersion": 167,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:move:9:out",
+          "mode": "move",
+          "rocketId": 9,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动 9 向外"
+      },
+      "validatedCurrentRuleFirst2": false
+    },
+    {
+      "input": 446,
+      "round": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:5bb27a70",
+        "actorId": "player-white",
+        "stateVersion": 180,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:launch",
+          "mode": "launch"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "发射探测器"
+      },
+      "validatedCurrentRuleFirst2": false
+    }
+  ],
+  "rounds": {
+    "2": {
+      "uses": 1,
+      "launches": 1,
+      "moves": 0,
+      "skips": 0
+    },
+    "3": {
+      "uses": 4,
+      "launches": 1,
+      "moves": 3,
+      "skips": 0
+    },
+    "4": {
+      "uses": 8,
+      "launches": 1,
+      "moves": 7,
+      "skips": 0
+    }
+  },
+  "futureRounds": [
+    {
+      "round": 2,
+      "uses": 1,
+      "launches": 1,
+      "moves": 0,
+      "skips": 0
+    },
+    {
+      "round": 3,
+      "uses": 4,
+      "launches": 1,
+      "moves": 3,
+      "skips": 0
+    },
+    {
+      "round": 4,
+      "uses": 8,
+      "launches": 1,
+      "moves": 7,
+      "skips": 0
+    }
+  ],
+  "usefulTransportUses": 13,
+  "oldForecastPerRound": 2,
+  "historicalMean": 4.333333333333333,
+  "conservativeIntegerForecast": 4,
+  "qualification": "Only first two rounds are validated by current-rule native replay. Later counts are historical teaching-policy activity, not a claim of current-rule reachability or guaranteed future rewards. Proposed activity forecast is an estimate, never a pruning bound or a target-specific teacher preference.",
+  "goalStatus": "active",
+  "goalAchieved": false
+}

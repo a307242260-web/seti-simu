@@ -1,0 +1,197 @@
+[
+  {
+    "technology": "blue2",
+    "freeResearchFunded": true,
+    "nativeInputs": 15,
+    "snapshots": [
+      {
+        "label": "both-incomes",
+        "value": 54.5,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 4.5,
+          "hand": 1,
+          "income": 28.5,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 2,
+          "score": 13
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        }
+      },
+      {
+        "label": "blue-reward",
+        "value": 55,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 5,
+          "hand": 1,
+          "income": 28.5,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 2,
+          "score": 13
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true
+          }
+        }
+      },
+      {
+        "label": "native-free-purple4",
+        "value": 58.5,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 1.5,
+          "hand": 0,
+          "income": 28.5,
+          "technologyPotential": 13.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 3,
+          "score": 15
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "purple4": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "technology": "blue3",
+    "freeResearchFunded": false,
+    "nativeInputs": 12,
+    "snapshots": [
+      {
+        "label": "both-incomes",
+        "value": 54.5,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 4.5,
+          "hand": 1,
+          "income": 28.5,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 2,
+          "score": 13
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue3": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue3": true
+          }
+        }
+      },
+      {
+        "label": "blue-reward",
+        "value": 55,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 4,
+          "hand": 2,
+          "income": 28.5,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 2,
+          "score": 13
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue3": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue3": true
+          }
+        }
+      }
+    ]
+  }
+]

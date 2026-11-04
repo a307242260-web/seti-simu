@@ -5,7 +5,7 @@ const w=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-f
 try{
  for(const row of [...w.rows].reverse()){
   const e=row.afterFirst.envelope;assert(c.lifecycle.restore(e).ok);const observation=c.projection({role:'player',playerId:'player-white'}).state,v=values.evaluateStateValue(observation,'player-white'),state=JSON.parse(e.committedState),p=state.players.players.find(p=>p.id==='player-white'),before=JSON.stringify(state);
-  assert.equal(v.total,row.name==='research-first'?90:89.5,'ready analysis is a funded asset, not discarded when the turn ends');
+  assert.equal(v.total,(row.name==='research-first'?90:89.5)+(values.FORECAST.usefulScansPerLaterRound-2)*(4-state.turn.roundNumber),'ready analysis is a funded asset, not discarded when the turn ends');
   assert.equal(v.components.analysisPotential,row.name==='research-first'?8.5:0);
   assert.equal(demand.planningCapital(state,p),v.components.handPotential+v.components.researchPotential+v.components.probePotential+v.components.analysisPotential,'state plans and viewer-safe observations share the same capital');
   assert.equal(JSON.stringify(state),before);assert.deepEqual(c.lifecycle.save().envelope,e);

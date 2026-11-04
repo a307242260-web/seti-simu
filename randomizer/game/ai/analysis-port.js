@@ -811,10 +811,10 @@
         &&hasPostMainInertReservations(state,hasOwnVisitSource(state))?localPlans.blueCompletion({state,seatId,goal:bluePlan.goal}):null;
       // Fixed preparation order follows the shared purpose value. Income
       // cannot take unconditional precedence when a blue reward funds a more
-      // valuable mission; a cold pending slot must see the same opportunity.
+      // valuable held-card or mission purpose; a cold pending slot must see the same opportunity.
       const competingBlue=blueTail||blueTails.find(t=>t.goalId===bluePlan?.goal.id);
       const forceBlue=competingBlue?.available&&competingBlue.selected
-        &&(incomeCandidate?hasUnprovedProbeCapital(state)&&competingBlue.netGain>incomeTail.netGain:Boolean(blueTail));
+        &&(incomeCandidate?competingBlue.netGain>incomeTail.netGain:Boolean(blueTail));
       const forceIncome=incomeCandidate&&!forceBlue;
       const forcedKind=forceIncome?"income":forceBlue?"blue-data":null;
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
@@ -824,7 +824,25 @@
     }
 
     function resourceView(node,control) {
-      const stored=nodes.get(node);
+      const stored=nodes.get(node),session=stored.envelope.session?.session,head=session?.queue?.[0],effect=head?.payload?.cardEffect;
+      // Once a pure research card has been paid, completed income/data funding
+      // cannot affect its pending tile choice. Keep the full rule/RNG key and
+      // goal; normalize only these obsolete private preparation fields.
+      if(control?.goal.kind==="effect-purpose"&&control.goal.purpose==="tech"&&control.operation?.targetStarted
+        &&node.status==="decision"&&session.queue.length===1&&head.payload.cardInstanceId===control.goal.cardId
+        &&effect?.type==="card_research_tech"&&!effect.options?.afterResearchReward&&(effect.options?.repeat??1)===1){
+        const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),played=owner.reservedCards.find(c=>c.id===control.goal.cardId),play=played&&cardEffects.buildPlayEffects(played);
+        if(play?.length===1&&play[0].type==="card_research_tech"&&!play[0].options?.afterResearchReward
+          &&data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===4)
+          &&!owner.hand.some(c=>c.id===control.goal.incomeCardId)
+          &&owner.reservedCards.every(c=>{const model=cardEffects.getCardModel(c);return model&&!model.triggers?.length&&!model.temporaryTasks?.length;})
+          &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot))){
+          const goal={...control.goal},operation={...control.operation};
+          for(const key of ["targetComputerSlot","incomeCardId","incomeFunding","publicityData","incomeBefore"])delete goal[key];
+          for(const key of ["placing","finalPlacement","discardIds","resourceBlueSlot","finalResourceBlue"])delete operation[key];
+          control={goal,operation};
+        }
+      }
       return createNode(stored.envelope,null,node.legalActions,node.status,stored.informationBarrier,stored.intent,control);
     }
 

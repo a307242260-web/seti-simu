@@ -19,7 +19,7 @@ function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelop
   const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete);
   const policy=p.resourceSpec(root);assert(policy.plans.every(plan=>plan.goal.kind==='blue-data'));
   assert.equal(policy.incomeTail.netGain,3.5);assert.equal(policy.blueTails[0].netGain,5);
-  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert.equal(r.value,evaluate(nativeBlue.node.observation));assert.equal(r.value,58.5);assert(r.diagnostics.nativeExecutions>0);
+  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert.equal(r.value,evaluate(nativeBlue.node.observation));assert.equal(r.value,58.5+(values.FORECAST.usefulScansPerLaterRound-2)*2);assert(r.diagnostics.nativeExecutions>0);
   assert.deepEqual(c.lifecycle.save().envelope,before);
   const first=root.legalActions.find(a=>a.actionId===r.actionId);assert(c.inputPort.submitQuickAction(first).ok);
   const changed=c.lifecycle.save().envelope;p.close();const n=p.openRoot();
@@ -33,6 +33,13 @@ function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelop
  const controlled=structuredClone(f.compositionEnvelope),s=JSON.parse(controlled.committedState);
  s.pieces.rockets=s.pieces.rockets.filter(r=>r.playerId!==f.seatId);
  s.pieces.activeRocketId=null;
+ controlled.committedState=JSON.stringify(s);
+ // With no probe the energy blue slot still advances the held card payment
+ // window. A positive income tail cannot hide that better fixed preparation.
+ const check=open(controlled);try{const r=searchDecision({port:check.p,root:check.root,evaluate,...agent.OPTIONS,budget}),policy=check.p.resourceSpec(check.root);assert(r.complete);assert(policy.plans.every(p=>p.goal.kind==='blue-data'));assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);assert.equal(check.p.incomePlanSummary(check.root),null);const actual=check.p.expandResourcePlan(check.root,policy.plans[0],()=>null);assert(actual.complete);assert.equal(r.value,evaluate(actual.node.observation));assert.deepEqual(c.lifecycle.save().envelope,check.before);}finally{check.p.close();}
+ // Add one energy in this already-controlled state. The held card is now
+ // funded without the blue slot, so blind income is genuinely the better tail.
+ s.players.players.find(p=>p.id===f.seatId).resources.energy++;
  controlled.committedState=JSON.stringify(s);f.compositionEnvelope=controlled;
 }
 try{

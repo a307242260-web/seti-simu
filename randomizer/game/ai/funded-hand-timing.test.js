@@ -6,11 +6,12 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  for(let i=record.roundEnds[0].beforeInput-1;i<73;i++){const e=save.replaySteps[i],a=env.legalActions().find(a=>a.actionId===e.action.actionId&&a.actorId===e.actorPlayerId);assert(a);assert(env.step(a).ok);}
  const next=env.observe(seatId),n=next.publicState.players.find(p=>p.playerId===seatId);assert.equal(next.publicState.roundNumber,2);assert(env.legalActions().some(a=>a.family==='play_card'&&a.target.cardInstanceId===card.id));const nextValue=values.evaluateStateValue(next,seatId);
  assert.equal(beforeValue.components.handPotential,nextValue.components.handPotential,'an unaffordable held technology must not claim the extra current-round capability window');
- assert.equal(beforeValue.components.handPotential,2.5);
+ const transport=values.FORECAST.usefulScansPerLaterRound,currentCard=3*transport-1.5,deferredCard=2*transport-1.5;
+ assert.equal(beforeValue.components.handPotential,deferredCard);
  env.loadCheckpoint(original);assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,original.coreState.compositionEnvelope);
  const state=JSON.parse(original.coreState.committedState),native=state.players.players.find(p=>p.id===seatId),supply=before.publicState.board.techSupply;
  const quote=(resources,income=p.income,startingIncome=0)=>values.handCapital([card],p.techState,supply,1,values.DEFAULT_WEIGHTS,{resources,income,startingIncome});
- assert.equal(quote({credits:3,energy:0}),4.5);assert.equal(quote({credits:2,energy:2}),3.5,'current native exchange loss is charged');assert.equal(quote({credits:0,energy:0}),2.5);assert.equal(quote({credits:0,energy:0},{credits:0,energy:0}),0);assert.equal(quote({credits:0,energy:6}),2.5,'waiting for known income may beat expensive current exchanges');
+ assert.equal(quote({credits:3,energy:0}),currentCard);assert.equal(quote({credits:2,energy:2}),currentCard-1,'current native exchange loss is charged');assert.equal(quote({credits:0,energy:0}),deferredCard);assert.equal(quote({credits:0,energy:0},{credits:0,energy:0}),0);assert.equal(quote({credits:0,energy:6}),Math.max(currentCard-3,deferredCard),'compare the exact current exchange loss with the later known-income window');
  const held=demand.heldAndResearchCapital(state,native);assert.equal(held,beforeValue.components.handPotential+beforeValue.components.researchPotential);assert.equal(demand.planningCapital(state,native),held+beforeValue.components.probePotential);
  const hidden=structuredClone(before);hidden.publicState.board.publicCards.reverse();assert.equal(values.evaluateStateValue(hidden,seatId).components.handPotential,beforeValue.components.handPotential);assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,original.coreState.compositionEnvelope);
  // The generalized native2-to1 funding query includes multi-credit card costs.
@@ -22,13 +23,13 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  // AI wallet. Landing spends the funds needed by heldDLC9; orbit keeps them.
  const opening=require('../../../tools/research-human405-round1');env.loadCheckpoint(opening.opening().checkpoint);
  for(let i=23;i<49;i++){const e=save.replaySteps[i],a=env.legalActions().find(a=>a.actionId===e.action.actionId&&a.actorId===e.actorPlayerId);assert(a);assert(env.step(a).ok);}
- const missionRoot=env.createCheckpoint(),joint={};assert.equal(values.evaluateStateValue(env.observe(seatId),seatId).components.handPotential,4.5);
+ const missionRoot=env.createCheckpoint(),joint={};assert.equal(values.evaluateStateValue(env.observe(seatId),seatId).components.handPotential,currentCard);
  for(const row of read('reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-orbit-land-native-assets-20261104-v1.json').rows){
   env.loadCheckpoint(missionRoot);for(const step of row.steps){const a=env.legalActions().find(a=>a.actionId===step.actionId);assert(a);assert(env.step(a).ok);}
   assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,row.checkpoint);
   const value=values.evaluateStateValue(env.observe(seatId),seatId);joint[row.goal]={hand:value.components.handPotential,value:value.total};
  }
- assert.deepEqual(joint,{orbit:{hand:4.5,value:60},land:{hand:2.5,value:60}});
+ assert.deepEqual(joint,{orbit:{hand:currentCard,value:60+(transport-2)*3},land:{hand:deferredCard,value:60+(transport-2)*2}});
  env.loadCheckpoint(original);assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope,original.coreState.compositionEnvelope);
  // A memoized purpose quote must agree with the independent calculation
  // after in-place wallet, known income and pass-phase changes.

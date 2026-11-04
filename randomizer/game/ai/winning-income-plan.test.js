@@ -58,7 +58,7 @@ try{
  assert(!timed.complete);assert.equal(timed.actionId,null);assert.equal(timed.planContinuation,null);assert.equal(timed.stopReason,'watchdog');assert(timed.unresolved.some(x=>x.winningPlanAttempt));assert.deepEqual(c.lifecycle.save().envelope,before);
  p.close();assert(c.lifecycle.restore(openingEnvelope).ok);let savedFree=null,freeEndEnvelope,freeCheckpoint;
  for(let i=0;i<4;i++){
-  p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});const token=p.importPlan(savedFree),root=p.openRoot(),before=c.lifecycle.save().envelope,result=search.searchDecision({...options,port:p,root,planContinuation:token});assert(result.complete);assert.equal(result.value,60);assert.deepEqual(c.lifecycle.save().envelope,before);
+  p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});const token=p.importPlan(savedFree),root=p.openRoot(),before=c.lifecycle.save().envelope,result=search.searchDecision({...options,port:p,root,planContinuation:token});assert(result.complete);assert.equal(result.value,60+(values.FORECAST.usefulScansPerLaterRound-2)*2);assert.deepEqual(c.lifecycle.save().envelope,before);
   const action=root.legalActions.find(a=>a.actionId===result.actionId);assert.equal(action.family,['play_card','move','choose_payment','end_turn'][i]);
   if(i){assert.equal(result.diagnostics.planContinuation,'hit');assert.equal(result.diagnostics.nativeExecutions,0);}
   if(i===3){assert.equal(p.getDiagnostics().completedMovementRecoveries,1);freeEndEnvelope=before;freeCheckpoint=p.exportPlan(result.planContinuation);}

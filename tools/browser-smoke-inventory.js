@@ -1114,7 +1114,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
     function submit(a){if(!a)throw Error('缺少真实移动输入');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitQuickAction(a);if(!r.ok)throw Error(JSON.stringify(r));}
     try{if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('途中探测器恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),obs=c.projection({role:'player',playerId:f.seatId}).state,v=window.SetiStateValue.evaluateStateValue(obs,f.seatId);
-      if(v.modelVersion!==window.SetiStateValue.MODEL_VERSION||v.components.probePotential!==3.5||v.components.handPotential!==3.5)throw Error('完整路线未扣除持牌资金机会成本');
+      if(v.modelVersion!==window.SetiStateValue.MODEL_VERSION||v.components.probePotential!==3.5-(window.SetiStateValue.FORECAST.usefulScansPerLaterRound-2)||v.components.handPotential!==3*window.SetiStateValue.FORECAST.usefulScansPerLaterRound-2.5)throw Error('完整路线未扣除持牌资金机会成本');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('估值改变原生根');submit(legal().find(a=>a.family==='quick_trade'&&a.target.tradeId==='energy-for-move'));submit(legal().find(a=>a.target?.deltaX===0&&a.target?.deltaY===1));
       const next=window.SetiStateValue.evaluateStateValue(c.projection({role:'player',playerId:f.seatId}).state,f.seatId);if(next.components.probePotential!==5.5||next.total<v.total)throw Error('真实费用或途中/到达用途不连续');if(!c.lifecycle.restore(JSON.parse(before)).ok||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('根/RNG恢复失败');window.__fundedTravel={ok:true};
     }finally{c.dispose();}
@@ -1217,7 +1217,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
       const saved=structuredClone(c.lifecycle.save().envelope);if(!c.lifecycle.restore(saved).ok)throw Error('免费发射逐步原生恢复失败');
       const d=c.inspect().session?.decision,actions=d?.choices||c.inputPort.enumerateActions({}),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:f.seatId,analysisPort:p});ai.loadCheckpoint(checkpoint);
       const before=JSON.stringify(c.lifecycle.save().envelope),r=ai.decide({seatId:f.seatId,legalActions:actions}),a=actions.find(a=>a.actionId===r.actionId);
-      if(!a||a.family!==['play_card','move','choose_payment','end_turn'][i]||r.search.value!==60||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('免费发射用途、固定路线或根隔离错误');
+      if(!a||a.family!==['play_card','move','choose_payment','end_turn'][i]||r.search.value!==60+(window.SetiStateValue.FORECAST.usefulScansPerLaterRound-2)*2||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('免费发射用途、固定路线或根隔离错误');
       if(!i&&(a.target.cardInstanceId!=='card-13-0'||r.search.diagnostics.nativeExecutions>256))throw Error('教师首个免费发射没有进入获胜候选');
       if(i&&(r.search.diagnostics.planContinuation!=='hit'||r.search.diagnostics.nativeExecutions!==0))throw Error('免费发射证书冷恢复失效');
       if(i===3&&r.search.analysis.completedMovementRecoveries!==1)throw Error('已完成移动目的未恢复');
@@ -1250,7 +1250,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('科技用途恢复失败');
     const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
     try{const root=p.openRoot(),value=window.SetiStateValue.evaluateStateValue(root.observation,f.seatId),player=root.observation.publicState.players.find(p=>p.playerId===f.seatId);
-      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.components.probePotential!==5.5||value.components.handPotential!==2.5||value.total!==60||value.components.researchIncomePotential!==4.5)throw Error('公开费用或科技用途估值缺失');
+      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.components.probePotential!==5.5||value.components.handPotential!==2*window.SetiStateValue.FORECAST.usefulScansPerLaterRound-1.5||value.total!==60+(window.SetiStateValue.FORECAST.usefulScansPerLaterRound-2)*2||value.components.researchIncomePotential!==4.5)throw Error('公开费用或科技用途估值缺失');
       if(JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),f.seatId))!==JSON.stringify(value))throw Error('完整与紧凑用途估值不同');
       const start=p.expand(root,root.legalActions.find(a=>a.family==='research_tech').actionId),choice=start.legalActions.find(a=>a.target.tileId==='blue1'&&a.target.blueSlot===1),end=p.expand(start,choice.actionId),actual=window.SetiStateValue.evaluateStateValue(end.observation,f.seatId);
       if(actual.total!==value.total-value.components.researchIncomePotential||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
@@ -1262,7 +1262,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
       if(completed.total-completed.components.researchIncomePotential!==value.total-value.components.researchIncomePotential||completed.components.probePotential!==0)throw Error('探测任务完整奖励链不连续或消耗探测器后仍重复估值');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('探测任务污染原根或RNG');
     }finally{p.close();c.dispose();}
-    for(const [name,expected] of [['autonomous',54.5],['teacher58',57.5]]){
+    for(const [name,expected] of [['autonomous',60.5],['teacher58',61.5]]){
       const fixture=await fetch('/adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/'+name+'-before-pass-20261031-v1.json').then(r=>r.json());
       const kernel=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const composition=kernel.composition;
       if(!composition.lifecycle.restore(fixture.compositionEnvelope).ok)throw Error('PASS反例恢复失败');
@@ -1306,10 +1306,10 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;
     if(!c.lifecycle.restore(cp.coreState.compositionEnvelope).ok)throw Error('手牌支付时机反例恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
     try{const root=p.openRoot(),o=root.observation,owner=o.publicState.players.find(p=>p.playerId===seat),card=o.selfState.hand.find(c=>c.cardId==='dlc_9.png'),v=window.SetiStateValue,value=v.evaluateStateValue(o,seat);
-      if(value.modelVersion!==window.SetiStateValue.MODEL_VERSION||owner.credits!==0||owner.energy!==0||value.components.handPotential!==2.5)throw Error('未支付的DLC9仍计本轮科技窗口');
+      if(value.modelVersion!==window.SetiStateValue.MODEL_VERSION||owner.credits!==0||owner.energy!==0||value.components.handPotential!==2*window.SetiStateValue.FORECAST.usefulScansPerLaterRound-1.5)throw Error('未支付的DLC9仍计本轮科技窗口');
       if(root.legalActions.some(a=>a.family==='play_card'&&a.target.cardInstanceId===card.id))throw Error('原生支付检查与钱包不符');
       const quote=(credits,energy,income=owner.income)=>v.handCapital([card],owner.techState,o.publicState.board.techSupply,1,v.DEFAULT_WEIGHTS,{resources:{credits,energy},income});
-      if(quote(3,0)!==4.5||quote(2,2)!==3.5||quote(0,0,{credits:0,energy:0})!==0)throw Error('支付轮次或真实兑换损失未进入用途估值');
+      if(quote(3,0)!==3*v.FORECAST.usefulScansPerLaterRound-1.5||quote(2,2)!==3*v.FORECAST.usefulScansPerLaterRound-2.5||quote(0,0,{credits:0,energy:0})!==0)throw Error('支付轮次或真实兑换损失未进入用途估值');
       if(JSON.stringify(value)!==JSON.stringify(v.evaluateStateValue(p.valueObservation(root),seat)))throw Error('完整/紧凑手牌资金估值不同');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('手牌资金查询污染根或RNG');window.__fundedHandTimingSmoke={ok:true};
     }finally{p.close();c.dispose();}
@@ -1318,12 +1318,45 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation:'真实页面按已知支付时机计算手牌科技窗口，兑换损失与Native钱包一致，未来收入只用于未来轮次',
   counterexample:'浏览器沿用无资金约束估值、下一轮收入被拿来支付本轮牌，或查询修改真实根',
 }), Object.freeze({
+  id:'production-teacher-development',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiStateValue && window.SetiSearchAgent && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/human405-v158-native-20261105-v1/ai-step-055-20261105-v1.json').then(r=>r.json()),seed=f.source.seed,seat=f.seatId;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('development root restore');
+    const original=JSON.stringify(c.lifecycle.save().envelope),source=JSON.parse(f.compositionEnvelope.committedState),owner=source.players.players.find(p=>p.id===seat),known=new Set([...owner.hand,...source.cards.publicCards].filter(Boolean).map(c=>c.id)),state=()=>{const e=c.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState);},legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+    const submit=a=>{if(!a)throw Error('native action missing');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('native action rejected');};
+    const value=()=>{const o=structuredClone(c.projection({role:'player',playerId:seat}).state);o.selfState.hand=o.selfState.hand.map(c=>known.has(c.id)?c:{id:c.id,hidden:true});o.publicState.board.publicCards=o.publicState.board.publicCards.map(c=>c&&known.has(c.id)?c:null);return window.SetiStateValue.evaluateStateValue(o,seat).total;};
+    try{const p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p}),r=ai.decide({seatId:seat,legalActions:legal()}),a=legal().find(a=>a.actionId===r.actionId);if(a?.family!=='pass'||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('preserved research purpose lost or root changed');submit(a);let inputs=1;
+      while(!(state().turn.roundNumber===2&&state().turn.currentPlayerId===seat&&!c.inspect().session?.decision)){if(inputs++>=40)throw Error('mandatory continuation bound');const d=c.inspect().session?.decision;submit(d?legal().find(a=>a.family==='choose_card'&&['pass-hand-limit','pass-reserve-card'].includes(a.target.kind)):legal().find(a=>a.family==='pass'));}
+      const before=value(),p2=state().players.players.find(p=>p.id===seat);if(p2.resources.credits<3||!p2.hand.some(c=>c.id==='card-15-0'))throw Error('known income did not preserve and fund DLC9');submit(legal().find(a=>a.family==='play_card'&&a.target.cardInstanceId==='card-15-0'));submit(legal().find(a=>a.target.tileId==='purple4'));
+      if(!state().players.players.find(p=>p.id===seat).techState.ownedTiles.purple4||value()!==before)throw Error('funded forecast differs from native acquisition');window.__teacherDevelopment={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__teacherDevelopment?.ok === true',
+  obligation:'Preserve a known income-funded research card through native PASS and play it after known income without using new draw identities',
+  counterexample:'Browser burns the research card for analysis or forecasts a payment that native income cannot fund',
+}), Object.freeze({
+  id:'production-settled-tech-funding',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiDecisionSearch)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json').then(r=>r.json()),reference=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v160-cold-serial-teacher-039-20261105-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('paid-tech root restore');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});
+      if(!r.complete||r.unresolved.length||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>256||r.diagnostics.nativeExecutions>=reference.nativeInputs)throw Error('paid-tech funding contexts were not shared correctly');
+      if(!r.lines.some(l=>l.status==='decision'&&l.resourcePolicy?.bound&&l.resourcePolicy.goal?.purpose==='tech'&&l.alternatives>=4))throw Error('distinct technology choices were lost');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('paid-tech sharing changed root/RNG');window.__settledTechFunding={ok:true,nativeInputs:r.diagnostics.nativeExecutions};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__settledTechFunding?.ok === true',
+  obligation:'Share fully paid pure-research contexts in the real page while retaining every target and full native state/RNG',
+  counterexample:'Preparation metadata repeats the same research effects, removes a target, changes value or writes the root',
+}), Object.freeze({
   id:'production-ready-analysis-capital',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiReadyAnalysisCapital && window.SetiStateValue?.purposeCapital && window.SetiProductionKernel)',
   actionExpression:`(async()=>{const w=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-research-analysis-order-native-20261104-v1.json').then(r=>r.json()),seed='seti-free-analyze-v1';
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
     try{for(const row of w.rows){if(!c.lifecycle.restore(row.afterFirst.envelope).ok)throw Error('restore');const before=JSON.stringify(c.lifecycle.save().envelope),o=c.projection({role:'player',playerId:'player-white'}).state,v=window.SetiStateValue.evaluateStateValue(o,'player-white'),s=JSON.parse(row.afterFirst.envelope.committedState),p=s.players.players.find(p=>p.id==='player-white');
-      if(v.components.analysisPotential!==(row.name==='research-first'?8.5:0)||v.total!==(row.name==='research-first'?90:89.5))throw Error('已就绪分析用途错误');
+      if(v.components.analysisPotential!==(row.name==='research-first'?8.5:0)||v.total!==(row.name==='research-first'?90:89.5)+(window.SetiStateValue.FORECAST.usefulScansPerLaterRound-2)*(4-s.turn.roundNumber))throw Error('已就绪分析用途错误');
       if(window.SetiResourceDemand.planningCapital(s,p)!==v.components.handPotential+v.components.researchPotential+v.components.probePotential+v.components.analysisPotential)throw Error('状态/观察用途分离');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('根/RNG改变');}window.__readyAnalysisSmoke={ok:true};}finally{c.dispose();}})()`,
   successExpression:'window.__readyAnalysisSmoke?.ok === true',

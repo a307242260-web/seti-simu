@@ -1,0 +1,4 @@
+{"teacherDevelopment":"passed","knownFreeResearchPreserved":true,"nativePassAndIncomeInputs":13,"unknownDrawIdentitiesUnused":true,"nativeFundingContinuity":true,"rootAndRngRestored":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.36s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1
