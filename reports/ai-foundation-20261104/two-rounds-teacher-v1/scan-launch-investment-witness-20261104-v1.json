@@ -1,0 +1,291 @@
+{
+  "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-076-20261104-v1.json",
+  "fixtureSha256": "5a785c192b4d5a7f59597091afcd0edc63a14187869c34b700fbb600a0d1164b",
+  "searchVersion": "seti-complete-decision-search-v124",
+  "valueVersion": "seti-purpose-capital-state-value-v6",
+  "rows": [
+    {
+      "launch": false,
+      "steps": [
+        {
+          "actionId": "choose_target:f042ebe0",
+          "family": "choose_target",
+          "summary": "跳过",
+          "target": {
+            "choiceId": "scan4:skip",
+            "mode": "skip"
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          }
+        },
+        {
+          "actionId": "play_card:720c219a",
+          "family": "play_card",
+          "summary": "dlc_5.png",
+          "target": {
+            "cardInstanceId": "card-24-pass-1-5"
+          }
+        },
+        {
+          "actionId": "choose_target:7af26739",
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          }
+        }
+      ],
+      "afterChoice": {
+        "round": 2,
+        "turn": 4,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [
+          "dlc_5.png",
+          "dlc_37.png"
+        ],
+        "probes": [],
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v6",
+          "total": 54,
+          "components": {
+            "realizedScore": 15,
+            "currentEndGameBonus": 0,
+            "resources": 9,
+            "hand": 2,
+            "income": 19,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0
+          },
+          "terminal": false
+        }
+      },
+      "knownNextTurnCardPlayable": true,
+      "afterKnownNextTurn": {
+        "round": 2,
+        "turn": 6,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 4,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [
+          "dlc_37.png"
+        ],
+        "probes": [],
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v6",
+          "total": 52.5,
+          "components": {
+            "realizedScore": 15,
+            "currentEndGameBonus": 0,
+            "resources": 8.5,
+            "hand": 1,
+            "income": 19,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0
+          },
+          "terminal": false
+        }
+      }
+    },
+    {
+      "launch": true,
+      "steps": [
+        {
+          "actionId": "choose_target:5bb27a70",
+          "family": "choose_target",
+          "summary": "发射探测器",
+          "target": {
+            "choiceId": "scan4:launch",
+            "mode": "launch"
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          }
+        },
+        {
+          "actionId": "play_card:720c219a",
+          "family": "play_card",
+          "summary": "dlc_5.png",
+          "target": {
+            "cardInstanceId": "card-24-pass-1-5"
+          }
+        },
+        {
+          "actionId": "choose_target:12318841",
+          "family": "choose_target",
+          "summary": "R4 向外",
+          "target": {
+            "choiceId": "4:0:1",
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          }
+        }
+      ],
+      "afterChoice": {
+        "round": 2,
+        "turn": 4,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 5,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [
+          "dlc_5.png",
+          "dlc_37.png"
+        ],
+        "probes": [
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 1,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 1,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v6",
+          "total": 53,
+          "components": {
+            "realizedScore": 15,
+            "currentEndGameBonus": 0,
+            "resources": 8,
+            "hand": 2,
+            "income": 19,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0
+          },
+          "terminal": false
+        }
+      },
+      "knownNextTurnCardPlayable": true,
+      "afterKnownNextTurn": {
+        "round": 2,
+        "turn": 6,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [
+          "dlc_37.png",
+          "dlc_5.png"
+        ],
+        "probes": [
+          {
+            "angleDegrees": -22.5,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 1,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 1,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 1,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v6",
+          "total": 52.5,
+          "components": {
+            "realizedScore": 15,
+            "currentEndGameBonus": 0,
+            "resources": 7.5,
+            "hand": 2,
+            "income": 19,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0
+          },
+          "terminal": false
+        }
+      }
+    }
+  ],
+  "nativeSourceRestored": true,
+  "productionFixed": false,
+  "goalStatus": "active",
+  "scope": "Two exact native purple4 choices: launch costs1energy, skip costs0. Plus one fixed known next-own-turn use of DLC5. No full game, no unknown draws, no fabricated state, and no assertion of dominance or global optimality."
+}

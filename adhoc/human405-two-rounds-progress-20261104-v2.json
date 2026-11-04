@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "baseCommit": "66dff952852a88499a7cd4b7a062a25040e799ef",
+  "scope": "Align first2 rounds score, exact technology and income, plus current resources and invested assets. Do not force teacher action imitation.",
+  "userBoundary": "Round end EXCLUDES PASS card selection AND next income. Both belong to next round start. Native pre-PASS snapshots provide the canonical end state.",
+  "canonicalEvidence": "reports/ai-foundation-20261104/two-rounds-teacher-v1/canonical-round-end-assets-20261104-v1.json",
+  "teacherNativeRoots": 67,
+  "teacherRound2NativeRoots": 35,
+  "teacherRound2": {
+    "score": 32,
+    "technology": [
+      "blue1",
+      "blue2",
+      "purple4"
+    ],
+    "incomeMoneyEnergyCards": [
+      6,
+      2,
+      1
+    ],
+    "endMoneyEnergyData": [
+      4,
+      1,
+      0
+    ],
+    "liveProbe": 1,
+    "sectorWins": 1,
+    "alienSlot1OwnColors": [
+      "blue",
+      "pink"
+    ]
+  },
+  "aiV123Round2": {
+    "score": 35,
+    "technology": [
+      "blue1",
+      "blue4",
+      "purple4"
+    ],
+    "incomeMoneyEnergyCards": [
+      4,
+      2,
+      2
+    ],
+    "endMoneyEnergyData": [
+      1,
+      1,
+      0
+    ],
+    "liveProbe": 0,
+    "sectorWins": 0,
+    "alienSlot1OwnColors": [
+      "blue",
+      "yellow"
+    ]
+  },
+  "nextStartSeparate": {
+    "teacherMoneyAfterIncome": 10,
+    "aiMoneyAfterIncome": 5
+  },
+  "investigations": [
+    "probe positioning and scan completion/preparation value",
+    "placed computer data and native reachable rewards",
+    "alien-card pending rewards and missing trace color accessibility; do not leak unknown species",
+    "PASS next-start card DLC18 is valued as unconditional free research despite requireCondition and researchedByOthersOnly"
+  ],
+  "firstProvenBugCandidate": {
+    "fixture": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+    "card": "dlc_18.png",
+    "nativeConditions": "publicity0 and another player owns the technology; other3 never research",
+    "valueV5WrongCapitalAtR2": 5,
+    "teacherAlternative": "b_101.webp",
+    "alternativeCapitalAtR2": 3,
+    "fixed": true
+  },
+  "thirdRoundContext": {
+    "teacherArchivedScore": 105,
+    "aiScore": 42,
+    "teacherReplayCurrentlyStopsAtInput": 163,
+    "currentRulesVerifiedToR3End": false,
+    "withinGoalRounds1and2ReplayValid": true
+  },
+  "nextSafeAction": "Do not rerunv124 first2. Investigate native-paid1energy purple4 launch versus skip and its known next-turn DLC5 return; conditional sector-scan card DLC37 timing and invested markers/probe route value. Avoid inventing flat rewards or claiming dominance from counts. Add a verified purpose-specific forecast only after native counterexamples, then repeat single-point gate before one new-source first2 run. Goal remains active.",
+  "candidate": {
+    "search": "v124",
+    "value": "V6",
+    "admitted": true,
+    "benchmarkRoots": 81,
+    "overruns": [],
+    "maxInputs": 243,
+    "maxMilliseconds": 588.654458,
+    "unitFocused": 7,
+    "chrome": 10,
+    "fullNode": {
+      "unit": 158,
+      "fullFlow": 1,
+      "passed": true
+    }
+  },
+  "scopeOverride": "Latest user boundary supersedes original goal-tool wording: round end excludes both PASS pick and next income; all assets/markers must be compared in addition to score/tech/income.",
+  "phase": "v124-first2-completed-goal-still-active-investment-gap-remains",
+  "sourceCommit": "38259e7e82c4d47e763d76c94e9842e8504a4c9b",
+  "lastRecord": "reports/research/b3e5178b.38259e7e.quick-400.json",
+  "lastVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-native-verification-20261104-v1.json",
+  "nativeFirst94Unchanged": true,
+  "firstChangedInput": 95,
+  "endingAssetsImproved": false,
+  "goalAchieved": false,
+  "investedProbeWitness": {
+    "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/scan-launch-investment-witness-20261104-v1.json",
+    "launchEnergyCost": 1,
+    "immediateSkipAndLaunchValues": [
+      54,
+      53
+    ],
+    "afterKnownNextTurnValues": [
+      52.5,
+      52.5
+    ],
+    "globalDominanceProved": false,
+    "productionFixed": false
+  }
+}

@@ -1,0 +1,34 @@
+import pathlib,subprocess,os,tempfile,json,hashlib
+stage=pathlib.Path(__file__).resolve().parents[1];root=pathlib.Path('/Users/bilibili/code/seti-simu');base='38259e7e82c4d47e763d76c94e9842e8504a4c9b';folder='reports/ai-foundation-20261104/two-rounds-teacher-v1/'
+def git(*a,data=None,env=None):return subprocess.check_output(['git',*a],cwd=root,input=data,env=dict(os.environ,GIT_OPTIONAL_LOCKS='0',**(env or {})))
+def sha(p):return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+def read(p):return json.loads((stage/p).read_text())
+assert git('rev-parse','HEAD').decode().strip()==base;ih=sha(root/'.git/index');eh=hashlib.sha256(git('ls-files','--stage','-z')).hexdigest();assert ih=='fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49'
+record='reports/research/b3e5178b.38259e7e.quick-400.json';r=read(record);v=read(folder+'v124-first2-native-verification-20261104-v1.json');assert not v['goalAchieved'] and v['goalStatus']=='active';assert v['allRoundEndsExcludePickAndIncome'] and v['allNativeInputsAndRngReplayed'] and v['allSearchesComplete'];assert v['first94NativeActionsUnchanged'] and v['firstChangedInput']==95;assert v['maxNativeInputs']<=256 and v['maxRootAndSearchMs']<=600
+for k in ['record','save','trace']:assert sha(stage/v[k])==v[k+'Sha256']
+assert [x['score'] for x in v['rounds']]==[27,35];assert [x['resources']['credits'] for x in v['rounds']]==[0,1];assert [len(x['hand']) for x in v['rounds']]==[1,0];assert all(x['phase']=='before-pass-card-and-income' for x in v['rounds'])
+files={record,r['savePath'],r['agentTracePath'],record+'.round-ends.jsonl','reports/iteration/ai-search-v124-white-first2-20261104/b3e5178b.38259e7e.quick-400.action-log.html','reports/iteration/versions.json','reports/iteration/registry.json','reports/robot-iteration.html','docs/ai-design.md','docs/human405-first2-v124-progress-20261104.md','adhoc/human405-two-rounds-progress-20261104-v2.json','adhoc/verify-human405-v124-first2-20261104-v1.js','adhoc/diagnose-scan-launch-investment-20261104-v1.js','adhoc/prepare-v124-first2-root-overlays-20261104-v1.js','adhoc/deliver-human405-v124-first2-progress-20261104-v1.py'}
+for name in ['v124-first2-live-20261104-v1.log','v124-first2-record-inventory-20261104-v1.log','v124-first2-registry-build-20261104-v1.log','v124-first2-native-verification-20261104-v1.json','v124-first2-native-verification-20261104-v1.log','scan-launch-investment-witness-20261104-v1.json','scan-launch-investment-witness-20261104-v1.log']:files.add(folder+name)
+for row in v['rounds']:assert sha(stage/row['checkpointPath'])==row['checkpointSha256'];files.add(row['checkpointPath'])
+witness=read(folder+'scan-launch-investment-witness-20261104-v1.json');assert not witness['productionFixed'] and witness['nativeSourceRestored'];assert sha(stage/witness['fixture'])==witness['fixtureSha256'];assert witness['rows'][0]['afterChoice']['resources']['energy']-witness['rows'][1]['afterChoice']['resources']['energy']==1
+versions=read('reports/iteration/versions.json');new=next(x for x in versions['versions'] if x['id']=='ai-search-v124-white-first2-20261104');assert new['baselineEligible'] is False;oldv=json.loads(git('show',base+':reports/iteration/versions.json'));assert [x for x in versions['versions'] if x['id']!=new['id']]==oldv['versions'];reg=read('reports/iteration/registry.json');assert reg['currentBaseline']=='ai-search-v41-baseline-20261029';assert all(x['versionId']!=new['id'] for x in reg['bestOf']['topByAvg']);assert next(x for x in reg['versions'] if x['id']==new['id'])['isHead'] is False
+old=set(git('ls-tree','-r','--name-only',base).decode().splitlines());checked={}
+for p,h in v['sourceHashes'].items():assert sha(stage/p)==h and hashlib.sha256(git('show',base+':'+p)).hexdigest()==h;checked[p]=h
+for p in old:
+ if p.startswith(('randomizer/','tools/','assets/')):assert (stage/p).read_bytes()==git('show',base+':'+p),p
+for p in files:
+ if p.endswith('.js'):subprocess.run(['node','--check',p],cwd=stage,check=True)
+overlays=json.loads(pathlib.Path('/private/tmp/seti-v124-first2-root-overlays-20261104/overlays.json').read_text())
+for p,o in overlays.items():assert sha(root/p)==o['beforeSha256'] and sha(o['path'])==o['sha256']
+w=json.loads(pathlib.Path(overlays['reports/iteration/versions.json']['path']).read_text());before=json.loads((root/'reports/iteration/versions.json').read_text());assert [x for x in w['versions'] if x['id']!=new['id']]==before['versions'];assert any(x['id']=='perf-baseline-lowload-20260913' for x in w['versions'])
+proof=folder+'v124-first2-progress-source-check-20261104-v1.json';(stage/proof).write_text(json.dumps({'sourceCommit':base,'sourceHashes':checked,'runtimeAndToolsUnchanged':True,'standardRuns':1,'nativeReplayAndRngMatched':True,'userRoundEnd':'before-PASS-card-and-next-income','nextStartPickAndIncomeExcluded':True,'boardScores':[27,35],'goalStatus':'active','goalAchieved':False,'baselineUnchanged':'ai-search-v41-baseline-20261029'},indent=2)+'\n');files.add(proof)
+manifest='adhoc/human405-v124-first2-progress-manifest-20261104-v1.json';(stage/manifest).write_text(json.dumps({'baseCommit':base,'files':{p:sha(stage/p) for p in sorted(files)},'workingTreeOverlays':overlays,'sharedIndexSha256':ih,'sharedIndexEntriesSha256':eh,'goalStatus':'active','goalAchieved':False},indent=2)+'\n');files.add(manifest)
+for p in files:
+ if (root/p).exists() and p not in overlays and (root/p).read_bytes()!=(stage/p).read_bytes():assert p in old and (root/p).read_bytes()==git('show',base+':'+p),p
+if os.environ.get('SETI_DELIVER_FIRST2_PROGRESS')!='1':print(json.dumps({'preflight':True,'files':len(files),'sourceFilesChecked':len(checked),'foreignV1Preserved':True,'goalStatus':'active'}));raise SystemExit(0)
+private=str(pathlib.Path(tempfile.mkdtemp(prefix='seti-v124-first2-progress-index-'))/'index');env={'GIT_INDEX_FILE':private};git('read-tree',base,env=env)
+for p in sorted(files):
+ b=(stage/p).read_bytes();d=root/p;d.parent.mkdir(parents=True,exist_ok=True);d.write_bytes(pathlib.Path(overlays[p]['path']).read_bytes() if p in overlays else b);blob=git('hash-object','-w','--stdin',data=b,env=env).decode().strip();git('update-index','--add','--cacheinfo','100644',blob,p,env=env)
+assert set(git('diff','--cached','--name-only',base,env=env).decode().splitlines())==files;git('diff','--cached','--check',env=env);git('commit','-m','记录v124前两轮选牌收入前资产，继续投入价值对齐',env=env);commit=git('rev-parse','HEAD').decode().strip();assert set(git('diff-tree','--no-commit-id','--name-only','-r',commit).decode().splitlines())==files;print(git('show','--name-only','--stat','--format=short','HEAD').decode());assert sha(root/'.git/index')==ih and hashlib.sha256(git('ls-files','--stage','-z')).hexdigest()==eh
+for p,o in overlays.items():assert sha(root/p)==o['sha256']
+print(json.dumps({'commit':commit,'privateIndex':private,'files':len(files),'sharedIndexUnchanged':True,'foreignV1Preserved':True,'goalStatus':'active'}))

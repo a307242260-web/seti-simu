@@ -1,0 +1,51 @@
+{
+  "baseCommit": "38259e7e82c4d47e763d76c94e9842e8504a4c9b",
+  "files": {
+    "adhoc/deliver-human405-v124-first2-progress-20261104-v1.py": "bf2e51d50fc7544adc944bca42051965cba00f966916a975f14d2491b3cba1d2",
+    "adhoc/diagnose-scan-launch-investment-20261104-v1.js": "b19475c448ba71a580ed4290403f66543c4a58c27f00f1a9984313d8b686f7f8",
+    "adhoc/human405-two-rounds-progress-20261104-v2.json": "708c97ced8f2e9b87a95b35c17173438fdb20ab5ef4db8be7b4457176083781a",
+    "adhoc/prepare-v124-first2-root-overlays-20261104-v1.js": "0cdadd2331f4f179d42a004c7c7d1945df19a92f3ea4ae0f12761a2bd77e0826",
+    "adhoc/verify-human405-v124-first2-20261104-v1.js": "5f1fc7e54809199b778784629ec947a1ec604bd3035991be8dc8b8fcc797d971",
+    "docs/ai-design.md": "9d621b4692f0133298d28f50e7271a3962e617227f3c11f9285bfe8a2380bb8a",
+    "docs/human405-first2-v124-progress-20261104.md": "5a208937260af0478030fc70156e88d2b71848783514ddbb5a6989f2fad2460e",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/scan-launch-investment-witness-20261104-v1.json": "2cfd3064b8b9958a35e70c72aa798906e599921e337f0bbd28c4d40c53ce5ff9",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/scan-launch-investment-witness-20261104-v1.log": "975e5142c39dd4705e5de1fced26930d89c3d900ab88776702d8c425b5f02125",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-live-20261104-v1.log": "382e0900b3a6e8d52355eefaf56a2edd2bb2fc32a3b954ffc62a6fb62de1af48",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-native-verification-20261104-v1.json": "6cae2a73856d6fdd2f000fea55ba23290a070ce4ece8c0d2a1ed82ba882b3eb7",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-native-verification-20261104-v1.log": "d176a9202623250090cbc332a934b22599a249b9d983831cece971ebe9f52dbe",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-progress-source-check-20261104-v1.json": "081d604db81635ced7f5f703f0361a9d4acdb53ce4960f9b1ce2b5bb5e73420f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-record-inventory-20261104-v1.log": "8f1544de423341366136b17b0c0b2c6073aab0daa1219f00c5959b08d20bd97c",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/v124-first2-registry-build-20261104-v1.log": "0f6a13b9beb0602fd4904acaeefefc084538358ca14065fa368de10b4786fd8f",
+    "reports/iteration/ai-search-v124-white-first2-20261104/b3e5178b.38259e7e.quick-400.action-log.html": "51259ca8833592e7f454d318ade422175cddb8ceaea5b16aa032e2da6fe02e82",
+    "reports/iteration/registry.json": "9cba3f0005f278317bf7d9e30f8cf7a09593a7603aded957acd8b62a0c91cfcd",
+    "reports/iteration/versions.json": "0cb2d77527ed9bc2122bf88929dd0d5beb984d733fb4bc861c19b0eb0156a9db",
+    "reports/research/b3e5178b.38259e7e.quick-400.json": "f00d2867e3362d39eebde28d16a80f6b482676cc0af269b3921d1b82f4785e52",
+    "reports/research/b3e5178b.38259e7e.quick-400.json.decisions.jsonl": "b6c102c02d9a51bf3f3b3981b2a4916aae3f32ae3071604798127fe02307f28e",
+    "reports/research/b3e5178b.38259e7e.quick-400.json.round-end-1.checkpoint.json": "a3fdf30c4089ee507bee12ba349357fcf7b4af86e929cd3ce40c0afb4eb439a3",
+    "reports/research/b3e5178b.38259e7e.quick-400.json.round-end-2.checkpoint.json": "243975514ceb81d4b991efc4c82c2984235de1976a42b9107fa00076bb8194ae",
+    "reports/research/b3e5178b.38259e7e.quick-400.json.round-ends.jsonl": "14d6348b60e144a0a24bf8e924df3acf3d5a1ae8f4d623b5d691388ef38cac41",
+    "reports/robot-iteration.html": "cde4b712a21cf3f1907a06cf79c75edd11dec34535b16cfdec14cb8b1a171b9e",
+    "seti-saves/seti-save-research-ai-search-v124-white-first2-20261104-38259e7e-quick-400-v41.json": "a6a01a33a1516943b7b0774303ad422117f58769d3951a97638b4a569e643d21"
+  },
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "5a37097315321a4bcc116a021d8d97281f60156871f1761c70ed677ccbfe8f92",
+      "path": "/private/tmp/seti-v124-first2-root-overlays-20261104/versions.json",
+      "sha256": "ecae7ea9228019a0c2523b9ec68a18c0bf3b21a4bee324a2801e84b5030e5500"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "487db0cd67b9438b982cf0663a6e5b7d3de7e43b8605f1f890d1b62b24586e64",
+      "path": "/private/tmp/seti-v124-first2-root-overlays-20261104/registry.json",
+      "sha256": "01077044fa09b7b70973e1bb971033f691223ddd615fc7fdfc8d02a8685e1a7f"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "b17d48d61b001113702423055f7b16534966e11c513746ae2fdceab206df892e",
+      "path": "/private/tmp/seti-v124-first2-root-overlays-20261104/robot-iteration.html",
+      "sha256": "1175dd5b5b2cc90c1105c9f5205121e3ee3a22c12229a811e5456b594e9d8fe5"
+    }
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "goalStatus": "active",
+  "goalAchieved": false
+}
