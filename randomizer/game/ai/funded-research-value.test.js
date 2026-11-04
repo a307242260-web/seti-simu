@@ -28,9 +28,9 @@ try {
   assert.equal(player.publicity, 7);
   const before = values.evaluateStateValue(observation, seatId);
   assert.equal(before.components.researchPotential, 9.5);
-  assert.equal(before.components.researchIncomePotential, 4.5,
+  assert.equal(before.components.researchIncomePotential, 5,
     'known selection reward and existing four data can fund an income before future held and probe purposes');
-  assert.equal(before.total, 60 + (values.FORECAST.usefulScansPerLaterRound - 2) * 2);
+  assert.equal(before.total, 60.5 + (values.FORECAST.usefulScansPerLaterRound - 2) * 2);
   assert.equal(before.components.handPotential, 2 * values.FORECAST.usefulScansPerLaterRound - 1.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
   assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
@@ -38,8 +38,8 @@ try {
   const choice = started.legalActions.find(a => a.target.tileId === 'blue1' && a.target.blueSlot === 1);
   assert(choice);
   const after = port.expand(started, choice.actionId), taken = values.evaluateStateValue(after.observation, seatId);
-  assert.equal(taken.total, before.total-before.components.researchIncomePotential,
-    'blue1 retains the original single-research value, while blue2 has the separate verified income bridge');
+  assert.equal(taken.total, before.total-before.components.researchIncomePotential+2,
+    'the newly owned currency blue also carries its native-verified future data purpose');
   assert.equal(taken.components.researchPotential, 0);
   assert.notDeepEqual(after.observation.publicState.board.rockets, observation.publicState.board.rockets,
     'research really rotates geometry; this model does not claim unchanged probe routes');
@@ -226,14 +226,14 @@ for (const kind of ['income', 'blue-data']) {
     const goal = demand.catalog({ state, seatId, requirements, actions: root.legalActions }).find(g => g.kind === kind);
     assert(goal); const local = require('./local-decision-plans');
     const preview = kind === 'income' ? local.incomeCompletion({ state, seatId, goal }) : local.blueCompletion({ state, seatId, goal });
-    assert(preview.selected);
+    assert.equal(preview.selected,preview.netGain>0,'realizing already forecast publicity/research capital need not add scalar value twice');
     const first = root.legalActions.find(a => a.family === 'place_data'); assert(first);
     const actual = p.expandResourcePlan(root, { id: goal.id, goal, operation: {}, firstActionId: first.actionId }, () => null);
     assert(actual.complete);
     const start = values.evaluateStateValue(root.observation, seatId), end = values.evaluateStateValue(actual.node.observation, seatId);
     assert.equal(start.components.researchPotential, 0); assert(end.components.researchPotential > 0);
     assert.equal(end.total - start.total, preview.netGain);
-    if(kind==='income'){const policy=p.resourceSpec(root),proof=p.incomePlanSummary(root);if(policy.plans.length===1&&policy.plans[0].goal.kind==='income'){assert(proof);assert.equal(proof.netGain,preview.netGain);}else assert.equal(proof,null,'a competing blue plan cannot be hidden by an income-only proof');}
+    if(kind==='income'){const policy=p.resourceSpec(root),proof=p.incomePlanSummary(root);if(policy.plans.length===1&&policy.plans[0].goal.kind==='income'&&preview.selected){assert(proof);assert.equal(proof.netGain,preview.netGain);}else assert.equal(proof,null,'a competing blue plan cannot be hidden by an income-only proof');}
     assert.deepEqual(composition.lifecycle.save().envelope, before);
   } finally { p.close(); composition.dispose(); }
 }

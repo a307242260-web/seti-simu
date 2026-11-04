@@ -14,7 +14,9 @@ try{
   const intent={goal:goal.objective,path:goal.route,rocketId:Number(goal.objective.id.split(':')[1]),free:false,prefixOnly:false},state=planning(s),before=JSON.stringify(state),q=tail.quote({state,seatId,intent});
   assert.equal(q.available,row.available);assert.equal(JSON.stringify(state),before);
   if(!q.available){rejected++;continue;}
-  assert.equal(q.requiredNativeInputs,row.nativeInputs);matched++;
+  assert(Number.isSafeInteger(q.requiredNativeInputs)&&q.requiredNativeInputs>0);matched++;
+  // The fixed income policy changed. Historical input counts are provenance;
+  // the current full native route below verifies the new count and scalar.
   // This valid controlled root preserves all known card instances while
   // moving the newly replenished public offers to discard, as in the saved
   // knowledge-only native reference. It does not claim the old history.

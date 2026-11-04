@@ -129,15 +129,16 @@
       let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = [];
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
-      const incomePurpose = (card, availableHand) => {
-        const gain=cards.getIncomeGainForCard(card),immediate={...gain},nextWallet={...wallet},nextIncome={...income};
+      const incomePurpose = (card, availableHand, projectedData=0) => {
+        const gain=cards.getIncomeGainForCard(card),immediate={...gain},nextWallet={...wallet,availableData:Math.min(players.RESOURCE_LIMITS.availableData,wallet.availableData+projectedData)},nextIncome={...income};
         if(immediate.publicity)immediate.publicity=Math.min(immediate.publicity,players.RESOURCE_LIMITS.publicity-wallet.publicity);
         if(immediate.availableData)immediate.availableData=Math.min(immediate.availableData,players.RESOURCE_LIMITS.availableData-wallet.availableData);
         for(const [key,amount]of Object.entries(immediate))if(key!=='handSize')nextWallet[key]=(nextWallet[key]||0)+amount;
         for(const [key,amount]of Object.entries(gain))nextIncome[key]=(nextIncome[key]||0)+amount;
         const after=capital(availableHand.filter(c=>c!==card),nextWallet,nextIncome);
         const linear=weighted(immediate)+weighted(gain)*(4-planningRound)-weights.handSize;
-        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:linear+after-capital(availableHand,wallet,income)};
+        const following=facts.dataContinuation?facts.dataContinuation({hand:availableHand.filter(c=>c!==card),wallet:nextWallet,income:nextIncome,traceSlots}):null;
+        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:linear+after+(following?.value||0)-capital(availableHand,wallet,income)};
       };
       for (let index = 0; index < effects.length && supported; index++) {
         const effect = effects[index], options = effect.options || {};
@@ -155,8 +156,9 @@
           unknownCount += count; delta += value; ledger.push({ type: effect.type, count, value, identityKnown: false });
         } else if (effect.type === 'pick_card') {
           if ((options.count || 1) !== 1) { supported = false; break; }
-          const incomeLater = effects.slice(index + 1).some(e => e.type === 'income');
-          const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomePurpose(card, [...hand, card]).value
+          const following=effects.slice(index+1),incomeAt=following.findIndex(e=>e.type==='income'),incomeLater=incomeAt>=0;
+          const projectedData=incomeLater?knownScanData(root,actor,following.slice(0,incomeAt),usedTokens):0;
+          const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomePurpose(card, [...hand, card],projectedData).value
             : capital([...hand, card], wallet, income) - capital(hand, wallet, income) }))
             .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           const picked = ranked[0]?.card;
@@ -219,12 +221,29 @@
         } else { supported = false; ledger.push({ type: effect.type, unsupported: true }); }
       }
       const capitalDelta = capital(hand, wallet, income) - initialCapital;
+      // One fixed, existing-data continuation belongs to this mission's
+      // shared wallet. It is an optional forecast, never a native node/bound.
+      const dataContinuation = supported && facts.dataContinuation
+        ? facts.dataContinuation({ hand, wallet, income, traceSlots }) : null;
       candidates.push({ id: goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
-        supported, payment, route: goal.route, ledger, capitalDelta, value: supported ? Math.max(0, delta + capitalDelta) : 0 });
+        supported, payment, route: goal.route, ledger, capitalDelta, dataContinuation,
+        value: supported ? Math.max(0, delta + capitalDelta + (dataContinuation?.value || 0)) : 0 });
     }
     const ranked = candidates.filter(c => c.funded && c.supported).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
     return { value: ranked[0]?.value || 0, selected: ranked[0] || null, candidates,
-      scope: 'One current-wallet-funded ordinary mission with its complete paid geometric route; maximum, not sum. No future income, card moves, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound.' };
+      scope: 'One current-wallet-funded ordinary mission with its complete paid geometric route and optional fixed existing-data tail; maximum, not sum. No future income, card moves, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound.' };
+  }
+
+  // A single known ordinary scan before queued income. No guessed refill,
+  // settlement reward, optional effect or other owner supplies this data.
+  function knownScanData(root,actor,effects,usedTokens=new Set()) {
+    if(effects.length!==1||effects[0].type!=="scan_planet_sector")return 0;
+    const options=effects[0].options||{};
+    return Number(science.listScanStepChoices(root,actor,{mode:"planet",planetId:options.planetId,gainData:true}).some(a=>{
+      const id=a.target.nebulaId,bucket=root.data.nebulae[id];
+      const available={...root.data,nebulae:{...root.data.nebulae,[id]:{...bucket,tokens:bucket.tokens.filter(t=>!usedTokens.has(t.id))}}};
+      return !!data.getNextReplaceableNebulaToken(available,id);
+    }));
   }
 
   function funding(wallet, cost, weights) {
@@ -252,7 +271,8 @@
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
     return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
       extraUnknownCount: 0, round: pub.roundNumber, passing: pub.passingPlayerIds.includes(seatId),
-      terminal: observation.terminal ?? observation.outcomeProjection?.terminal };
+      terminal: observation.terminal ?? observation.outcomeProjection?.terminal,
+      computerSlots: player.dataProgress?.computerSlots, blueSlots: player.dataProgress?.blueSlots };
   }
 
   // Only the selected player's public resources/owned technology and known
@@ -266,10 +286,14 @@
         publicCards: state.cards?.publicCards, aliens: { slots } }, hand: player.hand,
       extraUnknownCount: Math.max(0, (player.resources.handSize || 0) - player.hand.length), round: state.turn.roundNumber,
       passing: (state.passingPlayerIds || state.turn.passedPlayerIds).includes(player.id) || player.passCompletionPending === true,
-      terminal: state.turn.gameEnded === true };
+      terminal: state.turn.gameEnded === true,
+      computerSlots: data.listComputerPlacedTokens(player).map(t=>t.placementSlot),
+      blueSlots: Object.entries(player.techState?.blueBoardSlots || {}).filter(([id])=>player.techState.ownedTiles[id]&&!player.techState.disabledTiles[id]).map(([tileId,slot])=>({tileId,slot:Number(slot),
+        occupied:data.listBlueBonusPlacedTokens(player).some(t=>Number(t.blueSlot)===Number(slot)),
+        unlocked:data.listComputerPlacedTokens(player).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(slot))})).sort((a,b)=>a.slot-b.slot) };
   }
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ ownedProbes, funding, quote, factsFromObservation, factsFromState, fromObservation, fromState });
+  return Object.freeze({ ownedProbes, funding, knownScanData, quote, factsFromObservation, factsFromState, fromObservation, fromState });
 });

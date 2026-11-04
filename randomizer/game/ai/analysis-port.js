@@ -1812,6 +1812,10 @@
       if (node.status!=="stable" && node.status!=="decision" || node.status==="decision" && session?.queue?.[0]?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP) return null;
       const state=readPlanningState(stored);
       const owner=state.players.players.find(player=>player.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
+      // A scan can fund the new mission/data continuation. The old linear
+      // scan bound did not cover that increase in purpose capital.
+      if(hasUnprovedProbeCapital(state)&&Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]
+        &&["blue1","blue2","blue4"].includes(id)))return null;
       const quietCompany=company && (company.activeAbilityId==="turing_borrow_tech" && company.passiveIds.length===0
         || company.activeAbilityId===null && company.passiveIds.length===1 && company.passiveIds[0]==="alien_lab_panels");
       if (!quietCompany || !owner || state.turn.currentPlayerId!==seatId || state.match.initialSetup || owner.passCompletionPending

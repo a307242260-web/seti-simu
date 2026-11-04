@@ -14,7 +14,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v11";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v15";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
@@ -193,27 +193,35 @@
   }
 
   function probePotential(observation, seatId, weights = DEFAULT_WEIGHTS) {
-    const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
-    const round = pub.roundNumber + Number(pub.passingPlayerIds.includes(seatId));
-    return probeCapital.fromObservation(observation, seatId, weights, (hand, publicity, funding) =>
-      handCapital(hand, player.techState, pub.board.techSupply, round, weights, funding)
-        + researchCapital({ hand, techState: player.techState, supply: pub.board.techSupply,
-          round, publicity, researchCost: player.researchPublicityCost, funding }, weights)).value;
+    const pub=observation.publicState,player=pub.players.find(p=>p.playerId===seatId);
+    return basePurposeCapital({...probeCapital.factsFromObservation(observation,seatId),
+      supply:pub.board.techSupply,researchCost:player.researchPublicityCost,
+      reservedCards:observation.selfState.reservedCards},weights).probePotential;
   }
 
+  function investmentFor(facts,weights) {
+    const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
+    return(hand,publicity,funding)=>handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
+      +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+  }
+  function incomePreparationCapital(facts,weights=DEFAULT_WEIGHTS) {
+    const investment=investmentFor(facts,weights),funding={resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)};
+    const base=investment(facts.hand,facts.player.publicity,funding);
+    return base+researchIncome.missionDataContinuation({facts,hand:facts.hand,wallet:facts.player,income:facts.player.income,investment},weights).value;
+  }
   function basePurposeCapital(facts, weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
-    const investment=(hand,publicity,funding)=>handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
-      +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+    const investment=investmentFor(facts,weights);
     const funding={resources:player,income:player.income,startingIncome:Number(passing)};
     const held=handCapital(facts.hand,player.techState,supply,round+Number(passing),weights,funding);
     const paid=researchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
-    const mission=probeCapital.quote({...facts,investment},weights).value;
+    const mission=probeCapital.quote({...facts,investment,
+      dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment},weights)},weights).value;
     return{handPotential:held,researchPotential:paid,probePotential:mission,total:held+paid+mission};
   }
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
-    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots)=>portfolio({...facts,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
+    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>portfolio({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     return{...base,analysisPotential:analysis.value,analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,total:base.total+analysis.value+income.value};
   }
@@ -286,7 +294,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, readyAnalysisUpperBound:slots=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, readyAnalysisUpperBound:slots=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

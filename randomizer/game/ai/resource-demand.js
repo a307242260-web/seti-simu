@@ -130,10 +130,31 @@
     const hand=p.hand.filter(c=>c.id!==card.id);
     return beforeCapital-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
   }
-  function incomeCardValue(state,seatId,card){
-    const p=owner(state,seatId);return incomeValueWithCapital(state,p,card,planningCapital(state,p));
+  function incomePreparationCapital(state,p,projectedData=0){
+    const current=planningCapital(state,p);
+    if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]
+      &&["blue1","blue2","blue4"].includes(id)))return current;
+    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),reservedCards:p.reservedCards};
+    facts.player={...facts.player,availableData:Math.min(players.RESOURCE_LIMITS.availableData,facts.player.availableData+projectedData)};
+    // Current mission and immediate fixed-data preparation are alternatives,
+    // never two uses of the same wallet. This is a greedy ranking utility.
+    return Math.max(current,stateValue.incomePreparationCapital(facts));
   }
-  function incomeValueWithCapital(state,p,card,beforeCapital){
+  function incomeCardValue(state,seatId,card){
+    const p=owner(state,seatId);return incomeValueWithCapital(state,p,card,incomePreparationCapital(state,p));
+  }
+  function computerIncomeValue(state,seatId,card){
+    const preview=previewIncomeTail({state,seatId,goal:{incomeCardId:card.id}});
+    // The fourth-slot choice happens after its data and column rewards.
+    // Quote that real fixed endpoint, so it cannot collect computer4 twice.
+    return preview.available?preview.netGain+incomePreparationCapital(state,preview.player):null;
+  }
+  function incomeOfferValue(state,seatId,card,projectedData=0){
+    // Public offers share the pre-pick baseline. Do not subtract the newly
+    // acquired card's own different preparation value while ranking offers.
+    return incomeValueWithCapital(state,owner(state,seatId),card,0,projectedData);
+  }
+  function incomeValueWithCapital(state,p,card,beforeCapital,projectedData=0){
     const gain=cards.getIncomeGainForCard(card);
     const next={...p,hand:p.hand.filter(c=>c.id!==card.id),resources:{...p.resources,handSize:p.resources.handSize-1},income:{...p.income},
       dataState:{...p.dataState,poolTokens:[...p.dataState.poolTokens]}};
@@ -143,13 +164,13 @@
     const linear=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber);
     const overflow=(gain.publicity?gain.publicity-next.resources.publicity+p.resources.publicity:0)*.5
       +(gain.availableData?gain.availableData-next.resources.availableData+p.resources.availableData:0)*.5;
-    return linear-overflow+planningCapital(state,next)-beforeCapital;
+    return linear-overflow+incomePreparationCapital(state,next,projectedData)-beforeCapital;
   }
   function cardOpportunityCost(state,seatId,card){return incomeOpportunityCost(state,owner(state,seatId),card);}
   function dataCornerCards({state,seatId,goal}){
     const p=owner(state,seatId);
     const eligible=p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length);
-    if(!eligible.length)return[];const beforeCapital=planningCapital(state,p);
+    if(!eligible.length)return[];const beforeCapital=incomePreparationCapital(state,p);
     return eligible.map(card=>({card,loss:incomeOpportunityCost(state,p,card,beforeCapital)}))
       .sort((a,b)=>a.loss-b.loss||(a.card.id<b.card.id?-1:a.card.id>b.card.id?1:0));
   }
@@ -197,10 +218,10 @@
       }
     }
     if(placed(p)<4&&p.hand.some(c=>cards.getIncomeGainForCard(c))){
-      const beforeCapital=planningCapital(state,p);
+      const beforeCapital=incomePreparationCapital(state,p);
       // Quote each supplier once, using the same post-income wallet as the
       // native choice. Sorting must not repeatedly simulate an unchanged source.
-      const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).map(card=>({card,value:incomeValueWithCapital(state,p,card,beforeCapital)}))
+      const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).map(card=>({card,value:computerIncomeValue(state,seatId,card)??incomeValueWithCapital(state,p,card,beforeCapital)}))
         .sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1))
         .find(row=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:row.card.id,required:{}}))?.card;
       if(incomeCard)add({id:'data:income:4',kind:'income',targetComputerSlot:4,incomeCardId:incomeCard.id,incomeBefore:Object.values(p.income).reduce((a,b)=>a+b,0),required:{}});
@@ -337,7 +358,7 @@
   function incomeChoice({state,seatId,goal,actions}){
     const p=owner(state,seatId),choices=actions.filter(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('income:'));
     if(choices.length!==actions.length)return null;
-    const beforeCapital=planningCapital(state,p);
+    const beforeCapital=incomePreparationCapital(state,p);
     const scored=choices.filter(a=>a.target.cardInstanceId!==goal.cardId&&(!goal.incomeCardId||a.target.cardInstanceId===goal.incomeCardId)).map(a=>{
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
@@ -472,5 +493,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,dataCornerCards});
 });

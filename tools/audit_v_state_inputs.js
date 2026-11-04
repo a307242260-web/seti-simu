@@ -728,7 +728,7 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
   const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),{searchDecision}=require('../randomizer/game/ai/decision-search'),agent=require('../randomizer/game/ai/search-agent');
   const f=JSON.parse(fs.readFileSync(require('node:path').resolve(__dirname,'../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'))),seed=f.source.seed;
   kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const decision=comp.inspect().session.decision,pick=decision.choices.find(a=>a.summary==='b_2.webp');assert(pick);assert(comp.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:pick}).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert(r.diagnostics.nativeExecutions>0);assert.equal(r.diagnostics.incomePlanProofs,0);
-  const summary=port.incomePlanSummary(root),plan=port.resourceSpec(root).plans[0];assert.equal(summary,null);assert.equal(plan.goal.kind,'blue-data');const native=port.expandResourcePlan(root,plan,()=>null);assert(native.complete);assert.equal(evaluate(native.node.observation),r.value);assert.deepEqual(comp.lifecycle.save().envelope,before);
+  const summary=port.incomePlanSummary(root),plan=port.resourceSpec(root).plans[0];assert.equal(summary,null);assert.equal(plan.goal.kind,'blue-data');const native=port.expandResourcePlan(root,plan,()=>null);assert(native.complete);assert(r.value>=evaluate(native.node.observation),'complete search retains continuations after the native fixed preparation');assert.deepEqual(comp.lifecycle.save().envelope,before);
   console.log(`[PASS] independent-probe-plan-native-fallback: value=${r.value} nativeControlInputs=${native.submissions} inventedSuccessor=false`);
  }catch(error){console.log(`[FAIL] independent-probe-plan-native-fallback: ${error.message}`);allPass=false;}
  finally{port?.close();kernel?.composition.dispose();}
@@ -767,6 +767,20 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
   console.log('[PASS] independent-pass-investment-window: native PASS queue, formal IDs unchanged, held/paid terms and full/compact/canonical agree');
  } catch(error) { console.log(`[FAIL] independent-pass-investment-window: ${error.message}`); allPass=false; }
  finally { port?.close(); kernel?.composition.dispose(); }
+}
+
+// New typed inputs: computer progress and occupied blue slots must reach both
+// state-backed preparation and formal observations without a fake successor.
+{
+ let kernel;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),demand=require('../randomizer/game/ai/resource-demand');
+  const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json'))),seed=f.source.seed;
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:f.seatId}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:f.seatId,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(raw,f.seatId),state=JSON.parse(before.committedState),player=state.players.players.find(p=>p.id===f.seatId);
+  assert.deepEqual(independentValue.evaluateStateValue(formal,f.seatId),value);assert.equal(value.total,64.5);assert.equal(independentValue.probePotential(raw,f.seatId),value.components.probePotential);assert.equal(demand.planningCapital(state,player),value.components.handPotential+value.components.researchPotential+value.components.probePotential+value.components.analysisPotential+value.components.researchIncomePotential);assert.deepEqual(c.lifecycle.save().envelope,before);
+  console.log('[PASS] independent-mission-data-continuation: state/formal occupied-blue and computer progress agree; shared native-funded purpose64.5; root/RNG unchanged');
+ }catch(error){console.log(`[FAIL] independent-mission-data-continuation: ${error.message}`);allPass=false;}
+ finally{kernel?.composition.dispose();}
 }
 
 env.dispose();

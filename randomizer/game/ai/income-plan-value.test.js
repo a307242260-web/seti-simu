@@ -12,14 +12,14 @@ f.compositionEnvelope=c.lifecycle.save().envelope;
 function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),root=p.openRoot();return{before,p,root};}
 
 // Real deployed-probe control: the shared value now prefers the energy blue
-// plan (5) over blind income (3.5). Native cold recovery must see that same
+// plan (+1) over an already forecast blind income (+0). Native cold recovery must see that same
 // opportunity; the old probe-sensitive income-only shortcut is declined.
 {
  const {before,p,root}=open();try{
   const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete);
   const policy=p.resourceSpec(root);assert(policy.plans.every(plan=>plan.goal.kind==='blue-data'));
-  assert.equal(policy.incomeTail.netGain,3.5);assert.equal(policy.blueTails[0].netGain,5);
-  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert.equal(r.value,evaluate(nativeBlue.node.observation));assert.equal(r.value,58.5+(values.FORECAST.usefulScansPerLaterRound-2)*2);assert(r.diagnostics.nativeExecutions>0);
+  assert.equal(policy.incomeTail.netGain,0);assert.equal(policy.blueTails[0].netGain,1);assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);
+  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert(r.value>=evaluate(nativeBlue.node.observation),'complete search retains profitable continuations after the fixed blue preparation');assert.equal(evaluate(nativeBlue.node.observation),58.5+(values.FORECAST.usefulScansPerLaterRound-2)*2);assert.equal(r.value,64.5);assert(r.diagnostics.nativeExecutions>0);
   assert.deepEqual(c.lifecycle.save().envelope,before);
   const first=root.legalActions.find(a=>a.actionId===r.actionId);assert(c.inputPort.submitQuickAction(first).ok);
   const changed=c.lifecycle.save().envelope;p.close();const n=p.openRoot();

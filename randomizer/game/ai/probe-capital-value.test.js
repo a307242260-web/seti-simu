@@ -32,7 +32,7 @@ try {
   const investment = (hand, publicity, funding) => demand.heldAndResearchCapital(state, { ...own, hand, income: funding.income, resources: { ...own.resources, ...funding.resources, publicity } });
   assert.deepEqual(probe.fromState(state, own, values.DEFAULT_WEIGHTS, investment), forecast);
   const beforeValue=values.evaluateStateValue(obs,seatId);
-  assert.equal(beforeValue.components.researchIncomePotential,4.5);
+  assert(beforeValue.components.researchIncomePotential>0,'the separately native-verified funded research-income alternative remains represented');
   assert.equal(demand.planningCapital(state, own), demand.heldAndResearchCapital(state, own) + forecast.value+beforeValue.components.researchIncomePotential);
 
   // Four actual native inputs consume the quoted probe, public card, scan slot

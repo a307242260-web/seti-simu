@@ -4,11 +4,11 @@
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../tech/resolver'):root.SetiTechResolver,
     common?require('./resource-demand'):root.SetiResourceDemand,common?require('../players'):root.SetiPlayers,
-    common?require('../actions/quick-trades'):root.SetiQuickTrades);
+    common?require('../actions/quick-trades'):root.SetiQuickTrades,common?require('./probe-capital'):root.SetiProbeCapital);
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v8';
+  const VERSION='seti-purpose-card-pick-policy-v9';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -44,9 +44,9 @@
           if(!preview.available)throw new Error('CARD_PICK_READY_INCOME_UNAVAILABLE');after=preview.player;
         }else{after=structuredClone(p);players.gainIncome(after,gain,{blindDraw:()=>{}});}
         const fundingReduction=moneyFundingGap(p.resources,goal.required||{})-moneyFundingGap(after.resources,goal.required||{});
-        return{...f,incomeValue:demand.incomeCardValue(withCard,seatId,card),fundingReduction};
+        return{...f,incomeValue:goal.kind==='ready-income'?demand.computerIncomeValue(withCard,seatId,card):demand.incomeOfferValue(withCard,seatId,card,goal.projectedData||0),fundingReduction};
       }).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
-      const key=JSON.stringify([VERSION,state.turn.roundNumber,goal.kind,goal.amount||1,goal.cardId||null,known,blind]);
+      const key=JSON.stringify([VERSION,state.turn.roundNumber,goal.kind,goal.amount||1,goal.cardId||null,goal.projectedData||0,known,blind]);
       if(cache.has(key)){hits++;return{...cache.get(key),cache:'hit'};}
       misses++;rankedCards+=known.length;
       const eligible=known.filter(c=>(!goal.cardId||goal.cardId===c.id)&&(goal.kind==='move'?c.move>=(goal.amount||1):goal.kind==='data'?c.data>=(goal.amount||1)
@@ -146,13 +146,14 @@
       const goal={kind:'queued-income',id:'committed-own-income',...(future?{fundsCardId:future.id,required:effects.getCardPlayCost(future)}:{})};
       // Only this native, unconditional reward sequence is audited. Do not
       // infer income through unknown effects, optional branches or another owner.
+      const scans=[],finish=()=>({...goal,projectedData:probe.knownScanData(state,{id:p.id,color:p.color},scans)});
       for(const entry of session.queue.slice(1)){
         if(entry.ownerId!==seatId)break;
-        if(entry.type==='science_domain_income')return goal;
+        if(entry.type==='science_domain_income')return finish();
         const reward=entry.type==='probe_turn_reward'&&entry.payload?.reward;
         if(!reward||reward.options?.targetPlayerId&&reward.options.targetPlayerId!==seatId)break;
-        if(reward.type==='income'&&reward.options?.count===1)return goal;
-        if(reward.type!=='scan_planet_sector')break;
+        if(reward.type==='income'&&reward.options?.count===1)return finish();
+        if(reward.type!=='scan_planet_sector')break;scans.push(reward);
       }
       return null;
     }

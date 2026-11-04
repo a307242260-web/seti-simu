@@ -48,7 +48,11 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  // and the eventual native choice must use the same post-income funding value.
  const incomeFixture=read('adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-038-20261030-v1.json'),incomeState=JSON.parse(incomeFixture.compositionEnvelope.committedState),incomeOwner=incomeState.players.players.find(p=>p.id===seatId);
  assert(incomeOwner.mainActionCompleted);const publicIndex=incomeState.cards.publicCards.findIndex(c=>c?.cardId==='b_2.webp');assert(publicIndex>=0);incomeOwner.hand.push(incomeState.cards.publicCards[publicIndex]);incomeState.cards.publicCards[publicIndex]=null;incomeOwner.resources.handSize=incomeOwner.hand.length;
- const incomeRank=incomeOwner.hand.map(card=>({card,value:demand.incomeCardValue(incomeState,seatId,card)})).sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1));
+ const liveRank=incomeOwner.hand.map(card=>({card,value:demand.incomeCardValue(incomeState,seatId,card)})).sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1));assert.equal(liveRank[0].card.cardId,'b_2.webp','the live mission/data portfolio also values a second known income source');assert.equal(demand.catalog({state:incomeState,seatId,requirements:{bluePlacements:[]}}).find(g=>g.kind==='income').incomeCardId,incomeOwner.hand.find(c=>c.cardId==='b_48.webp').id,'computer4 income consumes its data first, so its choice differs from an immediate mission income');
+ // Remove the deployed probe in a separate controlled state to isolate the
+ // immediate same-round payment contract from that future mission purpose.
+ incomeState.pieces.rockets=incomeState.pieces.rockets.filter(r=>r.playerId!==seatId);incomeState.pieces.activeRocketId=null;
+ const incomeRank=incomeOwner.hand.map(card=>({card,value:demand.computerIncomeValue(incomeState,seatId,card)})).sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1));
  assert.equal(incomeRank[0].card.cardId,'b_48.webp','energy income improves the preservedDLC9 payment window');
  const incomeGoal=demand.catalog({state:incomeState,seatId,requirements:{bluePlacements:[]}}).find(g=>g.kind==='income');assert(incomeGoal);assert.equal(incomeGoal.incomeCardId,incomeRank[0].card.id,'income catalog must choose the same funded marginal value as native income choice');
  // Execute the chosen income through the production kernel. It enables a

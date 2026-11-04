@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: admittedV161,oneactualfirst2,100nativeinputverification,fullassetsandpublication; current turn proves missingmissiondata continuation and fixes actual greedy and computer-income context in isolated draft",
+  "baseCommit": "ad1033609639f165adcbc1e74df72e8659bfd743",
+  "productionRuntime": "v161 / V11",
+  "productionSourceCommit": "b961ce2911a08573f11ed04ad975935ec594c253",
+  "actualRecord": "reports/research/bc76a417.b961ce29.quick-400.json",
+  "actualScores": [
+    21,
+    43
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualTechnologyCount": [
+    1,
+    2
+  ],
+  "teacherTechnologyCount": [
+    2,
+    3
+  ],
+  "actualIncomeBothRounds": [
+    4,
+    3,
+    1,
+    0,
+    0,
+    1
+  ],
+  "teacherIncomeBothRounds": [
+    6,
+    2,
+    1,
+    0,
+    0,
+    1
+  ],
+  "roundEnd": "before-PASS-card-and-next-income",
+  "candidateRuntime": "v165 / V15",
+  "candidateAdmitted": false,
+  "candidateOfficialRuns": 0,
+  "candidate": {
+    "nativeRoots": 80,
+    "nativeAlternatives": 75,
+    "nativePlanInputs": 555,
+    "integrationAndGreedyInputs": 580,
+    "knownCompleteMissionCapital": 64.5,
+    "firstSlowCase": {
+      "nativeInputs": 198,
+      "milliseconds": 541.229208,
+      "complete": true
+    },
+    "chromePassed": 19,
+    "fullNodePending": true,
+    "coldGatePending": true,
+    "inputAudit": "only known legacy frozen aomomo; newtypedinputpass"
+  },
+  "rejected": {
+    "v162": "complete known chain64.5 but greedyforecast61.5; no officialrun",
+    "v163": "161/167unit+1flow; spendingblue suppresses stillfeasiblecomputerincome",
+    "v164": "80roots75nativeplans pass, source firstcasepasses; income catalog reused immediate-income ranking before consumingcomputer4"
+  },
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "finish full167+1 and90coldgates; archive if fails, no resampling",
+    "admit only proven source then one unique autonomousfirst2",
+    "native replay allinputs; compare exacttech/sixincome/score/allassets and synccenter preserving foreignV1"
+  ]
+}

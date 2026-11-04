@@ -27,7 +27,8 @@
   const selected=candidates[0];if(!selected)return zero('analysis-trace-needs-native-boundary');
   const slots=facts.board.aliens.slots.map(slot=>slot===selected.slot?{...slot,traces:{...slot.traces,blue:{...slot.traces.blue,firstPlaced:true,ownerPlayerColor:facts.player.color}}}:slot);
   const delta=wallet=>wallet.score-initial.score+Object.keys(weights).reduce((n,k)=>n+(k==='handSize'?0:wallet[k]-initial[k])*weights[k],0);
-  const base=delta(selected.wallet)+portfolio(selected.wallet,slots)-baseValue;
+  const cleared={computerSlots:[],blueSlots:(facts.blueSlots||[]).map(b=>({...b,occupied:false,unlocked:false}))};
+  const base=delta(selected.wallet)+portfolio(selected.wallet,slots,cleared)-baseValue;
   const tails=Object.entries(facts.player.techState?.blueBoardSlots||{}).flatMap(([tileId,slot])=>{
    if(!facts.player.techState.ownedTiles[tileId]||facts.player.techState.disabledTiles?.[tileId])return[];
    const required=placement.getRequiredComputerSlotForBlueBonus(slot),bonus=placement.getBlueTileDataBonus(tileId);
@@ -36,7 +37,7 @@
    if(required>=2)players.gainResources({resources:wallet},{publicity:placement.getComputerSlotBonus(2).publicity});
    const columns=Object.entries(facts.player.techState.blueBoardSlots).filter(([id,s])=>facts.player.techState.ownedTiles[id]&&!facts.player.techState.disabledTiles?.[id]&&placement.getRequiredComputerSlotForBlueBonus(s)<=required).length;
    players.gainResources({resources:wallet},{[bonus.type]:bonus[bonus.type],score:columns*placement.getBlueColumnScoreBonus().score});
-   return[{blueSlot:Number(slot),wallet,value:delta(wallet)+portfolio(wallet,slots)-baseValue}];
+   return[{blueSlot:Number(slot),wallet,value:delta(wallet)+portfolio(wallet,slots,{computerSlots:[1,2,3].filter(n=>n<=required),blueSlots:cleared.blueSlots.map(b=>({...b,occupied:b.slot===Number(slot),unlocked:placement.getRequiredComputerSlotForBlueBonus(b.slot)<=required}))})-baseValue}];
   }).sort((a,b)=>b.value-a.value||a.blueSlot-b.blueSlot);
   const tail=tails[0]?.value>base?tails[0]:null,net=tail?.value??base;
   return{value:Math.max(0,net),selected:{slotId:selected.slot.slotId,traceType:'blue',payment,blueSlot:tail?.blueSlot||null,planNetGain:net},reason:net>0?'funded-ready-analysis':'analysis-plan-not-profitable',scope:'One funded ready analysis and at most one known currency blue tail; no new income/card identity/species, native state transition or pruning guarantee'};
