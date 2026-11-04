@@ -137,8 +137,9 @@ for (const action of routes.root.legalActions.filter(action => action.target?.tr
   for (const choice of pending.legalActions) {
     const next = routes.port.expand(pending, choice.actionId);
     assert.equal(next.status, "stable");
-    assert(evaluate(next.observation) <= evaluate(routes.root.observation) - 0.5,
-      "快速移动、角标移动及结束移动均不能在默认V下赚取净收益");
+    assert(evaluate(next.observation)-probePotential(next.observation,seatId)
+      <= evaluate(routes.root.observation)-probePotential(routes.root.observation,seatId)-0.5,
+      "快速/角标移动实际消耗资源；任务潜值兑现不抵消原生费用核对");
   }
 }
 assert.deepEqual(comp.lifecycle.save().envelope, routes.before);

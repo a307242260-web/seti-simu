@@ -37,6 +37,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/initial-information-barrier.test.js", "rules/initial-setup", "初始发选项、结算盲抽和插收入牌报告实际新信息，移出集合去重并保持恢复重放", "搜索继续使用未知起始牌或收入盲抽牌，或空堆与非盲抽错误生成新屏障"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
+    entry("randomizer/game/ai/probe-travel-tail.test.js", "policy/state-value", "有在途探测器的固定收入/数据收尾保持全部根值与原生控制一致，只有不新增移动时使用数值证明", "为省模拟遗漏被新资金激活的移动，复制证明后缺少原生对照，或把计划边界冒充真实后继"),
     entry("randomizer/game/ai/probe-capital-value.test.js", "policy/state-value", "一次在场探测任务按原生费用和已知完整奖励链估值，与固定计划共用机会成本且不读取隐藏身份", "探测器跨回合被估为零、重复计价、无法支付仍计收益、未知牌被用于插收入或踪迹奖励硬编码"),
     entry("randomizer/game/ai/funded-research-value.test.js", "policy/state-value", "现有宣传按原生公开费用估计一次科技用途，公开与紧凑观察一致，兼容手牌不重复认领同一科技", "宣传未足仍假定可研究、忽略公司费用、窥视隐藏奖励或将同一科技和首拿重复计价"),
     entry("randomizer/game/ai/goal-movement.test.js", "policy/decision-search", "移动按明确目标和确定路线执行，原生费用、真实逐步提交及恢复一致，策略排除不冒充等价剪枝", "免费移动展开方向树、每步换目标、目标完成仍乱走、读暗牌定路线或恢复丢失路线目的"),

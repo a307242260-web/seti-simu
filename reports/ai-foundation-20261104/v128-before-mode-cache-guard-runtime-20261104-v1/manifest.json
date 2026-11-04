@@ -1,0 +1,12 @@
+{
+  "baseCommit": "013730ec57ca11357e007662e9ca850126d76b2e",
+  "sourceHashes": {
+    "randomizer/game/ai/probe-capital.js": "3dd8c4461c4fddddf1a7da4a5445ffffcdc8634f62e146dace67152abd097b3d",
+    "randomizer/game/ai/state-value.js": "1b87fd4b4f224954243ac6b1bcdde4d571b7681371b1378afcb75dabb54806a2",
+    "randomizer/game/ai/analysis-port.js": "8d830d1406b36a52685635c4b59e3405fd81e91819c140ae25b752f39f4b6dca",
+    "randomizer/game/ai/local-decision-plans.js": "5f7db504d852b8f849628e4b7dbe004f74276b0ac9ed66a666e5ac476c51b9e2",
+    "randomizer/game/ai/decision-search.js": "5ba00ffb9496faca9e94d25e069ddec784dde43d680c214db8e3176f7fe8ec1c"
+  },
+  "gate": "two-rounds-teacher-v2/v128-current-teacher-serial-gate-20261104-v1.json",
+  "status": "Not admitted; mode change can reuse invalid cached proof. No autonomous run."
+}

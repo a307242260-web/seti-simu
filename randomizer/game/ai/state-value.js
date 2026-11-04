@@ -12,12 +12,12 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v6";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v7";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
   });
-  const evaluatorWeights = new WeakMap();
+  const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
 
   function number(value, path) {
     if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
@@ -25,6 +25,7 @@
   }
 
   function valueWeights(options) {
+    if (options.weights && trustedWeights.has(options.weights)) return options.weights;
     const weights = { ...DEFAULT_WEIGHTS, ...options.weights };
     for (const [key, value] of Object.entries(weights)) {
       if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
@@ -58,11 +59,33 @@
     }
     return total;
   }
+  const targetQuotes = new Map(), immutableTargetQuotes = new WeakMap();
+  function immutableTargets(techState, supply, weights) {
+    if (!techState || !supply || !Object.isFrozen(techState) || !Object.isFrozen(techState.ownedTiles)
+      || !Object.isFrozen(techState.disabledTiles) || !Object.isFrozen(techState.blueBoardSlots)
+      || !Object.isFrozen(supply) || !supply.stacks || !Object.isFrozen(supply.stacks)
+      || !Object.values(supply.stacks).every(Object.isFrozen) || !Object.isFrozen(weights)) return null;
+    let bySupply = immutableTargetQuotes.get(techState);
+    if (!bySupply) { bySupply = new WeakMap(); immutableTargetQuotes.set(techState, bySupply); }
+    let byWeights = bySupply.get(supply);
+    if (!byWeights) { byWeights = new WeakMap(); bySupply.set(supply, byWeights); }
+    let byRound = byWeights.get(weights);
+    if (!byRound) { byRound = new Map(); byWeights.set(weights, byRound); }
+    return byRound;
+  }
   function researchTargets(techState, supply, round, weights) {
+    const memo = immutableTargets(techState, supply, weights);
+    if (memo?.has(round)) return memo.get(round);
+    const key = JSON.stringify([techState?.ownedTiles, techState?.disabledTiles, techState?.blueBoardSlots,
+      round, weights, Object.entries(supply?.stacks || {}).map(([id, stack]) =>
+        [id, stack.remaining, stack.firstTakeClaimedBy, stack.bonusHidden, stack.bonusId])]);
+    if (targetQuotes.has(key)) {
+      const result = targetQuotes.get(key); memo?.set(round, result); return result;
+    }
     const owned = techState?.ownedTiles || {}, current = technologyCapital(techState, round, weights);
     const occupied = new Set(Object.values(techState?.blueBoardSlots || {}));
     const blueSlot = [1, 2, 3, 4].find(slot => !occupied.has(slot));
-    return Object.entries(supply?.stacks || {}).flatMap(([id, stack]) => {
+    const result = Object.entries(supply?.stacks || {}).flatMap(([id, stack]) => {
       const type = techCatalog.getTechType(id);
       if (!type || owned[id] || !(stack.remaining > 0) || type === "blue" && blueSlot == null) return [];
       const next = { ...techState, ownedTiles: { ...owned, [id]: true },
@@ -71,26 +94,43 @@
       const bonus = !stack.bonusHidden && techCatalog.BONUS_EFFECTS[stack.bonusId];
       const bonusValue = bonus ? Object.entries(bonus).reduce((n, [key, amount]) => n + amount *
         (key === "score" ? 1 : key === "cardSelection" ? weights.handSize : weights[key] || 0), 0) : 0;
-      return [{ id, type, capability: technologyCapital(next, round, weights) - current, first, bonusValue }];
+      return [Object.freeze({ id, type, capability: technologyCapital(next, round, weights) - current, first, bonusValue })];
     });
+    if (targetQuotes.size >= 64) targetQuotes.delete(targetQuotes.keys().next().value);
+    targetQuotes.set(key, Object.freeze(result)); memo?.set(round, result);
+    return result;
+  }
+  const researchModels = new WeakMap();
+  function supportedResearch(card) {
+    if (!card?.cardId || card.hidden) return null;
+    const model = cardEffects.getCardModel(card);
+    if (!model) return null;
+    if (researchModels.has(model)) return researchModels.get(model);
+    const play = cardEffects.buildPlayEffects(card);
+    const supported = play.length === 1 && play[0].type === "card_research_tech" && play[0].options?.skipCost
+      && !play[0].options.afterResearchReward && !play[0].options.requireCondition
+      && !play[0].options.researchedByOthersOnly && !play[0].options.skipBonus ? play[0] : null;
+    if (Object.isFrozen(model) && Object.isFrozen(model.playEffects)
+      && (model.playEffects || []).every(effect => Object.isFrozen(effect) && Object.isFrozen(effect.options))) {
+      researchModels.set(model, supported);
+    }
+    return supported;
   }
   function cardResearchOptions(card, targets, round, weights) {
-    if (round >= 4 || !card?.cardId || card.hidden) return [];
-    const play = cardEffects.buildPlayEffects(card);
-    if (play.length !== 1 || play[0].type !== "card_research_tech" || !play[0].options?.skipCost
-      || play[0].options.afterResearchReward || play[0].options.requireCondition
-      || play[0].options.researchedByOthersOnly || play[0].options.skipBonus) return [];
+    if (round >= 4) return [];
+    const research = supportedResearch(card);
+    if (!research) return [];
     // This forecast covers unconditional research with the ordinary reward.
     // Conditional cards remain legal native plans; their future prerequisites
     // and altered rewards are not proven by the held-card capital model.
-    const types = play[0].options.techTypes || techCatalog.TECH_TYPES;
+    const types = research.options.techTypes || techCatalog.TECH_TYPES;
     const cost = Object.entries(cardEffects.getCardPlayCost(card)).reduce((n, [key, amount]) => n + amount * (weights[key] || 0), 0);
     // Paid and held-card options use the same visible one-time stack reward.
     return targets.filter(t => types.includes(t.type)).map(t => ({ id: t.id,
       value: Math.max(0, t.capability + t.first + t.bonusValue - cost - weights.handSize) }));
   }
   function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS) {
-    if (round >= 4 || !card?.cardId || card.hidden) return 0;
+    if (round >= 4 || !supportedResearch(card)) return 0;
     return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
   }
   function handOptions(hand, targets, round, weights) {
@@ -102,7 +142,9 @@
   }
   function handCapital(hand, techState, supply, round, weights = DEFAULT_WEIGHTS) {
     if (round >= 4 || !hand.length) return 0;
-    return Math.max(0, ...handOptions(hand, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
+    const eligible = hand.filter(supportedResearch);
+    if (!eligible.length) return 0;
+    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
   }
   function researchCapital({ hand, techState, supply, round, publicity, researchCost, passed = false }, weights = DEFAULT_WEIGHTS) {
     const planningRound = round + Number(passed);
@@ -173,6 +215,7 @@
   function createStateValueEvaluator(seatId, options = {}) {
     if (typeof seatId !== "string" || !seatId) throw new TypeError("VALUE_VIEWER_INVALID");
     const weights = Object.freeze(valueWeights(options));
+    trustedWeights.add(weights);
     const evaluate = observation => evaluateStateValue(observation, seatId, { weights }).total;
     Object.defineProperties(evaluate, {
       modelKey: { value: JSON.stringify({ version: MODEL_VERSION, seatId, weights }) },

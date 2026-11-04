@@ -1,0 +1,254 @@
+(function (root, factory) {
+  "use strict";
+  const common = typeof module === "object" && module.exports;
+  const api = factory(common ? require("../cards/effects") : root.SetiCardEffects,
+    common ? require("../data/placement") : root.SetiDataPlacement,
+    common ? require("../tech/catalog") : root.SetiTechCatalog,
+    common ? require("../abilities/planet") : root.SetiAbilityPlanet,
+    common ? require("../actions/scan-effects") : root.SetiScanEffects,
+    common ? require("./probe-capital") : root.SetiProbeCapital);
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else root.SetiStateValue = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital) {
+  "use strict";
+
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v7";
+  // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
+  const DEFAULT_WEIGHTS = Object.freeze({
+    credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
+  });
+  const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
+
+  function number(value, path) {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
+    return value;
+  }
+
+  function valueWeights(options) {
+    if (options.weights && trustedWeights.has(options.weights)) return options.weights;
+    const weights = { ...DEFAULT_WEIGHTS, ...options.weights };
+    for (const [key, value] of Object.entries(weights)) {
+      if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
+      if (number(value, `weights.${key}`) < 0) throw new TypeError(`VALUE_WEIGHT_NEGATIVE: ${key}`);
+    }
+    return weights;
+  }
+
+  // Forecast hypotheses, not guaranteed rewards or admissible search bounds.
+  // The current turn is executed natively; only later-round usage is forecast.
+  const FORECAST = Object.freeze({ computerCyclesPerLaterRound: 1, usefulScansPerLaterRound: 2,
+    landingsPerLaterRound: 1 });
+  function technologyCapital(techState, round, weights = DEFAULT_WEIGHTS) {
+    const later = Math.max(0, 4 - round), owned = techState?.ownedTiles || {}, disabled = techState?.disabledTiles || {};
+    let total = 0;
+    for (const id of Object.keys(owned)) {
+      if (!owned[id] || disabled[id]) continue;
+      const bonus = dataPlacement.getBlueTileDataBonus(id);
+      if (bonus && Number.isInteger(techState.blueBoardSlots?.[id])) {
+        const reward = bonus.type === "choose_card" ? weights.handSize
+          : Object.entries(weights).reduce((n, [key, w]) => n + (bonus[key] || 0) * w, 0);
+        total += FORECAST.computerCyclesPerLaterRound * later * (dataPlacement.getBlueColumnScoreBonus().score
+          + Math.max(0, reward - weights.availableData));
+      } else if (id === "purple4") {
+        // A useful one-point move replaces one paid ordinary movement point.
+        // Launch tempo and flexible scan targets are not assigned invented scores.
+        total += FORECAST.usefulScansPerLaterRound * later * scanEffects.SCAN_ACTION_4_MOVE_POINTS * weights.energy;
+      } else if (id === "orange3") {
+        total += FORECAST.landingsPerLaterRound * later * planetAbility.ORANGE3_LAND_DISCOUNT * weights.energy;
+      }
+    }
+    return total;
+  }
+  const targetQuotes = new Map(), immutableTargetQuotes = new WeakMap();
+  function immutableTargets(techState, supply, weights) {
+    if (!techState || !supply || !Object.isFrozen(techState) || !Object.isFrozen(techState.ownedTiles)
+      || !Object.isFrozen(techState.disabledTiles) || !Object.isFrozen(techState.blueBoardSlots)
+      || !Object.isFrozen(supply) || !supply.stacks || !Object.isFrozen(supply.stacks)
+      || !Object.values(supply.stacks).every(Object.isFrozen) || !Object.isFrozen(weights)) return null;
+    let bySupply = immutableTargetQuotes.get(techState);
+    if (!bySupply) { bySupply = new WeakMap(); immutableTargetQuotes.set(techState, bySupply); }
+    let byWeights = bySupply.get(supply);
+    if (!byWeights) { byWeights = new WeakMap(); bySupply.set(supply, byWeights); }
+    let byRound = byWeights.get(weights);
+    if (!byRound) { byRound = new Map(); byWeights.set(weights, byRound); }
+    return byRound;
+  }
+  function researchTargets(techState, supply, round, weights) {
+    const memo = immutableTargets(techState, supply, weights);
+    if (memo?.has(round)) return memo.get(round);
+    const key = JSON.stringify([techState?.ownedTiles, techState?.disabledTiles, techState?.blueBoardSlots,
+      round, weights, Object.entries(supply?.stacks || {}).map(([id, stack]) =>
+        [id, stack.remaining, stack.firstTakeClaimedBy, stack.bonusHidden, stack.bonusId])]);
+    if (targetQuotes.has(key)) {
+      const result = targetQuotes.get(key); memo?.set(round, result); return result;
+    }
+    const owned = techState?.ownedTiles || {}, current = technologyCapital(techState, round, weights);
+    const occupied = new Set(Object.values(techState?.blueBoardSlots || {}));
+    const blueSlot = [1, 2, 3, 4].find(slot => !occupied.has(slot));
+    const result = Object.entries(supply?.stacks || {}).flatMap(([id, stack]) => {
+      const type = techCatalog.getTechType(id);
+      if (!type || owned[id] || !(stack.remaining > 0) || type === "blue" && blueSlot == null) return [];
+      const next = { ...techState, ownedTiles: { ...owned, [id]: true },
+        blueBoardSlots: { ...techState?.blueBoardSlots, ...(type === "blue" ? { [id]: blueSlot } : {}) } };
+      const first = stack.firstTakeClaimedBy == null ? techCatalog.FIRST_TAKE_TYPE_SCORE : 0;
+      const bonus = !stack.bonusHidden && techCatalog.BONUS_EFFECTS[stack.bonusId];
+      const bonusValue = bonus ? Object.entries(bonus).reduce((n, [key, amount]) => n + amount *
+        (key === "score" ? 1 : key === "cardSelection" ? weights.handSize : weights[key] || 0), 0) : 0;
+      return [Object.freeze({ id, type, capability: technologyCapital(next, round, weights) - current, first, bonusValue })];
+    });
+    if (targetQuotes.size >= 64) targetQuotes.delete(targetQuotes.keys().next().value);
+    targetQuotes.set(key, Object.freeze(result)); memo?.set(round, result);
+    return result;
+  }
+  const researchModels = new WeakMap();
+  function supportedResearch(card) {
+    if (!card?.cardId || card.hidden) return null;
+    const model = cardEffects.getCardModel(card);
+    if (!model) return null;
+    if (researchModels.has(model)) return researchModels.get(model);
+    const play = cardEffects.buildPlayEffects(card);
+    const supported = play.length === 1 && play[0].type === "card_research_tech" && play[0].options?.skipCost
+      && !play[0].options.afterResearchReward && !play[0].options.requireCondition
+      && !play[0].options.researchedByOthersOnly && !play[0].options.skipBonus ? play[0] : null;
+    if (Object.isFrozen(model) && Object.isFrozen(model.playEffects)
+      && (model.playEffects || []).every(effect => Object.isFrozen(effect) && Object.isFrozen(effect.options))) {
+      researchModels.set(model, supported);
+    }
+    return supported;
+  }
+  function cardResearchOptions(card, targets, round, weights) {
+    if (round >= 4) return [];
+    const research = supportedResearch(card);
+    if (!research) return [];
+    // This forecast covers unconditional research with the ordinary reward.
+    // Conditional cards remain legal native plans; their future prerequisites
+    // and altered rewards are not proven by the held-card capital model.
+    const types = research.options.techTypes || techCatalog.TECH_TYPES;
+    const cost = Object.entries(cardEffects.getCardPlayCost(card)).reduce((n, [key, amount]) => n + amount * (weights[key] || 0), 0);
+    // Paid and held-card options use the same visible one-time stack reward.
+    return targets.filter(t => types.includes(t.type)).map(t => ({ id: t.id,
+      value: Math.max(0, t.capability + t.first + t.bonusValue - cost - weights.handSize) }));
+  }
+  function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS) {
+    if (round >= 4 || !supportedResearch(card)) return 0;
+    return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
+  }
+  function handOptions(hand, targets, round, weights) {
+    const byTarget = new Map();
+    for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights)) {
+      byTarget.set(option.id, Math.max(byTarget.get(option.id) || 0, option.value));
+    }
+    return [...byTarget].map(([id, value]) => ({ id, value }));
+  }
+  function handCapital(hand, techState, supply, round, weights = DEFAULT_WEIGHTS) {
+    if (round >= 4 || !hand.length) return 0;
+    const eligible = hand.filter(supportedResearch);
+    if (!eligible.length) return 0;
+    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
+  }
+  function researchCapital({ hand, techState, supply, round, publicity, researchCost, passed = false }, weights = DEFAULT_WEIGHTS) {
+    const planningRound = round + Number(passed);
+    if (planningRound >= 4 || !Object.keys(supply?.stacks || {}).length) return 0;
+    number(researchCost, "player.researchPublicityCost");
+    if (!Number.isSafeInteger(researchCost) || researchCost < 0) throw new TypeError("VALUE_RESEARCH_COST_INVALID");
+    if (publicity < researchCost) return 0;
+    const targets = researchTargets(techState, supply, planningRound, weights);
+    const held = handOptions(hand, targets, planningRound, weights);
+    const currentHand = Math.max(0, ...held.map(o => o.value));
+    return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity
+      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.value)) - currentHand));
+  }
+  function researchCapitalCeiling({ techState, supply, round, researchCost }, weights = DEFAULT_WEIGHTS) {
+    if (round >= 4) return 0;
+    return Math.max(0, ...researchTargets(techState, supply, round, weights)
+      .map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity));
+  }
+
+  function probePotential(observation, seatId, weights = DEFAULT_WEIGHTS) {
+    const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
+    const round = pub.roundNumber + Number(pub.passingPlayerIds.includes(seatId));
+    return probeCapital.fromObservation(observation, seatId, weights, (hand, publicity) =>
+      handCapital(hand, player.techState, pub.board.techSupply, round, weights)
+        + researchCapital({ hand, techState: player.techState, supply: pub.board.techSupply,
+          round, publicity, researchCost: player.researchPublicityCost }, weights)).value;
+  }
+
+  function evaluateStateValue(observation, seatId, options = {}) {
+    const player = observation?.publicState?.players?.find(player => player.playerId === seatId);
+    if (!player) throw new TypeError(`VALUE_PLAYER_MISSING: ${seatId}`);
+    if (observation.selfState?.playerId !== seatId) throw new TypeError("VALUE_VIEWER_MISMATCH");
+    if (!Array.isArray(observation.selfState.hand)) throw new TypeError("VALUE_HAND_MISSING");
+    const terminal = observation.terminal ?? observation.outcomeProjection?.terminal;
+    if (typeof terminal !== "boolean") throw new TypeError("VALUE_TERMINAL_MISSING");
+    const realizedScore = number(player.score, "player.score");
+    const currentTotal = number(player.finalScore, "player.finalScore");
+    if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal,
+      components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
+        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0 }), terminal: true });
+
+    const weights = valueWeights(options);
+    const round = number(observation.publicState.roundNumber, "roundNumber");
+    if (!Number.isInteger(round) || round < 1 || round > 4) throw new TypeError("VALUE_ROUND_INVALID");
+    if (!Array.isArray(observation.publicState.passingPlayerIds)) throw new TypeError("VALUE_PASSING_PLAYERS_MISSING");
+    const passing = observation.publicState.passingPlayerIds.includes(seatId);
+    if (!player.income || typeof player.income !== "object") throw new TypeError("VALUE_INCOME_MISSING");
+    let resources = 0;
+    let income = 0;
+    for (const key of Object.keys(weights)) {
+      if (key !== "handSize") resources += number(player[key], `player.${key}`) * weights[key];
+      // 正式轮初收入发生于第2/3/4轮；插收入的立即奖励已进入当前资源，不能重复加。
+      income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
+    }
+    const hand = observation.selfState.hand.length * weights.handSize;
+    const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
+      resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
+      handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round + Number(passing), weights),
+      researchPotential: researchCapital({ hand: observation.selfState.hand, techState: player.techState,
+        supply: observation.publicState.board?.techSupply, round, publicity: player.publicity,
+        researchCost: player.researchPublicityCost, passed: passing }, weights),
+      probePotential: probePotential(observation, seatId, weights) });
+    const total = Object.values(components).reduce((sum, value) => sum + value, 0);
+    number(total, "total");
+    return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
+  }
+
+  function createStateValueEvaluator(seatId, options = {}) {
+    if (typeof seatId !== "string" || !seatId) throw new TypeError("VALUE_VIEWER_INVALID");
+    const weights = Object.freeze(valueWeights(options));
+    trustedWeights.add(weights);
+    const evaluate = observation => evaluateStateValue(observation, seatId, { weights }).total;
+    Object.defineProperties(evaluate, {
+      modelKey: { value: JSON.stringify({ version: MODEL_VERSION, seatId, weights }) },
+      seatId: { value: seatId },
+    });
+    evaluatorWeights.set(evaluate, weights);
+    return Object.freeze(evaluate);
+  }
+
+  function evaluateHandCountDelta(evaluate, observation, delta) {
+    if (!evaluatorWeights.has(evaluate)) throw new TypeError("VALUE_EVALUATOR_UNKNOWN");
+    if (![-1, 1].includes(delta)) throw new TypeError("VALUE_HAND_DELTA_INVALID");
+    if ((observation?.terminal ?? observation?.outcomeProjection?.terminal) !== false) {
+      throw new TypeError("VALUE_BOUND_NONTERMINAL_REQUIRED");
+    }
+    if (!Array.isArray(observation.selfState?.hand)) throw new TypeError("VALUE_HAND_MISSING");
+    const hand = observation.selfState.hand.slice();
+    if (delta === -1 && !hand.length) throw new TypeError("VALUE_HAND_DELTA_INVALID");
+    if (delta === -1) hand.pop();
+    else hand.push({ hidden: true });
+    // 仅计算数值界，不是规则后继。重算相同求和顺序，避免 base+delta 的浮点误差低估上界。
+    return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
+  }
+
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential,
+    supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
+    evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),
+    isDefaultStateValueEvaluator: evaluate => {
+      const weights = evaluatorWeights.get(evaluate);
+      return Boolean(weights && Object.keys(DEFAULT_WEIGHTS).every(key => weights[key] === DEFAULT_WEIGHTS[key]));
+    },
+    isMoneyMonotoneEvaluator: evaluate => {
+      const weights = evaluatorWeights.get(evaluate);
+      return Boolean(weights && weights.credits > 0 && weights.energy > 0);
+    } });
+});

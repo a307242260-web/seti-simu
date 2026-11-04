@@ -1020,6 +1020,23 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-funded-travel-capital',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiProbeCapital && window.SetiStateValue && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+    function submit(a){if(!a)throw Error('缺少真实移动输入');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitQuickAction(a);if(!r.ok)throw Error(JSON.stringify(r));}
+    try{if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('途中探测器恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),obs=c.projection({role:'player',playerId:f.seatId}).state,v=window.SetiStateValue.evaluateStateValue(obs,f.seatId);
+      if(!v.modelVersion.endsWith('-v7')||v.components.probePotential!==4.5)throw Error('仍将有资金的一步火星任务计为0');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('估值改变原生根');submit(legal().find(a=>a.family==='quick_trade'&&a.target.tradeId==='energy-for-move'));submit(legal().find(a=>a.target?.deltaX===0&&a.target?.deltaY===1));
+      const next=window.SetiStateValue.evaluateStateValue(c.projection({role:'player',playerId:f.seatId}).state,f.seatId);if(next.components.probePotential!==5.5||next.total<v.total)throw Error('真实费用或途中/到达用途不连续');if(!c.lifecycle.restore(JSON.parse(before)).ok||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('根/RNG恢复失败');window.__fundedTravel={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__fundedTravel?.ok === true',
+  obligation:'真实页面计入当前资金可支付的完整探测路线，原生付费移动前后用途连续且不污染根',
+  counterexample:'页面仍加载旧估值、未到位探测器归零、遗漏移动费或估值读取未来资金',
+}), Object.freeze({
   id:'production-conditional-sector-flow',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiProductionKernel && window.SetiRuleObservation && window.SetiData)',
   actionExpression:`(async()=>{

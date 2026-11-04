@@ -399,10 +399,12 @@ try {
         const first = moneyPort.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-energy").actionId);
         const poor = moneyPort.expand(first, first.legalActions.find(action => action.target?.tradeId === "energy-for-credit").actionId);
         const evaluate = independentValue.createStateValueEvaluator(moneyFixture.seatId);
+        const rootV=independentValue.evaluateStateValue(root.observation,moneyFixture.seatId),poorV=independentValue.evaluateStateValue(poor.observation,moneyFixture.seatId);
+        const missionDelta=rootV.components.probePotential-poorV.components.probePotential;
         if (!proof || moneyPort.knownCardMoneyOrder(poor)?.group !== proof.group
           || evaluate(root.observation) !== evaluate(outcomeModel.createDecisionObservation(root.observation, { seatId: moneyFixture.seatId }))
           || evaluate(poor.observation) !== evaluate(outcomeModel.createDecisionObservation(poor.observation, { seatId: moneyFixture.seatId }))
-          || evaluate(root.observation) - evaluate(poor.observation) !== 2) throw new Error("已知模型钱包证明、原始/标准V或严格余额差不一致");
+          || missionDelta<0 || rootV.total-poorV.total!==2+missionDelta) throw new Error("已知模型钱包证明、原始/标准V或含任务资金门槛的余额差不一致");
         console.log(`[PASS] independent-known-card-money: case=${id} root=${evaluate(root.observation)} poor=${evaluate(poor.observation)}`);
         const purchase = moneyPort.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-card").actionId);
         const tradeBound = moneyPort.cardTradeBound(purchase);

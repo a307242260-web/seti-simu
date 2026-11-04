@@ -84,7 +84,11 @@ const skipped = step(visit.port, afterMove, action => action.target?.choiceId ==
 assert.equal(self(skipped).availableData, 0, "接受与跳过是不同正式输入，必须分别保留");
 const placement = step(visit.port, arrived, action => action.family === "place_data");
 const scored = step(visit.port, placement, action => action.target?.target === "computer");
-assert(evaluate(scored.observation) > evaluate(visit.root.observation), "移动连带的数据准备链确实有净收益");
+assert.equal(self(scored).score-self(skipped).score,2,"真实访问数据可进入蓝列得分，移动链不能被证明剪掉");
+assert(evaluate(scored.observation)>evaluate(skipped.observation),"接受访问奖励及蓝列放置优于同一付费移动后的跳过");
+// A funded travel mission is already capitalized at the root in V7. Moving
+// without completing it can reduce that opportunity; do not retain a V6-only
+// assertion that this incomplete route must beat the original total value.
 assert.deepEqual(comp.lifecycle.save().envelope, visit.before);
 visit.port.close();
 

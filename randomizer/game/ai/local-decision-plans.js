@@ -174,15 +174,19 @@
   }
   return{available:true,netGain:total(preview)-before,requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
- function dataTailCompletion({state,seatId}){
+ function dataTailCompletion({state,seatId,canLeaveProbeStationary=null}){
   // With no owned probe, the shared previews cover held/paid investment and
   // future currency income exactly. No new card identity or owned technology
   // is introduced. Live early-round travel still needs native continuation.
   // Every iteration fills computer4 or consumes a distinct blue bonus slot.
   const initialOwner=owner(state,seatId);
-  if(state.turn.roundNumber!==4&&state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===initialOwner.color)))return{available:false,reason:'blue-tail-live-probe-needs-native-continuation'};
+  const liveProbe=state.turn.roundNumber!==4&&state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===initialOwner.color));
+  if(liveProbe&&(!canLeaveProbeStationary||!canLeaveProbeStationary(state)))return{available:false,reason:'blue-tail-live-probe-needs-native-continuation'};
   let current=state;const plans=[];let netGain=0,requiredNativeInputs=1,immediateScoreGain=0;
   while(true){
+   // The caller's audited pure query must reject every intermediate plan
+   // boundary that could begin a new movement objective after receiving funds.
+   if(liveProbe&&!canLeaveProbeStationary(current))return{available:false,reason:'data-tail-movement-needs-native-continuation'};
    const p=owner(current,seatId),requirements={bluePlacements:data.listBluePlacementRequirements(p)};
    const goals=demand.catalog({state:current,seatId,requirements});
    const income=goals.find(g=>g.kind==='income');

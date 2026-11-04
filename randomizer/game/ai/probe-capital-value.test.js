@@ -69,6 +69,13 @@ try {
   const land = raw.find(r => r.name === 'teacher-first').observation;
   const landing = quote(land); assert.equal(landing.value, 8.5); assert.equal(landing.selected.family, 'land');
   assert.equal(landing.selected.ledger.find(e => e.type === 'alien_trace').gain.score, 5);
+  const discounted=structuredClone(land),discountOwner=discounted.publicState.players.find(p=>p.playerId===seatId);
+  discountOwner.techState.ownedTiles.orange3=true;
+  const discountedLand=quote(discounted).candidates.find(c=>c.id===landing.selected.id);
+  assert(discountedLand.payment.value<landing.selected.payment.value,'permanent land-cost technology invalidates the endpoint cache');
+  discountOwner.techState.disabledTiles.orange3=true;
+  assert.deepEqual(quote(discounted).candidates.find(c=>c.id===landing.selected.id).payment,landing.selected.payment,'disabled technology restores the native ordinary fee');
+  assert.deepEqual(quote(land).selected.payment,landing.selected.payment,'another technology quote cannot contaminate the original owner');
   const occupied = structuredClone(land);
   occupied.publicState.board.aliens.slots.forEach(s => { s.traces.yellow.firstPlaced = true; });
   const occupiedQuote = quote(occupied), occupiedLand = occupiedQuote.candidates.find(c => c.family === 'land');
@@ -98,6 +105,25 @@ try {
     assert.deepEqual(c.lifecycle.save().envelope,controlBefore);
   }finally{q.close();}
 } finally { port.close(); c.dispose(); }
+
+// The exact teacher Earth root has a funded one-point route to Mars. Its
+// future orbit retains 4.5V, and moving there natively charges that energy.
+{
+  const f=read('reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json'),seed=f.source.seed;
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;
+  assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+  const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+  function submit(a){assert(a);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
+  try{const root=p.openRoot(),q=quote(root.observation);assert.equal(q.value,4.5);assert.equal(q.selected.planet,'mars');assert.equal(q.selected.route.cost,1);assert.equal(q.selected.route.path.length,1);assert.equal(q.selected.payment.value,3);assert(Object.isFrozen(q.selected.route));
+    const s=JSON.parse(original.committedState),own=s.players.players.find(p=>p.id===f.seatId),investment=(hand,publicity)=>demand.heldAndResearchCapital(s,{...own,hand,resources:{...own.resources,publicity}});assert.deepEqual(probe.fromState(s,own,values.DEFAULT_WEIGHTS,investment),q);
+    assert.deepEqual(values.evaluateStateValue(p.valueObservation(root),f.seatId),values.evaluateStateValue(root.observation,f.seatId));
+    const saved=structuredClone(root.observation),poor=structuredClone(saved),player=poor.publicState.players.find(p=>p.playerId===f.seatId);player.credits=0;player.energy=0;player.income.credits=99;player.income.energy=99;assert.equal(quote(poor).value,0,'later income and endpoint rewards cannot prepay the route');assert.deepEqual(quote(saved),q,'a cached route never caches wallet-dependent funding');
+    const hidden=structuredClone(saved);hidden.publicState.board.aliens.slots.forEach(s=>s.assignedAlienId='other-hidden-world');assert.deepEqual(quote(hidden),q);
+    assert.deepEqual(c.lifecycle.save().envelope,original);submit(legal().find(a=>a.family==='quick_trade'&&a.target.tradeId==='energy-for-move'));const step=q.selected.route.path[0],a=legal().find(a=>a.target?.deltaX===step.deltaX&&a.target?.deltaY===step.deltaY);submit(a);
+    const moved=c.projection({role:'player',playerId:f.seatId}).state,after=quote(moved);assert.equal(after.selected.route.cost,0);assert.equal(after.value,5.5);assert.equal(moved.publicState.players.find(p=>p.playerId===f.seatId).energy,1);assert(values.evaluateStateValue(moved,f.seatId).total>=values.evaluateStateValue(saved,f.seatId).total,'the route quote does not invent arrival rewards');
+    assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
+  }finally{p.close();c.dispose();}
+}
 
 // Independent exhaustive small-wallet control for the constant-size native
 // 2:1 funding calculation, including nondefault nonnegative resource weights.

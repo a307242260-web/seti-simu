@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-04",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "phase": "v129-source-admission-verified-autonomous-pending",
+  "parentCommit": "013730ec57ca11357e007662e9ca850126d76b2e",
+  "scopeOverride": "Round end excludes PASS card selection AND next income. Both belong to next round start. Compare board, exact technology, permanent income and remaining/invested assets.",
+  "newModel": "V7: current-wallet-funded complete paid ordinary probe mission; no future income or hidden rewards.",
+  "gate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-current-teacher-serial-gate-20261104-v1.json",
+  "maxNativeInputs": 243,
+  "maxMilliseconds": 588.019625,
+  "coldRoots": 81,
+  "rejectedSourcesPreserved": [
+    "v126:602ms",
+    "v127/v128:movement-policy proof applicability corrected before admission"
+  ],
+  "unitPassed": 160,
+  "fullFlowPassed": 1,
+  "lastAutonomousVersion": "v125",
+  "aiScores": [
+    27,
+    35
+  ],
+  "teacherCurrentRulesScores": [
+    15,
+    34
+  ],
+  "newAutonomousFirst2Pending": true,
+  "limitations": [
+    "Card moves and future-income-funded missions not covered.",
+    "Scan completion and alien discovery rights not yet fully valued.",
+    "Cold roots do not prove autonomous round development.",
+    "Legacy frozen-aomomo audit failure remains."
+  ],
+  "nextAction": "After12relatedChromechecks pass, verify source-bound evidence, isolated-index Chinese commit/push; one registered autonomous first-two-round run. Preserve baselinev41, no duplicate run.",
+  "relatedChromePassed": 12
+}

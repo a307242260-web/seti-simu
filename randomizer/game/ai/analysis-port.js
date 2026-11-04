@@ -626,12 +626,18 @@
 
     function resourceCatalog(state, actions) {
       let variants = goalCatalogs.get(state);
-      const key = actionSetKey(actions);
-      if (variants?.has(key)) { goalCatalogHits++; return variants.get(key); }
+      // Node legal menus are immutable. Exact object identity is a stricter
+      // memo key than serializing and sorting every action on a cache miss.
+      // Ephemeral mutable source menus are queried without caching.
+      const key = Object.isFrozen(actions) ? actions : null;
+      if (key&&variants?.has(key)) { goalCatalogHits++; return variants.get(key); }
       goalCatalogMisses++;
       const result = freeze(resourceDemand.catalog({state,seatId,requirements:resourceQuery(state),actions}));
-      if (!variants) { variants = new Map(); goalCatalogs.set(state,variants); }
-      variants.set(key,result); return result;
+      if(key){
+        if (!variants) { variants = new WeakMap(); goalCatalogs.set(state,variants); }
+        variants.set(key,result);
+      }
+      return result;
     }
 
     function resourceStep(node,goal,operation={}) {
@@ -1783,9 +1789,11 @@
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
       if(!["end-turn","blue-end-turn","data-end-turn"].includes(kind))throw new Error("ANALYSIS_TURN_TAIL_KIND_INVALID");
+      // A compound live-probe proof is conditional on this policy, including
+      // cached proofs when a caller changes the planning mode on the same port.
+      if(kind!=="end-turn"&&!movementPlanning&&hasUnprovedProbeCapital(readPlanningState(stored)))return null;
       let variants=turnTailSpecs.get(node);if(variants?.has(kind))return variants.get(kind);
       const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
-      if(kind!=="end-turn"&&hasUnprovedProbeCapital(state))return null;
       if(kind!=="end-turn"&&state.turn.roundNumber<4&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"))return null;
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
       const passives={deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
@@ -1800,7 +1808,9 @@
         // A plain end cannot move a probe; the helper still checks historical
         // matching triggers, tasks and scoring. Compound plans keep their
         // visit-capable guard until their complete event set is proved.
-        &&hasPostMainInertReservations(state,kind!=="end-turn"&&hasOwnVisitSource(state))&&!node.legalActions.some(a=>a.family==="complete_task")){
+        // Plain end never moves; compound previews below separately certify
+        // that no movement policy starts at any intermediate goal boundary.
+        &&hasPostMainInertReservations(state,false)&&!node.legalActions.some(a=>a.family==="complete_task")){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
@@ -1811,11 +1821,30 @@
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail;
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
             if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&tail.selected)||(kind==="data-end-turn"&&plan.goal.kind==="income"&&policy.incomeTail?.selected))){
-              const compound=localPlans.dataTailCompletion({state,seatId});
+              let stationary;
+              const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
+              const sourceMoveCards=moveCards(owner);
+              const compound=localPlans.dataTailCompletion({state,seatId,
+                canLeaveProbeStationary: preview => {
+                  if(stationary===undefined){
+                    const policy=goalMovementSpec(node);
+                    stationary=!stored.intent?.path.length&&!policy?.selectedActionId
+                      &&["defer-movement","no-affordable-objective","objective-reached"].includes(policy?.reason);
+                  }
+                  const p=preview.players.players.find(p=>p.id===seatId);
+                  // At stable post-main nodes this policy's paid movement
+                  // depends on energy/corner points, not credit affordability.
+                  // No new energy/move cards and no lower publicity can create
+                  // an objective or a cheaper pre-rotation prefix. Other board,
+                  // reservation, technology and temporary-ability facts do not
+                  // change in these already-audited currency/data previews.
+                  return stationary&&p.resources.energy<=owner.resources.energy
+                    &&p.resources.publicity>=owner.resources.publicity&&moveCards(p)<=sourceMoveCards;
+                }});
               if(compound.available&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
                 spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles};
-              else if(plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
+              else if(!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
                 spec={firstActionId:plan.firstActionId,netGain:tail.netGain,requiredNativeInputs:tail.requiredNativeInputs+1,
                   blueSlot:plan.goal.blueSlot,computerPlacements:tail.computerPlacements,incomeCardId:tail.incomeCardId};

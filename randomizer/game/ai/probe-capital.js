@@ -10,10 +10,12 @@
     common ? require("../abilities/planet") : root.SetiAbilityPlanet,
     common ? require("../actions/planet-rewards") : root.SetiPlanetRewards,
     common ? require("../../solar-system/core") : root.SetiSolarSystem,
-    common ? require("../players") : root.SetiPlayers);
+    common ? require("../players") : root.SetiPlayers,
+    common ? require("../rockets") : root.SetiRocketActions,
+    common ? require("../abilities/rocket") : root.SetiAbilityRocket);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -25,24 +27,68 @@
       && (r.kind || "standard") === "standard" && r.fossilId == null && r.playerId === player.id);
   }
 
-  // These are read-only native Ability queries over viewer-safe public slices,
-  // not a canonical state, a successor observation or a route search.
+  // A bounded geometry cache contains only public topology and permanent
+  // terrain costs. Wallets, rewards and mission funding are always requoted.
+  const routeCache = new Map(), requirementCache = new Map();
+  function routes(facts, actor, ship) {
+    const pieces = { rockets: facts.board.rockets }, solarSystem = facts.board.solarSystem;
+    const key = JSON.stringify([solarSystem, pieces.rockets, ship.id,
+      Boolean(actor.techState?.ownedTiles?.orange2 && !actor.techState?.disabledTiles?.orange2)]);
+    if (routeCache.has(key)) return routeCache.get(key);
+    const context = { solarSystem, turn: { roundNumber: facts.round } };
+    const best = new Map(), queue = [{ coordinate: { ...rockets.getRocketSectorCoordinate(ship) }, cost: 0, path: [] }];
+    while (queue.length) {
+      queue.sort((a, b) => a.cost - b.cost || a.path.length - b.path.length);
+      const next = queue.shift(), id = `${next.coordinate.x},${next.coordinate.y}`;
+      if (best.has(id)) continue;
+      Object.freeze(next.coordinate);
+      next.path.forEach(Object.freeze); Object.freeze(next.path); Object.freeze(next);
+      best.set(id, next);
+      const cost = rocketAbility.getRequiredMovePointsFromCoordinate(context, actor, next.coordinate);
+      if (!Number.isSafeInteger(cost) || cost < 1) throw new Error('PROBE_CAPITAL_ROUTE_COST_INVALID');
+      for (const direction of rocketAbility.MOVE_DIRECTIONS) {
+        const move = rockets.canMoveFromCoordinate(pieces, next.coordinate, direction.deltaX, direction.deltaY, ship.id);
+        if (!move.ok || best.has(`${move.to.x},${move.to.y}`)) continue;
+        queue.push({ coordinate: move.to, cost: next.cost + cost,
+          path: [...next.path, { deltaX: direction.deltaX, deltaY: direction.deltaY, requiredMovePoints: cost }] });
+      }
+    }
+    if (routeCache.size >= 64) routeCache.delete(routeCache.keys().next().value);
+    routeCache.set(key, best);
+    return best;
+  }
+
+  // Read-only native Ability queries at named destination coordinates are
+  // requirement quotes, never fabricated successor observations or game nodes.
   function requirements(facts) {
     const p = facts.player, actor = { id: p.id, color: p.color, resources: p, techState: p.techState };
+    const key = JSON.stringify([facts.board.solarSystem, facts.board.rockets, facts.board.planets,
+      p.id, p.color, ['orange2', 'orange3', 'orange4'].map(id =>
+        Boolean(p.techState?.ownedTiles?.[id] && !p.techState?.disabledTiles?.[id]))]);
+    if (requirementCache.has(key)) return requirementCache.get(key);
     const context = { players: { players: [actor] }, turn: { currentPlayerId: p.id, roundNumber: facts.round },
-      planets: facts.board.planets, solarSystem: facts.board.solarSystem, pieces: { rockets: ownedProbes(facts.board.rockets, p) },
-      getPlanetLocations: () => solar.collectPlanetLocations(facts.board.solarSystem) };
-    return shared.listPlayerRocketPlanetPlacements(context, { currentPlayer: actor }).flatMap(placement => {
-      if (!ordinary.has(placement.planet.planetId)) return [];
-      return [...planetAbility.listOrbitRequirementsAt(context, placement), ...planetAbility.listLandRequirementsAt(context, placement)].map(choice => ({
-        requirementId: `${placement.rocket.id}:${choice.actionType}:${choice.planetId}:${choice.target?.satelliteId || 'planet'}`,
-        endpointFamily: choice.actionType, planetId: choice.planetId,
-        endpointFacts: { cost: choice.cost, rewards: choice.actionType === 'orbit'
-          ? rewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
-          : choice.target?.type === 'satellite' ? rewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
-            : rewards.buildPlanetLandRewardEffects(choice.planetId, choice.rewardMarkerSequence ?? choice.markerSequence) },
-      }));
+      planets: facts.board.planets, solarSystem: facts.board.solarSystem, pieces: { rockets: facts.board.rockets } };
+    const locations = solar.collectPlanetLocations(facts.board.solarSystem);
+    const result = ownedProbes(facts.board.rockets, p).flatMap(ship => {
+      const reachable = routes(facts, actor, ship);
+      return locations.flatMap(planet => {
+        if (!ordinary.has(planet.planetId)) return [];
+        const route = reachable.get(`${planet.x},${planet.y}`);
+        if (!route) return [];
+        const placement = { rocket: ship, planet, currentPlayer: actor, sectorCoordinate: route.coordinate };
+        return [...planetAbility.listOrbitRequirementsAt(context, placement), ...planetAbility.listLandRequirementsAt(context, placement)].map(choice => ({
+          requirementId: `${ship.id}:${choice.actionType}:${choice.planetId}:${choice.target?.satelliteId || 'planet'}`,
+          endpointFamily: choice.actionType, planetId: choice.planetId, route,
+          endpointFacts: { cost: choice.cost, rewards: choice.actionType === 'orbit'
+            ? rewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
+            : choice.target?.type === 'satellite' ? rewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
+              : rewards.buildPlanetLandRewardEffects(choice.planetId, choice.rewardMarkerSequence ?? choice.markerSequence) },
+        }));
+      });
     });
+    if (requirementCache.size >= 64) requirementCache.delete(requirementCache.keys().next().value);
+    requirementCache.set(key, result);
+    return result;
   }
 
   function quote(facts, weights) {
@@ -52,22 +98,34 @@
       if (facts.board[key] == null) throw new Error(`PROBE_CAPITAL_PUBLIC_FACTS_MISSING: ${key}`);
     }
     if (!Array.isArray(facts.board.aliens.slots)) throw new Error('PROBE_CAPITAL_ALIEN_SLOTS_MISSING');
+    // All supported ordinary endpoints still cost at least one energy, or
+    // both orbit currencies. With no energy, fewer than two credits cannot
+    // fund even that lower bound; route/mission construction is unnecessary.
+    if (planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
+      && planetAbility.DEFAULT_ORBIT_COST.energy > 0
+      && player.energy === 0 && player.credits < cToE.cost.credits) return zero();
     const goals = requirements(facts);
     if (!goals.length) return zero();
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
-    const capital = facts.investment;
+    const capitalValues = new Map();
+    const capital = (hand, publicity) => {
+      const key = JSON.stringify([publicity, hand.map(card => card.id)]);
+      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, publicity));
+      return capitalValues.get(key);
+    };
     const initialCapital = capital(knownHand, player.publicity);
     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
     const actor = { id: seatId, color: player.color };
     const candidates = [];
     for (const goal of goals) {
-      const payment = funding(player, goal.endpointFacts.cost, weights);
+      const totalCost = { ...goal.endpointFacts.cost, energy: (goal.endpointFacts.cost.energy || 0) + goal.route.cost };
+      const payment = funding(player, totalCost, weights);
       if (!payment) { candidates.push({ id: goal.requirementId, funded: false, value: 0 }); continue; }
       const hand = knownHand.slice(), publicCards = (facts.board.publicCards || []).filter(c => c && !c.hidden && c.cardId);
       const wallet = { credits: player.credits - payment.spend.credits, energy: player.energy - payment.spend.energy,
         publicity: player.publicity, availableData: player.availableData };
       let delta = -payment.value, unknownCount = facts.hand.length - hand.length + facts.extraUnknownCount, supported = true;
-      const traceSlots = structuredClone(facts.board.aliens.slots);
+      let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = [];
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
       const incomeValue = card => weighted(cards.getIncomeGainForCard(card) || {}) * (5 - planningRound);
@@ -134,6 +192,7 @@
           ledger.push({ type: effect.type, selected, value: selected?.value || 0,
             excluded: 'sector completion, triggered rewards, new identities and additional technology movement' });
         } else if (effect.type === 'alien_trace') {
+          traceSlots ||= structuredClone(facts.board.aliens.slots);
           for (let n = 0; n < (options.count || 1); n++) {
             const types = options.traceType ? [options.traceType] : ['yellow', 'pink', 'blue'];
             const choices = traceSlots.flatMap(slot => types.flatMap(type => {
@@ -155,11 +214,11 @@
       }
       const capitalDelta = capital(hand, wallet.publicity) - initialCapital;
       candidates.push({ id: goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
-        supported, payment, ledger, capitalDelta, value: supported ? Math.max(0, delta + capitalDelta) : 0 });
+        supported, payment, route: goal.route, ledger, capitalDelta, value: supported ? Math.max(0, delta + capitalDelta) : 0 });
     }
     const ranked = candidates.filter(c => c.funded && c.supported).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
     return { value: ranked[0]?.value || 0, selected: ranked[0] || null, candidates,
-      scope: 'One funded at-location ordinary mission; maximum, not sum. Forecast hypothesis, never an admissible bound.' };
+      scope: 'One current-wallet-funded ordinary mission with its complete paid geometric route; maximum, not sum. No future income, card moves, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound.' };
   }
 
   function funding(wallet, cost, weights) {

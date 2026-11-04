@@ -1,0 +1,12 @@
+{
+  "parentCommit": "013730ec57ca11357e007662e9ca850126d76b2e",
+  "files": {
+    "randomizer/game/ai/analysis-port.js": "e7b8860d4bd98a9622e9a50cea3711f6718f2cdca5afeabe8e2bad63e82d8c3b",
+    "randomizer/game/ai/decision-search.js": "de69cafb06bb0b6428ac6ca42591714180971d8040b3fd16c0533d6362703b01",
+    "randomizer/game/ai/local-decision-plans.js": "5f7db504d852b8f849628e4b7dbe004f74276b0ac9ed66a666e5ac476c51b9e2",
+    "randomizer/game/ai/probe-capital.js": "3dd8c4461c4fddddf1a7da4a5445ffffcdc8634f62e146dace67152abd097b3d",
+    "randomizer/game/ai/state-value.js": "1b87fd4b4f224954243ac6b1bcdde4d571b7681371b1378afcb75dabb54806a2"
+  },
+  "status": "production-flags-validated-but-not-admitted",
+  "reason": "Add an explicit movementPlanning guard before allowing the new live-probe stationary-policy tail proof in alternate option modes. No autonomous run."
+}
