@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "scope": "Native controls ran before the last two explanatory comment edits in decision-search.js. Reversing precisely these literal comments reproduces the entire original source hash. Every other loaded runtime byte matches current frozen candidate. No behavior, cold sample, proof result or native input changed; no extra query/retest. Current frozen unit and independent snapshot additionally execute the proof behavior.",
+  "onlyChangedRuntimeFile": "randomizer/game/ai/decision-search.js",
+  "priorSha256": "9939bae0178cfdcec8d136c826c2759c487c9133acff23da9c659aa75763e6f9",
+  "frozenSha256": "2e78333f7038a6efafb424ad15ccd900015def8f06d21113c5a44481522d9e1e",
+  "oldCommentText": [
+    "Every nonzero additive shortcut retains its exact half-unit grid.",
+    "A scalar proof has no successor observation. Its latest native base retains the evidence already realized; the unexecuted tail gets none."
+  ],
+  "newCommentText": [
+    "Other income shortcuts retain their existing half-unit guard.",
+    "A scalar proof has no successor observation. An audited purpose delta carries the boundary's exact realization; older proofs keep the base."
+  ],
+  "reports": [
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v229-amiba-dlc-all-native-controls-20261106-v1.json",
+      "sha256": "3f3a53da1bcb5284783565d800410853c3429252ac2ac6f3e7596d2d7a9151af",
+      "proofs": 36,
+      "inputs": 119
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v229-amiba-blind-income-native-controls-20261106-v1.json",
+      "sha256": "0e5304f653216736e1d86e617ab4fa9442318ac38b3d4552f363977cba7cd166",
+      "proofs": 14,
+      "inputs": 42
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

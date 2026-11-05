@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v218";
+  const VERSION = "seti-complete-decision-search-v230";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -52,9 +52,9 @@
       const baseValue=valueOf(observationForValue((node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node))));
       // A complete audited plan with exactly zero value change is an identity,
       // including fixed data realization under a fractional expectation.
-      // Every nonzero additive shortcut retains its exact half-unit grid.
+      // Other income shortcuts retain their existing half-unit guard.
       if(node.planSummary.netGain===0)return baseValue;
-      if(node.status==="turn-tail-value"){
+      if(node.status==="turn-tail-value"||node.planSummary.publicAmibaBlindIncome){
         const total=exactTailSum(baseValue,node.planSummary.netGain);
         if(total===null)throw new Error("SEARCH_TURN_TAIL_VALUE_INVALID");
         return total;
@@ -65,10 +65,12 @@
     };
     function realizationForNode(node) {
       if (!realizationTies) return 0;
-      // A scalar proof has no successor observation. Its latest native base
-      // retains the evidence already realized; the unexecuted tail gets none.
-      if (node.status === "income-plan-value") return realizationForNode(port.incomePlanBase(node));
-      if (node.status === "turn-tail-value") return realizationForNode(port.turnTailBase(node));
+      // A scalar proof has no successor observation. An audited purpose delta
+      // carries the boundary's exact realization; older proofs keep the base.
+      if (["income-plan-value","turn-tail-value"].includes(node.status)) {
+        const before=realizationForNode(node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node));
+        return node.planSummary.unrealizedPurposeDelta===undefined?before:stateValue.sumValueParts([before,-node.planSummary.unrealizedPurposeDelta]);
+      }
       const observation=observationForValue(node);
       valueOf(observation);
       return realizationCache.get(observation);
@@ -437,7 +439,9 @@
       const incomeProof=resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
         &&entry.alternatives.length===1&&entry.alternatives[0].resourcePlan?.goal.kind==="income"
         ?port.incomePlanSummary?.(entry.node):null;
-      if(incomeProof&&(incomeProof.netGain===0||[valueForNode(entry.node),incomeProof.netGain].every(v=>Number.isSafeInteger(v*2)))){
+      if(incomeProof&&(incomeProof.netGain===0||(incomeProof.publicAmibaBlindIncome
+        ?exactTailSum(valueForNode(entry.node),incomeProof.netGain)!==null
+        :[valueForNode(entry.node),incomeProof.netGain].every(v=>Number.isSafeInteger(v*2))))){
         if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break;}
         if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
         const leaf=port.incomePlanBoundary(entry.node,incomeProof),added=add(leaf);

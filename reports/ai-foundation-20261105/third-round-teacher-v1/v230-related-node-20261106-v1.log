@@ -1,0 +1,8 @@
+{"publicAmibaBlindIncome":true,"nativeSearchInputs":233,"nativeIncomeControls":14,"nativeIncomeInputs":42,"exactUnknownBoundaryValueAndRealization":true,"publicDeckCountConsumedOnce":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":183,"nativeTailControls":42,"nativeTailInputs":135,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+SUMMARY unit passed=5 failed=0 total=5 time=2.12s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5

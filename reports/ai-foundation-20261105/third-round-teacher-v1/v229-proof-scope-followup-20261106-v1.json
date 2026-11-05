@@ -1,0 +1,13 @@
+{
+  "status": "withheld-for-proof-scope-hardening",
+  "runtime": "V229/V37",
+  "priorColdAndRegressionPassed": true,
+  "productionPromoted": false,
+  "reason": "Publication review found that the final negative-blue skip did not run the newly supplied future-purpose guard on the skipped branch. A controlled helper witness demonstrates the missed callback; this is not claimed as a native teacher score counterexample. V230 adds the complete finite suffix check before strict domination.",
+  "evidenceSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v229-negative-blue-guard-contract-witness-20261106-v2.json": "7d5795957e2a0182175500b677d899bfd97eade014167042a898d31159ec5cac",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v230-negative-tail-guard-before-fix-20261106-v1.log": "2272cacca5fa25b1295d4d7b3c0fb4707b69d2904e0ade2de6bb658adfcc0ecb"
+  },
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

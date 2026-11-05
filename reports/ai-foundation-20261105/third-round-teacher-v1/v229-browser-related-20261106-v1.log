@@ -1,0 +1,6 @@
+PASS production-research-trigger-capital http://127.0.0.1:65471/randomizer/index.html
+PASS production-scan-launch-reserve http://127.0.0.1:65471/randomizer/index.html
+PASS production-amiba-plain-end-value http://127.0.0.1:65471/randomizer/index.html
+PASS production-amiba-currency-tail-value http://127.0.0.1:65471/randomizer/index.html
+PASS production-amiba-blind-income-value http://127.0.0.1:65471/randomizer/index.html
+SUMMARY browserSmoke passed=5 failed=0 total=5

@@ -1557,4 +1557,61 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   query: "agent=completion",
   obligation: "新completion AI在真实页面经共享factory完成初始选择、正式提交和保存恢复",
   counterexample: "新AI脚本未装配、绕过协调器提交或恢复后仍复用旧算法状态",
+ }), Object.freeze({
+  id:'production-scan-launch-reserve',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiLocalDecisionPlans && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const folder='/reports/ai-foundation-20261105/third-round-teacher-v1/',source=await fetch(folder+'v218-paired-scan-setup-prefix-20261106-v1.checkpoint.json').then(r=>r.json()),e=source.branches.ordinary.envelope,seed=JSON.parse(e.committedState).meta.seed,seat='player-white';
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('scan reserve restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setResourcePlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot(),spec=p.resourceSpec(root),normal=spec.plans.filter(p=>p.goal.kind==='scan-flow'&&!p.goal.launch),launch=spec.plans.filter(p=>p.goal.kind==='scan-flow'&&p.goal.launch);if(normal.length!==6||launch.length!==6)throw Error('missing native scan launch purposes');
+      if(launch.some(plan=>plan.goal.required.energy!==3||root.legalActions.find(a=>a.actionId===plan.firstActionId)?.target.tradeId!=='credits-for-energy'))throw Error('scan launch energy not reserved');
+      const r=p.expandResourcePlan(root,launch.find(p=>p.goal.nebulaId==='sector-1-a'),()=>null);if(!r.complete||!r.prefixes.some(x=>x.action.target?.mode==='launch')||!r.preparations.some(x=>x.reason==='fixed-funded-scan-launch'))throw Error('funded native scan failed to launch');
+      const v=window.SetiStateValue;if(JSON.stringify(v.evaluateStateValue(p.valueObservation(root),seat))!==JSON.stringify(v.evaluateStateValue(root.observation,seat)))throw Error('scan reserve full/compact value differs');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('scan reserve changed root/RNG');window.__scanLaunchReserveSmoke={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__scanLaunchReserveSmoke?.ok === true',
+  obligation:'Native scan purpose reserves extra purple4 launch energy, fixed branch actually launches, full/compact and root/RNG agree',
+  counterexample:'Browser misses reserve purpose, spends last energy on scan, silently skips launch, or mutates the source',
+ }), Object.freeze({
+  id:'production-amiba-plain-end-value',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const cp=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v214-actual123-corner-safety-purple2-prefix-20261106-v1.checkpoint.json').then(r=>r.json()),e=cp.prefixes[6],seed=JSON.parse(e.committedState).meta.seed,seat='player-white';
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('Amiba end restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setResourcePlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot(),spec=p.turnTailSummary(root,'end-turn'),evaluate=window.SetiStateValue.createStateValueEvaluator(seat);if(!spec?.publicAmibaPlainEnd||spec.netGain!==0||spec.unrealizedPurposeDelta!==-8||spec.markedTiles.join()!=='b')throw Error('Amiba earned-mark ledger proof missing');
+      let child=p.expand(root,spec.firstActionId),inputs=1;while(child.status==='decision'){const fixed=p.localDecisionSpec(child);if(fixed?.kind!=='fixed-final-mark')throw Error('unexpected Amiba end event');child=p.expand(child,fixed.selectedActionId);inputs++;}
+      const before=evaluate.details(p.valueObservation(root)),after=evaluate.details(p.valueObservation(child));if(inputs!==spec.requiredNativeInputs||after.value!==before.value||after.unrealizedPurposeValue-before.unrealizedPurposeValue!==-8)throw Error('Amiba native mark value/realization differs');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('Amiba end changed root/RNG');window.__amibaPlainEndSmoke={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__amibaPlainEndSmoke?.ok === true',
+  obligation:'Public Amiba end proof equals native final-mark total and realization without a successor observation or source mutation',
+  counterexample:'Browser invents a mark value, double claims pending capital, loses realization, or changes source/RNG',
+}), Object.freeze({
+  id:'production-amiba-currency-tail-value',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiDecisionSearch && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-purple2-known-analysis-single-3-root-20261106-v1.json').then(r=>r.json()),seed=f.source.seed,seat=f.seatId;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('currency tail restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0}),v=window.SetiStateValue,evaluate=v.createStateValueEvaluator(seat),proofs=new Map();
+    try{const port={...p,turnTailBoundary(node,spec){if(spec.publicAmibaCurrencyTail)proofs.set(node,spec);return p.turnTailBoundary(node,spec);}},r=window.SetiDecisionSearch.searchDecision({port,root:p.openRoot(),evaluate,movementPlanning:true,cardPickPlanning:true,resourcePlanning:true,finalMarkPlanning:true,scanPlanning:true,modelKey:evaluate.modelKey,budget:{transitions:null,nodes:null,frontier:null,milliseconds:null}});if(!r.complete||r.actionId!=='play_card:52a456f8'||r.value!==125.58333333333333||proofs.size<9)throw Error('currency tail choice/value differs');
+      for(const[node,spec]of proofs){const before=evaluate.details(p.valueObservation(node));let next=node,inputs=0;for(const step of spec.dataPlans){const plan=p.resourceSpec(next).plans.find(p=>p.goal.id===step.goal.id),result=p.expandResourcePlan(next,plan,()=>null);if(!result.complete)throw Error('currency tail incomplete');next=result.node;inputs+=result.submissions;}next=p.expand(next,next.legalActions.find(a=>a.family==='end_turn').actionId);inputs++;while(next.status==='decision'){const fixed=p.localDecisionSpec(next);if(fixed?.kind!=='fixed-final-mark')throw Error('currency tail pending event');next=p.expand(next,fixed.selectedActionId);inputs++;}const after=evaluate.details(p.valueObservation(next));if(inputs!==spec.requiredNativeInputs||after.value!==v.sumValueParts([before.value,spec.netGain])||v.sumValueParts([after.unrealizedPurposeValue,-before.unrealizedPurposeValue])!==spec.unrealizedPurposeDelta)throw Error('currency native value/realization differs');}
+      if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('currency tail changed root/RNG');window.__amibaCurrencyTailSmoke={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__amibaCurrencyTailSmoke?.ok === true',
+  obligation:'Every public Amiba fixed currency tail in the native 279-input reference preserves choice, value, realization and root/RNG in Browser',
+  counterexample:'Browser omits the typed currency proof, skips a real native event or misprices data and realized purpose',
+}), Object.freeze({
+  id:'production-amiba-blind-income-value',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiDecisionSearch && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json').then(r=>r.json()),seed=f.source.seed,seat=f.seatId;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('blind income restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0}),v=window.SetiStateValue,evaluate=v.createStateValueEvaluator(seat),proofs=new Map();
+    try{const port={...p,incomePlanBoundary(node,spec){if(spec.publicAmibaBlindIncome)proofs.set(node,spec);return p.incomePlanBoundary(node,spec);}},r=window.SetiDecisionSearch.searchDecision({port,root:p.openRoot(),evaluate,movementPlanning:true,cardPickPlanning:true,resourcePlanning:true,finalMarkPlanning:true,scanPlanning:true,modelKey:evaluate.modelKey,budget:{transitions:null,nodes:null,frontier:null,milliseconds:null}});if(!r.complete||r.actionId!=='industry:e887dc52'||r.value!==128.58333333333334||proofs.size<14)throw Error('blind income reference differs');
+      for(const[node,spec]of proofs){const before=evaluate.details(p.valueObservation(node)),policy=p.resourceSpec(node);if(policy.plans.length!==1||policy.retainedActionIds.length)throw Error('income has other alternatives');const result=p.expandResourcePlan(node,policy.plans[0],()=>null);if(!result.complete||result.node.status!=='information-barrier'||result.submissions!==spec.requiredNativeInputs)throw Error('wrong native income boundary');const observation=p.valueObservation(result.node),after=evaluate.details(observation);if(after.value!==v.sumValueParts([before.value,spec.netGain])||v.sumValueParts([after.unrealizedPurposeValue,-before.unrealizedPurposeValue])!==spec.unrealizedPurposeDelta||observation.publicState.board.ordinaryDrawCount!==spec.ordinaryDrawCountAfter||spec.ordinaryDrawCountAfter!==spec.ordinaryDrawCountBefore-1)throw Error('income native ledger differs');}
+      if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('blind income changed root/RNG');window.__amibaBlindIncomeSmoke={ok:true};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__amibaBlindIncomeSmoke?.ok === true',
+  obligation:'All public Amiba hand-income scalar proofs match their real unknown-card boundaries, deck count, value and realization in Browser',
+  counterexample:'Browser reads a hidden identity, invents a successor, miscounts the draw or changes root/RNG',
 })]);

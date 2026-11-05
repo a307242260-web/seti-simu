@@ -7,7 +7,7 @@
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v3';
+ const VERSION='seti-local-mark-and-scan-purpose-v8';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -185,7 +185,7 @@
  function computerCompletion(input){const {player,...result}=previewComputerCompletion(input);return result;}
  function quietEndCompletion({state,seatId}){
   const p=owner(state,seatId),minimum=Math.min(...state.finalScoring.thresholds);
-  if(Number.isSafeInteger(minimum)&&minimum>p.resources.score)return{available:true,netGain:0,requiredNativeInputs:1,markedTiles:[]};
+  if(Number.isSafeInteger(minimum)&&minimum>p.resources.score)return{available:true,netGain:0,purposeDelta:0,requiredNativeInputs:1,markedTiles:[]};
   const preview={...state,meta:structuredClone(state.meta),finalScoring:structuredClone(state.finalScoring)};
   const total=s=>endScoring.computePlayerFinalScore({...s,players:s.players.players,cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},p).totalScore;
   const before=total(preview),markedTiles=[];
@@ -198,18 +198,28 @@
    markedTiles.push(tile);
   }
   const purposeDelta=markedTiles.length?stateValue.sumValueParts([demand.planningCapital(preview,p),-demand.planningCapital(state,p)]):0;
-  return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),requiredNativeInputs:1+markedTiles.length,markedTiles};
+  return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),purposeDelta,requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
- function dataTailCompletion({state,seatId,canLeaveProbeStationary=null}){
+ function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null}){
   // With no owned probe, the shared previews cover held/paid investment and
   // future currency income exactly. No new card identity or owned technology
   // is introduced. Live early-round travel still needs native continuation.
   // Every iteration fills computer4 or consumes a distinct blue bonus slot.
   const initialOwner=owner(state,seatId);
   const liveProbe=state.turn.roundNumber!==4&&state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===initialOwner.color));
-  if(liveProbe&&(!canLeaveProbeStationary||!canLeaveProbeStationary(state)))return{available:false,reason:'blue-tail-live-probe-needs-native-continuation'};
+  if(liveProbe&&!firstBlueGoal&&(!canLeaveProbeStationary||!canLeaveProbeStationary(state)))return{available:false,reason:'blue-tail-live-probe-needs-native-continuation'};
   let current=state;const plans=[];let netGain=0,requiredNativeInputs=1,immediateScoreGain=0;
+  // This branch already selected one native blue goal. Its exact outcome is
+  // still quotable when locally unprofitable; do not replace it with ending now.
+  if(firstBlueGoal){
+   if(firstBlueGoal.kind!=='blue-data')throw new Error('BLUE_TAIL_FIRST_GOAL_INVALID');
+   const preview=previewBlueCompletion({state:current,seatId,goal:firstBlueGoal});if(!preview.available)return preview;
+   const {player,...summary}=preview;
+   plans.push({goal:firstBlueGoal,...summary});netGain+=preview.netGain;requiredNativeInputs+=preview.requiredNativeInputs;immediateScoreGain+=preview.immediateScoreGain;
+   current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
+  }
   while(true){
+   if(canContinue&&!canContinue(current))return{available:false,reason:'data-tail-new-purpose-needs-native-continuation'};
    // The caller's audited pure query must reject every intermediate plan
    // boundary that could begin a new movement objective after receiving funds.
    if(liveProbe&&!canLeaveProbeStationary(current))return{available:false,reason:'data-tail-movement-needs-native-continuation'};
@@ -243,6 +253,15 @@
    if(!preview.available)return preview;
    if(!preview.selected){
     if(requirements.bluePlacements.length>1)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
+    if(canContinue){
+     const after={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?preview.player:v)}};
+     // A negative immediate quote may enable another purpose or realize a
+     // final mark. Close it only when its complete fixed suffix loses strictly
+     // to ending now. The blue slot is consumed before this finite recursion.
+     const rest=dataTailCompletion({state:after,seatId,canLeaveProbeStationary,canContinue}),endNow=quietEndCompletion({state:current,seatId});
+     if(!rest.available||!endNow.available||stateValue.sumValueParts([preview.netGain,rest.netGain,-endNow.netGain])>=0)
+      return{available:false,reason:'nonpositive-blue-needs-native-continuation'};
+    }
     break;
    }
    const {player,...summary}=preview;
@@ -251,7 +270,8 @@
    current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
   }
   const end=quietEndCompletion({state:current,seatId});if(!end.available)return end;
-  return{available:true,plans,netGain:netGain+end.netGain,requiredNativeInputs:requiredNativeInputs+end.requiredNativeInputs-1,immediateScoreGain,markedTiles:end.markedTiles};
+  return{available:true,plans,netGain:netGain+end.netGain,requiredNativeInputs:requiredNativeInputs+end.requiredNativeInputs-1,immediateScoreGain,markedTiles:end.markedTiles,
+   ...(trackPurposeDelta?{purposeDelta:stateValue.sumValueParts([demand.planningCapital(current,owner(current,seatId)),-demand.planningCapital(state,initialOwner),end.purposeDelta])}:{})};
  }
  function scanDecision(actions){return actions.some(a=>a.target?.nebulaId)&&actions.every(a=>a.target?.nebulaId||a.target?.skip||a.target?.done);}
  function sources(state,seatId,actions,session){
@@ -272,14 +292,27 @@
   }
   return found;
  }
- function scanGoals({state,seatId,actions,session,required={}}){
-  const ids=[...new Set(sources(state,seatId,actions,session).map(a=>a.target.nebulaId).filter(Boolean))].sort();
-  return ids.map(nebulaId=>({id:'scan:sector:'+nebulaId,kind:'scan-flow',nebulaId,required,purpose:'advance-or-complete-known-sector; collect its data and native reward'}));
+ function scanGoals({state,seatId,actions,session,required={},launchPossible=false}){
+  const ids=[...new Set(sources(state,seatId,actions,session).map(a=>a.target.nebulaId).filter(Boolean))].sort(),p=owner(state,seatId);
+  const goals=ids.map(nebulaId=>({id:'scan:sector:'+nebulaId,kind:'scan-flow',nebulaId,required,purpose:'advance-or-complete-known-sector; collect its data and native reward'}));
+  // Already-funded scans retain their native launch/move/skip choices. Only
+  // the missing reserve needs a separate, bound preparation purpose.
+  if(!session&&!p.mainActionCompleted&&launchPossible&&scanEffects.playerOwnsPurpleTech(p,4,{turn:state.turn})
+    &&p.resources.energy<(required.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY){
+   const launchCost={...required,energy:(required.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY};
+   goals.push(...ids.map(nebulaId=>({id:'scan:sector:'+nebulaId+':launch',kind:'scan-flow',nebulaId,required:launchCost,launch:true,purpose:'scan named sector and fund purple4 native launch'})));
+  }
+  return goals;
  }
- function scanStep({state,seatId,goal,actions,status,session}){
+ function scanStep({state,seatId,goal,actions,status,session,operation={}}){
   if(status==='stable'){
    const a=actions.find(a=>a.family==='scan');
-   return !owner(state,seatId).mainActionCompleted&&a?{kind:'fixed',actionId:a.actionId,reason:'start-purpose-scan'}:{kind:'complete',reason:'scan-flow-ended'};
+   if(!owner(state,seatId).mainActionCompleted&&a)return{kind:'fixed',actionId:a.actionId,reason:'start-purpose-scan'};
+   return goal.launch&&!operation.scanLaunchCompleted?{kind:'infeasible',reason:'scan-launch-purpose-unfulfilled'}:{kind:'complete',reason:'scan-flow-ended'};
+  }
+  if(goal.launch&&session?.queue?.[0]?.type===science.EFFECT_TYPES.SCAN_ACTION_4){
+   const launch=actions.find(a=>a.target?.mode==='launch');
+   return launch?{kind:'fixed',actionId:launch.actionId,scanLaunchCompleted:true,reason:'fixed-funded-scan-launch'}:{kind:'infeasible',reason:'funded-scan-launch-unavailable'};
   }
   if(actions.length&&actions.every(a=>a.target?.done||a.target?.skip))return{kind:'fixed',actionId:actions[0].actionId,reason:'fixed-scan-exit'};
   if(!scanDecision(actions)){

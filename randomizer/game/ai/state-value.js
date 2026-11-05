@@ -246,9 +246,26 @@
     const markerGain=researchPurposeGains(techState,funding,weights);
     const held = handOptions(hand, targets, planningRound, weights, funding, markerGain);
     const currentHand = Math.max(0, ...held.map(o => o.value));
+    return paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights);
+  }
+  function paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights){
     const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost):markerGain;
     return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue + paidGain(t.id) - researchCost * weights.publicity
       + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id,o.currentFunded))) - currentHand));
+  }
+  // The joint portfolio needs the same held-card options both as an asset and
+  // as the opportunity cost of paid research. Build that local array once.
+  function jointResearchCapital({hand,techState,supply,round,publicity,researchCost,passed=false,funding=null},weights){
+    const planningRound=round+Number(passed);
+    if(planningRound>=4||!Object.keys(supply?.stacks||{}).length)return{held:0,paid:0};
+    number(researchCost,"player.researchPublicityCost");
+    if(!Number.isSafeInteger(researchCost)||researchCost<0)throw new TypeError("VALUE_RESEARCH_COST_INVALID");
+    const eligible=hand.filter(supportedResearch);
+    if(publicity<researchCost&&!eligible.length)return{held:0,paid:0};
+    const targets=researchTargets(techState,supply,planningRound,weights),markerGain=researchPurposeGains(techState,funding,weights);
+    const options=handOptions(eligible,targets,planningRound,weights,funding,markerGain),held=Math.max(0,...options.map(o=>o.value));
+    const paid=publicity<researchCost?0:paidResearchFromHeld(techState,targets,options,held,markerGain,funding,researchCost,weights);
+    return{held,paid};
   }
   function researchCapitalCeiling({ techState, supply, round, researchCost }, weights = DEFAULT_WEIGHTS) {
     if (round >= 4) return 0;
@@ -272,8 +289,8 @@
         &&Number.isSafeInteger(facts.researchCost)&&facts.researchCost>=0
         &&publicity<facts.researchCost&&!hand.some(supportedResearch))return 0;
       funding=researchFunding(facts,funding,publicity);
-      return handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
-        +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+      const joint=jointResearchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+      return joint.held+joint.paid;
     };
   }
   function dataInvestmentFor(facts,weights){
@@ -298,8 +315,7 @@
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
     const investment=dataInvestmentFor(facts,weights),computer=readyAnalysis.prepaidCapital(facts,weights);
     const funding=researchFunding(facts,{resources:player,income:player.income,startingIncome:Number(passing)});
-    const held=handCapital(facts.hand,player.techState,supply,round+Number(passing),weights,funding);
-    const paid=researchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+    const {held,paid}=jointResearchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
     const mission=probeCapital.quote({...facts,investment,
       dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights)},weights).value;
     const finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);

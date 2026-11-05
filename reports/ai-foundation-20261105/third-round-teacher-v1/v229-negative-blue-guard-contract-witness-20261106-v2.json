@@ -1,0 +1,78 @@
+{
+  "scope": "Controlled pure-helper contract witness only; not a native teacher checkpoint or performance sample. Same existing card identities; the prior blue-slot1 token is returned to the controlled test pool, with its original identity, known public income swap, controlled wallet/main flag. Callback represents a purpose becoming available after the final blue slot.",
+  "sourceFixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+  "sourceStateUnchanged": true,
+  "control": {
+    "credits": 0,
+    "energy": 0,
+    "computerSlots": [
+      1,
+      2,
+      3
+    ],
+    "pool": 4,
+    "baseline": {
+      "available": true,
+      "plans": [
+        {
+          "goal": {
+            "kind": "blue-data",
+            "id": "data:blue:1",
+            "blueSlot": 1
+          },
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 1,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        }
+      ],
+      "netGain": 0.5,
+      "requiredNativeInputs": 3,
+      "immediateScoreGain": 0,
+      "markedTiles": [],
+      "purposeDelta": 0
+    },
+    "guarded": {
+      "available": true,
+      "plans": [
+        {
+          "goal": {
+            "kind": "blue-data",
+            "id": "data:blue:1",
+            "blueSlot": 1
+          },
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 1,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        }
+      ],
+      "netGain": 0.5,
+      "requiredNativeInputs": 3,
+      "immediateScoreGain": 0,
+      "markedTiles": [],
+      "purposeDelta": 0
+    }
+  },
+  "expected": "decline the closure when the skipped blue can activate a later purpose",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

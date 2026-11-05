@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value'),search=require('./decision-search'),agent=require('./search-agent'),demand=require('./resource-demand');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json'))),seed=f.source.seed;
+const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),evaluate=values.createStateValueEvaluator(f.seatId),proofs=new Map();
+try{
+ const port={...p,incomePlanBoundary(node,spec){if(spec.publicAmibaBlindIncome)proofs.set(node,spec);return p.incomePlanBoundary(node,spec);}},root=p.openRoot(),r=search.searchDecision({port,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget:agent.BUDGET});
+ assert(r.complete);assert(r.diagnostics.nativeExecutions<=256);assert.equal(r.actionId,'industry:e887dc52');assert.equal(r.value,128.58333333333334,'retained V225311-input native reference');assert.equal(p.incomePlanSummary(root),null,'main action is still available');assert(proofs.size>=14);
+ let inputs=0;
+ for(const[node,spec]of proofs){
+  assert.throws(()=>p.incomePlanBoundary(node,spec).observation,/NO_SUCCESSOR_OBSERVATION/);const before=evaluate.details(p.valueObservation(node)),policy=p.resourceSpec(node);assert.equal(policy.plans.length,1);assert.equal(policy.retainedActionIds.length,0);
+  const native=p.expandResourcePlan(node,policy.plans[0],()=>null);assert(native.complete);assert.equal(native.node.status,'information-barrier');assert.equal(native.submissions,spec.requiredNativeInputs);const observation=p.valueObservation(native.node),after=evaluate.details(observation);
+  assert.equal(after.value,values.sumValueParts([before.value,spec.netGain]));assert.equal(values.sumValueParts([after.unrealizedPurposeValue,-before.unrealizedPurposeValue]),spec.unrealizedPurposeDelta);assert.equal(before.purposePreparationDebt,0);assert.equal(after.purposePreparationDebt,0);assert.equal(observation.publicState.board.ordinaryDrawCount,spec.ordinaryDrawCountAfter);assert.equal(spec.ordinaryDrawCountAfter,spec.ordinaryDrawCountBefore-1);inputs+=native.submissions;
+ }
+ const state=JSON.parse(f.compositionEnvelope.committedState),player=state.players.players.find(p=>p.id===f.seatId),goal={kind:'income',incomeCardId:player.hand[0].id};
+ const source=JSON.stringify(state),quote=demand.blindIncomeBoundaryCapital({state,seatId:f.seatId,goal});assert(quote);assert.equal(quote.ordinaryDrawCountAfter,state.cards.drawPileCardIds.length-1);assert.equal(JSON.stringify(state),source);
+ const empty={...state,cards:{...state.cards,drawPileCardIds:[]}};assert.equal(demand.blindIncomeBoundaryCapital({state:empty,seatId:f.seatId,goal}),null,'no unknown reward or negative deck quantity is invented');
+ assert.deepEqual(c.lifecycle.save().envelope,original);console.log(JSON.stringify({publicAmibaBlindIncome:true,nativeSearchInputs:r.diagnostics.nativeExecutions,nativeIncomeControls:proofs.size,nativeIncomeInputs:inputs,exactUnknownBoundaryValueAndRealization:true,publicDeckCountConsumedOnce:true,noInventedObservation:true,rootAndRngUnchanged:true}));
+}finally{p.close();c.dispose();}

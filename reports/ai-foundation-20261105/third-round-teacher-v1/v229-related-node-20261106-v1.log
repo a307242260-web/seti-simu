@@ -1,0 +1,7 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":183,"nativeTailControls":42,"nativeTailInputs":135,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaPlainEnd":true,"nativeEndControls":2,"earnedBRealizationDelta":-8,"actualPendingEffectsDecline":true,"noInventedObservation":true,"rootAndRngRestored":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+SUMMARY unit passed=4 failed=0 total=4 time=1.66s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=4

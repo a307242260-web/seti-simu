@@ -197,6 +197,17 @@
     if(immutable){if(!owners){owners=new WeakMap();immutableIncomeTailQuotes.set(state,owners);}if(!quotes){quotes=new WeakMap();owners.set(p,quotes);}quotes.set(card,quote);}
     return quote;
   }
+  // Scalar facts at the actual unknown-card boundary, not a native successor.
+  // The draw consumes one public deck count; its identity never enters funding.
+  function blindIncomeBoundaryCapital({state,seatId,goal}){
+    const p=owner(state,seatId),card=p.hand.find(c=>c.id===goal.incomeCardId),gain=card&&cards.getIncomeGainForCard(card);
+    const count=state.cards.drawPileCardIds?.length;
+    if(gain?.handSize!==1||Object.keys(gain).length!==1||!Number.isSafeInteger(count)||count<1)return null;
+    const preview=previewIncomeTail({state,seatId,goal});if(!preview.available)return null;
+    const facts=valueFacts(state,preview.player),after=stateValue.purposeCapital({...facts,board:{...facts.board,ordinaryDrawCount:count-1}}).total;
+    const old=incomeTailCapital({state,seatId,goal});
+    return{beforeCapital:old.beforeCapital,originalAfterCapital:old.afterCapital,afterCapital:after,ordinaryDrawCountBefore:count,ordinaryDrawCountAfter:count-1};
+  }
   function incomeOfferValue(state,seatId,card,projectedData=0){
     // Public offers share the pre-pick baseline. Do not subtract the newly
     // acquired card's own different preparation value while ranking offers.
@@ -553,5 +564,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,blindIncomeBoundaryCapital,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });

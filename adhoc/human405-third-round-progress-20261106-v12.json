@@ -1,0 +1,86 @@
+{
+  "status": "active",
+  "runtime": "V230/V37",
+  "sourceAdmitted": true,
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v230-current-source-admission-20261106-v1.json",
+  "existingPerformanceCoverage": {
+    "namedCases": 573,
+    "uniqueRoots": 483,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 550.298083
+  },
+  "newAutonomousRuns": 0,
+  "lastAutonomousRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "lastR3Assets": {
+    "score": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3Assets": {
+    "score": 105,
+    "tech": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "learningSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-learning-summary-20261106-v1.json",
+  "nextContract": "adhoc/v229-fixed-blue-and-blind-income-contract-20261106-v1.md",
+  "baseline": "V41 unchanged",
+  "stage": "/private/tmp/seti-v218-teacher-r3-20261106-v1",
+  "candidateRuntime": "V230/V37",
+  "candidateAdmitted": true,
+  "candidateManifest": "reports/ai-foundation-20261106/candidate-v230-negative-tail-purpose-guard-v1/manifest.json",
+  "candidateGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v230-current-source-serial-gate-20261106-v1.json",
+  "candidateProgress": {
+    "status": "complete",
+    "namedCases": 573,
+    "uniqueRoots": 483,
+    "allClosed": true,
+    "maxInputs": 256,
+    "maxMilliseconds": 550.298083
+  },
+  "productionRuntimeUnchanged": "V218/V37",
+  "candidateNativeControls": {
+    "currency": {
+      "proofs": 36,
+      "inputs": 119
+    },
+    "blindIncome": {
+      "proofs": 14,
+      "inputs": 42
+    }
+  },
+  "validation": {
+    "current": {
+      "unitPassed": 185,
+      "fullFlowPassed": 1,
+      "browserPassed": 5,
+      "independentTests": 24,
+      "independentFixtures": 317,
+      "inputAuditPass": 51,
+      "inputAuditLegacyFail": 1
+    }
+  },
+  "nextWork": "Known public income option funded by anonymous hand quantity; then exact R3 development, R2 end review and autonomous first3. No new game until strategy source admitted.",
+  "report": "docs/human405-third-round-fixed-tail-guard-admission-20261106.md",
+  "baseCommit": "00a48d10b62c39ff9f17a8f58d0500e52eb1c7d1",
+  "sourceDelivery": "Frozen source and exact Git tree are verified by the delivery manifest; final commit is in Git history and the delivery receipt.",
+  "productionRuntimeAtValidation": "V218/V37",
+  "V229WithheldForProofGuardReview": true,
+  "priorValidationPassed": true,
+  "sourceReviewFollowup": "reports/ai-foundation-20261105/third-round-teacher-v1/v229-proof-scope-followup-20261106-v1.json",
+  "sourceDeliveryManifest": "adhoc/v230-scan-source-delivery-manifest-20261106-v1.json",
+  "currentSourceUniqueColdRootTimings": 483,
+  "priorPairedNativeControlInputs": 84,
+  "currentIndependentScalarNativeControlInputs": 161,
+  "currentGoalTurnAutonomousRuns": 0
+}

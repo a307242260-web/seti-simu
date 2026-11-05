@@ -1,0 +1,6739 @@
+{
+  "scope": "Diagnostic only, one instrumented query; not a cold timing replacement or autonomous game. Compiled read-only diagnostic accessor only; on-disk production bytes and native rules unchanged.",
+  "nativeInputs": 275,
+  "reasons": {
+    "data-tail-new-purpose-needs-native-continuation": 6,
+    "available": 40,
+    "data-tail-income-needs-native-boundary": 1
+  },
+  "proofs": [
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 2,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -3.75,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 2,
+        "score": 63
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -3.75,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 63
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 63
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 2,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -3.75,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -5.25,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 60
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -3.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 60
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 0,
+        "availableData": 5,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 5,
+        "score": 60
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.6666666666666665,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 4,
+        "publicity": 1,
+        "availableData": 2,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 6,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 6,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -2.0833333333333335,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -9.583333333333334,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -3.75,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-50-0",
+            "cardId": "b_14.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-50-0",
+          "cardId": "b_14.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 3,
+        "publicity": 2,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-50-0",
+            "cardId": "b_14.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-50-0",
+          "cardId": "b_14.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 6,
+        "energy": 3,
+        "publicity": 2,
+        "availableData": 2,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-49-0",
+            "cardId": "dlc_32.png",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": false,
+          "realizesForecast": false,
+          "netGain": -4.75,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": false,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": "card-29-pass-2-5"
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "analyze",
+        "income",
+        "effect-purpose",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 6,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "launch",
+        "scan",
+        "play_card",
+        "pass",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-49-0",
+          "cardId": "card-49-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-50-0",
+          "cardId": "card-50-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-49-0",
+          "cardId": "card-49-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-50-0",
+          "cardId": "card-50-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 6,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 6,
+        "score": 60
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 3.833333333333334
+        },
+        "companyRetained": true,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 13.333333333333332
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 4,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 4,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 63
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 63
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 4,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": {
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 0.5,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        },
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [],
+        "nativeHandCount": 0,
+        "handQuantity": 0,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "blue-end-turn",
+      "goals": [
+        "blue-data"
+      ],
+      "hasBlueTail": false,
+      "hand": [],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 3,
+        "energy": 4,
+        "publicity": 1,
+        "availableData": 4,
+        "score": 60
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": false,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": "card-18-0"
+        },
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "analyze",
+        "income",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow",
+        "scan-flow"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 6,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "launch",
+        "scan",
+        "play_card",
+        "pass",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": false,
+        "completeTask": false,
+        "companyGoal": null,
+        "companyRetained": false,
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 5,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    },
+    {
+      "native": {
+        "blueQuote": null,
+        "status": "stable",
+        "hasSession": false,
+        "main": true,
+        "passPending": false,
+        "intent": false,
+        "rootKnownHand": true,
+        "rootKnownReserved": true,
+        "nativeHand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp",
+            "known": true
+          }
+        ],
+        "nativeHandCount": 1,
+        "handQuantity": 1,
+        "pendingHandTriggers": 0,
+        "temporary": false,
+        "inertPlain": true,
+        "inertVisit": true,
+        "probe": true,
+        "completeTask": false,
+        "companyGoal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 5.25
+        },
+        "companyRetained": true,
+        "movement": "defer-movement",
+        "aliens": [
+          {
+            "revealed": true,
+            "id": "阿米巴",
+            "ready": false
+          },
+          {
+            "revealed": false,
+            "id": null,
+            "ready": false
+          }
+        ],
+        "borrowed": null,
+        "bonuses": 0,
+        "passed": false
+      },
+      "kind": "data-end-turn",
+      "goals": [
+        "income"
+      ],
+      "hasBlueTail": false,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "rootKnown": true
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "rootKnown": true
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "rootKnown": true
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "rootKnown": true
+        }
+      ],
+      "wallet": {
+        "credits": 4,
+        "energy": 3,
+        "publicity": 1,
+        "availableData": 3,
+        "score": 58
+      },
+      "nativeActions": [
+        "move",
+        "move",
+        "move",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "quick_trade",
+        "industry",
+        "card_corner",
+        "place_data",
+        "end_turn"
+      ]
+    }
+  ],
+  "rootAndRngUnchanged": true,
+  "newAutonomousRuns": 0
+}

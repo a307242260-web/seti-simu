@@ -1,0 +1,11 @@
+from pathlib import Path
+import gzip,hashlib,json
+w=Path(__file__).resolve().parents[1];f=Path('reports/ai-foundation-20261105/third-round-teacher-v1');read=lambda p:json.loads((w/p).read_text());sha=lambda p:hashlib.sha256((w/p).read_bytes()).hexdigest();old=read(f/'v229-current-source-serial-gate-20261106-v1.json');new=read(f/'v230-current-source-serial-gate-20261106-v1.json');assert old['status']==new['status']=='complete';out=w/f/'v230-v229-retained-all-root-value-parity-20261106-v1.json';assert not out.exists();prior={r['identity']:r for r in old['rows']};seen=set();rows=[];differences=[]
+def root_values(e):
+ assert sha(e['rawPath'])==e['rawSha256'];r=json.loads(gzip.decompress((w/e['rawPath']).read_bytes()));return[{k:x.get(k)for k in ['actionId','value','realization','preparationDebt','completion']}for x in r['roots']]
+for item in new['rows']:
+ identity=item['identity']
+ if identity in seen:continue
+ seen.add(identity);a=read(prior[identity]['evidence']);b=read(item['evidence']);assert sha(a['fixture'])==a['fixtureSha256']and sha(b['fixture'])==b['fixtureSha256'];av=root_values(a);bv=root_values(b);same=av==bv and (a['actionId'],a['value'])==(b['actionId'],b['value']);row={'identity':identity,'label':item['label'],'oldEvidence':prior[identity]['evidence'],'newEvidence':item['evidence'],'sameAllRootValuesRealizationsAndDebts':same,'oldNativeInputs':a['nativeInputs'],'newNativeInputs':b['nativeInputs']};rows.append(row)
+ if not same:differences.append({**row,'oldRoots':av,'newRoots':bv})
+result={'status':'passed'if not differences else'review-differences','scope':'Read retained first cold outputs only, no new search/native input or timing. Compare every aggregated root action value, realization, preparation debt and completion, plus selected action/value across exactly483 raw native-envelope identities. The new guard additionally has a controlled red/green helper witness outside this corpus.','priorRuntime':'V229/V37','currentRuntime':'V230/V37','uniqueRoots':len(seen),'differences':differences,'newNativeInputs':0,'newAutonomousRuns':0,'rows':rows};out.write_text(json.dumps(result,indent=2)+'\n');assert len(seen)==483;assert not differences,differences[:1];print(json.dumps({'out':str(out.relative_to(w)),'roots':483,'allRootValuesRealizationsAndDebtsEqual':True,'noNewSearch':True}))

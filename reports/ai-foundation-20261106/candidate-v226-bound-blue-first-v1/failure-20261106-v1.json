@@ -1,0 +1,14 @@
+{
+  "status": "failed-native-input-gate-before-timing",
+  "candidateAdmitted": false,
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v226-amiba-dlc-all-native-controls-20261106-v1.json",
+  "evidenceSha256": "076bfaa000dce634f000bdcb3196704aa021c129d764902cc8836ba956b0d5ae",
+  "nativeInputs": 297,
+  "timingNotMeasured": true,
+  "firstColdSampleReplaced": false,
+  "nativeProofs": 28,
+  "nativeControlInputs": 89,
+  "allRootsValuesAndRealizationAgainstV225": true,
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}
