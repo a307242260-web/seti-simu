@@ -8,7 +8,10 @@ function cardPool(s){return [...s.cards.drawPileCardIds,...s.cards.discardPile.m
 try{
  for(const purpose of [false,true])for(const world of [0,1])for(const pick of purpose?['b_4.webp']:['dlc_4.png','dlc_5.png']){
   const envelope=structuredClone(fixture.compositionEnvelope),s=envelope.session.session.workingState;
-  if(purpose){const pool=cardPool(s),pile=s.cards.passReservePiles[1],old=pile[0],index=s.cards.drawPileCardIds.indexOf('b_4.webp');assert(index>=0);const entry=cards.CARD_CATALOG.find(c=>c.card_id==='b_4.webp');const {cardName,src,...replacement}=cards.createCardInstance(entry,'known-pass-purpose');pile[0]={...replacement,id:old.id,faceUp:true};s.cards.drawPileCardIds[index]=old.cardId;assert.deepEqual(cardPool(s),pool,'native card-pool conserved when moving a real free-tech card into the visible offer');}
+  if(purpose){const pool=cardPool(s),pile=s.cards.passReservePiles[1],old=pile[0],index=s.cards.drawPileCardIds.indexOf('b_4.webp');assert(index>=0);const entry=cards.CARD_CATALOG.find(c=>c.card_id==='b_4.webp');const {cardName,src,...replacement}=cards.createCardInstance(entry,'known-pass-purpose');pile[0]={...replacement,id:old.id,faceUp:true};s.cards.drawPileCardIds[index]=old.cardId;
+   // DLC5 now has a funded movement/data purpose. Isolate the free-tech
+   // knowledge obligation against the ordinary DLC4, preserving the full pool.
+   const other=pile.find(card=>card.cardId==='dlc_5.png'),ordinaryIndex=s.cards.drawPileCardIds.indexOf('dlc_4.png');assert(other&&ordinaryIndex>=0);const ordinaryEntry=cards.CARD_CATALOG.find(c=>c.card_id==='dlc_4.png'),{cardName:ordinaryName,src:ordinarySrc,...ordinary}=cards.createCardInstance(ordinaryEntry,'ordinary-pass-control');s.cards.drawPileCardIds[ordinaryIndex]=other.cardId;pile[pile.indexOf(other)]={...ordinary,id:other.id,faceUp:true};assert.deepEqual(cardPool(s),pool,'native card-pool conserved when moving real free-tech and ordinary control cards into the visible offer');}
   if(world)[s.cards.drawPileCardIds[0],s.cards.drawPileCardIds[1]]=[s.cards.drawPileCardIds[1],s.cards.drawPileCardIds[0]];
   assert(c.lifecycle.restore(envelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try{

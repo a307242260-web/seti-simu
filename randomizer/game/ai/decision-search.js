@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v186";
+  const VERSION = "seti-complete-decision-search-v187";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -24,7 +24,7 @@
     }
     // null is an explicit, JSON-safe opt-out; Infinity never leaves this calculation.
     const limits = Object.fromEntries(Object.entries(configuredLimits).map(([key,value])=>[key,value === null ? Infinity : value]));
-    const valueCache = new WeakMap(), realizationCache = new WeakMap();
+    const valueCache = new WeakMap(), realizationCache = new WeakMap(), preparationDebtCache = new WeakMap();
     const realizationTies = stateValue?.isDefaultStateValueEvaluator?.(evaluate);
     let valueCacheHits=0,valueEvaluations=0;
     function valueOf(observation) {
@@ -32,7 +32,7 @@
       valueEvaluations++;
       const details = realizationTies ? evaluate.details(observation) : null;
       const value = details ? details.value : evaluate(observation);
-      if (details) realizationCache.set(observation,-details.unrealizedPurposeValue);
+      if (details) {realizationCache.set(observation,-details.unrealizedPurposeValue);preparationDebtCache.set(observation,details.purposePreparationDebt);}
       valueCache.set(observation,value); return value;
     }
     const observationForValue=node=>stateValue?.isStateValueEvaluator?.(evaluate)&&port.valueObservation?port.valueObservation(node):node.observation;
@@ -59,6 +59,12 @@
       const observation=observationForValue(node);
       valueOf(observation);
       return realizationCache.get(observation);
+    }
+    function preparationDebtForNode(node) {
+      if (!realizationTies) return 0;
+      if (node.status === "income-plan-value") return preparationDebtForNode(port.incomePlanBase(node));
+      if (node.status === "turn-tail-value") return preparationDebtForNode(port.turnTailBase(node));
+      const observation=observationForValue(node);valueOf(observation);return preparationDebtCache.get(observation);
     }
     const startedAt = now();
     const scope=(movementPlanning?"own-turn-visible-window-with-goal-directed-movement-policy":"own-turn-visible-decision-window-to-turn-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"")+(finalMarkPlanning?"+local-final-mark-policy":"")+(scanPlanning?"+scan-purpose-policy":"");
@@ -98,7 +104,7 @@
     const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
     if (hit && now() - startedAt < limits.milliseconds) return {
-      schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0,
+      schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0, preparationDebt:hit.preparationDebt??0,
       selectionPlan: reused?.hit ? { selectedIds: reused.selectedIds, cardIds: reused.cardIds, proof: reused.proof, complete: true } : null,
       selectionContinuation: reused?.hit ? continuation : null,
       planContinuation: reusedPlan?.hit ? planContinuation : null,
@@ -106,7 +112,7 @@
         : { evidenceId: hit.evidenceId, proof: hit.proof, sourceNode: hit.sourceNode, source: hit.source, distance: hit.distance },
       stopReason: null, scope,
       roots: hit.roots, lines: [], unresolved: [],
-      diagnostics: { realizationTies:realizationTies?"latest-native-purpose-capital":"off", valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
+      diagnostics: { realizationTies:realizationTies?"funded-preparation-debt-and-latest-native-purpose-capital":"off", valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
         incomePlanProofs:0,provedIncomeInputs:0,turnTailProofs:0,provedTurnTailInputs:0,nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
         fixedDataChoiceStates:0,fixedDataChoicesExcluded:0,branchingStates:0,singleAlternativeStates:0,disabledBorrowStarts:0,disabledRemoveTechIncomeStarts:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
@@ -215,6 +221,7 @@
       const value = BOUNDARIES.has(node.status) ? valueForNode(node) : null;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
+      const preparationDebt = BOUNDARIES.has(node.status) ? preparationDebtForNode(node) : null;
       // A closed leaf retains its exact native envelope and scalar V; its full
       // observation can be regenerated, rather than pinning a second large tree.
       if (BOUNDARIES.has(node.status)&&!["income-plan-value","turn-tail-value"].includes(node.status)) port.releaseBoundaryObservation?.(node);
@@ -356,7 +363,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -665,11 +672,13 @@
           const parent = nodes[index];
           const distance = target.distance + edge.cost;
           if (parent.value == null || target.value > parent.value
-            || (target.value === parent.value && (target.realization > parent.realization
-              || (target.realization === parent.realization && (distance < parent.distance
-                || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))) {
+            || (target.value === parent.value && (target.preparationDebt < parent.preparationDebt
+              || (target.preparationDebt === parent.preparationDebt && (target.realization > parent.realization
+                || (target.realization === parent.realization && (distance < parent.distance
+                  || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))) {
             parent.value = target.value;
             parent.realization = target.realization;
+            parent.preparationDebt = target.preparationDebt;
             parent.distance = distance;
             parent.best = edge;
             changed.push(index);
@@ -711,7 +720,7 @@
       expanded: entry.expanded, alternatives:entry.deferredPolicy?null:entry.alternativeCount, edges: entry.edges,
       ...(entry.deferredPolicy?{policyPending:!entry.prunedByBound}:{}),
       distance: Number.isFinite(entry.distance) ? entry.distance : null,
-      value: entry.value, realization: entry.realization ?? null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
+      value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
         : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",
       ...(entry.prunedBy ? { prunedBy: entry.prunedBy } : {}),
       ...(entry.prunedByBound ? { prunedByBound: entry.prunedByBound } : {}),
@@ -755,7 +764,7 @@
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
         JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
-        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
+        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
       if (selection && !action.target?.confirm) return {
         actionId: action.actionId, target: null, value: nodes[0].value,
         completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",
@@ -763,7 +772,7 @@
       };
       return {
         actionId: action.actionId, target: edge?.target ?? null,
-        value: edge ? nodes[edge.target].value : null, realization: edge ? nodes[edge.target].realization ?? null : null,
+        value: edge ? nodes[edge.target].value : null, realization: edge ? nodes[edge.target].realization ?? null : null, preparationDebt:edge?nodes[edge.target].preparationDebt??null:null,
         ...(edge?.turnTailPlanValue?{valueType:"proved-plan-value",turnTailPlanValue:edge.turnTailPlanValue}:{}),
         ...(edge?.knownIncomePlan?{valueType:"proved-plan-value",knownIncomePlan:edge.knownIncomePlan}:{}),
         ...(edge?.resourcePlan?{kind:"resource-goal-plan",goal:edge.resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&e.resourcePlan).length}:{}),
@@ -776,7 +785,7 @@
       };
     });
     const evidence = complete && nodes[0].selection ? nodes[0].edges.map(edge => ({
-      selectedIds: edge.selectedIds, value: nodes[edge.target].value, realization: nodes[edge.target].realization,
+      selectedIds: edge.selectedIds, value: nodes[edge.target].value, realization: nodes[edge.target].realization, preparationDebt:nodes[edge.target].preparationDebt,
       distance: nodes[edge.target].value == null ? null : nodes[edge.target].distance,
     })) : null;
     let accepted = complete && now() - startedAt < limits.milliseconds;
@@ -799,7 +808,7 @@
             sourceNode: current, ...(exclusion ? policyExclusion ? { policy: exclusion, isEquivalence: false } : { proof: exclusion } : {}),
             ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
         });
-        entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, realization: entry.realization, distance: entry.distance, sourceNode: current, roots });
+        entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, realization: entry.realization, preparationDebt:entry.preparationDebt, distance: entry.distance, sourceNode: current, roots });
         if(best.knownIncomePlan&&port.hasMovementIntent?.(entry.node)){
           const plan=entry.resourcePolicy.plans.find(p=>p.goal.id===best.knownIncomePlan.goal.id);
           if(!plan)throw new Error("SEARCH_WINNING_INCOME_PLAN_MISSING");
@@ -829,7 +838,7 @@
           entries.at(-1).committedGoal=plan.goal.id;
           for(let i=1;i<fixed.prefixes.length&&entries.length<32;i++){
             const prefix=fixed.prefixes[i];
-            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,distance:entry.distance-i,
+            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,preparationDebt:entry.preparationDebt,distance:entry.distance-i,
               sourceNode:`winning-income:${current}:${i}`,committedGoal:plan.goal.id,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
                 completion:"committed-goal-plan-execution",policy:"seti-goal-resource-preparation-v3",goalId:plan.goal.id,isEquivalence:false}))});
@@ -841,7 +850,7 @@
           const macro=resourceExecutions.get(best);
           for(let i=1;i<macro.prefixes.length&&entries.length<32;i++){
             const prefix=macro.prefixes[i];
-            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,distance:entry.distance-i,
+            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,preparationDebt:entry.preparationDebt,distance:entry.distance-i,
               sourceNode:`resource:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
                 completion:"committed-goal-plan-execution",policy:"seti-goal-resource-preparation-v1",goalId:best.resourcePlan.goal.id,isEquivalence:false}))});
@@ -851,7 +860,7 @@
         if(entry.fixedCardExecutions?.has(best.actionId)){
           const fixed=entry.fixedCardExecutions.get(best.actionId);
           for(let i=1;i<fixed.prefixes.length&&entries.length<32;i++){
-            const prefix=fixed.prefixes[i],policy=fixed.fixedChoices.find(choice=>choice.prefix===i)?.policy||"seti-purpose-card-pick-policy-v1";entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,distance:entry.distance-i,
+            const prefix=fixed.prefixes[i],policy=fixed.fixedChoices.find(choice=>choice.prefix===i)?.policy||"seti-purpose-card-pick-policy-v1";entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,preparationDebt:entry.preparationDebt,distance:entry.distance-i,
               sourceNode:`fixed-card:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
                 completion:"fixed-plan-execution",policy,isEquivalence:false}))});
@@ -862,7 +871,7 @@
           const macro = entry.goalExecutions.get(best.actionId);
           for (let i=1;i<macro.prefixes.length && entries.length<32;i+=1) {
             const prefix=macro.prefixes[i];
-            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,distance:entry.distance-i,
+            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,preparationDebt:entry.preparationDebt,distance:entry.distance-i,
               sourceNode:`goal:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
                 completion:"committed-goal-plan-execution",policy:"seti-goal-movement-policy-v1",isEquivalence:false}))});
@@ -874,7 +883,7 @@
           const macro = entry.optimalAttainment;
           for (let i=1; i<macro.prefixes.length && entries.length<32; i+=1) {
             const prefix = macro.prefixes[i];
-            entries.push({ node: prefix.node, actionId: prefix.action.actionId, value: entry.value, realization: entry.realization, distance: prefix.distance,
+            entries.push({ node: prefix.node, actionId: prefix.action.actionId, value: entry.value, realization: entry.realization, preparationDebt:entry.preparationDebt, distance: prefix.distance,
               sourceNode: `attainment:${current}:${i}`, roots: prefix.node.legalActions.map(action => ({
                 actionId: action.actionId, value: action.actionId === prefix.action.actionId ? entry.value : null,
                 valueType: action.actionId === prefix.action.actionId ? "attained-lower-bound" : "not-executed",
@@ -904,13 +913,14 @@
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
       value: accepted ? nodes[0].value : null,
       realization: accepted ? nodes[0].realization ?? null : null,
+      preparationDebt:accepted?nodes[0].preparationDebt??null:null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,
       ...(resourcePlanning?{sharedPrefixGraph:port.getResourcePrefixGraph?.()||null}:{}),
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
-      diagnostics: { realizationTies:realizationTies?"latest-native-purpose-capital":"off", valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+      diagnostics: { realizationTies:realizationTies?"funded-preparation-debt-and-latest-native-purpose-capital":"off", valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
         incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,movementValuePrunes,
         winningIncomePlans,winningIncomeInputs,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,

@@ -136,6 +136,7 @@
     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
     return value;
   }
+  function movementToolPlan(state,p){return stateValue.purposeCapital(valueFacts(state,p)).toolPlan;}
   function forecastDataPlan(state,p){
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]&&['blue1','blue2','blue4'].includes(id)))return null;
     const capital=stateValue.purposeCapital(valueFacts(state,p));
@@ -516,5 +517,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });

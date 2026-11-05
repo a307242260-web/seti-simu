@@ -937,6 +937,26 @@
         if (first && prepaid) return { ...intent, free: true, prefixOnly: true };
         if (first && source.target.rocketId === intent.rocketId && source.target.deltaX === first.deltaX && source.target.deltaY === first.deltaY) return intent;
       }
+      // Bind a currently played known tool to the same funded named prefix
+      // that was quoted before its real native card input. No quoted launch or
+      // future identity can become an executable direction.
+      if(source?.family==="play_card"&&effect?.type==="card_move"&&session.baseState
+        &&source.target?.cardInstanceId===head.payload.cardInstanceId){
+        const anchor=planningState(session.baseState,barrier),owner=anchor.players.players.find(p=>p.id===seatId);
+        const card=owner?.hand.find(c=>c.id===head.payload.cardInstanceId);
+        if(card&&(!barrier||knownRootCardIds.has(card.id))&&stateValue.hasKnownMovementTool([card])
+          &&(!barrier||owner.reservedCards.every(c=>knownRootCardIds.has(c.id)))){
+          const visibleOwner=barrier?{...owner,hand:owner.hand.filter(c=>knownRootCardIds.has(c.id))}:owner;
+          const quote=resourceDemand.movementToolPlan(anchor,visibleOwner),selected=quote.selected;
+          if(quote.value>0&&!selected.prospectiveLaunch&&selected.cardId===card.id&&selected.rocketId>0){
+            const first=selected.path[0],at=rockets.getRocketSectorCoordinate(session.workingState.pieces.rockets.find(r=>r.id===selected.rocketId));
+            if(first&&at?.x===first.from.x&&at.y===first.from.y)return{rocketId:selected.rocketId,path:[first],free:true,prefixOnly:true,
+              startedTurn:anchor.turn.turnNumber,startedRound:anchor.turn.roundNumber,
+              goal:{id:"known-tool:"+card.id+":"+selected.goalId,kind:"known-tool-preparation",timing:"preparation",
+                coordinate:first.to,targetCoordinate:selected.path.at(-1).to,label:"已筹资的数据/移动准备"}};
+          }
+        }
+      }
       if (!effect || !session.undoFrames?.length || !(goalMovement.movementAllowance(head, session.workingState) > 0)) return null;
       const frame = session.undoFrames.find(frame => {
         const first = frame.queueBefore?.[0];
@@ -1305,7 +1325,7 @@
       if (!Array.isArray(entries) || entries.length !== expected.size) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INCOMPLETE");
       for (const entry of entries) {
         const key = selectionTargetKey(entry.selectedIds, spec.unordered);
-        if (!expected.delete(key) || entry.realization!==undefined&&entry.realization!==null&&!Number.isFinite(entry.realization) || (entry.value === null ? entry.distance !== null
+        if (!expected.delete(key) || entry.preparationDebt!==undefined&&entry.preparationDebt!==null&&(!Number.isSafeInteger(entry.preparationDebt)||entry.preparationDebt<0) || entry.realization!==undefined&&entry.realization!==null&&!Number.isFinite(entry.realization) || (entry.value === null ? entry.distance !== null
           : !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 0)) {
           throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
         }
@@ -1329,11 +1349,12 @@
         const entry = byTarget.get(selectionTargetKey(plan.selectedIds, spec.unordered));
         if (entry.value == null) continue;
         const distance = plan.submissions + entry.distance;
-        const realization = entry.realization ?? 0;
+        const realization = entry.realization ?? 0, preparationDebt=entry.preparationDebt??0;
         if (!best || entry.value > best.value || (entry.value === best.value
-          && (realization > best.realization || realization === best.realization
-            && (distance < best.distance || (distance === best.distance && plan.firstActionId < best.actionId))))) {
-          best = { actionId: plan.firstActionId, selectedIds: plan.selectedIds, value: entry.value, realization, distance };
+          && (preparationDebt < best.preparationDebt || preparationDebt === best.preparationDebt
+            && (realization > best.realization || realization === best.realization
+              && (distance < best.distance || (distance === best.distance && plan.firstActionId < best.actionId)))))) {
+          best = { actionId: plan.firstActionId, selectedIds: plan.selectedIds, value: entry.value, realization, preparationDebt, distance };
         }
       }
       if (!best) return { hit: false, reason: "no-reachable-boundary" };
@@ -1372,7 +1393,7 @@
         const stored = nodes.get(entry.node);
         if (!fork || !stored || !["stable", "decision"].includes(entry.node.status)
           || !entry.node.legalActions.some(action => action.actionId === entry.actionId)
-          || !Number.isFinite(entry.value) || entry.realization!==undefined&&!Number.isFinite(entry.realization) || !Number.isSafeInteger(entry.distance) || entry.distance < 1
+          || !Number.isFinite(entry.value) || entry.preparationDebt!==undefined&&(!Number.isSafeInteger(entry.preparationDebt)||entry.preparationDebt<0) || entry.realization!==undefined&&!Number.isFinite(entry.realization) || !Number.isSafeInteger(entry.distance) || entry.distance < 1
           || !Array.isArray(entry.roots) || entry.roots.length !== entry.node.legalActions.length
           || new Set(entry.roots.map(row => row.actionId)).size !== entry.roots.length
           || entry.node.legalActions.some(action => !entry.roots.some(row => row.actionId === action.actionId))) {
@@ -1382,7 +1403,7 @@
         return { key: entry.committedGoal ? stored.physicalKey : policyDependencyKey(stored),
           ...(entry.committedGoal?{committedGoal:entry.committedGoal}:{}), actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
           ...(!entry.committedGoal&&savedMovementIntent(stored.intent)?{movementIntent:freeze(structuredClone(stored.intent))}:{}),
-          value: entry.value, ...(entry.realization!==undefined?{realization:entry.realization}:{}), distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
+          value: entry.value, ...(entry.preparationDebt!==undefined?{preparationDebt:entry.preparationDebt}:{}), ...(entry.realization!==undefined?{realization:entry.realization}:{}), distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
       const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
       planCertificate = { token, modelKey, rows, evidenceId, source: freeze(structuredClone(source)) };
@@ -1419,7 +1440,7 @@
         }
       }
       if (!row) return { hit: false, reason: "dependencies-changed" };
-      return freeze({ hit: true, actionId: row.actionId, value: row.value, realization: row.realization ?? 0, distance: row.distance, roots: row.roots,
+      return freeze({ hit: true, actionId: row.actionId, value: row.value, realization: row.realization ?? 0, preparationDebt:row.preparationDebt??0, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
         sourceNode: row.sourceNode, source: saved.source, ...(row.committedGoal?{committedGoal:row.committedGoal}:{}) });
     }
@@ -1437,7 +1458,7 @@
         || !Array.isArray(saved.rows) || !saved.rows.length || saved.rows.length > 32
         || !Number.isSafeInteger(saved.source?.nodeCount) || saved.source.nodeCount < 1
         || saved.rows.some(row=>typeof row.key!=="string" || typeof row.actions!=="string" || typeof row.actionId!=="string"
-          || !Number.isFinite(row.value) || row.realization!==undefined&&!Number.isFinite(row.realization) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
+          || !Number.isFinite(row.value) || row.preparationDebt!==undefined&&(!Number.isSafeInteger(row.preparationDebt)||row.preparationDebt<0) || row.realization!==undefined&&!Number.isFinite(row.realization) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
           || row.committedGoal!==undefined&&(typeof row.committedGoal!=="string"||!row.committedGoal)
           || row.movementIntent!==undefined&&!savedMovementIntent(row.movementIntent))) {
         throw new Error("ANALYSIS_PLAN_CHECKPOINT_INVALID");
@@ -2092,7 +2113,7 @@
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
       const sourceState=readPlanningState(stored),sourceOwner=sourceState.players.players.find(p=>p.id===seatId);
-      if(hasUnprovedProbeCapital(sourceState)||sourceState.turn.roundNumber<4&&stateValue.hasKnownSectorTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)])){postMainValueBounds.set(node,null);return null;}
+      if(hasUnprovedProbeCapital(sourceState)||sourceState.turn.roundNumber<4&&(stateValue.hasKnownSectorTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)])||industryCatalog.getPlayerIndustryDefinition(sourceOwner)?.activeAbilityId==='deepspace_swap_cards'&&stateValue.hasKnownMovementTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)]))){postMainValueBounds.set(node,null);return null;}
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.
       const policyNode=resourcePlanning?{status:node.status,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;

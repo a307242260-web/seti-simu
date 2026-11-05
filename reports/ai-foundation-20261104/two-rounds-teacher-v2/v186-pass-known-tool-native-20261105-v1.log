@@ -1,0 +1,17 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/value-arithmetic.js:18
+ function units(value){if(!Number.isFinite(value))throw TypeError('VALUE_ARITHMETIC_NONFINITE');const result=Math.round(value*scale);return Number.isSafeInteger(result)?result:null;}
+                                                  ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/value-arithmetic.js:18:57)
+    at Object.sum (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/value-arithmetic.js:20:133)
+    at Object.quote (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/known-movement-tool-prototype-20261105-v1.js:23:181)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/control-v186-pass-tool-value-20261105-v1.js:1:1710)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+
+Node.js v22.22.0

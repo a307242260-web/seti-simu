@@ -40,6 +40,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/probe-travel-tail.test.js", "policy/state-value", "有在途探测器的固定收入/数据收尾保持全部根值与原生控制一致，只有不新增移动时使用数值证明", "为省模拟遗漏被新资金激活的移动，复制证明后缺少原生对照，或把计划边界冒充真实后继"),
     entry("randomizer/game/ai/probe-capital-value.test.js", "policy/state-value", "一次在场探测任务按原生费用和已知完整奖励链估值，与固定计划共用机会成本且不读取隐藏身份", "探测器跨回合被估为零、重复计价、无法支付仍计收益、未知牌被用于插收入或踪迹奖励硬编码"),
     entry("randomizer/game/ai/computer-preinvestment.test.js", "policy/state-value", "保留计算机准备与清空后重建的共同原生后缀不同，准备资本在分析兑现时消费，状态观察同值", "只计分析收益而忽略已投数据、预支未取得数据/物种奖励或清空后重复认领"),
+    entry("randomizer/game/ai/known-movement-tool.test.js", "policy/state-value", "已知数据移动回手工具按当前钱包和具名任务前缀报价，准备债务与原生资金/遮蔽/两次兑现一致", "把发射准备计零、重复认领回手卡、预支收入牌或跨模板循环刷收益"),
     entry("randomizer/game/ai/sector-card-capital.test.js", "policy/state-value", "已知扇区卡与现有数据分析准备共用钱包，稳定原生前缀及行动顺序兑现同值，标量同值时落实目的且摘要不预支新证据", "漏计可兑现扇区完成、重复领取同一工具收益、伪造重置后探测任务或短数据仍计分析"),
     entry("randomizer/game/ai/ready-analysis-capital.test.js", "policy/state-value", "已就绪分析与研究共用资金用途，状态/观察同值，当前原生准备资产不因turn边界丢失", "先清空电脑损失蓝槽奖励、分析用途与探测资金重复计算或准备策略与正式估值分离"),
     entry("randomizer/game/ai/research-income-capital.test.js", "policy/state-value", "已筹资研究的已知收入牌与现有数据共用钱包估值，正式观察和原生执行一致", "忽略已知收入准备、重复使用钱包或将新补牌身份计入未来价值"),

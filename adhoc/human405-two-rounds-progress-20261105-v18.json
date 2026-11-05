@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "thisGoalTurnClassification": "previous learning-goal turn no progress (20-board delivery only); revalidated stopped validation and executed full171 regression, independent46 audit and candidate admission preparation",
+  "productionRuntime": "V186/V20",
+  "productionSourceCommit": "9e3fa00bb4fb944e737271dcd86d0ba8992f9b32",
+  "actualRecord": "reports/research/92230fbe.9e3fa00b.quick-400.json",
+  "actualScores": [
+    15,
+    36
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 4346,
+  "actualInputs": 106,
+  "actualWhiteSearches": 67,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 386.22904199999994,
+  "allActualDecisionGatesPassed": true,
+  "nativeReplayedInputsAfterOpening": 83,
+  "allFinalNativeStateSessionRngAndRoundCheckpointsVerified": true,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": true,
+  "round2MoneyAIvsTeacher": [
+    3,
+    4
+  ],
+  "round2EnergyAIvsTeacher": [
+    1,
+    1
+  ],
+  "round2ProbesAIvsTeacher": [
+    0,
+    1
+  ],
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "candidateOfficialRuns": 0,
+  "candidateAdmitted": true,
+  "capturedActualWhiteSearchRoots": 67,
+  "newSourceOrGameReruns": 0,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "nextActions": [
+    "Verify admission source and privateindex deliver, push origin/dev.",
+    "Run one unique V187 standard autonomous first2 at admitted source, verify every native input/checkpoint, compare teacher technology/income/resources/probes, preserve V41baseline and V186 actual."
+  ],
+  "candidateRuntime": "V187/V21",
+  "candidateColdNamedCases": 300,
+  "candidateColdUniqueRoots": 249,
+  "candidateMaxNativeInputs": 252,
+  "candidateMaxRootAndSearchMs": 579.748917,
+  "candidateIndependentValueInputChecks": 46,
+  "candidateLegacyInputAuditErrorUnchanged": true,
+  "nativePortfolioControlInputs": 90,
+  "nativeToolPrefixInputs": 6,
+  "passChoiceNativeInputsIncludingFailedToolAttempt": 4,
+  "knownPassControlUpdatedToOrdinaryDLC4": true,
+  "candidateUnitPassed": 171,
+  "candidateFullFlowPassed": 1,
+  "fullRegressionMilliseconds": 280200,
+  "candidateRegressionLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-node-full-20261105-v2.log",
+  "candidateChromePassed": 25,
+  "candidateAdmissionScope": "171unit/1fullFlow/25Chrome/249unique cold roots;252inputs/579.748917ms;46current independent input paths pass, one unchanged legacy freeze error"
+}

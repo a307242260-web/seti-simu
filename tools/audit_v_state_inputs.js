@@ -819,6 +819,20 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{auditEnv?.dispose();}
 }
 
+// The known movement/data preparation consumes only current visible wallet,
+// coordinates and a disclosed card; projection modes must retain that contract.
+{
+ let kernel;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),demand=require('../randomizer/game/ai/resource-demand'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation');
+  const rows=JSON.parse(fs.readFileSync('reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json')).rows.filter(x=>['before-first-tool','after-teacher-input-80','after-teacher-input-83'].includes(x.label));
+  const seed=JSON.parse(rows[0].envelope.committedState).meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;let checks=0;
+  for(const row of rows){assert(c.lifecycle.restore(row.envelope).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),valueOnly=c.projection({role:'player',playerId:seat,valueOnly:true}).state,value=independentValue.evaluateStateValue(raw,seat),state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seat);assert.equal(value.total,80.08333333333333);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(independentValue.evaluateStateValue(valueOnly,seat),value);assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>value.components[k])));assert.deepEqual(c.lifecycle.save().envelope,before);checks++;}
+  console.log('[PASS] independent-known-movement-tool: '+checks+' native prefixes, formal/valueOnly/state quote and preparation debt agree; no invented observation or root/RNG change');
+ }catch(error){console.log(`[FAIL] independent-known-movement-tool: ${error.message}`);allPass=false;}
+ finally{kernel?.composition.dispose();}
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

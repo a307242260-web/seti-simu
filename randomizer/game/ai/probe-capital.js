@@ -300,5 +300,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ ownedProbes, funding, knownScanData, quote, factsFromObservation, factsFromState, fromObservation, fromState });
+  return Object.freeze({ ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, fromObservation, fromState });
 });

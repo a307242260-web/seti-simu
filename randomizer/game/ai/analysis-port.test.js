@@ -337,6 +337,7 @@ const searchOptions = { evaluate: observation => evaluateStateValue(observation,
   evidencePort.close();const restoredRoot=evidencePort.openRoot();
   assert.deepEqual(evidencePort.reuseSelection(restoredRoot,token,'realization-evidence-v1').selectedIds,selected.selectedIds);
   assert.throws(()=>evidencePort.rememberSelection(restoredRoot,entries.map((entry,i)=>i?entry:{...entry,realization:NaN}),'invalid'),/EVIDENCE_INVALID/);
+  const debtEntries=entries.map((entry,i)=>({...entry,preparationDebt:i===0?0:3}));const debtToken=evidencePort.rememberSelection(restoredRoot,debtEntries,'debt-evidence');assert.deepEqual(evidencePort.reuseSelection(restoredRoot,debtToken,'debt-evidence').selectedIds,plans[0].selectedIds,'preparation debt must precede residual-capital preference on reused ties');
   assert.deepEqual(comp.lifecycle.save().envelope,nativeBefore);evidencePort.close();
 }
 let current = searchDecision({ ...searchOptions, port: reusePort, root: reusePort.openRoot() });

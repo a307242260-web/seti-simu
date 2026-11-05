@@ -1,0 +1,41 @@
+{
+  "rows": [
+    {
+      "label": "control-dlc4-skip-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc4-skip-after-native-end-20261105-v1.json",
+      "fixtureSha256": "5f373146124f592cf11cb8a85abcba8a7cd33a70adf94bed413ab0c26fd2ccf8"
+    },
+    {
+      "label": "control-dlc4-launch-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc4-launch-after-native-end-20261105-v1.json",
+      "fixtureSha256": "ae00d352acf38632a7a08338506270ecb347117d74f1ac768c5fc977f385604e"
+    },
+    {
+      "label": "control-dlc5-skip-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc5-skip-after-native-end-20261105-v1.json",
+      "fixtureSha256": "27d1234d8923efc83c1f9bae5b7b335228d83350779f09710386b5fa7438406e"
+    },
+    {
+      "label": "control-dlc5-launch-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc5-launch-after-native-end-20261105-v1.json",
+      "fixtureSha256": "4fc753036e94d28e24d942f15523b50b3dc9a7f303bbd6ad50e5a14f37e39c0c"
+    },
+    {
+      "label": "control-tool-step-78",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-78-20261105-v1.json",
+      "fixtureSha256": "841547c62e111ce76c41f5254abb33688df9164616704560acfbf0556b9f1d5c"
+    },
+    {
+      "label": "control-tool-step-80",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-80-20261105-v1.json",
+      "fixtureSha256": "8de3947bc02dac40ff4c957f2c0c714add5dd2ea0251d5b9675cb422ba371a29"
+    },
+    {
+      "label": "control-tool-step-81",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-81-20261105-v1.json",
+      "fixtureSha256": "99f99932eee8d6601fad78dd18cd1f433342e2a7b0d100cad79fa72b2a9ee1f4"
+    }
+  ],
+  "nativeInputsCreated": 0,
+  "scope": "Seven saved native control endpoints copied to fixtures; no new execution or search"
+}

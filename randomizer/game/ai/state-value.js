@@ -10,13 +10,14 @@
     common ? require("./ready-analysis-capital") : root.SetiReadyAnalysisCapital,
     common ? require("./research-income-capital") : root.SetiResearchIncomeCapital,
     common ? require("./sector-card-capital") : root.SetiSectorCardCapital,
-    common ? require("./value-arithmetic") : root.SetiValueArithmetic);
+    common ? require("./value-arithmetic") : root.SetiValueArithmetic,
+    common ? require("./known-movement-capital") : root.SetiKnownMovementCapital);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v20";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v21";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -239,13 +240,19 @@
     // without adding duplicate claims or missions on an unexecuted sector reset.
     return Math.max(arithmetic.sum([base,analysis.value],weights),incomeAllocationCapital(facts,weights).total);
   }
-  function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
+  function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
     const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>portfolio({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
     const sector=sectorCard.quote(facts,weights,next=>capitalWithoutMission(next,weights),arithmetic.sum([current,dataPotential],weights));
     return{...base,handPotential:arithmetic.sum([base.handPotential,sector.value],weights),sectorCardPlan:sector,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential,sector.value],weights)};
+  }
+
+  function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
+    const base=purposeCapitalWithoutTools(facts,weights),tool=movementTool.quote(facts,weights,next=>purposeCapitalWithoutTools(next,weights).total);
+    return {...base,handPotential:arithmetic.sum([base.handPotential,tool.value],weights),toolPlan:tool,
+      total:arithmetic.sum([base.total,tool.value],weights)};
   }
 
   function evaluateStateValue(observation, seatId, options = {}) {
@@ -257,7 +264,7 @@
     if (typeof terminal !== "boolean") throw new TypeError("VALUE_TERMINAL_MISSING");
     const realizedScore = number(player.score, "player.score");
     const currentTotal = number(player.finalScore, "player.finalScore");
-    if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal,
+    if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal, purposePreparationDebt:0,
       components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
         resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0, analysisPotential: 0, researchIncomePotential: 0, dataPotential: 0 }), terminal: true });
 
@@ -285,7 +292,8 @@
       probePotential:capital.probePotential,analysisPotential:capital.analysisPotential,researchIncomePotential:capital.researchIncomePotential,dataPotential:capital.dataPotential });
     const total = arithmetic.sum(Object.values(components),weights);
     number(total, "total");
-    return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
+    return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false,
+      purposePreparationDebt:capital.toolPlan.value>0?capital.toolPlan.selected.preparationDebt:0 });
   }
 
   function createStateValueEvaluator(seatId, options = {}) {
@@ -294,7 +302,7 @@
     trustedWeights.add(weights);
     const details = observation => {
       const result = evaluateStateValue(observation, seatId, { weights }), c = result.components;
-      return Object.freeze({ value: result.total, unrealizedPurposeValue: arithmetic.sum([
+      return Object.freeze({ value: result.total, purposePreparationDebt:result.purposePreparationDebt, unrealizedPurposeValue: arithmetic.sum([
         c.handPotential,c.researchPotential,c.probePotential,c.analysisPotential,c.researchIncomePotential,c.dataPotential],weights) });
     };
     const evaluate = observation => details(observation).value;
@@ -322,7 +330,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

@@ -1,0 +1,15 @@
+trusted analysis fork isolation and exact reuse passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"knownMovementTool":"passed","sourceNativeControlledInputs":96,"newNativeInputs":0,"value":80.08333333333333,"directMoneyControls":84,"maskedPassChoice":true,"rootAndRngRestored":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"knownSectorAndAnalysis":"passed","nativeInputs":13,"stablePrefixes":5,"moneyControls":84,"value":75.5,"sectorCapital":14,"preparedAnalysisCapital":4.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+independent state value accounting and strict inputs passed
+{"winningIncomeNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":13}
+SUMMARY unit passed=8 failed=0 total=8 time=10.19s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=2
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=3
