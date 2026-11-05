@@ -1,0 +1,7 @@
+{
+  "status": "invalid-control",
+  "scriptSha256": "731891064cb87c3f4c4375aa51285c8c65c0e0ef857f2b855f33245bf00926a9",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-order-teacher-after-three-actions-20261105-v1.checkpoint.json",
+  "checkpointSha256": "8aaabdc7ce58555a9284f9a7eea02ce7d1edacd9ea1220234bfa8440aabed753",
+  "cause": "Harness chose the first accept_optional_effect, which is skip:researchTech, rather than confirm:trigger. Also used repeated greedy blue choices instead of formal locked region resolution. This is not a teacher or AI-policy result; excluded from conclusions."
+}

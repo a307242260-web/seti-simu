@@ -1,0 +1,1536 @@
+{
+  "candidate": "V197/V24",
+  "candidateAdmitted": false,
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-127-20261105-v1.checkpoint.json",
+  "checkpointSha256": "3537d80eb28c6637972acd5b7be36d5a3e2154d3bd1ac93c5e2171817cc40d46",
+  "candidateSourceManifest": "reports/ai-foundation-20261105/candidate-v197-stationary-prefix-20261105-v1/manifest.json",
+  "candidateSourceManifestSha256": "613124858bd46bd7e72416ff60b4fbc69380c7c7e83d3cf544482419673bcc32",
+  "scope": "Two finite native controls from the same current root, executing the same three known actions in different order. No policy search or autonomous game; new blind identity is masked and never funds a purpose.",
+  "inputs": 28,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true,
+  "rows": [
+    {
+      "label": "teacher",
+      "order": [
+        "paid-purple",
+        "automatic",
+        "held-orange"
+      ],
+      "before": {
+        "score": 48,
+        "finalScore": 55,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 8,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 6,
+          "score": 48
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "symbols": {
+          "revealInitialized": true,
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_3": "symbol_1",
+            "orange_1": "symbol_4",
+            "orange_2": "symbol_2",
+            "red_1": "symbol_5",
+            "red_2": "symbol_3"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "blue_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "orange_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "red_2",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "orange_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          }
+        },
+        "maskedHandValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "checkpoints": [
+        {
+          "purpose": "paid-purple",
+          "after": {
+            "score": 54,
+            "finalScore": 76,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 8,
+              "energy": 3,
+              "handSize": 2,
+              "publicity": 1,
+              "score": 54
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "purple2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_1": "symbol_3",
+                "blue_3": "symbol_1",
+                "orange_1": "symbol_4",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "blue_1",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "orange_1",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 111.5,
+              "components": {
+                "realizedScore": 54,
+                "currentEndGameBonus": 22,
+                "resources": 12,
+                "hand": 2,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 3,
+                "researchPotential": 0,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        },
+        {
+          "purpose": "automatic",
+          "after": {
+            "score": 58,
+            "finalScore": 80,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 6,
+              "energy": 3,
+              "handSize": 1,
+              "publicity": 1,
+              "score": 58
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "purple2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_2": "symbol_3",
+                "blue_3": "symbol_1",
+                "orange_1": "symbol_4",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "blue_2",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "orange_1",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 114,
+              "components": {
+                "realizedScore": 58,
+                "currentEndGameBonus": 22,
+                "resources": 11.5,
+                "hand": 1,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 3,
+                "researchPotential": 0,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        },
+        {
+          "purpose": "held-orange",
+          "after": {
+            "score": 60,
+            "finalScore": 82,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 3,
+              "energy": 4,
+              "handSize": 1,
+              "publicity": 1,
+              "score": 60
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "purple2": true,
+                "orange2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_1": "symbol_4",
+                "blue_2": "symbol_3",
+                "blue_3": "symbol_1",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "blue_2",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "blue_1",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 111,
+              "components": {
+                "realizedScore": 60,
+                "currentEndGameBonus": 22,
+                "resources": 9.5,
+                "hand": 1,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 0,
+                "researchPotential": 0,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        }
+      ],
+      "after": {
+        "score": 60,
+        "finalScore": 82,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 60
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true,
+            "purple2": true,
+            "orange2": true
+          }
+        },
+        "symbols": {
+          "revealInitialized": true,
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_1": "symbol_4",
+            "blue_2": "symbol_3",
+            "blue_3": "symbol_1",
+            "orange_2": "symbol_2",
+            "red_1": "symbol_5"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "blue_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "orange_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "blue_2",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "blue_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          }
+        },
+        "maskedHandValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:66c1a4bb",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "accept_optional_effect",
+          "phase": "conditional",
+          "actionId": "accept_optional_effect:1e93b329",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-purple-tech",
+            "cardInstanceId": "alien-amiba-1-2",
+            "ruleId": "amiba1-purple-tech"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结算 amiba_1.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "alien-amiba-1-2",
+            "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+            "imageAlt": "amiba_1.webp",
+            "detail": "安全协议：粉紫科技，红色区域 symbol 奖励"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:dc367eeb",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:red_2",
+            "slotId": "red_2",
+            "region": "red",
+            "symbolId": "symbol_3"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "red_2（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 53,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:aba3bdc5",
+          "actorId": "player-white",
+          "stateVersion": 53,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:b",
+            "tileId": "b"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "标记 B",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "b",
+            "imageSrc": "../assets/final/final_b1.png",
+            "imageAlt": "终局计分板块 B"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:2f9ae88e",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "alien-amiba-0-1"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "amiba_0.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2e7a24ba",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:blue_1",
+            "slotId": "blue_1",
+            "region": "blue",
+            "symbolId": "symbol_3"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue_1（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 55,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:52a456f8",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "card-29-pass-2-5"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_101.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e2010426",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": true,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "accept_optional_effect",
+          "phase": "conditional",
+          "actionId": "accept_optional_effect:8e86c549",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-orange-tech",
+            "cardInstanceId": "alien-amiba-1-2",
+            "ruleId": "amiba1-orange-tech"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结算 amiba_1.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "alien-amiba-1-2",
+            "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+            "imageAlt": "amiba_1.webp",
+            "detail": "安全协议：橙色科技，橙色区域 symbol 奖励"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0c90de23",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:orange_1",
+            "slotId": "orange_1",
+            "region": "orange",
+            "symbolId": "symbol_4"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "orange_1（1盲抽）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 57,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ],
+      "endpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-order-teacher-after-three-actions-20261105-v2.checkpoint.json",
+      "endpointSha256": "133c88831bf7d48c6a64134958d545b98a8aaa8bd09d24554188e9b1a51fcdfd",
+      "conditionalBlueRegionNativeRewards": [
+        {
+          "slot": "blue_2",
+          "symbolId": "symbol_3",
+          "reward": {
+            "gain": {
+              "score": 4
+            },
+            "dataCount": 0,
+            "drawCards": 0,
+            "pickCard": false,
+            "pickAlienCard": false,
+            "region": null
+          },
+          "value": 4
+        },
+        {
+          "slot": "blue_1",
+          "symbolId": "symbol_4",
+          "reward": {
+            "gain": {},
+            "dataCount": 0,
+            "drawCards": 1,
+            "pickCard": false,
+            "pickAlienCard": false,
+            "region": null
+          },
+          "value": 1
+        },
+        {
+          "slot": "blue_3",
+          "symbolId": "symbol_1",
+          "reward": {
+            "gain": {
+              "publicity": 1
+            },
+            "dataCount": 0,
+            "drawCards": 0,
+            "pickCard": false,
+            "pickAlienCard": false,
+            "region": null
+          },
+          "value": 0.5
+        }
+      ],
+      "conditionalScope": "Readonly formal symbol queries only; future blue4 trace payment/reachability is not established here."
+    },
+    {
+      "label": "held-first",
+      "order": [
+        "held-orange",
+        "paid-purple",
+        "automatic"
+      ],
+      "before": {
+        "score": 48,
+        "finalScore": 55,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 8,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 6,
+          "score": 48
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "symbols": {
+          "revealInitialized": true,
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_3": "symbol_1",
+            "orange_1": "symbol_4",
+            "orange_2": "symbol_2",
+            "red_1": "symbol_5",
+            "red_2": "symbol_3"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "blue_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "orange_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "red_2",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "orange_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          }
+        },
+        "maskedHandValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "checkpoints": [
+        {
+          "purpose": "held-orange",
+          "after": {
+            "score": 50,
+            "finalScore": 72,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 4,
+              "handSize": 2,
+              "publicity": 6,
+              "score": 50
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "orange2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_1": "symbol_4",
+                "blue_3": "symbol_1",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5",
+                "red_2": "symbol_3"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "red_2",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "blue_1",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 109,
+              "components": {
+                "realizedScore": 50,
+                "currentEndGameBonus": 22,
+                "resources": 12.5,
+                "hand": 2,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 0,
+                "researchPotential": 4,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        },
+        {
+          "purpose": "paid-purple",
+          "after": {
+            "score": 56,
+            "finalScore": 78,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 4,
+              "handSize": 2,
+              "publicity": 1,
+              "score": 56
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "orange2": true,
+                "purple2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_1": "symbol_4",
+                "blue_3": "symbol_1",
+                "orange_1": "symbol_3",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "orange_1",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "blue_1",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 108.5,
+              "components": {
+                "realizedScore": 56,
+                "currentEndGameBonus": 22,
+                "resources": 10,
+                "hand": 2,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 0,
+                "researchPotential": 0,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        },
+        {
+          "purpose": "automatic",
+          "after": {
+            "score": 56,
+            "finalScore": 78,
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 3,
+              "energy": 4,
+              "handSize": 2,
+              "publicity": 1,
+              "score": 56
+            },
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "purple4": true,
+                "orange2": true,
+                "purple2": true
+              }
+            },
+            "symbols": {
+              "revealInitialized": true,
+              "revealedSlotId": 1,
+              "symbolSlots": {
+                "blue_2": "symbol_4",
+                "blue_3": "symbol_1",
+                "orange_1": "symbol_3",
+                "orange_2": "symbol_2",
+                "red_1": "symbol_5"
+              },
+              "symbolsById": {
+                "symbol_1": {
+                  "sequence": 3,
+                  "slotId": "blue_3",
+                  "symbolId": "symbol_1"
+                },
+                "symbol_2": {
+                  "sequence": 2,
+                  "slotId": "orange_2",
+                  "symbolId": "symbol_2"
+                },
+                "symbol_3": {
+                  "sequence": 5,
+                  "slotId": "orange_1",
+                  "symbolId": "symbol_3"
+                },
+                "symbol_4": {
+                  "sequence": 1,
+                  "slotId": "blue_2",
+                  "symbolId": "symbol_4"
+                },
+                "symbol_5": {
+                  "sequence": 4,
+                  "slotId": "red_1",
+                  "symbolId": "symbol_5"
+                }
+              }
+            },
+            "maskedHandValue": {
+              "modelVersion": "seti-purpose-capital-state-value-v24",
+              "total": 108,
+              "components": {
+                "realizedScore": 56,
+                "currentEndGameBonus": 22,
+                "resources": 9.5,
+                "hand": 2,
+                "income": 9.5,
+                "technologyPotential": 9,
+                "handPotential": 0,
+                "researchPotential": 0,
+                "probePotential": 0,
+                "analysisPotential": 0,
+                "researchIncomePotential": 0,
+                "dataPotential": 0
+              },
+              "terminal": false,
+              "purposePreparationDebt": 0
+            }
+          }
+        }
+      ],
+      "after": {
+        "score": 56,
+        "finalScore": 78,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 56
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true,
+            "orange2": true,
+            "purple2": true
+          }
+        },
+        "symbols": {
+          "revealInitialized": true,
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_2": "symbol_4",
+            "blue_3": "symbol_1",
+            "orange_1": "symbol_3",
+            "orange_2": "symbol_2",
+            "red_1": "symbol_5"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "blue_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "orange_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "orange_1",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "blue_2",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          }
+        },
+        "maskedHandValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 108,
+          "components": {
+            "realizedScore": 56,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:52a456f8",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "card-29-pass-2-5"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_101.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e2010426",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": true,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "accept_optional_effect",
+          "phase": "conditional",
+          "actionId": "accept_optional_effect:8e86c549",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-orange-tech",
+            "cardInstanceId": "alien-amiba-1-2",
+            "ruleId": "amiba1-orange-tech"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结算 amiba_1.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "alien-amiba-1-2",
+            "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+            "imageAlt": "amiba_1.webp",
+            "detail": "安全协议：橙色科技，橙色区域 symbol 奖励"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0c90de23",
+          "actorId": "player-white",
+          "stateVersion": 52,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:orange_1",
+            "slotId": "orange_1",
+            "region": "orange",
+            "symbolId": "symbol_4"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "orange_1（1盲抽）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 53,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:aba3bdc5",
+          "actorId": "player-white",
+          "stateVersion": 53,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:b",
+            "tileId": "b"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "标记 B",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "b",
+            "imageSrc": "../assets/final/final_b1.png",
+            "imageAlt": "终局计分板块 B"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:66c1a4bb",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "accept_optional_effect",
+          "phase": "conditional",
+          "actionId": "accept_optional_effect:1e93b329",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-purple-tech",
+            "cardInstanceId": "alien-amiba-1-2",
+            "ruleId": "amiba1-purple-tech"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结算 amiba_1.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "alien-amiba-1-2",
+            "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+            "imageAlt": "amiba_1.webp",
+            "detail": "安全协议：粉紫科技，红色区域 symbol 奖励"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:dc367eeb",
+          "actorId": "player-white",
+          "stateVersion": 54,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:red_2",
+            "slotId": "red_2",
+            "region": "red",
+            "symbolId": "symbol_3"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "red_2（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 55,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:6bef76b1",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "alien-amiba-0-1"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "amiba_0.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96cf7209",
+          "actorId": "player-white",
+          "stateVersion": 56,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "symbol:blue_1",
+            "slotId": "blue_1",
+            "region": "blue",
+            "symbolId": "symbol_4"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue_1（1盲抽）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 57,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ],
+      "endpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-order-held-first-after-three-actions-20261105-v2.checkpoint.json",
+      "endpointSha256": "c1fbab45a2b1fbb511e0a02cd5b600df7da5ce07e48cd43b75e5018b57ca7cd8",
+      "conditionalBlueRegionNativeRewards": [
+        {
+          "slot": "blue_2",
+          "symbolId": "symbol_4",
+          "reward": {
+            "gain": {},
+            "dataCount": 0,
+            "drawCards": 1,
+            "pickCard": false,
+            "pickAlienCard": false,
+            "region": null
+          },
+          "value": 1
+        },
+        {
+          "slot": "blue_3",
+          "symbolId": "symbol_1",
+          "reward": {
+            "gain": {
+              "publicity": 1
+            },
+            "dataCount": 0,
+            "drawCards": 0,
+            "pickCard": false,
+            "pickAlienCard": false,
+            "region": null
+          },
+          "value": 0.5
+        }
+      ],
+      "conditionalScope": "Readonly formal symbol queries only; future blue4 trace payment/reachability is not established here."
+    }
+  ]
+}

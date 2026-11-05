@@ -1,0 +1,77 @@
+{
+  "status": "active",
+  "goalScope": "third-round-from-exact-teacher-native-state-first; revisit-end-of-round2-afterwards",
+  "runtime": "V189/V22",
+  "runtimeChanged": false,
+  "newAutonomousRuns": 0,
+  "teacherRound3CurrentNativeReference": {
+    "score": 105,
+    "technology": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "endPhase": "before-PASS-card-and-next-income"
+  },
+  "openingCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-107-20261105-v1.checkpoint.json",
+  "firstWhiteRoot": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-first-white-root-20261105-v1.json",
+  "nextIssue": "Confirmed native known-order defect at127: B101-first loses4 board score for1 blind card, with same tech slots, income and all spendable C/E/P/data. Teacher paid-purple then held regional card endpoint exactly equals saved140 envelope/RNG. Add shared funded known regional-card followup on moved research layout without additive double counting; separately audit50point new mark and purple2/orange2 uses, then113 land timing. No new autonomous run before source admission.",
+  "deferredSecondRoundReview": [
+    "earlyJupiterLanding",
+    "Amiba0/3 corners",
+    "Amiba1 income vs played trigger engine"
+  ],
+  "evidence": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/initial-native-audit-20261105-v1.json": "9bceb7faf5766a8c5a47bec09f6f522d3511ed05a7a85932748dddaf5865adcc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v1.json": "a0aa1741d71dc59a5ec5643e1a101dbea0706a229ac797e1b33846c1c230ac33",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v2.json": "6037289227b9169e8ea45fece24a6f5dd9e4f3eb70fd333f96f72a5a51d10e84",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/known-amiba-teacher-prefix-value-20261105-v1.json": "37834be8ade1629f8fd7c838f7765f98a36c08dcd3a078ef626950f5a110ea94",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-computer-prefix-review-20261105-v1.json": "3b93f2a627f09e2feddf40daeaee6d972c3d76c330aff12fbf31b891bce417b4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-review-20261105-v1.json": "f76319fecb78dc736266f21481eca352d1ce66e30ac30d1236b5ab2eec9e1c68",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v197-trigger-and-tail-review-20261105-v1.json": "ceebc261b9cfb970a80262dda269c3801c9f055086bd2c48517630c5750aa56c"
+  },
+  "candidate": "V197/V24",
+  "candidateAdmitted": false,
+  "candidateManifest": "reports/ai-foundation-20261105/candidate-v197-stationary-prefix-20261105-v1/manifest.json",
+  "candidateKeyColdRoots": 6,
+  "fullAdmissionPending": true,
+  "secondRoundReviewRequired": true,
+  "secondRoundReviewStage": "after-same-state-third-round-learning",
+  "secondRoundReviewPlan": "docs/human405-third-round-plan-20261105.md",
+  "secondRoundReviewInfoBoundary": "Each actual decision root; no future DLC31 or hidden species identity. Native RNG reproducibility, no forced common future cards.",
+  "currentReview": "docs/human405-third-round-trigger-review-20261105.md",
+  "evidenceSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-trigger-and-tail-review-20261105-v1.json",
+  "previousGoalTurnClassification": "progress",
+  "stateInputAudit": {
+    "passed": 49,
+    "legacyFailureMatchesV189": true,
+    "allGreen": false
+  },
+  "candidateRelatedRegression": {
+    "unitPassed": 177,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "independentCleanTestsPassed": 10,
+    "independentFixtureHashes": 32,
+    "browserFocusedPassed": 2,
+    "browserFullPassed": false,
+    "inputAuditPassed": 49,
+    "inputAuditFailed": 1,
+    "legacyAuditFailureMatchesV189": true
+  },
+  "allSixCandidateKeyColdRootsPassed": true,
+  "stage": "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n",
+  "knownOrderControl": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-known-research-order-control-20261105-v2.json",
+  "knownOrderIndependentCheck": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-research-order-independent-check-20261105-v1.json",
+  "knownOrderControlInputs": 28,
+  "knownOrderBoardScore": [
+    60,
+    56
+  ],
+  "knownOrderMaskedModelValue": [
+    111,
+    108
+  ],
+  "latestProgress": "adhoc/human405-third-round-progress-20261105-v5.json"
+}

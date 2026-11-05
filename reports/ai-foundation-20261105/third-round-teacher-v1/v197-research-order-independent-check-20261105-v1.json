@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "source": "v197-known-research-order-control-20261105-v2.json",
+  "sourceSha256": "468560b231ac4d2399bd73f9c7f5a34119d41e56e7931edf3c592098b6acab17",
+  "teacherEndpointNativeEnvelopeAndRngExactlyMatchesExisting140": true,
+  "sameTechnology": true,
+  "sameIncome": true,
+  "score": [
+    60,
+    56
+  ],
+  "maskedModelValue": [
+    111,
+    108
+  ],
+  "conditionalNativeBlueRegionRewardValue": [
+    5.5,
+    1.5
+  ],
+  "conditionalBlueTraceReachabilityProved": false,
+  "newAutonomousRuns": 0
+}
