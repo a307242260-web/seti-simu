@@ -1,0 +1,9 @@
+{
+  "report": "reports/iteration/ai-search-v187-white-first2-20261105/c5ea5600.72bbd878.quick-400.action-log.html",
+  "blankLinesNormalized": 22,
+  "nonWhitespaceTokensUnchanged": true,
+  "reason": "existing report generator emits whitespace-only lines; private git diff --check rejected artifact before any commit; only this new report cleaned",
+  "policyRuns": 0,
+  "searchRuns": 0,
+  "runtimeChanges": 0
+}

@@ -1,0 +1,93 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "thisGoalTurnClassification": "progress: V187171unit/25Chrome/249coldsourceadmitted andpushed; unique15/44 autonomous all125inputs verified;86actual roots captured;33nativeactual72teachercontinuation proves reachable asset discrepancy",
+  "productionRuntime": "V187/V21",
+  "productionSourceCommit": "72bbd87897e2e403c808d5ed408cc1c0f9c895f0",
+  "actualRecord": "reports/research/c5ea5600.72bbd878.quick-400.json",
+  "actualScores": [
+    15,
+    44
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 5415,
+  "actualInputs": 125,
+  "actualWhiteSearches": 86,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 462.18091700000014,
+  "allActualDecisionGatesPassed": true,
+  "nativeReplayedInputsAfterOpening": 102,
+  "allFinalNativeStateSessionRngAndRoundCheckpointsVerified": true,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": false,
+  "round2MoneyAIvsTeacher": [
+    1,
+    4
+  ],
+  "round2EnergyAIvsTeacher": [
+    1,
+    1
+  ],
+  "round2ProbesAIvsTeacher": [
+    0,
+    1
+  ],
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "candidateOfficialRuns": 1,
+  "candidateAdmitted": true,
+  "capturedActualWhiteSearchRoots": 86,
+  "newSourceOrGameReruns": 0,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "nextActions": [
+    "Atactual72 compare retainingDLC37 with fixed companyswap to b48; trace conditional-sector opportunity across funded movement and scan preparation, distinguish greedy swap valuation from cross-turn purpose-composition defect.",
+    "Use current33native teachercontinuation and86actualroots, no repeatedautonomous/game or unchanged-source cold resampling. New runtime must pass expandedexactroot gate before any nextgame. PreserveV41baseline."
+  ],
+  "candidateRuntime": "V187/V21",
+  "candidateColdNamedCases": 300,
+  "candidateColdUniqueRoots": 249,
+  "candidateMaxNativeInputs": 252,
+  "candidateMaxRootAndSearchMs": 579.748917,
+  "candidateIndependentValueInputChecks": 46,
+  "candidateLegacyInputAuditErrorUnchanged": true,
+  "nativePortfolioControlInputs": 90,
+  "nativeToolPrefixInputs": 6,
+  "passChoiceNativeInputsIncludingFailedToolAttempt": 4,
+  "knownPassControlUpdatedToOrdinaryDLC4": true,
+  "candidateUnitPassed": 171,
+  "candidateFullFlowPassed": 1,
+  "fullRegressionMilliseconds": 280200,
+  "candidateRegressionLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-node-full-20261105-v2.log",
+  "candidateChromePassed": 25,
+  "candidateAdmissionScope": "171unit/1fullFlow/25Chrome/249unique cold roots;252inputs/579.748917ms;46current independent input paths pass, one unchanged legacy freeze error",
+  "bothRoundsSpecificTechnologyEqualAndSixIncomesAtLeastTeacher": true,
+  "round2EnergyIncomeAIvsTeacher": [
+    3,
+    2
+  ],
+  "round2PlacedDataAIvsTeacher": [
+    0,
+    2
+  ],
+  "round2ScoreSourceDelta": {
+    "alienTraceBlueScore": 3,
+    "blueTechScore": 0,
+    "initialScore": 0,
+    "orbitScore": 10,
+    "scanScore": 2,
+    "techBonusScore": 0,
+    "alienTracePinkScore": -5
+  },
+  "actual72FixedTeacherContinuationInputs": 33,
+  "actual72TeacherAssetsReproduced": true,
+  "currentEndpointValuesAIvsTeacher": [
+    93,
+    95.75
+  ],
+  "assetEquivalenceNotProven": true,
+  "nextDifferenceFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step072-20261105-v1.json"
+}
