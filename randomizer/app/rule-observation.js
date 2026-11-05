@@ -134,6 +134,11 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
   // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
   const cheap = options.cheap === true;
+  const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
+  const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
+  if(selfState&&!cheap)selfState.nextFinalMark=endGameScoring.describeNextFinalMark({...state,cardEffects,
+    getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},selfPlayer);
+
   return {
     schemaVersion: OBSERVATION_SCHEMA_VERSION,
     seed: seed ?? null,
@@ -199,11 +204,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
       },
       pending: decision,
     },
-    selfState: sanitizeSelfPlayer(
-      (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
-      turn,
-      state.pendingEffectOwnerIds || [],
-    ),
+    selfState,
     decision,
     probeRouteRequirements: state.probeRouteRequirements || null,
     dataAnalyzeRequirements: state.dataAnalyzeRequirements || null,

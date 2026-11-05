@@ -1,0 +1,13 @@
+{
+  "status": "rejected-single-cold-time-gate",
+  "candidateAdmitted": false,
+  "firstColdEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v206-cold-case-105-20261106-v1.json",
+  "firstColdSha256": "4caaf88d2d844ac7858754e9714f92205416169c4d6fbdd4944d23e7a7d22b29",
+  "milliseconds": 601.859083,
+  "nativeInputs": 207,
+  "complete": true,
+  "relatedComputerPrefixAndReadyAnalysisNativeTestsPassed": true,
+  "fullAdmissionRun": false,
+  "newAutonomousRuns": 0,
+  "reason": "601.859083ms exceeds600ms. Preserve this first failure; no same-source retry. The fully derived next-mark formula is eagerly computed for contested below-threshold roots where both future and pending-mark consumers must decline. Profile this read-only overhead, then change source before any new gate."
+}

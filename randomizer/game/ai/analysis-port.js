@@ -2163,6 +2163,15 @@
       if(sourceState.turn.roundNumber<4&&sourceOwner.reservedCards.some(card=>cardEffects.getCardModel(card)?.triggers?.some(t=>
         (t.event?.type==='researchTech'||t.event?.types?.includes('researchTech'))&&!card.cardEffectState?.consumedTriggerIds?.includes(t.id)))){postMainValueBounds.set(node,null);return null;}
       if(hasUnprovedProbeCapital(sourceState)||sourceState.turn.roundNumber<4&&(stateValue.hasKnownSectorTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)])||industryCatalog.getPlayerIndustryDefinition(sourceOwner)?.activeAbilityId==='deepspace_swap_cards'&&stateValue.hasKnownMovementTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)]))){postMainValueBounds.set(node,null);return null;}
+      // The legacy ceiling has no allowance for research earning a new mark.
+      // In an uncontested round a later funded pick may unlock that opportunity;
+      // keep the native continuation until this broader ceiling is proved.
+      if(sourceState.turn.roundNumber<4){
+        const active=sourceState.turn.activePlayerIds,passed=sourceState.passingPlayerIds||sourceState.turn.passedPlayerIds||[];
+        const mark=node.observation.selfState?.nextFinalMark;
+        if(Array.isArray(active)&&active.length>0&&active.filter(id=>id!==seatId).every(id=>passed.includes(id))
+          &&mark?.valuationSafe&&mark.options.some(option=>option.currentValue>0)){postMainValueBounds.set(node,null);return null;}
+      }
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.
       const policyNode=resourcePlanning?{status:node.status,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;

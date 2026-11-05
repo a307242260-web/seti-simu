@@ -19,7 +19,7 @@ try{
  for(const row of native.rows){const s=control(row.spec),p=s.players.players.find(p=>p.id===seatId),unchanged=JSON.stringify(s),facts={...probe.factsFromState(s,p),supply:s.tech,researchCost:tech.getResearchPublicityCost(p),computerSlots:data.listComputerPlacedTokens(p).map(t=>t.placementSlot),reservedCards:p.reservedCards,analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST},capital=values.purposeCapital(facts),q=capital.researchIncomePlan;
   assert.equal(demand.planningCapital(s,p),capital.total);assert.equal(JSON.stringify(s),unchanged);
   const e={...w.freeFirstTurn.envelope,committedState:JSON.stringify(s)},restored=c.lifecycle.restore(e);assert(restored.ok,JSON.stringify(restored));const original=c.lifecycle.save().envelope,view=c.projection({role:'player',playerId:seatId}).state,before=values.evaluateStateValue(view,seatId);
-  assert.equal(before.components.researchIncomePotential,q.value);assert.equal(values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>before.components[k])),capital.total);
+  assert.equal(before.components.researchIncomePotential,q.value);assert.equal(values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>before.components[k])),capital.total);
   const nativeGains=[];
   // Historical values belong to V9. Retain every physical plan, including
   // negative payoffs, and revalue its actual native endpoint under this model.

@@ -20,7 +20,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v28";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v32";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -128,6 +128,19 @@
     return supported;
   }
   const NO_RESEARCH_MARKS = Object.freeze([]);
+  function newResearchMark(facts,funding,trigger) {
+    const opportunity=facts.nextFinalMark,score=funding?.resources?.score;
+    if(!(trigger.available||trigger.reason==='no-active-research-trigger')||!facts.uncontestedRound||facts.terminal||facts.passing||facts.round>=4||facts.pendingNativeEffects
+      ||!Array.isArray(facts.pendingCardTriggers)||facts.pendingCardTriggers.length||!opportunity?.valuationSafe
+      ||opportunity.playerId!==facts.player.id||score!==facts.player.score||!Number.isFinite(score)||opportunity.currentScore>score||!(score<opportunity.threshold))return null;
+    const needed=[1,2,3,4].filter(slot=>!facts.computerSlots?.includes(slot)).length;
+    if(!facts.computerSlots?.includes(4)&&!(facts.player.availableData<needed))return null;
+    const scores=Object.fromEntries(Object.entries(facts.supply?.stacks||{}).filter(([id,stack])=>!facts.player.techState.ownedTiles[id]&&stack.remaining>0).map(([id,stack])=>[id,
+      (stack.firstTakeClaimedBy==null?techCatalog.FIRST_TAKE_TYPE_SCORE:0)+(!stack.bonusHidden?techCatalog.BONUS_EFFECTS[stack.bonusId]?.score||0:0)]));
+    const currentValue=Math.max(0,...opportunity.options.map(option=>option.currentValue));
+    return score+2*Math.max(0,...Object.values(scores))>=opportunity.threshold&&currentValue>0
+      ?{currentScore:score,threshold:opportunity.threshold,currentValue,scoreGains:scores,availableData:funding.resources.availableData,neededData:needed,incomeUsed:facts.computerSlots.includes(4)}:null;
+  }
   function researchFunding(facts, funding, publicity = funding?.resources?.publicity) {
     const board=facts.board?.finalScoring,mark=board?.tiles?.d?.marks?.find(m=>m.playerId===facts.player.id);
     let result=funding;
@@ -135,19 +148,23 @@
       result={...funding,researchMarks:[{formulaId,multiplier:endScoring.getSlotMultiplier(formulaId,mark.slotIndex)}]};
     }else if(funding?.researchMarks?.length)result={...funding,researchMarks:NO_RESEARCH_MARKS};
     const trigger=researchTriggers.describe(facts,funding,publicity);
+    result={...result,newFinalMark:newResearchMark(facts,funding,trigger)};
     return trigger.available?{...result,researchTriggers:trigger}:result?.researchTriggers?{...result,researchTriggers:null}:result;
   }
   function researchPurposeGains(techState, funding, weights, paidPublicity=0) {
-    const marks=funding?.researchMarks;
+    const marks=funding?.researchMarks||[],opportunity=funding?.newFinalMark;
     const triggered=researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
-    if(!marks?.length)return triggered;
+    if(!marks.length&&!opportunity)return triggered;
     const value=tech=>marks.reduce((n,m)=>n+endScoring.getFormulaBaseValue(m.formulaId,{techState:tech},{})*m.multiplier,0);
     const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),current=value(techState),quotes=new Map();
-    return(id,prior=null)=>{
-      const key=prior?`${prior}:${id}`:id;
+    const newMark=ids=>opportunity&&(opportunity.incomeUsed||opportunity.availableData+triggered.outcome(ids).dataGain<opportunity.neededData)
+      &&opportunity.currentScore+ids.reduce((n,id)=>n+(opportunity.scoreGains[id]||0),0)>=opportunity.threshold?opportunity.currentValue:0;
+    return(id,prior=null,currentFunded=true)=>{
+      const key=JSON.stringify([prior,id,currentFunded]);
       if(quotes.has(key))return quotes.get(key);
       const before=prior?add(techState,prior):techState;
-      const gain=arithmetic.sum([value(add(before,id))-(prior?value(before):current),triggered(id,prior)],weights);
+      const gain=arithmetic.sum([value(add(before,id))-(prior?value(before):current),triggered(id,prior),
+        currentFunded?newMark(prior?[prior,id]:[id])-newMark(prior?[prior]:[]):0],weights);
       quotes.set(key,gain);return gain;
     };
   }
@@ -183,9 +200,13 @@
     // Only already-known currency income can advance the payment round. No
     // guessed blind card, future reward or fabricated successor funds the card.
     if(!windows.length)return[];
-    return targets.filter(t => types.includes(t.type)).map(t => {
-      const baseValue=Math.max(...windows.map(period => t.capabilityByRound[period.round] + t.first + t.bonusValue - period.payment - weights.handSize));
-      return {id:t.id,baseValue,value:Math.max(0,baseValue+markerGain(t.id))};
+    return targets.filter(t => types.includes(t.type)).flatMap(t => {
+      const choices=windows.map(period=>{
+        const baseValue=t.capabilityByRound[period.round]+t.first+t.bonusValue-period.payment-weights.handSize;
+        const currentFunded=period.round===round&&!(funding?.startingIncome||0);
+        return{id:t.id,baseValue,currentFunded,value:Math.max(0,baseValue+markerGain(t.id,null,currentFunded))};
+      }).sort((a,b)=>b.value-a.value||b.baseValue-a.baseValue);
+      return choices;
     });
   }
   function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS, funding = null) {
@@ -195,7 +216,8 @@
   function handOptions(hand, targets, round, weights, funding = null, markerGain = () => 0) {
     const byTarget = new Map();
     for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights, funding, markerGain)) {
-      if(!byTarget.has(option.id)||option.baseValue>byTarget.get(option.id).baseValue)byTarget.set(option.id,option);
+      const key=JSON.stringify([option.id,option.currentFunded]);
+      if(!byTarget.has(key)||option.value>byTarget.get(key).value)byTarget.set(key,option);
     }
     return [...byTarget.values()];
   }
@@ -217,7 +239,7 @@
     const currentHand = Math.max(0, ...held.map(o => o.value));
     const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost):markerGain;
     return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue + paidGain(t.id) - researchCost * weights.publicity
-      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id))) - currentHand));
+      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id,o.currentFunded))) - currentHand));
   }
   function researchCapitalCeiling({ techState, supply, round, researchCost }, weights = DEFAULT_WEIGHTS) {
     if (round >= 4) return 0;
@@ -266,7 +288,8 @@
     const paid=researchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
     const mission=probeCapital.quote({...facts,investment,
       dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights)},weights).value;
-    return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,total:arithmetic.sum([held,paid,mission,computer],weights)};
+    const finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);
+    return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,finalMarkPotential,total:arithmetic.sum([held,paid,mission,computer,finalMarkPotential],weights)};
   }
   function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
@@ -306,7 +329,7 @@
     const currentTotal = number(player.finalScore, "player.finalScore");
     if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal, purposePreparationDebt:0,
       components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
-        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0, analysisPotential: 0, researchIncomePotential: 0, dataPotential: 0 }), terminal: true });
+        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0, analysisPotential: 0, researchIncomePotential: 0, dataPotential: 0, finalMarkPotential:0 }), terminal: true });
 
     const weights = valueWeights(options);
     const round = number(observation.publicState.roundNumber, "roundNumber");
@@ -329,7 +352,7 @@
     const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
       handPotential:capital.handPotential,researchPotential:capital.researchPotential,
-      probePotential:capital.probePotential,analysisPotential:capital.analysisPotential,researchIncomePotential:capital.researchIncomePotential,dataPotential:capital.dataPotential });
+      probePotential:capital.probePotential,analysisPotential:capital.analysisPotential,researchIncomePotential:capital.researchIncomePotential,dataPotential:capital.dataPotential,finalMarkPotential:capital.finalMarkPotential });
     const total = arithmetic.sum(Object.values(components),weights);
     number(total, "total");
     return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false,
@@ -343,7 +366,7 @@
     const details = observation => {
       const result = evaluateStateValue(observation, seatId, { weights }), c = result.components;
       return Object.freeze({ value: result.total, purposePreparationDebt:result.purposePreparationDebt, unrealizedPurposeValue: arithmetic.sum([
-        c.handPotential,c.researchPotential,c.probePotential,c.analysisPotential,c.researchIncomePotential,c.dataPotential],weights) });
+        c.handPotential,c.researchPotential,c.probePotential,c.analysisPotential,c.researchIncomePotential,c.dataPotential,c.finalMarkPotential],weights) });
     };
     const evaluate = observation => details(observation).value;
     Object.defineProperties(evaluate, {

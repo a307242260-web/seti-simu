@@ -1,0 +1,4 @@
+{"knownSectorAndAnalysis":"passed","nativeInputs":13,"stablePrefixes":5,"moneyControls":84,"value":82.5,"sectorCapital":21,"preparedAnalysisCapital":4.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.52s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

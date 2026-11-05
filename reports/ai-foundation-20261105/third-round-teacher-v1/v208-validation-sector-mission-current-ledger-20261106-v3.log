@@ -1,0 +1,4 @@
+{"sectorMissionComposition":"passed","nativeSourceInputs":21,"newNativeInputs":0,"sourcePrefixes":5,"value":94.08333333333333,"sectorCapital":14,"moneyControls":84,"sharedWallet":true,"noRefillOrSameTokenReuse":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.30s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

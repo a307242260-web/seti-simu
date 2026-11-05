@@ -852,6 +852,24 @@
     return jiuzheModule.shouldApplyThreatPenalty(context.aliens, player, allPlayers);
   }
 
+  // Current public scoring facts only; this does not award or allocate a mark.
+  function describeNextFinalMark(context = {}, player = context.currentPlayer) {
+    const board=context.finalScoring,playerId=getPlayerId(player);
+    if(!playerId||!Array.isArray(board?.thresholds)||!board.tiles)return null;
+    const marks=Object.values(board.tiles).flatMap(tile=>tile.marks||[]),claimed=marks.filter(m=>m.playerId===playerId);
+    const threshold=[...board.thresholds].sort((a,b)=>a-b).find(t=>!claimed.some(m=>Number(m.threshold)===Number(t)));
+    if(threshold==null)return null;
+    const candidates=Object.entries(board.tiles).filter(([,tile])=>!tile.marks?.some(m=>m.playerId===playerId)).map(([tileId,tile])=>{
+      const slotIndex=!tile.marks?.some(m=>Number(m.slotIndex)===1)?1:!tile.marks?.some(m=>Number(m.slotIndex)===2)?2:3;
+      const formulaId=getFormulaId(tileId,board.tileVariants?.[tileId]),multiplier=getSlotMultiplier(formulaId,slotIndex);
+      const baseValue=getFormulaBaseValue(formulaId,player,context,{getCardTypeCode:context.getCardTypeCode});
+      return{tileId,formulaId,slotIndex,multiplier,currentValue:baseValue*multiplier};
+    });
+    const coupled=(player.reservedCards||[]).some(card=>resolveCardEndGameRule(card,context.cardEffects)?.kind==='unmarkedFinalRightmost')
+      ||shouldApplyJiuzheThreatPenalty(player,context);
+    return{playerId,currentScore:getBaseScore(player),threshold:Number(threshold),valuationSafe:!coupled,options:candidates};
+  }
+
   function computePlayerFinalScore(context = {}, player = context.currentPlayer) {
     const baseScore = getBaseScore(player);
     const tileResult = computePlayerTileScore(context.finalScoring, player, context);
@@ -922,5 +940,6 @@
     computePlayerRunezuSymbolScore,
     shouldApplyJiuzheThreatPenalty,
     computePlayerFinalScore,
+    describeNextFinalMark,
   });
 });

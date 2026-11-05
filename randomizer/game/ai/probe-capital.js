@@ -16,10 +16,11 @@
     common ? require("../industry/catalog") : root.SetiIndustryCatalog,
     common ? require("./value-arithmetic") : root.SetiValueArithmetic,
     common ? require("../cards/effects") : root.SetiCardEffects,
-    common ? require("../aliens/amiba") : root.SetiAlienAmiba);
+    common ? require("../aliens/amiba") : root.SetiAlienAmiba,
+    common ? require("../end-game-scoring") : root.SetiEndGameScoring);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic, cardEffects, amiba) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic, cardEffects, amiba, endScoring) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -282,10 +283,28 @@
     return choices[0] || null;
   }
 
+  function pendingFinalMarkCapital(facts) {
+    const mark=facts.nextFinalMark;
+    if(facts.terminal||!mark?.valuationSafe||mark.playerId!==facts.player.id||!Number.isFinite(facts.player.score)||facts.player.score<mark.threshold)return 0;
+    const placed=facts.computerSlots?.length||0;
+    const incomeCard=placed<4&&facts.player.availableData>=4-placed?facts.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
+      const value=c=>Object.entries(cards.getIncomeGainForCard(c)).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
+      return value(b)-value(a)||(a.id<b.id?-1:a.id>b.id?1:0);
+    })[0]:null;
+    const projected={income:{...facts.player.income},companyBaseIncome:facts.player.companyBaseIncome};
+    for(const[k,v]of Object.entries(incomeCard?cards.getIncomeGainForCard(incomeCard):{}))projected.income[k]=(projected.income[k]||0)+v;
+    const options=mark.options.map(option=>({...option,forecast:incomeCard&&['a1','a2'].includes(option.formulaId)
+      ?endScoring.getFormulaBaseValue(option.formulaId,projected,{})*option.multiplier:option.currentValue}))
+      .sort((a,b)=>b.forecast-a.forecast||b.currentValue-a.currentValue);
+    return Math.max(0,options[0]?.currentValue||0);
+  }
+
   function factsFromObservation(observation, seatId) {
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
     return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
+      nextFinalMark:observation.selfState.nextFinalMark,
+      uncontestedRound:Array.isArray(pub.activePlayerIds)&&pub.activePlayerIds.length>0&&pub.activePlayerIds.filter(id=>id!==seatId).every(id=>pub.passingPlayerIds.includes(id)),
       reservedCards: observation.selfState.reservedCards, pendingCardTriggers: observation.selfState.pendingCardTriggers,
       pendingHandCardTriggers: observation.selfState.pendingHandCardTriggers,
       pendingNativeEffects: observation.selfState.pendingNativeEffects,
@@ -311,7 +330,9 @@
     const blueSlots=Object.entries(player.techState?.blueBoardSlots||{}).filter(([id])=>player.techState.ownedTiles[id]&&!player.techState.disabledTiles[id]).map(([tileId,slot])=>({tileId,slot:Number(slot),
       occupied:usedBlue.some(t=>Number(t.blueSlot)===Number(slot)),unlocked:computerSlots.includes(data.getRequiredComputerSlotForBlueBonus(slot))})).sort((a,b)=>a.slot-b.slot);
     const unknown=state.cards?.unknownPublicSlotIndices,publicCards=unknown?.length?state.cards.publicCards.map((card,index)=>card||(unknown.includes(index)?{hidden:true,faceUp:false}:null)):state.cards?.publicCards;
-    return { ...researchFactsFromState(state,player),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
+    const nextFinalMark=endScoring.describeNextFinalMark({...state,cardEffects,getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},player);
+    const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
+    return { ...researchFactsFromState(state,player),nextFinalMark,uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income,companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player) },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem, finalScoring: state.finalScoring,
         publicCards, ordinaryDrawCount:Array.isArray(state.cards?.drawPileCardIds)?state.cards.drawPileCardIds.length:null, aliens: { slots } }, hand: player.hand,
       companyState: blueSlots.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))?{ abilityId: industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId ?? null, roundMarkRound: Number(player.industryRoundMarkRound) || 0, roundMarkTurn: Number(player.industryRoundMarkTurn) || 0 }:null,
@@ -323,5 +344,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ pendingFinalMarkCapital,ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

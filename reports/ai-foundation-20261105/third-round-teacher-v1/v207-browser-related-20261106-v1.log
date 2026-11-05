@@ -1,0 +1,9 @@
+PASS production-browser-full-parity-search http://127.0.0.1:57430/randomizer/index.html?agent=search
+PASS production-ready-amiba-analysis http://127.0.0.1:57430/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:57430/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:57430/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:57430/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:57430/randomizer/index.html
+PASS production-ready-analysis-capital http://127.0.0.1:57430/randomizer/index.html
+PASS production-computer-preinvestment http://127.0.0.1:57430/randomizer/index.html
+SUMMARY browserSmoke passed=8 failed=0 total=8

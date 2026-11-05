@@ -1,0 +1,10 @@
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":5.5,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"rootAndRngUnchanged":true}
+{"knownSectorAndAnalysis":"passed","nativeInputs":13,"stablePrefixes":5,"moneyControls":84,"value":82.5,"sectorCapital":21,"preparedAnalysisCapital":4.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=6 failed=0 total=6 time=2.26s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=3

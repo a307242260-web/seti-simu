@@ -34,8 +34,9 @@ try{
  for(const[key,total]of totals){const [company,credits,energy,stock,publicity]=JSON.parse(key);for(const [c,e]of [[credits+1,energy],[credits,energy+1]]){const more=totals.get(JSON.stringify([company,c,e,stock,publicity]));if(more!==undefined)assert(more>=total,JSON.stringify({company,credits,energy,stock,publicity,total,more,c,e}));}}
  // Native post-main upper bounds must cover activating analysis through a
  // real blue-slot6 prerequisite, while rejecting imaginary computer6 goals.
- for(const ownedMark of [true,false])for(const kind of ['not-reachable','already-ready','blue-slot6']){
+ for(const contested of [false,true])for(const ownedMark of [true,false])for(const kind of ['not-reachable','already-ready','blue-slot6']){
   const e=structuredClone(w.rows.find(r=>r.name===(kind==='not-reachable'?'analyze-first':'research-first')).afterFirst.envelope),s=JSON.parse(e.committedState),p=s.players.players.find(p=>p.id==='player-white');s.pieces.rockets=[];s.pieces.activeRocketId=null;p.mainActionCompleted=true;p.resources.score=10;
+  if(contested)s.turn.passedPlayerIds=[];
   if(kind==='blue-slot6'){
    p.techState.blueBoardSlots.blue1=4;
    const last=p.dataState.placedTokens.find(t=>t.placementKind==='computer'&&t.placementSlot===6);assert(last);
@@ -46,9 +47,11 @@ try{
   if(!ownedMark)s.finalScoring.tiles.d.marks=s.finalScoring.tiles.d.marks.filter(m=>m.playerId!==p.id);
   e.committedState=JSON.stringify(s);const restored=c.lifecycle.restore(e);assert(restored.ok,JSON.stringify(restored));const original=c.lifecycle.save().envelope,port=createAnalysisPort({composition:c,seatId:'player-white',maxCacheEntries:0});
   try{port.setResourcePlanning(true);port.setCardPickPlanning(true);const root=port.openRoot(),bound=port.postMainValueBound(root);if(ownedMark)assert.equal(bound,null,'an owned D mark requires native continuation because the old bound omits research growth');
-   else {assert(bound,'typed post-main bound must cover this below-threshold native control: '+kind);assert.equal(bound.analysisReachableByFixedDataPolicy,kind!=='not-reachable');assert.equal(bound.maximumAnalysisLinear,kind==='not-reachable'?0:kind==='blue-slot6'?13:11);}
+   else if(!contested)assert.equal(bound,null,'uncontested new-mark opportunity keeps native continuation until the broader bound is proved');
+   else {assert(bound,'typed post-main bound still covers the contested below-threshold control: '+kind);assert.equal(bound.analysisReachableByFixedDataPolicy,kind!=='not-reachable');assert.equal(bound.maximumAnalysisLinear,kind==='not-reachable'?0:kind==='blue-slot6'?13:11);}
    const evaluate=values.createStateValueEvaluator('player-white'),result=searchDecision({port,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(result.complete,result.stopReason);if(bound)assert(result.value<=evaluate(root.observation)+bound.maximumValueIncrease);
-   if(kind==='blue-slot6'){
+   if(contested)s.turn.passedPlayerIds=[];
+  if(kind==='blue-slot6'){
     assert(values.evaluateStateValue(root.observation,'player-white').components.analysisPotential>0,'existing pool data must already fund the last computer prerequisite');const place=root.legalActions.find(a=>a.family==='place_data');assert(place);const pending=port.expand(root,place.actionId),computer=pending.legalActions.find(a=>a.target?.target==='computer');assert(computer);const actual=port.expand(pending,computer.actionId),value=values.evaluateStateValue(port.valueObservation(actual),'player-white');assert(value.components.analysisPotential>0);assert.equal(value.total,evaluate(root.observation),'native last-slot preparation must cash its already-priced analysis, without spending the remaining data on an inferior blue bonus');
    }
    assert.deepEqual(c.lifecycle.save().envelope,original);

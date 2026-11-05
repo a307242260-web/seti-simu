@@ -1,0 +1,20 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/randomizer/game/ai/computer-prefix-plan.test.js:43
+  assert(apply(c.inputPort.enumerateActions({}).find(a=>a.family==='end_turn')).ok);const d=c.inspect().session.decision;assert(d.choices.every(a=>a.target.choiceId.startsWith('final:')));
+                                                                                                               ^
+
+TypeError: Cannot read properties of null (reading 'decision')
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/randomizer/game/ai/computer-prefix-plan.test.js:43:112)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=0.36s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+FAIL randomizer/game/ai/computer-prefix-plan.test.js status=1 signal=none

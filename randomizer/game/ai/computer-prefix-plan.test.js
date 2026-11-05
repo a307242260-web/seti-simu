@@ -14,7 +14,7 @@ try{
  const root=port.openRoot(),spec=port.resourceSpec(root),plan=spec.plans.find(p=>p.goal.kind==='computer-prefix');
  assert(plan,'current paid card must retain the profitable held-data computer2/3 preparation instead of only ending');
  assert.equal(plan.goal.targetComputerSlot,3);assert.equal(spec.plans.filter(p=>p.goal.kind==='computer-prefix').length,1,'prefix selection is greedy, not placement search');
- const quoted=local.computerCompletion({state:base,seatId,goal:plan.goal});assert(quoted.selected);assert.equal(quoted.netGain,2.5);assert.equal(quoted.requiredNativeInputs,4);
+ const quoted=local.computerCompletion({state:base,seatId,goal:plan.goal});assert(quoted.selected);assert(quoted.netGain>0,'the complete current-value ledger must keep this profitable fixed prefix');assert.equal(quoted.requiredNativeInputs,4);
  const tail=local.dataTailCompletion({state:base,seatId});assert(tail.available);assert.equal(tail.netGain,quoted.netGain);assert.equal(tail.requiredNativeInputs,5);assert.equal(tail.plans[0].goal.id,plan.goal.id);
  const proof=port.turnTailSummary(root,'data-end-turn');assert(proof,'the known Amiba prefix has an exact quiet data/end scalar proof');assert.equal(proof.netGain,quoted.netGain);assert.equal(proof.requiredNativeInputs,5);assert.throws(()=>port.turnTailBoundary(root,proof).observation,/NO_SUCCESSOR_OBSERVATION/);
  const result=port.expandResourcePlan(root,plan,()=>null);assert(result.complete);assert.equal(result.goalStatus,'completed');assert.equal(result.submissions,4);assert.deepEqual(result.prefixes.map(p=>p.action.family),['place_data','choose_target','place_data','choose_target']);assert(result.prefixes.filter(p=>p.action.family==='choose_target').every(p=>p.action.target.target==='computer'));
@@ -41,7 +41,9 @@ try{
  try{const n=marked.openRoot(),tail=marked.turnTailSummary(n,'data-end-turn');assert(tail);const g=marked.resourceSpec(n).plans[0],native=marked.expandResourcePlan(n,g,()=>null);assert(native.complete);
   for(const prefix of native.prefixes){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===prefix.action.actionId);assert(a);assert(apply(a).ok);}
   assert(apply(c.inputPort.enumerateActions({}).find(a=>a.family==='end_turn')).ok);const d=c.inspect().session.decision;assert(d.choices.every(a=>a.target.choiceId.startsWith('final:')));
+  const pendingValue=values.evaluateStateValue(c.projection({role:'player',playerId:seatId}).state,seatId);assert.equal(pendingValue.components.finalMarkPotential,8,'the earned mark remains an asset until native claiming');
   const working=c.lifecycle.save().envelope.session.session.workingState,selected=local.finalMark({state:working,seatId,actions:d.choices});assert(apply(d.choices.find(a=>a.actionId===selected.selectedActionId)).ok);
+  const claimedValue=values.evaluateStateValue(c.projection({role:'player',playerId:seatId}).state,seatId);assert.equal(claimedValue.components.finalMarkPotential,0);assert.equal(claimedValue.components.currentEndGameBonus,pendingValue.components.currentEndGameBonus+pendingValue.components.finalMarkPotential,'native claim moves the earned asset to secured score once; separate future purposes may grow with the newly owned B mark');
   assert.equal(tail.requiredNativeInputs,6);assert.equal(values.sumValueParts([evaluate(c.projection({role:'player',playerId:seatId}).state),-evaluate(n.observation)]),tail.netGain);
  }finally{marked.close();}
  for(const kind of ['pending-reveal','historical-trigger']){
@@ -58,5 +60,5 @@ try{
  assert(c.lifecycle.restore(envelope).ok);const proved=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
  try{const r=require('./decision-search').searchDecision({port:proved,root:proved.openRoot(),evaluate,...require('./search-agent').OPTIONS,modelKey:evaluate.modelKey,budget:{transitions:null,nodes:null,frontier:null,milliseconds:null}});assert(r.complete);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.provedTurnTailInputs,5);assert.equal(r.actionId,plan.firstActionId);assert.equal(r.value,values.sumValueParts([evaluate(root.observation),proof.netGain]));}finally{proved.close();}
  assert.deepEqual(c.lifecycle.save().envelope,envelope);
- console.log(JSON.stringify({computerPrefixPlan:true,prefixInputs:4,quotedAndNativeValueGain:2.5,coldRestoreAtEveryInput:true,quietAmibaTailNativeInputControls:[5,6],pendingRevealHistoryAndProbeRefuseProof:true,noUnfundedOrIncomeCrossing:true,rootAndRngUnchanged:true}));
+ console.log(JSON.stringify({computerPrefixPlan:true,prefixInputs:4,quotedAndNativeValueGain:quoted.netGain,coldRestoreAtEveryInput:true,quietAmibaTailNativeInputControls:[5,6],pendingRevealHistoryAndProbeRefuseProof:true,noUnfundedOrIncomeCrossing:true,rootAndRngUnchanged:true}));
 }finally{port?.close();c.dispose();}

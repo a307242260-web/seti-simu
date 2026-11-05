@@ -34,7 +34,7 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  // A memoized purpose quote must agree with the independent calculation
  // after in-place wallet, known income and pass-phase changes.
  const capitalState=JSON.parse(missionRoot.coreState.committedState),capitalOwner=capitalState.players.players.find(p=>p.id===seatId);
- const directCapital=()=>{const v=values.evaluateStateValue(require('../../app/rule-observation').buildRuleObservation(capitalState,capitalState.meta.seed,seatId),seatId);return values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>v.components[k]));};
+ const directCapital=()=>{const v=values.evaluateStateValue(require('../../app/rule-observation').buildRuleObservation(capitalState,capitalState.meta.seed,seatId),seatId);return values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>v.components[k]));};
  let memoControls=0;for(const passed of [false,true])for(const credits of [0,2,3,5])for(const energy of [0,1,2,6]){
   capitalOwner.resources.credits=credits;capitalOwner.resources.energy=energy;capitalState.passingPlayerIds=passed?[seatId]:[];
   for(const income of [0,2]){capitalOwner.income.credits=income;const expected=directCapital();assert.equal(demand.planningCapital(capitalState,capitalOwner),expected);assert.equal(demand.planningCapital(capitalState,capitalOwner),expected);memoControls++;}

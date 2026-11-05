@@ -1,0 +1,17 @@
+{
+  "status": "runtime-cold-gates-complete-validation-fixture-revision-required",
+  "sourceManifestSha256": "5fa5ffd082a5098d0b55d054dabdb13b912d74e8689dbcd7531765df349a7c56",
+  "runtimeChangedAfterColdFreeze": false,
+  "namedCases": 407,
+  "uniqueNativeRoots": 322,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 594.847334,
+  "browserPassedBeforeOldScalarFailure": 9,
+  "failedBrowser": "production-sector-mission-composition old87.0833 vs current94.0833",
+  "inputAuditFailures": [
+    "existing legacy aomomo frozen-object",
+    "known-movement-tool old87.0833 vs current94.0833",
+    "sector-mission old87.0833 vs current94.0833"
+  ],
+  "reason": "Current native purpose ledger includes an independently earned-mark7; fixtures with archived RuleObservations predate that derived input. Reproject exact native checkpoints, preserve original known-card mask, and verify strict value continuity. Production runtime hashes must remain exact; only named validation files may change. No new game."
+}

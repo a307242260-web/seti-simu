@@ -1,0 +1,24 @@
+{
+  "status": "rejected-full-regression",
+  "candidateAdmitted": false,
+  "sourceSnapshot": "source-files",
+  "nativeColdRoots": 322,
+  "allClosed": true,
+  "maxMilliseconds": 582.094167,
+  "maxNativeInputs": 256,
+  "unitPassed": 179,
+  "unitFailed": 1,
+  "fullFlowPassed": 1,
+  "browserRelatedPassed": 8,
+  "independentSnapshotTestsPassed": 14,
+  "newAutonomousRuns": 0,
+  "failure": "sector-card-capital.test native stable prefix82.5 versus old75.5. Real earned mark7 appears after prepared analysis; the pure future-wallet portfolio still used original native mark score and missed that pending asset. Fix shared future score ledger, not the native score or arbitrary teacher bonus. Revisit lazy descriptor omission where future known purposes can cross a threshold.",
+  "inputAudit": {
+    "passed": 50,
+    "failed": 2,
+    "failures": [
+      "existing aomomo frozen-object legacy path",
+      "new native known-sector prefix82.5 vs old75.5 ledger omission"
+    ]
+  }
+}

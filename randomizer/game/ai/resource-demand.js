@@ -112,7 +112,7 @@
   }
   function heldAndResearchCapital(state,p){
     const passing=(state.passingPlayerIds||state.turn.passedPlayerIds).includes(p.id)||p.passCompletionPending===true;
-    const funding=stateValue.researchFunding({...probeCapital.researchFactsFromState(state,p),player:p,board:{finalScoring:state.finalScoring}},
+    const funding=stateValue.researchFunding(valueFacts(state,p),
       {resources:p.resources,income:p.income,startingIncome:Number(passing)});
     return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber+Number(passing),stateValue.DEFAULT_WEIGHTS,funding)
       +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,

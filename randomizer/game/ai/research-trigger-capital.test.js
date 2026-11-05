@@ -18,6 +18,10 @@ try{
  assert.equal(gains('blue3','purple2'),4,'second color must see the4score symbol moved from red to blue');
  assert.equal(gains('purple3','purple2'),0,'one color rule is consumed once across both future research purposes');
  assert.equal(gains('orange2','purple2'),1);
+ assert.deepEqual(gains.outcome(['purple2']),{value:4,dataGain:0});
+ const dataLedger=trigger.gains(context,{...values.DEFAULT_WEIGHTS,availableData:2}).outcome(['orange2']);assert.deepEqual(dataLedger,{value:2,dataGain:1},'same public symbol ledger exposes actual clamped data, not an invented next state');
+ assert(Object.isFrozen(dataLedger));assert.deepEqual(trigger.gains(context,values.DEFAULT_WEIGHTS).outcome(['orange2']),{value:1,dataGain:0},'weight-specific choice and memo key preserve the data ledger');
+
  const capped=structuredClone(context);capped.wallet.publicity=require('../players').RESOURCE_LIMITS.publicity;assert.equal(trigger.gains(capped,values.DEFAULT_WEIGHTS)('blue3'),0,'same symbol at the publicity cap is a distinct complete scalar input');
  assert.equal(trigger.gains(capped,values.DEFAULT_WEIGHTS,1)('blue3'),0.5,'paid publicity changes the cap before the same trigger');
  assert.equal(trigger.gains(structuredClone(context),{...values.DEFAULT_WEIGHTS,handSize:2})('orange2'),2,'unknown-card weight participates in the scalar memo key');
@@ -50,7 +54,7 @@ try{
  const marked=values.researchFunding(nativeFacts,{resources:p.resources,income:p.income,startingIncome:0});
  assert.equal(values.researchCapital({...single,funding:marked}),10.5,'same paid research earns the already-owned marker growth6.5 plus one known4score trigger');
  assert.equal(values.researchCapital({...single,funding:{...marked,researchTriggers:null}}),6.5);
- const full=values.evaluateStateValue(before,seatId),capital=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>full.components[k]));assert.equal(demand.planningCapital(state,p),capital);
+ const full=values.evaluateStateValue(before,seatId),capital=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>full.components[k]));assert.equal(demand.planningCapital(state,p),capital);
  assert(c.lifecycle.restore(original).ok);const launch=c.inputPort.enumerateActions({}).find(a=>a.family==='launch');assert(launch);assert(c.inputPort.submitAction(launch).ok);
  const launched=c.lifecycle.save().envelope;assert(Number.isFinite(values.evaluateStateValue(observe(),seatId).total),'a real launch with active research triggers must support the mission wallet');assert.deepEqual(c.lifecycle.save().envelope,launched);
  assert(c.lifecycle.restore(read(folder+'teacher-before-input-136-20261105-v1.checkpoint.json').coreState.compositionEnvelope).ok);

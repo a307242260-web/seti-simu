@@ -40,9 +40,11 @@
   if(Object.values(wallet).some(v=>!Number.isFinite(v)))throw TypeError('RESEARCH_TRIGGER_WALLET_INVALID');
   return {available:true,rules,symbols:facts.researchSymbols,wallet,reason:'known-once-only-research-symbols'};
  }
+ const noOutcome=Object.freeze({value:0,dataGain:0});
+ const noGain=()=>0;Object.defineProperty(noGain,'outcome',{value:()=>noOutcome});Object.freeze(noGain);
  function gains(context,weights,paidPublicity=0){
-  if(!context?.available)return()=>0;
-  // Only complete pure trigger inputs share scalar totals, never native nodes.
+  if(!context?.available)return noGain;
+  // Only complete pure trigger inputs share numeric reward ledgers, never native nodes.
   const signature=JSON.stringify([context,weights,paidPublicity]);
   let totals=gainTotals.get(signature);
   if(!totals){
@@ -57,7 +59,7 @@
   }
   function total(types){
    const key=types.join(':');if(totals.has(key))return totals.get(key);
-   if(!context.rules.some(rule=>types.includes(rule.techType))){totals.set(key,0);return 0;}
+   if(!context.rules.some(rule=>types.includes(rule.techType))){totals.set(key,noOutcome);return noOutcome;}
    const alien={amiba:structuredClone(context.symbols)},wallet={...context.wallet,publicity:Math.max(0,context.wallet.publicity-paidPublicity)},used=new Set();let value=0;
    for(const type of types)for(const rule of context.rules.filter(r=>r.techType===type)){
     const id=rule.cardInstanceId+':'+rule.ruleId;if(used.has(id))continue;used.add(id);
@@ -67,12 +69,13 @@
     const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId);if(!resolved.ok)throw Error('RESEARCH_TRIGGER_SYMBOL_QUERY_FAILED');
     value=arithmetic.sum([value,apply(wallet,resolved.reward)],weights);
    }
-   totals.set(key,value);return value;
+   const outcome=Object.freeze({value,dataGain:wallet.availableData-context.wallet.availableData});totals.set(key,outcome);return outcome;
   }
-  return(id,prior=null)=>{
+  const gain=(id,prior=null)=>{
    const type=tech.getTechType(id),before=prior?[tech.getTechType(prior)]:[];
-   return arithmetic.sum([total([...before,type]),-total(before)],weights);
+   return arithmetic.sum([total([...before,type]).value,-total(before).value],weights);
   };
+  Object.defineProperty(gain,'outcome',{value:ids=>total(ids.map(tech.getTechType))});return Object.freeze(gain);
  }
  return Object.freeze({describe,gains});
 });

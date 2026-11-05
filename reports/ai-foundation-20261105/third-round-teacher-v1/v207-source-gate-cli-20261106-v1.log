@@ -1,0 +1,17 @@
+{"rows":25,"unique":25,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":50,"unique":49,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":75,"unique":74,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":100,"unique":98,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":125,"unique":120,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":150,"unique":145,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":175,"unique":170,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":200,"unique":183,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":225,"unique":187,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":250,"unique":203,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":275,"unique":224,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":300,"unique":249,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":325,"unique":263,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":350,"unique":265,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":375,"unique":290,"maxInputs":256,"maxMilliseconds":582.094167}
+{"rows":400,"unique":315,"maxInputs":256,"maxMilliseconds":582.094167}
+{"out":"reports/ai-foundation-20261105/third-round-teacher-v1/v207-current-source-serial-gate-20261106-v1.json","status":"complete","rows":407,"unique":322,"maxInputs":256,"maxMilliseconds":582.094167}

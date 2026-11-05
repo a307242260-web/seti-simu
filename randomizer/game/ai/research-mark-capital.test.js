@@ -42,8 +42,52 @@ try{
  const changing=structuredClone(facts),mutableFunding={resources:p.resources,income:p.income,startingIncome:0};
  assert.equal(values.researchFunding(changing,mutableFunding).researchMarks[0].multiplier,7);changing.board.finalScoring.tileVariants.d=1;
  assert.equal(values.researchFunding(changing,mutableFunding).researchMarks[0].formulaId,'d1','mutable native previews cannot reuse a stale mark quote');
- const full=values.evaluateStateValue(before,seatId),purpose=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>full.components[k]));
+ const full=values.evaluateStateValue(before,seatId),purpose=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>full.components[k]));
  assert.equal(demand.planningCapital(state,p),purpose,'native preparation and observation must use the same final-marker facts');
+ // Current-funded research can earn a new mark; use preserved native endpoints,
+ // not the historical score or a fabricated observation.
+ const actual=read('reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-native-20261106-v1.json'),follow=read('reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-prefix-20261106-v1.checkpoint.json');
+ assert(c.lifecycle.restore(actual.branches.safety.envelope).ok);const safetyObservation=c.projection({role:'player',playerId:seatId}).state,safetyState=JSON.parse(actual.branches.safety.envelope.committedState),safetyPlayer=safetyState.players.players.find(p=>p.id===seatId);
+ assert.equal(values.evaluateStateValue(safetyObservation,seatId).total,108,'eight currently attained B points must be retained before a funded known research crosses50');
+ const safetyFacts={...probe.factsFromObservation(safetyObservation,seatId),supply:safetyObservation.publicState.board.techSupply},wallet={resources:safetyFacts.player,income:safetyFacts.player.income,startingIncome:0},withNew=values.researchFunding(safetyFacts,wallet),withoutNew={...withNew,newFinalMark:null};
+ assert.equal(withNew.newFinalMark.currentValue,8);assert.equal(withNew.newFinalMark.threshold,50);
+ const researchCard=safetyObservation.selfState.hand.find(c=>c.cardId==='b_101.webp'),supply={stacks:{orange1:safetyState.tech.stacks.orange1,purple2:safetyState.tech.stacks.purple2}};
+ const heldNew=f=>values.handCapital([researchCard],safetyPlayer.techState,supply,3,values.DEFAULT_WEIGHTS,f);
+ assert.equal(heldNew(withNew)-heldNew(withoutNew),8);
+ const dataWeights={...values.DEFAULT_WEIGHTS,availableData:2};
+ const dataHand=f=>values.handCapital([researchCard],safetyPlayer.techState,{stacks:{orange1:safetyState.tech.stacks.orange1}},3,dataWeights,f);
+ assert.equal(dataHand(withNew),dataHand(withoutNew),'the visible data symbol enabling fourth-slot income invalidates the static mark-policy floor');
+ const nativeFactsOnly=end.describeNextFinalMark({...safetyState,cardEffects:require('../cards/effects')},safetyPlayer);
+ assert.equal(Math.max(...nativeFactsOnly.options.map(x=>x.currentValue)),follow.finalScoring.tileScoresById.b,'forecast current mark floor matches the later native first B mark');
+ const rightmost={...safetyPlayer,reservedCards:[...safetyPlayer.reservedCards,{id:'coupled-mark-card',cardId:'b_115.webp'}]};
+ assert.equal(end.describeNextFinalMark({...safetyState,cardEffects:require('../cards/effects')},rightmost).valuationSafe,false,'mark-coupled Type3 scoring cannot be replaced by raw tile value');
+
+ const joint=f=>values.sumValueParts([values.handCapital([researchCard],safetyPlayer.techState,supply,3,freeWeights,f),values.researchCapital({hand:[researchCard],techState:safetyPlayer.techState,supply,round:3,publicity:6,researchCost:6,funding:f},freeWeights)],freeWeights);
+ assert.equal(joint(withNew)-joint(withoutNew),8,'held and paid research share one new mark');
+ // Direct quote counterexample: paying6energy now versus3 future credits must
+ // keep each funding window coupled to its own mark eligibility.
+ const oneTarget={stacks:{orange1:safetyState.tech.stacks.orange1}},futureFunding={...withNew,resources:{...withNew.resources,credits:0,energy:6},income:{...withNew.income,credits:3}},futureBare={...futureFunding,newFinalMark:null};
+ const futureHand=f=>values.handCapital([researchCard],safetyPlayer.techState,oneTarget,2,values.DEFAULT_WEIGHTS,f);
+ assert.equal(futureHand(futureFunding)-futureHand(futureBare),5,'current mark8 pays the real3 extra exchange loss, not future3credit cost plus current mark8');
+ const sharedWindows=f=>values.sumValueParts([values.handCapital([researchCard],safetyPlayer.techState,supply,2,values.DEFAULT_WEIGHTS,f),values.researchCapital({hand:[researchCard],techState:safetyPlayer.techState,supply,round:2,publicity:6,researchCost:6,funding:f})]);
+ assert.equal(sharedWindows(futureFunding)-sharedWindows(futureBare),8,'after a paid first crossing, held research can keep its cheaper future window and must not charge a second mark');
+ const laterOnly={...futureFunding,resources:{...futureFunding.resources,energy:0}};
+ assert.equal(futureHand(laterOnly),futureHand({...laterOnly,newFinalMark:null}),'future income cannot earn a current uncontested mark');
+ const unclaimedBefore=structuredClone(safetyState),endInputs={...unclaimedBefore,cardEffects:require('../cards/effects'),getCardTypeCode:c=>c.cardTypeCode};
+ assert.deepEqual(end.describeNextFinalMark(endInputs,safetyPlayer),safetyObservation.selfState.nextFinalMark);assert.deepEqual(unclaimedBefore,safetyState,'describing mark options cannot allocate marks or mutate rules');
+
+ const partialWallet={...wallet,resources:{credits:9,energy:1,publicity:4,availableData:0}};assert.equal(values.researchFunding(safetyFacts,partialWallet).newFinalMark,null,'balances without a score ledger cannot forecast a new mark');
+ assert.equal(values.researchFunding({...safetyFacts,uncontestedRound:false},wallet).newFinalMark,null);
+ const contestedState=structuredClone(safetyState);contestedState.turn.passedPlayerIds=[];const contestedPlayer=contestedState.players.players.find(p=>p.id===seatId),contestedContext={...contestedState,cardEffects:require('../cards/effects')};
+ const contestedObservation=buildRuleObservation(contestedState,seed,seatId);assert.deepEqual(contestedObservation.selfState.nextFinalMark,end.describeNextFinalMark(contestedContext,contestedPlayer),'native metrics must remain available for future known-purpose score gains even while below threshold');
+ const projectedFacts=probe.factsFromObservation(contestedObservation,seatId);projectedFacts.player={...projectedFacts.player,score:50};assert.equal(probe.pendingFinalMarkCapital(projectedFacts),8,'a pure known score ledger can cross the original native threshold without a fabricated successor observation');
+ const noScoreLedger={...projectedFacts,player:{...projectedFacts.player}};delete noScoreLedger.player.score;assert.equal(probe.pendingFinalMarkCapital(noScoreLedger),0,'a balances-only wallet cannot create an earned mark');
+ assert.equal(values.researchFunding({...safetyFacts,pendingNativeEffects:true},wallet).newFinalMark,null);
+ const nativeFunding=values.researchFunding({...probe.factsFromState(safetyState,safetyPlayer),supply:safetyState.tech},{resources:safetyPlayer.resources,income:safetyPlayer.income,startingIncome:0});assert.deepEqual(nativeFunding.newFinalMark,withNew.newFinalMark);
+ const compact=c.projection({role:'player',playerId:seatId,valueOnly:true}).state;assert.equal(values.evaluateStateValue(compact,seatId).total,108);assert.deepEqual(compact.selfState.nextFinalMark,safetyObservation.selfState.nextFinalMark);
+ assert.equal(demand.planningCapital(safetyState,safetyPlayer),['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].reduce((n,k)=>n+values.evaluateStateValue(safetyObservation,seatId).components[k],0));
+ assert(c.lifecycle.restore(follow.envelope).ok);const realized=c.projection({role:'player',playerId:seatId}).state;assert.equal(values.evaluateStateValue(realized,seatId).total,109,'a claimed B mark is secured score, not another latent8');
+ assert.equal(values.researchFunding(probe.factsFromObservation(realized,seatId),{resources:realized.publicState.players.find(p=>p.playerId===seatId),income:realized.publicState.players.find(p=>p.playerId===seatId).income,startingIncome:0}).newFinalMark,null,'70 is not attainable by one ordinary research here');
  assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
  console.log(JSON.stringify({nativeResearchInputs:2,claimedFinalMarkGain:secured,nativeNetValue:6.5,jointD2OddEvenAndD1:true,unfundedAndUnclaimedRejected:true,stateObservationParity:true,mutableQuoteInvalidation:true,rootAndRngUnchanged:true}));
 }finally{c.dispose();}

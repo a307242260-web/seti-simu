@@ -1,0 +1,103 @@
+{
+  "scope": "Fixed current-funded Amiba0 plus current known DLC31 credit income at computer4, computer5/6, then next own turn analyze blue4 and mandatory blind alien pick. No search or autonomous game, first12 accepted inputs resumed. Neither ordinary nor alien draw identity funds or selects a later action; final quote uses the original pre-B101 safety information mask.",
+  "input": "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-prefix-20261106-v1.checkpoint.json",
+  "inputSha256": "b866db542cc121725a7330316c17e6713a9bc79a5a34dc7ddd354c3c2be6990c",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v207-known-computer3-analysis-prefix-20261106-v1.checkpoint.json",
+  "checkpointSha256": "899de312253cc4fb2e4e0024f2a3c33c38cb35adc465db4efb18c4857dde4555",
+  "nativeInputs": 14,
+  "previouslyAcceptedInputs": 12,
+  "additionalInputs": 2,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true,
+  "before": {
+    "modelVersion": "seti-purpose-capital-state-value-v31",
+    "total": 109,
+    "components": {
+      "realizedScore": 50,
+      "currentEndGameBonus": 22,
+      "resources": 9.5,
+      "hand": 5,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "after": {
+    "modelVersion": "seti-purpose-capital-state-value-v31",
+    "total": 111.5,
+    "components": {
+      "realizedScore": 51,
+      "currentEndGameBonus": 22,
+      "resources": 9,
+      "hand": 6,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "modelGain": 2.5,
+  "resources": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 5,
+    "energy": 1,
+    "handSize": 6,
+    "publicity": 5,
+    "score": 51
+  },
+  "income": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 7,
+    "energy": 2,
+    "handSize": 1,
+    "publicity": 0
+  },
+  "technology": {
+    "blueBoardSlots": {
+      "blue1": 2,
+      "blue2": 1
+    },
+    "disabledTiles": {},
+    "ownedTiles": {
+      "blue1": true,
+      "blue2": true,
+      "orange1": true,
+      "purple4": true
+    }
+  },
+  "symbolChoice": {
+    "sequence": 1,
+    "slotId": "blue_1",
+    "symbolId": "symbol_4",
+    "reward": {
+      "gain": {},
+      "dataCount": 0,
+      "drawCards": 1,
+      "pickCard": false,
+      "pickAlienCard": false,
+      "region": null
+    },
+    "region": "blue",
+    "value": 1
+  },
+  "allUnknownNewHandsMasked": 4,
+  "planResourceIntentCorrection": "The chosen DLC31 grants1 credit income, not energy. Its numeric checkpoint and14 accepted inputs are unchanged; this is the credit-income branch, with final income7C2E1card and model gain2.5. No energy-income improvement is claimed."
+}

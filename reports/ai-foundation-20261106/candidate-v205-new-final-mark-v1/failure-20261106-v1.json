@@ -1,0 +1,20 @@
+{
+  "status": "rejected-full-regression",
+  "candidateAdmitted": false,
+  "manifestSha256": "49e052c514bb6a078f8820b02923b371fa2fe24a9d289d04066880b083d98276",
+  "sourceSnapshot": "source-files",
+  "supplementalReviewedTests": "supplemental-reviewed-tests",
+  "nativeColdRoots": 322,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 584.679125,
+  "allColdRootsComplete": true,
+  "fullNode": {
+    "passed": 178,
+    "failed": 2,
+    "fullFlowPassed": 1
+  },
+  "browserPassed": 6,
+  "inputAudit": "51 pass plus the existing V204 aomomo frozen-object failure",
+  "newAutonomousRuns": 0,
+  "reason": "New research mark floor was counted before crossing but vanished between crossing and the actual mark choice. Fixed computer prefix stopped early; after removing one obsolete2.5 scalar lock, its native pending-mark assertion failed. A separate ready-analysis test still required an old bound now conservatively refused. Do not admit or run a game. V206 must carry already-earned pending mark capital independently and preserve exact native fixed mark choice."
+}

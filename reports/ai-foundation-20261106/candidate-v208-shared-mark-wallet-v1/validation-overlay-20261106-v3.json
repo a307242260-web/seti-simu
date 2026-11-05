@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "seti-runtime-frozen-validation-revision-v1",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v208-shared-mark-wallet-v1/manifest.json",
+  "sourceManifestSha256": "5fa5ffd082a5098d0b55d054dabdb13b912d74e8689dbcd7531765df349a7c56",
+  "runtimeChanged": false,
+  "allowedValidationPaths": [
+    "randomizer/game/ai/sector-mission-composition.test.js",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js"
+  ],
+  "originalSourceHashes": {
+    "randomizer/game/ai/sector-mission-composition.test.js": "8dcc7fbf249fbf7c8ffbe04c6c79b9a2d31232a31c6c0c7d62aac97acf436bf3",
+    "tools/audit_v_state_inputs.js": "1517b193e516a250de9b548a2b3b765323f806cd3fde127acec7bae3cbee7ed4",
+    "tools/browser-smoke-inventory.js": "49108e962efc330cb9c50a13edd72f471a7f9a050bd97bc9aff8dea45ec17c1f"
+  },
+  "validationSourceHashes": {
+    "randomizer/game/ai/sector-mission-composition.test.js": "57f93ebc747a7f0990430ccf8921d780f003b875d8712ec82e6d8acbd4f43ddf",
+    "tools/audit_v_state_inputs.js": "7a026861a3996711d04294ada842a93173f2a6407490b2a0b1111a1123d61f3b",
+    "tools/browser-smoke-inventory.js": "620eb3a2c35f85f9a99e30ba4833ad4946597f7fb30f5b9b6d9fed8588da17f8"
+  },
+  "reason": "Rebuild current derived mark facts from exact native checkpoints; strict original information masks and all native equality/funding/root checks remain. Only obsolete scalar expectations and archived observation usage change.",
+  "previousOverlay": "validation-overlay-20261106-v2.json",
+  "revisionReason": "Fresh native prefixes all94.0833; the remaining old sector incremental7 expectation must include its now-priced deferred mark7, total14. Keep direct linear7 and all wallet/token-sharing invariants."
+}

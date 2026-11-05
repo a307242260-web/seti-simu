@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-06",
+  "status": "active",
+  "previousTurnClassification": "progress",
+  "stage": "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q",
+  "runtime": "V208/V32",
+  "releaseStatus": "source-admitted-awaiting-this-delivery",
+  "baseCommit": "acf6694909d8e93f62ed7683071d6ca8637e9293",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-current-source-admission-20261106-v1.json",
+  "coldGate": {
+    "namedCases": 407,
+    "uniqueRoots": 322,
+    "allComplete": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 594.847334
+  },
+  "newAutonomousRuns": 0,
+  "lastAutonomous": {
+    "version": "V203",
+    "scope": "fixed112-input teacher prefix plus autonomous R3 only",
+    "score": 76,
+    "tech": 5,
+    "income": [
+      7,
+      2,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3": {
+    "score": 105,
+    "tech": 6,
+    "income": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "baseline": "V41 unchanged",
+  "nativeControls": {
+    "knownComputer3Analysis": 14,
+    "incomeFactor": 24,
+    "rootAndRngRestored": true
+  },
+  "candidateFailuresRetained": [
+    "V205",
+    "V206",
+    "V207"
+  ],
+  "remaining": [
+    "prove inert research triggers for prepaid computer",
+    "known computer3/data3 income+analysis fixed plan shared wallet",
+    "income cycles and energy-card opportunity cost",
+    "R2 end decision review",
+    "unique autonomous first-three-round verification"
+  ],
+  "legacyFailures": [
+    "aomomo input frozen-object error",
+    "default heuristic full-page timeout"
+  ]
+}

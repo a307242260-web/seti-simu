@@ -1,0 +1,31 @@
+{"knownMovementTool":"passed","sourceNativeControlledInputs":96,"newNativeInputs":0,"value":94.08333333333333,"directMoneyControls":84,"maskedPassChoice":true,"rootAndRngRestored":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: the funded no-data sector card has seven points of incremental purpose value despite an existing mission continuation
+
+14 !== 7
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/randomizer/game/ai/sector-mission-composition.test.js:8:111)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 14,
+  expected: 7,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=1 failed=1 total=2 time=1.28s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=2
+FAIL randomizer/game/ai/sector-mission-composition.test.js status=1 signal=none

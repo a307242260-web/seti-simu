@@ -197,7 +197,8 @@
    if(!finalScoring.markTile(preview.finalScoring,tile,p,{root:preview}).ok)throw new Error('QUIET_END_NATIVE_FINAL_MARK_INVALID');
    markedTiles.push(tile);
   }
-  return{available:true,netGain:total(preview)-before,requiredNativeInputs:1+markedTiles.length,markedTiles};
+  const purposeDelta=markedTiles.length?stateValue.sumValueParts([demand.planningCapital(preview,p),-demand.planningCapital(state,p)]):0;
+  return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
  function dataTailCompletion({state,seatId,canLeaveProbeStationary=null}){
   // With no owned probe, the shared previews cover held/paid investment and
