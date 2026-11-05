@@ -1,0 +1,26 @@
+{
+  "baseCommit": "151920f3af305282edc65d5b554f815d8a72d71b",
+  "nativeInputs": 20,
+  "newAutonomousRuns": 0,
+  "sourceUnchanged": true,
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedStageEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "filesSha256": {
+    "adhoc/control-v204-actual-safety-choice-20261106-v1.js": "f34efc0c5734ceb3e021bf55e4b26009e6d93b8fc1ed3e1248c55abe787c7ae2",
+    "adhoc/control-v204-safety-research-followup-20261106-v1.js": "b9bc8fa9a8179743bc62b8f9bc168bd9a98cd0ab53d38d17ae14abd3390189be",
+    "adhoc/control-v204-safety-research-followup-20261106-v2.js": "0be1f11b435b9020e1846379621403acb094378bf79bb8aabc91a9f47226a702",
+    "adhoc/control-v204-safety-research-followup-20261106-v3.js": "2085afb7c1799734dc1eb497f207251a979831b34fc4c85c85e2bc852be12a93",
+    "adhoc/deliver-v204-safety-controls-20261106-v1.py": "448b860425f092a541f2b4e69e7157465a5e4440247ad8b6202e79c57c743e4e",
+    "adhoc/human405-third-round-progress-20261106-v4.json": "63807395a41597d6434eb001e072f468fc29333a1da697bdf176164675f222c0",
+    "docs/human405-third-round-safety-followup-20261106.md": "163d9cecd81041b49974dcc3be74e33267d287123f41a9278cbc0f3260ebc2cc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-cli-20261106-v1.log": "b392cf5e1d7e614957bb5b8902489ce8e169288d205136ff642991bf11dfc7e7",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-native-20261106-v1.json": "92d5f0547a0885da7417cd73e99e6faed560fbdcd28a4865d9cd2b7b0b8d8acc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-native-prefixes-20261106-v1.checkpoint.json": "6f5f8f873e314cf89fe31ec6a84b56ce8d4ddfba9ce6c854c63231b203436db2",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-cli-20261106-v1.log": "2006f4b46b01fed68134712ce2dbde9050b71f41f5679d307fe2f894796fe82d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-cli-20261106-v2.log": "8b91504faa9879c39f116d70e440ca13dbb1b059af7930b1a7e2a4283a5527ee",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-cli-20261106-v3.log": "aae2ba0df83c97e6365646b7d5422f892e2e4e805379375dd7849a437db40f28",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-native-20261106-v1.json": "f2388870604784fe531633dc4526f3a0c274f471f6fc1e32e149f165d58f4160",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-prefix-20261106-v1.checkpoint.json": "b866db542cc121725a7330316c17e6713a9bc79a5a34dc7ddd354c3c2be6990c"
+  },
+  "goalStatus": "active"
+}

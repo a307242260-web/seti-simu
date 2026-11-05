@@ -1,0 +1,117 @@
+{
+  "scope": "One predetermined current-funded B101 orange1 follow-up from preserved actual123 safety endpoint, accepting the known orange trigger and current visible greedy symbol and B mark. Prior three accepted inputs resumed, not replayed. No AI search or game; cannot establish whole-round superiority.",
+  "input": "reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-native-20261106-v1.json",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-prefix-20261106-v1.checkpoint.json",
+  "nativeInputs": 7,
+  "previouslyAcceptedInputs": 3,
+  "additionalInputs": 4,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true,
+  "valueBefore": {
+    "modelVersion": "seti-purpose-capital-state-value-v28",
+    "total": 100,
+    "components": {
+      "realizedScore": 48,
+      "currentEndGameBonus": 7,
+      "resources": 12.5,
+      "hand": 4,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 10,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "valueAfter": {
+    "modelVersion": "seti-purpose-capital-state-value-v28",
+    "total": 109,
+    "components": {
+      "realizedScore": 50,
+      "currentEndGameBonus": 22,
+      "resources": 9.5,
+      "hand": 5,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "delta": 9,
+  "formalFinal": {
+    "playerId": "player-white",
+    "baseScore": 50,
+    "tileScore": 22,
+    "cardScore": 0,
+    "jiuzheCardScore": 0,
+    "runezuSymbolScore": 0,
+    "jiuzheThreat": 0,
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "prePenaltyTotalScore": 72,
+    "totalScore": 72,
+    "tileScoresById": {
+      "a": 0,
+      "b": 8,
+      "c": 0,
+      "d": 14
+    },
+    "tiles": [
+      {
+        "tileId": "b",
+        "variant": 1,
+        "formulaId": "b1",
+        "slotIndex": 1,
+        "baseValue": 1,
+        "multiplier": 8,
+        "score": 8
+      },
+      {
+        "tileId": "d",
+        "variant": 2,
+        "formulaId": "d2",
+        "slotIndex": 1,
+        "baseValue": 2,
+        "multiplier": 7,
+        "score": 14
+      }
+    ],
+    "cards": [],
+    "jiuzheCards": []
+  },
+  "resources": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 6,
+    "energy": 1,
+    "handSize": 5,
+    "publicity": 4,
+    "score": 50
+  },
+  "symbolChoice": {
+    "sequence": 1,
+    "slotId": "orange_1",
+    "symbolId": "symbol_4",
+    "reward": {
+      "gain": {},
+      "dataCount": 0,
+      "drawCards": 1,
+      "pickCard": false,
+      "pickAlienCard": false,
+      "region": null
+    },
+    "region": "orange",
+    "value": 1
+  }
+}
