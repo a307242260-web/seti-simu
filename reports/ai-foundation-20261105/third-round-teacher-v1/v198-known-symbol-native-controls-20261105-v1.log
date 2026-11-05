@@ -1,0 +1,507 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: native and standard observation share wallet, history and moved symbols
++ actual - expected
+... Skipped lines
+
+  {
+    candidates: [
+      {
+        afterCapital: 3,
+        cardId: 'alien-amiba-0-1',
+...
+          additionalPublicScan: 1,
++         aomomoFossils: 0,
+          availableData: 3,
+-         blueBonusAssets: {
+-           credits: 0,
+-           energy: 1,
+-           ordinaryCards: 0
+-         },
+          color: 'white',
+-         companyBaseIncome: {
+-           additionalPublicScan: 1,
+-           credits: 2,
+-           energy: 2,
+-           handSize: 1
+-         },
+-         completedTaskCount: 0,
+          credits: 6,
+-         dataProgress: {
+-           analyzeReady: false,
+-           blueBonusCount: 1,
+-           blueSlots: [
+-             {
+-               occupied: true,
+-               slot: 1,
+-               tileId: 'blue2',
+-               unlocked: true
+-             },
+-             {
+-               occupied: false,
+-               slot: 2,
+-               tileId: 'blue1',
+-               unlocked: true
+-             }
+-           ],
+-           computerSlots: [
+-             1,
+-             2,
+-             3
+-           ],
+-           discardedCount: 0
+-         },
+          energy: 3,
+-         finalScore: 76,
+-         handCount: 2,
+          handSize: 1,
+          id: 'player-white',
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+...
+          },
+-         industryAbilityId: 'deepspace_swap_cards',
+-         mainActionCompleted: false,
+-         passed: false,
+-         playerId: 'player-white',
+-         playerLabel: '白色玩家',
+          publicity: 1,
+-         researchPublicityCost: 6,
+-         reservedCount: 4,
+          score: 58,
+-         scoreBreakdown: null,
+-         scoreSources: null,
+-         securedEndGameBonus: 22,
+          techState: {
+            blueBoardSlots: {
+              blue1: 2,
+              blue2: 1
+            },
+...
+        additionalPublicScan: 1,
++       aomomoFossils: 0,
+        availableData: 3,
+-       blueBonusAssets: {
+-         credits: 0,
+-         energy: 1,
+-         ordinaryCards: 0
+-       },
+        color: 'white',
+-       companyBaseIncome: {
+-         additionalPublicScan: 1,
+-         credits: 2,
+-         energy: 2,
+-         handSize: 1
+-       },
+-       completedTaskCount: 0,
+        credits: 6,
+-       dataProgress: {
+-         analyzeReady: false,
+-         blueBonusCount: 1,
+-         blueSlots: [
+-           {
+-             occupied: true,
+-             slot: 1,
+-             tileId: 'blue2',
+-             unlocked: true
+-           },
+-           {
+-             occupied: false,
+-             slot: 2,
+-             tileId: 'blue1',
+-             unlocked: true
+-           }
+-         ],
+-         computerSlots: [
+-           1,
+-           2,
+-           3
+-         ],
+-         discardedCount: 0
+-       },
+        energy: 3,
+-       finalScore: 76,
+-       handCount: 2,
+        handSize: 1,
+        id: 'player-white',
+        income: {
+          additionalPublicScan: 1,
+          availableData: 0,
+...
+        },
+-       industryAbilityId: 'deepspace_swap_cards',
+-       mainActionCompleted: false,
+-       passed: false,
+-       playerId: 'player-white',
+-       playerLabel: '白色玩家',
+        publicity: 1,
+-       researchPublicityCost: 6,
+-       reservedCount: 4,
+        score: 58,
+-       scoreBreakdown: null,
+-       scoreSources: null,
+-       securedEndGameBonus: 22,
+        techState: {
+          blueBoardSlots: {
+            blue1: 2,
+            blue2: 1
+          },
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/known-symbol-capital.test.js:12:165)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    value: 2.5,
+    selected: {
+      cardId: 'alien-amiba-0-1',
+      payment: {
+        spend: { credits: 2, energy: 0 },
+        energyPurchases: 0,
+        creditPurchases: 0,
+        value: 2
+      },
+      slotId: 'blue_1',
+      reward: {
+        gain: { score: 4 },
+        dataCount: 0,
+        drawCards: 0,
+        pickCard: false,
+        pickAlienCard: false,
+        region: null
+      },
+      move: {
+        symbolId: 'symbol_3',
+        fromSlotId: 'blue_1',
+        toSlotId: 'blue_2',
+        moved: true
+      },
+      linear: 2.5,
+      afterCapital: 3,
+      netGain: 2.5,
+      wallet: {
+        additionalPublicScan: 1,
+        aomomoFossils: 0,
+        availableData: 3,
+        credits: 6,
+        energy: 3,
+        handSize: 1,
+        publicity: 1,
+        score: 58,
+        id: 'player-white',
+        color: 'white',
+        techState: {
+          blueBoardSlots: { blue1: 2, blue2: 1 },
+          disabledTiles: {},
+          ownedTiles: { blue1: true, blue2: true, purple2: true, purple4: true }
+        },
+        income: {
+          additionalPublicScan: 1,
+          availableData: 0,
+          credits: 6,
+          energy: 2,
+          handSize: 1,
+          publicity: 0
+        }
+      },
+      symbols: {
+        revealInitialized: true,
+        revealedSlotId: 1,
+        symbolSlots: {
+          blue_3: 'symbol_1',
+          orange_1: 'symbol_4',
+          orange_2: 'symbol_2',
+          red_1: 'symbol_5',
+          blue_2: 'symbol_3'
+        },
+        symbolsById: {
+          symbol_1: { sequence: 3, slotId: 'blue_3', symbolId: 'symbol_1' },
+          symbol_2: { sequence: 2, slotId: 'orange_2', symbolId: 'symbol_2' },
+          symbol_3: { sequence: 5, slotId: 'blue_2', symbolId: 'symbol_3' },
+          symbol_4: { sequence: 1, slotId: 'orange_1', symbolId: 'symbol_4' },
+          symbol_5: { sequence: 4, slotId: 'red_1', symbolId: 'symbol_5' }
+        }
+      }
+    },
+    candidates: [
+      {
+        cardId: 'alien-amiba-0-1',
+        payment: {
+          spend: { credits: 2, energy: 0 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 2
+        },
+        slotId: 'blue_1',
+        reward: {
+          gain: { score: 4 },
+          dataCount: 0,
+          drawCards: 0,
+          pickCard: false,
+          pickAlienCard: false,
+          region: null
+        },
+        move: {
+          symbolId: 'symbol_3',
+          fromSlotId: 'blue_1',
+          toSlotId: 'blue_2',
+          moved: true
+        },
+        linear: 2.5,
+        afterCapital: 3,
+        netGain: 2.5,
+        wallet: {
+          additionalPublicScan: 1,
+          aomomoFossils: 0,
+          availableData: 3,
+          credits: 6,
+          energy: 3,
+          handSize: 1,
+          publicity: 1,
+          score: 58,
+          id: 'player-white',
+          color: 'white',
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          },
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 6,
+            energy: 2,
+            handSize: 1,
+            publicity: 0
+          }
+        },
+        symbols: {
+          revealInitialized: true,
+          revealedSlotId: 1,
+          symbolSlots: {
+            blue_3: 'symbol_1',
+            orange_1: 'symbol_4',
+            orange_2: 'symbol_2',
+            red_1: 'symbol_5',
+            blue_2: 'symbol_3'
+          },
+          symbolsById: {
+            symbol_1: [Object],
+            symbol_2: [Object],
+            symbol_3: [Object],
+            symbol_4: [Object],
+            symbol_5: [Object]
+          }
+        }
+      }
+    ],
+    scope: 'One currently funded known data/region-symbol card, greedy current public reward and formal symbol movement, then the existing shared-wallet portfolio without this card; no future draw identity, native successor, new final mark, repeated latent trigger or pruning bound.'
+  },
+  expected: {
+    value: 2.5,
+    selected: {
+      cardId: 'alien-amiba-0-1',
+      payment: {
+        spend: { credits: 2, energy: 0 },
+        energyPurchases: 0,
+        creditPurchases: 0,
+        value: 2
+      },
+      slotId: 'blue_1',
+      reward: {
+        gain: { score: 4 },
+        dataCount: 0,
+        drawCards: 0,
+        pickCard: false,
+        pickAlienCard: false,
+        region: null
+      },
+      move: {
+        symbolId: 'symbol_3',
+        fromSlotId: 'blue_1',
+        toSlotId: 'blue_2',
+        moved: true
+      },
+      linear: 2.5,
+      afterCapital: 3,
+      netGain: 2.5,
+      wallet: {
+        playerId: 'player-white',
+        industryAbilityId: 'deepspace_swap_cards',
+        color: 'white',
+        playerLabel: '白色玩家',
+        score: 58,
+        finalScore: 76,
+        scoreBreakdown: null,
+        scoreSources: null,
+        credits: 6,
+        energy: 3,
+        publicity: 1,
+        researchPublicityCost: 6,
+        availableData: 3,
+        additionalPublicScan: 1,
+        handCount: 2,
+        reservedCount: 4,
+        completedTaskCount: 0,
+        dataProgress: {
+          discardedCount: 0,
+          computerSlots: [ 1, 2, 3 ],
+          blueBonusCount: 1,
+          blueSlots: [ [Object], [Object] ],
+          analyzeReady: false
+        },
+        techState: {
+          blueBoardSlots: { blue1: 2, blue2: 1 },
+          disabledTiles: {},
+          ownedTiles: { blue1: true, blue2: true, purple2: true, purple4: true }
+        },
+        income: {
+          additionalPublicScan: 1,
+          availableData: 0,
+          credits: 6,
+          energy: 2,
+          handSize: 1,
+          publicity: 0
+        },
+        blueBonusAssets: { credits: 0, energy: 1, ordinaryCards: 0 },
+        passed: false,
+        mainActionCompleted: false,
+        companyBaseIncome: { credits: 2, energy: 2, handSize: 1, additionalPublicScan: 1 },
+        securedEndGameBonus: 22,
+        id: 'player-white',
+        handSize: 1
+      },
+      symbols: {
+        revealInitialized: true,
+        revealedSlotId: 1,
+        symbolSlots: {
+          blue_3: 'symbol_1',
+          orange_1: 'symbol_4',
+          orange_2: 'symbol_2',
+          red_1: 'symbol_5',
+          blue_2: 'symbol_3'
+        },
+        symbolsById: {
+          symbol_1: { sequence: 3, slotId: 'blue_3', symbolId: 'symbol_1' },
+          symbol_2: { sequence: 2, slotId: 'orange_2', symbolId: 'symbol_2' },
+          symbol_3: { sequence: 5, slotId: 'blue_2', symbolId: 'symbol_3' },
+          symbol_4: { sequence: 1, slotId: 'orange_1', symbolId: 'symbol_4' },
+          symbol_5: { sequence: 4, slotId: 'red_1', symbolId: 'symbol_5' }
+        }
+      }
+    },
+    candidates: [
+      {
+        cardId: 'alien-amiba-0-1',
+        payment: {
+          spend: { credits: 2, energy: 0 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 2
+        },
+        slotId: 'blue_1',
+        reward: {
+          gain: { score: 4 },
+          dataCount: 0,
+          drawCards: 0,
+          pickCard: false,
+          pickAlienCard: false,
+          region: null
+        },
+        move: {
+          symbolId: 'symbol_3',
+          fromSlotId: 'blue_1',
+          toSlotId: 'blue_2',
+          moved: true
+        },
+        linear: 2.5,
+        afterCapital: 3,
+        netGain: 2.5,
+        wallet: {
+          playerId: 'player-white',
+          industryAbilityId: 'deepspace_swap_cards',
+          color: 'white',
+          playerLabel: '白色玩家',
+          score: 58,
+          finalScore: 76,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 6,
+          energy: 3,
+          publicity: 1,
+          researchPublicityCost: 6,
+          availableData: 3,
+          additionalPublicScan: 1,
+          handCount: 2,
+          reservedCount: 4,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [Array],
+            blueBonusCount: 1,
+            blueSlots: [Array],
+            analyzeReady: false
+          },
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          },
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 6,
+            energy: 2,
+            handSize: 1,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 1, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: {
+            credits: 2,
+            energy: 2,
+            handSize: 1,
+            additionalPublicScan: 1
+          },
+          securedEndGameBonus: 22,
+          id: 'player-white',
+          handSize: 1
+        },
+        symbols: {
+          revealInitialized: true,
+          revealedSlotId: 1,
+          symbolSlots: {
+            blue_3: 'symbol_1',
+            orange_1: 'symbol_4',
+            orange_2: 'symbol_2',
+            red_1: 'symbol_5',
+            blue_2: 'symbol_3'
+          },
+          symbolsById: {
+            symbol_1: [Object],
+            symbol_2: [Object],
+            symbol_3: [Object],
+            symbol_4: [Object],
+            symbol_5: [Object]
+          }
+        }
+      }
+    ],
+    scope: 'One currently funded known data/region-symbol card, greedy current public reward and formal symbol movement, then the existing shared-wallet portfolio without this card; no future draw identity, native successor, new final mark, repeated latent trigger or pruning bound.'
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

@@ -1,0 +1,9 @@
+{
+  "status": "native-control-completed-harness-assumption-failed",
+  "scriptSha256": "497349fffc8fbb895d4469a292173cc1f95a552877851aae77f9bea0bb7159b3",
+  "endpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-actual-orange1-after-three-actions-20261105-v1.envelope.json",
+  "endpointSha256": "d40d018843b5087e42bfda8a62d6e45557a051e102b893b640a5665bc8388b85",
+  "sourceSha256": "fbcaa4c541e3d14bce5b9ebfeaf98918519204c6d991cbf1133ecf6312da2904",
+  "nativeInputsExecuted": 8,
+  "cause": "Unverified expectation60board was false: endpoint56. Preserve and reuse the completed native endpoint; do not rerun the inputs just to replace failed hypothesis evidence."
+}

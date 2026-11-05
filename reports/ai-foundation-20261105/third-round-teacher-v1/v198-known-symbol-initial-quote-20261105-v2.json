@@ -1,0 +1,6 @@
+{
+  "status": "failed-quote",
+  "error": "VALUE_ARITHMETIC_NONFINITE",
+  "sourceSha256": "8dd0f1551f3ec3d6b62b6c05624903e4904635d9ebe2c468784c524e058080d7",
+  "cause": "Public observation player has handCount, not resources.handSize. Linear hand delta must be explicit consumed card plus anonymous draw, matching existing typed capital contracts."
+}

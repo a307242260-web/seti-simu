@@ -1,0 +1,5 @@
+PASS production-start-button http://127.0.0.1:55402/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:55402/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:55402/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:55402/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

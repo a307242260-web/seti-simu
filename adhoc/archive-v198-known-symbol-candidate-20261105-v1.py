@@ -1,0 +1,9 @@
+from pathlib import Path
+import hashlib,json,shutil
+stage=Path(__file__).resolve().parents[1];previous='reports/ai-foundation-20261105/candidate-v197-stationary-prefix-20261105-v1/manifest.json';prior=json.loads((stage/previous).read_text());dest=stage/'reports/ai-foundation-20261105/candidate-v198-known-symbol-20261105-v1';assert not(dest/'manifest.json').exists(),'preserve frozen candidate'
+files=set(prior['sourceHashes'])|{'randomizer/game/ai/known-symbol-capital.js','randomizer/game/ai/known-symbol-capital.test.js','tools/audit_v_state_inputs.js','adhoc/third-round-known-symbol-contract-20261105-v1.md'};sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+for n,h in prior['baseRuntimeHashes'].items():
+ if n not in files:assert sha(stage/n)==h,n
+for name in sorted(files):
+ p=dest/name;p.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(stage/name,p)
+m={**prior,'baseCommit':'a9646b0361451241e2b2e99ba352d28726701d9e','searchVersion':'seti-complete-decision-search-v198','valueModel':'seti-purpose-capital-state-value-v25','sourceHashes':{n:sha(stage/n)for n in sorted(files)},'priorCandidate':previous,'scope':'One known currently funded data/region-symbol card consumes its real card and wallet, applies greedy visible reward plus formal symbol movement, and requotes remaining existing research/held/mission/sector purposes without self-recursion. Expose readonly historical triggers for own known hand to decline native pending collection. No mark forecast, latent trigger reward, native successor, new identity or pruning bound. This prices a held followup after an already-native research boundary; it does not cover every within-purpose research/region/research order.'};(dest/'manifest.json').write_text(json.dumps(m,indent=2)+'\n');print(str((dest/'manifest.json').relative_to(stage)))

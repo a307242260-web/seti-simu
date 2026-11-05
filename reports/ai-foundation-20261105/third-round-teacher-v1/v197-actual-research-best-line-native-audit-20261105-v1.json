@@ -1,0 +1,259 @@
+{
+  "status": "passed",
+  "scope": "Replay the exact archived V197 complete best-value path, no new policy search or autonomous game. This differs from the earlier fixed-orange2 order control.",
+  "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-cold-teacher-r3-before-first-research-20261105-v1.raw.json.gz",
+  "rawSha256": "dacb7ba637a0e4ece1220269597be6c88bf4720f9d0e1641132f77af0ce9dec1",
+  "manifest": "reports/ai-foundation-20261105/candidate-v197-stationary-prefix-20261105-v1/manifest.json",
+  "manifestSha256": "613124858bd46bd7e72416ff60b4fbc69380c7c7e83d3cf544482419673bcc32",
+  "nativeInputs": 10,
+  "steps": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:52a456f8",
+      "actorId": "player-white",
+      "stateVersion": 52,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-29-pass-2-5"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "b_101.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:0953ea6c",
+      "actorId": "player-white",
+      "stateVersion": 52,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "tech:orange1",
+        "tileId": "orange1",
+        "blueSlot": null
+      },
+      "payload": {
+        "skipCost": true,
+        "skipRotate": false,
+        "skipBonus": false
+      },
+      "decision": null,
+      "summary": "研究 orange1"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:56497dc2",
+      "actorId": "player-white",
+      "stateVersion": 52,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "pick:card-18-0",
+        "cardInstanceId": "card-18-0",
+        "publicSlotIndex": 1
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "b_48.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-18-0",
+        "imageSrc": "../assets/cards/basic/split/b_48.webp",
+        "imageAlt": "b_48.webp"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "accept_optional_effect",
+      "phase": "conditional",
+      "actionId": "accept_optional_effect:8e86c549",
+      "actorId": "player-white",
+      "stateVersion": 52,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-orange-tech",
+        "cardInstanceId": "alien-amiba-1-2",
+        "ruleId": "amiba1-orange-tech"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结算 amiba_1.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "alien-amiba-1-2",
+        "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+        "imageAlt": "amiba_1.webp",
+        "detail": "安全协议：橙色科技，橙色区域 symbol 奖励"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:f9078fd1",
+      "actorId": "player-white",
+      "stateVersion": 52,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "symbol:orange_2",
+        "slotId": "orange_2",
+        "region": "orange",
+        "symbolId": "symbol_2"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "orange_2（1数据）"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 53,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:29b5215c",
+      "actorId": "player-white",
+      "stateVersion": 53,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "第一排放置位 4"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:b27d2a0c",
+      "actorId": "player-white",
+      "stateVersion": 53,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "income:card-18-0",
+        "cardInstanceId": "card-18-0"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "收入 b_48.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-18-0",
+        "imageSrc": "../assets/cards/basic/split/b_48.webp",
+        "imageAlt": "b_48.webp"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 54,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:aba3bdc5",
+      "actorId": "player-white",
+      "stateVersion": 54,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:b",
+        "tileId": "b"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "标记 B",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "b",
+        "imageSrc": "../assets/final/final_b1.png",
+        "imageAlt": "终局计分板块 B"
+      }
+    }
+  ],
+  "ties": [],
+  "value": 118.5,
+  "boundary": "information-barrier",
+  "chosenTechnology": [
+    "orange1",
+    "b"
+  ],
+  "resources": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 5,
+    "energy": 4,
+    "handSize": 1,
+    "publicity": 6,
+    "score": 50
+  },
+  "income": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 6,
+    "energy": 3,
+    "handSize": 1,
+    "publicity": 0
+  },
+  "tech": {
+    "blueBoardSlots": {
+      "blue1": 2,
+      "blue2": 1
+    },
+    "disabledTiles": {},
+    "ownedTiles": {
+      "blue1": true,
+      "blue2": true,
+      "orange1": true,
+      "purple4": true
+    }
+  },
+  "symbols": {
+    "blue_1": "symbol_2",
+    "blue_3": "symbol_1",
+    "orange_1": "symbol_4",
+    "red_1": "symbol_5",
+    "red_2": "symbol_3"
+  },
+  "endpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-actual-research-best-line-after-turn-20261105-v1.envelope.json",
+  "endpointSha256": "fbcaa4c541e3d14bce5b9ebfeaf98918519204c6d991cbf1133ecf6312da2904",
+  "previousControlInferenceCorrected": "60 versus56 applies only when both lines research orange2. V197 actually chooses orange1, a known public card, computer4 income and a mark; the fixed-target control alone does not refute this complete choice.",
+  "rootAndRngRestored": true
+}

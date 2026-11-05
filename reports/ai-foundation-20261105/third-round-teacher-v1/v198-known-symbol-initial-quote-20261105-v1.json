@@ -1,0 +1,36 @@
+{
+  "v": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 111.5,
+    "components": {
+      "realizedScore": 54,
+      "currentEndGameBonus": 22,
+      "resources": 12,
+      "hand": 2,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 3,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "symbol": {
+    "value": 0,
+    "selected": null,
+    "candidates": [],
+    "reason": "symbol-card-reservation-needs-native-value"
+  },
+  "metadata": {
+    "pendingHand": [],
+    "company": {
+      "abilityId": "deepspace_swap_cards",
+      "roundMarkRound": 0,
+      "roundMarkTurn": 0
+    }
+  }
+}

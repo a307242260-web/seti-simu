@@ -1,0 +1,271 @@
+{
+  "scope": "Family maximum117.5 is orange1, not the teacher purple2 branch. Fixed-orange2 order controls cannot establish superiority over the actual orange1 choice. Subsequent root after actual orange1 prefers orange4, so forced teacher-purple followup remains a finite counterfactual rather than an AI rollout.",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "rows": [
+    {
+      "version": "v197",
+      "label": "teacher-r3-before-first-research",
+      "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-cold-teacher-r3-before-first-research-20261105-v1.raw.json.gz",
+      "rawSha256": "dacb7ba637a0e4ece1220269597be6c88bf4720f9d0e1641132f77af0ce9dec1",
+      "selectedRootAction": "play_card:52a456f8",
+      "bestValue": 118.5,
+      "familyMaxima": [
+        {
+          "actionId": "launch:c94cda79",
+          "value": 108
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "value": 102.5
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 117.5
+        },
+        {
+          "actionId": "play_card:52a456f8",
+          "value": 118.5
+        },
+        {
+          "actionId": "play_card:2f9ae88e",
+          "value": 103.5
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 90
+        }
+      ],
+      "concretePaidResearchTargets": [
+        {
+          "technology": "blue3",
+          "blueSlot": 3,
+          "value": 111,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "blue4",
+          "blueSlot": 3,
+          "value": 111,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange1",
+          "blueSlot": null,
+          "value": 117.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange2",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange3",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange4",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple1",
+          "blueSlot": null,
+          "value": 105,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple2",
+          "blueSlot": null,
+          "value": 111.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple3",
+          "blueSlot": null,
+          "value": 112,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        }
+      ]
+    },
+    {
+      "version": "v198",
+      "label": "teacher-r3-before-first-research",
+      "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-cold-teacher-r3-before-first-research-20261105-v1.raw.json.gz",
+      "rawSha256": "45ca48f79149d961b9010ae921908ba7e1c73f9d1c6e746fd21c599da1e1741e",
+      "selectedRootAction": "play_card:52a456f8",
+      "bestValue": 118.5,
+      "familyMaxima": [
+        {
+          "actionId": "launch:c94cda79",
+          "value": 108
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "value": 102.5
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 117.5
+        },
+        {
+          "actionId": "play_card:52a456f8",
+          "value": 118.5
+        },
+        {
+          "actionId": "play_card:2f9ae88e",
+          "value": 103.5
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 90
+        }
+      ],
+      "concretePaidResearchTargets": [
+        {
+          "technology": "blue3",
+          "blueSlot": 3,
+          "value": 111,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "blue4",
+          "blueSlot": 3,
+          "value": 111,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange1",
+          "blueSlot": null,
+          "value": 117.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange2",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange3",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange4",
+          "blueSlot": null,
+          "value": 108,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple1",
+          "blueSlot": null,
+          "value": 115.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple2",
+          "blueSlot": null,
+          "value": 114,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple3",
+          "blueSlot": null,
+          "value": 114.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        }
+      ]
+    },
+    {
+      "version": "v198",
+      "label": "actual-v197-after-orange1",
+      "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-cold-actual-v197-after-orange1-20261105-v1.raw.json.gz",
+      "rawSha256": "839951101fa3d71d7db45884051a9d6f1401e0f64129d1c39a3d3809e58f4425",
+      "selectedRootAction": "research_tech:806ccfc8",
+      "bestValue": 121,
+      "familyMaxima": [
+        {
+          "actionId": "launch:c94cda79",
+          "value": 116.5
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "value": 116.5
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 121
+        },
+        {
+          "actionId": "play_card:6bef76b1",
+          "value": 118
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 105
+        },
+        {
+          "actionId": "move:67939f8f",
+          "value": 115.5
+        }
+      ],
+      "concretePaidResearchTargets": [
+        {
+          "technology": "blue3",
+          "blueSlot": 3,
+          "value": 117,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "blue4",
+          "blueSlot": 3,
+          "value": 118,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange2",
+          "blueSlot": null,
+          "value": 113.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange3",
+          "blueSlot": null,
+          "value": 116.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "orange4",
+          "blueSlot": null,
+          "value": 121,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple1",
+          "blueSlot": null,
+          "value": 117.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple2",
+          "blueSlot": null,
+          "value": 116,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        },
+        {
+          "technology": "purple3",
+          "blueSlot": null,
+          "value": 116.5,
+          "edgeFirstAction": "research_tech:806ccfc8"
+        }
+      ]
+    }
+  ]
+}

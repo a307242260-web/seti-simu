@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-actual-research-best-line-after-turn-20261105-v1.envelope.json",
+  "sourceSha256": "fbcaa4c541e3d14bce5b9ebfeaf98918519204c6d991cbf1133ecf6312da2904",
+  "endpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-actual-orange1-after-three-actions-20261105-v1.envelope.json",
+  "endpointSha256": "d40d018843b5087e42bfda8a62d6e45557a051e102b893b640a5665bc8388b85",
+  "nativeInputs": 0,
+  "fullNativeStateSessionAndRngRoundTrip": true,
+  "newAutonomousRuns": 0
+}

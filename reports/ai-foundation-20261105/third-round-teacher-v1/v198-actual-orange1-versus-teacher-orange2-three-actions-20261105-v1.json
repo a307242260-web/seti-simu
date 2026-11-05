@@ -1,0 +1,185 @@
+{
+  "status": "passed",
+  "scope": "Continue the archived actual V197 orange1/public-pick/income line with the same known paid-purple2 and regional card. This finite native control changes the technology choice relative to the fixed-orange2 order control; it is not an autonomous game or proof of whole-round superiority.",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-actual-research-best-line-after-turn-20261105-v1.envelope.json",
+  "sourceSha256": "fbcaa4c541e3d14bce5b9ebfeaf98918519204c6d991cbf1133ecf6312da2904",
+  "prefixAudit": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-actual-research-best-line-native-audit-20261105-v1.json",
+  "newNativeInputs": 0,
+  "previouslyExecutedNativeInputs": 8,
+  "reusedCompletedNativeEndpoint": true,
+  "steps": [],
+  "endpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-actual-orange1-after-three-actions-20261105-v1.envelope.json",
+  "endpointSha256": "d40d018843b5087e42bfda8a62d6e45557a051e102b893b640a5665bc8388b85",
+  "teacherReference": "reports/ai-foundation-20261105/third-round-teacher-v1/known-amiba-teacher-after140-20261105-v1.checkpoint.json",
+  "ai": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 4,
+      "credits": 3,
+      "energy": 4,
+      "handSize": 0,
+      "publicity": 1,
+      "score": 56
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "orange1": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "computerSlots": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "blueSlots": [
+      1
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png",
+      "dlc_31.png",
+      "amiba_1.webp",
+      "b_101.webp",
+      "amiba_0.webp"
+    ],
+    "handCount": 0,
+    "symbols": {
+      "blue_2": "symbol_2",
+      "blue_3": "symbol_1",
+      "orange_1": "symbol_4",
+      "orange_2": "symbol_3",
+      "red_1": "symbol_5"
+    },
+    "conditionalBlueRegionRewards": [
+      {
+        "gain": {},
+        "dataCount": 1,
+        "drawCards": 0,
+        "pickCard": false,
+        "pickAlienCard": false,
+        "region": null
+      },
+      {
+        "gain": {
+          "publicity": 1
+        },
+        "dataCount": 0,
+        "drawCards": 0,
+        "pickCard": false,
+        "pickAlienCard": false,
+        "region": null
+      }
+    ],
+    "conditionalScope": "Formal region query only; next trace funding and reachability are not proved."
+  },
+  "teacher": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 3,
+      "credits": 3,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 1,
+      "score": 60
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "orange2": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "computerSlots": [
+      1,
+      2,
+      3
+    ],
+    "blueSlots": [
+      1
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png",
+      "dlc_31.png",
+      "amiba_1.webp",
+      "amiba_0.webp",
+      "b_101.webp"
+    ],
+    "handCount": 1,
+    "symbols": {
+      "blue_1": "symbol_4",
+      "blue_2": "symbol_3",
+      "blue_3": "symbol_1",
+      "orange_2": "symbol_2",
+      "red_1": "symbol_5"
+    },
+    "conditionalBlueRegionRewards": [
+      {
+        "gain": {
+          "score": 4
+        },
+        "dataCount": 0,
+        "drawCards": 0,
+        "pickCard": false,
+        "pickAlienCard": false,
+        "region": null
+      },
+      {
+        "gain": {},
+        "dataCount": 0,
+        "drawCards": 1,
+        "pickCard": false,
+        "pickAlienCard": false,
+        "region": null
+      },
+      {
+        "gain": {
+          "publicity": 1
+        },
+        "dataCount": 0,
+        "drawCards": 0,
+        "pickCard": false,
+        "pickAlienCard": false,
+        "region": null
+      }
+    ],
+    "conditionalScope": "Formal region query only; next trace funding and reachability are not proved."
+  },
+  "rootAndRngRestored": true,
+  "newAutonomousRuns": 0
+}
