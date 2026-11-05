@@ -1,0 +1,22 @@
+{
+  "baseCommit": "1609bf504b36deb2fc7053bb7d90ef6609df432c",
+  "files": {
+    "adhoc/deliver-v189-first2-review-20261105-v1.py": "616ba94ef0e2d6d1b826e1611e8bb00df2b8e2a385d715dc74014642687eb5bf",
+    "adhoc/render-v189-first2-review-20261105-v1.js": "042280006eee4cde41878798a66f46d34360e0eea18c553932a1bf99914e1758",
+    "adhoc/review-v189-first2-every-input-20261105-v1.js": "083e3c9fd8b0ebed97a14d9dfc85ff922bcfd490e0ef0a23bf5266f40d547afd",
+    "adhoc/verify-v189-first2-review-html-20261105-v1.js": "ca5778782e0e41f576e59594607c0f79e24bc099bf12c351ba5b8b3a6eb788fa",
+    "docs/human405-v189-first2-result-20261105.md": "fbad769e5719408d0ef4b7b613b80f11fcc9e8d719cea0116053463a22c03626",
+    "reports/review/v189-first2-every-input-20261105-v1.browser-check.json": "10adf6c99ff241fba372292546849c116c093409a5a1be811104cf3327e188c8",
+    "reports/review/v189-first2-every-input-20261105-v1.html": "529ac304c7f70c5a5e45bd69778e2b8eafa449d9270db59eca9e380388002fa5",
+    "reports/review/v189-first2-every-input-20261105-v1.json": "da7215c7bc8b5de21d137fffa28f8c51f661df88c6ac04c97793a1dd5dbc29dc",
+    "reports/review/v189-first2-every-input-20261105-v1.mobile.png": "a0d4788b464673d355adc3ea8a181879d4602a8a2af1b82e7f392d9d419548d5",
+    "reports/review/v189-first2-every-input-20261105-v1.step104.png": "d9a0e1a2704440c7d1b11c89b1f364d54fd8efed7c38ea87b3d8faa560defffd",
+    "reports/review/v189-first2-every-input-20261105-v1.step108.png": "49532675b61ad8fe3f91a2ed220c2a84aae8848d76164fa8b70981b04d636c02",
+    "reports/review/v189-first2-every-input-20261105-v1.step112.png": "20bb4378d6b536af92ca69fc78defdd7d6274c0f5cb0f9367281cca828de9b9a"
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "policyQueries": 0,
+  "nativeInputsReplayed": 102,
+  "browserWhiteInputsVerified": 85,
+  "runtimeUnchanged": true
+}

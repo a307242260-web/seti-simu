@@ -1,0 +1,16 @@
+{
+  "html": "reports/review/v189-first2-every-input-20261105-v1.html",
+  "all85WhiteInputsRendered": true,
+  "allVisibleCardAndTechImagesDecoded": true,
+  "all102InputsNavigable": true,
+  "thirdRoundOpeningExcludedFromDefault": true,
+  "mobileNoHorizontalOverflow": true,
+  "browserErrors": [],
+  "screenshots": [
+    "reports/review/v189-first2-every-input-20261105-v1.step104.png",
+    "reports/review/v189-first2-every-input-20261105-v1.step108.png",
+    "reports/review/v189-first2-every-input-20261105-v1.step112.png",
+    "reports/review/v189-first2-every-input-20261105-v1.mobile.png"
+  ],
+  "policyQueries": 0
+}
