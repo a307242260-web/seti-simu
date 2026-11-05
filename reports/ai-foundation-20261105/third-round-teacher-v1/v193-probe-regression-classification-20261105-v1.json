@@ -1,0 +1,19 @@
+{
+  "baselineManifest": "reports/ai-foundation-20261105/candidate-v192-computer-prefix-20261105-v1/manifest.json",
+  "baselineSourceExact": true,
+  "baselineVersion": "V192/V22",
+  "test": "randomizer/game/ai/probe-capital-value.test.js",
+  "exitCode": 1,
+  "sameMissingIncomePlanFailureAsV193": true,
+  "reason": "New computer-prefix fixed policy replaces the old income plan; the test assumed the income plan must remain in the greedy menu. Preserve native income quote obligation as a controlled alternative.",
+  "log": "reports/ai-foundation-20261105/third-round-teacher-v1/v192-baseline-probe-regression-20261105-v1.log",
+  "logSha256": "f6c064092cf022bfff298d960f5f358b96b613cdbf31b836fbee75787886660d",
+  "copiedFixtures": [
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-035-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.raw.json.gz"
+  ],
+  "policyRuntimeChanged": false
+}

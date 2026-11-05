@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "candidateAdmitted": false,
+  "baseCommit": "5f234dac2e10de6d13ef4e1fdd60d6679eab2fe7",
+  "manifest": "reports/ai-foundation-20261105/candidate-v193-research-mark-20261105-v1/manifest.json",
+  "manifestSha256": "e0ec5b01acc1d9fced95addb0bfe5cb62fa17d0b8bf0d6f392ad50a446411bfb",
+  "snapshot": "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v193-clean-candidate-ma34lw03",
+  "allBaseRuntimeAndOverlayHashesMatched": true,
+  "fixtureHashes": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-127-20261105-v1.checkpoint.json": "3537d80eb28c6637972acd5b7be36d5a3e2154d3bd1ac93c5e2171817cc40d46",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-safety-protocol-root-20261105-v1.json": "24634846f25c2ccfed26110b9bbd854fc53538ec8628c8cc0c9e275c27ae7eea",
+    "seti-saves/seti-save-537-merged.json": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json": "703e9579a424474c3eb03eeaeb7cec8f33195fd667976faef039de07a9b31789",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-035-20261030-v1.json": "d805bbbab7ee496e29c711f66972a7754745aaa7af8404ac3c88a60e25a40e47",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json": "26780d39cf689ccd1370197d14b6363a4fc9b0da65d6c6b3914b7454c85c206f",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json": "948e80cfbe0f4025e9b45dbaaa29fc45e055b27f15d951a1da6c7209fe546605",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json": "00fb3ccb52162114b55ef58498c83849f602694ff847999ff64ab6647249119c",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.raw.json.gz": "838895f3ea4ed3dfbdd77d3424eac3af287c5ed2aeff278608c6703a428a0798",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json": "b044fcd7d74def9e0220e895139ff296f9117df8924b70e593e8b6194344b767",
+    "assets/cards/card_model.json": "e4d8bcf4a5348f2e67946a52beeeaf253c32a12bf7b4fd0b7fa02af4e9e286cd"
+  },
+  "productionChanged": false,
+  "newAutonomousRuns": 0,
+  "logsSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-research-mark-capital-20261105-v1.log": "279df6bc6170b328f76ee2a8860fbab8b8271a52cd818e18e100a0f86820d815",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-computer-prefix-plan-20261105-v1.log": "8a82e2246dda6f6e97e103870ec6ce93fdadcb991afc7adf86eb8141bb185985",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-winning-income-plan-20261105-v1.log": "5ae29ef41929319efd23148982e3591691fa9e61dc611418308d4f93085e7353",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-probe-capital-value-20261105-v1.log": "3cae91887a43eb598dcf22334234c3b160fb860b1978c009b9b9f6ef732c4dd6"
+  },
+  "scope": "Four changed behavior tests on exact clean base plus archived overlay, not full source admission."
+}

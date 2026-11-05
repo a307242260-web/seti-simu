@@ -1,0 +1,17 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-9t121b65/randomizer/game/ai/analysis-port.js:874
+      let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId,targetReached=false;
+                                          ^
+
+TypeError: Cannot read properties of undefined (reading 'operation')
+    at Object.expandResourcePlan (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-9t121b65/randomizer/game/ai/analysis-port.js:874:43)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-9t121b65/randomizer/game/ai/probe-capital-value.test.js:114:20)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0

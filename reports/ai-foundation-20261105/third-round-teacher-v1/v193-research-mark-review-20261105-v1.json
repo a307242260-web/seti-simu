@@ -1,0 +1,92 @@
+{
+  "status": "active",
+  "previousGoalTurnClassification": "progress",
+  "productionRuntime": "V189/V22",
+  "candidate": "V193/V23",
+  "candidateAdmitted": false,
+  "productionChanged": false,
+  "newAutonomousRuns": 0,
+  "baselineChanged": false,
+  "candidateManifest": "reports/ai-foundation-20261105/candidate-v193-research-mark-20261105-v1/manifest.json",
+  "coldRoots": [
+    {
+      "label": "case-105",
+      "actionId": "place_data:01c038e2",
+      "value": 71,
+      "nativeInputs": 198,
+      "milliseconds": 550.5371670000001,
+      "decisionGatePassed": true
+    },
+    {
+      "label": "teacher-r3-first-white",
+      "actionId": "land:d5ee03a2",
+      "value": 102.25,
+      "nativeInputs": 73,
+      "milliseconds": 322.914833,
+      "decisionGatePassed": true
+    },
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "actionId": "card_corner:295d3b4f",
+      "value": 117,
+      "nativeInputs": 223,
+      "milliseconds": 467.50812500000006,
+      "decisionGatePassed": true
+    },
+    {
+      "label": "teacher-r3-before-safety-protocol",
+      "actionId": "card_corner:ab712e76",
+      "value": 117,
+      "nativeInputs": 206,
+      "milliseconds": 421.383417,
+      "decisionGatePassed": true,
+      "protocolValue": 101.5,
+      "v192ProtocolValue": 94.5
+    }
+  ],
+  "nativeMarkerGrowth": 7,
+  "nativeResearchControlInputs": 2,
+  "nativeResearchNetValue": 6.5,
+  "relatedRegression": {
+    "firstBatchPassed": 14,
+    "firstBatchFailed": 1,
+    "failureWasPresentOnExactV192": true,
+    "correctedProbeTestPassed": true,
+    "independentChangedBehaviorTestsPassed": 4
+  },
+  "stateInputAudit": {
+    "passed": 49,
+    "failed": 1,
+    "failureExactV189Baseline": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib",
+    "fullAuditPassed": false
+  },
+  "nextIssues": [
+    "funded-continuing-research-trigger-and-known-symbol-movement",
+    "continuous-scan-value-of-purple2-and-orange2",
+    "first113-ordinary-landing-vs-DLC31-order-and-wallet-tradeoff",
+    "joint-blue-board-capacity-in-existing-paid-and-held-forecast",
+    "complete-source-admission-and-same-state-autonomous-third-round",
+    "second-round-end-review-after-third-round-learning"
+  ],
+  "interpretation": "Existing claimed D growth is repaired. Protocol branch still loses101.5 to117, and the first113 choice changes to ordinary landing102.25. These are local model results, not autonomous game scores or proof of third-round alignment.",
+  "evidenceSha256": {
+    "reports/ai-foundation-20261105/candidate-v193-research-mark-20261105-v1/manifest.json": "e0ec5b01acc1d9fced95addb0bfe5cb62fa17d0b8bf0d6f392ad50a446411bfb",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-cold-case-105-20261105-v1.json": "c399256b4dcd17ba51c7a835170f1a614075acd2b12b30b170877f73a925cf58",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-cold-teacher-r3-first-white-20261105-v1.json": "c6f4f6d85e482ca48eddd30d2b6f9b2d207fa22d8aaedba9e83f2c30a01fe6c3",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-cold-teacher-r3-after-amiba-reveal-20261105-v1.json": "b930ee884f30b57fe69ce19b74f6da309de5a528977e3c6f3f526de8c0bb23fa",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-cold-teacher-r3-before-safety-protocol-20261105-v1.json": "e121bff0c44e498fa47af3c2d3ab22d423746ab0e2aa5ee5375d39d8eed5b311",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-candidate-verification-20261105-v1.json": "b137bddc648fc7a05c17f0fac23e80e86dc58cadaa46ef9bc5e83601fc4bf283",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-research-mark-capital-20261105-v1.log": "279df6bc6170b328f76ee2a8860fbab8b8271a52cd818e18e100a0f86820d815",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-computer-prefix-plan-20261105-v1.log": "8a82e2246dda6f6e97e103870ec6ce93fdadcb991afc7adf86eb8141bb185985",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-winning-income-plan-20261105-v1.log": "5ae29ef41929319efd23148982e3591691fa9e61dc611418308d4f93085e7353",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-independent-probe-capital-value-20261105-v1.log": "3cae91887a43eb598dcf22334234c3b160fb860b1978c009b9b9f6ef732c4dd6",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-probe-regression-classification-20261105-v1.json": "6356cee716d209bcf9a9fb156a21a3345e73fdb4ac501dc69122ff109096aba0",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-red-20261105-v1.log": "c5fa1611802780d8030e8b6da5cad6e85a955b1a306681565ab2accdd3b33b1b",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-test-20261105-v1.log": "d74f7782a729bd1523879be8088f3128f8632bcbede21c0a1ad87567df0d891e",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-test-20261105-v2.log": "279df6bc6170b328f76ee2a8860fbab8b8271a52cd818e18e100a0f86820d815",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-marker-focused-tests-20261105-v1.log": "65bb963ec07ccd61c4eed6a667a07ddec6ac1b8bb2eefa55d50f8f332c4efd8e",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-probe-capital-regression-20261105-v1.log": "3cae91887a43eb598dcf22334234c3b160fb860b1978c009b9b9f6ef732c4dd6",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-state-input-audit-20261105-v1.log": "e1f9a26cf0187d34092898c381622d1a55e255c17da330696f919ed90777fa7f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-value-input-audit-20261105-v1.log": "864cacd8d25a3e1ff7cfb6407219434f54bfbed17358b425fe18dd0b4425b77b"
+  }
+}

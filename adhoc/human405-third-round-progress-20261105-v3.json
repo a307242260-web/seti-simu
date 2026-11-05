@@ -1,0 +1,58 @@
+{
+  "status": "active",
+  "goalScope": "third-round-from-exact-teacher-native-state-first; revisit-end-of-round2-afterwards",
+  "runtime": "V189/V22",
+  "runtimeChanged": false,
+  "newAutonomousRuns": 0,
+  "teacherRound3CurrentNativeReference": {
+    "score": 105,
+    "technology": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "endPhase": "before-PASS-card-and-next-income"
+  },
+  "openingCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-107-20261105-v1.checkpoint.json",
+  "firstWhiteRoot": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-first-white-root-20261105-v1.json",
+  "nextIssue": "Claimed D growth now has native6.5 control and nonduplicating D2/D1 combinations; all4 key cold roots pass. Protocol branch101.5 still loses to Amiba0 discard117. Next audit shared blue capacity, funded continuing triggers and purple2/orange2 scan uses, then resolve first113 ordinary-land/DLC31 timing before source admission and same-state autonomous R3.",
+  "deferredSecondRoundReview": [
+    "earlyJupiterLanding",
+    "Amiba0/3 corners",
+    "Amiba1 income vs played trigger engine"
+  ],
+  "evidence": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/initial-native-audit-20261105-v1.json": "9bceb7faf5766a8c5a47bec09f6f522d3511ed05a7a85932748dddaf5865adcc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v1.json": "a0aa1741d71dc59a5ec5643e1a101dbea0706a229ac797e1b33846c1c230ac33",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v2.json": "6037289227b9169e8ea45fece24a6f5dd9e4f3eb70fd333f96f72a5a51d10e84",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/known-amiba-teacher-prefix-value-20261105-v1.json": "37834be8ade1629f8fd7c838f7765f98a36c08dcd3a078ef626950f5a110ea94",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-computer-prefix-review-20261105-v1.json": "3b93f2a627f09e2feddf40daeaee6d972c3d76c330aff12fbf31b891bce417b4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-review-20261105-v1.json": "f76319fecb78dc736266f21481eca352d1ce66e30ac30d1236b5ab2eec9e1c68"
+  },
+  "candidate": "V193/V23",
+  "candidateAdmitted": false,
+  "candidateManifest": "reports/ai-foundation-20261105/candidate-v193-research-mark-20261105-v1/manifest.json",
+  "candidateKeyColdRoots": 4,
+  "allFourCandidateKeyColdRootsPassed": true,
+  "fullAdmissionPending": true,
+  "secondRoundReviewRequired": true,
+  "secondRoundReviewStage": "after-same-state-third-round-learning",
+  "secondRoundReviewPlan": "docs/human405-third-round-plan-20261105.md",
+  "secondRoundReviewInfoBoundary": "Each actual decision root; no future DLC31 or hidden species identity. Native RNG reproducibility, no forced common future cards.",
+  "currentReview": "docs/human405-third-round-mark-review-20261105.md",
+  "evidenceSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-review-20261105-v1.json",
+  "previousGoalTurnClassification": "progress",
+  "stateInputAudit": {
+    "passed": 49,
+    "legacyFailureMatchesV189": true,
+    "allGreen": false
+  },
+  "candidateRelatedRegression": {
+    "firstBatchPassed": 14,
+    "firstBatchFailed": 1,
+    "failureReproducedOnV192": true,
+    "correctedProbePassed": true,
+    "cleanCandidateChangedTestsPassed": 4
+  }
+}
