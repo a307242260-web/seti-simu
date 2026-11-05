@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v189";
+  const VERSION = "seti-complete-decision-search-v203";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -38,6 +38,14 @@
     const observationForValue=node=>stateValue?.isStateValueEvaluator?.(evaluate)&&port.valueObservation?port.valueObservation(node):node.observation;
     const legacyProof = node => !stateValue?.isStateValueEvaluator?.(evaluate)
       || stateValue.supportsLegacyValueProof(observationForValue(node));
+    // Exact default-model ledger terms include computer and blind-income
+    // fractions. The audited quiet tail changes only these same ledger terms.
+    const exactTailSum=(base,gain)=>{
+      const scale=stateValue.valueScale,units=[base,gain].map(v=>Math.round(v*scale));
+      if(!units.every((n,i)=>Number.isSafeInteger(n)&&n/scale===[base,gain][i])
+        ||!Number.isSafeInteger(units[0]+units[1]))return null;
+      return stateValue.sumValueParts([base,gain]);
+    };
     const valueForNode=node=>{
       if(!["income-plan-value","turn-tail-value"].includes(node.status))return valueOf(observationForValue(node));
       if(!stateValue?.isDefaultStateValueEvaluator?.(evaluate)||evaluate.seatId!==root.legalActions?.[0]?.actorId)throw new TypeError("SEARCH_INCOME_PROOF_MODEL_INVALID");
@@ -46,6 +54,11 @@
       // including fixed data realization under a fractional expectation.
       // Every nonzero additive shortcut retains its exact half-unit grid.
       if(node.planSummary.netGain===0)return baseValue;
+      if(node.status==="turn-tail-value"){
+        const total=exactTailSum(baseValue,node.planSummary.netGain);
+        if(total===null)throw new Error("SEARCH_TURN_TAIL_VALUE_INVALID");
+        return total;
+      }
       const total=baseValue+node.planSummary.netGain;
       if(!Number.isSafeInteger(total*2))throw new Error("SEARCH_INCOME_PROOF_VALUE_INVALID");
       return total;
@@ -520,12 +533,12 @@
           }
         }
         const tailKind=alternative.resourcePlan?.goal.kind==="blue-data"?"blue-end-turn"
-          :alternative.resourcePlan?.goal.kind==="income"?"data-end-turn"
+          :["income","computer-prefix"].includes(alternative.resourcePlan?.goal.kind)?"data-end-turn"
           :entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="end_turn")?"end-turn":null;
         const tail=tailKind&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
         if(tail&&tail.firstActionId===alternative.firstActionId
           &&(tail.netGain===0
-            ||[valueForNode(entry.node),tail.netGain].every(v=>Number.isSafeInteger(v*2)))){
+            ||exactTailSum(valueForNode(entry.node),tail.netGain)!==null)){
           if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break outer;}
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const added=add(port.turnTailBoundary(entry.node,tail));turnTailProofs++;provedTurnTailInputs+=tail.requiredNativeInputs;

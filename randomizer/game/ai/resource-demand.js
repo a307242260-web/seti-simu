@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v8';
+  const VERSION='seti-goal-resource-preparation-v9';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -38,7 +38,14 @@
   const targetSlot=(p,g)=>g.publicityData&&p.resources.publicity>=(g.required.publicity||0)?0:g.targetComputerSlot||0;
   const deficit=d=>Object.values(d).reduce((n,v)=>n+v,0);
   function capacity(state,seatId,goal,allowBlue=true){
-    const p=owner(state,seatId),spare=p.hand.filter(c=>!protectedCard(c,goal)),d=needs(state,seatId,goal);
+    const p=owner(state,seatId);
+    if(goal.kind==='computer-prefix'){
+      const slots=data.listComputerPlacedTokens(p).map(t=>t.placementSlot).sort((a,b)=>a-b),target=goal.targetComputerSlot;
+      return Number.isInteger(target)&&target>=1&&target<=6&&slots.every((s,i)=>s===i+1)
+        &&!(slots.length<4&&target>=4)&&p.resources.availableData===p.dataState.poolTokens.length
+        &&p.resources.availableData>=Math.max(0,target-slots.length);
+    }
+    const spare=p.hand.filter(c=>!protectedCard(c,goal)),d=needs(state,seatId,goal);
     const multiplier=industry.shouldDoubleDiscardCornerRewards?.(p)?2:1;
     const dataMax=p.resources.availableData+spare.reduce((n,c)=>n+cornerData(c)*multiplier,0);
     const publicityMax=p.resources.publicity+spare.reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier,0)
@@ -105,7 +112,8 @@
   }
   function heldAndResearchCapital(state,p){
     const passing=(state.passingPlayerIds||state.turn.passedPlayerIds).includes(p.id)||p.passCompletionPending===true;
-    const funding={resources:p.resources,income:p.income,startingIncome:Number(passing)};
+    const funding=stateValue.researchFunding({...probeCapital.researchFactsFromState(state,p),player:p,board:{finalScoring:state.finalScoring}},
+      {resources:p.resources,income:p.income,startingIncome:Number(passing)});
     return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber+Number(passing),stateValue.DEFAULT_WEIGHTS,funding)
       +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,
         publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:passing,funding});
@@ -154,8 +162,8 @@
     const hand=p.hand.filter(c=>c.id!==card.id);
     return stateValue.sumValueParts([beforeCapital,-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}})]);
   }
-  function incomePreparationCapital(state,p,projectedData=0){
-    const current=planningCapital(state,p);
+  function incomePreparationCapital(state,p,projectedData=0,knownCapital=null){
+    const current=knownCapital??planningCapital(state,p);
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]
       &&["blue1","blue2","blue4"].includes(id)))return current;
     const facts=valueFacts(state,p);
@@ -168,10 +176,26 @@
     const p=owner(state,seatId);return incomeValueWithCapital(state,p,card,incomePreparationCapital(state,p));
   }
   function computerIncomeValue(state,seatId,card){
-    const preview=previewIncomeTail({state,seatId,goal:{incomeCardId:card.id}});
+    const quote=incomeTailCapital({state,seatId,goal:{incomeCardId:card.id}});
     // The fourth-slot choice happens after its data and column rewards.
     // Quote that real fixed endpoint, so it cannot collect computer4 twice.
-    return preview.available?preview.netGain+incomePreparationCapital(state,preview.player):null;
+    return quote.available?quote.netGain+quote.preparedCapital:null;
+  }
+  const immutableIncomeTailQuotes=new WeakMap();
+  function incomeTailCapital({state,seatId,goal}){
+    const p=owner(state,seatId),card=p.hand.find(c=>c.id===goal.incomeCardId);
+    // Store scalars only, keyed by the complete immutable native source and
+    // the exact owner/card objects. Mutable previews never share this cache.
+    const immutable=card&&Object.isFrozen(state)&&Object.isFrozen(p)&&Object.isFrozen(card)
+      &&immutableCapitalInput(state)&&immutableCapitalInput(p);
+    let owners=immutable?immutableIncomeTailQuotes.get(state):null,quotes=owners?.get(p);
+    if(quotes?.has(card))return quotes.get(card);
+    const preview=previewIncomeTail({state,seatId,goal});
+    const after=preview.available?planningCapital(state,preview.player):null;
+    const quote=Object.freeze(preview.available?{available:true,netGain:preview.netGain,beforeCapital:planningCapital(state,p),afterCapital:after,
+      preparedCapital:incomePreparationCapital(state,preview.player,0,after)}:{available:false,reason:preview.reason});
+    if(immutable){if(!owners){owners=new WeakMap();immutableIncomeTailQuotes.set(state,owners);}if(!quotes){quotes=new WeakMap();owners.set(p,quotes);}quotes.set(card,quote);}
+    return quote;
   }
   function incomeOfferValue(state,seatId,card,projectedData=0){
     // Public offers share the pre-pick baseline. Do not subtract the newly
@@ -259,6 +283,17 @@
       // purpose deficit; card picks retain their separate known-card purpose.
       if(p.mainActionCompleted||needed&&!requested.some(g=>blueFunding(state,seatId,g)?.blueSlot===blue.blueSlot)||reward?.type==='choose_card')
         add({id:`data:blue:${blue.blueSlot}`,kind:'blue-data',blueSlot:blue.blueSlot,targetComputerSlot:blue.requiredComputerSlot,required:{}});
+    }
+    // A funded partial column can pay off before computer4 or a blue reward
+    // is reachable. The caller ranks these typed prefixes once and keeps one;
+    // their native slot selections remain fixed and never acquire more data.
+    if(p.mainActionCompleted&&p.resources.availableData>0){
+      const from=placed(p),through=Math.min(from<4?3:6,from+p.resources.availableData);
+      for(let target=from+1;target<=through;target++){
+        const column=data.getBlueBoardSlotForComputerSlot(target);
+        if(data.getComputerSlotBonus(target)?.type==='publicity'||column!=null&&data.hasBlueTechInBoardSlot(p,column))
+          add({id:`data:computer-prefix:${target}`,kind:'computer-prefix',targetComputerSlot:target,required:{}});
+      }
     }
     // Future travel has one fixed destination. At-location orbit/landing are
     // distinct main purposes and must survive even when another endpoint wins that estimate.
@@ -442,6 +477,7 @@
     }
     const p=owner(state,seatId),d=needs(state,seatId,goal);
     if(goal.kind==='blue-data'&&data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===goal.blueSlot))return{kind:'complete',reason:'blue-data-target-reached'};
+    if(goal.kind==='computer-prefix'&&status==='stable'&&placed(p)>=goal.targetComputerSlot)return{kind:'complete',reason:'computer-prefix-target-reached'};
     if(status==='decision'){
       if(goal.kind==='route'){
         const payment=actions.filter(a=>a.target?.kind==='move-payment');
@@ -517,5 +553,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });

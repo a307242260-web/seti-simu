@@ -1,0 +1,16 @@
+{"rows":25,"uniqueRoots":31,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":50,"uniqueRoots":56,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":75,"uniqueRoots":81,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":100,"uniqueRoots":104,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":125,"uniqueRoots":128,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":150,"uniqueRoots":153,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":175,"uniqueRoots":175,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":200,"uniqueRoots":175,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":225,"uniqueRoots":195,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":250,"uniqueRoots":207,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":275,"uniqueRoots":232,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":300,"uniqueRoots":255,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":325,"uniqueRoots":255,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":350,"uniqueRoots":273,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"rows":375,"uniqueRoots":298,"maxInputs":256,"maxMilliseconds":553.0394160000001}
+{"out":"reports/ai-foundation-20261105/third-round-teacher-v1/v203-current-source-serial-gate-20261105-v1.json","status":"complete","rows":391,"uniquePriorCorpusRoots":308,"measuredUnion":314,"maxInputs":256,"maxMilliseconds":553.0394160000001}

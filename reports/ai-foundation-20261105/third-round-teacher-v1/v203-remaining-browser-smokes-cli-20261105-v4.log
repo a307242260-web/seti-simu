@@ -1,0 +1,7 @@
+{"scope":"Native091 now strictly improves PASS85.083 to85.166; add the already measured native117 exact93 tie to preserve the real tie obligation. Remove only obsolete V22 version lock from five native sector/mission parity controls. Keep every behavioral, budget, root/RNG and recovery check.","cases":5,"ids":["production-purpose-realization","production-sector-mission-composition","production-known-movement-tool","production-search-agent-parity","production-completion-agent-parity"]}
+PASS production-purpose-realization http://127.0.0.1:52600/randomizer/index.html
+PASS production-sector-mission-composition http://127.0.0.1:52600/randomizer/index.html
+PASS production-known-movement-tool http://127.0.0.1:52600/randomizer/index.html
+PASS production-search-agent-parity http://127.0.0.1:52600/randomizer/index.html?agent=search
+PASS production-completion-agent-parity http://127.0.0.1:52600/randomizer/index.html?agent=completion
+SUMMARY browserSmoke passed=5 failed=0 total=5

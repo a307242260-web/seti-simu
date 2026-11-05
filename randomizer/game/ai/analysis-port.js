@@ -621,8 +621,16 @@
         ? {...state,passingPlayerIds:probeTurnSession.getPassingPlayerIds(state,session)} : state;
     }
 
+    const pendingPlanningStates=new WeakMap();
     function readPlanningState(stored) {
-      return passPlanningState(planningState(readIdentityState(stored.envelope),stored.informationBarrier),stored.envelope.session?.session);
+      let state=planningState(readIdentityState(stored.envelope),stored.informationBarrier);
+      const session=stored.envelope.session?.session;
+      if(session?.queue?.length){
+        let states=pendingPlanningStates.get(session);if(!states){states=new WeakMap();pendingPlanningStates.set(session,states);}
+        if(!states.has(state))states.set(state,freeze({...state,pendingEffectOwnerIds:[...new Set(session.queue.map(effect=>effect.ownerId).filter(Boolean))]}));
+        state=states.get(state);
+      }
+      return passPlanningState(state,session);
     }
 
     function describeCardPick(envelope,actions,status,barrier=null) {
@@ -745,7 +753,7 @@
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
       if(cardPickSpec(node)?.fixed){resourceSpecs.set(node,null);return null;}
       const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
-      let goals=[],source=null,operation={},incomeTail=null,blueTails=[];
+      let goals=[],source=null,operation={},incomeTail=null,blueTails=[],computerTail=null;
       if(stored.resourceControl){
         const control=stored.resourceControl,step=resourceStep(node,control.goal,control.operation);
         const ids=step.kind==="fallback"?step.actionIds:step.actionId?[step.actionId]:[];
@@ -766,6 +774,13 @@
             });
           operation={placing:source.family==="place_data",finalPlacement:false};
         }
+      }
+      if(goals.some(g=>g.kind==="computer-prefix")){
+        const prefixState=node.status==="decision"&&session?.baseState?planningState(session.baseState,stored.informationBarrier):state;
+        const ranked=goals.filter(g=>g.kind==="computer-prefix").map(goal=>({goal,tail:localPlans.computerCompletion({state:prefixState,seatId,goal})}))
+          .filter(p=>p.tail.available&&p.tail.selected).sort((a,b)=>b.tail.netGain-a.tail.netGain||a.tail.requiredNativeInputs-b.tail.requiredNativeInputs||a.goal.targetComputerSlot-b.goal.targetComputerSlot);
+        const selected=ranked[0];computerTail=selected?.tail||null;
+        goals=goals.filter(g=>g.kind!=="computer-prefix"||g===selected?.goal);
       }
       if(state.players.players.find(p=>p.id===seatId).mainActionCompleted){
         const goal=goals.find(g=>g.kind==="income");
@@ -830,9 +845,11 @@
       const forceBlue=competingBlue?.available&&competingBlue.selected
         &&(incomeCandidate?competingBlue.netGain>incomeTail.netGain:Boolean(blueTail));
       const forceIncome=incomeCandidate&&!forceBlue;
-      const forcedKind=forceIncome?"income":forceBlue?"blue-data":null;
+      const forceComputer=node.status==="stable"&&computerTail?.selected
+        &&(!incomeCandidate||computerTail.netGain>incomeTail.netGain)&&(!forceBlue||computerTail.netGain>competingBlue.netGain);
+      const forcedKind=forceComputer?"computer-prefix":forceIncome?"income":forceBlue?"blue-data":null;
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
-        ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),
+        ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         retainedActionIds:forcedKind?[]:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind?node.legalActions.map(a=>a.actionId):excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
@@ -1497,7 +1514,7 @@
       }));
     }
 
-    function hasTradeInertReservations(state) {
+    function hasTradeInertReservations(state, allowAmiba = false) {
       // 交易不推进回合或执行complete_task；任务可就绪，但不能在本队列中兑付。
       // 化石运输会在任意effect后补visitPlanet，不能只检查显式交易事件。
       if (Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length) return false;
@@ -1505,7 +1522,9 @@
         "reserveAfterPlay", "displayRow", "countsAsType3", "pluto"];
       return state.players.players.every(player => player.reservedCards.every(card => {
         const model = cardEffects.getCardModel(card);
-        if (!["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card) || !model
+        const knownCard=["basic", "space-agency"].includes(card.set)&&cards.getCatalogEntryForCard(card)
+          ||allowAmiba&&card.set==="alien:阿米巴"&&/^amiba_[0-9]\.webp$/.test(card.cardId);
+        if (!knownCard || !model
           || ![0, 1, 2, 3].includes(model.cardType) || Object.keys(model).some(key => !fields.includes(key))) return false;
         // 事件只投给交易owner，对手不会在此信息边界前取得行动或任务结算。
         if (player.id !== seatId) return true;
@@ -1514,8 +1533,8 @@
           if (Object.keys(trigger).some(key => !["id", "event", "effect"].includes(key)) || !event
             || Object.keys(event).some(key => !["type", "types", "planetIds", "includePlanetIds", "excludePlanetIds",
               "requiresOwnOrbit", "techType", "color", "cornerKind", "cornerCode", "timing", "price", "cardIds",
-              "includeCardIds", "excludeCardIds"].includes(key)) || event.types != null && !Array.isArray(event.types)) return false;
-          return (event.types?.length ? event.types : [event.type]).every(type => MONEY_INDEPENDENT_EVENTS.has(type));
+              "includeCardIds", "excludeCardIds",...(allowAmiba?["traceType"]:[])].includes(key)) || event.types != null && !Array.isArray(event.types)) return false;
+          return (event.types?.length ? event.types : [event.type]).every(type => MONEY_INDEPENDENT_EVENTS.has(type)||allowAmiba&&type==="alienTrace");
         }))) return false;
         const scoring = model.endGameScoring;
         if (model.cardType === 3 && !scoring) return false;
@@ -1527,8 +1546,8 @@
       }));
     }
 
-    function hasPostMainInertReservations(state, hasOwnRockets) {
-      if (!hasTradeInertReservations(state)) return false;
+    function hasPostMainInertReservations(state, hasOwnRockets, allowAmiba = false) {
+      if (!hasTradeInertReservations(state,allowAmiba)) return false;
       const owner = state.players.players.find(player => player.id === seatId);
       const reserved = owner.reservedCards.map(card => {
         const copy = structuredClone(card);
@@ -1540,6 +1559,7 @@
       if ((state.turn.type1TriggerEvents || []).some(event => cardEffects.collectMatchingTriggers(
         { ...owner, reservedCards: reserved }, event).length)) return false;
       const unreachableEvents = new Set(["launch", "orbit", "land", "researchTech", "signalMarked", "playCard"]);
+      if(allowAmiba)unreachableEvents.add("alienTrace");
       if (!hasOwnRockets) for (const type of ["move", "visitPlanet", "visitAsteroid", "visitComet"]) unreachableEvents.add(type);
       return reserved.every(card => {
         const model = cardEffects.getCardModel(card), scoring = model.endGameScoring;
@@ -1973,19 +1993,29 @@
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
       const passives={deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
       const quietCompany=company&&passives[company.activeAbilityId]&&company.passiveIds.length===1&&company.passiveIds[0]===passives[company.activeAbilityId];
+      const computerPolicy=kind==="data-end-turn"?resourceSpec(node):null;
+      // An already committed movement intent needs its materialized cold path.
+      // An unbound probe may use the existing per-boundary stationary proof.
+      const computerPrefix=computerPolicy?.plans.some(p=>p.goal.kind==="computer-prefix");
+      if(computerPrefix&&stored.intent)return null;
+      const stationaryComputerPrefix=computerPrefix&&hasOwnVisitSource(state);
+      if(stationaryComputerPrefix&&cardPickSpec(node)?.goal)return null;
+      const knownAmibaTail=computerPolicy?.plans.length===1&&computerPolicy.plans[0].goal.kind==="computer-prefix"
+        &&computerPolicy.retainedActionIds.length===0&&state.aliens.amiba?.revealInitialized===true
+        &&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="阿米巴");
       let spec=null;
       if(owner.mainActionCompleted&&!owner.passCompletionPending&&end&&state.turn.currentPlayerId===seatId
         &&quietCompany&&state.turn.activePlayerCount===4
         &&!owner.industryBorrowedTechTileId&&!state.turn.cardTurnEventBonuses?.length
         &&!state.match.initialSetup&&!state.turn.gameEnded&&!state.turn.passedPlayerIds.includes(seatId)
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
-        &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot))
+        &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed||knownAmibaTail&&slot.alienId==="阿米巴")&&!alienState.isAlienReadyToReveal(slot))
         // A plain end cannot move a probe; the helper still checks historical
         // matching triggers, tasks and scoring. Compound plans keep their
         // visit-capable guard until their complete event set is proved.
         // Plain end never moves; compound previews below separately certify
         // that no movement policy starts at any intermediate goal boundary.
-        &&hasPostMainInertReservations(state,false)&&!node.legalActions.some(a=>a.family==="complete_task")){
+        &&hasPostMainInertReservations(state,false,knownAmibaTail)&&!node.legalActions.some(a=>a.family==="complete_task")){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
@@ -1995,19 +2025,33 @@
           else{
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail;
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
-            if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&tail.selected)||(kind==="data-end-turn"&&plan.goal.kind==="income"&&policy.incomeTail?.selected))){
-              let stationary,reachedIntent;
+            if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&tail.selected)||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
+              let stationary,reachedIntent,noMovementPayment;
               const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
               const sourceMoveCards=moveCards(owner);
               const compound=localPlans.dataTailCompletion({state,seatId,
                 canLeaveProbeStationary: preview => {
                   if(stationary===undefined){
                     const policy=goalMovementSpec(node);
+                    noMovementPayment=stationaryComputerPrefix&&!policy&&owner.resources.energy===0
+                      &&owner.resources.credits===0&&sourceMoveCards===0&&!node.legalActions.some(goalMovement.isDirection);
                     stationary=!stored.intent?.path.length&&!policy?.selectedActionId
-                      &&["defer-movement","no-affordable-objective","objective-reached"].includes(policy?.reason);
+                      &&(noMovementPayment||["defer-movement","no-affordable-objective","objective-reached"].includes(policy?.reason));
                     reachedIntent=policy?.reason==="objective-reached"&&stored.intent?.path.length===0;
                   }
                   const p=preview.players.players.find(p=>p.id===seatId);
+                  if(stationaryComputerPrefix){
+                    const trade=quickTrades.getTradeAction('publicity-for-card');
+                    // Recheck the unchanged native acquisition menu and the
+                    // sole newly affordable trade at every data boundary.
+                    const actions=node.legalActions.filter(a=>cardPickPlanningApi.isTrade(a)
+                      ||a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards");
+                    if(p.resources.publicity>=trade.cost.publicity&&!actions.some(a=>a.target?.tradeId===trade.id))
+                      actions.push({family:"quick_trade",actionId:"quiet-prefix-publicity-pick",target:{tradeId:trade.id},payload:{cost:trade.cost}});
+                    const pick=cardPickPlanner.plan({state:preview,seatId,status:"stable",actions});
+                    if(pick?.goal)return false;
+                  }
+                  if(noMovementPayment&&(p.resources.credits!==0||p.resources.energy!==0||moveCards(p)!==0))return false;
                   // At stable post-main nodes this policy's paid movement
                   // depends on energy/corner points, not credit affordability.
                   // No new energy/move cards and no lower publicity can create
@@ -2113,6 +2157,11 @@
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
       const sourceState=readPlanningState(stored),sourceOwner=sourceState.players.players.find(p=>p.id===seatId);
+      // The legacy capital ceiling omits nonlinear growth of an owned D mark.
+      // Keep native continuation until that broader bound has its own proof.
+      if(sourceState.turn.roundNumber<4&&sourceState.finalScoring.tiles.d.marks.some(m=>m.playerId===seatId)){postMainValueBounds.set(node,null);return null;}
+      if(sourceState.turn.roundNumber<4&&sourceOwner.reservedCards.some(card=>cardEffects.getCardModel(card)?.triggers?.some(t=>
+        (t.event?.type==='researchTech'||t.event?.types?.includes('researchTech'))&&!card.cardEffectState?.consumedTriggerIds?.includes(t.id)))){postMainValueBounds.set(node,null);return null;}
       if(hasUnprovedProbeCapital(sourceState)||sourceState.turn.roundNumber<4&&(stateValue.hasKnownSectorTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)])||industryCatalog.getPlayerIndustryDefinition(sourceOwner)?.activeAbilityId==='deepspace_swap_cards'&&stateValue.hasKnownMovementTool([...sourceOwner.hand,...sourceState.cards.publicCards.filter(Boolean)]))){postMainValueBounds.set(node,null);return null;}
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.

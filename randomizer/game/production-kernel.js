@@ -1671,6 +1671,7 @@ function createProductionHostComposition(options = {}) {
       const projectedState = {
         ...projectionState,
         passingPlayerIds: probeTurnSession.getPassingPlayerIds(state, { queue: projectionContext.pendingEffects }),
+        pendingEffectOwnerIds: [...new Set((projectionContext.pendingEffects || []).map(effect=>effect.ownerId).filter(Boolean))],
         ...(options.trustedProjectionReader === true ? requirements : clone(requirements)),
       };
       if (hostKind === "browser") {

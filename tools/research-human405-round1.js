@@ -12,10 +12,13 @@ const effects = require("../randomizer/game/cards/effects");
 
 const ID = "human405-white-round1-v1";
 const TWO_ROUND_ID = "human405-white-first2-v1";
+const THIRD_ROUND_ID = "human405-white-teacher-r3-v1";
 const B117_PREFIX_ID = "human405-white-round1-b117-prefix-v1";
 const TEACHER_SAVE = "seti-saves/seti-save-537-merged.json";
 const LEARNER = "player-white";
 const OPPONENT_VERSION = "seti-human405-pass-only-v1";
+const THIRD_OPPONENT_VERSION = "seti-human405-pass-only-teacher-r3-v1";
+const THIRD_RESERVE = Object.freeze({ "player-green": "b_138.webp", "player-blue": "b_55.webp", "player-brown": "dlc_12.png" });
 const ROOT = path.resolve(__dirname, "..");
 const OPENING_REPORT = "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.json";
 const PREFERRED_RESERVE = Object.freeze({ "player-green": "b_24.webp", "player-blue": "b_49.webp", "player-brown": "b_80.webp" });
@@ -28,6 +31,37 @@ function opening() {
   const checkpoint = JSON.parse(bytes);
   assert.equal(checkpoint.replayCursor.stepIndex, 23);
   return { checkpoint, sha256 };
+}
+
+function thirdRoundOpening() {
+  const checkpointPath = "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-113-20261105-v1.checkpoint.json";
+  const entryPath = "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-107-20261105-v1.checkpoint.json";
+  const load = (file, expected) => {
+    const bytes = fs.readFileSync(path.join(ROOT, file));
+    const sha256 = crypto.createHash("sha256").update(bytes).digest("hex");
+    assert.equal(sha256, expected, "TEACHER_THIRD_OPENING_DRIFT:" + file);
+    return { checkpoint: JSON.parse(bytes), sha256 };
+  };
+  const source = load(checkpointPath, "0c7659905b151fff67495722e53dddb398fe41f0e07c83edc210008e562dea4f");
+  const entry = load(entryPath, "bb7795308482e979b2072e99ea814748766ac831a5743fc5694a092af37c2d7c");
+  const checkpoint = source.checkpoint, envelope = checkpoint.coreState.compositionEnvelope;
+  assert.equal(checkpoint.replayCursor.stepIndex, 112);
+  assert.equal(entry.checkpoint.replayCursor.stepIndex, 106);
+  assert.deepEqual(checkpoint.replaySteps.slice(0, 106), entry.checkpoint.replaySteps);
+  assert.deepEqual(checkpoint.replaySteps.slice(0, 23).map(e => [e.actorPlayerId, e.action]),
+    opening().checkpoint.replaySteps.map(e => [e.actorPlayerId, e.action]));
+  assert.equal(envelope.session, null);
+  assert.deepEqual(checkpoint.machineAI, {});
+  const state = JSON.parse(envelope.committedState);
+  assert.equal(state.meta.seed, "seti-free-analyze-v1");
+  assert.equal(state.turn.roundNumber, 3);
+  assert.equal(state.turn.currentPlayerId, LEARNER);
+  assert.deepEqual([...state.turn.passedPlayerIds].sort(), ["player-blue", "player-brown"]);
+  return { ...source, provenance: { checkpointPath, checkpointSha256: source.sha256,
+    roundEntryPath: entryPath, roundEntrySha256: entry.sha256,
+    originalOpeningInputs: 23, originalOpeningCheckpointSha256: opening().sha256,
+    controlledTeacherPrefixInputs: 112, passiveRound3PrefixInputs: 6,
+    autonomousScope: "round3-only", controlledTeacherRounds: [1, 2] } };
 }
 
 function teacherPrefix() {
@@ -50,20 +84,23 @@ function teacherPrefix() {
 }
 
 function describe(identity, options = {}) {
-  if (![ID, B117_PREFIX_ID, TWO_ROUND_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
+  if (![ID, B117_PREFIX_ID, TWO_ROUND_ID, THIRD_ROUND_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
   if (options.full) throw new Error("WHITE_ONLY_ROUND1_REQUIRES_QUICK_MODE");
   if (identity.agentType !== "search" || identity.activePlayerCount !== 4
     || identity.seed !== "seti-free-analyze-v1") throw new Error("WHITE_ONLY_ROUND1_CONFIGURATION_INVALID");
-  const source = opening();
+  const thirdRound = identity.flags.scenario === THIRD_ROUND_ID;
+  const source = thirdRound ? thirdRoundOpening() : opening();
   const twoRounds = identity.flags.scenario === TWO_ROUND_ID;
   return {
     id: identity.flags.scenario, learnerSeat: LEARNER, learnerAgentType: "search", hostAgentFactory: "custom-seat-roles",
-    opponentPolicyVersion: OPPONENT_VERSION, opponentReserveRule: "historical-preference-if-offered-otherwise-stable-action-id",
+    opponentPolicyVersion: thirdRound ? THIRD_OPPONENT_VERSION : OPPONENT_VERSION, opponentReserveRule: "historical-preference-if-offered-otherwise-stable-action-id",
+    ...(thirdRound ? { passiveReservePreferences: THIRD_RESERVE } : {}),
     roles: { "player-white": "shared-search", "player-green": "pass-only", "player-blue": "pass-only", "player-brown": "pass-only" },
-    openingInputs: 23, openingCheckpointSha256: source.sha256, stopAfterRound: twoRounds ? 2 : 1,
-    comparisonScope: twoRounds ? "white-only-first-two-rounds" : "white-only-first-round",
-    scoreSemantics: twoRounds ? "provisional-before-end-card-and-next-income" : "provisional-after-round1-settlement",
-    ...(twoRounds ? { roundEndPhase: "before-pass-card-and-income" } : {}),
+    openingInputs: thirdRound ? 112 : 23, openingCheckpointSha256: source.sha256, stopAfterRound: thirdRound ? 3 : twoRounds ? 2 : 1,
+    comparisonScope: thirdRound ? "white-only-third-round-from-exact-teacher-start" : twoRounds ? "white-only-first-two-rounds" : "white-only-first-round",
+    scoreSemantics: thirdRound ? "provisional-third-round-before-pass-card-and-next-income" : twoRounds ? "provisional-before-end-card-and-next-income" : "provisional-after-round1-settlement",
+    ...(twoRounds || thirdRound ? { roundEndPhase: "before-pass-card-and-income" } : {}),
+    ...(thirdRound ? { originalOpeningInputs: 23, controlledTeacherPrefix: source.provenance } : {}),
     decisionGate: { nativeInputs: 256, milliseconds: 600 },
     ...(identity.flags.scenario === B117_PREFIX_ID ? {
       openingInputs: 27, originalOpeningInputs: 23, controlledPrefix: teacherPrefix().provenance,
@@ -71,9 +108,9 @@ function describe(identity, options = {}) {
   };
 }
 
-function passiveAgent(seatId) {
+function passiveAgent(seatId, { preferredReserve = PREFERRED_RESERVE, version = OPPONENT_VERSION } = {}) {
   return Object.freeze({
-    getProvenance: () => ({ type: "passive-opponent", version: OPPONENT_VERSION }),
+    getProvenance: () => ({ type: "passive-opponent", version }),
     decide(context) {
       const actions = context.legalActions;
       const pass = actions.find(a => a.family === "pass");
@@ -93,7 +130,7 @@ function passiveAgent(seatId) {
         return { actionId: ranked[0].action.actionId, reasonCode: "research:required-pass-discard" };
       }
       if (actions.length && actions.every(a => a.family === "choose_card" && a.target?.kind === "pass-reserve-card")) {
-        const preferred = actions.find(a => a.target.cardId === PREFERRED_RESERVE[seatId]);
+        const preferred = actions.find(a => a.target.cardId === preferredReserve[seatId]);
         const selected = preferred || [...actions].sort((a, b) => a.actionId.localeCompare(b.actionId))[0];
         return { actionId: selected.actionId, reasonCode: preferred ? "research:required-pass-reserve-preference" : "research:required-pass-reserve-stable" };
       }
@@ -124,11 +161,24 @@ function agentFactory(context) {
   } });
 }
 
-function createEnvironment(options = {}) {
-  return createSimulationEnv({ ...options, agentFactory });
+function createEnvironment(options = {}, metadata = {}) {
+  const factory = metadata.id === THIRD_ROUND_ID ? context => context.seatId === LEARNER
+    ? agentFactory(context) : passiveAgent(context.seatId, { preferredReserve: THIRD_RESERVE, version: THIRD_OPPONENT_VERSION }) : agentFactory;
+  return createSimulationEnv({ ...options, agentFactory: factory });
 }
 
 function initialize(env, config, metadata) {
+  if (metadata.id === THIRD_ROUND_ID) {
+    const source = thirdRoundOpening();
+    assert.equal(source.sha256, metadata.openingCheckpointSha256);
+    assert.deepEqual(source.provenance, metadata.controlledTeacherPrefix);
+    const checkpoint = source.checkpoint, original = checkpoint.coreState.compositionEnvelope;
+    checkpoint.config = { ...checkpoint.config, ...config, agentType: "custom", seat: LEARNER, opponentIdentity: metadata.opponentPolicyVersion };
+    env.loadCheckpoint(checkpoint);
+    assert.deepEqual(env.createCheckpoint().coreState.compositionEnvelope, original, "TEACHER_THIRD_NATIVE_ROOT_OR_RNG_DRIFT");
+    assert.deepEqual(env.createCheckpoint().machineAI, {});
+    return checkpoint.replaySteps;
+  }
   const { checkpoint, sha256 } = opening();
   assert.equal(sha256, metadata.openingCheckpointSha256);
   const canonicalBefore = checkpoint.coreState.committedState;
@@ -160,4 +210,4 @@ function initialize(env, config, metadata) {
 
 function settled(observation, metadata = {}) { return observation.publicState.roundNumber > (metadata.stopAfterRound || 1); }
 
-module.exports = { ID, TWO_ROUND_ID, B117_PREFIX_ID, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };
+module.exports = { ID, TWO_ROUND_ID, THIRD_ROUND_ID, B117_PREFIX_ID, thirdRoundOpening, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };

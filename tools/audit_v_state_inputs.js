@@ -846,6 +846,34 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{kernel?.composition.dispose();}
 }
 
+// A held region card may match history as soon as it becomes reserved. The
+// same readonly hand-history facts and revealed layout must reach every V path.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),probe=require('../randomizer/game/ai/probe-capital'),demand=require('../randomizer/game/ai/resource-demand');
+  const cp=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-133-20261105-v1.checkpoint.json')),e=cp.coreState.compositionEnvelope,seed=JSON.parse(e.committedState).meta.seed,seat='player-white';
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(e).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(raw,seat),state=JSON.parse(e.committedState),owner=state.players.players.find(p=>p.id===seat);port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const root=port.openRoot();
+  assert.deepEqual(raw.selfState.pendingHandCardTriggers,[]);assert.equal(value.total,114);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(independentValue.evaluateStateValue(port.valueObservation(root),seat),value);assert.equal(independentValue.purposeCapital({...probe.factsFromState(state,owner),supply:state.tech,researchCost:6,analyzeEnergyCost:0}).symbolCardPlan.value,2.5);assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>value.components[k])));assert.deepEqual(c.lifecycle.save().envelope,before);
+  state.turn.type1TriggerEvents=[...(state.turn.type1TriggerEvents||[]),{type:'alienTrace',traceType:'pink',playerId:seat}];const h=buildRuleObservation(state,seed,seat);assert(h.selfState.pendingHandCardTriggers.some(t=>t.cardInstanceId==='alien-amiba-0-1'));assert.equal(independentValue.purposeCapital({...probe.factsFromObservation(h,seat),supply:state.tech,researchCost:6,analyzeEnergyCost:0}).symbolCardPlan.value,0);
+  console.log('[PASS] independent-known-symbol-card: native/formal/full/compact shared2.5 purpose, hand-history guard, current layout and root/RNG agree');
+ }catch(error){console.log(`[FAIL] independent-known-symbol-card: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
+// Revealed Amiba positions and draw quantities are public inputs. Its funded
+// ready-analysis value must agree without inspecting either new card identity.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),probe=require('../randomizer/game/ai/probe-capital'),demand=require('../randomizer/game/ai/resource-demand');
+  const cp=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-160-20261105-v1.checkpoint.json')),e=cp.coreState.compositionEnvelope,state=JSON.parse(e.committedState),seed=state.meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(e).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(raw,seat),owner=state.players.players.find(p=>p.id===seat);port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const root=port.openRoot();
+  assert.equal(value.total,123.5);assert.equal(value.components.analysisPotential,9.5);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(independentValue.evaluateStateValue(port.valueObservation(root),seat),value);assert.deepEqual(raw.publicState.board.aliens.amibaTraces,probe.factsFromState(state,owner).amibaTraces);assert.equal(raw.publicState.board.ordinaryDrawCount,state.cards.drawPileCardIds.length);assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].map(k=>value.components[k])));assert(!Object.hasOwn(raw.publicState.board.aliens.amibaTraces,'cardDeck'));assert.deepEqual(c.lifecycle.save().envelope,before);
+  console.log('[PASS] independent-ready-amiba-analysis: public occupancy/draw counts, formal/full/compact/native9.5 shared purpose agree; no new identity, entity or root/RNG mutation');
+ }catch(error){console.log(`[FAIL] independent-ready-amiba-analysis: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

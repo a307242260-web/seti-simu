@@ -181,6 +181,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
         }),
         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
         discardCount: (state.cards?.discardPile || []).length,
+        ordinaryDrawCount: Array.isArray(state.cards?.drawPileCardIds) ? state.cards.drawPileCardIds.length : null,
         techSupply: sanitizeTechSupply(state.tech),
         aliens: sanitizeAlienPublicState(state.aliens),
       },
@@ -200,6 +201,8 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
     },
     selfState: sanitizeSelfPlayer(
       (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
+      turn,
+      state.pendingEffectOwnerIds || [],
     ),
     decision,
     probeRouteRequirements: state.probeRouteRequirements || null,

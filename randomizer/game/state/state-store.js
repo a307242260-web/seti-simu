@@ -43,10 +43,24 @@
     return Object.freeze(value);
   }
 
+  // Repeated field names and card IDs have identical JSON escape bytes.
+  // Cache strings only: mutable objects still traverse and sort every time.
+  const serializedStrings = new Map();
+  function serializeString(value) {
+    if (serializedStrings.has(value)) return serializedStrings.get(value);
+    const serialized = JSON.stringify(value);
+    if (value.length <= 512) {
+      if (serializedStrings.size >= 1024) serializedStrings.delete(serializedStrings.keys().next().value);
+      serializedStrings.set(value, serialized);
+    }
+    return serialized;
+  }
+
 function stableSerialize(value) {
     // 性能：与递归 map/join 版输出逐字节相同（键排序语义不变），但避免每层
     // 临时数组分配，实测快 ~20%；序列化输出是 envelope/hash 的字节输入，
     // 格式不得变更（canonicalEnvelopeHash 耦合 fork RNG 种子）。
+    if (typeof value === "string") return serializeString(value);
     if (value === null || typeof value !== "object") return JSON.stringify(value);
     if (Array.isArray(value)) {
       let out = "[";
@@ -60,7 +74,7 @@ function stableSerialize(value) {
     let out = "{";
     for (let index = 0; index < keys.length; index += 1) {
       if (index) out += ",";
-      out += JSON.stringify(keys[index]) + ":" + stableSerialize(value[keys[index]]);
+      out += serializeString(keys[index]) + ":" + stableSerialize(value[keys[index]]);
     }
     return out + "}";
   }

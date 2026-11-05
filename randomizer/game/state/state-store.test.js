@@ -311,4 +311,25 @@ function committedBytes(store) {
   assert.equal(store.serializeForkSnapshot().serialized, canonical());
 })();
 
+(function testStringCachePreservesCanonicalEscapeBytesAndEviction() {
+  function reference(value) {
+    if (value === null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return "[" + value.map(reference).join(",") + "]";
+    return "{" + Object.keys(value).sort().map(key => JSON.stringify(key) + ":" + reference(value[key])).join(",") + "}";
+  }
+  const edge = ["", "\"", "\\", "\n\t\r\b\f\u0000", "中文🛰️", "\ud800", "\udfff", "\u2028\u2029", "x".repeat(513)];
+  const state = createState({ cards: { "10": "ten", "2": "two", values: [...edge, -0, 1e-12, true, false, null], nested: Object.fromEntries(edge.map((key, i) => [key, edge[edge.length - i - 1]])) } });
+  const store = createStateStore(state, { trustedIsolatedOwnership: true });
+  const original = reference(state);
+  assert.equal(store.serializeForkSnapshot().serialized, original, "canonical bytes include lexicographic integer-looking keys and lone-surrogate escapes");
+  for (let i = 0; i < 1100; i++) {
+    const candidate = structuredClone(state);
+    candidate.cards.values = ["evict-" + i, ...edge];
+    assert.equal(store.restoreForkSnapshot(candidate).ok, true);
+    assert.equal(store.serializeForkSnapshot().serialized, reference(candidate), "string memo eviction cannot reuse another string or prior mutable state");
+  }
+  assert.equal(store.restoreForkSnapshot(state).ok, true);
+  assert.equal(store.serializeForkSnapshot().serialized, original, "evicted special strings encode to the exact original bytes again");
+})();
+
 console.log("state-store tests passed");

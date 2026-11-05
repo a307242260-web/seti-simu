@@ -1,0 +1,2 @@
+PASS production-browser-full-parity-search http://127.0.0.1:49442/randomizer/index.html?agent=search
+SUMMARY browserSmoke passed=1 failed=0 total=1

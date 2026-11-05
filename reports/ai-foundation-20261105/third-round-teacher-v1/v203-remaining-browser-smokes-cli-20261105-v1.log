@@ -1,0 +1,23 @@
+{"scope":"Remaining original functional cases after the default legacy full-page timeout; all earlier27 passes reused, new-search full-page separately verified. No timeout increase or assertion deletion.","cases":39,"ids":["production-action-log-and-card-viewer","production-quick-move-button","production-solar-preview","production-replay-steps-recorded","production-search-agent-entry","production-goal-movement-plan","production-fixed-card-pick-plan","production-local-final-mark","production-scan-purpose-plan","production-search-hotpath","production-blue-exchange-funding","production-six-greedy-plans","production-shared-resource-prefix","production-resource-goal-plan","production-funded-travel-capital","production-conditional-sector-flow","production-conditional-research-capital","production-known-pass-card","production-winning-income-recovery","production-free-launch-plan-recovery","production-funded-movement-tail","production-funded-research-value","production-ready-amiba-analysis","production-known-symbol-capital","production-research-trigger-capital","production-quiet-data-tail","production-funded-hand-timing","production-mission-data-continuation","production-teacher-development","production-settled-tech-funding","production-ready-analysis-capital","production-public-income-option","production-known-sector-analysis","production-computer-preinvestment","production-purpose-realization","production-sector-mission-composition","production-known-movement-tool","production-search-agent-parity","production-completion-agent-parity"]}
+PASS production-action-log-and-card-viewer http://127.0.0.1:50027/randomizer/index.html
+PASS production-quick-move-button http://127.0.0.1:50027/randomizer/index.html
+PASS production-solar-preview http://127.0.0.1:50027/randomizer/index.html
+PASS production-replay-steps-recorded http://127.0.0.1:50027/randomizer/index.html
+PASS production-search-agent-entry http://127.0.0.1:50027/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:50027/randomizer/index.html
+PASS production-fixed-card-pick-plan http://127.0.0.1:50027/randomizer/index.html
+PASS production-local-final-mark http://127.0.0.1:50027/randomizer/index.html
+PASS production-scan-purpose-plan http://127.0.0.1:50027/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:50027/randomizer/index.html
+PASS production-blue-exchange-funding http://127.0.0.1:50027/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:50027/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:50027/randomizer/index.html
+PASS production-resource-goal-plan http://127.0.0.1:50027/randomizer/index.html
+PASS production-funded-travel-capital http://127.0.0.1:50027/randomizer/index.html
+PASS production-conditional-sector-flow http://127.0.0.1:50027/randomizer/index.html
+PASS production-conditional-research-capital http://127.0.0.1:50027/randomizer/index.html
+PASS production-known-pass-card http://127.0.0.1:50027/randomizer/index.html
+Error: production-winning-income-recovery 操作异常：Error: 固定收入准备偏离证书
+    at <anonymous>:17:74
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v203-search-browser-parity-20261105-v1.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v203-search-browser-parity-20261105-v1.js:294:11)

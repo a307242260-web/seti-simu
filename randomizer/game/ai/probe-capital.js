@@ -14,10 +14,12 @@
     common ? require("../rockets") : root.SetiRocketActions,
     common ? require("../abilities/rocket") : root.SetiAbilityRocket,
     common ? require("../industry/catalog") : root.SetiIndustryCatalog,
-    common ? require("./value-arithmetic") : root.SetiValueArithmetic);
+    common ? require("./value-arithmetic") : root.SetiValueArithmetic,
+    common ? require("../cards/effects") : root.SetiCardEffects,
+    common ? require("../aliens/amiba") : root.SetiAlienAmiba);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic, cardEffects, amiba) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -111,7 +113,7 @@
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
     const capitalValues = new Map();
     const capital = (hand, wallet, income, traceSlots = null) => {
-      const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
+      const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, wallet.availableData, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
       if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}));
       return capitalValues.get(key);
     };
@@ -173,8 +175,20 @@
           const ranked = hand.filter(card=>cards.getIncomeGainForCard(card)).map(card=>incomePurpose(card,hand))
             .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           if (!ranked.length) {
-            if (unknownCount) supported = false;
-            ledger.push({ type: effect.type, value: 0, unresolvedUnknownIncome: unknownCount > 0 });
+            // A final ordinary income reward may consume one anonymous card.
+            // Charge its complete hand value and forecast none of its gains.
+            // This narrow resource-only mission cannot spend an unknown grant
+            // or deplete the counted ordinary deck before a possible redraw.
+            const anonymousFloor=unknownCount>0&&index===effects.length-1
+              &&effects.slice(0,index).every(e=>e.type==='gain_resources')
+              &&Number.isSafeInteger(facts.board.ordinaryDrawCount)&&facts.board.ordinaryDrawCount>0;
+            if(anonymousFloor){unknownCount--;delta-=weights.handSize;
+              ledger.push({type:effect.type,value:-weights.handSize,anonymousCardsConsumed:1,
+                policy:'known-final-income-consumption-floor',excluded:'all unknown immediate and permanent income gains; no funding from this reward'});
+            }else{
+              if (unknownCount) supported = false;
+              ledger.push({ type: effect.type, value: 0, unresolvedUnknownIncome: unknownCount > 0 });
+            }
             continue;
           }
           const chosen = ranked[0]; hand.splice(hand.indexOf(chosen.card), 1);
@@ -272,6 +286,10 @@
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
     return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
+      reservedCards: observation.selfState.reservedCards, pendingCardTriggers: observation.selfState.pendingCardTriggers,
+      pendingHandCardTriggers: observation.selfState.pendingHandCardTriggers,
+      pendingNativeEffects: observation.selfState.pendingNativeEffects,
+      researchSymbols: pub.board?.aliens?.amiba, amibaTraces: pub.board?.aliens?.amibaTraces,
       companyState: player.dataProgress?.blueSlots?.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))&&observation.selfState.companyState ? { abilityId: observation.selfState.companyState.abilityId, roundMarkRound: observation.selfState.companyState.roundMarkRound, roundMarkTurn: observation.selfState.companyState.roundMarkTurn } : null,
       extraUnknownCount: 0, round: pub.roundNumber, passing: pub.passingPlayerIds.includes(seatId),
       terminal: observation.terminal ?? observation.outcomeProjection?.terminal,
@@ -280,17 +298,22 @@
 
   // Only the selected player's public resources/owned technology and known
   // hand are used. Hidden alien identities and replacement cards are omitted.
+  function researchFactsFromState(state, player) {
+    return {reservedCards:player.reservedCards,pendingCardTriggers:cardEffects.listPendingTriggerKeys(player,state.turn),
+      pendingHandCardTriggers:cardEffects.listPendingTriggerKeys({...player,reservedCards:player.hand||[]},state.turn),
+      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),researchSymbols:amiba.getPublicSymbolState(state.aliens),amibaTraces:amiba.getPublicTraceState(state.aliens)};
+  }
   function factsFromState(state, player) {
     const slots = Object.entries(state.aliens?.aliens || {}).map(([slotId, slot]) => ({
-      slotId: Number(slotId), revealed: Boolean(slot.revealed), traces: slot.traces,
+      slotId: Number(slotId), revealed: Boolean(slot.revealed), alienId:slot.revealed?(slot.alienId||slot.assignedAlienId||null):null, traces: slot.traces,
     }));
     const computerSlots=data.listComputerPlacedTokens(player).map(t=>t.placementSlot),usedBlue=data.listBlueBonusPlacedTokens(player);
     const blueSlots=Object.entries(player.techState?.blueBoardSlots||{}).filter(([id])=>player.techState.ownedTiles[id]&&!player.techState.disabledTiles[id]).map(([tileId,slot])=>({tileId,slot:Number(slot),
       occupied:usedBlue.some(t=>Number(t.blueSlot)===Number(slot)),unlocked:computerSlots.includes(data.getRequiredComputerSlotForBlueBonus(slot))})).sort((a,b)=>a.slot-b.slot);
     const unknown=state.cards?.unknownPublicSlotIndices,publicCards=unknown?.length?state.cards.publicCards.map((card,index)=>card||(unknown.includes(index)?{hidden:true,faceUp:false}:null)):state.cards?.publicCards;
-    return { player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
-      board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem,
-        publicCards, aliens: { slots } }, hand: player.hand,
+    return { ...researchFactsFromState(state,player),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
+      board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem, finalScoring: state.finalScoring,
+        publicCards, ordinaryDrawCount:Array.isArray(state.cards?.drawPileCardIds)?state.cards.drawPileCardIds.length:null, aliens: { slots } }, hand: player.hand,
       companyState: blueSlots.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))?{ abilityId: industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId ?? null, roundMarkRound: Number(player.industryRoundMarkRound) || 0, roundMarkTurn: Number(player.industryRoundMarkTurn) || 0 }:null,
       extraUnknownCount: Math.max(0, (player.resources.handSize || 0) - player.hand.length), round: state.turn.roundNumber,
       passing: (state.passingPlayerIds || state.turn.passedPlayerIds).includes(player.id) || player.passCompletionPending === true,
@@ -300,5 +323,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, fromObservation, fromState });
+  return Object.freeze({ ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

@@ -1,0 +1,11 @@
+# 同状态第三轮标准实验入口契约
+
+V203/V27的391具名/308不同根，加8个关键首次样本，共314个不同完整envelope/席位组合全部闭合且过256/600；相关完整179单元/1完整流程已通过。新入口只调整研究宿主与记录，不修改AI候选、估值、状态等价、准备剪枝或预算。
+
+实验从已合法重放、SHA冻结的教师113前完整Simulation checkpoint恢复：112个已接受输入包含同一23输入四席开局、教师前两轮和第三轮蓝/棕席PASS及强制选择。保留107前全局第三轮起点的来源，注明107—112是已验证的被动席固定前缀。initialize不重放这些输入，不修改原生envelope/session/RNG，不带入任何AI缓存；仅设置custom宿主/白席共享搜索及其余PASS角色。不能把前两轮固定教师输入宣称成新AI自主前三轮成绩。
+
+独立scenario ID human405-white-teacher-r3-v1，quick模式，在第三轮PASS队列结算并进入R4后停止；比较summary只取第三轮提交PASS之前保存的轮末checkpoint，不含PASS选牌和R4收入。记录范围white-only-third-round-from-exact-teacher-start、controlledTeacherPrefix、originalOpeningInputs23和openingInputs112，baselineEligible=false。原first2及V123/V189整局续跑接口和严格源码限制不放宽。
+
+白席沿用既有共享factory和每次决策256原生输入/600ms提交门槛；未闭合/错误/超限则不提交失败行动，不替代PASS，保存attempt/checkpoint。其余三席只PASS及强制选择；初始蓝/棕已PASS，绿席尚未轮到。新场景被动席使用单独版本，绿席轮末优先教师已记录的b138（仅在合法菜单中已提供时），缺失仍沿用稳定选择，避免额外换牌变量。经robot_iterate唯一标准入口登记、构建实验中心，不直接调用临时脚本跑策略；同commit+scenario指纹不得重复。新入口完成静态/行为及初始化/去重测试、源码归属验证、隔离提交后才能运行一次新实验。
+
+单独的同起点第三轮不替代整个Goal的最终自主前三轮回归：第三轮同状态学习完成后，仍须核对前两轮表现及从原23输入开局的自主前缀/前三轮，之后回查第二轮轮末取舍。V41四AI整局baseline保持。

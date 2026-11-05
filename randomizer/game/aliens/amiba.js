@@ -523,6 +523,22 @@
     return symbolId ? amiba.symbolsById?.[symbolId] || null : null;
   }
 
+  function getPublicSymbolState(alienState) {
+    const amiba=alienState?.amiba,id=amiba?.revealedSlotId;
+    const source=alienState?.aliens||alienState?.slots;
+    const slot=Array.isArray(source)?source.find(slot=>Number(slot.slotId)===Number(id)):source?.[String(id)];
+    if(!amiba?.revealInitialized||!slot?.revealed||(slot.alienId||slot.assignedAlienId)!==ALIEN_ID)return null;
+    return {revealInitialized:true,revealedSlotId:id,symbolSlots:structuredClone(amiba.symbolSlots),symbolsById:structuredClone(amiba.symbolsById)};
+  }
+
+  function getPublicTraceState(alienState) {
+    const amiba=alienState?.amiba,id=amiba?.revealedSlotId,slot=alienState?.aliens?.[String(id)];
+    if(!amiba?.revealInitialized||!slot?.revealed||(slot.alienId||slot.assignedAlienId)!==ALIEN_ID)return null;
+    const grid=getTraceGrid(alienState,id);if(!grid)return null;
+    return {revealedSlotId:id,traceSlotsByAlienSlotId:{[String(id)]:structuredClone(grid)},
+      blindCardCount:Array.isArray(amiba.cardDeck)?amiba.cardDeck.length:null,displayedCardAvailable:amiba.displayedCardIndex!=null};
+  }
+
   function listSymbols(alienState) {
     const amiba = ensureAmibaState(alienState);
     return Object.values(amiba.symbolsById || {}).sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
@@ -745,6 +761,8 @@
     listSymbols,
     listSymbolsInRegion,
     getSymbolEntry,
+    getPublicSymbolState,
+    getPublicTraceState,
     resolveSymbolAtSlot,
     resolveRegionReward,
     formatTraceLabel,

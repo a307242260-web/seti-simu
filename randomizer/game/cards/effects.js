@@ -3977,6 +3977,17 @@
     return matches;
   }
 
+  // Public availability query; unlike collection this never initializes cards.
+  function listPendingTriggerKeys(player, turn = {}) {
+    if(!player||turn.currentPlayerId!==player.id)return[];
+    const events=turn.type1TriggerEvents||[],keys=[];
+    for(const card of player.reservedCards||[])for(const trigger of getCardModel(card)?.triggers||[]){
+      if(!isTriggerConsumed(card,trigger.id)&&events.some(event=>event.sourceCardInstanceId!==card.id&&eventMatchesTrigger(event,trigger)))
+        keys.push({cardInstanceId:card.id,ruleId:trigger.id});
+    }
+    return keys;
+  }
+
   function countSectorWinsByColor(player, dataState, color) {
     const mod = getEndGameScoring();
     if (mod) return mod.countSectorWinsByColor(player, dataState, color);
@@ -4709,6 +4720,7 @@
     consumeTrigger,
     completeTask,
     collectMatchingTriggers,
+    listPendingTriggerKeys,
     collectReadyTasks,
     collectTemporaryTaskRewards,
     countTraceMarkers,

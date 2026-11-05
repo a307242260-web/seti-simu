@@ -103,18 +103,28 @@ try {
   assert(c.lifecycle.restore({...original,committedState:JSON.stringify(controlled)}).ok);
   const deferred=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try{deferred.setResourcePlanning(true);deferred.setCardPickPlanning(true);const root=deferred.openRoot();assert.equal(deferred.incomePlanSummary(root),null);assert.equal(deferred.resourceSpec(root).incomeTail.selected,false);}finally{deferred.close();}
-  // Below the research fee, the same native income plan funds publicity via
-  // computer2 and is positive. Keep its deployed probe and shared-wallet quote.
+  // Below the research fee, both preparations are positive. The greedy
+  // computer prefix preserves the supplier and beats income; independently
+  // execute the income counterfactual to retain its shared-wallet obligation.
   recipient.resources.publicity=5;
   assert(c.lifecycle.restore({...original,committedState:JSON.stringify(controlled)}).ok);
   const controlBefore=c.lifecycle.save().envelope,q=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try{
     q.setResourcePlanning(true);q.setCardPickPlanning(true);const root=q.openRoot(),spec=q.incomePlanSummary(root),policy=q.resourceSpec(root);assert.equal(spec,null,'non-half-unit income gain must execute its native preparation');
     assert(values.evaluateStateValue(root.observation,seatId).components.probePotential>0);
-    const actual=q.expandResourcePlan(root,policy.plans.find(p=>p.goal.kind==='income'),()=>null);assert(actual.complete);
+    const requirements=require('../production-kernel').getResourceGoalRequirements(controlled,seatId);
+    const goal=demand.catalog({state:controlled,seatId,requirements,actions:root.legalActions}).find(g=>g.kind==='income');assert(goal);
+    const first=demand.step({state:controlled,seatId,goal,actions:root.legalActions,status:'stable'});assert(first.actionId);
+    const actual=q.expandResourcePlan(root,{id:goal.id,goal,operation:{},firstActionId:first.actionId},()=>null);assert(actual.complete);
     assert.equal(actual.submissions,9);
     assert.equal(values.evaluateStateValue(actual.node.observation,seatId).total,
       values.sumValueParts([values.evaluateStateValue(root.observation,seatId).total,policy.incomeTail.netGain]));
+    const preferred=policy.plans.find(p=>p.goal.kind==='computer-prefix');assert(preferred);
+    const prefix=q.expandResourcePlan(root,preferred,()=>null);assert(prefix.complete);
+    const startValue=values.evaluateStateValue(root.observation,seatId).total,prefixValue=values.evaluateStateValue(prefix.node.observation,seatId).total,incomeValue=values.evaluateStateValue(actual.node.observation,seatId).total;
+    assert.equal(prefixValue,values.sumValueParts([startValue,policy.fixedComputerTail.netGain]));
+    assert(prefixValue>incomeValue&&prefix.submissions<actual.submissions,'prefer the higher-valued native preparation with fewer fixed inputs');
+    console.log(JSON.stringify({controlledComputerPrefixBeatsIncome:true,prefixInputs:prefix.submissions,incomeInputs:actual.submissions,prefixValue,incomeValue}));
     assert.deepEqual(c.lifecycle.save().envelope,controlBefore);
   }finally{q.close();}
 } finally { port.close(); c.dispose(); }

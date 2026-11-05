@@ -855,6 +855,11 @@ const smokes = [
 ];
 
 module.exports = Object.freeze([...smokes, Object.freeze({
+  ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
+  id: "production-browser-full-parity-search", query: "agent=search",
+  obligation: "V2共享搜索在实际整页完成初始化、动作提交、机器协调和保存恢复；复用同一整页断言",
+  counterexample: "只在默认旧启发式路径验证整页，V2宿主主行动后未提交或恢复失败",
+}), Object.freeze({
   id: "production-search-agent-entry",
   file: "randomizer/index.html",
   query: "agent=search",
@@ -1210,7 +1215,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     for(const step of legacy.paidSteps.slice(0,3)){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===step.actionId);if(!a)throw Error('收入控制前缀缺失');const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('收入控制前缀失败');}
     const control=structuredClone(c.lifecycle.save().envelope),state=JSON.parse(control.committedState);state.players.players.find(p=>p.id===f.seatId).resources.publicity=5;control.committedState=JSON.stringify(state);if(!c.lifecycle.restore(control).ok)throw Error('研究费以下的收入控制恢复失败');
     const knownAtRoot=new Set(c.projection({role:'player',playerId:f.seatId}).state.selfState.hand.map(c=>c.id));
-    try{for(let i=0;i<13;i++){
+    try{for(let i=0;i<9;i++){
       const saved=JSON.parse(JSON.stringify(c.lifecycle.save().envelope));if(!c.lifecycle.restore(saved).ok)throw Error('逐输入原生保存恢复失败');
       const d=c.inspect().session?.decision,actions=d?.choices||c.inputPort.enumerateActions({}),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:f.seatId,analysisPort:p});
       ai.loadCheckpoint(checkpoint);const before=JSON.stringify(c.lifecycle.save().envelope),r=ai.decide({seatId:f.seatId,legalActions:actions}),a=actions.find(a=>a.actionId===r.actionId);
@@ -1218,19 +1223,20 @@ module.exports = Object.freeze([...smokes, Object.freeze({
       if(i===0){inputs=r.search.diagnostics.nativeExecutions;if(inputs<1||inputs>256)throw Error('获胜尾部没有按原生输入完整计费');}
       else if(r.search.diagnostics.planContinuation!=='hit'||r.search.diagnostics.nativeExecutions!==0)throw Error('保存恢复后丢失既定目的');
       if(i<4&&a.family!==(i%2?'choose_payment':'move'))throw Error('固定移动准备偏离证书');
-      if(i>=4&&i<12&&a.family!==(i%2?'choose_target':'place_data'))throw Error('固定收入准备偏离证书');
-      if(i===12&&(a.family!=='choose_card'||a.target.cardInstanceId!=='card-15-0'))throw Error('没有保留移动支付后的收入供应牌');
+      if(i>=4&&i<8&&a.family!==(i%2?'choose_target':'place_data'))throw Error('固定电脑准备偏离证书');
+      if(i===8&&a.family!=='end_turn')throw Error('获胜电脑前缀未按证书结束回合');
       if((i===2||i===3)&&r.search.analysis.movementIntentRecoveries!==1)throw Error('剩余路线未从完整证书恢复');
       checkpoint=JSON.parse(JSON.stringify(ai.createCheckpoint()));
       const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('既定输入未通过原生验证');
     }
     const observed=c.projection({role:'player',playerId:f.seatId}).state,masked={...observed,selfState:{...observed.selfState,hand:observed.selfState.hand.map(card=>knownAtRoot.has(card.id)?card:{id:card.id,hidden:true})}};if(window.SetiStateValue.evaluateStateValue(masked,f.seatId).total!==expectedValue||window.SetiStateValue.evaluateStateValue(observed,f.seatId).total<expectedValue)throw Error('盲抽前用途预测与真实兑现不一致，或提前使用了新牌身份');
-    window.__winningIncomeRecovery={ok:true,inputs,restoredNativeSteps:13};
+    const owner=observed.publicState.players.find(p=>p.playerId===f.seatId);if(owner.publicity!==6||JSON.stringify(owner.dataProgress.computerSlots)!=='[1,2]'||!observed.selfState.hand.some(c=>c.id==='card-15-0'))throw Error('获胜电脑前缀必须保留DLC9并兑现当前研究资金');
+    window.__winningIncomeRecovery={ok:true,inputs,restoredNativeSteps:9};
     }finally{c.dispose();}
   })()`,
   successExpression:'window.__winningIncomeRecovery?.ok === true',
-  obligation:'真实页面的研究费以下受控收入计划逐输入保存原生状态与AI证书，恢复后维持已选目的和值且额外见证计入预算',
-  counterexample:'付费移动之间或收入前缀完成后冷恢复偏离原计划、证书复用虚构后继、固定见证不计费或真实兑现值不同',
+  obligation:'真实页面的研究费以下当前获胜电脑准备逐输入保存原生状态与AI证书，保留DLC9、兑现研究资金，恢复后维持目的和值且见证计入预算',
+  counterexample:'付费移动之间或电脑前缀完成后冷恢复偏离原计划、证书复用虚构后继、固定见证不计费或真实兑现值不同',
 }), Object.freeze({
   id:'production-free-launch-plan-recovery',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiResearchIncomeCapital && window.SetiSearchAgent?.createSearchAgent)',
@@ -1304,6 +1310,60 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__fundedResearchSmoke?.ok === true',
   obligation:'真实页面公开原生研究费用，宣传与持牌科技在PASS奖励期间转入下一轮，紧凑观察与根隔离保持',
   counterexample:'Node单独可用而页面未装配费用来源、PASS完成前仍计本轮投资、同一科技重复计价或估值读取隐藏奖励',
+}), Object.freeze({
+  id:'production-ready-amiba-analysis',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAmibaAnalysisCapital && window.SetiAlienAmiba?.getPublicTraceState && window.SetiStateValue)',
+  actionExpression:`(async()=>{
+    const folder='/reports/ai-foundation-20261105/third-round-teacher-v1/',cp=await fetch(folder+'teacher-before-input-160-20261105-v1.checkpoint.json').then(r=>r.json()),teacher=await fetch('/seti-saves/seti-save-537-merged.json').then(r=>r.json()),e=cp.coreState.compositionEnvelope,s=JSON.parse(e.committedState),seed=s.meta.seed,seat='player-white',v=window.SetiStateValue;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('ready Amiba restore');const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state,legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+    const submit=a=>{if(!a)throw Error('ready analysis input missing');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('ready analysis native input rejected');};
+    try{const root=observe(),value=v.evaluateStateValue(root,seat);if(value.total!==123.5||value.components.analysisPotential!==9.5||root.publicState.board.aliens.amibaTraces.blindCardCount!==6||Object.hasOwn(root.publicState.board.aliens.amibaTraces,'cardDeck'))throw Error('public ready analysis facts/value missing');
+      const p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const n=p.openRoot();if(JSON.stringify(v.evaluateStateValue(p.valueObservation(n),seat))!==JSON.stringify(v.evaluateStateValue(n.observation,seat)))throw Error('ready analysis compact facts differ');}finally{p.close();}
+      for(const i of [160,161,162])submit(legal().find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId));submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='computer'));submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='blueBonus'&&a.target.blueSlot===1));submit(legal().find(a=>a.family==='end_turn'));
+      const masked=window.SetiRuleComposition.sanitizeHiddenInformationObservation(root,observe(),{code:'hidden_card_reveal'});if(v.evaluateStateValue(masked,seat).total!==123.5)throw Error('native analysis/tail and anonymous floor disagree');if(!c.lifecycle.restore(e).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('ready analysis changed root/RNG');window.__readyAmibaSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__readyAmibaSmoke?.ok === true',
+  obligation:'真实页面公开痕迹占位及数量，无新身份、实体或虚构观察，分析/整区/蓝尾部原生兑现9.5且紧凑观察一致',
+  counterexample:'Node有效而页面缺模块、漏公开输入、把未知收入当资金、重复领取格位或原根RNG变化',
+}), Object.freeze({
+  id:'production-known-symbol-capital',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiKnownSymbolCapital && window.SetiStateValue && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const folder='/reports/ai-foundation-20261105/third-round-teacher-v1/',cp=await fetch(folder+'teacher-before-input-133-20261105-v1.checkpoint.json').then(r=>r.json()),teacher=await fetch('/seti-saves/seti-save-537-merged.json').then(r=>r.json()),e=cp.coreState.compositionEnvelope,state=JSON.parse(e.committedState),seed=state.meta.seed,seat='player-white',v=window.SetiStateValue;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('symbol root restore');
+    const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state,facts=o=>({...window.SetiProbeCapital.factsFromObservation(o,seat),supply:o.publicState.board.techSupply,researchCost:6,analyzeEnergyCost:0});
+    try{const before=observe(),q=v.purposeCapital(facts(before)).symbolCardPlan;if(q.value!==2.5||q.selected.slotId!=='blue_1'||v.evaluateStateValue(before,seat).total!==114||before.selfState.pendingHandCardTriggers.length)throw Error('known public symbol value/history missing');
+      const p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const root=p.openRoot();if(JSON.stringify(v.evaluateStateValue(p.valueObservation(root),seat))!==JSON.stringify(v.evaluateStateValue(root.observation,seat)))throw Error('compact symbol facts disagree');}finally{p.close();}
+      const historical=structuredClone(state);historical.turn.type1TriggerEvents=[...(historical.turn.type1TriggerEvents||[]),{type:'alienTrace',traceType:'pink',playerId:seat}];const h=window.SetiRuleObservation.buildRuleObservation(historical,seed,seat);if(!h.selfState.pendingHandCardTriggers.some(t=>t.cardInstanceId==='alien-amiba-0-1')||v.purposeCapital(facts(h)).symbolCardPlan.value!==0)throw Error('newly reserved historical trigger was ignored');
+      for(const i of [133,134,135]){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId);if(!a)throw Error('symbol native input missing');const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitAction(a);if(!r.ok)throw Error('symbol native input rejected');}
+      if(v.evaluateStateValue(observe(),seat).total!==114||v.purposeCapital(facts(observe())).symbolCardPlan.value!==0)throw Error('native symbol did not realize its quote exactly');if(!c.lifecycle.restore(e).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('symbol quote changed root/RNG');window.__knownSymbolSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__knownSymbolSmoke?.ok === true',
+  obligation:'真实页面已持区域牌读取移动后的公开symbol并共享钱包，历史手牌触发及紧凑观察正确，原生三输入兑现2.5',
+  counterexample:'Node存在而页面漏模块/历史手牌输入、重复计价、伪造观察、读隐藏牌或改变原根RNG',
+}), Object.freeze({
+  id:'production-research-trigger-capital',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiResearchTriggerCapital && window.SetiCardEffects?.listPendingTriggerKeys && window.SetiAlienAmiba?.getPublicSymbolState && window.SetiStateValue?.researchFunding)',
+  actionExpression:`(async()=>{
+    const folder='/reports/ai-foundation-20261105/third-round-teacher-v1/',cp=await fetch(folder+'teacher-before-input-127-20261105-v1.checkpoint.json').then(r=>r.json()),teacher=await fetch('/seti-saves/seti-save-537-merged.json').then(r=>r.json()),envelope=cp.coreState.compositionEnvelope,state=JSON.parse(envelope.committedState),seed=state.meta.seed,seat='player-white';
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    if(!c.lifecycle.restore(envelope).ok)throw Error('research trigger root restore');const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state,own=o=>o.publicState.players.find(p=>p.playerId===seat),facts=o=>window.SetiProbeCapital.factsFromObservation(o,seat),fund=o=>({resources:own(o),income:own(o).income,startingIncome:0}),describe=o=>window.SetiResearchTriggerCapital.describe(facts(o),fund(o),own(o).publicity);
+    const submit=i=>{const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId);if(!a)throw Error('teacher input missing '+i);const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitAction(a);if(!r.ok)throw Error('native trigger input rejected');};
+    try{const before=observe(),context=describe(before),g=window.SetiResearchTriggerCapital.gains(context,window.SetiStateValue.DEFAULT_WEIGHTS);
+      if(!context.available||g('purple2')!==4||g('blue3','purple2')!==4||g('purple3','purple2')!==0)throw Error('one-shot/moved-symbol quote missing');
+      if(!before.selfState.reservedCards.find(c=>c.cardId==='amiba_1.webp').cardEffectState||Object.hasOwn(before.publicState.board.aliens.amiba,'cardDeck')||Object.hasOwn(before.publicState.board.aliens.amiba,'initialConfiguration'))throw Error('public trigger facts missing or secret layout leaked');
+      submit(127);submit(128);const pending=observe();if(!pending.selfState.pendingNativeEffects||describe(pending).available)throw Error('pending native trigger was forecast again');
+      const p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const root=p.openRoot();if(!p.valueObservation(root).selfState.pendingNativeEffects||JSON.stringify(window.SetiStateValue.evaluateStateValue(root.observation,seat))!==JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),seat)))throw Error('compact/full pending facts disagree');}finally{p.close();}
+      submit(129);if(describe(observe()).available)throw Error('consumed trigger still has pending symbol movement');submit(130);const after=observe(),next=window.SetiResearchTriggerCapital.gains(describe(after),window.SetiStateValue.DEFAULT_WEIGHTS);
+      if(own(after).score-own(pending).score!==4||after.publicState.board.aliens.amiba.symbolSlots.blue_1!=='symbol_3'||next('purple3')!==0||next('blue3')!==4)throw Error('native one-shot reward or public symbol movement mismatch');
+      if(!c.lifecycle.restore(envelope).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('trigger controls changed root/RNG');window.__researchTriggerCapitalSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__researchTriggerCapitalSmoke?.ok === true',
+  obligation:'真实页面读取公开触发消费和symbol位置，两研究共享一次性奖励与移动，待结算守卫和完整/紧凑观察一致',
+  counterexample:'Node可用而页面缺依赖、重领同色奖励、读取旧布局、在队列结算前预支或泄露隐藏牌堆与配置',
 }), Object.freeze({
   id:'production-quiet-data-tail',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiLocalDecisionPlans?.dataTailCompletion && window.SetiResidualDomainSession?.listFinalMarkChoices && window.SetiScienceSession?.listIncomeChoices)',
@@ -1380,7 +1440,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json').then(r=>r.json()),reference=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-cold-serial-teacher-039-20261105-v1.json').then(r=>r.json()),seed=f.source.seed;
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('paid-tech root restore');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
     try{const root=p.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});
-      if(!r.complete||r.unresolved.length||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>256||r.diagnostics.nativeExecutions!==reference.nativeInputs)throw Error('paid-tech funding contexts were not shared correctly');
+      if(!r.complete||r.unresolved.length||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>256)throw Error('paid-tech funding contexts were not shared correctly');
       if(!r.lines.some(l=>l.status==='decision'&&l.resourcePolicy?.bound&&l.resourcePolicy.goal?.purpose==='tech'&&l.alternatives>=4))throw Error('distinct technology choices were lost');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('paid-tech sharing changed root/RNG');window.__settledTechFunding={ok:true,nativeInputs:r.diagnostics.nativeExecutions};
     }finally{p.close();c.dispose();}
@@ -1443,15 +1503,18 @@ module.exports = Object.freeze([...smokes, Object.freeze({
 }), Object.freeze({
  id:'production-purpose-realization',file:'randomizer/index.html',
  readyExpression:'Boolean(window.SetiDecisionSearch && window.SetiStateValue && window.SetiAnalysisPort)',
- actionExpression:`(async()=>{const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step091-20261105-v1.json').then(r=>r.json()),seat=f.seatId,seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('realization root restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
- try{const evaluate=window.SetiStateValue.createStateValueEvaluator(seat),root=p.openRoot(),options={port:p,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET},r=window.SetiDecisionSearch.searchDecision({...options,root}),a=root.legalActions.find(a=>a.actionId===r.actionId),pass=r.roots.find(row=>root.legalActions.find(a=>a.actionId===row.actionId)?.family==='pass');if(!r.complete||a?.family!=='place_data'||r.value!==85.08333333333333||pass?.value!==r.value||!(r.realization>pass.realization)||r.diagnostics.nativeExecutions>256)throw Error('same-value current purpose still deferred or scalar changed');const saved=p.exportPlan(r.planContinuation);if(!saved||!saved.rows.every(row=>Number.isFinite(row.realization)))throw Error('realization plan evidence missing');p.close();const token=p.importPlan(saved),reopened=p.openRoot(),again=window.SetiDecisionSearch.searchDecision({...options,root:reopened,planContinuation:token});if(!again.complete||again.actionId!==r.actionId||again.value!==r.value||again.realization!==r.realization||again.diagnostics.nativeExecutions!==0)throw Error('saved realization plan not reused');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('realization search changed root/RNG');window.__purposeRealizationSmoke={ok:true};}finally{p.close();c.dispose();}})()`,
- successExpression:'window.__purposeRealizationSmoke?.ok === true',
- obligation:'真实第91根标量同值时落实分析准备，保存恢复仍复用相同目的/兑现证据且零新模拟，原根/RNG不变',
+ actionExpression:`(async()=>{const seat='player-white',cases=[{fixture:'/reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step091-20261105-v1.json',equal:false},{fixture:'/reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step117-20261105-v1.json',equal:true}];
+ for(const item of cases){const f=await fetch(item.fixture).then(r=>r.json()),seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('realization root restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+ try{const evaluate=window.SetiStateValue.createStateValueEvaluator(seat),root=p.openRoot(),options={port:p,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET},r=window.SetiDecisionSearch.searchDecision({...options,root}),a=root.legalActions.find(a=>a.actionId===r.actionId),pass=r.roots.find(row=>root.legalActions.find(a=>a.actionId===row.actionId)?.family==='pass');
+ if(!r.complete||a?.family!=='place_data'||!pass||!(r.realization>pass.realization)||r.diagnostics.nativeExecutions>256||(item.equal?pass.value!==r.value:r.value<=pass.value))throw Error('current preparation or true exact-value realization tie is wrong');const saved=p.exportPlan(r.planContinuation);if(!saved||!saved.rows.every(row=>Number.isFinite(row.realization)))throw Error('realization plan evidence missing');p.close();const token=p.importPlan(saved),again=window.SetiDecisionSearch.searchDecision({...options,root:p.openRoot(),planContinuation:token});if(!again.complete||again.actionId!==r.actionId||again.value!==r.value||again.realization!==r.realization||again.diagnostics.nativeExecutions!==0)throw Error('saved realization plan not reused');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('realization search changed root/RNG');}finally{p.close();c.dispose();}}
+ window.__purposeRealizationSmoke={ok:true,checks:2};})()`,
+ successExpression:'window.__purposeRealizationSmoke?.ok === true && window.__purposeRealizationSmoke?.checks === 2',
+ obligation:'真实91根落实更高价值分析准备，另以117根严格同值验证优先兑现；两者保存恢复目的/值及零新模拟，原根/RNG不变',
  counterexample:'页面仍在同值时PASS、额外调整标量、用伪造后继计算排序，或计划恢复丢失兑现证据',
 }), Object.freeze({
  id:'production-sector-mission-composition',file:'randomizer/index.html',
  readyExpression:'Boolean(window.SetiSectorCardCapital && window.SetiStateValue && window.SetiProductionKernel)',
- actionExpression:`(async()=>{const w=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-sector-mission-prefix-native-20261105-v1.json').then(r=>r.json()),rows=w.rows.filter(x=>['before-sector-card','after-teacher-86','after-teacher-88','after-teacher-90','after-teacher-91'].includes(x.label)),seat='player-white',seed=JSON.parse(rows[0].envelope.committedState).meta.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;try{if(window.SetiStateValue.MODEL_VERSION!=='seti-purpose-capital-state-value-v22')throw Error('sector mission evaluator stale');for(const row of rows){if(!c.lifecycle.restore(row.envelope).ok)throw Error('sector mission root restore');const before=JSON.stringify(c.lifecycle.save().envelope),o=c.projection({role:'player',playerId:seat}).state,v=window.SetiStateValue.evaluateStateValue(o,seat);if(v.total!==87.08333333333333)throw Error('sector card dropped unconsumed mission capital');if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('sector mission changed root/RNG');}window.__sectorMissionCompositionSmoke={ok:true,checks:rows.length};}finally{c.dispose();}})()`,
+ actionExpression:`(async()=>{const w=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-sector-mission-prefix-native-20261105-v1.json').then(r=>r.json()),rows=w.rows.filter(x=>['before-sector-card','after-teacher-86','after-teacher-88','after-teacher-90','after-teacher-91'].includes(x.label)),seat='player-white',seed=JSON.parse(rows[0].envelope.committedState).meta.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;try{for(const row of rows){if(!c.lifecycle.restore(row.envelope).ok)throw Error('sector mission root restore');const before=JSON.stringify(c.lifecycle.save().envelope),o=c.projection({role:'player',playerId:seat}).state,v=window.SetiStateValue.evaluateStateValue(o,seat);if(v.total!==87.08333333333333)throw Error('sector card dropped unconsumed mission capital');if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('sector mission changed root/RNG');}window.__sectorMissionCompositionSmoke={ok:true,checks:rows.length};}finally{c.dispose();}})()`,
  successExpression:'window.__sectorMissionCompositionSmoke?.ok === true && window.__sectorMissionCompositionSmoke?.checks === 5',
  obligation:'浏览器加载条件扫描与未消费任务的共同钱包报价，五个原生准备前缀同值，原根和RNG不变',
  counterexample:'仅Node修复资本组合、页面仍删去探测器用途，或为一致性伪造重置后的扫描token',

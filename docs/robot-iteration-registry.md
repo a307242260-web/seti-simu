@@ -497,3 +497,12 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 `seti-free-analyze-v1`）。
 
 2026-10-29用户在知晓新版尚未复跑整局的前提下，明确确认`ai-search-v41-baseline-20261029`为开发代码baseline。本版本以11个已闭合单点验收登记`baselineEligible=true`、`records={}`，总览显示当前baseline，完整局耗时/分数留空。该例只代表本次用户确认的开发基线，不改变此前中途失败候选的排除标记。冻结配置和证据见[版本说明](ai-search-v41-baseline-20261029.md)。
+
+## 教师同状态第三轮（2026-11-05）
+
+`robot_iterate run --config agentType=search,scenario=human405-white-teacher-r3-v1,compactReplay=true --steps 400`
+从已验证教师第113输入前的完整原生checkpoint恢复。112个既有输入包含同一23输入开局、固定教师前两轮，以及第三轮蓝/棕席的6个PASS/强制输入；初始化不重放它们，不带入旧AI缓存，state/session/RNG逐位保留。元数据同时记录107前全局第三轮起点与113前首个白席根的SHA。
+
+仅第三轮白席由当前共享搜索自主决策。绿席尚未PASS，其强制保留牌优先教师已记录且菜单中已提供的b138；不在菜单则稳定选择。被动席使用独立`seti-human405-pass-only-teacher-r3-v1`身份，其他入口的被动政策不变。白席每次提交前检查完整搜索与256原生输入/600ms；失败保存未提交尝试和原生检查点，不以PASS代替，也不重跑同指纹。
+
+quick模式在R3 PASS结算并进入R4后停止；成绩取白席提交R3 PASS前保存的轮末checkpoint，轮末选牌和R4收入不计入。`scenarioResult.newInputsAfterControlledPrefix`单独给出112输入之后新增数量。实验范围为`white-only-third-round-from-exact-teacher-start`，不宣称前两轮是本版自主成绩，不替代从23输入开局的最终自主前三轮回归。该受控实验独立指纹、`baselineEligible:false`，V41四AI整局baseline保留。

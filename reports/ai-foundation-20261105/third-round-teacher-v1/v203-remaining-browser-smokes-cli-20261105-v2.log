@@ -1,0 +1,16 @@
+{"scope":"Corrected obsolete forced-income assertion to current winning computer preparation, consistent with the existing native recovery test. Resume at this failed case; reuse all earlier functional passes. No timeout increase or production strategy restoration.","cases":21,"ids":["production-winning-income-recovery","production-free-launch-plan-recovery","production-funded-movement-tail","production-funded-research-value","production-ready-amiba-analysis","production-known-symbol-capital","production-research-trigger-capital","production-quiet-data-tail","production-funded-hand-timing","production-mission-data-continuation","production-teacher-development","production-settled-tech-funding","production-ready-analysis-capital","production-public-income-option","production-known-sector-analysis","production-computer-preinvestment","production-purpose-realization","production-sector-mission-composition","production-known-movement-tool","production-search-agent-parity","production-completion-agent-parity"]}
+PASS production-winning-income-recovery http://127.0.0.1:51128/randomizer/index.html
+PASS production-free-launch-plan-recovery http://127.0.0.1:51128/randomizer/index.html
+PASS production-funded-movement-tail http://127.0.0.1:51128/randomizer/index.html
+PASS production-funded-research-value http://127.0.0.1:51128/randomizer/index.html
+PASS production-ready-amiba-analysis http://127.0.0.1:51128/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:51128/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:51128/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:51128/randomizer/index.html
+PASS production-funded-hand-timing http://127.0.0.1:51128/randomizer/index.html
+PASS production-mission-data-continuation http://127.0.0.1:51128/randomizer/index.html
+PASS production-teacher-development http://127.0.0.1:51128/randomizer/index.html
+Error: production-settled-tech-funding 操作异常：Error: paid-tech funding contexts were not shared correctly
+    at <anonymous>:5:202
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v203-search-browser-parity-20261105-v1.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v203-search-browser-parity-20261105-v1.js:294:11)

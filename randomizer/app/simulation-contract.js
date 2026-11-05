@@ -3,10 +3,12 @@
   const common = typeof module === "object" && module.exports;
   const api = factory(common ? require("../game/data/placement") : root.SetiDataPlacement,
     common ? require("../game/industry/catalog") : root.SetiIndustryCatalog,
-    common ? require("../game/tech/resolver") : root.SetiTechResolver);
+    common ? require("../game/tech/resolver") : root.SetiTechResolver,
+    common ? require("../game/cards/effects") : root.SetiCardEffects,
+    common ? require("../game/aliens/amiba") : root.SetiAlienAmiba);
   if (common) module.exports = api;
   else root.SetiSimulationContract = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (dataPlacement, industryCatalog, techResolver) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (dataPlacement, industryCatalog, techResolver, cardEffects, amiba) {
 "use strict";
 
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
@@ -58,6 +60,11 @@ function sanitizeCard(card) {
     incomeCode: card.incomeCode,
     faceUp: card.faceUp,
     blueBonusOwnerId: card.blueBonusOwnerId,
+    cardEffectState: card.cardEffectState ? {
+      modelCardId: card.cardEffectState.modelCardId,
+      consumedTriggerIds: clone(card.cardEffectState.consumedTriggerIds || []),
+      completedTaskIds: clone(card.cardEffectState.completedTaskIds || []),
+    } : null,
   });
 }
 
@@ -121,12 +128,15 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
   };
 }
 
-function sanitizeSelfPlayer(player) {
+function sanitizeSelfPlayer(player, turn = {}, pendingEffectOwnerIds = []) {
   if (!player) return null;
   return compactObject({
     playerId: player.id,
     hand: (player.hand || []).map(sanitizeCard),
     reservedCards: (player.reservedCards || []).map(sanitizeCard),
+    pendingCardTriggers: cardEffects.listPendingTriggerKeys(player, turn),
+    pendingHandCardTriggers: cardEffects.listPendingTriggerKeys({ ...player, reservedCards: player.hand || [] }, turn),
+    pendingNativeEffects: pendingEffectOwnerIds.includes(player.id),
     industryId: player.industryId,
     industryCardId: player.industryCardId,
     industryAbilityUsed: player.industryAbilityUsed,
@@ -157,7 +167,8 @@ function sanitizeAlienPublicState(state) {
     alienId: slot?.revealed ? (slot.alienId || slot.assignedAlienId || null) : null,
     traces: clone(slot?.traces || {}),
   }));
-  return { slots };
+  const symbols=amiba.getPublicSymbolState(state),traces=amiba.getPublicTraceState(state);
+  return { slots, ...(symbols ? { amiba: symbols } : {}), ...(traces ? { amibaTraces: traces } : {}) };
 }
 
 function sanitizeTechSupply(state) {

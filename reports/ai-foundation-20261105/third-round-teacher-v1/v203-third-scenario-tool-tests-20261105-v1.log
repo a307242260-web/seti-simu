@@ -1,0 +1,58 @@
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"firstTwoRoundsScenario":true,"endBeforePassCardAndIncome":true,"nativeBeforeExecutionCallback":true,"sourceEndMoney":1,"nextStartMoney":5,"independentIdentityAndDuplicateGuard":true}
+fatal: not a git repository (or any of the parent directories): .git
+{"frozenV123Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR1":true}
+fatal: not a git repository (or any of the parent directories): .git
+{"frozenV189Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR2":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"whiteOnlyScenario":"passed","controlledOpening":true,"passiveNativeDecisions":3,"scenarioIdentitySeparated":true}
+fatal: not a git repository (or any of the parent directories): .git
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    'player-blue',
+    'player-brown',
+-   'player-green'
+  ]
+
+    at thirdRoundOpening (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/research-human405-round1.js:57:10)
+    at Object.describe (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/research-human405-round1.js:90:31)
+    at Object.buildIdentity (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_research_validation.js:133:112)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/research-human405-third.test.js:3:128)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [ 'player-blue', 'player-brown' ],
+  expected: [ 'player-blue', 'player-brown', 'player-green' ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+research search statistics tests passed
+[搜索触限] 步42 p1 strategic #0 frontier={"enabled":true,"limit":256,"reached":true,"truncated":true,"trimCount":3} action=scan:<a>
+[搜索触限] 步42 p1 strategic #0 execution={"enabled":true,"limit":4096,"reached":true,"truncated":false} action=scan:<a>
+research world resume tests passed
+SUMMARY unit passed=5 failed=1 total=6 time=3.64s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=5
+OWNER training/research-statistics tests=1
+FAIL tools/research-human405-third.test.js status=1 signal=none

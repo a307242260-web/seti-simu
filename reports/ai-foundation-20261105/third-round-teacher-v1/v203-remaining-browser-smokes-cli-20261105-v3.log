@@ -1,0 +1,10 @@
+{"scope":"Current exact native target/value and <=256 gate replace obsolete strict V184 input count252; V203 requires256 after removal of an unsound old D-mark bound. Resume at this case without restoring the bound; retain prior passes and failures.","cases":10,"ids":["production-settled-tech-funding","production-ready-analysis-capital","production-public-income-option","production-known-sector-analysis","production-computer-preinvestment","production-purpose-realization","production-sector-mission-composition","production-known-movement-tool","production-search-agent-parity","production-completion-agent-parity"]}
+PASS production-settled-tech-funding http://127.0.0.1:51920/randomizer/index.html
+PASS production-ready-analysis-capital http://127.0.0.1:51920/randomizer/index.html
+PASS production-public-income-option http://127.0.0.1:51920/randomizer/index.html
+PASS production-known-sector-analysis http://127.0.0.1:51920/randomizer/index.html
+PASS production-computer-preinvestment http://127.0.0.1:51920/randomizer/index.html
+Error: production-purpose-realization 操作异常：Error: same-value current purpose still deferred or scalar changed
+    at <anonymous>:2:596
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:294:11)

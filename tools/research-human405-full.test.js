@@ -23,6 +23,13 @@ console.log(JSON.stringify({whiteFullContinuation:true,sourceNativeRngAndAICheck
 
 // The current V189 two-round result is a separate, strictly pinned continuation.
 {
+ const v189Proof=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-result-source-check-20261105-v1.json')));
+ const v189Drift=Object.entries(v189Proof.runtimeSourceHashes).some(([p,h])=>p.startsWith('randomizer/')&&crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname,'..',p))).digest('hex')!==h);
+ if(v189Drift){
+  assert.throws(()=>runner.buildIdentity({full:true,config:{agentType:'search',scenario:scenario.V189_ID,compactReplay:true}}),/FULL_CONTINUATION_STRATEGY_DRIFT/);
+  assert.throws(()=>scenario.continuation(scenario.V189_ID),/FULL_CONTINUATION_STRATEGY_DRIFT/);
+  console.log(JSON.stringify({frozenV189Continuation:'correctly-rejected-for-new-runtime',newStrategyCannotReuseOldR2:true}));
+ }else{
  const options={full:true,config:{agentType:'search',scenario:scenario.V189_ID,compactReplay:true}},identity=runner.buildIdentity(options),source=scenario.continuation(scenario.V189_ID);
  assert.equal(identity.scenario.openingInputs,125);assert.equal(identity.scenario.roundEndPhase,'before-pass-card-and-income');assert.equal(identity.scenario.continuation.sourceCompletedRounds,2);assert.equal(identity.scenario.decisionGate.enforcement,'measure-only');assert.throws(()=>runner.buildIdentity({...options,full:false}),/REQUIRES_FULL/);
  const env=scenario.createEnvironment();try{scenario.initialize(env,{seed:identity.seed,activePlayerCount:4,compactReplay:true},identity.scenario,{checkpointFromSave:runner.checkpointFromSave});const restored=env.saveBrowserSave();assert.equal(restored.committedState,source.save.committedState);assert.deepEqual(restored.session,source.save.session);assert.deepEqual(restored.machineAI,source.save.machineAI);assert.deepEqual(restored.replaySteps,source.save.replaySteps);assert.equal(scenario.inputCount(env.createCheckpoint()),125);assert(!scenario.settled(env.observe()));assert.equal(env.observe().publicState.roundNumber,3);}finally{env.dispose();}
@@ -31,4 +38,5 @@ console.log(JSON.stringify({whiteFullContinuation:true,sourceNativeRngAndAICheck
   const args=['tools/run_research_validation.js','--name','v189-full-continuation-unit','--config',`agentType=search,scenario=${scenario.V189_ID},compactReplay=true`,'--full','--no-save','--records-dir',dir],faultEnv={...process.env,NODE_OPTIONS:`${process.env.NODE_OPTIONS||''} --require=${preload}`};const child=spawnSync(process.execPath,args,{cwd:root,env:faultEnv,encoding:'utf8'});assert.equal(child.status,1,child.stderr);const file=path.join(dir,fs.readdirSync(dir).find(p=>p.endsWith('.full.json'))),bytes=fs.readFileSync(file),record=JSON.parse(bytes);assert.equal(record.status,'failed');assert.equal(record.steps,125);assert.equal(record.resumeStep,125);assert.equal(record.failure.failedDecisionCommitted,false);assert.deepEqual(record.roundEnds.map(x=>[x.round,x.score]),[[1,15],[2,50]]);assert.deepEqual(record.rounds,[]);const cp=JSON.parse(fs.readFileSync(path.resolve(root,record.failure.checkpointPath)));assert.equal(cp.coreState.committedState,source.save.committedState);assert.deepEqual(cp.machineAI,source.save.machineAI);assert.deepEqual(cp.browserReplaySteps,source.save.replaySteps);const duplicate=spawnSync(process.execPath,args,{cwd:root,env:faultEnv,encoding:'utf8'});assert.equal(duplicate.status,2);assert.deepEqual(fs.readFileSync(file),bytes);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
  console.log(JSON.stringify({v189Continuation:true,first125NotRerun:true,nativeRngAndAICheckpointExact:true,sourceRoundsPreserved:true,preDecisionFaultRetained:true,duplicateRefused:true}));
+ }
 }

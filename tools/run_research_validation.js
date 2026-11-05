@@ -456,7 +456,7 @@ function runValidation(options) {
       fs.mkdirSync(RECORDS_DIR, { recursive: true });
       fs.appendFileSync(failedAttemptsPath, `${JSON.stringify(trace)}\n`, "utf8");
     }
-  } }) : createSimulationEnv();
+  } }, identity.scenario) : createSimulationEnv();
   const resetConfig = {
     seed: identity.seed,
     activePlayerCount: identity.activePlayerCount,
@@ -606,8 +606,8 @@ function runValidation(options) {
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       ...(identity.scenario ? { scenario: identity.scenario,
-        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(identity.scenario.continuation.sourceCompletedRounds === 2 ? [1,2] : []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
-        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(finalObs, identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: steps - identity.scenario.openingInputs } : {}), ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(identity.scenario.continuation.sourceCompletedRounds === 2 ? [1,2] : []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
+        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? "third-round-settled" : identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
         scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
       gitCommit: gitCommit(),
@@ -661,7 +661,7 @@ function runValidation(options) {
         seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
         aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
         agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
-        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: whiteRound1.settled(env.observe()), openingInputs: identity.scenario.openingInputs },
+        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: whiteRound1.settled(env.observe()), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(env.observe(), identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: checkpointSteps - identity.scenario.openingInputs } : {}) },
         createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpointSteps, stepsLimit: options.steps,
         terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
         ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath) } : {}),

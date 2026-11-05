@@ -11,13 +11,16 @@
     common ? require("./research-income-capital") : root.SetiResearchIncomeCapital,
     common ? require("./sector-card-capital") : root.SetiSectorCardCapital,
     common ? require("./value-arithmetic") : root.SetiValueArithmetic,
-    common ? require("./known-movement-capital") : root.SetiKnownMovementCapital);
+    common ? require("./known-movement-capital") : root.SetiKnownMovementCapital,
+    common ? require("../end-game-scoring") : root.SetiEndGameScoring,
+    common ? require("./research-trigger-capital") : root.SetiResearchTriggerCapital,
+    common ? require("./known-symbol-capital") : root.SetiKnownSymbolCapital);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v22";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v27";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -124,7 +127,31 @@
     }
     return supported;
   }
-  function cardResearchOptions(card, targets, round, weights, funding = null) {
+  const NO_RESEARCH_MARKS = Object.freeze([]);
+  function researchFunding(facts, funding, publicity = funding?.resources?.publicity) {
+    const board=facts.board?.finalScoring,mark=board?.tiles?.d?.marks?.find(m=>m.playerId===facts.player.id);
+    let result=funding;
+    if(mark){const formulaId=endScoring.getFormulaId('d',board.tileVariants.d);
+      result={...funding,researchMarks:[{formulaId,multiplier:endScoring.getSlotMultiplier(formulaId,mark.slotIndex)}]};
+    }else if(funding?.researchMarks?.length)result={...funding,researchMarks:NO_RESEARCH_MARKS};
+    const trigger=researchTriggers.describe(facts,funding,publicity);
+    return trigger.available?{...result,researchTriggers:trigger}:result?.researchTriggers?{...result,researchTriggers:null}:result;
+  }
+  function researchPurposeGains(techState, funding, weights, paidPublicity=0) {
+    const marks=funding?.researchMarks;
+    const triggered=researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
+    if(!marks?.length)return triggered;
+    const value=tech=>marks.reduce((n,m)=>n+endScoring.getFormulaBaseValue(m.formulaId,{techState:tech},{})*m.multiplier,0);
+    const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),current=value(techState),quotes=new Map();
+    return(id,prior=null)=>{
+      const key=prior?`${prior}:${id}`:id;
+      if(quotes.has(key))return quotes.get(key);
+      const before=prior?add(techState,prior):techState;
+      const gain=arithmetic.sum([value(add(before,id))-(prior?value(before):current),triggered(id,prior)],weights);
+      quotes.set(key,gain);return gain;
+    };
+  }
+  function cardResearchOptions(card, targets, round, weights, funding = null, markerGain = () => 0) {
     if (round >= 4) return [];
     const research = supportedResearch(card);
     if (!research) return [];
@@ -155,25 +182,28 @@
     }
     // Only already-known currency income can advance the payment round. No
     // guessed blind card, future reward or fabricated successor funds the card.
-    return targets.filter(t => types.includes(t.type)).map(t => ({ id: t.id,
-      value: Math.max(0, ...windows.map(period => t.capabilityByRound[period.round] + t.first + t.bonusValue - period.payment - weights.handSize)) }));
+    if(!windows.length)return[];
+    return targets.filter(t => types.includes(t.type)).map(t => {
+      const baseValue=Math.max(...windows.map(period => t.capabilityByRound[period.round] + t.first + t.bonusValue - period.payment - weights.handSize));
+      return {id:t.id,baseValue,value:Math.max(0,baseValue+markerGain(t.id))};
+    });
   }
   function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS, funding = null) {
     if (round >= 4 || !supportedResearch(card)) return 0;
-    return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights, funding).map(o => o.value));
+    return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights, funding, researchPurposeGains(techState,funding,weights)).map(o => o.value));
   }
-  function handOptions(hand, targets, round, weights, funding = null) {
+  function handOptions(hand, targets, round, weights, funding = null, markerGain = () => 0) {
     const byTarget = new Map();
-    for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights, funding)) {
-      byTarget.set(option.id, Math.max(byTarget.get(option.id) || 0, option.value));
+    for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights, funding, markerGain)) {
+      if(!byTarget.has(option.id)||option.baseValue>byTarget.get(option.id).baseValue)byTarget.set(option.id,option);
     }
-    return [...byTarget].map(([id, value]) => ({ id, value }));
+    return [...byTarget.values()];
   }
   function handCapital(hand, techState, supply, round, weights = DEFAULT_WEIGHTS, funding = null) {
     if (round >= 4 || !hand.length) return 0;
     const eligible = hand.filter(supportedResearch);
     if (!eligible.length) return 0;
-    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights, funding).map(o => o.value));
+    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights, funding, researchPurposeGains(techState,funding,weights)).map(o => o.value));
   }
   function researchCapital({ hand, techState, supply, round, publicity, researchCost, passed = false, funding = null }, weights = DEFAULT_WEIGHTS) {
     const planningRound = round + Number(passed);
@@ -182,10 +212,12 @@
     if (!Number.isSafeInteger(researchCost) || researchCost < 0) throw new TypeError("VALUE_RESEARCH_COST_INVALID");
     if (publicity < researchCost) return 0;
     const targets = researchTargets(techState, supply, planningRound, weights);
-    const held = handOptions(hand, targets, planningRound, weights, funding);
+    const markerGain=researchPurposeGains(techState,funding,weights);
+    const held = handOptions(hand, targets, planningRound, weights, funding, markerGain);
     const currentHand = Math.max(0, ...held.map(o => o.value));
-    return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity
-      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.value)) - currentHand));
+    const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost):markerGain;
+    return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue + paidGain(t.id) - researchCost * weights.publicity
+      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id))) - currentHand));
   }
   function researchCapitalCeiling({ techState, supply, round, researchCost }, weights = DEFAULT_WEIGHTS) {
     if (round >= 4) return 0;
@@ -202,8 +234,11 @@
 
   function investmentFor(facts,weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
-    return(hand,publicity,funding)=>handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
-      +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+    return(hand,publicity,funding)=>{
+      funding=researchFunding(facts,funding,publicity);
+      return handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
+        +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+    };
   }
   function dataInvestmentFor(facts,weights){
     const investment=investmentFor(facts,weights);
@@ -226,7 +261,7 @@
   function basePurposeCapital(facts, weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
     const investment=dataInvestmentFor(facts,weights),computer=readyAnalysis.prepaidCapital(facts,weights);
-    const funding={resources:player,income:player.income,startingIncome:Number(passing)};
+    const funding=researchFunding(facts,{resources:player,income:player.income,startingIncome:Number(passing)});
     const held=handCapital(facts.hand,player.techState,supply,round+Number(passing),weights,funding);
     const paid=researchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
     const mission=probeCapital.quote({...facts,investment,
@@ -235,14 +270,23 @@
   }
   function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
-    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>portfolio({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
+    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>{
+      const {aliens,ordinaryDrawCount,...updates}=progress;
+      return portfolio({...facts,...updates,player:wallet,board:{...facts.board,
+        ...(ordinaryDrawCount===undefined?{}:{ordinaryDrawCount}),aliens:aliens||{...facts.board.aliens,slots}}});
+    },base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
     return{...base,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential],weights)};
   }
-  function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
+  function purposeCapitalWithoutSymbols(facts, weights = DEFAULT_WEIGHTS) {
     const base=capitalWithoutSector(facts,weights),sector=sectorCard.quote(facts,weights,next=>capitalWithoutSector(next,weights).total,base.total);
     return{...base,handPotential:arithmetic.sum([base.handPotential,sector.value],weights),sectorCardPlan:sector,total:arithmetic.sum([base.total,sector.value],weights)};
+  }
+
+  function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
+    const base=purposeCapitalWithoutSymbols(facts,weights),symbol=symbolCard.quote(facts,weights,next=>purposeCapitalWithoutSymbols(next,weights).total,base.total);
+    return{...base,handPotential:arithmetic.sum([base.handPotential,symbol.value],weights),symbolCardPlan:symbol,total:arithmetic.sum([base.total,symbol.value],weights)};
   }
 
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
@@ -326,7 +370,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

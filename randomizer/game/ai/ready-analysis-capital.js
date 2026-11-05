@@ -1,9 +1,9 @@
 (function(root,factory){
  'use strict';const common=typeof module==='object'&&module.exports;
  const api=factory(common?require('../data/placement'):root.SetiDataPlacement,common?require('../data'):root.SetiData,common?require('../aliens/state'):root.SetiAlienState,
-  common?require('../players'):root.SetiPlayers,common?require('../cards/effects'):root.SetiCardEffects,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic);
+  common?require('../players'):root.SetiPlayers,common?require('../cards/effects'):root.SetiCardEffects,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,common?require('./amiba-analysis-capital'):root.SetiAmibaAnalysisCapital);
  if(common)module.exports=api;else root.SetiReadyAnalysisCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(placement,data,aliens,players,effects,probe,arithmetic){
+})(typeof globalThis!=='undefined'?globalThis:window,function(placement,data,aliens,players,effects,probe,arithmetic,amibaAnalysis){
  'use strict';
  const zero=reason=>({value:0,selected:null,reason});
  const weighted=(gain,w)=>Object.entries(gain).reduce((n,[k,v])=>n+v*(k==='score'?1:w[k]||0),0);
@@ -28,6 +28,7 @@
   const placed=[...(facts.computerSlots||[])].sort((a,b)=>a-b),needed=[1,2,3,4,5,6].filter(slot=>!placed.includes(slot));
   if(needed.length&&(placed.length<4||placed.some((slot,index)=>slot!==index+1)
     ||needed.some(slot=>slot<5)||facts.player.availableData<needed.length))return zero('analysis-not-ready');
+  if(facts.researchSymbols?.revealInitialized&&facts.companyState?.abilityId==='deepspace_swap_cards')return amibaAnalysis.quote(facts,weights,portfolio,baseValue);
   if(!quiet(facts.reservedCards))return zero('analysis-reservation-needs-native-value');
   const payment=probe.funding(facts.player,{energy:facts.analyzeEnergyCost},weights);
   if(!payment)return zero('analysis-not-funded');
