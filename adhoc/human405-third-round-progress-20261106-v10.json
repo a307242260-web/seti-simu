@@ -1,0 +1,99 @@
+{
+  "status": "active",
+  "runtime": "V218/V37",
+  "sourceCommit": "5b5d3504c9b88a204e8787d92f4c50bcf9a47eb7",
+  "sourceAdmitted": true,
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-current-source-admission-20261106-v1.json",
+  "existingPerformanceCoverage": {
+    "namedCases": 476,
+    "uniqueRoots": 387,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 584.39825
+  },
+  "additionalNativeControls": 84,
+  "additionalSearchTimings": 0,
+  "newAutonomousRuns": 0,
+  "lastAutonomousRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "lastR3Assets": {
+    "score": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3Assets": {
+    "score": 105,
+    "tech": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "learningSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-learning-summary-20261106-v1.json",
+  "nextContract": "adhoc/v219-third-round-scan-income-contract-20261106-v1.md",
+  "baseline": "V41 unchanged",
+  "stage": "/private/tmp/seti-v218-teacher-r3-20261106-v1",
+  "candidateRuntime": "V225/V37",
+  "candidateAdmitted": false,
+  "candidateManifest": "reports/ai-foundation-20261106/candidate-v225-amiba-currency-blue-tail-v1/manifest.json",
+  "candidateGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-current-source-serial-gate-20261106-v3.json",
+  "candidateProgress": {
+    "status": "failed-gate",
+    "plannedNamedCases": 573,
+    "measuredNamedCases": 504,
+    "measuredUniqueRoots": 415,
+    "maxInputs": 311,
+    "maxMilliseconds": 565.5611250000001,
+    "failure": {
+      "label": "paired-paired-scan-setup-dlc31-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+      "identity": "d64e98f41c197c4f471188448001dd64b6c9270ede66c9993f80d85324c8cdaf",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-cold-paired-paired-scan-setup-dlc31-15-20261106-v1.json",
+      "nativeInputs": 311,
+      "milliseconds": 565.5611250000001,
+      "value": 128.58333333333334,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  },
+  "productionRuntimeUnchanged": "V218/V37",
+  "candidateNativeControls": {
+    "publicAmibaPlainEnd": {
+      "proofs": 67,
+      "inputs": 106,
+      "source": "V223",
+      "allRootsAgainstFullNative": true
+    },
+    "publicAmibaCurrencyTail": {
+      "proofs": 9,
+      "inputs": 32,
+      "source": "V225",
+      "allRootsAgainstNative": true
+    }
+  },
+  "validation": {
+    "V223": {
+      "fullUnitPassed": 182,
+      "fullFlowPassed": 1,
+      "browserPassed": 3,
+      "independentSnapshotTests": 21,
+      "independentSnapshotFixtures": 315
+    },
+    "V225": {
+      "relatedUnitPassed": 6,
+      "fullNodeNotRun": true,
+      "browserNotRun": true,
+      "completeColdGatePassed": false
+    }
+  },
+  "nextWork": "At exact DLC31 setup prefix15, remove avoidable native repetitions from311-input decision. Diagnose hand-income native boundaries, known public company swap, fixed blue data and genuine live-probe continuations; preserve every necessary purpose. No further batch or autonomous run until primary gates pass. Then known public income from anonymous card quantity, R3 development and R2 end review.",
+  "report": "docs/human405-third-round-scan-launch-20261106.md"
+}

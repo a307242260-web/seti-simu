@@ -1,0 +1,4 @@
+PASS production-research-trigger-capital http://127.0.0.1:57109/randomizer/index.html
+PASS production-scan-launch-reserve http://127.0.0.1:57109/randomizer/index.html
+PASS production-amiba-plain-end-value http://127.0.0.1:57109/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3

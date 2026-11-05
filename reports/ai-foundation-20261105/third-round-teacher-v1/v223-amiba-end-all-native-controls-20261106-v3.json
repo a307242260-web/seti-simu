@@ -1,0 +1,107 @@
+{
+  "status": "failed",
+  "scope": "One diagnostic search, not a replacement cold sample. Every public-Amiba plain-end scalar proof is checked by separate native end/mark executions. Root values and realizations against retained V219 full-native search.",
+  "comparisonEncoding": "JSON canonicalizes signed zero exactly as the retained native reference; v1 assertion failure is preserved",
+  "newAutonomousRuns": 0,
+  "rootSearchInputs": 200,
+  "additionalNativeInputs": 14,
+  "rows": [
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "1172ee639bb88808ae1280c426eaf9c7a8660232ab69b1e9d04253c859fdc3e4",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120.5,
+      "successorValue": 120.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "65abaf6811215ba40b438412c8503a3d2259de30fab9124fed71d3df923fcd31",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114.5,
+      "successorValue": 114.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "6d5d6751fbacdd1aa293d3c7d5ba6d1ccbed52210667127b94cbb97e157e7c75",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 109.5,
+      "successorValue": 109.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "e275dee891f487e571abcd90634981fabe01c17c44fa1f98bdf36daa28a9cf03",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120,
+      "successorValue": 120,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "f8293f6a0f37901593e8c6d551935449c856c054d01eaaa69a4c9894112beab7",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114,
+      "successorValue": 114,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "91820af0a67b62de84d6c59f00eb880851882d4a6215641e5cff264982a3dc31",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "572f355bc2a0b90f5cac6c199429de5be1d66efd7c629896def114f8ec1f7f73",
+      "valueAndRealizationMatch": true
+    }
+  ],
+  "allRootChoicesValuesAndRealizationsEqualFullNative": true,
+  "proofCount": 67,
+  "failure": {
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ -7.999999999999998\n- -8\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ -7.999999999999998\n- -8\n\n    at Object.<anonymous> (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/verify-v223-amiba-end-native-controls-20261106-v3.js:9:269)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

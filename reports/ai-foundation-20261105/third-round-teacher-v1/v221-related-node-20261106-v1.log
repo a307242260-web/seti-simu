@@ -1,0 +1,8 @@
+{"publicAmibaPlainEnd":true,"nativeEndControls":2,"earnedBRealizationDelta":-8,"actualPendingEffectsDecline":true,"noInventedObservation":true,"rootAndRngRestored":true}
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"rootAndRngUnchanged":true}
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+SUMMARY unit passed=4 failed=0 total=4 time=0.78s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=2

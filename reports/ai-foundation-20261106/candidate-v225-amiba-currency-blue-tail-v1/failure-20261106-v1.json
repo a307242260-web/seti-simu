@@ -1,0 +1,13 @@
+{
+  "status": "failed-native-input-gate",
+  "candidateAdmitted": false,
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-cold-paired-paired-scan-setup-dlc31-15-20261106-v1.json",
+  "evidenceSha256": "0cff3727724ac2c13c9e19c897b63c4acf945d2d0248fc8758350bcc88c0ee85",
+  "nativeInputs": 311,
+  "milliseconds": 565.5611250000001,
+  "complete": true,
+  "firstColdSampleRetained": true,
+  "historicalCasesAllPassed": true,
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

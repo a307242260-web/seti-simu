@@ -1,0 +1,456 @@
+{
+  "scope": "Canonical lowercase physical filenames for case-sensitive replay. Uppercase paths in pre-search harness failures resolve through this explicit map; no native input, accepted cold sample, envelope or hash changed. All executed samples refer to lowercase canonical paths.",
+  "aliases": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-13-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-13-root-20261106-v1.json",
+      "sha256": "7c05b6d1d4a831ff7187b704f968bd7cda8427fbbfdb424e2073436d7c74d40a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-19-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-19-root-20261106-v1.json",
+      "sha256": "d7bce1408bf054ca812adbf08754eedd0250349cd8d525066386f5ccc9d2e452",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-6-root-20261106-v1.json",
+      "sha256": "876f6e569eefc9c1478b80e2a8863511634543b1cf08e3b300799ead4fedc17f",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-4-root-20261106-v1.json",
+      "sha256": "2f468e8c5bd5937b3547fa02ff3f750ef9207ae39e2e15d8a1bd1146b0779a42",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-10-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-10-root-20261106-v1.json",
+      "sha256": "0363c1d7618690824a94112d83d6d5093d75cb95769e9e8cc980305187016b24",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-10-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-10-root-20261106-v1.json",
+      "sha256": "0363c1d7618690824a94112d83d6d5093d75cb95769e9e8cc980305187016b24",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-11-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-11-root-20261106-v1.json",
+      "sha256": "721c173ae109ec373dfe3885a13e081be77b4930d13c2904ec63fa9a3d60b35d",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-8-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-8-root-20261106-v1.json",
+      "sha256": "ac36da57e8ca0e1e89febf2df8ab7711d7ca03be6af8a3a591eeae0c1b482edd",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-2-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-2-root-20261106-v1.json",
+      "sha256": "e7a583a00f0a56957dc5c9d299959c6743f204bc40e7a03bc488872dd16e85f8",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-18-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-18-root-20261106-v1.json",
+      "sha256": "b79169883c4fdca2d24326813318b595ccd0a2e4e180010fe4546d8d5fc9a971",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-18-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-18-root-20261106-v1.json",
+      "sha256": "b79169883c4fdca2d24326813318b595ccd0a2e4e180010fe4546d8d5fc9a971",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-7-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-7-root-20261106-v1.json",
+      "sha256": "f337f439d26f678b0db287fe40c6df91b547694a95de423da5f35881bd21abdf",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-6-root-20261106-v1.json",
+      "sha256": "f85d339ac2666252811ed63667a0ac8cc5adb4be273b17209b411088bb52a794",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-4-root-20261106-v1.json",
+      "sha256": "dabc3d10df9e037aa0e0168008c0d5d3f234aa02c24eef95eb5d97b292184300",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-12-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-12-root-20261106-v1.json",
+      "sha256": "a923a833d75bcc5329919fe0c18dec82d37760b7e75b743e93d7eb352d837755",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-12-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-12-root-20261106-v1.json",
+      "sha256": "a923a833d75bcc5329919fe0c18dec82d37760b7e75b743e93d7eb352d837755",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-11-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-11-root-20261106-v1.json",
+      "sha256": "721c173ae109ec373dfe3885a13e081be77b4930d13c2904ec63fa9a3d60b35d",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-5-root-20261106-v1.json",
+      "sha256": "e11c9d67140d92c480a2fd90e017f84f1ac87446e494cc935dea52f0a9660d6b",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-13-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-13-root-20261106-v1.json",
+      "sha256": "7c05b6d1d4a831ff7187b704f968bd7cda8427fbbfdb424e2073436d7c74d40a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-20-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-20-root-20261106-v1.json",
+      "sha256": "cacb856513623d41f056726c1192310cf3fe2c1ba11c7209484f92c3a32c5ec6",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-8-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-8-root-20261106-v1.json",
+      "sha256": "ac36da57e8ca0e1e89febf2df8ab7711d7ca03be6af8a3a591eeae0c1b482edd",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-20-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-20-root-20261106-v1.json",
+      "sha256": "cacb856513623d41f056726c1192310cf3fe2c1ba11c7209484f92c3a32c5ec6",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-19-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-19-root-20261106-v1.json",
+      "sha256": "d7bce1408bf054ca812adbf08754eedd0250349cd8d525066386f5ccc9d2e452",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-15-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+      "sha256": "a29315b1baef4a9f4a76d7fe0acdb2551dd50f2e99877de4bf1dd23bf91dac85",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-3-root-20261106-v1.json",
+      "sha256": "ee2b74c45c943e89e21f221c2783f4ed4e39a95fa623a48e8114956c7e1ae4c5",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-8-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-8-root-20261106-v1.json",
+      "sha256": "8e33eff5ef0fe3ce08e112a31e16a8348f5632ff76ba2eb5c4edfb6b0d51f7e1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-6-root-20261106-v1.json",
+      "sha256": "876f6e569eefc9c1478b80e2a8863511634543b1cf08e3b300799ead4fedc17f",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-4-root-20261106-v1.json",
+      "sha256": "19df9f6512df708ac2362ed431f26ef78dcd4e3d0ed8ac1049a0fc89b19d5d3a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-6-root-20261106-v1.json",
+      "sha256": "c79f580b02b36a01a90992189349cd947740f2d1c07834fb58a1afe08e183c0d",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-17-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-17-root-20261106-v1.json",
+      "sha256": "23c6402d3f6202519659d143ec5996865394cc945f740df2d203eb1108144378",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-14-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-14-root-20261106-v1.json",
+      "sha256": "76f5742d634ca22545a35877189cb43e5cbfdb8d184451abfc2ac6e21362c7c1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-14-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-14-root-20261106-v1.json",
+      "sha256": "76f5742d634ca22545a35877189cb43e5cbfdb8d184451abfc2ac6e21362c7c1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-2-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-2-root-20261106-v1.json",
+      "sha256": "e7a583a00f0a56957dc5c9d299959c6743f204bc40e7a03bc488872dd16e85f8",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-1-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-1-root-20261106-v1.json",
+      "sha256": "46e7c2b2507b102d2f404ed06e09c0de90c2257f17ad59994e0a2f401a721140",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-4-root-20261106-v1.json",
+      "sha256": "dabc3d10df9e037aa0e0168008c0d5d3f234aa02c24eef95eb5d97b292184300",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-17-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-17-root-20261106-v1.json",
+      "sha256": "23c6402d3f6202519659d143ec5996865394cc945f740df2d203eb1108144378",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-16-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-16-root-20261106-v1.json",
+      "sha256": "01be3a227269e401ec6db13021a4f782af18f3d824a21949da0f2092199197fe",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-16-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-16-root-20261106-v1.json",
+      "sha256": "01be3a227269e401ec6db13021a4f782af18f3d824a21949da0f2092199197fe",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-2-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-2-root-20261106-v1.json",
+      "sha256": "f146740af4d8c09d83f88e778729e09c07be27aa8d5e6933d6026838365bdab4",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-9-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-9-root-20261106-v1.json",
+      "sha256": "57285decbe2a176f2a9ba2b5d99d8aa2f77a25c6498b2af9bae0ecd6921bfd63",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-4-root-20261106-v1.json",
+      "sha256": "19df9f6512df708ac2362ed431f26ef78dcd4e3d0ed8ac1049a0fc89b19d5d3a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-6-root-20261106-v1.json",
+      "sha256": "c79f580b02b36a01a90992189349cd947740f2d1c07834fb58a1afe08e183c0d",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-15-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+      "sha256": "a29315b1baef4a9f4a76d7fe0acdb2551dd50f2e99877de4bf1dd23bf91dac85",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-9-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-9-root-20261106-v1.json",
+      "sha256": "4dd758abdb6919de48831c6d09d0d4770a91c1df2cec4db23ccb5466f95de8bc",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-10-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-10-root-20261106-v1.json",
+      "sha256": "547557234f1bb1896a3a27ab11f2142a7404bd3064e5dd03f9e8cbe39d3350e1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-3-root-20261106-v1.json",
+      "sha256": "0821591a5751e89da7295e39299438449660f99e3263efa2443ea5e7bc23fe34",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-19-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-19-root-20261106-v1.json",
+      "sha256": "8738b162593e91e6e482576fa397f9616f8e587cdd511c12eccb1e64b241148a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-19-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-19-root-20261106-v1.json",
+      "sha256": "8738b162593e91e6e482576fa397f9616f8e587cdd511c12eccb1e64b241148a",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-6-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-6-root-20261106-v1.json",
+      "sha256": "f85d339ac2666252811ed63667a0ac8cc5adb4be273b17209b411088bb52a794",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-20-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-20-root-20261106-v1.json",
+      "sha256": "2a35c8b242fb72176c53b1c76433242664e27b25cd738b6799b6f4c08f80835c",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-18-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-18-root-20261106-v1.json",
+      "sha256": "9633446063e06a2912a25b4ce4d5c9d34f2e938c396367223835991b0226ae9e",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-12-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-12-root-20261106-v1.json",
+      "sha256": "b8ecd712105cf3900e38a6c93a694f2c07f56c65d83ef51b8a9eb214918e7b93",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-3-root-20261106-v1.json",
+      "sha256": "be1da8030e7313c7f2bcb2357242e661d51b39e0d3219dedc28ca9d2086c3606",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-5-root-20261106-v1.json",
+      "sha256": "e11c9d67140d92c480a2fd90e017f84f1ac87446e494cc935dea52f0a9660d6b",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-11-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-11-root-20261106-v1.json",
+      "sha256": "ff48a6e9f6eb4355b3122790af1228e7e5c9732ebc32e7272a92a624464c32c4",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-11-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-11-root-20261106-v1.json",
+      "sha256": "ff48a6e9f6eb4355b3122790af1228e7e5c9732ebc32e7272a92a624464c32c4",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-1-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-1-root-20261106-v1.json",
+      "sha256": "1ff864caeee18b3a1783bbb3c10b750f0aabc586934a9ccdf60ed53619378ece",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-4-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-4-root-20261106-v1.json",
+      "sha256": "2f468e8c5bd5937b3547fa02ff3f750ef9207ae39e2e15d8a1bd1146b0779a42",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-21-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-21-root-20261106-v1.json",
+      "sha256": "39b9badd5624d67b4181a0d2672be9b3d7876451373a536ef24cb59786c03e91",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-9-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-9-root-20261106-v1.json",
+      "sha256": "4dd758abdb6919de48831c6d09d0d4770a91c1df2cec4db23ccb5466f95de8bc",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-21-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-21-root-20261106-v1.json",
+      "sha256": "39b9badd5624d67b4181a0d2672be9b3d7876451373a536ef24cb59786c03e91",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-18-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-18-root-20261106-v1.json",
+      "sha256": "9633446063e06a2912a25b4ce4d5c9d34f2e938c396367223835991b0226ae9e",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-12-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-12-root-20261106-v1.json",
+      "sha256": "b8ecd712105cf3900e38a6c93a694f2c07f56c65d83ef51b8a9eb214918e7b93",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-20-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-20-root-20261106-v1.json",
+      "sha256": "2a35c8b242fb72176c53b1c76433242664e27b25cd738b6799b6f4c08f80835c",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-5-root-20261106-v1.json",
+      "sha256": "78f41db8c619e9b50f54142a877b57fd9a5a20011756fa8227322a2e78407918",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-7-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-7-root-20261106-v1.json",
+      "sha256": "f337f439d26f678b0db287fe40c6df91b547694a95de423da5f35881bd21abdf",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-13-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-13-root-20261106-v1.json",
+      "sha256": "94afe5fd64923b99a83090e712142d27ad028a4ec94105aa33d8134a98d65c8f",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-13-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-13-root-20261106-v1.json",
+      "sha256": "94afe5fd64923b99a83090e712142d27ad028a4ec94105aa33d8134a98d65c8f",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-10-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-10-root-20261106-v1.json",
+      "sha256": "547557234f1bb1896a3a27ab11f2142a7404bd3064e5dd03f9e8cbe39d3350e1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-3-root-20261106-v1.json",
+      "sha256": "be1da8030e7313c7f2bcb2357242e661d51b39e0d3219dedc28ca9d2086c3606",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-5-root-20261106-v1.json",
+      "sha256": "9d5cc532ea555bcfecc11c0ff2dba2bb9c926508f88da715a06ed82578872388",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-7-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-7-root-20261106-v1.json",
+      "sha256": "162dd2f81453be407ba034603ea96f182b7cb35830b1cb630475a1c188194584",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-16-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-16-root-20261106-v1.json",
+      "sha256": "4f02a182d0295e4650da0d84f68370ef4489c496316ce4d67825d519c64a1182",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-15-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-15-root-20261106-v1.json",
+      "sha256": "0170edf77240bf7a821c7962dbd47534c2ec6023bdf7a628713b679e4bd85fc0",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-15-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-15-root-20261106-v1.json",
+      "sha256": "0170edf77240bf7a821c7962dbd47534c2ec6023bdf7a628713b679e4bd85fc0",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-1-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-1-root-20261106-v1.json",
+      "sha256": "46e7c2b2507b102d2f404ed06e09c0de90c2257f17ad59994e0a2f401a721140",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-3-root-20261106-v1.json",
+      "sha256": "0821591a5751e89da7295e39299438449660f99e3263efa2443ea5e7bc23fe34",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-14-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-14-root-20261106-v1.json",
+      "sha256": "2e2f87dc43743aee75374cb31353d91666cb8f62dfc0be314ca04eb83dbc50d8",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-9-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-9-root-20261106-v1.json",
+      "sha256": "57285decbe2a176f2a9ba2b5d99d8aa2f77a25c6498b2af9bae0ecd6921bfd63",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-2-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-2-root-20261106-v1.json",
+      "sha256": "f146740af4d8c09d83f88e778729e09c07be27aa8d5e6933d6026838365bdab4",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-17-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-17-root-20261106-v1.json",
+      "sha256": "fbc5d20a7da3dea05ce4b50599d520fae2f26268569d9c40e349f4c32e963125",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-17-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-17-root-20261106-v1.json",
+      "sha256": "fbc5d20a7da3dea05ce4b50599d520fae2f26268569d9c40e349f4c32e963125",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-DLC31-1-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-visible-scan-dlc31-1-root-20261106-v1.json",
+      "sha256": "1ff864caeee18b3a1783bbb3c10b750f0aabc586934a9ccdf60ed53619378ece",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-DLC31-8-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-income-analysis-dlc31-8-root-20261106-v1.json",
+      "sha256": "8e33eff5ef0fe3ce08e112a31e16a8348f5632ff76ba2eb5c4edfb6b0d51f7e1",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-DLC31-3-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-income-analysis-dlc31-3-root-20261106-v1.json",
+      "sha256": "ee2b74c45c943e89e21f221c2783f4ed4e39a95fa623a48e8114956c7e1ae4c5",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-5-root-20261106-v1.json",
+      "sha256": "9d5cc532ea555bcfecc11c0ff2dba2bb9c926508f88da715a06ed82578872388",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-7-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-7-root-20261106-v1.json",
+      "sha256": "162dd2f81453be407ba034603ea96f182b7cb35830b1cb630475a1c188194584",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-DLC31-14-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-scan-setup-dlc31-14-root-20261106-v1.json",
+      "sha256": "2e2f87dc43743aee75374cb31353d91666cb8f62dfc0be314ca04eb83dbc50d8",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-DLC31-5-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-paired-visible-scan-dlc31-5-root-20261106-v1.json",
+      "sha256": "78f41db8c619e9b50f54142a877b57fd9a5a20011756fa8227322a2e78407918",
+      "nativeEnvelopeBytesUnchanged": true
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-DLC31-16-root-20261106-v1.json": {
+      "canonicalPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-16-root-20261106-v1.json",
+      "sha256": "4f02a182d0295e4650da0d84f68370ef4489c496316ce4d67825d519c64a1182",
+      "nativeEnvelopeBytesUnchanged": true
+    }
+  },
+  "newAutonomousRuns": 0
+}

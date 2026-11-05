@@ -1,0 +1,13 @@
+{
+  "status": "failed-native-input-gate",
+  "candidateAdmitted": false,
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-cold-paired-purple2-known-analysis-single-3-20261106-v1.json",
+  "evidenceSha256": "8e34416231044c04d23561fd3a4b469d0e4c44a1a6a17727a83552da221c7df2",
+  "nativeInputs": 279,
+  "milliseconds": 562.1816670000001,
+  "complete": true,
+  "firstColdSampleRetained": true,
+  "priorHistoricalCasesPassed": 476,
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

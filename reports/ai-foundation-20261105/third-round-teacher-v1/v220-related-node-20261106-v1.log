@@ -1,0 +1,30 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: known-live-probe needs an exact plain-end proof despite the already revealed public Amiba
+    at Object.<anonymous> (/private/tmp/seti-v218-teacher-r3-20261106-v1/randomizer/game/ai/amiba-quiet-end.test.js:8:83)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: null,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=3 failed=1 total=4 time=1.28s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=4
+FAIL randomizer/game/ai/amiba-quiet-end.test.js status=1 signal=none

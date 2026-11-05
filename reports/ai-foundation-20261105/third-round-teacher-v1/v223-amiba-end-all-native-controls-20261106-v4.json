@@ -1,0 +1,935 @@
+{
+  "status": "passed",
+  "scope": "One diagnostic search, not a replacement cold sample. Every public-Amiba plain-end scalar proof is checked by separate native end/mark executions. Root values and realizations against retained V219 full-native search.",
+  "comparisonEncoding": "JSON canonicalizes signed zero exactly as the retained native reference; v1 assertion failure is preserved",
+  "newAutonomousRuns": 0,
+  "rootSearchInputs": 200,
+  "additionalNativeInputs": 106,
+  "rows": [
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "1172ee639bb88808ae1280c426eaf9c7a8660232ab69b1e9d04253c859fdc3e4",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120.5,
+      "successorValue": 120.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "65abaf6811215ba40b438412c8503a3d2259de30fab9124fed71d3df923fcd31",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114.5,
+      "successorValue": 114.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "6d5d6751fbacdd1aa293d3c7d5ba6d1ccbed52210667127b94cbb97e157e7c75",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 109.5,
+      "successorValue": 109.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "e275dee891f487e571abcd90634981fabe01c17c44fa1f98bdf36daa28a9cf03",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120,
+      "successorValue": 120,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "f8293f6a0f37901593e8c6d551935449c856c054d01eaaa69a4c9894112beab7",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114,
+      "successorValue": 114,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "91820af0a67b62de84d6c59f00eb880851882d4a6215641e5cff264982a3dc31",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "572f355bc2a0b90f5cac6c199429de5be1d66efd7c629896def114f8ec1f7f73",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 123.58333333333333,
+      "successorValue": 123.58333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "909658f0f13ca7a85ebaa5c40b459dd80ba29428e3f06b8a92bdd3a1d049129d",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 121.5,
+      "successorValue": 121.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "472071eb2f143eb7640cdd24b8a1dad680e37114770708cf929ab80e713bb22c",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 117.58333333333333,
+      "successorValue": 117.58333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "6a981808bcf038815b7b9817aefd2fc7506e0eae242b99d9dd7b3abe6e6bf651",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 115.5,
+      "successorValue": 115.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "557cd9a19fed7909975f9bfc297030f361561fa62989f30c4d158151c6cb9e0a",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "562107374a56433b0f5cf0fc14d7a364c74b6d9191dbb4bcd78b160a8ccc687b",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112,
+      "successorValue": 112,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "d35d474c43444c02a957117acb807cb16ba4a45bb359ebcf58fdf08835589e64",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112.08333333333333,
+      "successorValue": 112.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "fa1b3d50f53b5a57e0339248e1df49cfcede37000a7ac2cbda78689c9b200777",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "f818cdd18adef1d6cbe41779d4476ef6e2a1aaf8c82f1cdcabf92876fc20a54b",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "46af2f84afc2eb1020fb564389b9c6d4274d4e263b4a464a5f7fc10f8b6c3d53",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113.08333333333333,
+      "successorValue": 113.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "10ff19d9e03c82c33a25cd965953cc7cb127b1f4798a95c12422aea53317b812",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "145375e78f6c14722b4b544e5834030ab971cd8672ab1a161d960981dc082652",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112,
+      "successorValue": 112,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "e81c27cc160d27f89b0abba152b96011c092db51605afea560f42c573f71fcce",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112.08333333333333,
+      "successorValue": 112.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "959fe8e1b8e93f2451cda173d1cb2b78ded5579665b86d69400a9d4389226c7c",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 115,
+      "successorValue": 115,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "b744d151c8473d395e3c4eb1dc21f4fb043b619d1793dc30e21788f839b8de5d",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120.5,
+      "successorValue": 120.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "4061a17925e5ac669700327ac49c02532ab140b52cd5f001293df740f48fded0",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 120.58333333333333,
+      "successorValue": 120.58333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "7403c1908bd13b3b4625e064722741f34e7d999b5e4496b609bd82aa4f0e98c6",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114.5,
+      "successorValue": 114.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "a049e938c25cade45ba0a512c1e260f0bf634afa191cb2943a0f47c1fe2cbede",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112.75,
+      "successorValue": 112.75,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "949283b5a0955dd72cf50a2a2effe5d75db3c8ec4ea3cc5e96cd8e10c4509a2a",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 114.5,
+      "successorValue": 114.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "7480dac87233c73dc870b52aa8475571e4f7cbb8a5e7e01a8ecde5d2d04e0481",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 112.75,
+      "successorValue": 112.75,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "b7eb5d02ea9fd6c1ed31a8680537450cf8d939b0fdc0003f996a80f5dd1e5873",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "202612d6a891a5e810528bd83b75b4d45e1402607c9336f2e8a5bfeb18344bf6",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "e168d083222a3f0449a8c62e5e14a62a29cb3df64e9430f8ce3f382bebab49e9",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "2a293f8a553be551ad5c37acad56636e3234f5f8d4504f1c3bb33fbb1c3033ef",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "678938cf51825f7c82bc3fbae42acddbb445db2073933b0a5c19b5f49ef34c09",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "0aea7efcd4f35cb3728445f998e14743a788b46017bc75f5876633a707606ac3",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "f8271dc66667768cf84f0ff38b29f46e8adb368de47161507f9a1766b2bca8cc",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "6a807eb3b3f043d2ba50d69422b5652bb1f4d5736cc588f4a3ba9178fd965e84",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "9f75d7c1414b40c8ac8b1c3ed5c2634455d40cf6b924051523d82c4bbf5f01df",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "3bd442eeb944af9469f3fd96a44f1299f7061669e6b2b6eed49704af632e7405",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "436fe2f2a64babb8c92b7dc89674e9dd92f0e502b92648616364df989a386b8c",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.5,
+      "successorValue": 111.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "1c3befa4ff7cba6d318a3bfd4bd43ef44bfda2b627e5b257b01c618b343b241b",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 110.33333333333333,
+      "successorValue": 110.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "8caae4b9ef9c3e94fac7f9edf14bf3dca51c44924e49592c49b4e49621b7c606",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "3c5aa1a15e304c62a76aed6239141da6f5eefc2cad5aef36ae220874a4b2aa6f",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "a72d762ac6c7dcc662fdfea91ab52ba4673b5e49ed6f067c0841e8ca74869f9f",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "922140a891e05db1fe7f5f5aa85175686d4f3c1875eb33f698738243f1837c78",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "69bdd3b42c2bdb9c22e2292faffd1c1589ded1c28dbb4eba84d356923cf8a962",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "221c5d64e7238a7b9f80dccf568ec6a1e496a5a6cada2c8da05a7f6d5227e98a",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "3b40d43843472967b5a8ad06fe3944af60643fd350d45475a796c1485832ad3a",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "5a5d63ecbbf90703bad916d2f2e2a111d579632bd8039c76c9c1254e9e01fb4e",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "33f32db4211a9e8ec13fc8c93f513870c4e8546d1a501eb0168b9835ab7ee60a",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "2a19a18ca975e130fdaf6e9f804aece23e0c741187ce9df7762131eba8b4822f",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "b0c973b3f033835a6eb2bf51a8a2861f75ac0567ef26f0eb1a85ab6f32798b9e",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 113.5,
+      "successorValue": 113.5,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "cb86d08a22af8ed8a651babfec6a986e31185e2cf72ecb49fe950a79f470334b",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 112.33333333333333,
+      "successorValue": 112.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "2b009d6e8f82de5e8ef43fe3a2d5743b613c8e515889abcee73c4d60a7317d65",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "53d39b6154c66fd85dc4b4b9d1025763ca6fb093d91f434f256b48987637eef8",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "1d311913557a17141bded9ec7355d6bc7097b4b135d5f36b9fd2c48180efc553",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113.08333333333333,
+      "successorValue": 113.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "67cfdb13e5ecd0967ce6f6e539e9c8cb3fb0c945021f49a0bf33b064b9677620",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "3cdbb667fec95d973264fbd0203be06043668e9b404d872a12ddde7a454ffe84",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 116,
+      "successorValue": 116,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "e42d721df027bb34551b2488874ea3ce714a19541dccfcf19eaa5dc7ec5b43a6",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 116.08333333333333,
+      "successorValue": 116.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "90be82169f934d6485c9e75636d74904acdd922db11644133a11ccc72fb7deee",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 110,
+      "successorValue": 110,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "706964cdc0a715cc768fe7c536ef2ae83d707f22e5f9c4d507ccc9c14646ae0f",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113,
+      "successorValue": 113,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "c9783391040d14cc0a82695bfd9e1e31c4a50abfaffafaebc4f770e1ab7c6e1b",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 113.08333333333333,
+      "successorValue": 113.08333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "33d52c5896714742d4933e88be1e582b2b56b06674c114ec139e5561ce8b3bee",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 115,
+      "successorValue": 115,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "c446f0c7b780052ad4d9e235e91df1c93a36cc1f271b72562ae4c070373f985d",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 121.5,
+      "successorValue": 121.5,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "0224462a242901ba06357b9fa6a3a5bf47800191c623c2cb20b63ba59aea8721",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 2,
+      "baseValue": 121.58333333333333,
+      "successorValue": 121.58333333333333,
+      "netGain": 0,
+      "purposeDelta": -8,
+      "markedTiles": [
+        "b"
+      ],
+      "nativeSuccessorObservationSha256": "c1c1465121abe536d79593dba969f0d17d1b35343bd352b0f0e42aeff18e4a4d",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 114,
+      "successorValue": 114,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "d5de9b1fbedff6e1ec3061d21e0c50bffec6de94b85532f90a6249632e90561f",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 114.33333333333333,
+      "successorValue": 114.33333333333333,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "9bf4cfa53f5a37656d102a799d66bafa120d96e1e3c031c71f7ab47fc15305bf",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.75,
+      "successorValue": 111.75,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "c244e253c2fd47cea94f56227b21045036c4a0ad665198d72c4f5365c4077642",
+      "valueAndRealizationMatch": true
+    },
+    {
+      "sourceIdentitySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "nativeInputs": 1,
+      "baseValue": 111.75,
+      "successorValue": 111.75,
+      "netGain": 0,
+      "purposeDelta": 0,
+      "markedTiles": [],
+      "nativeSuccessorObservationSha256": "b5c172cd49b4764e1c9fab6396d3bea2d5cb9970687a9e09074626eac8a07b44",
+      "valueAndRealizationMatch": true
+    }
+  ],
+  "allRootChoicesValuesAndRealizationsEqualFullNative": true,
+  "proofCount": 67,
+  "rootAndRngUnchanged": true,
+  "searchVersion": "seti-complete-decision-search-v223",
+  "productionBudgets": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "sourceHashes": {
+    "randomizer/app/rule-observation.js": "72421a478364517c3e926e243f02d46ef2cd249163c2980a046ec8f931f6cf52",
+    "randomizer/app/simulation-contract.js": "447a1c064629ae4f03af79bda69dffe3cbbaec2d9b8cc5f913cc714e966eaddc",
+    "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+    "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+    "randomizer/game/abilities/planet.js": "8cd0f6ee13c2e429e7a159c5020b1de2795b9239f124df9fd865ad96520fd13a",
+    "randomizer/game/abilities/rocket.js": "51a6794b70e42b075bb82252b34ad33e5e420c612ce9924535a0f4ed8ff0d78f",
+    "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+    "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+    "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+    "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+    "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+    "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+    "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+    "randomizer/game/actions/standard-action.js": "9bfd8d8a1bd6120807dfeb7f3a4364ae7c39bba9443b243821a6d3789ca93b7d",
+    "randomizer/game/ai/amiba-analysis-capital.js": "d1ff234d33eb33f477ca6cde8a220c503242c244557829ef135e63f63ea0bade",
+    "randomizer/game/ai/analysis-port.js": "fe932cf1218165730f01aab62ebb5502ea33d7bb0005a7d358d644922265abc4",
+    "randomizer/game/ai/card-pick-planning.js": "ee47ea165e0e8bfa9d1322f1a0b09f49b1f1884715a47df688efd01e891f7fef",
+    "randomizer/game/ai/decision-search.js": "2fe36d806a8887cf133ab242fb230ae25a0da0be18d5b1fd45e31eeece5e09f6",
+    "randomizer/game/ai/funded-movement-tail.js": "ce9e258444b7a37018175adeb5df2546847dc4b721d02bbc4b1033328dc0115d",
+    "randomizer/game/ai/goal-movement.js": "38f997ea31e1426c3e40670676974c0924f01b3229869e2e4c44671b4c732cce",
+    "randomizer/game/ai/known-movement-capital.js": "ae38f7e0a2a59ccc2f523ab2daa51ff9524de96fa993fb69163464615b89862c",
+    "randomizer/game/ai/known-symbol-capital.js": "8ba554c954d08fda50b0e8831aecdc46e1de75c64418f684accaee50f78f4d42",
+    "randomizer/game/ai/local-decision-plans.js": "12a9d366d71297d2227b2ba4cfe58f5c2f2d58947f25adcff13ffdd7b2fa6806",
+    "randomizer/game/ai/probe-capital.js": "094281800a6bd89fa4e3c5265576e394c834da544f214fa62b66c4409755ea8f",
+    "randomizer/game/ai/ready-analysis-capital.js": "f946f56a7f4c65dc1316efec2b530d9b56120034450455fe5ed8c8640693f3d3",
+    "randomizer/game/ai/research-income-capital.js": "fb4276ba22cb8442c2f97d9afe1c23b2eeebc240431ad1859349ce790d344209",
+    "randomizer/game/ai/research-trigger-capital.js": "0aae045e3dab3b000b7c831ef07ad24f053ced13c8024f7a0eb2bbda31f52445",
+    "randomizer/game/ai/resource-demand.js": "0f673eb9a44ea61378b300da5d8310480edb401d05de390a73f74bdb91fdab94",
+    "randomizer/game/ai/search-agent.js": "e84c1997766d3dac00024878bc0edafb1a18effad0fd48f27923edc41bdc804e",
+    "randomizer/game/ai/sector-card-capital.js": "33107171a839f7f5d8b50dc16d91c8077d5d3a1be5ef439d3058387496923c23",
+    "randomizer/game/ai/state-value.js": "d115012030c80a72ce3fae2a20c8dc50b4035507a95ca4f151d959365cfeee15",
+    "randomizer/game/ai/value-arithmetic.js": "de8a7cb1cf5bae41c6590e5bfe2ecb4f4bfea55c92bfff02e2c5df6fbcf368b2",
+    "randomizer/game/aliens/amiba.js": "3f0566e7fc583e8eef6a2cd8f1acbb6b8c49d66fe9d7e21733df8dacfbcc67ed",
+    "randomizer/game/aliens/aomomo.js": "986413d7da56665ac423b507f92832dce83519a6f94aa79280caa6d4377e4a3d",
+    "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+    "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+    "randomizer/game/aliens/chong.js": "de65614f5aae989b2d79902fe51724a6ed85c2292a2d7677decbfff85f120838",
+    "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+    "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+    "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+    "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+    "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+    "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+    "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+    "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+    "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+    "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/cards/effects.js": "7c3bb066c911763de3163694f21a48432fe507c1834f0d67dcbe3ce6b6f6e239",
+    "randomizer/game/cards/play-domain.js": "59b3d60c569ec992a717bd628dacafa468056db093f6fb01022144783b888062",
+    "randomizer/game/cards/task-state.js": "b7bdd2c0b559f731523f4ce37b485d6b40d53dd881e6ebce37d311a788d0cd90",
+    "randomizer/game/data/index.js": "593b159683ca184bf610c0d1097fc8a4c99306c3a664a9fc06d8d24ea1d6c903",
+    "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+    "randomizer/game/data/nebula-state.js": "d7ac07b41e1317cf15ba019482165558a6e39060b1a76abd4d402be792995a88",
+    "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+    "randomizer/game/data/state.js": "a3f51c069acbb9acbd6d2d4fab423fd1591a552574ff940b1ac5b05c87f0f457",
+    "randomizer/game/effects/probe-turn-session.js": "3eff4f609a50da8390761a4f7d0008826da05733f8d243d6ac9b4604cbf81008",
+    "randomizer/game/effects/residual-domain-session.js": "50ada0fbf8fbeff5abbf583c40e09faeec01a3a44adfc0b60956639fd9b6ec35",
+    "randomizer/game/effects/science-session.js": "b1a228a09da4a18280cb27b72098fde3428fc25b51fcae29963caac2c660138e",
+    "randomizer/game/effects/session-runtime.js": "a0f675fc9a20d18b3c26240cdd82e481db840303bf274659d7858981c7dc0379",
+    "randomizer/game/effects/standard-action-session.js": "5b6c60ebdee4b05963ab861be8465e15c26039b5b1343059e7651d6d87433d81",
+    "randomizer/game/end-game-scoring.js": "1bd04f5bac93e6918d9dc08246afaee6f9589b26544d967796417d4b558da66c",
+    "randomizer/game/final-scoring.js": "4770b83ca0153b7ba0490fd10dc821334b9a36b3e559b1671b9b7b1328f943f3",
+    "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+    "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+    "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+    "randomizer/game/industry/index.js": "f24fc4ad4b3351b21248d04c569a48ab480ff8356a3115872e1e2679f23a2a31",
+    "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+    "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+    "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+    "randomizer/game/industry/strategy-passive.js": "8bae3cdb34075fe7df8c1963c2e6d9cb2ba8c64a5e773e775ff4bf969b22e77b",
+    "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+    "randomizer/game/initial-setup.js": "e30d48741330426c2801f3b70766c720bd8440a539df3a92295c8c7de5b08b46",
+    "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+    "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+    "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+    "randomizer/game/production-composition.js": "4347d4cf0b1bd3898527aea6b790777185b5791f71a0caf80901d9dc7be2ef0c",
+    "randomizer/game/production-kernel.js": "1c667dba31471a459cc92375107a991a9539110ffb9aa677335d1d1bda9f17f5",
+    "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+    "randomizer/game/rockets.js": "a3924ee4ee1392a20671699b51b1e25b40fd08d0536c38acff4f882bba76ca74",
+    "randomizer/game/rule-composition.js": "b34c3c7a27a5e9b8b0c9703411f5c1d6c49bb7251950d4f343db28abd81b2742",
+    "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+    "randomizer/game/state/high-coupling-slices.js": "86e4a9ccc20e8804e008c25b3354cfd964fe091248d1755fad7a59495d57fd2b",
+    "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+    "randomizer/game/state/low-coupling-slices.js": "5104bca6ef4cea25856ca88c5ecc07b2d363aa732f8d70fc89cb34d4f6ca08b7",
+    "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+    "randomizer/game/state/state-store.js": "343f27ff3b89001094db3de402920a321057eacbabdbcb5082d79e4e9cf78ed0",
+    "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+    "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+    "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/tech/resolver.js": "e52c3dc535c85ecef2c288e6fcf821f18611c2c2bae1ee30970c82574efbac03",
+    "randomizer/game/turn-flow.js": "c30db5accee34e36ed5b2d20a153803bd2a28bc18e23f87a8bc132b3418d5ea7",
+    "randomizer/solar-system/core.js": "8b5f6e6e35167dc6746191b7d07d5941f4757b3a6e6e810a3a0727573d6e51cb",
+    "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477",
+    "randomizer/training/simulation-rule-composition.js": "24d04512bcd67fd226dfc272a2369bfd769dfc2c04b40e01a75a40bdfbbbe0a3"
+  }
+}

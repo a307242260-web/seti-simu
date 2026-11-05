@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "scope": "One diagnostic search, not a replacement cold sample. Every public-Amiba plain-end scalar proof is checked by separate native end/mark executions. Root values and realizations against retained V219 full-native search.",
+  "comparisonEncoding": "JSON canonicalizes signed zero exactly as the retained native reference; v1 assertion failure is preserved",
+  "newAutonomousRuns": 0,
+  "rootSearchInputs": 200,
+  "additionalNativeInputs": 2,
+  "rows": [],
+  "allRootChoicesValuesAndRealizationsEqualFullNative": true,
+  "proofCount": 67,
+  "failure": {
+    "message": "The \"data\" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received an instance of Object",
+    "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"data\" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received an instance of Object\n    at Hash.update (node:internal/crypto/hash:140:11)\n    at sha (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/verify-v223-amiba-end-native-controls-20261106-v2.js:3:210)\n    at Object.<anonymous> (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/verify-v223-amiba-end-native-controls-20261106-v2.js:9:513)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+  }
+}

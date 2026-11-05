@@ -1,0 +1,13 @@
+{
+  "status": "failed-time-gate",
+  "candidateAdmitted": false,
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v221-cold-corner-safety-purple2-3-20261106-v1.json",
+  "evidenceSha256": "2a8bd46533dc4dee34cf705599045a4ff298642faefdb0ccfb6f7b0663149b97",
+  "nativeInputs": 200,
+  "milliseconds": 616.003042,
+  "complete": true,
+  "firstColdSampleRetained": true,
+  "symbolSubtreeStringCacheNotRetained": true,
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

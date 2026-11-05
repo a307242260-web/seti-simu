@@ -1,0 +1,10 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":253,"nativeTailControls":9,"nativeTailInputs":32,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaPlainEnd":true,"nativeEndControls":2,"earnedBRealizationDelta":-8,"actualPendingEffectsDecline":true,"noInventedObservation":true,"rootAndRngRestored":true}
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=6 failed=0 total=6 time=3.87s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=1

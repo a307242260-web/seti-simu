@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "scope": "One diagnostic search, not a replacement cold sample. Every public-Amiba plain-end scalar proof is checked by separate native end/mark executions. Root values and realizations against retained V219 full-native search.",
+  "newAutonomousRuns": 0,
+  "rootSearchInputs": null,
+  "additionalNativeInputs": 0,
+  "rows": [],
+  "failure": {
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    {\n      actionId: 'launch:c94cda79',\n      realization: -23.75,\n      value: 111.75\n...\n      actionId: 'pass:a1f33c73',\n+     realization: -0,\n-     realization: 0,\n      value: 90\n    },\n    {\n      actionId: 'quick_trade:f385e2ac',\n      realization: -26,\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    {\n      actionId: 'launch:c94cda79',\n      realization: -23.75,\n      value: 111.75\n...\n      actionId: 'pass:a1f33c73',\n+     realization: -0,\n-     realization: 0,\n      value: 90\n    },\n    {\n      actionId: 'quick_trade:f385e2ac',\n      realization: -26,\n\n    at Object.<anonymous> (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/verify-v223-amiba-end-native-controls-20261106-v1.js:7:140)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
