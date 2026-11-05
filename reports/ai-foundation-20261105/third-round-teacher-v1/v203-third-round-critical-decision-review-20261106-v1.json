@@ -1,0 +1,1495 @@
+{
+  "scope": "Read-only decode of archived V203 search evidence and verified native roots. No V204 evaluation, native submission, new search or game; legal descriptors and owned cards resolve candidate names.",
+  "cpPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-standard-r3-native-verification-prefix-20261106-v2.checkpoint.json",
+  "checkpointSha256": "dce1023ffda50a2dbbee511289e68bf358c9d908d44991cf27ef7d58a8cc604c",
+  "recordPath": "reports/research/a121adb0.697b888b.quick-400.json",
+  "recordSha256": "7de838ce9d185ac7d9c20bb2a63cc1ca53c62398da0d13b630d315cd290e8cd1",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "rows": [
+    {
+      "step": 123,
+      "chosen": "card_corner:295d3b4f",
+      "value": 116.75,
+      "roots": [
+        {
+          "actionId": "launch:c94cda79",
+          "target": 1,
+          "value": 104.25,
+          "realization": -14.75,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:c94cda79",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "play_card:52a456f8",
+          "target": 7,
+          "value": 113.75,
+          "realization": -8.25,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-29-pass-2-5",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-29-pass-2-5",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:52a456f8",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-29-pass-2-5"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "b_101.webp"
+          },
+          "knownCards": [
+            {
+              "id": "card-29-pass-2-5",
+              "cardId": "b_101.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:ec548c50",
+          "target": 2,
+          "value": 98.5,
+          "realization": -9,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:ec548c50",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-51-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "dlc_31.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-51-0",
+              "cardId": "dlc_31.png"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:8e0d747b",
+          "target": 3,
+          "value": 102.5,
+          "realization": -11.5,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:8e0d747b",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-0-1"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 2
+            },
+            "decision": null,
+            "summary": "amiba_0.webp"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-0-1",
+              "cardId": "amiba_0.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:1c4e6ebd",
+          "target": 4,
+          "value": 100,
+          "realization": -10,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:1c4e6ebd",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-1-2"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "amiba_1.webp"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-1-2",
+              "cardId": "amiba_1.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:a27d2ab4",
+          "target": 5,
+          "value": 116,
+          "realization": -11.5,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:a27d2ab4",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-3-3"
+            },
+            "payload": {
+              "cost": {},
+              "handIndex": 4
+            },
+            "decision": null,
+            "summary": "amiba_3.webp"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-3-3",
+              "cardId": "amiba_3.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 6,
+          "value": 90.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": 8,
+          "value": 101.5,
+          "realization": -12.5,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 6,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:f385e2ac",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2信用点 → 1能量"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "card_corner:295d3b4f",
+          "target": 16,
+          "value": 116.75,
+          "realization": -10.25,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "tech:orange1:",
+            "kind": "research_tech",
+            "tileId": "orange1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "resourceGoalCount": 9,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:295d3b4f",
+            "actorId": "player-white",
+            "stateVersion": 49,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-3-3"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "amiba_3.webp：弃牌角标"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-3-3",
+              "cardId": "amiba_3.webp"
+            }
+          ]
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 10,
+        "energy": 1,
+        "handSize": 5,
+        "publicity": 3,
+        "score": 48
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp"
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp"
+        },
+        {
+          "id": "alien-amiba-3-3",
+          "cardId": "amiba_3.webp"
+        }
+      ],
+      "nativeInputs": 117,
+      "milliseconds": 234.02441699999997,
+      "complete": true
+    },
+    {
+      "step": 124,
+      "chosen": "card_corner:ab712e76",
+      "value": 116.75,
+      "roots": [
+        {
+          "actionId": "card_corner:ab712e76",
+          "value": 116.75,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "tech:orange1:",
+          "isEquivalence": false,
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:ab712e76",
+            "actorId": "player-white",
+            "stateVersion": 50,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-0-1"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "amiba_0.webp：弃牌角标"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-0-1",
+              "cardId": "amiba_0.webp"
+            }
+          ]
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 10,
+        "energy": 1,
+        "handSize": 4,
+        "publicity": 5,
+        "score": 48
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp"
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp"
+        }
+      ],
+      "nativeInputs": 0,
+      "milliseconds": 8.250500000000102,
+      "complete": true
+    },
+    {
+      "step": 130,
+      "chosen": "play_card:6d26f523",
+      "value": 117.33333333333333,
+      "roots": [
+        {
+          "actionId": "launch:c94cda79",
+          "target": 1,
+          "value": 112.75,
+          "realization": -8.25,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:c94cda79",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "play_card:52a456f8",
+          "target": 6,
+          "value": 114.25,
+          "realization": -5.75,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-29-pass-2-5",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-29-pass-2-5",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:52a456f8",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-29-pass-2-5"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "b_101.webp"
+          },
+          "knownCards": [
+            {
+              "id": "card-29-pass-2-5",
+              "cardId": "b_101.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:ec548c50",
+          "target": 2,
+          "value": 111,
+          "realization": -6.5,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:ec548c50",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-51-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "dlc_31.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-51-0",
+              "cardId": "dlc_31.png"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:201c00de",
+          "target": 3,
+          "value": 112,
+          "realization": -7,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:201c00de",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "alien-amiba-1-2"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 2
+            },
+            "decision": null,
+            "summary": "amiba_1.webp"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-1-2",
+              "cardId": "amiba_1.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:6d26f523",
+          "target": 4,
+          "value": 117.33333333333333,
+          "realization": -10.833333333333334,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:6d26f523",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-18-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_48.webp"
+          },
+          "knownCards": [
+            {
+              "id": "card-18-0",
+              "cardId": "b_48.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 5,
+          "value": 106.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": 10,
+          "value": 116.83333333333333,
+          "realization": -10.333333333333334,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-2-b",
+            "kind": "scan-flow",
+            "nebulaId": "sector-2-b",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 6,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:f385e2ac",
+            "actorId": "player-white",
+            "stateVersion": 53,
+            "decisionVersion": 1,
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2信用点 → 1能量"
+          },
+          "knownCards": []
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 10,
+        "energy": 1,
+        "handSize": 4,
+        "publicity": 1,
+        "score": 50
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp"
+        },
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        }
+      ],
+      "nativeInputs": 105,
+      "milliseconds": 252.86033300000008,
+      "complete": true
+    },
+    {
+      "step": 136,
+      "chosen": "quick_trade:f385e2ac",
+      "value": 117.5,
+      "roots": [
+        {
+          "actionId": "launch:c94cda79",
+          "target": 1,
+          "value": 113.33333333333333,
+          "realization": -8.833333333333334,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:c94cda79",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "play_card:52a456f8",
+          "target": 5,
+          "value": 114.83333333333333,
+          "realization": -6.333333333333333,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-29-pass-2-5",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-29-pass-2-5",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:52a456f8",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-29-pass-2-5"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "b_101.webp"
+          },
+          "knownCards": [
+            {
+              "id": "card-29-pass-2-5",
+              "cardId": "b_101.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:ec548c50",
+          "target": 2,
+          "value": 113,
+          "realization": -8.5,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:ec548c50",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-51-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "dlc_31.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-51-0",
+              "cardId": "dlc_31.png"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:2d72d80a",
+          "target": 3,
+          "value": 113.83333333333333,
+          "realization": -8.833333333333334,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:2d72d80a",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-49-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 2
+            },
+            "decision": null,
+            "summary": "dlc_32.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-49-0",
+              "cardId": "dlc_32.png"
+            }
+          ]
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 4,
+          "value": 106.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": 6,
+          "value": 117.5,
+          "realization": -5,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "rocket:5:land:mercury:planet:",
+            "kind": "route",
+            "family": "land",
+            "rocketId": 5,
+            "planetId": "mercury",
+            "endpointTarget": {
+              "type": "planet",
+              "rocketId": 5
+            },
+            "endpointCost": {
+              "energy": 3
+            },
+            "benefit": {
+              "score": 12,
+              "incomeCount": 0,
+              "dataCount": 3,
+              "grossEquivalentValue": 17,
+              "rewardSummary": "首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:mercury"
+            },
+            "coordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "path": [
+              {
+                "from": {
+                  "x": 6,
+                  "y": 1
+                },
+                "to": {
+                  "x": 5,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 5,
+                  "y": 1
+                },
+                "to": {
+                  "x": 4,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 4,
+                  "y": 1
+                },
+                "to": {
+                  "x": 3,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 3,
+                  "y": 1
+                },
+                "to": {
+                  "x": 2,
+                  "y": 1
+                },
+                "deltaX": -1,
+                "deltaY": 0,
+                "requiredMovePoints": 1
+              }
+            ],
+            "movementPoints": 4,
+            "required": {
+              "credits": 0
+            }
+          },
+          "resourceGoalCount": 6,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:f385e2ac",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 1,
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2信用点 → 1能量"
+          },
+          "knownCards": []
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 10,
+        "energy": 1,
+        "handSize": 3,
+        "publicity": 1,
+        "score": 50
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png"
+        }
+      ],
+      "nativeInputs": 81,
+      "milliseconds": 174.23325,
+      "complete": true
+    },
+    {
+      "step": 155,
+      "chosen": "card_corner:ac30be37",
+      "value": 121.58333333333333,
+      "roots": [
+        {
+          "actionId": "play_card:dfc87f9b",
+          "target": 1,
+          "value": 115,
+          "realization": -4,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:dfc87f9b",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "cardInstanceId": "card-51-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "dlc_31.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-51-0",
+              "cardId": "dlc_31.png"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:47361cc3",
+          "target": 2,
+          "value": 115.08333333333333,
+          "realization": -4.583333333333333,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:47361cc3",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "cardInstanceId": "card-49-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "dlc_32.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-49-0",
+              "cardId": "dlc_32.png"
+            }
+          ]
+        },
+        {
+          "actionId": "play_card:80138632",
+          "target": 3,
+          "value": 115,
+          "realization": -4,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:80138632",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "cardInstanceId": "card-60-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "dlc_25.png"
+          },
+          "knownCards": [
+            {
+              "id": "card-60-0",
+              "cardId": "dlc_25.png"
+            }
+          ]
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 4,
+          "value": 113,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "target": 6,
+          "value": 114.58333333333333,
+          "realization": -4.583333333333333,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "launch:earth",
+            "kind": "launch",
+            "required": {
+              "credits": 2
+            }
+          },
+          "resourceGoalCount": 2,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:12411a2c",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "tradeId": "cards-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1信用点"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "target": 8,
+          "value": 118.5,
+          "realization": -7.5,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 5,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:a39c1a77",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "tradeId": "cards-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1能量"
+          },
+          "knownCards": []
+        },
+        {
+          "actionId": "card_corner:ac30be37",
+          "target": 13,
+          "value": 121.58333333333333,
+          "realization": -6.583333333333333,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "tech:blue4:3",
+            "kind": "research_tech",
+            "tileId": "blue4",
+            "blueSlot": 3,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "resourceGoalCount": 8,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:ac30be37",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "cardInstanceId": "alien-amiba-9-5"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "amiba_9.webp：弃牌角标"
+          },
+          "knownCards": [
+            {
+              "id": "alien-amiba-9-5",
+              "cardId": "amiba_9.webp"
+            }
+          ]
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": 5,
+          "value": 117.5,
+          "realization": -0.5,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete",
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 68,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "knownCards": []
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 63
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png"
+        },
+        {
+          "id": "alien-amiba-9-5",
+          "cardId": "amiba_9.webp"
+        },
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png"
+        }
+      ],
+      "nativeInputs": 106,
+      "milliseconds": 189.5472920000002,
+      "complete": true
+    },
+    {
+      "step": 168,
+      "chosen": "scan:2d21a323",
+      "value": 123.75,
+      "roots": [
+        {
+          "actionId": "scan:2d21a323",
+          "value": 123.75,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "scan:sector:sector-3-b",
+          "isEquivalence": false,
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 75,
+            "decisionVersion": 7,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "knownCards": []
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0,
+        "publicity": 2,
+        "score": 67
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [],
+      "nativeInputs": 0,
+      "milliseconds": 6.954583000000184,
+      "complete": true
+    },
+    {
+      "step": 175,
+      "chosen": "analyze:a5629aa3",
+      "value": 123.5,
+      "roots": [
+        {
+          "actionId": "analyze:a5629aa3",
+          "value": 123.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:analyze:6",
+          "isEquivalence": false,
+          "descriptor": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:a5629aa3",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 7,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": true
+            },
+            "decision": null,
+            "summary": "分析"
+          },
+          "knownCards": []
+        }
+      ],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 2,
+        "score": 69
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [],
+      "nativeInputs": 0,
+      "milliseconds": 7.195291999999881,
+      "complete": true
+    }
+  ]
+}

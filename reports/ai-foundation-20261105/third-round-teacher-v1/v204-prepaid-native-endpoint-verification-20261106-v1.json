@@ -1,0 +1,109 @@
+{
+  "status": "passed",
+  "input": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-first-landing-capital-control-20261106-v1.json",
+  "inputSha256": "3282ba613cd6b1dfc39ff9b2b03e9e658bc9bb7cf9f24de84877275c0ee3189f",
+  "manifestPath": "reports/ai-foundation-20261106/candidate-v204-prepaid-inert-score-v1/manifest.json",
+  "manifestSha256": "c489de67b08a8ed018ee62e556b8a0a310f76de857779e5d480575c73390d2fd",
+  "rows": {
+    "ordinary": {
+      "old": {
+        "modelVersion": "seti-purpose-capital-state-value-v27",
+        "total": 102.25,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 13,
+          "hand": 5,
+          "income": 9.5,
+          "technologyPotential": 9,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "new": {
+        "modelVersion": "seti-purpose-capital-state-value-v28",
+        "total": 102.25,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 13,
+          "hand": 5,
+          "income": 9.5,
+          "technologyPotential": 9,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "prepaid": 1.75,
+      "nativeAcceptedInputs": 7
+    },
+    "DLC31": {
+      "old": {
+        "modelVersion": "seti-purpose-capital-state-value-v27",
+        "total": 100.5,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 14,
+          "hand": 4,
+          "income": 9.5,
+          "technologyPotential": 9,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "new": {
+        "modelVersion": "seti-purpose-capital-state-value-v28",
+        "total": 102.25,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 14,
+          "hand": 4,
+          "income": 9.5,
+          "technologyPotential": 9,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "prepaid": 1.75,
+      "nativeAcceptedInputs": 8
+    }
+  },
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "observationsUnchanged": true,
+  "hiddenInformation": "Reused both exact native endpoints masked at original113; no unknown new card identity introduced.",
+  "firstColdRoot": {
+    "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v204-cold-teacher-r3-first-white-20261106-v1.json",
+    "sha256": "d9b6dce33b94f38ff10b81a1a948b696a22d38cd427cccf23bd225e82970e28b",
+    "actionId": "land:d5ee03a2",
+    "nativeInputs": 69,
+    "milliseconds": 321.978667
+  },
+  "conclusion": "Both landing paths tie102.25 after fixing only the1.75 prepaid guard defect; ordinary still wins on shorter native path, not development equivalence. No R3 success claim."
+}

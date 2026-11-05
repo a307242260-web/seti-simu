@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/adhoc/verify-v204-admission-snapshot-20261106-v1.py", line 37, in <module>
+    log=folder/f'v204-admission-independent-{number+1:02d}-{Path(name).stem}-20261106-v1.log';assert not(stage/log).exists();r=subprocess.run(['node',name],cwd=snapshot,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=60);(stage/log).write_bytes(r.stdout);assert r.returncode==0,r.stdout.decode();logs[str(log)]=sha(stage/log)
+AssertionError: node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v204-admission-clean-dxsu_vam/reports/ai-foundation-20261104/two-rounds-teacher-v2/v179-computer-preinvestment-suffix-native-20261105-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at read (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v204-admission-clean-dxsu_vam/randomizer/game/ai/computer-preinvestment.test.js:2:454)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v204-admission-clean-dxsu_vam/randomizer/game/ai/computer-preinvestment.test.js:2:690)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v204-admission-clean-dxsu_vam/reports/ai-foundation-20261104/two-rounds-teacher-v2/v179-computer-preinvestment-suffix-native-20261105-v1.json'
+}
+
+Node.js v22.22.0
+

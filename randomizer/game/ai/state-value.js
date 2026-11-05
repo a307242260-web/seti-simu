@@ -20,7 +20,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v27";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v28";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);

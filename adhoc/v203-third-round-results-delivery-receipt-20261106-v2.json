@@ -1,0 +1,15 @@
+{
+  "commit": "d4d430e140c654060333cb8c52d98fed032265ed",
+  "commitManifestExact": true,
+  "pushed": true,
+  "runtimeChanged": false,
+  "newAutonomousRuns": 1,
+  "developmentAligned": false,
+  "goalStatus": "active",
+  "centralForeignVersionPreserved": true,
+  "sharedIndexBefore": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexAfterRegistryBuild": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexByteExact": false,
+  "registryBuildStatusRefresh": "The final byte check failed after root center builder ran git status --porcelain without GIT_OPTIONAL_LOCKS=0. Earlier pre/post private commit index checks passed. No shared staging mutation command issued and index not overwritten; do not claim byte-exact after build. Future builders must disable optional locks.",
+  "reportOpened": true
+}

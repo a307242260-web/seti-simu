@@ -7,9 +7,10 @@
  'use strict';
  const zero=reason=>({value:0,selected:null,reason});
  const weighted=(gain,w)=>Object.entries(gain).reduce((n,[k,v])=>n+v*(k==='score'?1:w[k]||0),0);
- function quiet(cards){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&!m.endGameScoring&&!m?.triggers?.length&&!m?.temporaryTasks?.length;});}
+ function quiet(cards,allowLandingPairs=false){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&(!m.endGameScoring||allowLandingPairs&&m.endGameScoring.kind==='planetLandingPairs')&&!m?.triggers?.length&&!m?.temporaryTasks?.length;});}
+ // Landing-pair scoring depends only on planet markers, never on existing computer data.
  function prepaidCapital(facts,weights){
-  if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards))return 0;
+  if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards,true))return 0;
   const slots=[...(facts.computerSlots||[])].sort((a,b)=>a-b);
   if(!slots.length||slots.length>=data.ANALYZE_REQUIRED_COMPUTER_SLOT||slots.some((s,i)=>s!==i+1))return 0;
   if(!Array.isArray(facts.board?.aliens?.slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
