@@ -1,0 +1,26 @@
+{
+  "nativeQueries": 0,
+  "sourceNativeInputs": 21,
+  "rows": [
+    {
+      "label": "sector-mission-before-sector-card",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-before-sector-card-20261105-v1.json"
+    },
+    {
+      "label": "sector-mission-after-teacher-86",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-86-20261105-v1.json"
+    },
+    {
+      "label": "sector-mission-after-teacher-88",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-88-20261105-v1.json"
+    },
+    {
+      "label": "sector-mission-after-teacher-90",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-90-20261105-v1.json"
+    },
+    {
+      "label": "sector-mission-after-teacher-91",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-91-20261105-v1.json"
+    }
+  ]
+}

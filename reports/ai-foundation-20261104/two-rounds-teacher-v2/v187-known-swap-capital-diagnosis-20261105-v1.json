@@ -1,0 +1,2246 @@
+{
+  "status": "complete",
+  "baseCommit": "bdb1f76e93f801e52748e3665ffc555d90937e08",
+  "nativeInputs": 0,
+  "searchQueries": 0,
+  "autonomousRuns": 0,
+  "scope": "Read-only current V21 values on existing exact native source envelopes; no hypothetical state or observation construction",
+  "allSourceEnvelopesUnchanged": true,
+  "rows": [
+    {
+      "label": "actual-72",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step072-20261105-v1.json",
+      "sourceSha256": "3b94dfab4febca499af8f443ebd98ec88ccaea3790a0a98cfe8cab7dbca291a7",
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 82.58333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 11,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 18.916666666666668,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 3.6666666666666665,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 3
+      },
+      "scalar": {
+        "handPotential": 18.916666666666668,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 22.583333333333332,
+        "analysisPotential": 3.6666666666666665,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 17.916666666666668,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 3,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": true,
+          "launchPayment": {
+            "spend": {
+              "credits": 2,
+              "energy": 0
+            },
+            "value": 2
+          },
+          "goalId": "-1:orbit:jupiter:planet",
+          "rocketId": null,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -3.5,
+          "baseline": 4.666666666666667,
+          "afterCapital": 26.083333333333332,
+          "netGain": 17.916666666666668,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 2,
+              "energy": 3,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-42-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 1,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 3,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            }
+          ],
+          "linear": 1,
+          "afterCapital": 3.6666666666666665,
+          "netGain": 1
+        }
+      },
+      "analysis": {
+        "value": 0,
+        "reason": "analysis-not-ready",
+        "selected": null
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-75",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step075-20261105-v1.json",
+      "sourceSha256": "4d8bbb104df6108f46db2fc88cb30acbd93f2ba6d0b21ad0b424b4278e2ecdb2",
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 84.83333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 11,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 21.166666666666668,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 3.6666666666666665,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 3
+      },
+      "scalar": {
+        "handPotential": 21.166666666666668,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 24.833333333333332,
+        "analysisPotential": 3.6666666666666665,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 21.166666666666668,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 3,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": true,
+          "launchPayment": {
+            "spend": {
+              "credits": 2,
+              "energy": 0
+            },
+            "value": 2
+          },
+          "goalId": "-1:orbit:jupiter:planet",
+          "rocketId": null,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -3.5,
+          "baseline": 3.6666666666666665,
+          "afterCapital": 28.333333333333332,
+          "netGain": 21.166666666666668,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 2,
+              "energy": 3,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-18-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 0,
+        "reason": "analysis-not-ready",
+        "selected": null
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-81",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step081-20261105-v1.json",
+      "sourceSha256": "7436d47c345b9e9f53b22ee3febc95677c9cf59b34a690350fe0bf905e175043",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 5,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 17
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 84.83333333333333,
+        "components": {
+          "realizedScore": 17,
+          "currentEndGameBonus": 0,
+          "resources": 8,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 21.333333333333332,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 2
+      },
+      "scalar": {
+        "handPotential": 21.333333333333332,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 25.833333333333332,
+        "analysisPotential": 4.5,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 21.333333333333332,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 2,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": false,
+          "launchPayment": null,
+          "goalId": "4:orbit:jupiter:planet",
+          "rocketId": 4,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -1.5,
+          "baseline": 4.5,
+          "afterCapital": 27.333333333333332,
+          "netGain": 21.333333333333332,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 17,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-18-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 0.8333333333333334,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": null,
+          "planNetGain": 0.8333333333333334
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-84",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step084-20261105-v1.json",
+      "sourceSha256": "79afb054d8fa4c1a58693c4fd6462961a405e444b37b8f7b4e9683f82144abd9",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 17
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        },
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 84.83333333333333,
+        "components": {
+          "realizedScore": 17,
+          "currentEndGameBonus": 0,
+          "resources": 7.5,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 10.75,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 15.583333333333334,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 1
+      },
+      "scalar": {
+        "handPotential": 10.75,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 26.333333333333332,
+        "analysisPotential": 15.583333333333334,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 10.75,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 1,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": false,
+          "launchPayment": null,
+          "goalId": "4:orbit:jupiter:planet",
+          "rocketId": 4,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 1,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -1,
+          "baseline": 15.583333333333334,
+          "afterCapital": 27.333333333333332,
+          "netGain": 10.75,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 17,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-18-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 11.916666666666666,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": 1,
+          "planNetGain": 11.916666666666666
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-87",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step087-20261105-v1.json",
+      "sourceSha256": "caa069544f90ae8bb5bf177269377f13d6d071ed635f56fa6130702e32d4f252",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 3,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 17
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 84.83333333333333,
+        "components": {
+          "realizedScore": 17,
+          "currentEndGameBonus": 0,
+          "resources": 7.5,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 27.333333333333332,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "scalar": {
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 27.333333333333332,
+        "analysisPotential": 27.333333333333332,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 0,
+        "reason": "no-supported-known-tool",
+        "selected": null
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 23.666666666666668,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": 1,
+          "planNetGain": 23.666666666666668
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-98",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step098-20261105-v1.json",
+      "sourceSha256": "7a54a66847733c93bc7af9fa87e1ab4bdcfb41e9814a01032e7b3ecd44fa9c03",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 5,
+        "score": 24
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-18-0",
+          "cardId": "b_48.webp"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 84.83333333333333,
+        "components": {
+          "realizedScore": 24,
+          "currentEndGameBonus": 0,
+          "resources": 7,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 20.25,
+          "analysisPotential": 0.5833333333333334,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "scalar": {
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 20.25,
+        "computerPotential": 0.5833333333333334,
+        "total": 20.833333333333332,
+        "analysisPotential": 0.5833333333333334,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 0,
+        "reason": "outside-audited-analysis-tool-window",
+        "selected": null
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 0,
+        "reason": "analysis-not-ready",
+        "selected": null
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 0.5833333333333334,
+          "baseline": 0.5833333333333334,
+          "knownSwapCapital": 0.5833333333333334,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "actual-124",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step124-20261105-v1.json",
+      "sourceSha256": "4b0d3bd7b72e71ae0c8136e124f3d808dee6d111cb9293b378a2f0cac3b8e364",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 2,
+        "score": 44
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 93,
+        "components": {
+          "realizedScore": 44,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 0,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "scalar": {
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 0,
+        "total": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 0,
+        "reason": "outside-audited-analysis-tool-window",
+        "selected": null
+      },
+      "sector": {
+        "value": 0,
+        "reason": "no-known-sector-tool",
+        "selected": null
+      },
+      "analysis": {
+        "value": 0,
+        "reason": "analysis-not-ready",
+        "selected": null
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 0,
+          "baseline": 0,
+          "knownSwapCapital": 0,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "dlc_5.png-launch-after-native-end",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-launch-portfolio-native-20261105-v1.json",
+      "sourceSha256": "c68eb7043982a963807b14f047486a9ac9d343c2d18b73e72ae038429be37950",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 5,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 80.08333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 8,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 18.583333333333332,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 2
+      },
+      "scalar": {
+        "handPotential": 18.583333333333332,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 23.083333333333332,
+        "analysisPotential": 4.5,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 4.583333333333333,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 2,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": false,
+          "launchPayment": null,
+          "goalId": "4:orbit:jupiter:planet",
+          "rocketId": 4,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -1.5,
+          "baseline": 18.5,
+          "afterCapital": 24.583333333333332,
+          "netGain": 4.583333333333333,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-42-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 14,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 6,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            },
+            {
+              "kind": "settlement",
+              "sectorId": "sector-2-a",
+              "gain": {
+                "publicity": 1
+              }
+            },
+            {
+              "kind": "trace",
+              "sectorId": "sector-2-a",
+              "slotId": 1,
+              "traceType": "pink",
+              "first": true,
+              "gain": {
+                "score": 5,
+                "publicity": 1
+              }
+            }
+          ],
+          "linear": 7,
+          "afterCapital": 11.5,
+          "netGain": 14
+        }
+      },
+      "analysis": {
+        "value": 0.8333333333333334,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": null,
+          "planNetGain": 0.8333333333333334
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "dlc_5.png-skip-after-native-end",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-launch-portfolio-native-20261105-v1.json",
+      "sourceSha256": "c68eb7043982a963807b14f047486a9ac9d343c2d18b73e72ae038429be37950",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 5,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 80.08333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 9,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 17.583333333333332,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 3
+      },
+      "scalar": {
+        "handPotential": 17.583333333333332,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 22.083333333333332,
+        "analysisPotential": 4.5,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 3.5833333333333335,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 3,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": true,
+          "launchPayment": {
+            "spend": {
+              "credits": 2,
+              "energy": 0
+            },
+            "value": 2
+          },
+          "goalId": "-1:orbit:jupiter:planet",
+          "rocketId": null,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -3.5,
+          "baseline": 18.5,
+          "afterCapital": 25.583333333333332,
+          "netGain": 3.5833333333333335,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 1,
+              "energy": 1,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-42-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 14,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 6,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            },
+            {
+              "kind": "settlement",
+              "sectorId": "sector-2-a",
+              "gain": {
+                "publicity": 1
+              }
+            },
+            {
+              "kind": "trace",
+              "sectorId": "sector-2-a",
+              "slotId": 1,
+              "traceType": "pink",
+              "first": true,
+              "gain": {
+                "score": 5,
+                "publicity": 1
+              }
+            }
+          ],
+          "linear": 7,
+          "afterCapital": 11.5,
+          "netGain": 14
+        }
+      },
+      "analysis": {
+        "value": 0.8333333333333334,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": null,
+          "planNetGain": 0.8333333333333334
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "before-first-tool",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json",
+      "sourceSha256": "7e596b00bdf0e3f39e0c4aa48744b64c9aed9b101a315cfa022f290738e18074",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 5,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 80.08333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 8,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 18.583333333333332,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 2
+      },
+      "scalar": {
+        "handPotential": 18.583333333333332,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 23.083333333333332,
+        "analysisPotential": 4.5,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 4.583333333333333,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 2,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": false,
+          "launchPayment": null,
+          "goalId": "4:orbit:jupiter:planet",
+          "rocketId": 4,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 2,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -1.5,
+          "baseline": 18.5,
+          "afterCapital": 24.583333333333332,
+          "netGain": 4.583333333333333,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-42-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 14,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 6,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            },
+            {
+              "kind": "settlement",
+              "sectorId": "sector-2-a",
+              "gain": {
+                "publicity": 1
+              }
+            },
+            {
+              "kind": "trace",
+              "sectorId": "sector-2-a",
+              "slotId": 1,
+              "traceType": "pink",
+              "first": true,
+              "gain": {
+                "score": 5,
+                "publicity": 1
+              }
+            }
+          ],
+          "linear": 7,
+          "afterCapital": 11.5,
+          "netGain": 14
+        }
+      },
+      "analysis": {
+        "value": 0.8333333333333334,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": null,
+          "planNetGain": 0.8333333333333334
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "after-teacher-input-80",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json",
+      "sourceSha256": "7e596b00bdf0e3f39e0c4aa48744b64c9aed9b101a315cfa022f290738e18074",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        },
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 80.08333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 7.5,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 8,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 15.583333333333334,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 1
+      },
+      "scalar": {
+        "handPotential": 8,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 23.583333333333332,
+        "analysisPotential": 15.583333333333334,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 2.5,
+        "selected": {
+          "cardId": "card-24-pass-1-5",
+          "cardIdentity": "dlc_5.png",
+          "preparationDebt": 1,
+          "geometryAssumption": "unchanged-board-between-own-tool-turns",
+          "prospectiveLaunch": false,
+          "launchPayment": null,
+          "goalId": "4:orbit:jupiter:planet",
+          "rocketId": 4,
+          "path": [
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "uses": 1,
+          "returned": false,
+          "payment": {
+            "spend": {
+              "credits": 1,
+              "energy": 0
+            },
+            "value": 1
+          },
+          "linear": -1,
+          "baseline": 21.083333333333332,
+          "afterCapital": 24.583333333333332,
+          "netGain": 2.5,
+          "endpoint": {
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 4,
+              "score": 15,
+              "id": "player-white",
+              "color": "white",
+              "techState": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              }
+            },
+            "handIds": [
+              "card-42-0"
+            ],
+            "probeCoordinate": {
+              "x": 1,
+              "y": 3
+            }
+          }
+        }
+      },
+      "sector": {
+        "value": 5.5,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 6,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            },
+            {
+              "kind": "settlement",
+              "sectorId": "sector-2-a",
+              "gain": {
+                "publicity": 1
+              }
+            },
+            {
+              "kind": "trace",
+              "sectorId": "sector-2-a",
+              "slotId": 1,
+              "traceType": "pink",
+              "first": true,
+              "gain": {
+                "score": 5,
+                "publicity": 1
+              }
+            }
+          ],
+          "linear": 7,
+          "afterCapital": 14.083333333333334,
+          "netGain": 5.5
+        }
+      },
+      "analysis": {
+        "value": 11.916666666666666,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": 1,
+          "planNetGain": 11.916666666666666
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    },
+    {
+      "label": "after-teacher-input-83",
+      "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json",
+      "sourceSha256": "7e596b00bdf0e3f39e0c4aa48744b64c9aed9b101a315cfa022f290738e18074",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 3,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "id": "card-42-0",
+          "cardId": "dlc_37.png"
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v21",
+        "total": 80.08333333333333,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 7.5,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 13,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 24.583333333333332,
+          "researchIncomePotential": 0,
+          "dataPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "scalar": {
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "computerPotential": 3.6666666666666665,
+        "total": 24.583333333333332,
+        "analysisPotential": 24.583333333333332,
+        "researchIncomePotential": 0,
+        "dataPotential": 0
+      },
+      "tool": {
+        "value": 0,
+        "reason": "no-supported-known-tool",
+        "selected": null
+      },
+      "sector": {
+        "value": 0,
+        "selected": {
+          "cardId": "card-42-0",
+          "targets": [
+            "sector-2-a",
+            "sector-4-b"
+          ],
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "ledger": [
+            {
+              "kind": "signal",
+              "nebulaId": "sector-2-a",
+              "slot": 6,
+              "gain": {
+                "score": 0
+              }
+            },
+            {
+              "kind": "signal",
+              "nebulaId": "sector-4-b",
+              "slot": 2,
+              "gain": {
+                "score": 2
+              }
+            },
+            {
+              "kind": "settlement",
+              "sectorId": "sector-2-a",
+              "gain": {
+                "publicity": 1
+              }
+            },
+            {
+              "kind": "trace",
+              "sectorId": "sector-2-a",
+              "slotId": 1,
+              "traceType": "pink",
+              "first": true,
+              "gain": {
+                "score": 5,
+                "publicity": 1
+              }
+            }
+          ],
+          "linear": 7,
+          "afterCapital": 14.083333333333334,
+          "netGain": -3.5
+        }
+      },
+      "analysis": {
+        "value": 20.916666666666668,
+        "reason": "funded-ready-analysis",
+        "selected": {
+          "slotId": 1,
+          "traceType": "blue",
+          "payment": {
+            "spend": {
+              "credits": 0,
+              "energy": 0
+            },
+            "energyPurchases": 0,
+            "creditPurchases": 0,
+            "value": 0
+          },
+          "preparationPlacements": 2,
+          "blueSlot": 1,
+          "planNetGain": 20.916666666666668
+        }
+      },
+      "data": {
+        "value": 0,
+        "plan": {
+          "total": 3.6666666666666665,
+          "baseline": 3.6666666666666665,
+          "knownSwapCapital": 3.6666666666666665,
+          "knownSwapPlan": null,
+          "fixed": {
+            "value": 0,
+            "selected": null,
+            "candidates": [],
+            "reason": "one-fixed-income-and-optional-currency-blue-tail",
+            "scope": "One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds."
+          },
+          "classes": []
+        }
+      }
+    }
+  ]
+}

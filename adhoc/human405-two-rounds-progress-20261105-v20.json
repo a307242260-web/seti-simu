@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "thisGoalTurnClassification": "progress: V187 actual72 defect traced to sector-card post-capital deleting unconsumed mission;21nativeprefix capture and fail-before/pass-after fiveprefix/84money controls; V188 isolated, full172/audit running",
+  "productionRuntime": "V187/V21",
+  "productionSourceCommit": "72bbd87897e2e403c808d5ed408cc1c0f9c895f0",
+  "actualRecord": "reports/research/c5ea5600.72bbd878.quick-400.json",
+  "actualScores": [
+    15,
+    44
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 5415,
+  "actualInputs": 125,
+  "actualWhiteSearches": 86,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 462.18091700000014,
+  "allActualDecisionGatesPassed": true,
+  "nativeReplayedInputsAfterOpening": 102,
+  "allFinalNativeStateSessionRngAndRoundCheckpointsVerified": true,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": false,
+  "round2MoneyAIvsTeacher": [
+    1,
+    4
+  ],
+  "round2EnergyAIvsTeacher": [
+    1,
+    1
+  ],
+  "round2ProbesAIvsTeacher": [
+    0,
+    1
+  ],
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "candidateOfficialRuns": 0,
+  "candidateAdmitted": false,
+  "capturedActualWhiteSearchRoots": 86,
+  "newSourceOrGameReruns": 0,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "nextActions": [
+    "Preserve failed V188 source and first cold sample. Profile identified public geometry repeated allocations and mandatory state clones, no autonomous game.",
+    "Optimize only measured read-only geometry with output/coercion/mutation isolation controls, then a distinct source version must repeat exact391case gate with value/action/input parity before admission."
+  ],
+  "candidateRuntime": "V188/V22",
+  "candidateColdNamedCases": 391,
+  "candidateColdUniqueRoots": 308,
+  "candidateMaxNativeInputs": 252,
+  "candidateMaxRootAndSearchMs": 608.5741670000001,
+  "candidateIndependentValueInputChecks": 47,
+  "candidateLegacyInputAuditErrorUnchanged": true,
+  "nativePortfolioControlInputs": 90,
+  "nativeToolPrefixInputs": 6,
+  "passChoiceNativeInputsIncludingFailedToolAttempt": 4,
+  "knownPassControlUpdatedToOrdinaryDLC4": true,
+  "candidateUnitPassed": 172,
+  "candidateFullFlowPassed": 1,
+  "fullRegressionMilliseconds": 280200,
+  "candidateRegressionLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-node-full-20261105-v2.log",
+  "candidateChromePassed": null,
+  "candidateAdmissionScope": "not admitted; new sector-mission composition is isolated",
+  "bothRoundsSpecificTechnologyEqualAndSixIncomesAtLeastTeacher": true,
+  "round2EnergyIncomeAIvsTeacher": [
+    3,
+    2
+  ],
+  "round2PlacedDataAIvsTeacher": [
+    0,
+    2
+  ],
+  "round2ScoreSourceDelta": {
+    "alienTraceBlueScore": 3,
+    "blueTechScore": 0,
+    "initialScore": 0,
+    "orbitScore": 10,
+    "scanScore": 2,
+    "techBonusScore": 0,
+    "alienTracePinkScore": -5
+  },
+  "actual72FixedTeacherContinuationInputs": 33,
+  "actual72TeacherAssetsReproduced": true,
+  "currentEndpointValuesAIvsTeacher": [
+    93,
+    95.75
+  ],
+  "assetEquivalenceNotProven": true,
+  "nextDifferenceFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step072-20261105-v1.json",
+  "candidateSourceBaseCommit": "bdb1f76e93f801e52748e3665ffc555d90937e08",
+  "sourceNativeSectorMissionPrefixInputs": 21,
+  "newNativePrefixControls": 5,
+  "remainingOldTokenLedgerVerified": true,
+  "foreignTraceChoiceDeclined": true,
+  "candidateColdOverruns": [
+    {
+      "label": "case-105",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "nativeEnvelopeSha256": "990736e441eb2815552f5b257317fd835e5626c39d24ec520191152cb2cec50b",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-cold-serial-case-105-20261105-v1.json",
+      "nativeInputs": 198,
+      "milliseconds": 608.5741670000001,
+      "value": 71,
+      "actionId": "place_data:01c038e2",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "candidateArchive": "reports/ai-foundation-20261104/candidate-v188-sector-mission-20261105-v1/manifest.json",
+  "actual72CandidateAction": "scan:2d21a323",
+  "actual72CandidateNativeInputs": 63,
+  "actual72CandidateMilliseconds": 521.5985410000001
+}
