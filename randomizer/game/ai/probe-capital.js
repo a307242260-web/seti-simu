@@ -283,9 +283,9 @@
     return choices[0] || null;
   }
 
-  function pendingFinalMarkCapital(facts) {
+  function pendingFinalMarkOption(facts) {
     const mark=facts.nextFinalMark;
-    if(facts.terminal||!mark?.valuationSafe||mark.playerId!==facts.player.id||!Number.isFinite(facts.player.score)||facts.player.score<mark.threshold)return 0;
+    if(facts.terminal||!mark?.valuationSafe||mark.playerId!==facts.player.id||!Number.isFinite(facts.player.score)||facts.player.score<mark.threshold)return null;
     const placed=facts.computerSlots?.length||0;
     const incomeCard=placed<4&&facts.player.availableData>=4-placed?facts.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
       const value=c=>Object.entries(cards.getIncomeGainForCard(c)).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
@@ -296,13 +296,16 @@
     const options=mark.options.map(option=>({...option,forecast:incomeCard&&['a1','a2'].includes(option.formulaId)
       ?endScoring.getFormulaBaseValue(option.formulaId,projected,{})*option.multiplier:option.currentValue}))
       .sort((a,b)=>b.forecast-a.forecast||b.currentValue-a.currentValue);
-    return Math.max(0,options[0]?.currentValue||0);
+    return options[0]||null;
+  }
+  function pendingFinalMarkCapital(facts) {
+    return Math.max(0,pendingFinalMarkOption(facts)?.currentValue||0);
   }
 
   function factsFromObservation(observation, seatId) {
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
-    return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
+    const facts={ player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
       nextFinalMark:observation.selfState.nextFinalMark,
       uncontestedRound:Array.isArray(pub.activePlayerIds)&&pub.activePlayerIds.length>0&&pub.activePlayerIds.filter(id=>id!==seatId).every(id=>pub.passingPlayerIds.includes(id)),
       reservedCards: observation.selfState.reservedCards, pendingCardTriggers: observation.selfState.pendingCardTriggers,
@@ -313,6 +316,7 @@
       extraUnknownCount: 0, round: pub.roundNumber, passing: pub.passingPlayerIds.includes(seatId),
       terminal: observation.terminal ?? observation.outcomeProjection?.terminal,
       computerSlots: player.dataProgress?.computerSlots, blueSlots: player.dataProgress?.blueSlots };
+    return{...facts,sourcePendingFinalMarkChoice:facts.amibaTraces&&facts.companyState?.abilityId==='deepspace_swap_cards'?pendingFinalMarkOption(facts):null};
   }
 
   // Only the selected player's public resources/owned technology and known
@@ -320,7 +324,7 @@
   function researchFactsFromState(state, player) {
     return {reservedCards:player.reservedCards,pendingCardTriggers:cardEffects.listPendingTriggerKeys(player,state.turn),
       pendingHandCardTriggers:cardEffects.listPendingTriggerKeys({...player,reservedCards:player.hand||[]},state.turn),
-      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),researchSymbols:amiba.getPublicSymbolState(state.aliens),amibaTraces:amiba.getPublicTraceState(state.aliens)};
+      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),researchSymbols:amiba.getPublicSymbolState(state.aliens,{readOnly:true}),amibaTraces:amiba.getPublicTraceState(state.aliens,{readOnly:true})};
   }
   function factsFromState(state, player) {
     const slots = Object.entries(state.aliens?.aliens || {}).map(([slotId, slot]) => ({
@@ -332,7 +336,7 @@
     const unknown=state.cards?.unknownPublicSlotIndices,publicCards=unknown?.length?state.cards.publicCards.map((card,index)=>card||(unknown.includes(index)?{hidden:true,faceUp:false}:null)):state.cards?.publicCards;
     const nextFinalMark=endScoring.describeNextFinalMark({...state,cardEffects,getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},player);
     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
-    return { ...researchFactsFromState(state,player),nextFinalMark,uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income,companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player) },
+    const facts={ ...researchFactsFromState(state,player),nextFinalMark,uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income,companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player) },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem, finalScoring: state.finalScoring,
         publicCards, ordinaryDrawCount:Array.isArray(state.cards?.drawPileCardIds)?state.cards.drawPileCardIds.length:null, aliens: { slots } }, hand: player.hand,
       companyState: blueSlots.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))?{ abilityId: industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId ?? null, roundMarkRound: Number(player.industryRoundMarkRound) || 0, roundMarkTurn: Number(player.industryRoundMarkTurn) || 0 }:null,
@@ -340,9 +344,10 @@
       passing: (state.passingPlayerIds || state.turn.passedPlayerIds).includes(player.id) || player.passCompletionPending === true,
       terminal: state.turn.gameEnded === true,
       computerSlots,blueSlots };
+    return{...facts,sourcePendingFinalMarkChoice:facts.amibaTraces&&facts.companyState?.abilityId==='deepspace_swap_cards'?pendingFinalMarkOption(facts):null};
   }
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ pendingFinalMarkCapital,ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, knownScanData, quote, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

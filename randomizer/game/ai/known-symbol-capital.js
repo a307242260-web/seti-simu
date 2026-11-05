@@ -45,7 +45,7 @@
    const body=supported(card),wallet={...facts.player,credits:facts.player.credits-payment.spend.credits,
     energy:facts.player.energy-payment.spend.energy,handSize:facts.hand.length+facts.extraUnknownCount-1};
    players.gainResources({resources:wallet},{availableData:body.dataCount});
-   const alien={amiba:structuredClone(facts.researchSymbols)};
+   const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
    const choices=amiba.listSymbolsInRegion(alien,body.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
     .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
    if(!choices.length)continue;

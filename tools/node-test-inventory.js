@@ -62,7 +62,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/stationary-computer-tail.test.js", "policy/decision-search", "静止探测器固定电脑前缀的分数账本摘要与原生尾部逐输入一致，保留原完整搜索的值和动作", "分数值被半单位守卫拒绝导致重复模拟，或摘要漏掉新移动、选牌目的"),
     entry("randomizer/game/ai/computer-prefix-plan.test.js", "policy/decision-search", "主行动后电脑宣传及蓝列作为固定前缀，跨线待领取标记与实际领取价值连续，报价/原生逐步恢复一致", "只剩结束turn、为局部准备弃牌补数据、跨收入选牌、重复领取格位奖励或预算中断污染原根"),
     entry("randomizer/game/ai/research-mark-capital.test.js", "policy/state-value", "延后研究计入已得D标记增值与当前筹资跨阈值的新标记用途，手牌/宣传共享一次领取，原生/完整/紧凑观察一致", "遗漏已得标记增长或确定可跨阈值的新标记、D2/D1及新标记重复计价、借未来支付和当前收益、收入改变固定排序仍报价"),
-    entry("randomizer/game/ai/amiba-analysis-capital.test.js", "policy/state-value", "满电脑及3格加3数据的已知收入/公开阿米巴蓝痕迹/整区/货币蓝尾部共享组合，与原生执行一致", "保留牌过宽拒绝、重复抽牌/蓝位、匿名牌错误取消用途、读取隐藏身份或伪造后继实体"),
+    entry("randomizer/game/ai/amiba-analysis-capital.test.js", "policy/state-value", "满电脑及3格加3数据的已知收入/公开阿米巴蓝痕迹/整区/货币蓝尾部共享组合，已得稳定B待领前后同值，与原生执行一致", "保留牌过宽拒绝、重复抽牌/蓝位、匿名牌错误取消用途、读取隐藏身份或伪造后继实体"),
     entry("randomizer/game/ai/known-symbol-capital.test.js", "policy/state-value", "当前可支付已持区域牌读取真实公开symbol布局，费用、手牌和后续资本共享账本，报价与原生一致", "未来牌身份筹资、忽略历史触发、数据溢出、重复消费或与研究重复付款"),
     entry("randomizer/game/ai/research-trigger-capital.test.js", "policy/state-value", "公开已用触发与symbol布局支持有限筹资研究报价，原生一次性消费及跨颜色移动一致", "重复使用同色触发、读取旧symbol位置、待结算时预支后续、隐藏布局或牌堆泄漏、以奖励筹资"),
     entry("randomizer/game/ai/probe-data-capital-key.test.js", "policy/state-value", "原生几何上的不同任务按完整资源余额复用用途报价，数据容量变化与奖励账本一致", "相同钱电宣传但不同数据的钱包错误复用同一资本报价"),

@@ -1,0 +1,2 @@
+PASS production-ready-amiba-analysis http://127.0.0.1:56810/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

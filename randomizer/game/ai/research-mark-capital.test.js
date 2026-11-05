@@ -42,6 +42,8 @@ try{
  const changing=structuredClone(facts),mutableFunding={resources:p.resources,income:p.income,startingIncome:0};
  assert.equal(values.researchFunding(changing,mutableFunding).researchMarks[0].multiplier,7);changing.board.finalScoring.tileVariants.d=1;
  assert.equal(values.researchFunding(changing,mutableFunding).researchMarks[0].formulaId,'d1','mutable native previews cannot reuse a stale mark quote');
+ const mutableTech=structuredClone(p.techState),mutableMarks=structuredClone(funding.researchMarks),mutableParams={...params,techState:mutableTech,funding:{...funding,researchMarks:mutableMarks}};
+ assert.equal(values.researchCapital(mutableParams),6.5);mutableTech.ownedTiles.orange1=true;assert.equal(values.researchCapital(mutableParams),0,'same mutable technology object must invalidate the raw D2 delta');delete mutableTech.ownedTiles.orange1;mutableMarks[0].multiplier=5;assert.equal(values.researchCapital(mutableParams),4.5,'same mutable mark object with a changed slot multiplier must use its new complete scalar key');mutableMarks[0].multiplier=7;assert.equal(values.researchCapital(mutableParams),6.5,'restoring the full original scalar inputs recovers their exact formal gain');
  const full=values.evaluateStateValue(before,seatId),purpose=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>full.components[k]));
  assert.equal(demand.planningCapital(state,p),purpose,'native preparation and observation must use the same final-marker facts');
  // Current-funded research can earn a new mark; use preserved native endpoints,

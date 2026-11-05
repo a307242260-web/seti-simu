@@ -1,0 +1,24 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: {"accepted":11,"legal":[{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:0c6b3a23","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:1:blue:state-extra","kind":"planet-reward-alien-trace","alienSlotId":1,"traceType":"blue","stateExtra":true},"payload":{},"decision":null,"summary":"外星人 1 额外痕迹位（3分）"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:66e46f42","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:1:blue:amiba:1","kind":"planet-reward-alien-trace","alienSlotId":1,"traceType":"blue","speciesId":"amiba","position":1},"payload":{},"decision":null,"summary":"外星人 1 蓝1号位"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:411af34c","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:1:blue:amiba:2","kind":"planet-reward-alien-trace","alienSlotId":1,"traceType":"blue","speciesId":"amiba","position":2},"payload":{},"decision":null,"summary":"外星人 1 蓝2号位（1分）"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:5c6d197a","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:1:blue:amiba:3","kind":"planet-reward-alien-trace","alienSlotId":1,"traceType":"blue","speciesId":"amiba","position":3},"payload":{},"decision":null,"summary":"外星人 1 蓝3号位（外星人牌）"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:06ca6510","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:1:blue:amiba:4","kind":"planet-reward-alien-trace","alienSlotId":1,"traceType":"blue","speciesId":"amiba","position":4},"payload":{},"decision":null,"summary":"外星人 1 蓝4号位（1分+外星人牌）"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:46f3414a","actorId":"player-white","stateVersion":59,"decisionVersion":1,"target":{"choiceId":"trace:2:blue","kind":"planet-reward-alien-trace","alienSlotId":2,"traceType":"blue"},"payload":{},"decision":null,"summary":"外星人 2 蓝色痕迹"}]}
+    at submit (/private/tmp/seti-v214-teacher-r3-20261106-v1/adhoc/control-v218-purple2-known-analysis-20261106-v1.js:4:20)
+    at Object.<anonymous> (/private/tmp/seti-v214-teacher-r3-20261106-v1/adhoc/control-v218-purple2-known-analysis-20261106-v1.js:12:416)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

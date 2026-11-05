@@ -23,8 +23,15 @@
   });
  }
  function publicAliens(facts){
-  return {aliens:Object.fromEntries(facts.board.aliens.slots.map(s=>[String(s.slotId),structuredClone(s)])),
-   amiba:{...structuredClone(facts.researchSymbols),...structuredClone(facts.amibaTraces),revealInitialized:true,cardDeck:[]}};
+  return {aliens:Object.fromEntries(facts.board.aliens.slots.map(s=>[String(s.slotId),s])),
+   amiba:{...facts.researchSymbols,...facts.amibaTraces,traceSlotsByAlienSlotId:{...facts.amibaTraces.traceSlotsByAlienSlotId},revealInitialized:true,cardDeck:[]}};
+ }
+ function analysisAliens(source){
+  // Only blue occupancy/counts and symbol slot locations are written below.
+  // Other trace colors and marker entries are read-only scoring inputs.
+  return{aliens:Object.fromEntries(Object.entries(source.aliens).map(([id,slot])=>[id,{...slot,traces:{...slot.traces,blue:{...slot.traces.blue}}}])),
+   amiba:{...amiba.copyPublicSymbolState(source.amiba),
+    traceSlotsByAlienSlotId:Object.fromEntries(Object.entries(source.amiba.traceSlotsByAlienSlotId).map(([id,grid])=>[id,{...grid,blue:{...grid.blue}}]))}};
  }
  // Only current blue-trace metrics can change. Other scored facts are held
  // fixed by the reservation guard; unknown new cards never become Type3 facts.
@@ -62,7 +69,13 @@
   const selected=options[0];if(!selected)return zero('analysis-known-currency-income-missing');
   const next={...facts,...selected.progress,player:selected.wallet},tail=quote(next,weights,(wallet,slots,progress={})=>portfolio(wallet,slots,{...selected.progress,...progress}),selected.after);
   if(!tail.selected)return zero('income-analysis-tail-unavailable');
-  if(facts.nextFinalMark&&tail.selected.endpoint.resources.score>=facts.nextFinalMark.threshold)return zero('income-analysis-new-mark-needs-native-value');
+  if(facts.nextFinalMark&&tail.selected.endpoint.resources.score>=facts.nextFinalMark.threshold){
+   const mark=facts.nextFinalMark,source=facts.sourcePendingFinalMarkChoice,before=probe.pendingFinalMarkOption(facts),after=probe.pendingFinalMarkOption(next);
+   const sameB=(a,b)=>a&&b&&a.tileId==='b'&&b.tileId===a.tileId&&b.formulaId===a.formulaId&&b.slotIndex===a.slotIndex;
+   const nextThreshold=mark.followingThreshold;
+   if(!(mark.currentScore>=mark.threshold)||!sameB(source,before)||!sameB(source,after)||nextThreshold===undefined
+     ||nextThreshold!==null&&tail.selected.endpoint.resources.score>=nextThreshold)return zero('income-analysis-new-mark-needs-native-value');
+  }
   const net=arithmetic.sum([selected.linear,tail.selected.planNetGain,selected.after,-baseValue],weights);
   return{...tail,value:Math.max(0,net),selected:{...tail.selected,incomeCardId:selected.cardId,preparationPlacements:3,incomePreparation:{linear:selected.linear,capitalAfter:selected.after,greedyValue:selected.value},planNetGain:net},
    reason:net>0?'funded-known-income-amiba-analysis':'income-amiba-analysis-not-profitable',
@@ -92,7 +105,7 @@
    return[{slot,first,reward:first?aliens.getFirstTraceRewardForSlot(slot.slotId):aliens.getExtraTraceReward()}];
   });
   for(const choice of choices){
-   const context=structuredClone(originalAliens),wallet={...paid};let unknownCards=0,ordinaryLeft=facts.board.ordinaryDrawCount;
+   const context=analysisAliens(originalAliens),wallet={...paid};let unknownCards=0,ordinaryLeft=facts.board.ordinaryDrawCount;
    const apply=reward=>{
     players.gainResources({resources:wallet},reward.gain||{});if(reward.dataCount)players.gainResources({resources:wallet},{availableData:reward.dataCount});
     if((reward.drawCards||0)>ordinaryLeft)return false;ordinaryLeft-=reward.drawCards||0;unknownCards+=reward.drawCards||0;return true;

@@ -859,7 +859,7 @@
     const board=context.finalScoring,playerId=getPlayerId(player);
     if(!playerId||!Array.isArray(board?.thresholds)||!board.tiles)return null;
     const marks=Object.values(board.tiles).flatMap(tile=>tile.marks||[]),claimed=marks.filter(m=>m.playerId===playerId);
-    const threshold=[...board.thresholds].sort((a,b)=>a-b).find(t=>!claimed.some(m=>Number(m.threshold)===Number(t)));
+    const unclaimed=[...board.thresholds].sort((a,b)=>a-b).filter(t=>!claimed.some(m=>Number(m.threshold)===Number(t))),threshold=unclaimed[0];
     if(threshold==null)return null;
     const candidates=Object.entries(board.tiles).filter(([,tile])=>!tile.marks?.some(m=>m.playerId===playerId)).map(([tileId,tile])=>{
       const slotIndex=!tile.marks?.some(m=>Number(m.slotIndex)===1)?1:!tile.marks?.some(m=>Number(m.slotIndex)===2)?2:3;
@@ -869,7 +869,7 @@
     });
     const coupled=(player.reservedCards||[]).some(card=>resolveCardEndGameRule(card,context.cardEffects)?.kind==='unmarkedFinalRightmost')
       ||shouldApplyJiuzheThreatPenalty(player,context);
-    return{playerId,currentScore:getBaseScore(player),threshold:Number(threshold),valuationSafe:!coupled,options:candidates};
+    return{playerId,currentScore:getBaseScore(player),threshold:Number(threshold),followingThreshold:unclaimed.length>1?Number(unclaimed[1]):null,valuationSafe:!coupled,options:candidates};
   }
 
   function computePlayerFinalScore(context = {}, player = context.currentPlayer) {

@@ -1,0 +1,55 @@
+{
+  "status": "active",
+  "runtime": "V218/V37",
+  "sourceAdmitted": true,
+  "admission": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-current-source-admission-20261106-v1.json",
+  "admissionSha256": "0873ff394b2b3e1986ffb87d99863158471286244435d84c6a9e5b5595f86d32",
+  "namedCases": 476,
+  "uniqueNativeRoots": 387,
+  "maxNativeInputs": 256,
+  "maxColdMilliseconds": 584.39825,
+  "unitPassed": 180,
+  "fullFlowPassed": 1,
+  "independentTests": 18,
+  "independentFixtures": 305,
+  "browserPassed": 5,
+  "legacyInputAuditFailureRetained": true,
+  "failedCandidatesRetained": [
+    215,
+    216,
+    217
+  ],
+  "newAutonomousRuns": 0,
+  "lastAutonomousRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "lastR3Assets": {
+    "score": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3Assets": {
+    "score": 105,
+    "tech": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "nativeControl": {
+    "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-purple2-known-analysis-native-20261106-v1.json",
+    "reusedAcceptedPrefixInputs": 9,
+    "newInputs": 14,
+    "newUnknownIdentitiesMasked": true,
+    "sourceAndEndingValue": 120
+  },
+  "next": "Paired native control: use accepted ordinary/DLC31 landing prefixes, verify the same future standard scan/purple4 launch/data-income-analysis purpose and shared-wallet conversion costs. Do not force teacher card/tech bonuses. Then revisit R2 end, finally autonomous first3.",
+  "baseline": "V41 unchanged",
+  "stage": "/private/tmp/seti-v214-teacher-r3-20261106-v1"
+}

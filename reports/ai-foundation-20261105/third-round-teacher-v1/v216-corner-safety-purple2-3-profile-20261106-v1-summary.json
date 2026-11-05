@@ -1,0 +1,212 @@
+{
+  "input": "reports/ai-foundation-20261105/third-round-teacher-v1/v216-corner-safety-purple2-3-profile-20261106-v1.cpuprofile.gz",
+  "inputSha256": "13bb73e913e0e9b2453268e84496115586241f6d53993387f3c0c26dfb78d5bc",
+  "timingScope": "Instrumented root-and-search CPU samples only, not a cold decision admission sample",
+  "profileMs": 701.292,
+  "withinResearchIncomeMs": 7.709,
+  "withinPurposeMs": 190.209,
+  "self": [
+    {
+      "key": "node:internal/worker/js_transferable:structuredClone",
+      "milliseconds": 117.876
+    },
+    {
+      "key": ":(garbage collector)",
+      "milliseconds": 37.04
+    },
+    {
+      "key": "game/ai/analysis-port.js:normalize",
+      "milliseconds": 25.126
+    },
+    {
+      "key": "game/ai/state-value.js:",
+      "milliseconds": 23.291
+    },
+    {
+      "key": "game/state/state-store.js:stableSerialize",
+      "milliseconds": 20.21
+    },
+    {
+      "key": "game/ai/analysis-port.js:forwardIdentity",
+      "milliseconds": 17.833
+    },
+    {
+      "key": "game/ai/research-trigger-capital.js:gains",
+      "milliseconds": 17.71
+    },
+    {
+      "key": "game/ai/analysis-port.js:normalizeObject",
+      "milliseconds": 17.375
+    },
+    {
+      "key": "node:inspector:post",
+      "milliseconds": 14.334
+    },
+    {
+      "key": "game/state/low-coupling-slices.js:visit",
+      "milliseconds": 11.958
+    },
+    {
+      "key": "game/ai/state-value.js:add",
+      "milliseconds": 9
+    },
+    {
+      "key": "game/ai/probe-capital.js:",
+      "milliseconds": 8.792
+    },
+    {
+      "key": "game/ai/value-arithmetic.js:sum",
+      "milliseconds": 8.584
+    },
+    {
+      "key": "game/ai/research-trigger-capital.js:total",
+      "milliseconds": 8.583
+    },
+    {
+      "key": "game/ai/resource-demand.js:immutableCapitalInput",
+      "milliseconds": 8.375
+    },
+    {
+      "key": "game/state/high-coupling-slices.js:scanForbidden",
+      "milliseconds": 8.25
+    },
+    {
+      "key": "game/ai/analysis-port.js:snapshot",
+      "milliseconds": 7.542
+    },
+    {
+      "key": "randomizer/game/rule-composition.js:deepFreeze",
+      "milliseconds": 6.834
+    },
+    {
+      "key": "game/state/state-store.js:deepFreeze",
+      "milliseconds": 6.792
+    },
+    {
+      "key": "game/ai/probe-capital.js:quote",
+      "milliseconds": 6.709
+    },
+    {
+      "key": "game/ai/amiba-analysis-capital.js:",
+      "milliseconds": 6.083
+    },
+    {
+      "key": "game/tech/catalog.js:getTechType",
+      "milliseconds": 5.624
+    },
+    {
+      "key": "game/ai/amiba-analysis-capital.js:analysisAliens",
+      "milliseconds": 5.583
+    },
+    {
+      "key": "game/ai/probe-capital.js:capital",
+      "milliseconds": 5.041
+    },
+    {
+      "key": "game/ai/amiba-analysis-capital.js:secured",
+      "milliseconds": 5
+    }
+  ],
+  "structuredCloneCallers": [
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:restoreCheckpoint <- game/rule-composition.js:restore <- ai/analysis-port.js:restoreEnvelope",
+      "milliseconds": 30.376
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:beginWorkingCopy <- effects/session-runtime.js:dispatchStandardAction <- game/rule-composition.js:submitAction",
+      "milliseconds": 13.916
+    },
+    {
+      "key": "ai/known-symbol-capital.js:quote <- ai/state-value.js:purposeCapitalWithoutTools <- ai/state-value.js:purposeCapital <- ai/resource-demand.js:planningCapital",
+      "milliseconds": 7.5
+    },
+    {
+      "key": "aliens/amiba.js:getPublicSymbolState <- ai/probe-capital.js:researchFactsFromState <- ai/probe-capital.js:factsFromState <- ai/resource-demand.js:valueFacts",
+      "milliseconds": 7.5
+    },
+    {
+      "key": "ai/local-decision-plans.js:finalMark <- ai/analysis-port.js:localDecisionSpec <- ai/analysis-port.js:expandWithCardPick <- ai/decision-search.js:searchDecision",
+      "milliseconds": 7.416
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:publish <- game/rule-composition.js:finishIfTerminal <- game/rule-composition.js:advanceSession",
+      "milliseconds": 4.5
+    },
+    {
+      "key": "app/simulation-contract.js:clone <- app/simulation-contract.js:sanitizePublicPlayer <- app/rule-observation.js: <- app/rule-observation.js:buildRuleObservation",
+      "milliseconds": 3.083
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js: <- game/rule-composition.js:maskUnknownCards <- game/rule-composition.js:sanitizeHiddenInformationObservation",
+      "milliseconds": 3
+    },
+    {
+      "key": "ai/resource-demand.js:previewIncomeTail <- ai/resource-demand.js:incomeTailCapital <- ai/resource-demand.js:computerIncomeValue <- ai/resource-demand.js:",
+      "milliseconds": 3
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:advanceSession <- game/rule-composition.js:submitAction <- ai/analysis-port.js:executeCurrent",
+      "milliseconds": 2.959
+    },
+    {
+      "key": "aliens/amiba.js:getPublicTraceState <- ai/probe-capital.js:researchFactsFromState <- ai/probe-capital.js:factsFromState <- ai/resource-demand.js:valueFacts",
+      "milliseconds": 2.875
+    },
+    {
+      "key": "app/rule-observation.js:clone <- app/rule-observation.js:buildRuleObservation <- adhoc/profile-v216-cold-failure-20261106-v1.js:projectCounterfactualState <- game/production-kernel.js:projectState",
+      "milliseconds": 2.791
+    },
+    {
+      "key": "ai/local-decision-plans.js:pureOptional <- ai/analysis-port.js:localDecisionSpec <- ai/analysis-port.js:expandResourcePlan <- ai/decision-search.js:searchDecision",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "worker/js_transferable:structuredClone <- ai/known-symbol-capital.js:quote <- ai/state-value.js:purposeCapitalWithoutTools <- ai/state-value.js:purposeCapital",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "app/rule-observation.js:clone <- app/rule-observation.js: <- app/rule-observation.js:buildRuleObservation <- adhoc/profile-v216-cold-failure-20261106-v1.js:projectCounterfactualState",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "ai/resource-demand.js:previewIncomeTail <- ai/local-decision-plans.js:incomeCompletion <- ai/analysis-port.js:resourceSpec <- ai/decision-search.js:add",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:appendReplayStep <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "ai/probe-capital.js:quote <- ai/state-value.js:basePurposeCapital <- ai/state-value.js:capitalWithoutSector <- ai/state-value.js:purposeCapitalWithoutSymbols",
+      "milliseconds": 1.541
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:validate <- game/rule-composition.js:save <- ai/analysis-port.js:snapshot",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:loadCurrent <- state/state-store.js:createStateStore <- state/high-coupling-slices.js:createHighCouplingStateStore",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:advanceSession <- game/rule-composition.js:submitDecision <- ai/analysis-port.js:executeCurrent",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "effects/science-session.js:clone <- effects/science-session.js: <- effects/science-session.js:formalizeChoices <- effects/residual-domain-session.js:formalize",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:submitDecision <- ai/analysis-port.js:executeCurrent <- ai/analysis-port.js:expand",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "ai/local-decision-plans.js:incomeCompletion <- ai/analysis-port.js:resourceSpec <- ai/decision-search.js:add <- ai/decision-search.js:searchDecision",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:getDecisionSnapshot <- effects/session-runtime.js:resolveDecision <- game/rule-composition.js:submitDecision",
+      "milliseconds": 1.5
+    }
+  ]
+}

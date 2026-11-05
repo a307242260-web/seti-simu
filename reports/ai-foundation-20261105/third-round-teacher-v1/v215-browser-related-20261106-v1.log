@@ -1,0 +1,4 @@
+PASS production-browser-full-parity-search http://127.0.0.1:57143/randomizer/index.html?agent=search
+PASS production-known-symbol-capital http://127.0.0.1:57143/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:57143/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3

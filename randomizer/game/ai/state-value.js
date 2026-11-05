@@ -20,7 +20,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v33";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v37";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -151,19 +151,28 @@
     result={...result,newFinalMark:newResearchMark(facts,funding,trigger)};
     return trigger.available?{...result,researchTriggers:trigger}:result?.researchTriggers?{...result,researchTriggers:null}:result;
   }
+  const researchMarkQuotes=new Map();
   function researchPurposeGains(techState, funding, weights, paidPublicity=0) {
     const marks=funding?.researchMarks||[],opportunity=funding?.newFinalMark;
     const triggered=researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
     if(!marks.length&&!opportunity)return triggered;
     const value=tech=>marks.reduce((n,m)=>n+endScoring.getFormulaBaseValue(m.formulaId,{techState:tech},{})*m.multiplier,0);
-    const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),current=value(techState),quotes=new Map();
+    const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),quotes=new Map();
+    // Cache only raw formal point differences. Full technology/mark facts are
+    // serialized anew per quote; funding, triggers and new marks stay local.
+    const markKey=marks.length?JSON.stringify([techState,marks]):null;
+    let markQuotes=markKey===null?null:researchMarkQuotes.get(markKey);
+    if(markKey!==null&&!markQuotes){if(researchMarkQuotes.size>=64)researchMarkQuotes.delete(researchMarkQuotes.keys().next().value);markQuotes=new Map();researchMarkQuotes.set(markKey,markQuotes);}
+    const markGain=(id,prior)=>{
+      if(!markQuotes)return 0;const key=JSON.stringify([prior,id]);if(markQuotes.has(key))return markQuotes.get(key);
+      const before=prior?add(techState,prior):techState,gain=value(add(before,id))-value(before);markQuotes.set(key,gain);return gain;
+    };
     const newMark=ids=>opportunity&&(opportunity.incomeUsed||opportunity.availableData+triggered.outcome(ids).dataGain<opportunity.neededData)
       &&opportunity.currentScore+ids.reduce((n,id)=>n+(opportunity.scoreGains[id]||0),0)>=opportunity.threshold?opportunity.currentValue:0;
     return(id,prior=null,currentFunded=true)=>{
       const key=JSON.stringify([prior,id,currentFunded]);
       if(quotes.has(key))return quotes.get(key);
-      const before=prior?add(techState,prior):techState;
-      const gain=arithmetic.sum([value(add(before,id))-(prior?value(before):current),triggered(id,prior),
+      const gain=arithmetic.sum([markGain(id,prior),triggered(id,prior),
         currentFunded?newMark(prior?[prior,id]:[id])-newMark(prior?[prior]:[]):0],weights);
       quotes.set(key,gain);return gain;
     };

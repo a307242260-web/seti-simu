@@ -523,20 +523,27 @@
     return symbolId ? amiba.symbolsById?.[symbolId] || null : null;
   }
 
-  function getPublicSymbolState(alienState) {
+  function getPublicSymbolState(alienState, { readOnly = false } = {}) {
     const amiba=alienState?.amiba,id=amiba?.revealedSlotId;
     const source=alienState?.aliens||alienState?.slots;
     const slot=Array.isArray(source)?source.find(slot=>Number(slot.slotId)===Number(id)):source?.[String(id)];
     if(!amiba?.revealInitialized||!slot?.revealed||(slot.alienId||slot.assignedAlienId)!==ALIEN_ID)return null;
-    return {revealInitialized:true,revealedSlotId:id,symbolSlots:structuredClone(amiba.symbolSlots),symbolsById:structuredClone(amiba.symbolsById)};
+    return {revealInitialized:true,revealedSlotId:id,symbolSlots:readOnly?amiba.symbolSlots:structuredClone(amiba.symbolSlots),symbolsById:readOnly?amiba.symbolsById:structuredClone(amiba.symbolsById)};
   }
 
-  function getPublicTraceState(alienState) {
+  function getPublicTraceState(alienState, { readOnly = false } = {}) {
     const amiba=alienState?.amiba,id=amiba?.revealedSlotId,slot=alienState?.aliens?.[String(id)];
     if(!amiba?.revealInitialized||!slot?.revealed||(slot.alienId||slot.assignedAlienId)!==ALIEN_ID)return null;
     const grid=getTraceGrid(alienState,id);if(!grid)return null;
-    return {revealedSlotId:id,traceSlotsByAlienSlotId:{[String(id)]:structuredClone(grid)},
+    return {revealedSlotId:id,traceSlotsByAlienSlotId:{[String(id)]:readOnly?grid:structuredClone(grid)},
       blindCardCount:Array.isArray(amiba.cardDeck)?amiba.cardDeck.length:null,displayedCardAvailable:amiba.displayedCardIndex!=null};
+  }
+
+  // Private quote ledgers change only symbol locations, while native/public
+  // observations keep the default detached snapshots above.
+  function copyPublicSymbolState(symbols) {
+    return { ...symbols, symbolSlots: { ...symbols.symbolSlots },
+      symbolsById: Object.fromEntries(Object.entries(symbols.symbolsById).map(([id, entry]) => [id, { ...entry }])) };
   }
 
   function listSymbols(alienState) {
@@ -762,6 +769,7 @@
     listSymbolsInRegion,
     getSymbolEntry,
     getPublicSymbolState,
+    copyPublicSymbolState,
     getPublicTraceState,
     resolveSymbolAtSlot,
     resolveRegionReward,

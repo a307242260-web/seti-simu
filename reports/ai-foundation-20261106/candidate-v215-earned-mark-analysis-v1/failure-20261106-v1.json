@@ -1,0 +1,24 @@
+{
+  "status": "failed-performance-gate",
+  "candidateAdmitted": false,
+  "sourceManifest": "./manifest.json",
+  "sourceManifestSha256": "492cc7a4d5b041244c43b6a99ce42d21941d3c1a00c4003318d7b20e4b688a78",
+  "firstColdSampleRetained": true,
+  "gate": "reports/ai-foundation-20261105/third-round-teacher-v1/v215-current-source-serial-gate-20261106-v1.json",
+  "gateSha256": "b0d38411c6d7f979fd479b45319f40ec300f7142b9bb84839457835013102b9c",
+  "failure": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v215-cold-income-before-amiba-20261106-v1.json",
+    "nativeInputs": 170,
+    "milliseconds": 608.135375,
+    "value": 125,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  },
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

@@ -31,6 +31,7 @@ try{
  assert.equal(values.researchFunding(facts(before),fund(before)).researchTriggers.available,true);
  const p=state.players.players.find(p=>p.id===seatId),nativeFacts=probe.factsFromState(state,p),nativeContext=trigger.describe(nativeFacts,{resources:p.resources,income:p.income,startingIncome:0},p.resources.publicity);
  assert.deepEqual(nativeContext,context,'native preparation and the common observation must expose the same public trigger facts');
+ const amiba=require('../aliens/amiba'),borrow=amiba.getPublicSymbolState(state.aliens,{readOnly:true}),snapshot=amiba.getPublicSymbolState(state.aliens),privateSymbols=amiba.copyPublicSymbolState(borrow);assert.equal(borrow.symbolSlots,state.aliens.amiba.symbolSlots);assert.notEqual(snapshot.symbolSlots,borrow.symbolSlots);assert.deepEqual(privateSymbols,snapshot);const publicBefore=JSON.stringify(state.aliens);assert(amiba.resolveSymbolAtSlot({amiba:privateSymbols},Object.keys(borrow.symbolSlots)[0]).ok);assert.equal(JSON.stringify(state.aliens),publicBefore,'private symbol-location writes cannot change borrowed native public facts');assert.deepEqual(amiba.getPublicTraceState(state.aliens,{readOnly:true}),amiba.getPublicTraceState(state.aliens));
  for(const i of [127,128])apply(i);
  const pending=observe();assert(pending.selfState.pendingNativeEffects);assert.equal(trigger.describe(facts(pending),fund(pending),own(pending).publicity).reason,'pending-native-trigger');
  const port=require('./analysis-port').createAnalysisPort({composition:c,seatId,maxCacheEntries:0});

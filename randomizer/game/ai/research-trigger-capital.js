@@ -60,7 +60,7 @@
   function total(types){
    const key=types.join(':');if(totals.has(key))return totals.get(key);
    if(!context.rules.some(rule=>types.includes(rule.techType))){totals.set(key,noOutcome);return noOutcome;}
-   const alien={amiba:structuredClone(context.symbols)},wallet={...context.wallet,publicity:Math.max(0,context.wallet.publicity-paidPublicity)},used=new Set();let value=0;
+   const alien={amiba:amiba.copyPublicSymbolState(context.symbols)},wallet={...context.wallet,publicity:Math.max(0,context.wallet.publicity-paidPublicity)},used=new Set();let value=0;
    for(const type of types)for(const rule of context.rules.filter(r=>r.techType===type)){
     const id=rule.cardInstanceId+':'+rule.ruleId;if(used.has(id))continue;used.add(id);
     const choices=amiba.listSymbolsInRegion(alien,rule.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
