@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-06",
+  "status": "active",
+  "previousTurnClassification": "progress",
+  "stage": "/private/tmp/seti-v214-teacher-r3-20261106-v1",
+  "runtime": "V214/V33",
+  "releaseStatus": "source-committed-and-pushed",
+  "baseCommit": "32b1122dfca2c78634adb141f0dfc70c652f1f0e",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-current-source-admission-20261106-v1.json",
+  "coldGate": {
+    "namedCases": 409,
+    "uniqueRoots": 324,
+    "allComplete": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 591.349917
+  },
+  "newAutonomousRuns": 1,
+  "lastAutonomous": {
+    "version": "V214",
+    "scope": "fixed112-input teacher prefix plus autonomous R3 only",
+    "record": "reports/research/768b7f09.341f6fad.quick-400.json",
+    "score": 82,
+    "tech": 5,
+    "income": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1,
+    "wallMilliseconds": 4270,
+    "maxNativeInputs": 163,
+    "maxDecisionMilliseconds": 367.5119169999998,
+    "nativeStateSessionRngVerified": true
+  },
+  "teacherR3": {
+    "score": 105,
+    "tech": 6,
+    "income": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "baseline": "V41 unchanged",
+  "fixed": [
+    "prepaid computer inert research/pink/yellow trigger guard",
+    "known computer3/data3 income-analysis shared plan",
+    "income preview copy/query cost",
+    "company module repeated require",
+    "same ordinary income scalar reuse under base portfolio certificate"
+  ],
+  "discarded": "V212 wallet cache did not meet admission",
+  "candidateFailuresRetained": [
+    "V209",
+    "V210",
+    "V211",
+    "V212",
+    "V213"
+  ],
+  "remaining": [
+    "node learning of exact purple2/orange2/orange4 alternatives and income/data cycles from all60 saved prefixes",
+    "R2 end decision review after R3 learning",
+    "unique autonomous first-three-round verification"
+  ],
+  "legacyFailures": [
+    "aomomo input frozen-object error",
+    "default heuristic full-page timeout"
+  ],
+  "releaseCommit": "341f6fad2f04956b58078543c40a0fcf3c2fd6e2",
+  "visualReport": "reports/iteration/ai-search-v214-teacher-r3-20261106/v214-third-round-visual-20261106-v1.html"
+}

@@ -1,0 +1,13 @@
+{
+  "status": "visually-checked",
+  "image": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-third-round-visual-qa-20261106-v1.png",
+  "sha256": "59a1b1170d9f2a4e5cc32779472cac1ab5d9bc161c2938f767bb3cbad9083470",
+  "viewport": [
+    1440,
+    1400
+  ],
+  "topSummaryAndFirstNativeActionsReadable": true,
+  "cardAssetsExist": 10,
+  "nativeInputsRendered": 60,
+  "newAutonomousRuns": 0
+}

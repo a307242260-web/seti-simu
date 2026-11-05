@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "report": "reports/iteration/ai-search-v214-teacher-r3-20261106/v214-third-round-visual-20261106-v1.html",
+  "reportSha256": "b2759a7297df5b22a3e3d1bd0291eb6ba874cd98f199d4fb4495b995f8451b43",
+  "sourceComparison": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-third-round-development-comparison-20261106-v2.json",
+  "sourceComparisonSha256": "778a6b01c0412e5d78f58b7d62bc4ab1a8561b02894fc51bd78e17a33c0a8e91",
+  "nativeVerification": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-standard-r3-native-verification-20261106-v1.json",
+  "rows": 60,
+  "mainInputs": 58,
+  "boundaryInputs": 2,
+  "turns": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "localImageAssets": [
+    "assets/cards/basic/split/b_138.webp",
+    "assets/aliens/阿米巴/cards/3.webp",
+    "assets/cards/basic/split/b_101.webp",
+    "assets/cards/basic/split/b_48.webp",
+    "assets/cards/space-agency/split/dlc_27.png",
+    "assets/cards/space-agency/split/dlc_32.png",
+    "assets/aliens/阿米巴/cards/0.webp",
+    "assets/aliens/阿米巴/cards/1.webp",
+    "assets/cards/space-agency/split/dlc_31.png",
+    "assets/cards/basic/split/b_111.webp"
+  ],
+  "imageAssetsAllExist": true,
+  "newAutonomousRuns": 0
+}
