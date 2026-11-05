@@ -1,0 +1,46 @@
+{
+  "scope": "Diagnostic replay of accepted V233 physical graph edges and pure policy/value queries only; no new search, no speed acceptance/resampling, no autonomous game",
+  "sourceCold": "reports/ai-foundation-20261105/third-round-teacher-v1/v233-cold-corner-safety-purple2-3-20261106-v1.json",
+  "metrics": {
+    "publicIncomeSwapInputs": {
+      "calls": 1632,
+      "ms": 3.5393469999962264
+    },
+    "knownPublicIncomeSwapPlan": {
+      "calls": 110,
+      "ms": 0.19499500000056003
+    },
+    "incomeAllocationCapital": {
+      "calls": 2398,
+      "ms": 69.60468400000286
+    },
+    "basePurposeCapital": {
+      "calls": 4346,
+      "ms": 282.9652409999987
+    },
+    "capitalWithoutIncomeSwap": {
+      "calls": 2001,
+      "ms": 418.853694000001
+    },
+    "publicIncomeSwap": {
+      "calls": 1522,
+      "ms": 156.8295340000015
+    },
+    "purposeCapitalWithoutSymbols": {
+      "calls": 1522,
+      "ms": 426.0068200000017
+    },
+    "purposeCapitalWithoutTools": {
+      "calls": 840,
+      "ms": 437.2794179999986
+    },
+    "purposeCapital": {
+      "calls": 840,
+      "ms": 438.5941269999994
+    }
+  },
+  "nativeReplayInputs": 112,
+  "physicalNodes": 83,
+  "visited": 83,
+  "rootAndRngUnchanged": true
+}

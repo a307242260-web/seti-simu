@@ -1,0 +1,168 @@
+{
+  "scope": "Pure capital microprofile on one already accepted observation; no search, Native submission or performance acceptance",
+  "current": [
+    {
+      "ms": 8.401125000000008,
+      "value": 23.75
+    }
+  ],
+  "old": [
+    {
+      "ms": 1.921999999999997,
+      "value": 23.75
+    }
+  ],
+  "timing": {
+    "basePurposeCapital": {
+      "calls": 10,
+      "ms": 4.450165000000027
+    },
+    "capitalWithoutIncomeSwap": {
+      "calls": 4,
+      "ms": 7.477582999999996
+    },
+    "publicIncomeSwap": {
+      "calls": 2,
+      "ms": 2.9787919999999986
+    },
+    "purposeCapitalWithoutSymbols": {
+      "calls": 2,
+      "ms": 7.875250000000008
+    },
+    "eligible": [
+      {
+        "hand": [
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          }
+        ],
+        "unknown": 0,
+        "resources": {
+          "playerId": "player-white",
+          "industryAbilityId": "deepspace_swap_cards",
+          "color": "white",
+          "playerLabel": "白色玩家",
+          "score": 48,
+          "finalScore": 55,
+          "scoreBreakdown": null,
+          "scoreSources": null,
+          "credits": 7,
+          "energy": 1,
+          "publicity": 7,
+          "researchPublicityCost": 6,
+          "availableData": 3,
+          "additionalPublicScan": 1,
+          "handCount": 3,
+          "reservedCount": 3,
+          "completedTaskCount": 0,
+          "dataProgress": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue1",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "techState": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "blueBonusAssets": {
+            "credits": 0,
+            "energy": 0,
+            "ordinaryCards": 0
+          },
+          "passed": false,
+          "mainActionCompleted": false,
+          "companyBaseIncome": {
+            "credits": 2,
+            "energy": 2,
+            "handSize": 1,
+            "additionalPublicScan": 1
+          },
+          "securedEndGameBonus": 7,
+          "id": "player-white",
+          "handSize": 2
+        },
+        "base": {
+          "handPotential": 10,
+          "researchPotential": 4,
+          "probePotential": 0,
+          "computerPotential": 1.75,
+          "finalMarkPotential": 0,
+          "total": 15.75,
+          "analysisPotential": 1.75,
+          "analysisPlan": {
+            "value": 0,
+            "selected": null,
+            "reason": "income-analysis-new-mark-needs-native-value"
+          },
+          "researchIncomePotential": 0,
+          "researchIncomePlan": {
+            "value": 0,
+            "selected": null,
+            "reason": "reserved-card-needs-native-value"
+          },
+          "dataPotential": 0,
+          "dataPlan": {
+            "total": 15.75,
+            "baseline": 15.75,
+            "knownSwapCapital": 15.75,
+            "knownSwapPlan": null,
+            "fixed": {
+              "value": 0,
+              "selected": null,
+              "reason": "reserved-card-needs-native-value"
+            },
+            "classes": []
+          }
+        }
+      }
+    ],
+    "purposeCapitalWithoutTools": {
+      "calls": 1,
+      "ms": 8.158083000000005
+    },
+    "purposeCapital": {
+      "calls": 1,
+      "ms": 8.379417000000004
+    }
+  }
+}

@@ -1,0 +1,5 @@
+PASS production-public-income-option http://127.0.0.1:58486/randomizer/index.html
+PASS production-amiba-currency-tail-value http://127.0.0.1:58486/randomizer/index.html
+PASS production-amiba-blind-income-value http://127.0.0.1:58486/randomizer/index.html
+PASS production-public-amiba-income-swap http://127.0.0.1:58486/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

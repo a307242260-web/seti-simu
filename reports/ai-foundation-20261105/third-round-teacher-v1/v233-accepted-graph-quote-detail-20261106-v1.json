@@ -1,0 +1,728 @@
+{
+  "scope": "Diagnostic replay of accepted V233 physical graph edges and pure policy/value queries only; no new search, no speed acceptance/resampling, no autonomous game",
+  "sourceCold": "reports/ai-foundation-20261105/third-round-teacher-v1/v233-cold-corner-safety-purple2-3-20261106-v1.json",
+  "metrics": {
+    "publicIncomeSwapInputs": {
+      "calls": 1632,
+      "ms": 3.287101999998967
+    },
+    "knownPublicIncomeSwapPlan": {
+      "calls": 110,
+      "ms": 0.2030410000003542
+    },
+    "incomeAllocationCapital": {
+      "calls": 2398,
+      "ms": 67.18579699999903
+    },
+    "basePurposeCapital": {
+      "calls": 4346,
+      "ms": 281.3457039999988
+    },
+    "capitalWithoutIncomeSwap": {
+      "calls": 2001,
+      "ms": 417.2761089999998
+    },
+    "publicIncomeSwap": {
+      "calls": 1522,
+      "ms": 157.66717399999982,
+      "groups": {
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,7,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 4,
+          "ms": 0.07374999999994714
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,7,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 3,
+          "ms": 1.3113339999999312
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,7,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 1.8784999999999314
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,7,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 1.592624000000015
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,7,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 0.42474999999998886
+        },
+        "[\"analysis-known-currency-income-missing\",false,48,8,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.030457999999995877
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.012791000000021313
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 1.5946250000000077
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 2.167500000000018
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 2.272958999999986
+        },
+        "[\"analysis-known-currency-income-missing\",false,48,6,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.006250000000022737
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,2,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.003833000000014408
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,2,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.328125
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,2,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.5489589999999964
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,2,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.9407910000000186
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,4,0,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 12,
+          "ms": 0.042831000000035147
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,4,0,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 8,
+          "ms": 2.2955820000000244
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,4,0,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 8,
+          "ms": 2.4965409999999792
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,4,0,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 8,
+          "ms": 2.2967930000000365
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,3,3,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.0030830000000037217
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,3,3,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.3009169999999983
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,3,3,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.5035000000000025
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,3,3,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.514708000000013
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,2,0,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 12,
+          "ms": 0.03929100000007679
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,2,0,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 8,
+          "ms": 2.4472909999998933
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,2,0,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 8,
+          "ms": 2.6637929999999983
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,2,0,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 8,
+          "ms": 2.591333000000077
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,48,5,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 1.3096249999999827
+        },
+        "[\"analysis-known-currency-income-missing\",false,48,6,1,3,[],1,0]": {
+          "calls": 1,
+          "ms": 0.4147920000000056
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 9,
+          "ms": 5.324374999999861
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.28737499999999727
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 2.351292000000001
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 9,
+          "ms": 0.022705999999971027
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.36770899999999074
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.6980840000000512
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.6809159999999679
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 1,
+          "ms": 0.8350419999999872
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007124999999973625
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.10983300000003737
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.2141250000000241
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.2227500000000191
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.008498999999972057
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.13974999999999227
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.26191699999998264
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.2767499999999927
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.0073749999999108695
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.11170800000002146
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.20949999999999136
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.20466699999997218
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.8699169999999867
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.17866700000001856
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.24887499999999818
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.8617499999999723
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.15454199999999219
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.3170000000000073
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,50,7,1,3,[\"dlc_31.png\",\"b_48.webp\"],1,0]": {
+          "calls": 3,
+          "ms": 1.2847479999999791
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 1.854791999999918
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,50,7,2,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007376000000078875
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,54,7,1,3,[\"dlc_31.png\",\"b_48.webp\"],1,0]": {
+          "calls": 1,
+          "ms": 0.18970899999999347
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,8,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.7874170000000049
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,54,7,2,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.002958999999975731
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,58,7,1,3,[\"dlc_31.png\",\"b_48.webp\"],1,0]": {
+          "calls": 1,
+          "ms": 0.18145800000002055
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,8,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.22729199999997718
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,58,7,2,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.002166999999985819
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007000000000005002
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.113708000000031
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.23579100000000608
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.23866600000002336
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007126000000027943
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.5214169999999854
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.22204199999998764
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.2179580000000101
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 0.14233300000000781
+        },
+        "[\"analysis-known-currency-income-missing\",false,50,8,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.001082999999994172
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 0.16270900000000665
+        },
+        "[\"analysis-known-currency-income-missing\",false,54,8,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.0009590000000230248
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 0.15474999999997863
+        },
+        "[\"analysis-known-currency-income-missing\",false,58,8,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.0009999999999763531
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007500000000050022
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.12429200000002538
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.23504100000002381
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,7,1,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.21941600000002381
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.00716600000004064
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.14404199999995626
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.25495800000004465
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,7,1,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.2498329999999669
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 19,
+          "ms": 0.04379199999999628
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 4,
+          "ms": 0.46370799999994006
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 0.8826650000000882
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 0.8553749999999809
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,8,1,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 24,
+          "ms": 0.045123999999873377
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,8,1,4,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.22995900000000802
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,8,1,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.43512400000003026
+        },
+        "[\"funded-known-income-amiba-analysis\",true,54,8,1,4,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.449957999999981
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,8,1,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 24,
+          "ms": 0.043834000000174456
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,8,1,4,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.23745900000005804
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,8,1,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.4647080000000301
+        },
+        "[\"funded-known-income-amiba-analysis\",true,58,8,1,4,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.42270700000005945
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 6,
+          "ms": 0.014084000000025299
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.2259999999999991
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.38900100000012117
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.4197090000000685
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,2,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 3,
+          "ms": 0.418000999999947
+        },
+        "[\"analysis-known-currency-income-missing\",false,50,8,2,3,[\"b_101.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 0.00333299999999781
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,2,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 28,
+          "ms": 0.055754000000092674
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,2,4,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 4,
+          "ms": 0.5226660000001857
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,2,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 0.9514999999999532
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,2,4,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 0.9044990000000439
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,2,4,[\"dlc_31.png\"],1,0]": {
+          "calls": 4,
+          "ms": 0.6525839999999903
+        },
+        "[\"analysis-known-currency-income-missing\",false,50,9,2,4,[\"b_101.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 0.0037500000000818545
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,5,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.007541000000060194
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,5,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.10954200000003311
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,5,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.20000000000004547
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,5,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.196124999999995
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,7,1,3,[\"dlc_31.png\"],1,0]": {
+          "calls": 1,
+          "ms": 0.1290000000000191
+        },
+        "[\"analysis-known-currency-income-missing\",false,53,8,1,3,[\"b_101.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.0009169999999585343
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,8,1,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 14,
+          "ms": 0.027538999999933367
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,8,1,4,[\"b_101.webp\",\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.24154100000004064
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,8,1,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.4374990000000025
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,8,1,4,[\"b_101.webp\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.4430420000000481
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,8,1,4,[\"dlc_31.png\"],1,0]": {
+          "calls": 2,
+          "ms": 0.30266699999998536
+        },
+        "[\"analysis-known-currency-income-missing\",false,53,9,1,4,[\"b_101.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.0018329999999764368
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 4.721250000000055
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 1,
+          "ms": 0.9442080000000033
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,7,1,5,[\"b_101.webp\",\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 1.9993749999999864
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 14,
+          "ms": 30.259748999999942
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 2,
+          "ms": 3.0591240000001108
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,8,1,4,[\"b_101.webp\",\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 4.067957999999976
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,50,8,1,4,[\"dlc_31.png\",\"b_48.webp\"],1,0]": {
+          "calls": 2,
+          "ms": 2.8748319999999694
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,9,1,4,[\"b_101.webp\",\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 4.771957000000043
+        },
+        "[\"income-analysis-new-mark-needs-native-value\",false,50,8,2,4,[\"b_101.webp\",\"dlc_31.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.0060839999999871
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,3,[\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 2.0769169999998667
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,3,[\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 1,
+          "ms": 0.33541600000000926
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,3,[\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.5737500000000182
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,3,[\"dlc_31.png\"],0,0]": {
+          "calls": 7,
+          "ms": 0.015539999999873544
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,3,[\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.2392090000000735
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,3,[\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.45458300000007057
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,3,[\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.4651250000000573
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,3,[\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.008499999999912689
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,3,[\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.12033299999995961
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,3,[\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.22524999999995998
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,3,[\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.21866700000009587
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,5,[\"dlc_31.png\"],0,0]": {
+          "calls": 6,
+          "ms": 0.013332999999988715
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,5,[\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.2986670000000231
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,5,[\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.8963749999999209
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,2,5,[\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.49766699999997854
+        },
+        "[\"analysis-known-currency-income-missing\",false,50,5,2,3,[],0,0]": {
+          "calls": 2,
+          "ms": 0.00154199999985849
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,2,4,[\"dlc_31.png\"],0,0]": {
+          "calls": 30,
+          "ms": 0.05550199999947836
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,2,4,[\"dlc_32.png\"],0,0]": {
+          "calls": 4,
+          "ms": 0.5468339999999898
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,2,4,[\"b_48.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 1.481333000000177
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,2,4,[\"b_14.webp\"],0,0]": {
+          "calls": 4,
+          "ms": 1.0597500000001219
+        },
+        "[\"analysis-known-currency-income-missing\",false,50,6,2,4,[],0,0]": {
+          "calls": 4,
+          "ms": 0.002624999999852662
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,5,[\"dlc_31.png\"],0,0]": {
+          "calls": 3,
+          "ms": 0.006583000000091488
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,5,[\"dlc_32.png\"],0,0]": {
+          "calls": 1,
+          "ms": 0.14199999999993906
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,5,[\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.26633300000003146
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,4,1,5,[\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.26208299999996143
+        },
+        "[\"analysis-known-currency-income-missing\",false,53,5,1,3,[],0,0]": {
+          "calls": 1,
+          "ms": 0.0007920000000467553
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,5,1,4,[\"dlc_31.png\"],0,0]": {
+          "calls": 14,
+          "ms": 0.026209999999764477
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,5,1,4,[\"dlc_32.png\"],0,0]": {
+          "calls": 2,
+          "ms": 0.2637079999999514
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,5,1,4,[\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.5219170000000304
+        },
+        "[\"funded-known-income-amiba-analysis\",true,53,5,1,4,[\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 0.49566700000002584
+        },
+        "[\"analysis-known-currency-income-missing\",false,53,6,1,4,[],0,0]": {
+          "calls": 2,
+          "ms": 0.0012909999999237698
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,5,[\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 3,
+          "ms": 2.6859170000001313
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,5,[\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 1,
+          "ms": 0.36054200000000947
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,4,1,5,[\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 1.07549999999992
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,1,3,[\"b_48.webp\"],0,0]": {
+          "calls": 1,
+          "ms": 0.5566250000000537
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,1,4,[\"dlc_31.png\",\"b_48.webp\"],0,0]": {
+          "calls": 14,
+          "ms": 16.855002000000354
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,1,4,[\"dlc_31.png\",\"dlc_32.png\"],0,1]": {
+          "calls": 2,
+          "ms": 1.4997489999999516
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,5,1,4,[\"dlc_31.png\",\"b_14.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 2.2267910000000484
+        },
+        "[\"funded-known-income-amiba-analysis\",true,50,6,1,4,[\"b_48.webp\"],0,0]": {
+          "calls": 2,
+          "ms": 2.420541000000071
+        }
+      }
+    },
+    "purposeCapitalWithoutSymbols": {
+      "calls": 1522,
+      "ms": 425.28061699999864
+    },
+    "purposeCapitalWithoutTools": {
+      "calls": 840,
+      "ms": 437.04420799999883
+    },
+    "purposeCapital": {
+      "calls": 840,
+      "ms": 438.3818379999998
+    }
+  },
+  "nativeReplayInputs": 112,
+  "physicalNodes": 83,
+  "visited": 83,
+  "rootAndRngUnchanged": true
+}

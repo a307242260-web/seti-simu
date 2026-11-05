@@ -62,3 +62,5 @@ python3 adhoc/materialize-public-income-candidate-20261105-v1.py --dest /private
 ```
 
 在隔离目录运行候选测试；需要Git信息的工具应显式设置原仓库GIT_DIR、隔离GIT_WORK_TREE与私有GIT_INDEX_FILE。候选没有浏览器准入、完整回归或自主两轮通过的声明。后续需先补齐单点门槛，再执行相关/完整回归、输入审计、Chrome及唯一登记的自主前两轮。
+
+2026-11-06：已公开阿米巴的匿名数量补收入由 [V237 的独立范围](human405-public-income-admission-20261106.md)覆盖。它与本文未公开物种的目录先验路径分开：只使用真实已知公开钱电牌，最多两个固定类别报价，兑现时必须有真实换出牌 ID；计入既有分析资本的收入准备仍须在零边际时实际执行。

@@ -14,13 +14,14 @@
     common ? require("./known-movement-capital") : root.SetiKnownMovementCapital,
     common ? require("../end-game-scoring") : root.SetiEndGameScoring,
     common ? require("./research-trigger-capital") : root.SetiResearchTriggerCapital,
-    common ? require("./known-symbol-capital") : root.SetiKnownSymbolCapital);
+    common ? require("./known-symbol-capital") : root.SetiKnownSymbolCapital,
+    common ? require("../cards/deck") : root.SetiCards);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v37";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v42";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -321,7 +322,7 @@
     const finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);
     return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,finalMarkPotential,total:arithmetic.sum([held,paid,mission,computer,finalMarkPotential],weights)};
   }
-  function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
+  function capitalWithoutIncomeSwap(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
     const analysisPortfolio=(wallet,slots,progress={})=>{
       const {aliens,ordinaryDrawCount,...updates}=progress;
@@ -335,6 +336,78 @@
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
     return{...base,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential],weights)};
+  }
+  function publicIncomeSwapEligible(facts) {
+    return !(facts.terminal||facts.passing||facts.round>=4||facts.pendingNativeEffects
+      ||!facts.amibaTraces||!facts.researchSymbols?.revealInitialized
+      ||!Array.isArray(facts.pendingCardTriggers)||facts.pendingCardTriggers.length
+      ||!Array.isArray(facts.pendingHandCardTriggers)||facts.pendingHandCardTriggers.length
+      ||facts.companyState?.abilityId!=="deepspace_swap_cards"||facts.companyState.roundMarkRound===facts.round
+      ||facts.computerSlots.length!==3||facts.computerSlots.some((s,i)=>s!==i+1)||facts.player.availableData<3);
+  }
+  function ordinaryIncomeSwapCard(card) {
+    return !supportedResearch(card)&&!sectorCard.supported(card)&&!symbolCard.supported(card)&&!movementTool.supported(card)
+      &&!cardEffects.buildPlayEffects(card).some(e=>["card_land","card_orbit","card_move","card_launch","card_scan"].includes(e.type));
+  }
+  function publicIncomeSwapInputs(facts,weights) {
+    if(!publicIncomeSwapEligible(facts))return null;
+    // The lower portfolio can price ordinary income sources, but supported
+    // tools remain in their higher shared-wallet portfolios and cannot supply
+    // this exchange. Hidden metadata is never inspected.
+    const ordinary=ordinaryIncomeSwapCard;
+    const hidden=facts.hand.findIndex(c=>c.hidden===true),counted=facts.extraUnknownCount>0;
+    // Already known currency income has its existing direct preparation and
+    // positive-purpose swap policy. This added forecast supplies a missing
+    // known currency source; it does not requote every currency conversion.
+    const known=!counted&&hidden<0?facts.hand.filter(c=>c.cardId&&!c.hidden&&ordinary(c)
+      &&!['credits','energy'].some(k=>cards.getIncomeGainForCard(c)?.[k])).map(card=>({card,
+      value:(cardEffects.getCardPrice(card)||0)+Object.entries(cards.getIncomeGainForCard(card)||{}).reduce((n,[k,v])=>n+v*(weights[k]||0)*(4-facts.round),0)
+        +((cards.getDiscardActionRewardForCard(card)?.dataCount||0)+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0))*.5
+    })).sort((a,b)=>a.value-b.value||a.card.id.localeCompare(b.card.id))[0]?.card:null;
+    if(!counted&&hidden<0&&!known)return null;
+    // Select one stable representative per known currency category. This is
+    // a fixed income purpose, never combinations of outgoing hand cards.
+    const offers=new Map();
+    // Offer-value previews can already hold this public card. It cannot be
+    // acquired again by exchanging another hand card for the same entity.
+    for(const card of (facts.board.publicCards||[]).filter(c=>c&&!c.hidden&&c.cardId
+      &&!facts.hand.some(held=>!held.hidden&&held.id===c.id)&&ordinary(c)).sort((a,b)=>a.id.localeCompare(b.id))){
+      const gain=cards.getIncomeGainForCard(card),keys=Object.keys(gain||{});
+      if(keys.length===1&&["credits","energy"].includes(keys[0])&&gain[keys[0]]===1&&!offers.has(keys[0]))offers.set(keys[0],card);
+    }
+    return offers.size?{hidden,counted,known,offers}:null;
+  }
+  function publicIncomeSwap(facts, weights, base, inputs=publicIncomeSwapInputs(facts,weights)) {
+    const none={value:0,plan:null};if(!inputs)return none;
+    // This new forecast fills a missing/valuable income source. A ready
+    // ordinary supplier already funds this exact analysis; extra stock for
+    // another later income remains in the existing positive-purpose policy.
+    const current=facts.hand.find(c=>!c.hidden&&c.id===base.analysisPlan.selected?.incomeCardId);
+    if(current&&ordinaryIncomeSwapCard(current))return none;
+    const {hidden,counted,known,offers}=inputs;
+    let best=none;
+    for(const incoming of offers.values()){
+      const hand=facts.hand.slice();if(counted)hand.push(incoming);else hand[hidden>=0?hidden:hand.indexOf(known)]=incoming;
+      const next={...facts,hand,extraUnknownCount:facts.extraUnknownCount-Number(counted),
+        companyState:{...facts.companyState,roundMarkRound:facts.round},board:{...facts.board,
+          publicCards:facts.board.publicCards.map(c=>c===incoming?(known||{hidden:true,faceUp:false}):c)}};
+      const after=capitalWithoutIncomeSwap(next,weights);
+      // Only a plan actually consuming the incoming card as income qualifies.
+      if(after.analysisPlan.selected?.incomeCardId!==incoming.id)continue;
+      const net=arithmetic.sum([after.total,-base.total],weights);
+      if(net>best.value)best={value:net,plan:{outgoingCardId:known?.id||null,incomingCardId:incoming.id,netGain:net,
+        continuation:after.analysisPlan.selected,anonymousSupplier:!known}};
+    }
+    return best;
+  }
+  function knownPublicIncomeSwapPlan(facts,weights=DEFAULT_WEIGHTS) {
+    const inputs=publicIncomeSwapInputs(facts,weights);if(!inputs)return null;
+    return publicIncomeSwap(facts,weights,capitalWithoutIncomeSwap(facts,weights),inputs).plan;
+  }
+  function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
+    const base=capitalWithoutIncomeSwap(facts,weights),swap=publicIncomeSwap(facts,weights,base);
+    return{...base,knownPublicIncomeSwapPlan:swap.plan,dataPotential:arithmetic.sum([base.dataPotential,swap.value],weights),
+      total:arithmetic.sum([base.total,swap.value],weights)};
   }
   function purposeCapitalWithoutSymbols(facts, weights = DEFAULT_WEIGHTS) {
     const base=capitalWithoutSector(facts,weights),sector=sectorCard.quote(facts,weights,next=>capitalWithoutSector(next,weights).total,base.total);
@@ -427,7 +500,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, knownPublicIncomeSwapPlan, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

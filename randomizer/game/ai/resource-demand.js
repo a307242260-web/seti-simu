@@ -133,21 +133,28 @@
       computerSlots:data.listComputerPlacedTokens({...p}).map(t=>t.placementSlot),reservedCards:p.reservedCards,
       analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST};
   }
-  function planningCapital(state,p){
+  function planningCapitalDetails(state,p){
     // Only fully immutable source/player pairs can share this value. Mutable
     // previews compute directly; there is no serialized-key invalidation cost.
     const immutable=Object.isFrozen(p)&&Object.isFrozen(state)&&immutableCapitalInput(p)&&immutableCapitalInput(state);
     let quotes=immutable?planningCapitalQuotes.get(state):null;
     if(quotes?.has(p))return quotes.get(p);
     const facts=valueFacts(state,p);
-    const value=stateValue.purposeCapital(facts).total;
+    const value=stateValue.purposeCapital(facts);
     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
     return value;
   }
-  function movementToolPlan(state,p){return stateValue.purposeCapital(valueFacts(state,p)).toolPlan;}
+  function planningCapital(state,p){return planningCapitalDetails(state,p).total;}
+  function movementToolPlan(state,p){return planningCapitalDetails(state,p).toolPlan;}
   function forecastDataPlan(state,p){
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]&&['blue1','blue2','blue4'].includes(id)))return null;
-    const capital=stateValue.purposeCapital(valueFacts(state,p));
+    const capital=planningCapitalDetails(state,p);
+    const analysis=capital.analysisPlan;
+    // A funded computer4 income can be flat because the same fixed analysis
+    // already includes its reward. Preserve that exact supplier, without
+    // treating a post-analysis blue slot as a current-turn blue purpose.
+    if(analysis?.value>0&&analysis.selected?.incomeCardId)return{fixed:{selected:{incomeCardId:analysis.selected.incomeCardId}},
+      reason:'realize-funded-analysis-income'};
     return capital.dataPotential>0?capital.dataPlan:null;
   }
   function incomeSwapPlan(state,p,committed=false){
@@ -155,8 +162,17 @@
     // In a native pending swap the mark is already spent by this very flow.
     // Quote its remaining selection with the live wallet, without refunding
     // the mark in any native state or admitting a second company action.
-    if(committed&&facts.companyState?.abilityId==='deepspace_swap_cards')facts.companyState={...facts.companyState,roundMarkRound:0};
-    return stateValue.incomeAllocationCapital(facts).knownSwapPlan;
+    if(committed&&facts.companyState?.abilityId==='deepspace_swap_cards'){
+      facts.companyState={...facts.companyState,roundMarkRound:0};
+      // This call is made only for the exact Native swap_hand/public menus.
+      // Exchange has no other pending reward; do not synthesize a live action.
+      facts.pendingNativeEffects=false;
+    }
+    // Most states cannot use this option. Decline before computing the whole
+    // portfolio, rather than repricing it at every unrelated card menu.
+    const planned=stateValue.knownPublicIncomeSwapPlan(facts);
+    // Anonymous quantity can fund a forecast, never an executable selection.
+    return planned?.outgoingCardId?planned:stateValue.incomeAllocationCapital(facts).knownSwapPlan;
   }
   function incomeOpportunityCost(state,p,card,beforeCapital=planningCapital(state,p)){
     const hand=p.hand.filter(c=>c.id!==card.id);

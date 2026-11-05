@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-06",
+  "status": "active",
+  "runtime": "V237/V42",
+  "sourceAdmitted": true,
+  "sourceCommitted": false,
+  "stage": "/private/tmp/seti-v231-public-income-20261106-v1",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-current-source-admission-20261106-v1.json",
+  "manifest": "reports/ai-foundation-20261106/candidate-v237-public-income-quantity-v1/manifest.json",
+  "coldGate": {
+    "namedCases": 574,
+    "uniqueRoots": 483,
+    "allComplete": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 585.24775
+  },
+  "validation": {
+    "unit": 186,
+    "fullFlow": 1,
+    "browser": 5,
+    "independentTests": 26,
+    "independentFixtures": 319,
+    "inputAuditPass": 51,
+    "inputAuditExistingFail": 1
+  },
+  "firstTwoRoundRegression": {
+    "roots": 304,
+    "changedValues": 0,
+    "changedChoices": 0
+  },
+  "strategyChanges": [
+    "anonymous/noncurrency hand quantity to existing known public income in one shared wallet/data/company-mark portfolio",
+    "at most one fixed public C/E representative each, no hand subsets",
+    "already priced funded analysis income is realized even at zero marginal value",
+    "known Native outgoing ID required for execution; anonymous capital cannot issue a selection"
+  ],
+  "lastAutonomous": {
+    "version": "V214",
+    "record": "reports/research/768b7f09.341f6fad.quick-400.json",
+    "scope": "third round only after fixed112 teacher prefix",
+    "score": 82,
+    "technology": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1,
+    "wallMilliseconds": 4270
+  },
+  "teacherR3": {
+    "score": 105,
+    "technology": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "newAutonomousRunsThisTurn": 0,
+  "developmentAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029 unchanged",
+  "legacyFailures": [
+    "aomomo frozen-object input audit",
+    "default heuristic full-page timeout"
+  ],
+  "next": "Commit/push admitted source via private index, then one unique standard R3-only experiment; keep learning R3 from matching Native start, then R2 end review and autonomous first3."
+}

@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+w=Path(__file__).resolve().parents[1];F=Path('reports/ai-foundation-20261105/third-round-teacher-v1');read=lambda p:json.loads((w/p).read_text());old=read(F/'v230-current-source-serial-gate-20261106-v1.json');new=read(F/'v237-current-source-serial-gate-20261106-v1.json');assert new['status']=='complete';index={r['identity']:r for r in old['rows']};rows=[]
+for r in new['rows']:
+ if any(x['identity']==r['identity']for x in rows):continue
+ before=index[r['identity']];f=read(r['fixture']);round=json.loads(f['compositionEnvelope']['committedState'])['turn']['roundNumber'];rows.append({'identity':r['identity'],'label':r['label'],'round':round,'fixture':r['fixture'],'oldEvidence':before['evidence'],'newEvidence':r['evidence'],'oldValue':before['value'],'newValue':r['value'],'oldAction':before['actionId'],'newAction':r['actionId'],'oldInputs':before['nativeInputs'],'newInputs':r['nativeInputs']})
+assert len(rows)==483
+summary={str(round):{'roots':len(rs:=[r for r in rows if r['round']==round]),'valueChanged':sum(r['oldValue']!=r['newValue']for r in rs),'choiceChanged':sum(r['oldAction']!=r['newAction']for r in rs)}for round in sorted(set(r['round']for r in rows))}
+r={'scope':'Offline comparison of retained full-Native-identity cold evidence only; intentional new strategy/value coverage, no new searches, no asset-key deduplication or claim of full-game parity','oldSource':'V230/V37','newSource':'V237/V42','uniqueRoots':483,'byRound':summary,'maxCurrentInputs':max(r['newInputs']for r in rows),'newAutonomousRuns':0,'rows':rows};out=F/'v237-cold-roots-v230-comparison-20261106-v1.json';assert not(w/out).exists();(w/out).write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'out':str(out),'byRound':summary,'changedFirst2':[r['label']for r in rows if r['round']<3 and(r['oldValue']!=r['newValue']or r['oldAction']!=r['newAction'])]}))

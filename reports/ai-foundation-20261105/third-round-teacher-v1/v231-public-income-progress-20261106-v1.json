@@ -1,0 +1,40 @@
+{
+  "status": "withheld",
+  "source": "V231/V38",
+  "manifest": "reports/ai-foundation-20261106/candidate-v231-public-income-quantity-v1/manifest.json",
+  "anonymousPublicIncomeGapClosed": true,
+  "beforeAfterNativeKnownSwapValue": [
+    123.58333333333333,
+    123.58333333333333
+  ],
+  "ordinaryBranchValueUnchanged": 118.58333333333333,
+  "primaryGatePassed": true,
+  "primaryDLC31": {
+    "inputs": 233,
+    "milliseconds": 527.917459
+  },
+  "failedOldRoot": {
+    "inputs": 112,
+    "milliseconds": 762.8105830000001,
+    "label": "corner-safety-purple2-3",
+    "retained": true,
+    "fullNodeAndAuditWereConcurrent": true
+  },
+  "flatIncomeExecutionBug": {
+    "nativePrefixInputs": 3,
+    "netGain": 0,
+    "selected": false,
+    "realizesForecast": false,
+    "requiredFix": "Retain exact known-income preparation when its value is already capitalized by the funded analysis quote."
+  },
+  "logsSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-public-income-red-20261106-v1.log": "35eec54a72dca375c49c4c0c49b6a3e02c5481aedba682afb2895eaff03c54c3",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-public-income-green-20261106-v1.log": "19cab1f27866145116219c46672a272759ac232990a2d8858b6d49cb8802a276",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-income-focused-tests-20261106-v1.log": "c210094bd700c336673efb14a09608890a7c9f0cedcdc33bc710004bb89ac858",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-primary-income-cold-20261106-v1.log": "9e2b08762d5b48a9490fedf8c70516e20e0f6a941ab5cb37fb91b180292510d6",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-critical-dlc31-setup-cold-20261106-v1.log": "1ae5799ea14d280fb06ebb9751e35c0c58ff232adaf08897a439dcfad90e9675",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v231-fixed-income-red-20261106-v1.log": "9740625fa209b079e42f9e4443e61306701ff223798d22b524de513fbea0099a"
+  },
+  "newAutonomousRuns": 0,
+  "goalStatus": "active"
+}

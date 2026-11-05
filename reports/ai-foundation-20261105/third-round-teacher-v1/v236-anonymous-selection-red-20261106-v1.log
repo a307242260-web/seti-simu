@@ -1,0 +1,534 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: anonymous quantity is a value promise, not an executable outgoing entity
++ actual - expected
+
++ {
++   anonymousSupplier: true,
++   continuation: {
++     blueSlot: 1,
++     endpoint: {
++       aliens: {
++         amiba: {
++           revealInitialized: true,
++           revealedSlotId: 1,
++           symbolSlots: {
++             blue_2: 'symbol_4',
++             orange_2: 'symbol_2',
++             orange_3: 'symbol_1',
++             red_1: 'symbol_5',
++             red_2: 'symbol_3'
++           },
++           symbolsById: {
++             symbol_1: {
++               sequence: 3,
++               slotId: 'orange_3',
++               symbolId: 'symbol_1'
++             },
++             symbol_2: {
++               sequence: 2,
++               slotId: 'orange_2',
++               symbolId: 'symbol_2'
++             },
++             symbol_3: {
++               sequence: 5,
++               slotId: 'red_2',
++               symbolId: 'symbol_3'
++             },
++             symbol_4: {
++               sequence: 1,
++               slotId: 'blue_2',
++               symbolId: 'symbol_4'
++             },
++             symbol_5: {
++               sequence: 4,
++               slotId: 'red_1',
++               symbolId: 'symbol_5'
++             }
++           }
++         },
++         amibaTraces: {
++           blindCardCount: 5,
++           displayedCardAvailable: true,
++           revealedSlotId: 1,
++           traceSlotsByAlienSlotId: {
++             '1': {
++               blue: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': {
++                   playerColor: 'white',
++                   playerId: 'player-white',
++                   position: 4,
++                   traceType: 'blue'
++                 }
++               },
++               pink: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': null
++               },
++               yellow: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': null
++               }
++             }
++           }
++         },
++         slots: [
++           {
++             alienId: '阿米巴',
++             revealed: true,
++             slotId: 1,
++             traces: {
++               blue: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: true,
++                 neutral: false,
++                 ownerPlayerColor: 'white'
++               },
++               pink: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: true,
++                 neutral: false,
++                 ownerPlayerColor: 'white'
++               },
++               yellow: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: true,
++                 neutral: false,
++                 ownerPlayerColor: 'white'
++               }
++             }
++           },
++           {
++             alienId: null,
++             revealed: false,
++             slotId: 2,
++             traces: {
++               blue: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: false,
++                 ownerPlayerColor: null
++               },
++               pink: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: false,
++                 ownerPlayerColor: null
++               },
++               yellow: {
++                 extraCount: 0,
++                 extraMarkers: [],
++                 firstPlaced: true,
++                 neutral: false,
++                 ownerPlayerColor: 'blue'
++               }
++             }
++           }
++         ]
++       },
++       amibaTraces: {
++         blindCardCount: 5,
++         displayedCardAvailable: true,
++         revealedSlotId: 1,
++         traceSlotsByAlienSlotId: {
++           '1': {
++             blue: {
++               '1': null,
++               '2': null,
++               '3': null,
++               '4': {
++                 playerColor: 'white',
++                 playerId: 'player-white',
++                 position: 4,
++                 traceType: 'blue'
++               }
++             },
++             pink: {
++               '1': null,
++               '2': null,
++               '3': null,
++               '4': null
++             },
++             yellow: {
++               '1': null,
++               '2': null,
++               '3': null,
++               '4': null
++             }
++           }
++         }
++       },
++       blueSlots: [
++         {
++           occupied: true,
++           slot: 1,
++           tileId: 'blue2',
++           unlocked: true
++         },
++         {
++           occupied: false,
++           slot: 2,
++           tileId: 'blue1',
++           unlocked: false
++         }
++       ],
++       computerSlots: [
++         1
++       ],
++       extraUnknownCount: 2,
++       ordinaryDrawCount: 122,
++       researchSymbols: {
++         revealInitialized: true,
++         revealedSlotId: 1,
++         symbolSlots: {
++           blue_2: 'symbol_4',
++           orange_2: 'symbol_2',
++           orange_3: 'symbol_1',
++           red_1: 'symbol_5',
++           red_2: 'symbol_3'
++         },
++         symbolsById: {
++           symbol_1: {
++             sequence: 3,
++             slotId: 'orange_3',
++             symbolId: 'symbol_1'
++           },
++           symbol_2: {
++             sequence: 2,
++             slotId: 'orange_2',
++             symbolId: 'symbol_2'
++           },
++           symbol_3: {
++             sequence: 5,
++             slotId: 'red_2',
++             symbolId: 'symbol_3'
++           },
++           symbol_4: {
++             sequence: 1,
++             slotId: 'blue_2',
++             symbolId: 'symbol_4'
++           },
++           symbol_5: {
++             sequence: 4,
++             slotId: 'red_1',
++             symbolId: 'symbol_5'
++           }
++         }
++       },
++       resources: {
++         additionalPublicScan: 1,
++         aomomoFossils: 0,
++         availableData: 1,
++         color: 'white',
++         companyBaseIncome: {
++           additionalPublicScan: 1,
++           credits: 2,
++           energy: 2,
++           handSize: 1
++         },
++         credits: 2,
++         energy: 3,
++         handSize: 2,
++         id: 'player-white',
++         income: {
++           additionalPublicScan: 1,
++           availableData: 0,
++           credits: 6,
++           energy: 3,
++           handSize: 1,
++           publicity: 0
++         },
++         publicity: 1,
++         score: 69,
++         techState: {
++           blueBoardSlots: {
++             blue1: 2,
++             blue2: 1
++           },
++           disabledTiles: {},
++           ownedTiles: {
++             blue1: true,
++             blue2: true,
++             orange2: true,
++             purple2: true,
++             purple4: true
++           }
++         }
++       }
++     },
++     incomeCardId: 'card-18-0',
++     incomePreparation: {
++       capitalAfter: 2.3333333333333335,
++       greedyValue: 1.0833333333333333,
++       linear: 0.5
++     },
++     linearGain: 8.5,
++     localPlanValue: 8.5,
++     payment: {
++       creditPurchases: 0,
++       energyPurchases: 0,
++       spend: {
++         credits: 0,
++         energy: 0
++       },
++       value: 0
++     },
++     planNetGain: 11.833333333333334,
++     position: 4,
++     preparationPlacements: 3,
++     region: {
++       message: '蓝色区域结算 3 个 symbol',
++       ok: true,
++       region: 'blue',
++       results: [
++         {
++           message: '结算 symbol_3 并移动至 red_2',
++           move: {
++             fromSlotId: 'blue_2',
++             moved: true,
++             symbolId: 'symbol_3',
++             toSlotId: 'red_2'
++           },
++           ok: true,
++           reward: {
++             dataCount: 0,
++             drawCards: 0,
++             gain: {
++               score: 4
++             },
++             pickAlienCard: false,
++             pickCard: false,
++             region: null
++           },
++           slotId: 'blue_2',
++           symbolId: 'symbol_3'
++         },
++         {
++           message: '结算 symbol_4 并移动至 blue_2',
++           move: {
++             fromSlotId: 'blue_1',
++             moved: true,
++             symbolId: 'symbol_4',
++             toSlotId: 'blue_2'
++           },
++           ok: true,
++           reward: {
++             dataCount: 0,
++             drawCards: 1,
++             gain: {},
++             pickAlienCard: false,
++             pickCard: false,
++             region: null
++           },
++           slotId: 'blue_1',
++           symbolId: 'symbol_4'
++         },
++         {
++           message: '结算 symbol_1 并移动至 orange_3',
++           move: {
++             fromSlotId: 'blue_3',
++             moved: true,
++             symbolId: 'symbol_1',
++             toSlotId: 'orange_3'
++           },
++           ok: true,
++           reward: {
++             dataCount: 0,
++             drawCards: 0,
++             gain: {
++               publicity: 1
++             },
++             pickAlienCard: false,
++             pickCard: false,
++             region: null
++           },
++           slotId: 'blue_3',
++           symbolId: 'symbol_1'
++         }
++       ]
++     },
++     securedGain: 0,
++     slotId: 1,
++     traceType: 'blue',
++     unknownCards: 2
++   },
++   incomingCardId: 'card-18-0',
++   netGain: 11.833333333333334,
++   outgoingCardId: null
++ }
+- null
+
+    at Object.<anonymous> (/private/tmp/seti-v231-public-income-20261106-v1/randomizer/game/ai/public-amiba-income-swap.test.js:21:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    outgoingCardId: null,
+    incomingCardId: 'card-18-0',
+    netGain: 11.833333333333334,
+    continuation: {
+      slotId: 1,
+      position: 4,
+      traceType: 'blue',
+      payment: {
+        spend: { credits: 0, energy: 0 },
+        energyPurchases: 0,
+        creditPurchases: 0,
+        value: 0
+      },
+      preparationPlacements: 3,
+      blueSlot: 1,
+      planNetGain: 11.833333333333334,
+      localPlanValue: 8.5,
+      linearGain: 8.5,
+      securedGain: 0,
+      unknownCards: 2,
+      region: {
+        ok: true,
+        region: 'blue',
+        results: [
+          {
+            ok: true,
+            symbolId: 'symbol_3',
+            slotId: 'blue_2',
+            reward: [Object],
+            move: [Object],
+            message: '结算 symbol_3 并移动至 red_2'
+          },
+          {
+            ok: true,
+            symbolId: 'symbol_4',
+            slotId: 'blue_1',
+            reward: [Object],
+            move: [Object],
+            message: '结算 symbol_4 并移动至 blue_2'
+          },
+          {
+            ok: true,
+            symbolId: 'symbol_1',
+            slotId: 'blue_3',
+            reward: [Object],
+            move: [Object],
+            message: '结算 symbol_1 并移动至 orange_3'
+          }
+        ],
+        message: '蓝色区域结算 3 个 symbol'
+      },
+      endpoint: {
+        resources: {
+          additionalPublicScan: 1,
+          aomomoFossils: 0,
+          availableData: 1,
+          credits: 2,
+          energy: 3,
+          handSize: 2,
+          publicity: 1,
+          score: 69,
+          id: 'player-white',
+          color: 'white',
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          },
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 6,
+            energy: 3,
+            handSize: 1,
+            publicity: 0
+          },
+          companyBaseIncome: {
+            credits: 2,
+            energy: 2,
+            handSize: 1,
+            additionalPublicScan: 1
+          }
+        },
+        computerSlots: [ 1 ],
+        blueSlots: [
+          { tileId: 'blue2', slot: 1, occupied: true, unlocked: true },
+          {
+            tileId: 'blue1',
+            slot: 2,
+            occupied: false,
+            unlocked: false
+          }
+        ],
+        researchSymbols: {
+          revealInitialized: true,
+          revealedSlotId: 1,
+          symbolSlots: {
+            orange_2: 'symbol_2',
+            red_1: 'symbol_5',
+            red_2: 'symbol_3',
+            blue_2: 'symbol_4',
+            orange_3: 'symbol_1'
+          },
+          symbolsById: {
+            symbol_1: [Object],
+            symbol_2: [Object],
+            symbol_3: [Object],
+            symbol_4: [Object],
+            symbol_5: [Object]
+          }
+        },
+        amibaTraces: {
+          revealedSlotId: 1,
+          traceSlotsByAlienSlotId: { '1': [Object] },
+          blindCardCount: 5,
+          displayedCardAvailable: true
+        },
+        extraUnknownCount: 2,
+        aliens: {
+          slots: [ [Object], [Object] ],
+          amiba: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 5,
+            displayedCardAvailable: true
+          }
+        },
+        ordinaryDrawCount: 122
+      },
+      incomeCardId: 'card-18-0',
+      incomePreparation: {
+        linear: 0.5,
+        capitalAfter: 2.3333333333333335,
+        greedyValue: 1.0833333333333333
+      }
+    },
+    anonymousSupplier: true
+  },
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
