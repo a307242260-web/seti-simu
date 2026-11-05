@@ -1,0 +1,186 @@
+{
+  "date": "2026-11-05",
+  "goalStatusAtGeneration": "active",
+  "goalCompletionPendingDelivery": true,
+  "learningAndValidationRequirementsProven": true,
+  "thisGoalTurnClassification": "progress: evidence-based sector/mission fix, failedV188archived, V189geometry reuse and fullsourceadmission, unique autonomous15/50, exactteacher-assets prefix and currentteacher replay, all65teacherroots reviewed",
+  "productionRuntime": "V189/V22",
+  "productionSourceCommit": "93989585a13f9faed2c3caf5bf78b1279b8560f1",
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "fixedOpeningInputs": 23,
+  "opponents": "PASS and mandatory choices only",
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "actualRecord": "reports/research/e01243ba.93989585.quick-400.json",
+  "actualScores": [
+    15,
+    50
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 5507,
+  "actualInputs": 125,
+  "actualWhiteDecisionRecords": 86,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 378.02808300000015,
+  "allActualDecisionsCompleteAndGatePassed": true,
+  "standardAutonomousRunsAtSource": 1,
+  "nativeActualVerificationInputsAfterOpening": 102,
+  "nativeTeacherReplayInputsAfterOpening": 83,
+  "nativeOrderingControlInputs": 16,
+  "nativeRootCaptureInputsAfterOpening": 102,
+  "rootCaptureAdditionalPolicyQueries": 0,
+  "actualRootsCaptured": 86,
+  "primaryComparison": [
+    {
+      "round": 1,
+      "aiScore": 15,
+      "teacherScore": 15,
+      "allTeacherTechSlotsAndDisabledStatesRetained": true,
+      "additionalAITech": [],
+      "sixIncomeAtLeastTeacher": true,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "probes": [
+        0,
+        0
+      ],
+      "placedData": [
+        5,
+        5
+      ]
+    },
+    {
+      "round": 2,
+      "aiScore": 50,
+      "teacherScore": 34,
+      "allTeacherTechSlotsAndDisabledStatesRetained": true,
+      "additionalAITech": [
+        "purple1"
+      ],
+      "sixIncomeAtLeastTeacher": true,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": -1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 16
+      },
+      "probes": [
+        0,
+        1
+      ],
+      "placedData": [
+        6,
+        2
+      ]
+    }
+  ],
+  "round2ScoreSourceDelta": {
+    "alienTraceBlueScore": 0,
+    "alienTracePinkScore": 0,
+    "alienTraceYellowScore": 5,
+    "blueTechScore": 2,
+    "initialScore": 0,
+    "landScore": 7,
+    "orbitScore": 0,
+    "scanScore": 0,
+    "techBonusScore": 2
+  },
+  "teacherAssetAnchor": {
+    "beforeActualInput": 105,
+    "afterActualInput": 104,
+    "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-actual-step105-20261105-v1.json",
+    "fixtureSha256": "4e998b6c95c1c40c6ff4265674fca1f26bf40fb91d9643cd199ce1c4a0b40927",
+    "teacherCheckpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json",
+    "teacherCheckpointSha256": "49c5d1a351a9c3b4c91361024661a5a011d7e54019df4039e23a41d0914d945a",
+    "wholeWhitePlayerStateExactlyEqual": true,
+    "boardSlicesExactlyEqual": [
+      "aliens",
+      "data",
+      "finalScoring",
+      "meta",
+      "pieces",
+      "planets",
+      "solarSystem",
+      "tech",
+      "turn"
+    ],
+    "drawPileAndPublicCardsEqual": true,
+    "fullNativeStateEquivalent": false,
+    "knownDifferences": "Passive opponents retain different hand-limit cards; discard pile, those hidden hands and match.decisionVersion differ. No search identity/dedup equivalence is asserted."
+  },
+  "finalAssetCompositionExactlyEqualToTeacher": false,
+  "wholeFourSeatStateEquivalenceClaimed": false,
+  "teacherNodeReview": {
+    "allWhiteTeacherRootsThrough104": 65,
+    "sameAction": 60,
+    "classifiedDifferences": 5,
+    "postTeacherPassRootsAlsoRetained": 2,
+    "additionalPolicyQueries": 0
+  },
+  "admission": {
+    "unit": 172,
+    "fullFlow": 1,
+    "chrome": 26,
+    "independentCurrentInputs": 47,
+    "unchangedLegacyInputAuditError": true,
+    "coldNamedCases": 391,
+    "coldUniqueRoots": 308,
+    "maxNativeInputs": 252,
+    "maxRootAndSearchMs": 558.305041,
+    "all391ActionValueNativeCountsSameAsV188": true,
+    "V188608msFailurePreserved": true
+  },
+  "actualTeacherPrefixThenExtraDevelopment": {
+    "inputs": [
+      105,
+      123
+    ],
+    "ownMainPurposes": [
+      "funded Jupiter landing",
+      "actual observed Amiba card corners funding purple1",
+      "fixed computer income and blue bonus"
+    ],
+    "additionalAITech": "purple1",
+    "incomeCreditDelta": 1,
+    "finalCreditsMatchTeacher": true,
+    "finalEnergyDelta": -1,
+    "extraPlacedData": 4,
+    "extraOwnJupiterLandMarker": true,
+    "ownYellowTraceAndAmibaRevealed": true,
+    "scope": "Actual autonomous actions after already reaching teacher assets, not a claim of globally optimal future play or whole-game baseline."
+  },
+  "remainingRequiredWork": [
+    "Privateindex commit/push all result evidence andexperimentcenter, preservingforeignV1 andV41baseline.",
+    "Verify committed artifacts/currentruntime/live report/remote tip; then update_goal complete."
+  ]
+}

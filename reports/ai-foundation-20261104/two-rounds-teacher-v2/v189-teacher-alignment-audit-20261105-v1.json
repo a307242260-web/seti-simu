@@ -1,0 +1,3368 @@
+{
+  "status": "complete",
+  "sourceCommit": "93989585a13f9faed2c3caf5bf78b1279b8560f1",
+  "record": "reports/research/e01243ba.93989585.quick-400.json",
+  "recordSha256": "6377e81c9ef1a8cee43f023cc0c4c1a93f62e567e143232563a0fe08e4caf54b",
+  "nativeTeacherReplay": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-current-native-replay-20261105-v1.json",
+  "nativeTeacherReplaySha256": "7d521e5acc4329001c4fa6d23159635bed8beed3684fcf4950d64a2f9128a9b2",
+  "pairedNativeControls": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-order-native-controls-20261105-v1.json",
+  "pairedNativeControlInputs": 16,
+  "autonomousTeacherAssetAnchor": {
+    "beforeActualInput": 105,
+    "afterActualInput": 104,
+    "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-actual-step105-20261105-v1.json",
+    "fixtureSha256": "4e998b6c95c1c40c6ff4265674fca1f26bf40fb91d9643cd199ce1c4a0b40927",
+    "teacherCheckpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json",
+    "teacherCheckpointSha256": "49c5d1a351a9c3b4c91361024661a5a011d7e54019df4039e23a41d0914d945a",
+    "wholeWhitePlayerStateExactlyEqual": true,
+    "boardSlicesExactlyEqual": [
+      "aliens",
+      "data",
+      "finalScoring",
+      "meta",
+      "pieces",
+      "planets",
+      "solarSystem",
+      "tech",
+      "turn"
+    ],
+    "drawPileAndPublicCardsEqual": true,
+    "fullNativeStateEquivalent": false,
+    "knownDifferences": "Passive opponents retain different hand-limit cards; discard pile, those hidden hands and match.decisionVersion differ. No search identity/dedup equivalence is asserted."
+  },
+  "primary": [
+    {
+      "round": 1,
+      "aiScore": 15,
+      "teacherScore": 15,
+      "allTeacherTechSlotsAndDisabledStatesRetained": true,
+      "additionalAITech": [],
+      "sixIncomeAtLeastTeacher": true,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "probes": [
+        0,
+        0
+      ],
+      "placedData": [
+        5,
+        5
+      ]
+    },
+    {
+      "round": 2,
+      "aiScore": 50,
+      "teacherScore": 34,
+      "allTeacherTechSlotsAndDisabledStatesRetained": true,
+      "additionalAITech": [
+        "purple1"
+      ],
+      "sixIncomeAtLeastTeacher": true,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": -1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 16
+      },
+      "probes": [
+        0,
+        1
+      ],
+      "placedData": [
+        6,
+        2
+      ]
+    }
+  ],
+  "scoreSourceDelta": {
+    "alienTraceBlueScore": 0,
+    "alienTracePinkScore": 0,
+    "alienTraceYellowScore": 5,
+    "blueTechScore": 2,
+    "initialScore": 0,
+    "landScore": 7,
+    "orbitScore": 0,
+    "scanScore": 0,
+    "techBonusScore": 2
+  },
+  "additionalActualContinuation": {
+    "inputs": [
+      105,
+      123
+    ],
+    "ownMainPurposes": [
+      "funded Jupiter landing",
+      "actual observed Amiba card corners funding purple1",
+      "fixed computer income and blue bonus"
+    ],
+    "additionalAITech": "purple1",
+    "incomeCreditDelta": 1,
+    "finalCreditsMatchTeacher": true,
+    "finalEnergyDelta": -1,
+    "extraPlacedData": 4,
+    "extraOwnJupiterLandMarker": true,
+    "ownYellowTraceAndAmibaRevealed": true,
+    "scope": "Actual autonomous actions after already reaching teacher assets, not a claim of globally optimal future play or whole-game baseline."
+  },
+  "teacherRootCoverage": {
+    "allWhiteTeacherRootsThrough104": 65,
+    "sameAction": 60,
+    "classifiedDifferences": 5,
+    "postTeacherPassRootsAlsoRetained": 2,
+    "additionalPolicyQueries": 0
+  },
+  "rows": [
+    {
+      "step": 24,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:124d76d3",
+        "actorId": "player-white",
+        "stateVersion": 2,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-13-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_117.webp"
+      },
+      "selectedActionId": "play_card:124d76d3",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "play_card:124d76d3",
+        "target": 2,
+        "value": 68.16666666666667,
+        "realization": -30.166666666666668,
+        "preparationDebt": 0,
+        "completion": "covered-by-global-value-bound",
+        "valueType": "attained-lower-bound"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-024-20261105-v1.json",
+      "evidenceSha256": "8f426cf61c861aa4e9d5d96d519b64b25aa6ba851799fd0dbe3df64bd2d680d1",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-024-20261105-v1.raw.json.gz",
+      "rawSha256": "675a21ecde36d708a36acb7504830e35746de0983d9244381fdff413e8b0ac21",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 25,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:be9dd0cd",
+        "actorId": "player-white",
+        "stateVersion": 3,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-move"
+        },
+        "payload": {
+          "cost": {
+            "energy": 1
+          },
+          "gain": {}
+        },
+        "decision": null,
+        "summary": "1能量 → 移动1步"
+      },
+      "selectedActionId": "move:e0158279",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "quick_trade:be9dd0cd",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-movement-policy",
+        "policy": "seti-goal-movement-policy-v4",
+        "chosenGoal": {
+          "id": "rocket:3:land:mars:planet:",
+          "kind": "land",
+          "label": "land mars",
+          "coordinate": {
+            "x": 5,
+            "y": 2
+          },
+          "timing": "advance-before-rotation",
+          "planetId": "mars",
+          "endpointTarget": {
+            "type": "planet",
+            "rocketId": 3
+          },
+          "endpointCost": {
+            "energy": 3
+          },
+          "targetCoordinate": {
+            "x": 5,
+            "y": 2
+          },
+          "movementTiming": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 2,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ],
+            "availablePrefixPoints": 2
+          }
+        },
+        "isEquivalence": false
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-025-20261105-v1.json",
+      "evidenceSha256": "69bd4b881a836ef4b744a078f14e4297acac9c79e17f9a2909a39a0746026088",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-025-20261105-v1.raw.json.gz",
+      "rawSha256": "94fa0e61da57914629841d67a710ce41b2e6a11e109a4cbe4db5d059c5295492",
+      "classification": "native-material-equivalent-movement-representation",
+      "proof": "v189-teacher-order-native-controls-20261105-v1.json:teacherStep25",
+      "reason": "Goal-directed ordinary move and teacher energy-for-move finish with the exact same whole owner state, cards, board, turn and RNG slices. Not claimed as equal intermediate input envelopes.",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 26,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d9014565",
+        "actorId": "player-white",
+        "stateVersion": 3,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "quick-move",
+          "choiceId": "move:3:out",
+          "rocketId": 3,
+          "deltaX": 0,
+          "deltaY": 1,
+          "direction": "out"
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动探测器 3 向外"
+      },
+      "selectedActionId": "choose_target:d9014565",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:d9014565",
+        "target": 1,
+        "value": 68.16666666666667,
+        "realization": -30.166666666666668,
+        "preparationDebt": 0,
+        "kind": "goal-plan",
+        "plan": {
+          "kind": "goal-plan",
+          "objective": {
+            "id": "rocket:3:land:mars:planet:",
+            "kind": "land",
+            "label": "land mars",
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "timing": "advance-before-rotation",
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet",
+              "rocketId": 3
+            },
+            "endpointCost": {
+              "energy": 3
+            },
+            "targetCoordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "movementTiming": {
+              "comparable": true,
+              "assumption": "one-known-solar-rotation-before-the-future-goal",
+              "rotationCount": 1,
+              "waitPaidPoints": 2,
+              "bestPrefixLength": 1,
+              "bestTotalPaidPoints": 1,
+              "classification": "advance-before-rotation",
+              "alternatives": [
+                {
+                  "prefixLength": 0,
+                  "totalPaidPoints": 2,
+                  "remainingPaidPoints": 2
+                },
+                {
+                  "prefixLength": 1,
+                  "prefixMovementPoints": 1,
+                  "totalPaidPoints": 1,
+                  "remainingPaidPoints": 0
+                }
+              ],
+              "availablePrefixPoints": 2
+            }
+          },
+          "route": [
+            {
+              "from": {
+                "x": 5,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "execution": "deterministic-native-route"
+        },
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-026-20261105-v1.json",
+      "evidenceSha256": "a3165df90677a48fcadc6ff5c6cc89d122c534ff48c5b5b31a547c903915b2a0",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-026-20261105-v1.raw.json.gz",
+      "rawSha256": "1c30f1d9c89a5e39e5dded56996c0540768199aa7ab9fda9ac3a7f02b5c3ba26",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 27,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 4,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 68.16666666666667,
+        "realization": -30.166666666666668,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-027-20261105-v1.json",
+      "evidenceSha256": "1260374c12f575f5b9b7d98ce4d0c9a06cc5f294cfbc30f30206e739f4953793",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-027-20261105-v1.raw.json.gz",
+      "rawSha256": "d33174716d4d6cde0d6abae8322a7a9f861a6488734dd80148214d6fd7d7cc08",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 35,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 11,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "selectedActionId": "research_tech:806ccfc8",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "research_tech:806ccfc8",
+        "target": 6,
+        "value": 68.16666666666667,
+        "realization": -19.166666666666668,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "tech:blue2:1",
+          "kind": "research_tech",
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "required": {
+            "publicity": 6
+          }
+        },
+        "resourceGoalCount": 12,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-035-20261105-v1.json",
+      "evidenceSha256": "685053a5cfa623f685e40376e25cd9e3d3684f1fa66297b025ebe1223e620510",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-035-20261105-v1.raw.json.gz",
+      "rawSha256": "d3c12c883786dee9c686918258c3dad080bbdc9af608e1711e0567e8112ce4f3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 36,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:3fcecb14",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "tech:blue2:slot:1",
+          "tileId": "blue2",
+          "blueSlot": 1
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue2（蓝槽 1）"
+      },
+      "selectedActionId": "choose_target:3fcecb14",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:3fcecb14",
+        "target": 2,
+        "value": 68.16666666666667,
+        "realization": -19.166666666666668,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-036-20261105-v1.json",
+      "evidenceSha256": "43255974f089a92fc3fc12cfcf0666013e3309175c6cec3e08a25a0baf9a7f44",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-036-20261105-v1.raw.json.gz",
+      "rawSha256": "aafb2d6572c745b90fa23217b274310f5a413cacde88b1e145d86a0b8f24c58f",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 37,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:56497dc2",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "pick:card-18-0",
+          "cardInstanceId": "card-18-0",
+          "publicSlotIndex": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_48.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_48.webp",
+          "imageAlt": "b_48.webp"
+        }
+      },
+      "selectedActionId": "choose_card:56497dc2",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:56497dc2",
+        "target": 1,
+        "value": 68.16666666666667,
+        "realization": -19.166666666666668,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-037-20261105-v1.json",
+      "evidenceSha256": "70785c9b34febe3180b9faabd57c54d657c28dc1d11b3a853917952b6e883b72",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-037-20261105-v1.raw.json.gz",
+      "rawSha256": "f5e66c13625a540161e1ec8810e98f95483bbadddb6cc94cf14c5740a3a95679",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 38,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 12,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 68.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 2,
+        "value": 68.16666666666667,
+        "realization": -22.666666666666668,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-038-20261105-v1.json",
+      "evidenceSha256": "966b6c1317b3eeebbaefb91c95fda093389d75d86590ef7dc2d81ce5b5a6a572",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-038-20261105-v1.raw.json.gz",
+      "rawSha256": "f30513089b263860221547e9e04912dade13a0257627b46f1c5e5a78107afb1a",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 39,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "orbit",
+        "phase": "main",
+        "actionId": "orbit:44937d1f",
+        "actorId": "player-white",
+        "stateVersion": 13,
+        "decisionVersion": 1,
+        "target": {
+          "rocketId": 3,
+          "planetId": "mars"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "环绕火星（R3）"
+      },
+      "selectedActionId": "orbit:44937d1f",
+      "selectedValue": 68.50732600732601,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "orbit:44937d1f",
+        "target": 8,
+        "value": 68.50732600732601,
+        "realization": -15.507326007326007,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "rocket:3:orbit:mars:planet:",
+          "kind": "route",
+          "family": "orbit",
+          "rocketId": 3,
+          "planetId": "mars",
+          "endpointTarget": {
+            "type": "planet"
+          },
+          "endpointCost": {
+            "credits": 1,
+            "energy": 1
+          },
+          "benefit": {
+            "score": 3,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 5.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+            "source": "planetRewards.orbit:mars"
+          },
+          "coordinate": {
+            "x": 4,
+            "y": 2
+          },
+          "path": [],
+          "movementPoints": 0,
+          "required": {
+            "credits": 1
+          }
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-039-20261105-v1.json",
+      "evidenceSha256": "fbaf1b2bc506f3cc4cd7826f92eafb1b490a221d32db7f939e47279de1891515",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-039-20261105-v1.raw.json.gz",
+      "rawSha256": "6b03cee49aa726b237b46b183fb651538350bb9f565bafdf5b7d77095d67537e",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 40,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:669ddc72",
+        "actorId": "player-white",
+        "stateVersion": 10,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "pick:card-40-0",
+          "cardInstanceId": "card-40-0",
+          "publicSlotIndex": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_40.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-40-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_40.png",
+          "imageAlt": "dlc_40.png"
+        }
+      },
+      "selectedActionId": "choose_card:669ddc72",
+      "selectedValue": 68.50732600732601,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:669ddc72",
+        "target": 1,
+        "value": 68.50732600732601,
+        "realization": -15.507326007326007,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-040-20261105-v1.json",
+      "evidenceSha256": "5213182ae4761ecb9dfab679bfae9da82b95d476868299fd8ca5a8dceba7628e",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-040-20261105-v1.raw.json.gz",
+      "rawSha256": "1414c7c872328cdb692e39fd53cb2073d60e8bf441cd149c7cad00a5c0e57722",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 41,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96270e4a",
+        "actorId": "player-white",
+        "stateVersion": 10,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "nebula:sector-4-b",
+          "nebulaId": "sector-4-b",
+          "sectorX": 4
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 绘架座β"
+      },
+      "selectedActionId": "choose_target:96270e4a",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:96270e4a",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -16.166666666666668,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-4-b",
+          "kind": "scan-flow",
+          "nebulaId": "sector-4-b",
+          "required": {},
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-041-20261105-v1.json",
+      "evidenceSha256": "ec4d141ccec925445712b7337565079bc3093b22d7775c1bfbade63757ba1817",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-041-20261105-v1.raw.json.gz",
+      "rawSha256": "afc2240bf9eb549260fa0a5110a03bae9f6bb69abb849ca509e03e9b337298b3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 42,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6ddc2a28",
+        "actorId": "player-white",
+        "stateVersion": 10,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "income:card-40-0",
+          "cardInstanceId": "card-40-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_40.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-40-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_40.png",
+          "imageAlt": "dlc_40.png"
+        }
+      },
+      "selectedActionId": "choose_card:6ddc2a28",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:6ddc2a28",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -16.166666666666668,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-042-20261105-v1.json",
+      "evidenceSha256": "07143990eeeff8d8f6ff256035b6dfcae993d38630fd7c01d416e84bd8d64f85",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-042-20261105-v1.raw.json.gz",
+      "rawSha256": "1ea3cca6dff226cbeb6671d8ffe1478c00b82ef52847f65d6fb5009d89960523",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 43,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 2,
+        "value": 69.16666666666667,
+        "realization": -18.166666666666668,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-043-20261105-v1.json",
+      "evidenceSha256": "79ca84ef4dd24c5607e7b7887eda51e57d5b1a9f6b7ed862ce5c7180f9d33561",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-043-20261105-v1.raw.json.gz",
+      "rawSha256": "c7ec928cb8dccc1497f8205ab31d8a8554d8a6ddd0a14d84f2d5d7f46b1680d2",
+      "classification": "same-scalar-preparation-timing",
+      "proof": "Current cold teacher043 has an exact end-turn scalar witness; actual first-round compared assets and round2 whole-white anchor match teacher.",
+      "reason": "Earlier free data preparation replaces ending now; equal scalar, different realization. No intermediate native-state equivalence claim.",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 44,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:e887dc52",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 1,
+        "target": {
+          "companyId": "深空探测",
+          "abilityId": "deepspace_swap_cards"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "深空探测 1x 行动"
+      },
+      "selectedActionId": "industry:e887dc52",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "industry:e887dc52",
+        "target": 4,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-044-20261105-v1.json",
+      "evidenceSha256": "458b11a3d372005776a9a138cc407cb8899883b042fd4908b44ddf0413867b12",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-044-20261105-v1.raw.json.gz",
+      "rawSha256": "a9b9fdd32aec055601705965b980a36c118b65555fcc4e1a8aee44f10b914719",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 45,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:406ad170",
+        "actorId": "player-white",
+        "stateVersion": 12,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-18-0",
+          "cardInstanceId": "card-18-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_48.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_48.webp",
+          "imageAlt": "b_48.webp"
+        }
+      },
+      "selectedActionId": "choose_card:406ad170",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:406ad170",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-045-20261105-v1.json",
+      "evidenceSha256": "874e645e28c1d580b3c31985bff8ad07a477d03fc6729ec872ad24d879dde116",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-045-20261105-v1.raw.json.gz",
+      "rawSha256": "f5be361b0d0c813cee6e715bdedbe88bd163a0c46f4c846b97007e1f0b0f3fe7",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 46,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:2882fca6",
+        "actorId": "player-white",
+        "stateVersion": 12,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "public:1:card-41-0",
+          "slotIndex": 1,
+          "cardInstanceId": "card-41-0"
+        },
+        "payload": {
+          "handCardInstanceId": "card-18-0"
+        },
+        "decision": null,
+        "summary": "dlc_39.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-41-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_39.png",
+          "imageAlt": "dlc_39.png"
+        }
+      },
+      "selectedActionId": "choose_card:2882fca6",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:2882fca6",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-046-20261105-v1.json",
+      "evidenceSha256": "d22ddc60c42de9503e8ec2deae302ef92f77183bab2b2f9b2fdaf2bf3c70392f",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-046-20261105-v1.raw.json.gz",
+      "rawSha256": "9c2b12190d1de18395f9deefaed27ddcb14309d1406b562744ca7878d3831db6",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 47,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 5,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-047-20261105-v1.json",
+      "evidenceSha256": "9e551fb26fa885311ca53d75b81b5653df44059c089a30df446a0199841bd080",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-047-20261105-v1.raw.json.gz",
+      "rawSha256": "cb37eae2e2024809efab00c81902d8eb157318db2245522758f040df8eaa6d87",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 48,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 13,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-048-20261105-v1.json",
+      "evidenceSha256": "b8370d807b9b95065f09d4428d18c874bac05cb277d1a78184f1f55da7fa53d8",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-048-20261105-v1.raw.json.gz",
+      "rawSha256": "14ab73f8f1c8006f110937858949ae9ce099f15a50911a72c18ea4756837fb67",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 49,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 5,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-049-20261105-v1.json",
+      "evidenceSha256": "c056c86800544099105fcd5fb841e808f6903ee3edc4050559c0e5304cac1533",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-049-20261105-v1.raw.json.gz",
+      "rawSha256": "eeaab87ccc6f01b85c546c3fc9583d338b7ffe5d5419ea2dfc1c05a4dd2bea9e",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 50,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 2,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-050-20261105-v1.json",
+      "evidenceSha256": "dc3aa3971e98afe7c633a0003d1b32e16b1b3bcf3dafc6f7781f5580e25ae171",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-050-20261105-v1.raw.json.gz",
+      "rawSha256": "d1cdf520cc95daa940eb73d0fb9c9d4767ef3eb885dc3cbf79712ae4574e7cfb",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 51,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 5,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-051-20261105-v1.json",
+      "evidenceSha256": "1fd63d0259b13a1dc56355626f0adcbb8b8b65385af3b761b1854402f2eaec2a",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-051-20261105-v1.raw.json.gz",
+      "rawSha256": "6a171883f5878634c148acfe77c5fe52a0c4d14721f96393a3261978fbab63fd",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 52,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 2,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-052-20261105-v1.json",
+      "evidenceSha256": "a7418245e91c4d2c634687c6969afa9f0804464f213d7a8994010a508c322813",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-052-20261105-v1.raw.json.gz",
+      "rawSha256": "c0a925fd4eed913d9977fd5cde39462ce3de4e3a5189fa520e936e5900bd9a4f",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 53,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 5,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-053-20261105-v1.json",
+      "evidenceSha256": "0223b9238c0474bb7286b6ae534d296d738dc95cb5b35ee210590c9f43ef9d8a",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-053-20261105-v1.raw.json.gz",
+      "rawSha256": "164c44c7ce10a6d99831154e0b9c1b201f107b255b8df0c6fde0806c39a4a1a0",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 54,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 2,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-054-20261105-v1.json",
+      "evidenceSha256": "55708de9ed6320a41455760090ac800352ace729b39075358e36827432553497",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-054-20261105-v1.raw.json.gz",
+      "rawSha256": "aa9b361ad1653f75a4ca956772a6a1586278cf3eb7cb65c4c7ecc8f1e7d483c2",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 55,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:66acc520",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "income:card-41-0",
+          "cardInstanceId": "card-41-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_39.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-41-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_39.png",
+          "imageAlt": "dlc_39.png"
+        }
+      },
+      "selectedActionId": "choose_card:66acc520",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:66acc520",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -4.166666666666667,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-41-0",
+          "incomeBefore": 9,
+          "required": {}
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-055-20261105-v1.json",
+      "evidenceSha256": "39fae1dbcf2d970187afc1d03f4b7cbccfd3858fc0951d38a70cfe455dabb1e1",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-055-20261105-v1.raw.json.gz",
+      "rawSha256": "399a5164e7e881801b9d51d90a2c02719274a5128edc71a36352ae784f9a24b3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 56,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "play_card:8faf8ead",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 5,
+        "value": 63,
+        "realization": -11,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-1-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-1-a",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 4,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-056-20261105-v1.json",
+      "evidenceSha256": "fffeb8e628367c944ce8a6bd2eb2cc731d17e741ea7330d8a532c4134c475708",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-056-20261105-v1.raw.json.gz",
+      "rawSha256": "d44220e6e642a65b537120845d2dde4f508c3856b6ff061de550f06d84c1bb18",
+      "classification": "native-material-equivalent-funded-ordering",
+      "proof": "v189-teacher-order-native-controls-20261105-v1.json:teacherStep56",
+      "reason": "DLC9 already payable. Play/research first then take the blue bonus vs blue bonus first then play/research has exact owner/cards/board/turn/RNG slices at native end.",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 57,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue2 下方"
+      },
+      "selectedActionId": "choose_target:44b74627",
+      "selectedValue": 63,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:44b74627",
+        "target": 1,
+        "value": 63,
+        "realization": -11,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-1-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-1-a",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 4,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-057-20261105-v1.json",
+      "evidenceSha256": "01832f53e4b453d58fd7a29e744068160d7adfc572b8accada2425fb69ad5629",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-057-20261105-v1.raw.json.gz",
+      "rawSha256": "97cfeddd9382bbba8782894f8508ae5250625bd334167003054ab31e63e48fab",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 58,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:8faf8ead",
+        "actorId": "player-white",
+        "stateVersion": 21,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_9.png"
+      },
+      "selectedActionId": "play_card:8faf8ead",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "play_card:8faf8ead",
+        "target": 4,
+        "value": 69.16666666666667,
+        "realization": -3.6666666666666665,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "effect:tech:card:card-15-0",
+          "kind": "effect-purpose",
+          "purpose": "tech",
+          "cardId": "card-15-0",
+          "sourceFamily": "play_card",
+          "required": {
+            "credits": 3
+          }
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-058-20261105-v1.json",
+      "evidenceSha256": "77e2270d83aaa30f3eb9ee868bc68e4813989278387e1e8c5fd894deecec80ba",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-058-20261105-v1.raw.json.gz",
+      "rawSha256": "a4ce1bf71d3d57ecbdbc8e7a451015829e4c3df2940c4eb08db4f03079f495a7",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 59,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:062d2a7a",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": true,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      "selectedActionId": "choose_target:062d2a7a",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:062d2a7a",
+        "target": 4,
+        "value": 69.16666666666667,
+        "realization": -3.6666666666666665,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-059-20261105-v1.json",
+      "evidenceSha256": "ffd0290b4738990e101cc3115bcf5d2797a36bc2cc59a8270d3815bb56c31b47",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-059-20261105-v1.raw.json.gz",
+      "rawSha256": "2679134ae4c98c72648a44021f8f7a5c7ddd50e8cfbf340baffc86d010335fcb",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 60,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -3.6666666666666665,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-060-20261105-v1.json",
+      "evidenceSha256": "8c7810a5c10d3deb5f010cb27f63f87723121a867e5f45656a7553b6fec503b6",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-060-20261105-v1.raw.json.gz",
+      "rawSha256": "282bd4e0fc134117553f5afd81b19719bfc9cab164c4ea877e4e445700a2c226",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 61,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 23,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "selectedActionId": "pass:a1f33c73",
+      "selectedValue": 69.16666666666667,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "pass:a1f33c73",
+        "target": 1,
+        "value": 69.16666666666667,
+        "realization": -3.6666666666666665,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-061-20261105-v1.json",
+      "evidenceSha256": "b6825d88b806cd8dbf27864c88495a010db738f92697f0537f170d7d0d27bf71",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-061-20261105-v1.raw.json.gz",
+      "rawSha256": "fded415f82e50d4f5f4c89567c21494300654063510d6c64f463dd0ac2e6c592",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 62,
+      "round": 1,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e1e8d8f7",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        "payload": {
+          "cardInstanceId": "card-24-pass-1-5"
+        },
+        "decision": null,
+        "summary": "dlc_5.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-24-pass-1-5",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_5.png",
+          "imageAlt": "dlc_5.png"
+        }
+      },
+      "selectedActionId": "choose_card:e1e8d8f7",
+      "selectedValue": 81.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:e1e8d8f7",
+        "target": 2,
+        "value": 81.08333333333333,
+        "realization": -21.083333333333332,
+        "preparationDebt": 3,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-062-20261105-v1.json",
+      "evidenceSha256": "b2bc3569a845a13423457db1aa09c1b7e1935312ba24ee3f947eae414c73b6b2",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-062-20261105-v1.raw.json.gz",
+      "rawSha256": "df5ad5d8bbcd543b8914758554117df8a5fec150ae35ffc4db3aa5c10c5dcfa3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 72,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 31,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "selectedActionId": "scan:2d21a323",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "scan:2d21a323",
+        "target": 7,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 4,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-072-20261105-v1.json",
+      "evidenceSha256": "213c87e6b1d63dcda129e733ed5a2232ae83966f311ec29d4a67c52e7b5ff4b9",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-072-20261105-v1.raw.json.gz",
+      "rawSha256": "e358d7de9700a491db7ddf316fbd25f10b0c1c0cd0fed86a5f43f991f3bcd66d",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 73,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8a5d7b2d",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "nebula:sector-2-a",
+          "nebulaId": "sector-2-a",
+          "sectorX": 1
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 天狼星A"
+      },
+      "selectedActionId": "choose_target:8a5d7b2d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:8a5d7b2d",
+        "target": 2,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {},
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 4,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-073-20261105-v1.json",
+      "evidenceSha256": "470ba14003d10741eee8b54e377e9b2ea22bf1d690f9371ddce5f7553d39c027",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-073-20261105-v1.raw.json.gz",
+      "rawSha256": "2f916d52c20e7d735b4a2a8129333389efd40e87ba9cc952e9f786c991a824f4",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 74,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:00a51ff4",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "public:card-17-0:sector-2-a",
+          "cardInstanceId": "card-17-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-2-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_2.webp → 天狼星A",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_2.webp",
+          "imageAlt": "b_2.webp"
+        }
+      },
+      "selectedActionId": "choose_card:00a51ff4",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:00a51ff4",
+        "target": 2,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {},
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-074-20261105-v1.json",
+      "evidenceSha256": "60f0705ba77f57948e5cafe199443d624076b881dce46967cb65112d8917ea2e",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-074-20261105-v1.raw.json.gz",
+      "rawSha256": "9917741f1a21d4a4524a0860630ab2b383dde08972e2164459397414dc29862e",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 75,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c1d20eee",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "public:card-19-0:sector-2-a",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2,
+          "nebulaId": "sector-2-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_21.png → 天狼星A",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      },
+      "selectedActionId": "choose_card:c1d20eee",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:c1d20eee",
+        "target": 2,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {},
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-075-20261105-v1.json",
+      "evidenceSha256": "2f01b10c652bc829873b34179996715353e7392ae3ae769faf0792cd93a99251",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-075-20261105-v1.raw.json.gz",
+      "rawSha256": "3ab4ba1fcf2fa7c86936c36154ea2053f44d935ec6f8c056a259f6260589f76d",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 76,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:5bb27a70",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "scan4:launch",
+          "mode": "launch"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "发射探测器"
+      },
+      "selectedActionId": "choose_target:5bb27a70",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:5bb27a70",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-076-20261105-v1.json",
+      "evidenceSha256": "7d6c80a6e212576e71083cc81d82b736151edff36830675acdc8a3c64c9c6376",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-076-20261105-v1.raw.json.gz",
+      "rawSha256": "654838ae117298ffa3d49875182b7051c613c27096132d749c711cac2f4432c3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 77,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 32,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -30.083333333333332,
+        "preparationDebt": 2,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-077-20261105-v1.json",
+      "evidenceSha256": "0e0a2604b0c45d9947bb3f5871050ad2b16c9ea054bc0da38e84809f66306004",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-077-20261105-v1.raw.json.gz",
+      "rawSha256": "471c9e55ba8b7572a682007ef1bcaaa3d5012726012e5be8e4b4edd432bf26ec",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 78,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:720c219a",
+        "actorId": "player-white",
+        "stateVersion": 33,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-24-pass-1-5"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_5.png"
+      },
+      "selectedActionId": "play_card:720c219a",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "play_card:720c219a",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -30.583333333333332,
+        "preparationDebt": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-078-20261105-v1.json",
+      "evidenceSha256": "8f2cb336144d93e856c0e3d00992ca9bbdf92207a20dc9221e3d033e9c9736b9",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-078-20261105-v1.raw.json.gz",
+      "rawSha256": "193f7ed03c83356e2ec6ec108a5b4e6c0b5821d9ef5b61abaac6fece6b1f38d0",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 79,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:12318841",
+        "actorId": "player-white",
+        "stateVersion": 26,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "4:0:1",
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1,
+          "remaining": 1
+        },
+        "decision": null,
+        "summary": "R4 向外"
+      },
+      "selectedActionId": "choose_target:12318841",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:12318841",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -30.583333333333332,
+        "preparationDebt": 1,
+        "kind": "goal-plan",
+        "plan": {
+          "kind": "goal-plan",
+          "objective": {
+            "id": "known-tool:card-24-pass-1-5:4:orbit:jupiter:planet",
+            "kind": "known-tool-preparation",
+            "timing": "preparation",
+            "coordinate": {
+              "x": 1,
+              "y": 2
+            },
+            "targetCoordinate": {
+              "x": 1,
+              "y": 3
+            },
+            "label": "已筹资的数据/移动准备"
+          },
+          "route": [
+            {
+              "from": {
+                "x": 1,
+                "y": 1
+              },
+              "to": {
+                "x": 1,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "execution": "deterministic-native-route"
+        },
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-079-20261105-v1.json",
+      "evidenceSha256": "cf29f1f506a3955df4d2f7085f85b0695684fdcff3b56fff2511b08fd79c941a",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-079-20261105-v1.raw.json.gz",
+      "rawSha256": "33ee9d0c3966b84aab970c02bb1d6bde4ab31aee7cc68d8e309b7a467aac99b7",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 80,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 34,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -30.583333333333332,
+        "preparationDebt": 1,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-080-20261105-v1.json",
+      "evidenceSha256": "9a313faf9faed10d90aebc0d97dff6f2e4c5483b9868adc6ffd9cbbc2e0236c0",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-080-20261105-v1.raw.json.gz",
+      "rawSha256": "9a0a7a574b74363ca3f8fd42d9d9622fd1e5f71bba2decb31bea8ca85d2207af",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 81,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:719591bb",
+        "actorId": "player-white",
+        "stateVersion": 35,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-24-pass-1-5"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "dlc_5.png"
+      },
+      "selectedActionId": "play_card:719591bb",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "play_card:719591bb",
+        "target": 2,
+        "value": 87.08333333333333,
+        "realization": -31.583333333333332,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-081-20261105-v1.json",
+      "evidenceSha256": "f0d21935b7a1d0dbf06c75d2a8d2c587c52e394179631e7097f1edb6309eccbf",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-081-20261105-v1.raw.json.gz",
+      "rawSha256": "e4a4849ebe0f4271149e61d1b31e0f973bab2f0a99d7172905b070345301b3a7",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 82,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:12318841",
+        "actorId": "player-white",
+        "stateVersion": 28,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "4:0:1",
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "requiredMovePoints": 1,
+          "remaining": 1
+        },
+        "decision": null,
+        "summary": "R4 向外"
+      },
+      "selectedActionId": "choose_target:12318841",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:12318841",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -31.583333333333332,
+        "preparationDebt": 0,
+        "kind": "goal-plan",
+        "plan": {
+          "kind": "goal-plan",
+          "objective": {
+            "id": "known-tool:card-24-pass-1-5:4:orbit:jupiter:planet",
+            "kind": "known-tool-preparation",
+            "timing": "preparation",
+            "coordinate": {
+              "x": 1,
+              "y": 3
+            },
+            "targetCoordinate": {
+              "x": 1,
+              "y": 3
+            },
+            "label": "已筹资的数据/移动准备"
+          },
+          "route": [
+            {
+              "from": {
+                "x": 1,
+                "y": 2
+              },
+              "to": {
+                "x": 1,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "execution": "deterministic-native-route"
+        },
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-082-20261105-v1.json",
+      "evidenceSha256": "fde026459a572e3d8c1c6cabbe4a3d2252d47dfc531975c2621afca889080830",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-082-20261105-v1.raw.json.gz",
+      "rawSha256": "70f4797869ce1f03ee617fcb6884d2e7402a15bec024a4d29502013db4e2c238",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 83,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 36,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -31.583333333333332,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-083-20261105-v1.json",
+      "evidenceSha256": "df7c9f58022b1cda987bb37cccf34bc6de68434b65891a9622c3e1746e738617",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-083-20261105-v1.raw.json.gz",
+      "rawSha256": "7c338f7a0a43e45cc99e7d9a23082da135c38974d9d6c4120ec67ba285221dc3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 84,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:684d5f30",
+        "actorId": "player-white",
+        "stateVersion": 37,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-42-0"
+        },
+        "payload": {
+          "cost": {},
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_37.png"
+      },
+      "selectedActionId": "play_card:684d5f30",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "play_card:684d5f30",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -24.583333333333332,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-084-20261105-v1.json",
+      "evidenceSha256": "2c4dc9b90677c1fb504ccac3ec7af75e3df65812223caf47ca4c6efaec834b07",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-084-20261105-v1.raw.json.gz",
+      "rawSha256": "c63093a83338e9174fa06ed5e6ed5d4e302877fdb269a583481681af604d6b6e",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 85,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:6b287122",
+        "actorId": "player-white",
+        "stateVersion": 30,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "nebula:sector-2-a",
+          "nebulaId": "sector-2-a",
+          "sectorX": null
+        },
+        "payload": {
+          "gainData": false
+        },
+        "decision": null,
+        "summary": "扫描 天狼星A"
+      },
+      "selectedActionId": "choose_target:6b287122",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:6b287122",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -24.583333333333332,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {},
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-085-20261105-v1.json",
+      "evidenceSha256": "26ca3d0ef904c4b3805ef4db70b010b92fdc4befaf81727a1d3048ba484de6d3",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-085-20261105-v1.raw.json.gz",
+      "rawSha256": "6d457a29231dbdac3f2563c96da73026b898408e11c129141bb2a3816237410f",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 86,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:2618cdf2",
+        "actorId": "player-white",
+        "stateVersion": 30,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "trace:1:pink",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "pink"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 粉色痕迹"
+      },
+      "selectedActionId": "choose_target:2618cdf2",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:2618cdf2",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -24.583333333333332,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-086-20261105-v1.json",
+      "evidenceSha256": "4eb8f16441ac76d933ffa11038aebff12cc79e234f6dd28747eb8d75f5c3cf55",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-086-20261105-v1.raw.json.gz",
+      "rawSha256": "3267126b3206edffcf03f4ce064335812c640f8d0d35dd1bad34dd1135fb7971",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 87,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 38,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-087-20261105-v1.json",
+      "evidenceSha256": "56ebb7aee52481757dc5eac0afd2bbc8b301120c22c6e78961fe2fe5ef765fad",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-087-20261105-v1.raw.json.gz",
+      "rawSha256": "1b2eb51309ffc79176cbf5227179758e0b3488ac647f846c2aa92e817a5bfb73",
+      "classification": "deferred-to-bound-analysis-purpose",
+      "proof": "Actual research/blue inputs88-92, preparation/analyze94-104; whole-white and board anchor before105 exactly match teacher.",
+      "reason": "Fixed resource policy does not fill future-analysis slots after the current main action. It prepares them with the next analysis purpose; no lost resources or tech at aligned anchor.",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 88,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 31,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -25.083333333333332,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-088-20261105-v1.json",
+      "evidenceSha256": "32f7d88555aac312bcb80b45493188e320d3f8dc81a924a8f0f65eaddf61f21b",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-088-20261105-v1.raw.json.gz",
+      "rawSha256": "1946d176d87207dfb3013e6644e1fff1cd8b08da01011b248d27209ce750a6f5",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 89,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 39,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-089-20261105-v1.json",
+      "evidenceSha256": "5e90d1a090f9e84e9b4d82cb5563d26fdf5713d2e585694b7e05ac8c6d61f0e1",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-089-20261105-v1.raw.json.gz",
+      "rawSha256": "2a6e90c19b2a10afd5be3b873c1451781e5b8310c0fb0c599d3773b43937c401",
+      "classification": "deferred-to-bound-analysis-purpose",
+      "proof": "Same exact actual104/teacher104 material anchor; current teacher089 fixed-policy exclusion is explicitly retained.",
+      "reason": "One remaining analysis prerequisite is deferred to the analysis purpose instead of separate post-main preparation; not a native identity equivalence.",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 90,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 32,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -25.583333333333332,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-090-20261105-v1.json",
+      "evidenceSha256": "96406d37513ca61a43dda26507edfc302eea703e242c0012b53cc4cc7ed7834f",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-090-20261105-v1.raw.json.gz",
+      "rawSha256": "c32372e5821345f8b495036284ead757870fcd7b5fb18e91c8922f10ac3ae392",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 91,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 40,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 87.08333333333333,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 87.08333333333333,
+        "realization": -25.583333333333332,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-091-20261105-v1.json",
+      "evidenceSha256": "fac80bab7072a73ee011f1b8c00314c41641e574659d3b0145f27f65a6fedea6",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-091-20261105-v1.raw.json.gz",
+      "rawSha256": "05dd0f5f6e134a37de8c99041b54724137695c5bc0128fd681910ceeaa6f5bee",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 92,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 41,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "selectedActionId": "research_tech:806ccfc8",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "research_tech:806ccfc8",
+        "target": 3,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "tech:blue1:2",
+          "kind": "research_tech",
+          "tileId": "blue1",
+          "blueSlot": 2,
+          "required": {
+            "publicity": 6
+          }
+        },
+        "resourceGoalCount": 10,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-092-20261105-v1.json",
+      "evidenceSha256": "d22ad02c38ad341db15b0b3d52b899601f33b85c38333adfcc7e8d0b07ca72a1",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-092-20261105-v1.raw.json.gz",
+      "rawSha256": "e25b1fd3d9626f3e6f1b9445d08fb9061432f2ce735b28b5dc2b5c172bc557b0",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 93,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:0cbf059c",
+        "actorId": "player-white",
+        "stateVersion": 34,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "tech:blue1:slot:2",
+          "tileId": "blue1",
+          "blueSlot": 2
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue1（蓝槽 2）"
+      },
+      "selectedActionId": "choose_target:0cbf059c",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:0cbf059c",
+        "target": 1,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-093-20261105-v1.json",
+      "evidenceSha256": "558dd8027786276e06139f47d34e3f59a18980ee84f242c4589c1281e1321b82",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-093-20261105-v1.raw.json.gz",
+      "rawSha256": "f022d82b49db6d5cceb6e49b955827849be06b9305be2ffad9f739aa6c205bc3",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 94,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 42,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 1,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:2",
+          "kind": "blue-data",
+          "blueSlot": 2,
+          "targetComputerSlot": 3,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-094-20261105-v1.json",
+      "evidenceSha256": "7c16d56702ceb1fff8397d041990a1d84b4d879465e1fed5b5b1f231e4bb00cf",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-094-20261105-v1.raw.json.gz",
+      "rawSha256": "336806de1a0ead3312081d77721f240d414f9a03ecfc2839d87fa03ca1cb1033",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 95,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:7be78a55",
+        "actorId": "player-white",
+        "stateVersion": 35,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:blueBonus:2",
+          "target": "blueBonus",
+          "blueSlot": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue1 下方"
+      },
+      "selectedActionId": "choose_target:7be78a55",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:7be78a55",
+        "target": 1,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:2",
+          "kind": "blue-data",
+          "blueSlot": 2,
+          "targetComputerSlot": 3,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-095-20261105-v1.json",
+      "evidenceSha256": "e7b258a37a6fe64f27a3ddd33a7741f57ea8b1ee4558a2e704449672faec351b",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-095-20261105-v1.raw.json.gz",
+      "rawSha256": "83627adae99f86fc25eebba1b34d6776e1da2ccecde8f6469cd1513d5f809d93",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 96,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 43,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-096-20261105-v1.json",
+      "evidenceSha256": "1e2f83780ae60911794c8398cedaf9d639a9b0911f28c30c301f6f1c4e917dd2",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-096-20261105-v1.raw.json.gz",
+      "rawSha256": "8968b272e67a176961bbd10212f6c72b9b8ac94ffd4b68aa914233834ac74285",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 97,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:91d79691",
+        "actorId": "player-white",
+        "stateVersion": 36,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:d",
+          "tileId": "d"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 D",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "d",
+          "imageSrc": "../assets/final/final_d2.png",
+          "imageAlt": "终局计分板块 D"
+        }
+      },
+      "selectedActionId": "choose_target:91d79691",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:91d79691",
+        "target": 1,
+        "value": 95.75,
+        "realization": -19.75,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-097-20261105-v1.json",
+      "evidenceSha256": "05079cac3d23c5ac11154b627c4ba089d58676f34aa9f91374ae068dd58d656a",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-097-20261105-v1.raw.json.gz",
+      "rawSha256": "a44c3a0997ad711a5d38ed7a627c1f57a8fe7397e487abdf876437398322c5e1",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 98,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 44,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      "selectedActionId": "analyze:a5629aa3",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "analyze:a5629aa3",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-098-20261105-v1.json",
+      "evidenceSha256": "237d8b5630c2799b150507a8947c6bd7b05351750a57f0e2870fc7c72067ccc6",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-098-20261105-v1.raw.json.gz",
+      "rawSha256": "cca715e5de5de25438a242f0544be315944b5545b74d7cb0107da87a5da6518f",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 99,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8f2f1c72",
+        "actorId": "player-white",
+        "stateVersion": 37,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "trace:1:blue",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 蓝色痕迹"
+      },
+      "selectedActionId": "choose_target:8f2f1c72",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:8f2f1c72",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-099-20261105-v1.json",
+      "evidenceSha256": "54cd97dd2e4752085dd40fe67ecc5597088a14ca9370664354b258f21861abc1",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-099-20261105-v1.raw.json.gz",
+      "rawSha256": "006ecf63d8928fdbc62a28ab1db7ff9ef8d57c56b2b1f0275ab98ffe757ebb3f",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 100,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 45,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-100-20261105-v1.json",
+      "evidenceSha256": "78ede809bbba39ca06e054905e199b303700e50b1b26f24ad4a0f9439c314776",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-100-20261105-v1.raw.json.gz",
+      "rawSha256": "a28ef5780ac88f7721a4d441c3c5f47fda151ad73ef540baa9df41d93433aef8",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 101,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 38,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "selectedActionId": "choose_target:29b5215c",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:29b5215c",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-101-20261105-v1.json",
+      "evidenceSha256": "d98fe0dd466b7b0b4ffc475c0e76a0e4e856db8b84148bf0f45cf484aa0a1cf2",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-101-20261105-v1.raw.json.gz",
+      "rawSha256": "ac53dac764b27a2971e8f5ecf6c09c613d4c5bde3ac6a524727426447898d2e4",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 102,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 46,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "selectedActionId": "place_data:8fd12fd3",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "place_data:8fd12fd3",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-102-20261105-v1.json",
+      "evidenceSha256": "5f0facdbcac929d49f6b9dc52a8dc2f058cc1f009cba85dc47900bb5af149db0",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-102-20261105-v1.raw.json.gz",
+      "rawSha256": "93e80b72e550e82c2d140d9270f30572cd1aefc1848158394d952146ebeea203",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 103,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 39,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue2 下方"
+      },
+      "selectedActionId": "choose_target:44b74627",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_target:44b74627",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-103-20261105-v1.json",
+      "evidenceSha256": "37d7ff2e04215bf6c35bf4737121ad3f08ebd398db020bb626e2de5268de2582",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-103-20261105-v1.raw.json.gz",
+      "rawSha256": "44233c695c8cf0f7405e7c924fb48f8a50807b4e8ef38f60ccc26508ce95892b",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 104,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 47,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "selectedActionId": "end_turn:b2f9b29d",
+      "selectedValue": 95.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 1,
+        "value": 95.75,
+        "realization": -12.25,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-104-20261105-v1.json",
+      "evidenceSha256": "7878bbf0cf82ffbd06870b90058e67c1f4b66989a6028eb95cd06de86b0df72f",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-104-20261105-v1.raw.json.gz",
+      "rawSha256": "83cdf3103b3cef33014b687d8df7c7777600fc23d23d7c52b139af6b36592fe4",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 105,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 48,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "selectedActionId": "quick_trade:f385e2ac",
+      "selectedValue": 97.58333333333333,
+      "selectedTeacher": false,
+      "teacherRootWitness": {
+        "actionId": "pass:a1f33c73",
+        "target": 1,
+        "value": 94.58333333333333,
+        "realization": -11.083333333333334,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-105-20261105-v1.json",
+      "evidenceSha256": "e5422c62e40ad4d96a0f1d08c498aba96e3df32782ccf4053429404d7ccf27d2",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-105-20261105-v1.raw.json.gz",
+      "rawSha256": "87945b6b0ff78d6f0f625bc083e716b89db83e80be08c9033cdaa81f5f819e9f",
+      "classification": "continue-beyond-teacher-end",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    },
+    {
+      "step": 106,
+      "round": 2,
+      "teacherAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c3064b92",
+        "actorId": "player-white",
+        "stateVersion": 41,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-29-pass-2-5"
+        },
+        "decision": null,
+        "summary": "b_101.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-29-pass-2-5",
+          "imageSrc": "../assets/cards/basic/split/b_101.webp",
+          "imageAlt": "b_101.webp"
+        }
+      },
+      "selectedActionId": "choose_card:c3064b92",
+      "selectedValue": 90.75,
+      "selectedTeacher": true,
+      "teacherRootWitness": {
+        "actionId": "choose_card:c3064b92",
+        "target": 2,
+        "value": 90.75,
+        "realization": -15.25,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-106-20261105-v1.json",
+      "evidenceSha256": "becb29ffa00a1991e01cd7f0f101561a12fba9a41a427e22e2042ff7259fa25f",
+      "rawPath": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-cold-serial-teacher-106-20261105-v1.raw.json.gz",
+      "rawSha256": "ad0f2055035e44434ea55f2ce3b218a494e4906b4632004cc8256de421d064f2",
+      "classification": "same-action",
+      "scope": "Current cold teacher-root observation only; root attained values/policy exclusions are not promoted to exact maxima for unexecuted actions."
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "firstTwoRoundLearningRequirementsProven": true,
+  "wholeGameBaselineUnchanged": "ai-search-v41-baseline-20261029"
+}

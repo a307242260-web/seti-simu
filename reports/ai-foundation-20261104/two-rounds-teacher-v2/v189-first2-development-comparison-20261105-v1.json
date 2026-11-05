@@ -1,0 +1,634 @@
+{
+  "nativeVerification": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+  "nativeVerificationSha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca",
+  "allAssetSummariesMatchBothNativeCheckpoints": true,
+  "roundEnd": "before-PASS-card-and-next-income",
+  "rows": [
+    {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "ai": {
+        "score": 15,
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": []
+        },
+        "probes": [],
+        "sectorWins": [],
+        "scanProgress": [
+          {
+            "sectorId": "sector-2-a",
+            "ownedSlots": [
+              1,
+              2
+            ],
+            "capacity": 6
+          },
+          {
+            "sectorId": "sector-4-b",
+            "ownedSlots": [
+              1
+            ],
+            "capacity": 5
+          }
+        ],
+        "alienTraceSlots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ]
+      },
+      "teacher": {
+        "score": 15,
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 3,
+          "score": 15
+        },
+        "hand": [],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "probes": [],
+        "sectorWins": [],
+        "scanProgress": [
+          {
+            "sectorId": "sector-2-a",
+            "ownedSlots": [
+              1,
+              2
+            ]
+          },
+          {
+            "sectorId": "sector-4-b",
+            "ownedSlots": [
+              1
+            ]
+          }
+        ],
+        "alienTraceSlots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ]
+      },
+      "boardScoreDelta": 0,
+      "technologyCountDelta": 0,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "aiCheckpoint": "reports/research/e01243ba.93989585.quick-400.json.round-end-1.checkpoint.json",
+      "teacherCheckpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round1-end-before-pick-income-20261104-v1.checkpoint.json"
+    },
+    {
+      "round": 2,
+      "phase": "before-pass-card-and-income",
+      "ai": {
+        "score": 50,
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 2,
+          "score": 50
+        },
+        "hand": [],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-19",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-20",
+              "index": 13,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-21",
+              "index": 14,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "probes": [],
+        "sectorWins": [
+          {
+            "sectorId": "sector-2-a",
+            "settlementNumber": 1
+          }
+        ],
+        "scanProgress": [
+          {
+            "sectorId": "sector-4-b",
+            "ownedSlots": [
+              1,
+              2
+            ],
+            "capacity": 5
+          }
+        ],
+        "alienTraceSlots": [
+          {
+            "slotId": 1,
+            "revealed": true,
+            "alienId": "阿米巴",
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "neutral": false
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "neutral": false
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ]
+      },
+      "teacher": {
+        "score": 34,
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 34
+        },
+        "hand": [],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "probes": [
+          {
+            "angleDegrees": -22.5,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 1,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 1,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 227.66,
+            "sectorX": 1,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "sectorWins": [
+          {
+            "sectorId": "sector-2-a",
+            "settlementNumber": 1
+          }
+        ],
+        "scanProgress": [
+          {
+            "sectorId": "sector-4-b",
+            "ownedSlots": [
+              1,
+              2
+            ]
+          }
+        ],
+        "alienTraceSlots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "neutral": false
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "neutral": false
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ]
+      },
+      "boardScoreDelta": 16,
+      "technologyCountDelta": 1,
+      "incomeDelta": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": -1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 16
+      },
+      "aiCheckpoint": "reports/research/e01243ba.93989585.quick-400.json.round-end-2.checkpoint.json",
+      "teacherCheckpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json"
+    }
+  ],
+  "goalStatus": "active",
+  "goalAchieved": false
+}

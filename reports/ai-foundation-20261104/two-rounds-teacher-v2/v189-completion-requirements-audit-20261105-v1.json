@@ -1,0 +1,215 @@
+{
+  "status": "learning-and-validation-proven-delivery-pending",
+  "objectiveScope": "Human405 first2 learning: native per-round score, all exactteacher technology/slots/disabled retained and sixincome at leastteacher; resources/data/probes/scans/traces compared and differences explained. No exact-action imitation, whole4seat-state equivalence, R3performance or newwholegamebaseline claim.",
+  "roundEndUserOverride": "轮末选牌也放到下一轮开始，轮末状态不要计入",
+  "requirements": [
+    {
+      "id": "same23OpeningAndPassiveOpponentContract",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+          "sha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-current-native-replay-20261105-v1.json",
+          "sha256": "7d521e5acc4329001c4fa6d23159635bed8beed3684fcf4950d64a2f9128a9b2"
+        }
+      ],
+      "detail": "Actual125 inputs and current teacher83 post-opening inputs use the same fixed23 opening; other seats onlyPASS and mandatory choices."
+    },
+    {
+      "id": "latestExplicitRoundEndPhaseAndNativeIncomeReplay",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+          "sha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-development-comparison-20261105-v1.json",
+          "sha256": "3bbbe2ecf576b7063618ffa9180d3a0d280a410ccad180b720543f12cde74941"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-current-native-replay-20261105-v1.json",
+          "sha256": "7d521e5acc4329001c4fa6d23159635bed8beed3684fcf4950d64a2f9128a9b2"
+        }
+      ],
+      "detail": "Latest user instruction excludes PASS reserve choice and next income from the compared round-end. Actual native replay/save still executes these phases and advancesR3; stocks are never mixed across phases."
+    },
+    {
+      "id": "threeDevelopmentCriteriaEveryRound",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-alignment-audit-20261105-v1.json",
+          "sha256": "6c5f02a22598e24ab4f27fcc4c8f551ad169b0adb42c941f4f8f47400f3bec60"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-development-comparison-20261105-v1.json",
+          "sha256": "3bbbe2ecf576b7063618ffa9180d3a0d280a410ccad180b720543f12cde74941"
+        }
+      ],
+      "detail": "R1 15/15, same2tech/sixincome;R2 50/34, all3teachertech with exactblue slots retained pluspurple1, creditincome7/6 and other5income equal."
+    },
+    {
+      "id": "resourcesProbesDataTracesAndBoardInvestmentCompared",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-alignment-audit-20261105-v1.json",
+          "sha256": "6c5f02a22598e24ab4f27fcc4c8f551ad169b0adb42c941f4f8f47400f3bec60"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-actual-step105-20261105-v1.json",
+          "sha256": "4e998b6c95c1c40c6ff4265674fca1f26bf40fb91d9643cd199ce1c4a0b40927"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json",
+          "sha256": "49c5d1a351a9c3b4c91361024661a5a011d7e54019df4039e23a41d0914d945a"
+        }
+      ],
+      "detail": "Actual104 already attains the entire teacher white player state, all material board slices and draw/public cards. Finalprobe converted into a real Jupiter landing; no claim of full four-seat state identity or globally optimal future play."
+    },
+    {
+      "id": "teacherNodesAndNonmatchingChoicesExplained",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-alignment-audit-20261105-v1.json",
+          "sha256": "6c5f02a22598e24ab4f27fcc4c8f551ad169b0adb42c941f4f8f47400f3bec60"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-order-native-controls-20261105-v1.json",
+          "sha256": "e463a9f3e226bcd3596e8187e2453caad1b00bb4680adb302a322e328d7ab87c"
+        },
+        {
+          "path": "docs/human405-v189-teacher-node-review-20261105.md",
+          "sha256": "bd844edd5b315088c9d6ed07db2520a1081416548680b07c4e798c0cf9ce4014"
+        }
+      ],
+      "detail": "65white teacher roots through104:60same,5classified;2order/movement pairs native16inputs; other preparation timing reaches exactteacher assetanchor. Two PASS/pick roots also retained. Policy exclusions/attained values not misrepresented as exactmaxima."
+    },
+    {
+      "id": "evidenceBasedFixesAndControlledExecution",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "docs/ai-known-movement-tool-20261105.md",
+          "sha256": "2becbfda9a8ba75702078ecedd72c529196f3135abce70d642100a043c27c58a"
+        },
+        {
+          "path": "docs/ai-sector-mission-composition-20261105.md",
+          "sha256": "282b70e69e7acd2c062cfb985b5a1f33f334f3b136fa5318c88567312f28b5d7"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-sector-mission-prefix-native-20261105-v1.json",
+          "sha256": "7c98bb5de5fa0179b0df7727669dd60966a0594c1e1a4a29069bac3c54ffa8e3"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-alignment-audit-20261105-v1.json",
+          "sha256": "6c5f02a22598e24ab4f27fcc4c8f551ad169b0adb42c941f4f8f47400f3bec60"
+        }
+      ],
+      "detail": "Known card identity, funded research/income/data/probe preparation and finite tool progression corrected. Latest native21prefix control exposed lost7capital; corrected common wallet preserves unspent mission and no-refill token ledger."
+    },
+    {
+      "id": "completeSearchRootAndRngIsolationAndLimits",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+          "sha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-current-teacher-serial-gate-20261105-v1.json",
+          "sha256": "a85840ef56f7ea38320da6c05b206050e4c8b234798add599434a348d3f12f40"
+        }
+      ],
+      "detail": "391named/308coldunique complete, full native identity dedup, max252/558.305041ms; actual86 max252/378.028083ms, allproductionlimitsnull, root/RNG restored."
+    },
+    {
+      "id": "singleStandardAutonomousAndNoSameSourceResampling",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+          "sha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-all-white-search-roots-20261105-v1.json",
+          "sha256": "fc212866255ccedcde616bd5414c8f119a9c5719e408adfa3094537fb978079a"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-geometry-gate-parity-20261105-v1.json",
+          "sha256": "2f36861a87d9a335bfb342cadb6df287596b3353760359ec7b74aeae53871041"
+        }
+      ],
+      "detail": "One standard controlled experiment at93989585; zero policy queries to recapture86roots; V188608msfirstfailure and candidate remain archived."
+    },
+    {
+      "id": "requiredNodeBrowserAndInputChecks",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-admission-source-check-20261105-v1.json",
+          "sha256": "6b80802f83c441dab9b411b498b50949d5499d0cb0b338f418a8d0727e698679"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-node-full-20261105-v1.log",
+          "sha256": "f6e0de2675d77bd48f452605bb6c027e54761f4e6ebaf0de1d7a0bcd43d05ecb"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-chrome-ai-twentysix-20261105-v1.log",
+          "sha256": "f6cfade19b08d52ff863ea912e2444b6f6c4fbccf3e9310c6ee6ddb990cf8118"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-value-input-audit-20261105-v1.log",
+          "sha256": "864cacd8d25a3e1ff7cfb6407219434f54bfbed17358b425fe18dd0b4425b77b"
+        }
+      ],
+      "detail": "172unit+1fullFlow,26Chrome,47currentindependentinputs passed. One unchanged legacy frozen-aomomo audit error is explicitly retained; whole audit is not claimed green."
+    },
+    {
+      "id": "nativeSourceReplayAndRoundEvidenceTraceable",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json",
+          "sha256": "1f4ac332f975af30ac0513b90e4b5ec7c2bc23b63ae086325e09820f3fd9a5ca"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-teacher-current-native-replay-20261105-v1.json",
+          "sha256": "7d521e5acc4329001c4fa6d23159635bed8beed3684fcf4950d64a2f9128a9b2"
+        },
+        {
+          "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-all-white-search-roots-20261105-v1.json",
+          "sha256": "fc212866255ccedcde616bd5414c8f119a9c5719e408adfa3094537fb978079a"
+        }
+      ],
+      "detail": "Both current teacher nativeenvelopes match frozen corrected references; actual102post-opening inputs, round checkpoints, finalstate/session/RNG verified, sourcehashes checked by delivery."
+    },
+    {
+      "id": "preserveWholeGameBaselineAndGenerationIsolation",
+      "state": "proven",
+      "evidence": [
+        {
+          "path": "reports/iteration/versions.json",
+          "sha256": "ca3ef3dd92e1bb2f8d23a5b00b04b513ad09acf0c09c0ebb8ba07aba3142033f"
+        },
+        {
+          "path": "reports/iteration/registry.json",
+          "sha256": "21987f26bbdbaa5437557fd3b7cbdef8433adead7fbebfe8da4bbd037850d7ac"
+        }
+      ],
+      "detail": "Controlled two-round learning result only; V41whole-gamebaseline retained, V2separate fromV1. Shared-worktree foreignV1 preservation checked atdelivery."
+    }
+  ],
+  "learningAndValidationRequirementsProven": true,
+  "requiredDeliveryRemaining": [
+    "Commit result/save/trace/report/current-native checkpoints/alignment evidence with privateindex, preserveforeignV1 andV41baseline;pushorigin/dev.",
+    "Verify realcommittedsource/artifacts andliveV2report/remote tip, then update_goal complete."
+  ],
+  "goalStatusAtGeneration": "active",
+  "wholeGameBaselineUnchanged": "ai-search-v41-baseline-20261029"
+}
