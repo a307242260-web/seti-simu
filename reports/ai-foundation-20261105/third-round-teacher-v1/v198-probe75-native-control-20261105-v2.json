@@ -1,0 +1,127 @@
+{
+  "status": "executed",
+  "scope": "Execute the named current-wallet-funded Uranus route, no policy search or autonomous game. Ordinary new cards are masked by the shared native information-barrier sanitizer.",
+  "reference": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-probe75-purpose-20261105-v1.json",
+  "referenceSha256": "1f6d8a54634580856e0fe5d9f0aa0f75bb712d1e8e646ba343b99d3ce545c3d9",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-actual-orange1-after-three-actions-20261105-v1.envelope.json",
+  "sourceSha256": "d40d018843b5087e42bfda8a62d6e45557a051e102b893b640a5665bc8388b85",
+  "nativeInputs": 12,
+  "resumedAcceptedNativeInputs": 2,
+  "newNativeInputs": 10,
+  "resumedCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-probe75-native-prefixes-20261105-v1.checkpoint.json",
+  "resumedCheckpointSha256": "23f6522719d6bf51d3414a94e0e52826c3f59ddd5469ce7e7633e4130ad890c9",
+  "quotedValue": 7.5,
+  "linearNativeValue": 8.5,
+  "modelBefore": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 115,
+    "components": {
+      "realizedScore": 56,
+      "currentEndGameBonus": 22,
+      "resources": 10,
+      "hand": 0,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 7.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "modelAfterMasked": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 116,
+    "components": {
+      "realizedScore": 67,
+      "currentEndGameBonus": 22,
+      "resources": 4.5,
+      "hand": 3,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "modelValueDelta": 1,
+  "beforeAssets": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 4,
+      "credits": 3,
+      "energy": 4,
+      "handSize": 0,
+      "publicity": 1,
+      "score": 56
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "handCount": 0,
+    "probes": [
+      {
+        "angleDegrees": 170.1,
+        "color": "white",
+        "id": 5,
+        "launchGrid": {
+          "x": 6,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 6,
+          "y": 1
+        },
+        "playerId": "player-white",
+        "playerSequence": 1,
+        "radius": 69.42,
+        "sectorX": 5,
+        "sectorY": 1,
+        "slotIndex": 2,
+        "surface": "solar-board"
+      }
+    ]
+  },
+  "afterAssets": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 5,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 3,
+      "publicity": 3,
+      "score": 67
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "handCount": 3,
+    "probes": []
+  },
+  "endpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-probe75-native-endpoint-20261105-v2.envelope.json",
+  "endpointSha256": "44aee8a6020469c8d382bb55d71892b65eea834bf1fab2c3b8c8591598fc5ed6",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-probe75-native-prefixes-20261105-v2.checkpoint.json",
+  "checkpointSha256": "7cc7e389e8a08e6053b6e92937b6393c431136068eb7a1995de39113d0ab8cf4",
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

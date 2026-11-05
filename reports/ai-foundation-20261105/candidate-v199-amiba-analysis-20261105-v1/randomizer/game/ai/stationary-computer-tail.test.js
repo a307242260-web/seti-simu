@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value'),search=require('./decision-search'),agent=require('./search-agent');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json'))),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),evaluate=values.createStateValueEvaluator(f.seatId),proofs=new Map();
+try{
+ const port={...p,turnTailBoundary(node,spec){if(spec.dataPlans?.[0]?.goal.kind==='computer-prefix')proofs.set(node,spec);return p.turnTailBoundary(node,spec);}};
+ const root=p.openRoot(),result=search.searchDecision({port,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget:{transitions:256,nodes:2048,frontier:512,milliseconds:5000}});assert(result.complete,result.stopReason);assert(result.diagnostics.nativeExecutions<=256);assert.equal(result.actionId,'orbit:44937d1f');assert.equal(result.value,values.sumValueParts([64.5,62/182,11/3]),'same value and choice as the V196 full 268-input native graph');
+ assert(proofs.size>=6,'the actual decision must use the newly audited fixed data tails');let nativeControls=0,fractional=0;
+ for(const[node,spec]of proofs){
+  assert.equal(spec.dataPlans.length,1);const plan=p.resourceSpec(node).plans[0];assert.equal(plan.goal.kind,'computer-prefix');assert(!Number.isSafeInteger(evaluate(p.valueObservation(node))*2));fractional++;
+  const placed=p.expandResourcePlan(node,plan,()=>null);assert(placed.complete);const end=placed.node.legalActions.find(a=>a.family==='end_turn');assert(end);const boundary=p.expand(placed.node,end.actionId);assert(['turn-boundary','information-barrier','other-owner'].includes(boundary.status),boundary.status);
+  assert.equal(placed.submissions+1,spec.requiredNativeInputs);assert.equal(evaluate(p.valueObservation(boundary)),values.sumValueParts([evaluate(p.valueObservation(node)),spec.netGain]),'fractional exact-ledger proof must equal the independently executed native tail');nativeControls++;
+ }
+ assert.deepEqual(c.lifecycle.save().envelope,original);
+ console.log(JSON.stringify({complete:true,nativeInputs:result.diagnostics.nativeExecutions,unchanged268InputGraphChoiceAndValue:true,nativeTailControls:nativeControls,fractionalBaseControls:fractional,noInventedSuccessor:true,rootAndRngUnchanged:true}));
+}finally{p.close();c.dispose();}

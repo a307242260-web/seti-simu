@@ -1,0 +1,600 @@
+{
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v198-actual-orange1-after-three-actions-20261105-v1.envelope.json",
+  "sourceSha256": "d40d018843b5087e42bfda8a62d6e45557a051e102b893b640a5665bc8388b85",
+  "value": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 115,
+    "components": {
+      "realizedScore": 56,
+      "currentEndGameBonus": 22,
+      "resources": 10,
+      "hand": 0,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 7.5,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "quote": {
+    "value": 7.5,
+    "selected": {
+      "id": "5:orbit:uranus:planet",
+      "family": "orbit",
+      "planet": "uranus",
+      "funded": true,
+      "supported": true,
+      "payment": {
+        "spend": {
+          "credits": 3,
+          "energy": 4
+        },
+        "energyPurchases": 1,
+        "creditPurchases": 0,
+        "value": 7
+      },
+      "route": {
+        "coordinate": {
+          "x": 6,
+          "y": 4
+        },
+        "cost": 4,
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          }
+        ]
+      },
+      "ledger": [
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 3
+          },
+          "value": 3
+        },
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 8
+          },
+          "value": 8
+        },
+        {
+          "type": "draw_cards",
+          "count": 3,
+          "value": 3,
+          "identityKnown": false
+        },
+        {
+          "type": "choose_nebula_scan",
+          "selected": {
+            "id": "sector-1-b",
+            "tokenId": "nebula-data-6",
+            "value": 0.5,
+            "score": 0,
+            "data": 1
+          },
+          "value": 0.5,
+          "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+        }
+      ],
+      "capitalDelta": 0,
+      "dataContinuation": null,
+      "value": 7.5
+    },
+    "candidates": [
+      {
+        "id": "5:orbit:mercury:planet",
+        "family": "orbit",
+        "planet": "mercury",
+        "funded": true,
+        "supported": false,
+        "payment": {
+          "spend": {
+            "credits": 3,
+            "energy": 4
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 7
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 1
+          },
+          "cost": 4,
+          "path": [
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 3
+            },
+            "value": 3
+          },
+          {
+            "type": "draw_cards",
+            "count": 1,
+            "value": 1,
+            "identityKnown": false
+          },
+          {
+            "type": "scan_planet_sector",
+            "selected": {
+              "id": "sector-2-a",
+              "tokenId": "nebula-data-46",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "scan_planet_sector",
+            "selected": {
+              "id": "sector-2-a",
+              "tokenId": "nebula-data-47",
+              "value": 2.5,
+              "score": 2,
+              "data": 1
+            },
+            "value": 2.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "income",
+            "value": 0,
+            "unresolvedUnknownIncome": true
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 0
+      },
+      {
+        "id": "5:land:mercury:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:orbit:venus:planet",
+        "family": "orbit",
+        "planet": "venus",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 1,
+            "energy": 3
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 4
+        },
+        "route": {
+          "coordinate": {
+            "x": 3,
+            "y": 1
+          },
+          "cost": 2,
+          "path": [
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 3
+            },
+            "value": 3
+          },
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 6
+            },
+            "value": 6
+          },
+          {
+            "type": "income",
+            "value": 0,
+            "unresolvedUnknownIncome": false
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 5
+      },
+      {
+        "id": "5:land:venus:planet",
+        "family": "land",
+        "planet": "venus",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 2,
+            "energy": 4
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 6
+        },
+        "route": {
+          "coordinate": {
+            "x": 3,
+            "y": 1
+          },
+          "cost": 2,
+          "path": [
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_data",
+            "count": 2,
+            "value": 1
+          },
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 5
+            },
+            "value": 5
+          },
+          {
+            "type": "alien_trace",
+            "slotId": 1,
+            "traceType": "yellow",
+            "first": false,
+            "gain": {
+              "score": 3
+            },
+            "value": 3,
+            "excluded": "revealed-species effects and future discovery"
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 3
+      },
+      {
+        "id": "5:orbit:mars:planet",
+        "family": "orbit",
+        "planet": "mars",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 3,
+            "energy": 4
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 7
+        },
+        "route": {
+          "coordinate": {
+            "x": 0,
+            "y": 2
+          },
+          "cost": 4,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "pick_card",
+            "cardId": "dlc_32.png",
+            "value": 1,
+            "policy": "one fixed known income or held-purpose quote; not a claim of native card identity equivalence"
+          },
+          {
+            "type": "scan_planet_sector",
+            "selected": {
+              "id": "sector-3-b",
+              "tokenId": "nebula-data-28",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "income",
+            "cardId": "dlc_32.png",
+            "gain": {
+              "credits": 1
+            },
+            "value": 1,
+            "handPurposeCost": 0
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 0
+      },
+      {
+        "id": "5:land:mars:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:orbit:jupiter:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:land:jupiter:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:orbit:saturn:planet",
+        "family": "orbit",
+        "planet": "saturn",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 3,
+            "energy": 4
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 7
+        },
+        "route": {
+          "coordinate": {
+            "x": 4,
+            "y": 3
+          },
+          "cost": 4,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 2
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "publicity": 2
+            },
+            "value": 1
+          },
+          {
+            "type": "scan_planet_sector",
+            "selected": {
+              "id": "sector-4-b",
+              "tokenId": "nebula-data-40",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "income",
+            "value": 0,
+            "unresolvedUnknownIncome": false
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 0
+      },
+      {
+        "id": "5:land:saturn:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:orbit:neptune:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:land:neptune:planet",
+        "funded": false,
+        "value": 0
+      },
+      {
+        "id": "5:orbit:uranus:planet",
+        "family": "orbit",
+        "planet": "uranus",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 3,
+            "energy": 4
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 7
+        },
+        "route": {
+          "coordinate": {
+            "x": 6,
+            "y": 4
+          },
+          "cost": 4,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 3
+            },
+            "value": 3
+          },
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 8
+            },
+            "value": 8
+          },
+          {
+            "type": "draw_cards",
+            "count": 3,
+            "value": 3,
+            "identityKnown": false
+          },
+          {
+            "type": "choose_nebula_scan",
+            "selected": {
+              "id": "sector-1-b",
+              "tokenId": "nebula-data-6",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 7.5
+      },
+      {
+        "id": "5:land:uranus:planet",
+        "funded": false,
+        "value": 0
+      }
+    ],
+    "scope": "One current-wallet-funded ordinary mission with its complete paid geometric route and optional fixed existing-data tail; maximum, not sum. No future income, card moves, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound."
+  },
+  "sourceHashes": {
+    "randomizer/game/ai/probe-capital.js": "f9147e572f9498a2f0e06b819dbbc51c249b4437539718aadae72b1153084147",
+    "randomizer/game/ai/state-value.js": "fcf1990615792165f1784f7a2a6801d80f27d5fb09be950f3f8a31a5ad07f201"
+  },
+  "nativeInputs": 0,
+  "newAutonomousRuns": 0
+}

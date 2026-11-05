@@ -1,0 +1,17 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/attribute-teacher-scan-tech-20261105-v2.js:18
+const mercuries=[146,190,206,227].map(id=>{const row=byId.get(id),b=row.before.player.resources,a=row.after.player.resources;return{historicalInput:id,nebula:row.action.target.nebulaId,beforeResources:b,afterResources:a,netDelta:Object.fromEntries(Object.keys(b).map(k=>[k,a[k]-b[k]]).filter(([,v])=>v!==0)),beforeSectors:row.before.data.sectorSettlements,afterSectors:row.after.data.sectorSettlements};});
+                                                                                                                                                                                                                                                                                                                                                  ^
+
+TypeError: Cannot read properties of undefined (reading 'sectorSettlements')
+    at /private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/attribute-teacher-scan-tech-20261105-v2.js:18:339
+    at Array.map (<anonymous>)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/attribute-teacher-scan-tech-20261105-v2.js:18:35)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+
+Node.js v22.22.0

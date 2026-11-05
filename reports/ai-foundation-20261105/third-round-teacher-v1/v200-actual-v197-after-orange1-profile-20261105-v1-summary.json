@@ -1,0 +1,188 @@
+{
+  "input": "reports/ai-foundation-20261105/third-round-teacher-v1/v200-actual-v197-after-orange1-profile-20261105-v1.cpuprofile.gz",
+  "inputSha256": "47753594f411069a218078043e35f47a0ed82290609ea68f8ade1e095754ef2a",
+  "timingScope": "Instrumented root-and-search CPU samples only, not a cold decision admission sample",
+  "profileMs": 683.083,
+  "withinResearchIncomeMs": 3,
+  "withinPurposeMs": 341.754,
+  "self": [
+    {
+      "key": "node:internal/worker/js_transferable:structuredClone",
+      "milliseconds": 89.33
+    },
+    {
+      "key": ":(garbage collector)",
+      "milliseconds": 36.42
+    },
+    {
+      "key": "game/ai/state-value.js:",
+      "milliseconds": 22.958
+    },
+    {
+      "key": "game/ai/analysis-port.js:normalize",
+      "milliseconds": 22.332
+    },
+    {
+      "key": "game/ai/research-trigger-capital.js:gains",
+      "milliseconds": 22.21
+    },
+    {
+      "key": "randomizer/solar-system/core.js:getBaseWheelCell",
+      "milliseconds": 19.499
+    },
+    {
+      "key": "randomizer/solar-system/core.js:resolveNormalizedVisibleContent",
+      "milliseconds": 18.832
+    },
+    {
+      "key": "game/ai/probe-capital.js:quote",
+      "milliseconds": 18.543
+    },
+    {
+      "key": "game/ai/probe-capital.js:",
+      "milliseconds": 16.919
+    },
+    {
+      "key": "game/ai/probe-capital.js:capital",
+      "milliseconds": 16.833
+    },
+    {
+      "key": "game/state/state-store.js:stableSerialize",
+      "milliseconds": 15.542
+    },
+    {
+      "key": "node:inspector:post",
+      "milliseconds": 14.291
+    },
+    {
+      "key": "game/ai/probe-capital.js:requirements",
+      "milliseconds": 13.583
+    },
+    {
+      "key": "randomizer/solar-system/core.js:createSolarSnapshot",
+      "milliseconds": 13.374
+    },
+    {
+      "key": "randomizer/solar-system/core.js:getNebulaAtCoordinate",
+      "milliseconds": 12.542
+    },
+    {
+      "key": "randomizer/solar-system/core.js:getWheelCellAtDisplayCoordinate",
+      "milliseconds": 12.083
+    },
+    {
+      "key": "game/ai/analysis-port.js:forwardIdentity",
+      "milliseconds": 10.541
+    },
+    {
+      "key": "game/ai/state-value.js:basePurposeCapital",
+      "milliseconds": 10.458
+    },
+    {
+      "key": "game/ai/research-trigger-capital.js:describe",
+      "milliseconds": 9.207
+    },
+    {
+      "key": "randomizer/solar-system/core.js:mod8",
+      "milliseconds": 8.916
+    },
+    {
+      "key": "randomizer/game/rule-composition.js:deepFreeze",
+      "milliseconds": 7.459
+    },
+    {
+      "key": "game/ai/resource-demand.js:immutableCapitalInput",
+      "milliseconds": 7.459
+    },
+    {
+      "key": "game/ai/amiba-analysis-capital.js:quote",
+      "milliseconds": 7.417
+    },
+    {
+      "key": "game/ai/analysis-port.js:normalizeObject",
+      "milliseconds": 7.249
+    },
+    {
+      "key": "randomizer/game/end-game-scoring.js:getFormulaBaseValue",
+      "milliseconds": 6.126
+    }
+  ],
+  "structuredCloneCallers": [
+    {
+      "key": "ai/probe-capital.js:quote <- ai/state-value.js:basePurposeCapital <- ai/state-value.js:portfolio <- ai/state-value.js:",
+      "milliseconds": 17.458
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:restoreCheckpoint <- game/rule-composition.js:restore <- ai/analysis-port.js:restoreEnvelope",
+      "milliseconds": 16.416
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:beginWorkingCopy <- effects/session-runtime.js:dispatchStandardAction <- game/rule-composition.js:submitAction",
+      "milliseconds": 14.957
+    },
+    {
+      "key": "ai/amiba-analysis-capital.js:quote <- ai/ready-analysis-capital.js:quote <- ai/state-value.js:capitalWithoutSector <- ai/state-value.js:purposeCapitalWithoutSymbols",
+      "milliseconds": 10.5
+    },
+    {
+      "key": "app/rule-observation.js:clone <- app/rule-observation.js:buildRuleObservation <- adhoc/profile-v200-cold-failure-20261105-v1.js:projectCounterfactualState <- game/production-kernel.js:projectState",
+      "milliseconds": 7.416
+    },
+    {
+      "key": "ai/probe-capital.js:quote <- ai/state-value.js:basePurposeCapital <- ai/state-value.js:capitalWithoutSector <- ai/state-value.js:purposeCapitalWithoutSymbols",
+      "milliseconds": 3.042
+    },
+    {
+      "key": "game/rule-composition.js:clone <- game/rule-composition.js:publish <- game/rule-composition.js:finishIfTerminal <- game/rule-composition.js:advanceSession",
+      "milliseconds": 3.041
+    },
+    {
+      "key": "data/state.js:listBluePlacementRequirements <- game/production-kernel.js:getResourceGoalRequirements <- ai/analysis-port.js:resourceQuery <- ai/analysis-port.js:resourceCatalog",
+      "milliseconds": 3
+    },
+    {
+      "key": "aliens/amiba.js:getPublicSymbolState <- ai/probe-capital.js:researchFactsFromState <- ai/probe-capital.js:factsFromState <- ai/resource-demand.js:valueFacts",
+      "milliseconds": 2.958
+    },
+    {
+      "key": "ai/local-decision-plans.js:pureOptional <- ai/analysis-port.js:localDecisionSpec <- ai/analysis-port.js:expandResourcePlan <- ai/decision-search.js:searchDecision",
+      "milliseconds": 1.542
+    },
+    {
+      "key": "state/state-store.js:clone <- state/state-store.js:loadCurrent <- state/state-store.js:deserialize <- game/rule-composition.js:validateRestore",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "aliens/amiba.js:getPublicTraceState <- ai/probe-capital.js:researchFactsFromState <- ai/probe-capital.js:factsFromState <- ai/resource-demand.js:valueFacts",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:appendReplayStep <- effects/session-runtime.js:dispatchAction <- effects/session-runtime.js:dispatchStandardAction",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "worker/js_transferable:structuredClone <- effects/session-runtime.js:clone <- effects/session-runtime.js:normalizeEffect <- effects/session-runtime.js:",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "effects/session-runtime.js:clone <- effects/session-runtime.js:commit <- effects/session-runtime.js:advance <- effects/session-runtime.js:drain",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "effects/probe-turn-session.js:clone <- effects/probe-turn-session.js:createEffectGroup <- game/rule-composition.js:createProductionEffectGroup <- effects/session-runtime.js:dispatchAction",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "ai/analysis-port.js: <- ai/analysis-port.js:rememberPlan <- ai/decision-search.js:searchDecision <- adhoc/profile-v200-cold-failure-20261105-v1.js:",
+      "milliseconds": 1.5
+    },
+    {
+      "key": "worker/js_transferable:structuredClone <- game/rule-composition.js:clone <- game/rule-composition.js:createProductionEffectGroup <- effects/session-runtime.js:dispatchAction",
+      "milliseconds": 1.458
+    },
+    {
+      "key": "worker/js_transferable:structuredClone <- ai/probe-capital.js:quote <- ai/state-value.js:basePurposeCapital <- ai/state-value.js:portfolio",
+      "milliseconds": 0.542
+    }
+  ]
+}

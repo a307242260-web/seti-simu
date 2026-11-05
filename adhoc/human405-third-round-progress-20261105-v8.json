@@ -1,0 +1,223 @@
+{
+  "status": "active",
+  "goalScope": "third-round-from-exact-teacher-native-state-first; revisit-end-of-round2-afterwards",
+  "runtime": "V189/V22",
+  "runtimeChanged": false,
+  "newAutonomousRuns": 0,
+  "teacherRound3CurrentNativeReference": {
+    "score": 105,
+    "technology": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "endPhase": "before-PASS-card-and-next-income"
+  },
+  "openingCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-107-20261105-v1.checkpoint.json",
+  "firstWhiteRoot": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-first-white-root-20261105-v1.json",
+  "nextIssue": "V203 fixed greedy analysis plan realizes native9.5 and one shared-portfolio quote, eight first cold roots pass max256/553.039416ms; actual-after-orange1 preserves134 inputs/action/value126 and improves706.9775->436.963667ms. Failed V199-V202 samples retained, ineffective geometry/investment caches removed. Continue remaining same-state R3 strategy gaps and complete source admission before unique standard autonomous R3; revisit R2 only afterwards.",
+  "deferredSecondRoundReview": [
+    "earlyJupiterLanding",
+    "Amiba0/3 corners",
+    "Amiba1 income vs played trigger engine"
+  ],
+  "evidence": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/initial-native-audit-20261105-v1.json": "9bceb7faf5766a8c5a47bec09f6f522d3511ed05a7a85932748dddaf5865adcc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v1.json": "a0aa1741d71dc59a5ec5643e1a101dbea0706a229ac797e1b33846c1c230ac33",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v2.json": "6037289227b9169e8ea45fece24a6f5dd9e4f3eb70fd333f96f72a5a51d10e84",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/known-amiba-teacher-prefix-value-20261105-v1.json": "37834be8ade1629f8fd7c838f7765f98a36c08dcd3a078ef626950f5a110ea94",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-computer-prefix-review-20261105-v1.json": "3b93f2a627f09e2feddf40daeaee6d972c3d76c330aff12fbf31b891bce417b4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v193-research-mark-review-20261105-v1.json": "f76319fecb78dc736266f21481eca352d1ce66e30ac30d1236b5ab2eec9e1c68",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v197-trigger-and-tail-review-20261105-v1.json": "ceebc261b9cfb970a80262dda269c3801c9f055086bd2c48517630c5750aa56c",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v198-symbol-and-target-review-20261105-v1.json": "6b9eb63d1e2f095f92bf20b39f77d23fdc6c5c311f2dbe63eb8326bffa909a18",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v199-ready-analysis-review-20261105-v1.json": "3df2238a230baf0a2057859925efb0990f622062da9e551dabdc3cb546aca001",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v203-fixed-analysis-review-20261105-v1.json": "cb81320574363c092e3554d139e0ebae7c65ac5e4e94d9efd1be2a0367cc078a"
+  },
+  "candidate": "V203/V27",
+  "candidateAdmitted": false,
+  "candidateManifest": "reports/ai-foundation-20261105/candidate-v203-fixed-analysis-20261105-v1/manifest.json",
+  "candidateKeyColdRoots": 8,
+  "fullAdmissionPending": true,
+  "secondRoundReviewRequired": true,
+  "secondRoundReviewStage": "after-same-state-third-round-learning",
+  "secondRoundReviewPlan": "docs/human405-third-round-plan-20261105.md",
+  "secondRoundReviewInfoBoundary": "Each actual decision root; no future DLC31 or hidden species identity. Native RNG reproducibility, no forced common future cards.",
+  "currentReview": "docs/human405-third-round-fixed-analysis-review-20261105.md",
+  "evidenceSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-fixed-analysis-review-20261105-v1.json",
+  "previousGoalTurnClassification": "progress",
+  "stateInputAudit": {
+    "passed": 51,
+    "legacyFailureMatchesV189": true,
+    "allGreen": false
+  },
+  "candidateRelatedRegression": {
+    "unitPassed": 179,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "independentCleanTestsPassed": 13,
+    "independentFixtureHashes": 35,
+    "browserFocusedPassed": 5,
+    "browserFullPassed": false,
+    "inputAuditPassed": 51,
+    "inputAuditFailed": 1,
+    "legacyFailureMatchesV189": true
+  },
+  "stage": "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n",
+  "knownOrderControl": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-known-research-order-control-20261105-v2.json",
+  "knownOrderIndependentCheck": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-research-order-independent-check-20261105-v1.json",
+  "knownOrderControlInputs": 28,
+  "knownOrderBoardScore": [
+    60,
+    56
+  ],
+  "knownOrderMaskedModelValue": [
+    111,
+    108
+  ],
+  "latestProgress": "adhoc/human405-third-round-progress-20261105-v8.json",
+  "knownSymbolPurpose": {
+    "nativeInputs": 3,
+    "netGain": 2.5,
+    "teacher133BeforeAnd135AfterModel": 114,
+    "heldHistoryInput": "pendingHandCardTriggers",
+    "futureResearchRegionResearchPermutationCovered": false
+  },
+  "attributionCorrection": {
+    "familyMaximum117_5": "paid orange1, not teacher purple2",
+    "teacherPurple2V197": 111.5,
+    "teacherPurple2V198": 114,
+    "actualV197Best": "B101 orange1 / B48 / orange data / computer4 energy income / markB / automatic free probe",
+    "actualV197Value": 118.5,
+    "fixedOrange2ControlDoesNotRefuteActualOrange1": true
+  },
+  "controlledActualAssets": {
+    "boardScore": [
+      56,
+      60
+    ],
+    "modelValueNowPublic": [
+      115,
+      111
+    ],
+    "probes": [
+      1,
+      0
+    ],
+    "energyIncome": [
+      3,
+      2
+    ],
+    "hand": [
+      0,
+      1
+    ],
+    "poolData": [
+      4,
+      3
+    ],
+    "computer": [
+      4,
+      3
+    ],
+    "sameCreditsEnergyPublicity": [
+      3,
+      4,
+      1
+    ],
+    "notAutonomous": true,
+    "doesNotProveWholeRoundSuperiority": true,
+    "nativeInputsAlreadyExecuted": 8,
+    "endpointReusedAfterFailed60ScoreAssumption": true,
+    "additionalReplayInputs": 0
+  },
+  "nextActualRoot": {
+    "best": "paid orange4",
+    "value": 121,
+    "teacherPurple2Value": 116,
+    "nativeInputs": 136,
+    "milliseconds": 414.76625
+  },
+  "allEightCandidateKeyColdRootsPassed": true,
+  "analysisNativeControl": {
+    "inputs": 8,
+    "netValue": 9.5,
+    "modelBeforeAndMaskedAfter": 123.5,
+    "selected": "Amiba blue4 plus current-funded blue1 currency tail",
+    "newAnonymousCards": 2,
+    "consumedComputer": true,
+    "oldV198AnalysisQuote": 0
+  },
+  "anonymousIncomeFloor": {
+    "nativeInputs": 8,
+    "quoted": 4,
+    "nativeLinearValue": 5.5,
+    "onlyCost": "one anonymous hand card",
+    "unknownIncomeGainsAndFunding": false
+  },
+  "probeControl": {
+    "nativeInputs": 12,
+    "quoted": 7.5,
+    "nativeLinearValue": 8.5,
+    "additionalPublicity": 2,
+    "resumedPreviouslyAcceptedInputs": 2
+  },
+  "technologyAttribution": {
+    "MercuryScans": 4,
+    "data": 4,
+    "boardScore": 2,
+    "orange2At205PublicityGain": 1,
+    "orange2At226RequiredMovePoints": [
+      1,
+      2
+    ],
+    "fullNoTechRollout": false
+  },
+  "greedyAnalysisPolicy": "Local visible net reward chooses one analysis/blue-trace/currency-tail plan, then exactly one shared future portfolio quote. It can forgo a lower-immediate/higher-future local plan; no claim of all-state V26 value parity. Native options and node equivalence unchanged.",
+  "failedFirstSamplesRetained": {
+    "V199": [
+      {
+        "label": "actual-v197-after-orange1",
+        "nativeInputs": 134,
+        "milliseconds": 706.9775,
+        "complete": true
+      },
+      {
+        "label": "case-105",
+        "nativeInputs": 198,
+        "milliseconds": 621.872167,
+        "complete": true
+      }
+    ],
+    "V200": [
+      {
+        "label": "actual-v197-after-orange1",
+        "nativeInputs": 134,
+        "milliseconds": 622.429125,
+        "complete": true
+      }
+    ],
+    "V201": [
+      {
+        "label": "actual-v197-after-orange1",
+        "nativeInputs": 134,
+        "milliseconds": 624.902875,
+        "complete": true
+      }
+    ],
+    "V202": [
+      {
+        "label": "actual-v197-after-orange1",
+        "nativeInputs": 134,
+        "milliseconds": 748.577459,
+        "complete": true
+      },
+      {
+        "label": "teacher-r3-after-amiba-reveal",
+        "nativeInputs": 200,
+        "milliseconds": 605.073459,
+        "complete": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,668 @@
+{
+  "scope": "Readonly attribution of already current-rule-replayed teacher actions and one-step native ability ablations on private contexts. Disabled orange2 keeps ownership/count; ablations are conditional at each recorded geometry, not a full feasible game without the technology. No AI policy or new game run.",
+  "sources": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/initial-native-audit-20261105-v1.json": "9bceb7faf5766a8c5a47bec09f6f522d3511ed05a7a85932748dddaf5865adcc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v1.json": "a0aa1741d71dc59a5ec5643e1a101dbea0706a229ac797e1b33846c1c230ac33",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v2.json": "6037289227b9169e8ea45fece24a6f5dd9e4f3eb70fd333f96f72a5a51d10e84"
+  },
+  "geometryPath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-next-mismatch-185-20261105-v1.checkpoint.json",
+  "geometrySha256": "efae5a85d232060cbfb52305407f02d8f86f532a5081bc1ed209698ca915c62f",
+  "lastGeometryPath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-round3-before-pass-current-20261105-v2.checkpoint.json",
+  "lastGeometrySha256": "e43328241e8d6cc9877151aac4e09fa7b4fc8a426c75296b296fc86bbf33c436",
+  "geometryScope": "Actions189/205 use saved pre185 geometry; action226 follows the recorded orange4 research221 rotation, with no later board rotation before the saved prePASS endpoint. This is historical attribution only, not an AI forecast.",
+  "fullScans": [
+    141,
+    185,
+    202,
+    223
+  ],
+  "mercuryFormalCost": {
+    "publicity": 1
+  },
+  "mercuries": [
+    {
+      "historicalInput": 146,
+      "nebula": "sector-2-a",
+      "beforeResources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 2,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 62
+      },
+      "afterResources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 2,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 0,
+        "score": 62
+      },
+      "netDelta": {
+        "availableData": 1,
+        "publicity": -1
+      },
+      "beforeSectors": {
+        "kind": "recorded-own-sector-wins-only",
+        "value": [
+          {
+            "sectorId": "sector-2-a",
+            "settlementNumber": 1
+          }
+        ]
+      },
+      "afterSectors": {
+        "kind": "recorded-own-sector-wins-only",
+        "value": [
+          {
+            "sectorId": "sector-2-a",
+            "settlementNumber": 1
+          }
+        ]
+      }
+    },
+    {
+      "historicalInput": 190,
+      "nebula": "sector-2-a",
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 0,
+        "publicity": 4,
+        "score": 71
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 0,
+        "publicity": 3,
+        "score": 73
+      },
+      "netDelta": {
+        "availableData": 1,
+        "publicity": -1,
+        "score": 2
+      },
+      "beforeSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      },
+      "afterSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "historicalInput": 206,
+      "nebula": "sector-2-a",
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 5,
+        "score": 76
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 5,
+        "score": 76
+      },
+      "netDelta": {
+        "availableData": 1
+      },
+      "beforeSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      },
+      "afterSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            },
+            "sector-1-a": {
+              "sectorId": "sector-1-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "sectorId": "sector-1-a",
+                  "settlementNumber": 1,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "slotKind": "circle",
+                  "markerIndex": 1
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              },
+              {
+                "sectorId": "sector-1-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "historicalInput": 227,
+      "nebula": "sector-3-b",
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 2,
+        "score": 85
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 2,
+        "score": 85
+      },
+      "netDelta": {
+        "availableData": 1
+      },
+      "beforeSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            },
+            "sector-1-a": {
+              "sectorId": "sector-1-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "sectorId": "sector-1-a",
+                  "settlementNumber": 1,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "slotKind": "circle",
+                  "markerIndex": 1
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              },
+              {
+                "sectorId": "sector-1-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      },
+      "afterSectors": {
+        "kind": "full-native-data",
+        "value": {
+          "sectors": {
+            "sector-2-a": {
+              "sectorId": "sector-2-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "markerIndex": 1,
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1,
+                  "slotKind": "bar"
+                }
+              ]
+            },
+            "sector-1-a": {
+              "sectorId": "sector-1-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "sectorId": "sector-1-a",
+                  "settlementNumber": 1,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "slotKind": "circle",
+                  "markerIndex": 1
+                }
+              ]
+            },
+            "sector-3-a": {
+              "sectorId": "sector-3-a",
+              "settlementCount": 1,
+              "winners": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "slotKind": "circle",
+                  "markerIndex": 1
+                }
+              ]
+            }
+          },
+          "winsByPlayerId": {
+            "player-white": [
+              {
+                "sectorId": "sector-2-a",
+                "settlementNumber": 1
+              },
+              {
+                "sectorId": "sector-1-a",
+                "settlementNumber": 1
+              },
+              {
+                "sectorId": "sector-3-a",
+                "settlementNumber": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "moves": [
+    {
+      "historicalInput": 189,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "to": {
+        "x": 5,
+        "y": 2
+      },
+      "fromContent": {
+        "x": 5,
+        "y": 1,
+        "kind": "planet",
+        "planetId": "earth",
+        "label": "地球",
+        "tags": [
+          "launch_origin"
+        ]
+      },
+      "toContent": {
+        "x": 0,
+        "y": 2,
+        "kind": "comet",
+        "label": "彗星"
+      },
+      "versions": [
+        {
+          "orange2Active": true,
+          "requiredMovePoints": 1,
+          "oneFreePointMoveAvailable": true,
+          "reason": null,
+          "publicityDelta": 1,
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 5,
+              "playerId": "player-white",
+              "source": "scan4",
+              "from": {
+                "x": 5,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 2
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 5,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-white",
+              "source": "scan4",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        },
+        {
+          "orange2Active": false,
+          "requiredMovePoints": 1,
+          "oneFreePointMoveAvailable": true,
+          "reason": null,
+          "publicityDelta": 1,
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 5,
+              "playerId": "player-white",
+              "source": "scan4",
+              "from": {
+                "x": 5,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 2
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 5,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-white",
+              "source": "scan4",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "historicalInput": 205,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "to": {
+        "x": 4,
+        "y": 2
+      },
+      "fromContent": {
+        "x": 0,
+        "y": 2,
+        "kind": "comet",
+        "label": "彗星"
+      },
+      "toContent": {
+        "x": 6,
+        "y": 2,
+        "kind": "asteroid",
+        "label": "小行星带",
+        "tags": [
+          "extra_exit_cost"
+        ]
+      },
+      "versions": [
+        {
+          "orange2Active": true,
+          "requiredMovePoints": 1,
+          "oneFreePointMoveAvailable": true,
+          "reason": null,
+          "publicityDelta": 1,
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 5,
+              "playerId": "player-white",
+              "source": "scan4",
+              "from": {
+                "x": 5,
+                "y": 2
+              },
+              "to": {
+                "x": 4,
+                "y": 2
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitAsteroid",
+              "rocketId": 5,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-white",
+              "source": "scan4"
+            }
+          ]
+        },
+        {
+          "orange2Active": false,
+          "requiredMovePoints": 1,
+          "oneFreePointMoveAvailable": true,
+          "reason": null,
+          "publicityDelta": 0,
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 5,
+              "playerId": "player-white",
+              "source": "scan4",
+              "from": {
+                "x": 5,
+                "y": 2
+              },
+              "to": {
+                "x": 4,
+                "y": 2
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitAsteroid",
+              "rocketId": 5,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-white",
+              "source": "scan4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "historicalInput": 226,
+      "from": {
+        "x": 3,
+        "y": 2
+      },
+      "to": {
+        "x": 3,
+        "y": 3
+      },
+      "fromContent": {
+        "x": 6,
+        "y": 2,
+        "kind": "asteroid",
+        "label": "小行星带",
+        "tags": [
+          "extra_exit_cost"
+        ]
+      },
+      "toContent": {
+        "x": 7,
+        "y": 3,
+        "kind": "planet",
+        "planetId": "saturn",
+        "label": "土星",
+        "tags": [
+          "orbit_target",
+          "landing_target"
+        ]
+      },
+      "versions": [
+        {
+          "orange2Active": true,
+          "requiredMovePoints": 1,
+          "oneFreePointMoveAvailable": true,
+          "reason": null,
+          "publicityDelta": 1,
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 5,
+              "playerId": "player-white",
+              "source": "scan4",
+              "from": {
+                "x": 3,
+                "y": 2
+              },
+              "to": {
+                "x": 3,
+                "y": 3
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitPlanet",
+              "planetId": "saturn",
+              "rocketId": 5,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-white",
+              "source": "scan4",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        },
+        {
+          "orange2Active": false,
+          "requiredMovePoints": 2,
+          "oneFreePointMoveAvailable": false,
+          "reason": "移动力不足，需要 2 点移动力",
+          "publicityDelta": null,
+          "events": []
+        }
+      ]
+    }
+  ],
+  "nativeInputs": 0,
+  "newAutonomousRuns": 0
+}

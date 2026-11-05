@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/deliver-human405-fixed-analysis-evidence-20261105-v1.py", line 62, in <module>
+    git('diff','--cached','--check','--','.',f':(exclude){archive}',f':(exclude){folder}/*.log',private=private)
+  File "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/deliver-human405-fixed-analysis-evidence-20261105-v1.py", line 16, in git
+    return subprocess.check_output(['git',*args],cwd=repo,input=data,env=env)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 424, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--cached', '--check', '--', '.', ':(exclude)reports/ai-foundation-20261105/candidate-v203-fixed-analysis-20261105-v1', ':(exclude)reports/ai-foundation-20261105/third-round-teacher-v1/*.log']' returned non-zero exit status 2.

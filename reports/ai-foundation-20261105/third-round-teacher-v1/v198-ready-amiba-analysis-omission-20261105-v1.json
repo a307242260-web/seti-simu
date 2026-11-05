@@ -1,0 +1,59 @@
+{
+  "scope": "Reuse the already validated current-rule teacher160/161/162 native checkpoints; no new native actions. Full funded computer6 and free analysis yield visible blue4/locked-region rewards while V198 quotes0. Newly drawn ordinary and alien card identities are masked.",
+  "beforePath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-160-20261105-v1.checkpoint.json",
+  "beforeSha256": "7bd179e81676be154f52f59971c9b5896472ea0655ef7ba28826f3996e9cecc2",
+  "afterPath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-163-20261105-v1.checkpoint.json",
+  "afterSha256": "c831403b062cf739c0252b2aca55ace5afcb769e4e74234f6f4fd61a3fcb2e42",
+  "beforeValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 114,
+    "components": {
+      "realizedScore": 62,
+      "currentEndGameBonus": 22,
+      "resources": 6.5,
+      "hand": 0,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "afterMaskedValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v25",
+    "total": 117.5,
+    "components": {
+      "realizedScore": 67,
+      "currentEndGameBonus": 22,
+      "resources": 7,
+      "hand": 2,
+      "income": 10.5,
+      "technologyPotential": 9,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "analysisPlan": {
+    "value": 0,
+    "selected": null,
+    "reason": "analysis-reservation-needs-native-value"
+  },
+  "linearNativeValue": 7.5,
+  "scoreGain": 5,
+  "unknownCardsGain": 2,
+  "publicityGain": 1,
+  "nativeInputsReused": 3,
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

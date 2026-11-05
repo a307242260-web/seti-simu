@@ -1,0 +1,8 @@
+{
+  "scope": "Instrumented repetition count only; no memo hit skips work, no admission timing",
+  "calls": 1779,
+  "uniqueFullFactsAndWeights": 1698,
+  "repeatedCalls": 81,
+  "serializedBytes": 32079335,
+  "instrumentedSourceSha256": "eaab55a82af381fdc3ebf13941f25384bcbfd5bda5a78c49cbcb30af2e214a6b"
+}
