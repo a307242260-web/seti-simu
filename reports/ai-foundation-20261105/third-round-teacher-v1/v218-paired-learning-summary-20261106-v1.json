@@ -1,0 +1,59 @@
+{
+  "status": "learning-evidence-verified",
+  "sourceCommit": "5b5d3504c9b88a204e8787d92f4c50bcf9a47eb7",
+  "runtime": "V218/V37",
+  "sourceUnchanged": true,
+  "newNativeInputs": 84,
+  "newAutonomousRuns": 0,
+  "partialRoundControlledScoreOnly": 69,
+  "controlIncomeCreditsEnergyCards": [
+    6,
+    3,
+    1
+  ],
+  "lastAutonomousRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "lastAutonomousR3": {
+    "score": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ]
+  },
+  "developmentAligned": false,
+  "resultsSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-scan-setup-native-20261106-v1.json": "7127f72cbbf70dd8b8fd809a01b3d490b263ccaaa7c2b1433215fc1e2caa0e5a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-visible-scan-native-20261106-v1.json": "d2def7b40be0b02fe793ab870982d847619e20a0a10191a26acbdc800ebb5b43",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-scan-income-analysis-native-20261106-v1.json": "f270df4104e8ead947edfc343515176913fb7ed0a7db1db72052788e141375aa",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v218-scan-launch-reserve-gap-native-20261106-v2.json": "f9902ec45bde6161f40120fc1fb791dca6b0f7bc6cd058e44a62e47d0c01e4b8",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v218-round3-scoring-gap-20261106-v1.json": "ce8568e38bc7557d5c6581a13a1cb8c75eb0371c408f7e1dfeb2d6a934c3c85a"
+  },
+  "knownPublicSwapWitness": {
+    "DLC31Before": 111.75,
+    "after": 123.58333333333333,
+    "differenceComponent": "analysisPotential",
+    "anonymousIdentityNotUsed": true
+  },
+  "scanReserveWitness": {
+    "standardCostEnergy": 2,
+    "launchExtraEnergy": 1,
+    "catalogScanGoals": 6,
+    "catalogBlueGoals": 0,
+    "noReserveNativeLaunchUnavailable": true,
+    "fundedNativeLaunchAvailable": true
+  },
+  "provisionalR3ScoreGap": {
+    "board": 23,
+    "currentFinalScore": 58,
+    "tiles": {
+      "a": 0,
+      "b": 16,
+      "c": 8,
+      "d": 7
+    },
+    "cardScore": 4,
+    "completedTaskCount": 2
+  },
+  "goalStatus": "active"
+}

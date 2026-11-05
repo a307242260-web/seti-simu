@@ -1,0 +1,406 @@
+{
+  "status": "passed",
+  "scope": "Pure current-rule scoring of the already verified teacher/V214 before-PASS R3 checkpoints. No new native input, game or policy query. Current end-game points are provisional, not a terminal outcome.",
+  "sourcePath": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-third-round-development-comparison-20261106-v2.json",
+  "sourceSha256": "778a6b01c0412e5d78f58b7d62bc4ab1a8561b02894fc51bd78e17a33c0a8e91",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "difference": {
+    "board": 23,
+    "currentFinalScore": 58,
+    "tiles": {
+      "a": 0,
+      "b": 16,
+      "c": 8,
+      "d": 7
+    },
+    "cardScore": 4,
+    "completedTaskCount": 2
+  },
+  "rows": {
+    "teacher": {
+      "checkpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-round3-before-pass-current-20261105-v2.checkpoint.json",
+      "checkpointSha256": "e43328241e8d6cc9877151aac4e09fa7b4fc8a426c75296b296fc86bbf33c436",
+      "board": 105,
+      "completedTaskCount": 2,
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "score": {
+        "playerId": "player-white",
+        "baseScore": 105,
+        "tileScore": 53,
+        "cardScore": 4,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 162,
+        "totalScore": 162,
+        "tileScoresById": {
+          "a": 0,
+          "b": 24,
+          "c": 8,
+          "d": 21
+        },
+        "tiles": [
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 8,
+            "score": 24
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 4,
+            "score": 8
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 7,
+            "score": 21
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_7.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "blue",
+              "scorePer": 2
+            },
+            "score": 4
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "reservedTasks": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "completedTaskIds": [],
+          "tasks": [
+            {
+              "id": "b117-orbit-land-count-task",
+              "condition": {
+                "type": "orbitOrLandCount",
+                "count": 5
+              },
+              "rewards": [
+                {
+                  "id": "b117-score-credit",
+                  "type": "gain_resources",
+                  "label": "5个环绕/登陆：3分+1信用",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3,
+                      "credits": 1
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "temporaryTasks": []
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "completedTaskIds": [],
+          "tasks": [
+            {
+              "id": "b101-distance-task",
+              "condition": {
+                "type": "probeDistanceFromEarth",
+                "minDistance": 5
+              },
+              "rewards": [
+                {
+                  "id": "b101-score-energy",
+                  "type": "gain_resources",
+                  "label": "远离地球探测器：3分+1能量",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3,
+                      "energy": 1
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "temporaryTasks": []
+        },
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        },
+        {
+          "id": "alien-chong-3-10",
+          "cardId": "chong_3.webp",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        }
+      ]
+    },
+    "ai": {
+      "checkpointPath": "reports/research/768b7f09.341f6fad.quick-400.json.round-end-3.checkpoint.json",
+      "checkpointSha256": "50cb806e47f30fc13323c986905f2979ccfe18ffe830ab28199a3a25d6d52e87",
+      "board": 82,
+      "completedTaskCount": 0,
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1,
+          "blue4": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue4": true,
+          "orange1": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "score": {
+        "playerId": "player-white",
+        "baseScore": 82,
+        "tileScore": 22,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 104,
+        "totalScore": 104,
+        "tileScoresById": {
+          "a": 0,
+          "b": 8,
+          "c": 0,
+          "d": 14
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 0,
+            "multiplier": 11,
+            "score": 0
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 8,
+            "score": 8
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 7,
+            "score": 14
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "reservedTasks": [
+        {
+          "id": "card-13-0",
+          "cardId": "b_117.webp",
+          "completedTaskIds": [],
+          "tasks": [
+            {
+              "id": "b117-orbit-land-count-task",
+              "condition": {
+                "type": "orbitOrLandCount",
+                "count": 5
+              },
+              "rewards": [
+                {
+                  "id": "b117-score-credit",
+                  "type": "gain_resources",
+                  "label": "5个环绕/登陆：3分+1信用",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3,
+                      "credits": 1
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "temporaryTasks": []
+        },
+        {
+          "id": "card-15-0",
+          "cardId": "dlc_9.png",
+          "completedTaskIds": [],
+          "tasks": [
+            {
+              "id": "dlc9-three-sector-wins",
+              "condition": {
+                "type": "completedSectors",
+                "count": 3
+              },
+              "rewards": [
+                {
+                  "id": "dlc9-publicity",
+                  "type": "gain_resources",
+                  "label": "完成3个扇区：3宣传",
+                  "icon": "publicity",
+                  "options": {
+                    "gain": {
+                      "publicity": 3
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "temporaryTasks": []
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "completedTaskIds": [],
+          "tasks": [
+            {
+              "id": "b101-distance-task",
+              "condition": {
+                "type": "probeDistanceFromEarth",
+                "minDistance": 5
+              },
+              "rewards": [
+                {
+                  "id": "b101-score-energy",
+                  "type": "gain_resources",
+                  "label": "远离地球探测器：3分+1能量",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3,
+                      "energy": 1
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "temporaryTasks": []
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        },
+        {
+          "id": "alien-amiba-1-2",
+          "cardId": "amiba_1.webp",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        },
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png",
+          "completedTaskIds": [],
+          "tasks": [],
+          "temporaryTasks": []
+        }
+      ]
+    }
+  }
+}

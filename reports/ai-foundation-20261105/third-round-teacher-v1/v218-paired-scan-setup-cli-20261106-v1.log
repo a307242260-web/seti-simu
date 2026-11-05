@@ -1,0 +1,24 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: {"accepted":9,"legal":[{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:e9dca119","actorId":"player-white","stateVersion":52,"decisionVersion":1,"target":{"choiceId":"symbol:red_1","slotId":"red_1","region":"red","symbolId":"symbol_5"},"payload":{},"decision":null,"summary":"red_1（2分）"},{"schemaVersion":"seti-standard-action-v1","family":"choose_target","phase":"conditional","actionId":"choose_target:dc367eeb","actorId":"player-white","stateVersion":52,"decisionVersion":1,"target":{"choiceId":"symbol:red_2","slotId":"red_2","region":"red","symbolId":"symbol_3"},"payload":{},"decision":null,"summary":"red_2（4分）"}]}
+    at submit (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/control-v218-paired-scan-setup-20261106-v1.js:6:20)
+    at Object.<anonymous> (/private/tmp/seti-v218-teacher-r3-20261106-v1/adhoc/control-v218-paired-scan-setup-20261106-v1.js:14:42)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

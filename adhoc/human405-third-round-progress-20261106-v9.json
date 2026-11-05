@@ -1,0 +1,42 @@
+{
+  "status": "active",
+  "runtime": "V218/V37",
+  "sourceCommit": "5b5d3504c9b88a204e8787d92f4c50bcf9a47eb7",
+  "sourceAdmitted": true,
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-current-source-admission-20261106-v1.json",
+  "existingPerformanceCoverage": {
+    "namedCases": 476,
+    "uniqueRoots": 387,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 584.39825
+  },
+  "additionalNativeControls": 84,
+  "additionalSearchTimings": 0,
+  "newAutonomousRuns": 0,
+  "lastAutonomousRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "lastR3Assets": {
+    "score": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3Assets": {
+    "score": 105,
+    "tech": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "developmentAligned": false,
+  "learningSummary": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-learning-summary-20261106-v1.json",
+  "nextContract": "adhoc/v219-third-round-scan-income-contract-20261106-v1.md",
+  "baseline": "V41 unchanged",
+  "stage": "/private/tmp/seti-v218-teacher-r3-20261106-v1"
+}

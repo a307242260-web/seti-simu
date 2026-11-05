@@ -1,0 +1,1 @@
+{"out":"reports/ai-foundation-20261105/third-round-teacher-v1/v218-scan-launch-reserve-gap-native-20261106-v2.json","newNativeInputs":0,"noReserveModes":[{"choiceId":"nebula:sector-2-a","nebulaId":"sector-2-a","sectorX":1},{"choiceId":"skip","skip":true}],"fundedModes":[{"choiceId":"scan4:launch","mode":"launch"},{"choiceId":"scan4:skip","mode":"skip"}]}
