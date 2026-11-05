@@ -17,7 +17,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v21";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v22";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -233,20 +233,16 @@
       dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights)},weights).value;
     return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,total:arithmetic.sum([held,paid,mission,computer],weights)};
   }
-  function capitalWithoutMission(facts,weights){
-    const investment=dataInvestmentFor(facts,weights),base=investment(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
-    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>dataInvestmentFor({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}},weights)(facts.hand,wallet.publicity,{resources:wallet,income:wallet.income,startingIncome:Number(facts.passing)}),base);
-    // Both quotes share the same wallet/data: preserve the better funded use,
-    // without adding duplicate claims or missions on an unexecuted sector reset.
-    return Math.max(arithmetic.sum([base,analysis.value],weights),incomeAllocationCapital(facts,weights).total);
-  }
-  function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
+  function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
     const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>portfolio({...facts,...progress,player:wallet,board:{...facts.board,aliens:{slots}}}),base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
-    const sector=sectorCard.quote(facts,weights,next=>capitalWithoutMission(next,weights),arithmetic.sum([current,dataPotential],weights));
-    return{...base,handPotential:arithmetic.sum([base.handPotential,sector.value],weights),sectorCardPlan:sector,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential,sector.value],weights)};
+    return{...base,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential],weights)};
+  }
+  function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
+    const base=capitalWithoutSector(facts,weights),sector=sectorCard.quote(facts,weights,next=>capitalWithoutSector(next,weights).total,base.total);
+    return{...base,handPotential:arithmetic.sum([base.handPotential,sector.value],weights),sectorCardPlan:sector,total:arithmetic.sum([base.total,sector.value],weights)};
   }
 
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {

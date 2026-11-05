@@ -1,0 +1,14 @@
+{
+  "sourceGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-current-teacher-serial-gate-20261105-v1.json",
+  "sourceGateSha256": "f583ffcce84bb64035e1ddf1bb9591229a78f37adc6b624c48ec282bcbd6323b",
+  "optimizedGate": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-current-teacher-serial-gate-20261105-v1.json",
+  "optimizedGateSha256": "a85840ef56f7ea38320da6c05b206050e4c8b234798add599434a348d3f12f40",
+  "all391NamedNativeIdentityActionValueInputsAndCompletionEqual": true,
+  "changes": [],
+  "oldFirstMaxMilliseconds": 608.5741670000001,
+  "newFirstMaxMilliseconds": 558.305041,
+  "oldFirstSampleUnchanged": true,
+  "noUnchangedSourceResampling": true,
+  "all308UniqueGatesPassed": true,
+  "autonomousRuns": 0
+}

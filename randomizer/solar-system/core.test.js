@@ -222,3 +222,29 @@ for(let wheel=1;wheel<=4;wheel++)for(let x=0;x<8;x++)for(let y=1;y<=4;y++){
  }
 }
 assert(specialCells>0);
+
+// Single-coordinate geometry retains the full public descriptor and fresh
+// result semantics across every sector assignment, not just the fixed board.
+let nebulaCases=0;
+for(let a=1;a<=4;a++)for(let b=1;b<=4;b++)for(let c=1;c<=4;c++)for(let d=1;d<=4;d++){
+ const assignment={1:a,2:b,3:c,4:d},all=solar.getNebulaLocations(assignment);
+ for(const x of [...Array.from({length:35},(_,i)=>i-17),0.25,'-1','3',NaN,Infinity]){
+  const expected=all.find(n=>n.x===solar.mod8(x))||null;
+  assert.deepEqual(solar.getNebulaAtCoordinate(x,5,assignment),expected);
+  if(expected)assert.deepEqual(Object.keys(solar.getNebulaAtCoordinate(x,5,assignment)),Object.keys(expected));
+  nebulaCases++;
+ }
+ for(const y of [0,1,2,3,4,'5',null])assert.equal(solar.getNebulaAtCoordinate(0,y,assignment),null);
+}
+const mutableAssignment={slot1:1,slot2:2,slot3:3,slot4:4};
+const firstNebula=solar.getNebulaAtCoordinate(0,5,mutableAssignment);firstNebula.label='modified query result';
+assert.notEqual(solar.getNebulaAtCoordinate(0,5,mutableAssignment).label,firstNebula.label);
+mutableAssignment.slot2=1;assert.deepEqual(solar.getNebulaAtCoordinate(0,5,mutableAssignment),solar.getNebulaLocations(mutableAssignment).find(n=>n.x===0));
+let wheelCases=0;
+for(const input of [null,{},[0,'-2',3,0,4],{1:-3,2:2},{rotation:{wheel1Steps:'-2',wheel2Steps:0,3:4,rotationCount:7}},...[-17,0,19,3.5,NaN,Infinity].map(n=>({wheel1Steps:n,wheel2Steps:n,wheel3Steps:n,wheel4Steps:n}))]){
+ for(const wheelId of [1,2,3,4,'1','2'])for(const x of [-17,-1,0,7,8,0.25,'-1',NaN])for(const y of [0,1,2,3,4,5])for(const active of [false,true]){
+  const baseX=solar.toBaseX(x,wheelId,input),expected={wheelId,displayX:x,y,baseX,step:solar.getWheelStep(input,wheelId),normalizedStep:solar.getNormalizedWheelStep(input,wheelId),cell:solar.getBaseWheelCell(wheelId,baseX,y,{aomomoActive:active})};
+  assert.deepEqual(solar.getWheelCellAtDisplayCoordinate(wheelId,x,y,input,{aomomoActive:active}),expected);wheelCases++;
+ }
+}
+console.log(JSON.stringify({publicGeometryParity:true,nebulaCases,wheelCases,mutableInputAndResultIsolation:true}));

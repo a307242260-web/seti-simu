@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "thisGoalTurnClassification": "progress: V188joint-sector-mission fix passed172/47 but preserved608msfailedcold, archived/pushed without production change; V189readonlygeometry makes all308coldpass,391exactvalue/action/inputparity,172units/1fullFlow/26Chrome/47current inputs passed, sourceadmission next",
+  "productionRuntime": "V187/V21",
+  "productionSourceCommit": "72bbd87897e2e403c808d5ed408cc1c0f9c895f0",
+  "actualRecord": "reports/research/c5ea5600.72bbd878.quick-400.json",
+  "actualScores": [
+    15,
+    44
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 5415,
+  "actualInputs": 125,
+  "actualWhiteSearches": 86,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 462.18091700000014,
+  "allActualDecisionGatesPassed": true,
+  "nativeReplayedInputsAfterOpening": 102,
+  "allFinalNativeStateSessionRngAndRoundCheckpointsVerified": true,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": false,
+  "round2MoneyAIvsTeacher": [
+    1,
+    4
+  ],
+  "round2EnergyAIvsTeacher": [
+    1,
+    1
+  ],
+  "round2ProbesAIvsTeacher": [
+    0,
+    1
+  ],
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "candidateOfficialRuns": 0,
+  "candidateAdmitted": true,
+  "capturedActualWhiteSearchRoots": 86,
+  "newSourceOrGameReruns": 0,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "nextActions": [
+    "Privateindex sourceadmission with95loadedmodulehashes and eleven reviewed production/test/tool changes, pushorigin/dev.",
+    "One unique standard autonomousfirst2 at newlyadmitted source, verify allnativeinputs/RNG and per-round assets, updateexperimentcenter preservingV1/V41baseline."
+  ],
+  "candidateRuntime": "V189/V22",
+  "candidateColdNamedCases": 391,
+  "candidateColdUniqueRoots": 308,
+  "candidateMaxNativeInputs": 252,
+  "candidateMaxRootAndSearchMs": 558.305041,
+  "candidateIndependentValueInputChecks": 47,
+  "candidateLegacyInputAuditErrorUnchanged": true,
+  "nativePortfolioControlInputs": 90,
+  "nativeToolPrefixInputs": 6,
+  "passChoiceNativeInputsIncludingFailedToolAttempt": 4,
+  "knownPassControlUpdatedToOrdinaryDLC4": true,
+  "candidateUnitPassed": 172,
+  "candidateFullFlowPassed": 1,
+  "fullRegressionMilliseconds": 280200,
+  "candidateRegressionLog": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-node-full-20261105-v2.log",
+  "candidateChromePassed": 26,
+  "candidateAdmissionScope": "172unit/1fullFlow/26Chrome/308unique coldroots,max252/558.305041ms;47current independentinputs passed, unchangedlegacyfreezeerror",
+  "bothRoundsSpecificTechnologyEqualAndSixIncomesAtLeastTeacher": true,
+  "round2EnergyIncomeAIvsTeacher": [
+    3,
+    2
+  ],
+  "round2PlacedDataAIvsTeacher": [
+    0,
+    2
+  ],
+  "round2ScoreSourceDelta": {
+    "alienTraceBlueScore": 3,
+    "blueTechScore": 0,
+    "initialScore": 0,
+    "orbitScore": 10,
+    "scanScore": 2,
+    "techBonusScore": 0,
+    "alienTracePinkScore": -5
+  },
+  "actual72FixedTeacherContinuationInputs": 33,
+  "actual72TeacherAssetsReproduced": true,
+  "currentEndpointValuesAIvsTeacher": [
+    93,
+    95.75
+  ],
+  "assetEquivalenceNotProven": true,
+  "nextDifferenceFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step072-20261105-v1.json",
+  "candidateSourceBaseCommit": "e8687e1fee9ad7e8bb920b2fa0a0f273df5d7579",
+  "sourceNativeSectorMissionPrefixInputs": 21,
+  "newNativePrefixControls": 5,
+  "remainingOldTokenLedgerVerified": true,
+  "foreignTraceChoiceDeclined": true,
+  "candidateColdOverruns": [],
+  "candidateArchive": null,
+  "actual72CandidateAction": "scan:2d21a323",
+  "actual72CandidateNativeInputs": 63,
+  "actual72CandidateMilliseconds": 521.5985410000001,
+  "previousCandidateArchive": "reports/ai-foundation-20261104/candidate-v188-sector-mission-20261105-v1/manifest.json",
+  "geometryNebulaQueries": 10240,
+  "geometryWheelQueries": 6336
+}

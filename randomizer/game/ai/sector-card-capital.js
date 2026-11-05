@@ -38,13 +38,14 @@
     }else{signals.sectorExtraMarks ||= {};signals.sectorExtraMarks[id] ||= [];signals.sectorExtraMarks[id].push({replacedByPlayerId:wallet.id,replacedByPlayerColor:wallet.color,replacementOrder:++order});}
    }
    // Signal counts/rank only: no entity allocation, sector reset, native node
-   // or successor observation. Later mission scans are excluded by the caller.
+   // or successor observation. Spent old tokens remain unavailable to later
+   // missions; no refill or sector reset is invented in this count ledger.
    const traceSlots=structuredClone(facts.board.aliens.slots);let safe=true;
    for(const id of data.NEBULA_IDS){
     if(!data.isSectorReadyToSettle(signals,id))continue;
     const participants=data.getSectorRanking(signals,id),settlement={ok:true,sectorId:id,participants,winner:participants[0],settlementNumber:(signals.sectorSettlements?.sectors?.[id]?.settlementCount||0)+1};
     for(const reward of data.buildSectorRewardDescriptors(settlement)){
-     if(reward.owner.playerId!==wallet.id&&reward.owner.playerColor!==wallet.color)continue;
+     if(reward.owner.playerId!==wallet.id&&reward.owner.playerColor!==wallet.color){if(reward.kind==='alien_trace'){safe=false;break;}continue;}
      if(reward.kind==='resource'){players.gainResources({resources:wallet},reward.gain);ledger.push({kind:'settlement',sectorId:id,gain:reward.gain});}
      else if(reward.kind==='alien_trace'){
       const type=reward.traceType,choices=traceSlots.flatMap(slot=>{
@@ -61,12 +62,12 @@
     if(!safe)break;
    }
    if(!safe)continue;
-   const after={...facts,player:wallet,hand:facts.hand.filter(c=>c!==card),board:{...facts.board,aliens:{slots:traceSlots}}};
+   const after={...facts,player:wallet,hand:facts.hand.filter(c=>c!==card),board:{...facts.board,data:signals,aliens:{slots:traceSlots}}};
    const linear=wallet.score-facts.player.score+Object.entries(weights).reduce((n,[k,w])=>n+(k==='handSize'?-1:wallet[k]-facts.player[k])*w,0),afterCapital=portfolio(after),netGain=arithmetic.sum([linear,afterCapital,-currentCapital],weights);
    if(!Number.isFinite(netGain))throw Error('SECTOR_CARD_VALUE_INVALID');candidates.push({cardId:card.id,targets,payment,ledger,linear,afterCapital,netGain});
   }
   candidates.sort((a,b)=>b.netGain-a.netGain||a.cardId.localeCompare(b.cardId));return{value:Math.max(0,candidates[0]?.netGain||0),selected:candidates[0]||null,candidates,
-   scope:'One current-wallet-funded known all-matching no-data sector card, known trace rewards and held/research/prepared-analysis capital; no later mission scans on an unexecuted sector reset, new identity, species reveal or pruning bound'};
+   scope:'One current-wallet-funded known all-matching no-data sector card, known trace rewards and one shared-wallet held/research/prepared-analysis/mission continuation; missions use only remaining old tokens after this card, never a sector refill, foreign trace choice, new identity, species reveal or pruning bound'};
  }
  return Object.freeze({supported,quote});
 });

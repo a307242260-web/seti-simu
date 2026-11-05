@@ -83,6 +83,11 @@
     .filter(cell => cell.kind === layout.CONTENT_KIND.PLANET)
     .map(cell => Object.freeze({ wheelId, cell }))));
 
+  const nebulaCoordinatesByX = Object.freeze(Object.fromEntries(
+    [1, 3, 4, 2].flatMap(slot => layout.SECTOR_SLOT_COORDINATES[slot]
+      .map(coordinate => [coordinate.x, Object.freeze({ slot, ...coordinate })])),
+  ));
+
   function mod8(n) {
     return ((Number(n) % 8) + 8) % 8;
   }
@@ -519,15 +524,16 @@
   }
 
   function getWheelCellAtDisplayCoordinate(wheelId, displayX, y, rotation, input = null) {
-    const baseX = toBaseX(displayX, wheelId, rotation);
+    const step = getWheelStep(rotation, wheelId);
+    const baseX = mod8(displayX - step);
     const cell = getBaseWheelCell(wheelId, baseX, y, input);
     return {
       wheelId,
       displayX,
       y,
       baseX,
-      step: getWheelStep(rotation, wheelId),
-      normalizedStep: getNormalizedWheelStep(rotation, wheelId),
+      step,
+      normalizedStep: mod8(step),
       cell,
     };
   }
@@ -566,7 +572,23 @@
 
   function getNebulaAtCoordinate(displayX, y, sectorBySlot) {
     if (y !== 5) return null;
-    return getNebulaLocations(sectorBySlot).find((nebula) => nebula.x === mod8(displayX)) || null;
+    const normalized = normalizeSectorBySlot(sectorBySlot);
+    const coordinate = nebulaCoordinatesByX[mod8(displayX)];
+    if (!coordinate) return null;
+    const { slot, localIndex, side, x } = coordinate;
+    const sectorId = normalized[slot];
+    const nebula = layout.SECTORS[sectorId]?.nebulae.find(item => item.localIndex === localIndex);
+    return {
+      id: nebula?.id || `slot-${slot}-${localIndex}`,
+      label: nebula?.label || "未知星云",
+      kind: layout.CONTENT_KIND.NEBULA,
+      sectorId,
+      slot,
+      localIndex,
+      side,
+      x,
+      y: coordinate.y,
+    };
   }
 
   function resolveVisibleContent(displayX, y, input) {

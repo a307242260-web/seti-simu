@@ -1,0 +1,10 @@
+{"requestedOwnerLandCost":"passed","differentCurrentActor":true,"viewerCacheIsolation":true,"nativePassControlInputs":9,"rootAndRngUnchanged":true}
+{"movementPreviewCopy":"passed","nativeTimingCases":12,"technologyVariants":36,"uncachedDirectoryControls":16,"nativeProjectionControls":4,"frozenRootsUnchanged":true,"geometryCacheInvalidation":true}
+{"sectorMissionComposition":"passed","nativeSourceInputs":21,"newNativeInputs":0,"sourcePrefixes":5,"value":87.08333333333333,"sectorCapital":7,"moneyControls":84,"sharedWallet":true,"noRefillOrSameTokenReuse":true,"rootAndRngUnchanged":true}
+solar-system-core tests passed
+{"publicGeometryParity":true,"nebulaCases":10240,"wheelCases":6336,"mutableInputAndResultIsolation":true}
+SUMMARY unit passed=3 failed=0 total=3 time=0.63s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=1
+OWNER rules/actions tests=1
