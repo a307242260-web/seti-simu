@@ -1,0 +1,13 @@
+{
+  "candidateManifest": "reports/ai-foundation-20261105/candidate-v194-research-trigger-20261105-v1/manifest.json",
+  "candidateManifestSha256": "6893fd5f2339470d6398f4d3bfea84245974590e36326e748da7913dcc7f6ed4",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-first-research-root-20261105-v1.json",
+  "fixtureSha256": "9726ad8df8e21d144003cddbdb4ab72da424d4842cc8a9b458fe12959a6e60b5",
+  "status": "threw",
+  "complete": false,
+  "gatePassed": false,
+  "rootAndRngVerified": false,
+  "error": "RESEARCH_TRIGGER_WALLET_INVALID",
+  "log": "reports/ai-foundation-20261105/third-round-teacher-v1/v194-before-first-research-wallet-error-20261105-v1.log",
+  "newAutonomousRuns": 0
+}

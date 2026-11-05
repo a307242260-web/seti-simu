@@ -1,0 +1,370 @@
+{
+  "searchVersion": "seti-complete-decision-search-v197",
+  "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+  "analysisPortSha256": "bd1e14f1bbf880442e55091dcfbacc65ff07693a027c7182f775faad6d527e6f",
+  "instrumentedSha256": "92a508178245b99a34a678488e5a8c9e28212706880d7cd72a3301dbb22465b4",
+  "scope": "Private in-memory logging only; not a cold timing sample or new rollout. Guards and transitions unchanged.",
+  "nativeInputs": 268,
+  "value": 68.50732600732601,
+  "actionId": "orbit:44937d1f",
+  "events": [
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "compound",
+      "available": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null,
+      "plans": [
+        {
+          "id": "data:computer-prefix:2",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 2,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "phase": "summary",
+      "selected": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 2,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "compound",
+      "available": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null,
+      "plans": [
+        {
+          "id": "data:computer-prefix:2",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 2,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "phase": "summary",
+      "selected": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "stationary-return",
+      "stationary": true,
+      "noMovementPayment": true,
+      "source": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "after": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 12
+      },
+      "sourceMoveCards": 0,
+      "afterMoves": 0
+    },
+    {
+      "phase": "compound",
+      "available": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null,
+      "plans": [
+        {
+          "id": "data:computer-prefix:2",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 2,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "phase": "summary",
+      "selected": true,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    }
+  ],
+  "rootAndRngUnchanged": true
+}

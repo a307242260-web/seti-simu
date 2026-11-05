@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-human405-third-trigger-candidate-20261105-v1.py", line 44, in <module>
+    r=subprocess.run(['node',f'randomizer/game/ai/{label}.test.js'],cwd=snapshot,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=55);(stage/log).write_bytes(r.stdout);assert r.returncode==0,r.stdout.decode();logs[str(log)]=sha(stage/log)
+AssertionError: node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v197-clean-candidate-6xapwfgx/reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-136-20261105-v1.checkpoint.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at read (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v197-clean-candidate-6xapwfgx/randomizer/game/ai/research-trigger-capital.test.js:5:29)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v197-clean-candidate-6xapwfgx/randomizer/game/ai/research-trigger-capital.test.js:50:29)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v197-clean-candidate-6xapwfgx/reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-136-20261105-v1.checkpoint.json'
+}
+
+Node.js v22.22.0
+

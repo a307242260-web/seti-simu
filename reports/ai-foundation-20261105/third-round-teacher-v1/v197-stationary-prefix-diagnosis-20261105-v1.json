@@ -1,0 +1,199 @@
+{
+  "searchVersion": "seti-complete-decision-search-v197",
+  "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+  "analysisPortSha256": "ffd9235a77186ae4abf9a1e6830aaab144c7931208ab583df3b0353b58e4950e",
+  "instrumentedSha256": "4e4e10d11e58a7ef5eba4ebce3070da9ca4f52d7218c59dee2c4de92aff935a6",
+  "scope": "Private in-memory logging only; not a cold timing sample or new rollout. Guards and transitions unchanged.",
+  "nativeInputs": 268,
+  "value": 68.50732600732601,
+  "actionId": "orbit:44937d1f",
+  "events": [
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "compound",
+      "available": false,
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    },
+    {
+      "phase": "summary",
+      "selected": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 12
+      },
+      "intent": null
+    }
+  ],
+  "rootAndRngUnchanged": true
+}

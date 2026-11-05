@@ -1,0 +1,14 @@
+{
+  "status": "hypothesis-refuted",
+  "states": 81,
+  "orderedPairs": 108,
+  "runtimeChanged": false,
+  "policyQueries": 0,
+  "newAutonomousRuns": 0,
+  "conclusion": "Four distinct blue technologies and four slots. Every distinct remaining research pair has native capacity, including disabled ownership cases; same target is already excluded. No new slot pruning or search branch needed. This does not prove future placement preferences optimal.",
+  "sourceHashes": {
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/ai/state-value.js": "f77ec4be1ec8251223d413f9229d0dcd19ab716295d06c9d13e81fb012b5f82b"
+  }
+}

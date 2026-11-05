@@ -1,0 +1,2654 @@
+{
+  "source": "seti-saves/seti-save-537-merged.json",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-120-20261105-v1.checkpoint.json",
+  "candidateSourceManifest": "reports/ai-foundation-20261105/candidate-v197-stationary-prefix-20261105-v1/manifest.json",
+  "candidateSourceManifestSha256": "613124858bd46bd7e72416ff60b4fbc69380c7c7e83d3cf544482419673bcc32",
+  "searchVersion": "seti-complete-decision-search-v197",
+  "valueModel": "seti-purpose-capital-state-value-v24",
+  "candidateAdmitted": false,
+  "sourceCheckpointSha256": "a0cef3cb464c242b8bd38d3ab0e11ed6bd524d5a1d972cfce584e19334e3834e",
+  "policyQueries": 0,
+  "nativeInputs": 21,
+  "scope": "Current native teacher known-card setup, research and one paid held free-research card. Actual blind draw at139 is retained natively; a separate value-only hand projection masks its new identity.",
+  "newBlindHandIdentityMasked": true,
+  "endpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-known-amiba-teacher-after140-20261105-v1.checkpoint.json",
+  "rows": [
+    {
+      "input": 120,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:295d3b4f",
+        "actorId": "player-white",
+        "stateVersion": 47,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "alien-amiba-3-3"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_3.webp：弃牌角标"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 4,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 4,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15.5,
+            "hand": 3,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15.5,
+            "hand": 3,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 9,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 9,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 4,
+        "score": 46
+      }
+    },
+    {
+      "input": 121,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:201c00de",
+        "actorId": "player-white",
+        "stateVersion": 48,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "alien-amiba-1-2"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "amiba_1.webp"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15.5,
+            "hand": 3,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 99,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15.5,
+            "hand": 3,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 9,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 4,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 46
+      }
+    },
+    {
+      "input": 122,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 49,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 97.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 97.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 46
+      }
+    },
+    {
+      "input": 123,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 49,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 97.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 97.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 46
+      }
+    },
+    {
+      "input": 124,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 50,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 100,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 100,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 46
+      }
+    },
+    {
+      "input": 125,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 50,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 100,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 100,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 7,
+            "resources": 15,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 46
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      }
+    },
+    {
+      "input": 126,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 51,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      }
+    },
+    {
+      "input": 127,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 52,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 104,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 10,
+            "researchPotential": 4,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 101.5,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 101.5,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      }
+    },
+    {
+      "input": 128,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:66c1a4bb",
+        "actorId": "player-white",
+        "stateVersion": 52,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "tech:purple2",
+          "tileId": "purple2",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple2"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 101.5,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 101.5,
+          "components": {
+            "realizedScore": 48,
+            "currentEndGameBonus": 7,
+            "resources": 14.5,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 9,
+            "researchPotential": 2.5,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 6,
+        "score": 48
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 50
+      }
+    },
+    {
+      "input": 129,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:1e93b329",
+        "actorId": "player-white",
+        "stateVersion": 52,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-purple-tech",
+          "cardInstanceId": "alien-amiba-1-2",
+          "ruleId": "amiba1-purple-tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结算 amiba_1.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "alien-amiba-1-2",
+          "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+          "imageAlt": "amiba_1.webp",
+          "detail": "安全协议：粉紫科技，红色区域 symbol 奖励"
+        }
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 50
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 50
+      }
+    },
+    {
+      "input": 130,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:dc367eeb",
+        "actorId": "player-white",
+        "stateVersion": 52,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "symbol:red_2",
+          "slotId": "red_2",
+          "region": "red",
+          "symbolId": "symbol_3"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "red_2（4分）"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 98.5,
+          "components": {
+            "realizedScore": 50,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 103.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 103.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 50
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      }
+    },
+    {
+      "input": 131,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 53,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 103.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 103.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      }
+    },
+    {
+      "input": 132,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:aba3bdc5",
+        "actorId": "player-white",
+        "stateVersion": 53,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:b",
+          "tileId": "b"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 B",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "b",
+          "imageSrc": "../assets/final/final_b1.png",
+          "imageAlt": "终局计分板块 B"
+        }
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 102.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 14,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      }
+    },
+    {
+      "input": 133,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:2f9ae88e",
+        "actorId": "player-white",
+        "stateVersion": 54,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "alien-amiba-0-1"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "amiba_0.webp"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111.5,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 12,
+            "hand": 2,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 109,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 109,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 54
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 54
+      }
+    },
+    {
+      "input": 134,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:2e7a24ba",
+        "actorId": "player-white",
+        "stateVersion": 54,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "symbol:blue_1",
+          "slotId": "blue_1",
+          "region": "blue",
+          "symbolId": "symbol_3"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue_1（4分）"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 109,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 109,
+          "components": {
+            "realizedScore": 54,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 2,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 54
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 58
+      }
+    },
+    {
+      "input": 135,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 55,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 58
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 58
+      }
+    },
+    {
+      "input": 136,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:52a456f8",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-29-pass-2-5"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_101.webp"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 114,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 11.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 3,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 107,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 8.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 107,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 8.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 58
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 58
+      }
+    },
+    {
+      "input": 137,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:e2010426",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "tech:orange2",
+          "tileId": "orange2",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": true,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 orange2"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 107,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 8.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 107,
+          "components": {
+            "realizedScore": 58,
+            "currentEndGameBonus": 22,
+            "resources": 8.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 58
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 60
+      }
+    },
+    {
+      "input": 138,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:8e86c549",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "confirm:trigger:alien-amiba-1-2:amiba1-orange-tech",
+          "cardInstanceId": "alien-amiba-1-2",
+          "ruleId": "amiba1-orange-tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结算 amiba_1.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "alien-amiba-1-2",
+          "imageSrc": "../assets/aliens/阿米巴/cards/1.webp",
+          "imageAlt": "amiba_1.webp",
+          "detail": "安全协议：橙色科技，橙色区域 symbol 奖励"
+        }
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 60
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 60
+      }
+    },
+    {
+      "input": 139,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:0c90de23",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "symbol:orange_1",
+          "slotId": "orange_1",
+          "region": "orange",
+          "symbolId": "symbol_4"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "orange_1（1盲抽）"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 110,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 0,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 60
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 60
+      }
+    },
+    {
+      "input": 140,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "before": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "after": {
+        "currentPublicValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "unknownNewHandIdentityMaskedValue": {
+          "modelVersion": "seti-purpose-capital-state-value-v24",
+          "total": 111,
+          "components": {
+            "realizedScore": 60,
+            "currentEndGameBonus": 22,
+            "resources": 9.5,
+            "hand": 1,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      "resourcesBefore": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 60
+      },
+      "resourcesAfter": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 60
+      }
+    }
+  ]
+}

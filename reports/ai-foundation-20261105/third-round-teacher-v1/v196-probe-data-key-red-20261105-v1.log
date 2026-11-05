@@ -1,0 +1,26 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: {"fixture":"reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json","credits":4,"energy":8,"publicity":0,"data":0,"id":"3:land:jupiter:planet","ledger":[{"type":"gain_data","count":2,"value":1},{"type":"gain_resources","gain":{"score":7},"value":7},{"type":"alien_trace","slotId":1,"traceType":"yellow","first":true,"gain":{"score":5,"publicity":1},"value":5.5,"excluded":"revealed-species effects and future discovery"}],"actual":3,"expected":2}
+
+3 !== 2
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/probe-data-capital-key.test.js:15:11)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

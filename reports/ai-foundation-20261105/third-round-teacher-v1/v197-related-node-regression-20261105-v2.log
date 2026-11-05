@@ -1,0 +1,16 @@
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":5.5,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"walletQuotes":378,"nativeGeometryMissionControls":5992,"dataCapacityIncludedInSharedCapitalKey":true,"sourceUnchanged":true}
+{"nativeFundedControls":176,"unfunded":16,"nativeInputs":840,"moneyMonotone":true,"stateObservationParity":true,"rootAndRngUnchanged":true}
+ready analysis and research ordering share funded portfolio value with immutable native inputs
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"rootAndRngUnchanged":true}
+{"settledTechFunding":"passed","complete":true,"nativeInputs":256,"distinctResearchInputs":16,"duplicatePaidResearchInputs":0,"rootAndRngUnchanged":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+{"winningDataPreparationNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":8}
+SUMMARY unit passed=10 failed=0 total=10 time=11.47s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=5
