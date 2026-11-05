@@ -41,6 +41,19 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 
 受控开局另用 `scenario=human405-white-round1-b117-prefix-v1`：先恢复同一23输入开局，再通过原生 `env.step` 执行教师24—27步（B117、能量换移动、向外移动、结束回合），之后才由共享AI决策。`controlledPrefix` 记录教师存档及动作SHA、输入区间和4步数量，`originalOpeningInputs=23`、`openingInputs=27`；其独立指纹、输入计数和决策轨迹明确区分固定输入与AI选择。对手、轮末停止和256/600门槛与原场景一致。该场景用于开局因果对照，不是自主开局成绩或新基线。
 
+## V189 前两轮继续到终局（2026-11-05）
+
+`robot_iterate run --full --config agentType=search,scenario=human405-white-v189-full-v1,compactReplay=true`
+严格恢复 `e01243ba.93989585.quick-400.json` 的125次输入、RNG、原生会话与AI检查点，
+进入R3，不重跑15/50分的前两轮。源记录、存档、轨迹和108个Production模块证明的SHA
+均校验，策略漂移拒绝，旧V123入口不放宽。白席沿用V189，其他三席仅PASS与强制选择。
+
+保留源记录选牌/收入前的两条 `roundEnds`，后续PASS前追加R3/R4；`rounds`只记续跑
+新轮次的结算后状态，并标记 `after-settlement-and-next-income`。终局summary取正式
+终局观察，不能被最后一次PASS前观察覆盖。`wallMs`是续跑耗时，
+`wallMsIncludingSourcePrefix`加原前两轮5.507秒；生产预算仍null，单点256/600为
+整局测量门槛，超标如实保留。V41四AI整局baseline保持。
+
 ## 仅白席整局续跑（2026-11-04）
 
 `robot_iterate run --full --config agentType=search,scenario=human405-white-full-v1,compactReplay=true`从已验证的v123首轮存档继续：前64次输入、原生状态/RNG和AI证书原样恢复，不重跑第一轮。原23输入开局SHA及首轮记录、存档、轨迹、源码证明的SHA进入独立实验身份；当前Production策略源码必须与v123证明逐文件一致。其余三席保持原PASS与强制选择策略。原首轮入口继续拒绝full，不改变其256次/600ms强制门槛。

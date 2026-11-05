@@ -1,0 +1,3 @@
+research search statistics tests passed
+[搜索触限] 步42 p1 strategic #0 frontier={"enabled":true,"limit":256,"reached":true,"truncated":true,"trimCount":3} action=scan:<a>
+[搜索触限] 步42 p1 strategic #0 execution={"enabled":true,"limit":4096,"reached":true,"truncated":false} action=scan:<a>

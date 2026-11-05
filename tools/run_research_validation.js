@@ -130,7 +130,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = (config.scenario === whiteFull.ID ? whiteFull : whiteRound1).describe(identity, options);
+    identity.scenario = ([whiteFull.ID,whiteFull.V189_ID].includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -417,13 +417,14 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const scenario = identity.scenario?.id === whiteFull.ID ? whiteFull : whiteRound1;
+  const scenario = [whiteFull.ID,whiteFull.V189_ID].includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const fullWhite = scenario === whiteFull;
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
   let nextRoundToRecord = 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
   let failedTrace = null;
   const roundEnds = [];
+  let continuationSource = null;
   let lastRoundEndObservation = null;
   const env = identity.scenario ? scenario.createEnvironment({ onAgentDecision(trace) {
     const action = trace.context.legalActions.find(a => a.actionId === trace.actionId);
@@ -491,7 +492,8 @@ function runValidation(options) {
       const opening = scenario.initialize(env, resetConfig, identity.scenario, { checkpointFromSave });
       steps = opening.length;
       if (fullWhite) {
-        const source = whiteFull.continuation();
+        const source = whiteFull.continuation(identity.scenario.id);
+        continuationSource = source;
         resumedFrom = source.provenance.savePath; resumeStep = steps;
         seedCollectorFrom(collector, source.record.metrics);
         fs.writeFileSync(agentTracePath, fs.readFileSync(path.join(__dirname, "..", source.provenance.tracePath)));
@@ -511,11 +513,19 @@ function runValidation(options) {
       const row = whiteFull.roundSummary(env, round, Date.now() - startedAt);
       row.checkpointPath = path.relative(path.join(__dirname, ".."), checkpointPath);
       row.checkpointSha256 = sha256(fs.readFileSync(checkpointPath));
-      row.cumulativeWallMsIncludingSourceRound1 = row.elapsedMs + identity.scenario.continuation.sourceRoundWallMs;
+      row.cumulativeWallMsIncludingSourcePrefix = row.elapsedMs + identity.scenario.continuation.sourceRoundWallMs;
+      if (!identity.scenario.continuation.sourceCompletedRounds) row.cumulativeWallMsIncludingSourceRound1 = row.cumulativeWallMsIncludingSourcePrefix;
+      if (identity.scenario.continuation.sourceCompletedRounds === 2) row.phase = 'after-settlement-and-next-income';
       roundSummaries.push(row); fs.appendFileSync(roundSummariesPath, `${JSON.stringify(row)}\n`);
       console.log(`[轮末] ${JSON.stringify(row)}`);
     }
-    if (fullWhite) { recordRound(1); nextRoundToRecord = 2; }
+    if (fullWhite) {
+      if (identity.scenario.continuation.sourceCompletedRounds === 2) {
+        roundEnds.push(...continuationSource.record.roundEnds);
+        for (const row of roundEnds) fs.appendFileSync(`${recordPath}.round-ends.jsonl`, `${JSON.stringify(row)}\n`);
+        nextRoundToRecord = 3;
+      } else { recordRound(1); nextRoundToRecord = 2; }
+    }
 
     const unboundedSearch = identity.agentType === "search" && Object.values(searchAgent.BUDGET).every(value => value === null);
     const limit = options.full ? (unboundedSearch ? null : MAX_DECISIONS) : options.steps;
@@ -568,7 +578,8 @@ function runValidation(options) {
     }
     terminal = env.isTerminal();
     const finalObs = env.observe();
-    const summary = summaryOf(lastRoundEndObservation || finalObs, { boardOnly: Boolean(lastRoundEndObservation) });
+    const terminalFull = fullWhite && terminal;
+    const summary = summaryOf(terminalFull ? finalObs : (lastRoundEndObservation || finalObs), { boardOnly: !terminalFull && Boolean(lastRoundEndObservation) });
     const wallMs = Date.now() - startedAt;
 
     // ---- 存档（快速验证存档供全盘续跑；全盘存档供复盘/快进）----
@@ -595,7 +606,7 @@ function runValidation(options) {
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       ...(identity.scenario ? { scenario: identity.scenario,
-        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: roundSummaries.map(r => r.round) } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(identity.scenario.continuation.sourceCompletedRounds === 2 ? [1,2] : []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
         stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
         scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
@@ -605,7 +616,7 @@ function runValidation(options) {
       terminal,
       wallMs,
       ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
-      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), wallMsIncludingSourceRound1: wallMs + identity.scenario.continuation.sourceRoundWallMs } : {}),
+      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), ...(identity.scenario.continuation.sourceCompletedRounds === 2 ? {wallMsIncludingSourcePrefix:wallMs+identity.scenario.continuation.sourceGameWallMs} : {wallMsIncludingSourceRound1:wallMs+identity.scenario.continuation.sourceRoundWallMs}) } : {}),
       resumedFrom,
       resumeStep,
       savePath,
