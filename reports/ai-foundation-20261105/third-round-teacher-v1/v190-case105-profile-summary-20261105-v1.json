@@ -1,0 +1,180 @@
+{
+  "purpose": "CPU diagnostic only; this profiled rerun is not a replacement cold admission sample",
+  "rows": [
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "ms": 57.957
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 15.709
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 11.958
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "ms": 9.249
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 9.166
+    },
+    {
+      "function": "normalize",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 7.5
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 6.916
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 6.542
+    },
+    {
+      "function": "getSectorOccupancy",
+      "file": "file://randomizer/game/rockets.js",
+      "ms": 6.084
+    },
+    {
+      "function": "plan",
+      "file": "file://randomizer/game/ai/goal-movement.js",
+      "ms": 6.042
+    },
+    {
+      "function": "",
+      "file": "file://randomizer/game/production-kernel.js",
+      "ms": 6
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "file://randomizer/game/production-kernel.js",
+      "ms": 5.999
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 5.959
+    },
+    {
+      "function": "normalize",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 5.876
+    },
+    {
+      "function": "normalize",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 4.584
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "ms": 4.583
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 4.542
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 4.541
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "ms": 4.501
+    },
+    {
+      "function": "",
+      "file": "file://randomizer/game/rule-composition.js",
+      "ms": 4.5
+    },
+    {
+      "function": "searchDecision",
+      "file": "file://randomizer/game/ai/decision-search.js",
+      "ms": 4.5
+    },
+    {
+      "function": "stableSerialize",
+      "file": "file://randomizer/game/state/state-store.js",
+      "ms": 4.417
+    },
+    {
+      "function": "normalize",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 4.166
+    },
+    {
+      "function": "append",
+      "file": "file://randomizer/game/production-kernel.js",
+      "ms": 4.083
+    },
+    {
+      "function": "deepFreeze",
+      "file": "file://randomizer/game/rule-composition.js",
+      "ms": 3.875
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "ms": 3.208
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "ms": 3.084
+    },
+    {
+      "function": "requirements",
+      "file": "file://randomizer/game/ai/probe-capital.js",
+      "ms": 3.084
+    },
+    {
+      "function": "openRoot",
+      "file": "file://randomizer/game/ai/analysis-port.js",
+      "ms": 3.083
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "ms": 3.042
+    },
+    {
+      "function": "visit",
+      "file": "file://randomizer/game/state/low-coupling-slices.js",
+      "ms": 3.042
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "file://randomizer/game/ai/resource-demand.js",
+      "ms": 3.042
+    },
+    {
+      "function": "stableSerialize",
+      "file": "file://randomizer/game/state/state-store.js",
+      "ms": 3.042
+    },
+    {
+      "function": "processChunkSync",
+      "file": "node:zlib",
+      "ms": 3.042
+    },
+    {
+      "function": "getSectorOccupancy",
+      "file": "file://randomizer/game/rockets.js",
+      "ms": 3.041
+    }
+  ]
+}

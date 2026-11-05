@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "candidateAdmitted": false,
+  "baseCommit": "c5e8ca89fe9964a1832cc41051cf63c3bd30acc5",
+  "manifest": "reports/ai-foundation-20261105/candidate-v192-computer-prefix-20261105-v1/manifest.json",
+  "manifestSha256": "2a3ab4b3a08569cfc0f1531d47c0e6b6235d5a9cfb789e56d8e6d0eaf1002a9b",
+  "snapshot": "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-9t121b65",
+  "baseExportPaths": [
+    "randomizer",
+    "assets/cards/card_model.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-safety-protocol-root-20261105-v1.json",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json"
+  ],
+  "allBaseRuntimeAndOverlayHashesMatched": true,
+  "productionChanged": false,
+  "newAutonomousRuns": 0,
+  "logsSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-independent-computer-prefix-20261105-v2.log": "8a82e2246dda6f6e97e103870ec6ce93fdadcb991afc7adf86eb8141bb185985",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-independent-winning-preparation-20261105-v2.log": "5ae29ef41929319efd23148982e3591691fa9e61dc611418308d4f93085e7353"
+  },
+  "earlierVerificationSetupFailure": {
+    "log": "reports/ai-foundation-20261105/third-round-teacher-v1/v192-independent-computer-prefix-20261105-v1.log",
+    "reason": "First sparse export omitted assets/cards/card_model.json; empty catalog produced scale0. Candidate source unchanged; add committed catalog to clean export."
+  },
+  "scope": "Clean committed base plus exact archived overlay; two changed behavior tests only, not full source admission."
+}

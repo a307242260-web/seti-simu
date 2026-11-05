@@ -1,0 +1,141 @@
+{
+  "status": "active",
+  "productionRuntime": "V189/V22",
+  "candidate": "V192/V22",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "baselineChanged": false,
+  "scopeOrder": [
+    "same-teacher-native-third-round-learning",
+    "review-second-round-end-afterwards"
+  ],
+  "candidateManifests": [
+    "reports/ai-foundation-20261105/candidate-v190-computer-prefix-20261105-v1/manifest.json",
+    "reports/ai-foundation-20261105/candidate-v191-computer-prefix-20261105-v1/manifest.json",
+    "reports/ai-foundation-20261105/candidate-v192-computer-prefix-20261105-v1/manifest.json"
+  ],
+  "coldRoots": [
+    {
+      "label": "case-105",
+      "searchVersion": "seti-complete-decision-search-v190",
+      "nativeInputs": 198,
+      "milliseconds": 648.544083,
+      "decisionGatePassed": false,
+      "actionId": "place_data:01c038e2",
+      "value": 71
+    },
+    {
+      "label": "case-105",
+      "searchVersion": "seti-complete-decision-search-v191",
+      "nativeInputs": 198,
+      "milliseconds": 570.212667,
+      "decisionGatePassed": true,
+      "actionId": "place_data:01c038e2",
+      "value": 71
+    },
+    {
+      "label": "teacher-r3-first-white",
+      "searchVersion": "seti-complete-decision-search-v191",
+      "nativeInputs": 77,
+      "milliseconds": 325.93025,
+      "decisionGatePassed": true,
+      "actionId": "play_card:52a456f8",
+      "value": 102.08333333333333
+    },
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "searchVersion": "seti-complete-decision-search-v191",
+      "nativeInputs": 281,
+      "milliseconds": 550.674,
+      "decisionGatePassed": false,
+      "actionId": "card_corner:295d3b4f",
+      "value": 117
+    },
+    {
+      "label": "teacher-r3-before-safety-protocol",
+      "searchVersion": "seti-complete-decision-search-v191",
+      "nativeInputs": 253,
+      "milliseconds": 482.59074999999996,
+      "decisionGatePassed": true,
+      "actionId": "card_corner:ab712e76",
+      "value": 117
+    },
+    {
+      "label": "case-105",
+      "searchVersion": "seti-complete-decision-search-v192",
+      "nativeInputs": 198,
+      "milliseconds": 589.1527920000001,
+      "decisionGatePassed": true,
+      "actionId": "place_data:01c038e2",
+      "value": 71
+    },
+    {
+      "label": "teacher-r3-first-white",
+      "searchVersion": "seti-complete-decision-search-v192",
+      "nativeInputs": 73,
+      "milliseconds": 328.875,
+      "decisionGatePassed": true,
+      "actionId": "play_card:52a456f8",
+      "value": 102.08333333333333
+    },
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "searchVersion": "seti-complete-decision-search-v192",
+      "nativeInputs": 223,
+      "milliseconds": 470.835333,
+      "decisionGatePassed": true,
+      "actionId": "card_corner:295d3b4f",
+      "value": 117
+    },
+    {
+      "label": "teacher-r3-before-safety-protocol",
+      "searchVersion": "seti-complete-decision-search-v192",
+      "nativeInputs": 206,
+      "milliseconds": 421.25341699999996,
+      "decisionGatePassed": true,
+      "actionId": "card_corner:ab712e76",
+      "value": 117
+    }
+  ],
+  "focusedBehaviorTestsPassed": 14,
+  "extendedNativeTailInputControls": [
+    5,
+    6
+  ],
+  "nativeComputerPrefixInputs": 4,
+  "nativeComputerPrefixNetValueGain": 4,
+  "nativeKnownContinuationObservations": {
+    "research128CurrentFinalBonusGain": 7,
+    "protocol130ScoreGain": 4,
+    "newMark132CurrentFinalBonusGain": 8
+  },
+  "remainingIssues": [
+    "funded-continuing-research-and-trace-triggers",
+    "existing-final-marker-growth-in-delayed-research-quotes",
+    "continuous-scan-value-of-purple2-and-orange2",
+    "first113-order-tradeoff",
+    "full-source-admission-and-same-state-autonomous-third-round"
+  ],
+  "interpretation": "Observed native rewards are not an additive future guarantee or a proof that the teacher path is optimal. R2 choices remain unreviewed; do not use future DLC31 or hidden species identity.",
+  "evidenceSha256": {
+    "reports/ai-foundation-20261105/candidate-v190-computer-prefix-20261105-v1/manifest.json": "1588dc38840b550579535797b68d7daf300b3228b848655586126b8dfead1f0b",
+    "reports/ai-foundation-20261105/candidate-v191-computer-prefix-20261105-v1/manifest.json": "e602878e25cc6ba33aacaf15985ef437af9014ca001447fac3ad0cc549a50cf3",
+    "reports/ai-foundation-20261105/candidate-v192-computer-prefix-20261105-v1/manifest.json": "2a3ab4b3a08569cfc0f1531d47c0e6b6235d5a9cfb789e56d8e6d0eaf1002a9b",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v190-cold-case-105-20261105-v1.json": "5ef8e6f3a178b27721706e49308a822f7ac77d61d45f14a0550ecbb2fd97572f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v191-cold-case-105-20261105-v1.json": "b67c0725bf2b61b953aa5b1eb85eadcb78c6aa3aa4cd37060eeb14750ad260f7",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v191-cold-teacher-r3-first-white-20261105-v1.json": "f991bcb83f9e97f8d94cd43ded8423df36151de8ec65fc6b0b14d1848531e96c",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v191-cold-teacher-r3-after-amiba-reveal-20261105-v1.json": "dcdbc3e8d6d6cd8d81f1b344914316762c767fc365a9c400eb514da1aa0ac476",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v191-cold-teacher-r3-before-safety-protocol-20261105-v1.json": "0dbe81efe7c3007f7897548b61f2d41e1f7d4318a0a05cc22d1bdb428ada4e09",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-cold-case-105-20261105-v1.json": "98a434de2bef0a5009f38df90c3077a67bca54ade1d2e83df70c40fb8b8d8aba",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-cold-teacher-r3-first-white-20261105-v1.json": "d6c669deaaced95c1762b1271263274b37351f517b8fe91f7ef27a68ec47b317",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-cold-teacher-r3-after-amiba-reveal-20261105-v1.json": "8f156f9e02e49c19c295197142e20043284a4e460607621fcf733b9da204e161",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-cold-teacher-r3-before-safety-protocol-20261105-v1.json": "e943eb0130d2170044b0b103f3840b76c2aafea5b0ca7323b1ec968a37b5d978",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-prefix-proof-focused-tests-20261105-v1.log": "9c7e588bac28c76f9f82a4666fea1e6120e4c43880e8a9c48580cc4c701af3cc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-amiba-prefix-native-proof-final-20261105-v3.log": "8a82e2246dda6f6e97e103870ec6ce93fdadcb991afc7adf86eb8141bb185985",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v192-frozen-continuations-test-clean-20261105-v1.log": "ce9a3daec021ccea9367a21d13a74a98e2c6d76109d398cdf4481c73ec8bc625",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/known-amiba-teacher-prefix-value-20261105-v1.json": "37834be8ade1629f8fd7c838f7765f98a36c08dcd3a078ef626950f5a110ea94",
+    "randomizer/game/ai/state-value.js": "b825bb010cfae27966013fc19964f9b164a11fb9a3201011da947cf3f4f25064",
+    "randomizer/game/end-game-scoring.js": "13c2989df4f601cc5677544f925e0dccc46e8775b64516e5027cd8e50ab8458f",
+    "assets/final/final_detail.md": "e6a800ca627d7d95d88d2e442716409deb2c4b7d89c383b53513c99abe47c3f2"
+  }
+}

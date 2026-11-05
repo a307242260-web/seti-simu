@@ -1,0 +1,17 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/value-arithmetic.js:18
+ function units(value){if(!Number.isFinite(value))throw TypeError('VALUE_ARITHMETIC_NONFINITE');const result=Math.round(value*scale);return Number.isSafeInteger(result)?result:null;}
+                                                  ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/value-arithmetic.js:18:57)
+    at Object.sum (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/value-arithmetic.js:20:133)
+    at Object.incomeOptions (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/research-income-capital.js:160:71)
+    at Object.incomeAllocationCapital (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/state-value.js:219:27)
+    at Object.incomeSwapPlan (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/resource-demand.js:158:23)
+    at swapIntent (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/card-pick-planning.js:178:28)
+    at Object.plan (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/card-pick-planning.js:221:104)
+    at describeCardPick (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/analysis-port.js:633:36)
+    at cardPickSpec (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/analysis-port.js:643:20)
+    at Object.resourceSpec (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v192-clean-candidate-ep9qf0pj/randomizer/game/ai/analysis-port.js:746:10)
+
+Node.js v22.22.0

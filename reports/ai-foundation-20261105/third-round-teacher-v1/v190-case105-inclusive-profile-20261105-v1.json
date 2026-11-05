@@ -1,0 +1,103 @@
+{
+  "purpose": "inclusive CPU attribution, not admission timing",
+  "selectedFunctionMilliseconds": [
+    [
+      "planningCapital file://randomizer/game/ai/resource-demand.js",
+      66.959
+    ],
+    [
+      "resourceSpec file://randomizer/game/ai/analysis-port.js",
+      46.209
+    ],
+    [
+      "catalog file://randomizer/game/ai/resource-demand.js",
+      43.793
+    ],
+    [
+      "dataTailCompletion file://randomizer/game/ai/local-decision-plans.js",
+      23.875999999999998
+    ],
+    [
+      "previewComputerCompletion file://randomizer/game/ai/local-decision-plans.js",
+      5.958
+    ],
+    [
+      "valueFacts file://randomizer/game/ai/resource-demand.js",
+      4.708
+    ],
+    [
+      "computerCompletion file://randomizer/game/ai/local-decision-plans.js",
+      4.458
+    ],
+    [
+      "finalScore file://randomizer/game/ai/funded-movement-tail.js",
+      3
+    ]
+  ],
+  "cloneAncestors": [
+    [
+      "clone file://randomizer/game/state/state-store.js",
+      38.081
+    ],
+    [
+      "clone file://randomizer/game/effects/session-runtime.js",
+      29.750000000000004
+    ],
+    [
+      "clone file://randomizer/game/rule-composition.js",
+      6.583
+    ],
+    [
+      "listBluePlacementRequirements file://randomizer/game/data/state.js",
+      6.209
+    ],
+    [
+      "clone file://randomizer/app/rule-observation.js",
+      6
+    ],
+    [
+      "previewIncomeTail file://randomizer/game/ai/resource-demand.js",
+      5.959
+    ],
+    [
+      "clone file://randomizer/game/production-kernel.js",
+      4.541
+    ],
+    [
+      "finalScore file://randomizer/game/ai/funded-movement-tail.js",
+      3
+    ],
+    [
+      "buildProbeCandidateStructures file://randomizer/game/production-kernel.js",
+      2.959
+    ],
+    [
+      "clone file://randomizer/game/effects/science-session.js",
+      1.5
+    ],
+    [
+      "settleRocketsAfterSolarRotation file://randomizer/game/abilities/rocket.js",
+      1.5
+    ],
+    [
+      "previewTurn file://randomizer/game/ai/analysis-port.js",
+      1.5
+    ],
+    [
+      "clone file://randomizer/app/simulation-contract.js",
+      1.5
+    ],
+    [
+      "finalMark file://randomizer/game/ai/local-decision-plans.js",
+      1.5
+    ],
+    [
+      "previewComputerCompletion file://randomizer/game/ai/local-decision-plans.js",
+      1.5
+    ],
+    [
+      "incomeCompletion file://randomizer/game/ai/local-decision-plans.js",
+      1.458
+    ]
+  ]
+}
