@@ -1,0 +1,7 @@
+# V213候选：公司收入目录延迟模块复用
+
+V212纯标量缓存没有取得验收改善（揭示后206输入619.806375ms，V211611.246667ms）；撤销这项本次新增缓存，保留V212失败和13文件源码快照，不重采。
+
+对V210同一CPU样本追溯require栈：约37ms的internalModuleStat/包路径解析源于getPlayerCompanyBaseIncome重复require('./initial-cards')，其中describeNextFinalMark里的A公式约28.8ms。不是游戏决策搜索，也不是收入策略变化。
+
+按项目已有惰性模块模式缓存成功加载且有getIndustryEffect的模块引用。仍先读Browser全局，缺依赖和未知公司继续显式报错；不缓存公司的收入值、原生节点或RuleObservation，不在循环依赖未就绪时固定空exports。公司每次仍按当前player身份/覆盖/规则目录求值。对322原生根全部玩家基础收入及下一标记指标逐项比较旧模块与新模块，随后首次冷门槛，四项全局预算及<=256/600ms不变。

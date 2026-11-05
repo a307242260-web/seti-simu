@@ -1,0 +1,576 @@
+(function (root, factory) {
+  "use strict";
+
+  let placement = root.SetiDataPlacement;
+  let players = root.SetiPlayers;
+  let playerTech = root.SetiPlayerTech;
+  let catalog = root.SetiTechCatalog;
+  let stateSequences = root.SetiStateSequences;
+
+  if (typeof require === "function") {
+    placement = placement || require("./placement");
+    players = players || require("../players");
+    playerTech = playerTech || require("../tech/player-tech");
+    catalog = catalog || require("../tech/catalog");
+    stateSequences = stateSequences || require("../state/sequences");
+  }
+
+  const api = factory(placement, players, playerTech, catalog, stateSequences);
+
+  if (typeof module === "object" && module.exports) {
+    module.exports = api;
+  }
+
+  if (typeof module === "undefined") root.SetiDataState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  placement,
+  players,
+  playerTech,
+  catalog,
+  stateSequences,
+) {
+  "use strict";
+
+  const DATA_TOKEN_SRC = "../assets/tokens/data.png";
+  const PLACEMENT_KIND_COMPUTER = "computer";
+  const PLACEMENT_KIND_BLUE_BONUS = "blueBonus";
+  const ANALYZE_ENERGY_COST = 1;
+  const ANALYZE_REQUIRED_COMPUTER_SLOT = 6;
+  function createDefaultDataState() {
+    return { poolTokens: [], placedTokens: [], discardedCount: 0 };
+  }
+
+  function getPlacementKind(token) {
+    return token?.placementKind === PLACEMENT_KIND_BLUE_BONUS
+      ? PLACEMENT_KIND_BLUE_BONUS
+      : PLACEMENT_KIND_COMPUTER;
+  }
+
+  function normalizePoolToken(token, index) {
+    const source = token || {};
+    const slotIndex = Number(source.slotIndex);
+    return {
+      id: source.id || `data-token-${index + 1}`,
+      index: Number.isInteger(source.index) ? source.index : index + 1,
+      slotIndex,
+    };
+  }
+
+  function normalizePlacedToken(token, index) {
+    const source = token || {};
+    const placementKind = getPlacementKind(source);
+
+    if (placementKind === PLACEMENT_KIND_BLUE_BONUS) {
+      const blueSlot = Number(source.blueSlot);
+      return {
+        id: source.id || `data-placed-blue-${index + 1}`,
+        index: Number.isInteger(source.index) ? source.index : index + 1,
+        placementKind,
+        blueSlot,
+      };
+    }
+
+    const placementSlot = Number(source.placementSlot);
+    return {
+      id: source.id || `data-placed-${index + 1}`,
+      index: Number.isInteger(source.index) ? source.index : index + 1,
+      placementKind: PLACEMENT_KIND_COMPUTER,
+      placementSlot,
+    };
+  }
+
+  function normalizeDataState(source) {
+    const poolSource = source?.poolTokens ?? source?.tokens ?? [];
+    const placedSource = source?.placedTokens ?? [];
+    return {
+      poolTokens: Array.isArray(poolSource) ? poolSource.map(normalizePoolToken) : [],
+      placedTokens: Array.isArray(placedSource) ? placedSource.map(normalizePlacedToken) : [],
+      discardedCount: Math.max(0, Math.round(Number(source?.discardedCount) || 0)),
+    };
+  }
+
+  function ensurePlayerDataState(player) {
+    if (!player.dataState) {
+      player.dataState = createDefaultDataState();
+    } else if (!Array.isArray(player.dataState.poolTokens) || !Array.isArray(player.dataState.placedTokens)) {
+      player.dataState = normalizeDataState(player.dataState);
+    }
+    return player.dataState;
+  }
+
+  function ensurePlayerTechState(player) {
+    if (!player.techState) {
+      player.techState = playerTech.createPlayerTechState(null);
+    }
+    return player.techState;
+  }
+
+  function syncAvailableDataCount(player) {
+    const dataState = ensurePlayerDataState(player);
+    player.resources.availableData = dataState.poolTokens.length;
+    return player.resources.availableData;
+  }
+
+  function readPlayerDataState(player) {
+    const state = player.dataState;
+    return Array.isArray(state?.poolTokens) && Array.isArray(state?.placedTokens)
+      ? state : normalizeDataState(state);
+  }
+
+  function listPoolTokens(player) {
+    return [...readPlayerDataState(player).poolTokens];
+  }
+
+  function listPlacedTokens(player) {
+    return [...readPlayerDataState(player).placedTokens];
+  }
+
+  function listComputerPlacedTokens(player) {
+    return listPlacedTokens(player).filter((token) => getPlacementKind(token) === PLACEMENT_KIND_COMPUTER);
+  }
+
+  function listBlueBonusPlacedTokens(player) {
+    return listPlacedTokens(player).filter((token) => getPlacementKind(token) === PLACEMENT_KIND_BLUE_BONUS);
+  }
+
+  function listDataTokens(player) {
+    return listPoolTokens(player);
+  }
+
+  function getNextDataIndex(dataState) {
+    const all = [...dataState.poolTokens, ...dataState.placedTokens];
+    if (!all.length) return 1;
+    return Math.max(...all.map((token) => token.index)) + 1;
+  }
+
+  function findNextOpenPoolSlotIndex(player) {
+    const occupied = new Set(
+      ensurePlayerDataState(player).poolTokens.map((token) => token.slotIndex),
+    );
+    for (const slotIndex of placement.DATA_POOL_SLOT_IDS) {
+      if (!occupied.has(slotIndex)) return slotIndex;
+    }
+    return null;
+  }
+
+  function findLeftmostPoolToken(dataState) {
+    return [...dataState.poolTokens].sort((a, b) => a.slotIndex - b.slotIndex)[0] || null;
+  }
+
+  function getBlueTechTileInBoardSlot(player, blueSlot) {
+    const techState = ensurePlayerTechState(player);
+    const slot = Number(blueSlot);
+    for (const tileId of catalog.TILE_IDS_BY_TYPE.blue) {
+      if (!playerTech.playerHasActiveTile(techState, tileId)) continue;
+      if (playerTech.getBlueBoardSlot(techState, tileId) === slot) return tileId;
+    }
+    return null;
+  }
+
+  function hasBlueTechInBoardSlot(player, blueSlot) {
+    return Boolean(getBlueTechTileInBoardSlot(player, blueSlot));
+  }
+
+  function getComputerSlotBlueColumnBonus(player, placementSlot) {
+    const blueBoardSlot = placement.getBlueBoardSlotForComputerSlot(placementSlot);
+    if (!blueBoardSlot) return null;
+    if (!hasBlueTechInBoardSlot(player, blueBoardSlot)) return null;
+    return placement.getBlueColumnScoreBonus();
+  }
+
+  function getBlueBonusPlacementReward(player, blueBoardSlot) {
+    const tileId = getBlueTechTileInBoardSlot(player, blueBoardSlot);
+    if (!tileId) return null;
+    return placement.getBlueTileDataBonus(tileId);
+  }
+
+  function collectComputerPlacementBonuses(player, placementSlot) {
+    const slotBonuses = [];
+    const computerSlotBonus = placement.getComputerSlotBonus(placementSlot);
+    if (computerSlotBonus) slotBonuses.push(computerSlotBonus);
+    const columnBonus = getComputerSlotBlueColumnBonus(player, placementSlot);
+    if (columnBonus) slotBonuses.push(columnBonus);
+    return slotBonuses;
+  }
+
+  function describeSlotBonus(bonus) {
+    if (!bonus) return "";
+    if (bonus.type === "publicity") return `额外获得 ${bonus.publicity} 宣传`;
+    if (bonus.type === "income") return "额外获得 1 次收入";
+    if (bonus.type === "score") return `额外获得 ${bonus.score} 分`;
+    if (bonus.type === "credits") return `额外获得 ${bonus.credits} 信用点`;
+    if (bonus.type === "energy") return `额外获得 ${bonus.energy} 能量`;
+    if (bonus.type === "choose_card") return "额外精选 1 张牌";
+    return "";
+  }
+
+  function describePlacementBonuses(bonuses) {
+    const labels = (bonuses || []).map(describeSlotBonus).filter(Boolean);
+    return labels.length ? `，${labels.join("，")}` : "";
+  }
+
+  function isComputerSlotOccupied(player, placementSlot) {
+    return listComputerPlacedTokens(player).some((token) => token.placementSlot === Number(placementSlot));
+  }
+
+  function isBlueBonusSlotOccupied(player, blueSlot) {
+    return listBlueBonusPlacedTokens(player).some((token) => token.blueSlot === Number(blueSlot));
+  }
+
+  function isBlueBonusSlotEligible(player, blueSlot) {
+    const slot = Number(blueSlot);
+    if (!placement.BLUE_BONUS_DATA_SLOT_IDS.includes(slot)) return false;
+    const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(slot);
+    if (!requiredComputerSlot) return false;
+    if (!hasBlueTechInBoardSlot(player, slot)) return false;
+    if (!isComputerSlotOccupied(player, requiredComputerSlot)) return false;
+    if (isBlueBonusSlotOccupied(player, slot)) return false;
+    return true;
+  }
+
+  function listEligibleBlueBonusSlots(player) {
+    return placement.BLUE_BONUS_DATA_SLOT_IDS.filter((blueSlot) => isBlueBonusSlotEligible(player, blueSlot));
+  }
+
+  function describeComputerSlotBonus(player, placementSlot) {
+    return describePlacementBonuses(collectComputerPlacementBonuses(player, placementSlot));
+  }
+
+  function describeBlueBonusPlacementReward(player, blueBoardSlot) {
+    const tileId = getBlueTechTileInBoardSlot(player, blueBoardSlot);
+    if (!tileId) return "";
+    return describePlacementBonuses([placement.getBlueTileDataBonus(tileId)]);
+  }
+
+  function hasBlueBonusPlaceOptions(player) {
+    return listEligibleBlueBonusSlots(player).length > 0;
+  }
+
+  function findNextComputerPlacementSlot(player) {
+    const occupied = new Set(listComputerPlacedTokens(player).map((token) => token.placementSlot));
+    for (const slot of placement.COMPUTER_DATA_SLOT_IDS) {
+      if (!occupied.has(slot)) return slot;
+    }
+    return null;
+  }
+
+  function gainData(player, options = {}) {
+    if (!player) {
+      return { ok: false, message: "未找到当前玩家" };
+    }
+
+    const dataState = ensurePlayerDataState(player);
+    const limit = players.RESOURCE_LIMITS.availableData;
+
+    if (dataState.poolTokens.length >= limit) {
+      dataState.discardedCount += 1;
+      syncAvailableDataCount(player);
+      return {
+        ok: false,
+        discarded: true,
+        message: `数据池已满（${limit}/${limit}），本次数据被弃置`,
+      };
+    }
+
+    const slotIndex = findNextOpenPoolSlotIndex(player);
+    if (!slotIndex) {
+      return { ok: false, message: "数据池没有可用槽位" };
+    }
+
+    const committedSequence = stateSequences.take(options.root, "dataToken");
+    const token = {
+      id: `data-token-${committedSequence}`,
+      index: getNextDataIndex(dataState),
+      slotIndex,
+    };
+
+    dataState.poolTokens.push(token);
+    syncAvailableDataCount(player);
+
+    return {
+      ok: true,
+      token,
+      slotIndex,
+      message: `获取数据 +1，序号 ${token.index} @数据池槽位${slotIndex}`,
+    };
+  }
+
+  function canPlaceDataToComputer(player) {
+    if (!player) {
+      return { ok: false, message: "未找到当前玩家" };
+    }
+    if (!ensurePlayerDataState(player).poolTokens.length) {
+      return { ok: false, message: "数据池没有可放置的数据" };
+    }
+    const placementSlot = findNextComputerPlacementSlot(player);
+    if (!placementSlot) {
+      return { ok: false, message: "计算机第一排放置区已满（6/6）" };
+    }
+    return { ok: true, message: null, placementSlot };
+  }
+
+  function canPlaceDataToBlueBonus(player, blueSlot) {
+    if (!player) {
+      return { ok: false, message: "未找到当前玩家" };
+    }
+    if (!ensurePlayerDataState(player).poolTokens.length) {
+      return { ok: false, message: "数据池没有可放置的数据" };
+    }
+    const slot = Number(blueSlot);
+    if (!isBlueBonusSlotEligible(player, slot)) {
+      const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(slot);
+      return {
+        ok: false,
+        message: requiredComputerSlot
+          ? `位置${slot}蓝色科技不可放置（需蓝色科技在位且第一排第 ${requiredComputerSlot} 位已有数据）`
+          : `位置${slot}蓝色科技没有附加放置位`,
+      };
+    }
+    return { ok: true, message: null, blueSlot: slot };
+  }
+
+  // Purpose requirements may include a column whose computer prerequisite is
+  // not filled yet; the current legal placement menu below remains unchanged.
+  function listBluePlacementRequirements(player) {
+    const copy={...player},filled=new Set(listBlueBonusPlacedTokens(copy).map(t=>t.blueSlot));
+    return placement.BLUE_BONUS_DATA_SLOT_IDS.filter(slot=>hasBlueTechInBoardSlot(copy,slot)&&!filled.has(slot))
+      .map(blueSlot=>({target:PLACEMENT_KIND_BLUE_BONUS,blueSlot,requiredComputerSlot:placement.getRequiredComputerSlotForBlueBonus(blueSlot)}));
+  }
+
+  function listPlaceDataChoices(player) {
+    const choices = [];
+    const computerCheck = canPlaceDataToComputer(player);
+    if (computerCheck.ok) {
+      choices.push({
+        target: PLACEMENT_KIND_COMPUTER,
+        placementSlot: computerCheck.placementSlot,
+        label: `第一排放置位 ${computerCheck.placementSlot}`,
+        description:
+          `按从左到右放入第一排第 ${computerCheck.placementSlot} 位`
+          + describeComputerSlotBonus(player, computerCheck.placementSlot),
+      });
+    }
+
+    for (const blueSlot of listEligibleBlueBonusSlots(player)) {
+      const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(blueSlot);
+      const tileId = getBlueTechTileInBoardSlot(player, blueSlot);
+      choices.push({
+        target: PLACEMENT_KIND_BLUE_BONUS,
+        blueSlot,
+        blueTileId: tileId,
+        requiredComputerSlot,
+        label: tileId ? `${tileId} 下方` : `位置${blueSlot}蓝色科技`,
+        description:
+          `放入蓝色科技 ${blueSlot} 下方（第一排第 ${requiredComputerSlot} 位下方）`
+          + describeBlueBonusPlacementReward(player, blueSlot),
+      });
+    }
+
+    return choices;
+  }
+
+  function canPlaceAnyData(player) {
+    if (!player) {
+      return { ok: false, message: "未找到当前玩家" };
+    }
+    if (!ensurePlayerDataState(player).poolTokens.length) {
+      return { ok: false, message: "数据池没有可放置的数据" };
+    }
+    const choices = listPlaceDataChoices(player);
+    if (!choices.length) {
+      return { ok: false, message: "没有可用的数据放置位置" };
+    }
+    return { ok: true, message: null, choices };
+  }
+
+  function isAnalyzeReady(player) {
+    return listComputerPlacedTokens(player).some(
+      (token) => token.placementSlot === ANALYZE_REQUIRED_COMPUTER_SLOT,
+    );
+  }
+
+  function canAnalyzeData(player, options = {}) {
+    if (!player) {
+      return { ok: false, message: "未找到当前玩家" };
+    }
+    if (!isAnalyzeReady(player)) {
+      return {
+        ok: false,
+        message: `需在计算机第 ${ANALYZE_REQUIRED_COMPUTER_SLOT} 放置位放置数据`,
+      };
+    }
+    if (!options.skipEnergyCost && player.resources.energy < ANALYZE_ENERGY_COST) {
+      return { ok: false, message: `能量不足，分析需要 ${ANALYZE_ENERGY_COST} 能量` };
+    }
+    return { ok: true, message: null };
+  }
+
+  function analyzeData(player) {
+    const check = canAnalyzeData(player);
+    if (!check.ok) return check;
+
+    const dataState = ensurePlayerDataState(player);
+    const clearedCount = dataState.placedTokens.length;
+    const spend = players.spendResources(player, { energy: ANALYZE_ENERGY_COST });
+    if (!spend.ok) {
+      return { ok: false, message: spend.message };
+    }
+
+    dataState.placedTokens = [];
+    syncAvailableDataCount(player);
+
+    return {
+      ok: true,
+      clearedCount,
+      message: `分析数据：消耗 ${ANALYZE_ENERGY_COST} 能量，清除 ${clearedCount} 个已放置数据`,
+    };
+  }
+
+  function analyzeDataWithoutEnergy(player) {
+    if (!isAnalyzeReady(player)) {
+      return {
+        ok: false,
+        message: `需在计算机第 ${ANALYZE_REQUIRED_COMPUTER_SLOT} 放置位放置数据`,
+      };
+    }
+
+    const dataState = ensurePlayerDataState(player);
+    const clearedCount = dataState.placedTokens.length;
+    dataState.placedTokens = [];
+    syncAvailableDataCount(player);
+
+    return {
+      ok: true,
+      clearedCount,
+      message: `分析数据：清除 ${clearedCount} 个已放置数据（免能）`,
+    };
+  }
+
+  function placeDataToComputer(player, options = {}) {
+    const target = options.target === PLACEMENT_KIND_BLUE_BONUS
+      ? PLACEMENT_KIND_BLUE_BONUS
+      : PLACEMENT_KIND_COMPUTER;
+    const check = target === PLACEMENT_KIND_BLUE_BONUS
+      ? canPlaceDataToBlueBonus(player, options.blueSlot)
+      : canPlaceDataToComputer(player);
+    if (!check.ok) return check;
+
+    const dataState = ensurePlayerDataState(player);
+    const poolToken = findLeftmostPoolToken(dataState);
+    if (!poolToken) {
+      return { ok: false, message: "数据池没有可放置的数据" };
+    }
+
+    const poolIndex = dataState.poolTokens.findIndex((token) => token.id === poolToken.id);
+    dataState.poolTokens.splice(poolIndex, 1);
+
+    function restorePoolToken() {
+      dataState.poolTokens.push(poolToken);
+      syncAvailableDataCount(player);
+    }
+
+    if (target === PLACEMENT_KIND_BLUE_BONUS) {
+      const blueSlot = check.blueSlot;
+      if (!blueSlot) {
+        restorePoolToken();
+        return { ok: false, message: "蓝色科技附加放置位不可用" };
+      }
+
+      const blueTileId = getBlueTechTileInBoardSlot(player, blueSlot);
+      const slotBonus = getBlueBonusPlacementReward(player, blueSlot);
+      const slotBonuses = slotBonus ? [slotBonus] : [];
+
+      const placedToken = normalizePlacedToken({
+        id: poolToken.id,
+        index: poolToken.index,
+        placementKind: PLACEMENT_KIND_BLUE_BONUS,
+        blueSlot,
+      }, dataState.placedTokens.length);
+
+      dataState.placedTokens.push(placedToken);
+      syncAvailableDataCount(player);
+
+      return {
+        ok: true,
+        token: placedToken,
+        poolToken,
+        placementKind: PLACEMENT_KIND_BLUE_BONUS,
+        blueSlot,
+        blueTileId,
+        slotBonus,
+        slotBonuses,
+        message:
+          `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
+          + ` → ${blueTileId || `位置${blueSlot}蓝色科技`} 下方`
+          + describePlacementBonuses(slotBonuses),
+      };
+    }
+
+    const placementSlot = check.placementSlot ?? findNextComputerPlacementSlot(player);
+    if (!placementSlot) {
+      restorePoolToken();
+      return { ok: false, message: "计算机第一排没有可用放置位" };
+    }
+
+    const placedToken = normalizePlacedToken({
+      id: poolToken.id,
+      index: poolToken.index,
+      placementKind: PLACEMENT_KIND_COMPUTER,
+      placementSlot,
+    }, dataState.placedTokens.length);
+
+    dataState.placedTokens.push(placedToken);
+    syncAvailableDataCount(player);
+
+    const slotBonuses = collectComputerPlacementBonuses(player, placementSlot);
+    const slotBonus = slotBonuses[0] ?? null;
+    const message =
+      `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
+      + ` → 第一排放置位${placementSlot}`
+      + describePlacementBonuses(slotBonuses);
+
+    return {
+      ok: true,
+      token: placedToken,
+      poolToken,
+      placementKind: PLACEMENT_KIND_COMPUTER,
+      placementSlot,
+      slotBonus,
+      slotBonuses,
+      message,
+    };
+  }
+
+  return Object.freeze({
+    DATA_TOKEN_SRC,
+    PLACEMENT_KIND_COMPUTER,
+    PLACEMENT_KIND_BLUE_BONUS,
+    ANALYZE_ENERGY_COST,
+    ANALYZE_REQUIRED_COMPUTER_SLOT,
+    createDefaultDataState,
+    normalizeDataState,
+    ensurePlayerDataState,
+    syncAvailableDataCount,
+    listPoolTokens,
+    listPlacedTokens,
+    listComputerPlacedTokens,
+    listBlueBonusPlacedTokens,
+    listDataTokens,
+    listEligibleBlueBonusSlots,
+    hasBlueTechInBoardSlot,
+    getBlueTechTileInBoardSlot,
+    getComputerSlotBlueColumnBonus,
+    getBlueBonusPlacementReward,
+    hasBlueBonusPlaceOptions,
+    gainData,
+    canPlaceAnyData,
+    listPlaceDataChoices,
+    listBluePlacementRequirements,
+    canPlaceDataToComputer,
+    canPlaceDataToBlueBonus,
+    isAnalyzeReady,
+    canAnalyzeData,
+    analyzeData,
+    analyzeDataWithoutEnergy,
+    placeDataToComputer,
+  });
+});

@@ -20,7 +20,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v32";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v33";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -257,6 +257,11 @@
   function investmentFor(facts,weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
     return(hand,publicity,funding)=>{
+      // Neither held nor paid research can consume this wallet. Preserve the
+      // original validation path for missing/non-finite funding inputs.
+      if(Number.isFinite(publicity)&&Number.isFinite(funding?.resources?.availableData)
+        &&Number.isSafeInteger(facts.researchCost)&&facts.researchCost>=0
+        &&publicity<facts.researchCost&&!hand.some(supportedResearch))return 0;
       funding=researchFunding(facts,funding,publicity);
       return handCapital(hand,player.techState,supply,round+Number(passing),weights,funding)
         +researchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
@@ -293,11 +298,15 @@
   }
   function capitalWithoutSector(facts, weights = DEFAULT_WEIGHTS) {
     const base=basePurposeCapital(facts,weights),portfolio=next=>basePurposeCapital(next,weights).total;
-    const analysis=readyAnalysis.quote(facts,weights,(wallet,slots,progress={})=>{
+    const analysisPortfolio=(wallet,slots,progress={})=>{
       const {aliens,ordinaryDrawCount,...updates}=progress;
       return portfolio({...facts,...updates,player:wallet,board:{...facts.board,
         ...(ordinaryDrawCount===undefined?{}:{ordinaryDrawCount}),aliens:aliens||{...facts.board.aliens,slots}}});
-    },base.total);
+    };
+    // This base portfolio observes ordinary held cards only as income sources.
+    // Preserve every research card identity and every different income vector.
+    analysisPortfolio.incomeRemovalClass=card=>supportedResearch(card)?null:'ordinary-income';
+    const analysis=readyAnalysis.quote(facts,weights,analysisPortfolio,base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
     const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
     return{...base,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential],weights)};

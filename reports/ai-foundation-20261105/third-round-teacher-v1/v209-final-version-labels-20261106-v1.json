@@ -1,0 +1,12 @@
+{
+  "scope": "Only version string labels updated after180/180+1 full Node and5 related Browser checks; production algorithms unchanged. Final labeled source frozen before first cold gates and independently validated later.",
+  "before": {
+    "randomizer/game/ai/state-value.js": "3c7bdb3ad7254f7e095d3f2f11852e52a0e63acf29ddb2282f92c50a01690305",
+    "randomizer/game/ai/decision-search.js": "755363bdada0476a9340b8fbe4b9e6eb339ad03f89f52d1981dc8f5b74d2d6e5"
+  },
+  "after": {
+    "randomizer/game/ai/state-value.js": "d64e11cd944ec3f96e15f7c22c0fdf64e28c2dfdf4fb90ff267dadccfc806ee5",
+    "randomizer/game/ai/decision-search.js": "3cc0b0c5813f06cbe7f67b2c5a05f1fffdaa4a982ceca1357489e84b6e71ce83"
+  },
+  "newAutonomousRuns": 0
+}

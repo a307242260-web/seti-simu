@@ -7,7 +7,7 @@ const facts=o=>{const f=probe.factsFromObservation(o,seatId),p=o.publicState.pla
 function submit(i){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId);assert(a,'native teacher '+i);const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
 try{
  const original=c.lifecycle.save().envelope,o=observe(),f=facts(o),serialized=JSON.stringify(f),capital=values.purposeCapital(f),q=capital.symbolCardPlan;
- assert.equal(q.value,2.5);assert.equal(q.selected.slotId,'blue_1');assert.equal(q.selected.linear,2.5);assert.equal(q.selected.afterCapital,3);assert.equal(values.evaluateStateValue(o,seatId).total,114);
+ assert.equal(q.value,2.5);assert.equal(q.selected.slotId,'blue_1');assert.equal(q.selected.linear,2.5);assert.equal(q.selected.afterCapital,4.75);assert.equal(values.evaluateStateValue(o,seatId).total,115.75);
  assert.equal(JSON.stringify(f),serialized);assert.deepEqual(c.lifecycle.save().envelope,original);
  const owner=state.players.players.find(p=>p.id===seatId),native={...probe.factsFromState(state,owner),supply:state.tech,researchCost:6,analyzeEnergyCost:0};const nq=values.purposeCapital(native).symbolCardPlan;assert.equal(nq.value,q.value);
  for(const key of ['payment','slotId','reward','move','linear','afterCapital','netGain','symbols'])assert.deepEqual(nq.selected[key],q.selected[key],key);
@@ -29,5 +29,5 @@ try{
  assert.equal(symbol.quote({...f,researchSymbols:null},values.DEFAULT_WEIGHTS,()=>0,0).reason,'no-public-symbol-layout');
  const wrongCompany={...f,companyState:{abilityId:'unknown'}};assert.equal(symbol.quote(wrongCompany,values.DEFAULT_WEIGHTS,()=>0,0).reason,'symbol-card-company-not-audited');
  assert.equal(JSON.stringify(f),serialized);assert.deepEqual(c.lifecycle.save().envelope,original);
- console.log(JSON.stringify({knownSymbolCard:true,nativeInputs:3,netValue:2.5,fullyRealizedModelValue:114,dataCapacity:true,sharedCostAndHandOpportunity:true,pendingNativeAndNewlyHeldHistoricalTriggers:true,stateFullCompactParity:true,hiddenIdentityIndependent:true,rootAndRngUnchanged:true}));
+ console.log(JSON.stringify({knownSymbolCard:true,nativeInputs:3,netValue:2.5,fullyRealizedModelValue:115.75,dataCapacity:true,sharedCostAndHandOpportunity:true,pendingNativeAndNewlyHeldHistoricalTriggers:true,stateFullCompactParity:true,hiddenIdentityIndependent:true,rootAndRngUnchanged:true}));
 }finally{c.dispose();}

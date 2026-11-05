@@ -1,0 +1,552 @@
+{
+  "status": "reviewed",
+  "scope": "Read existing complete cold-search evidence only. No new native execution, simulation or autonomous game; values are model comparisons, not actual board score. Every action retains its real native identity.",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "remaining": "Teacher safety-protocol choice is still valued below immediate B101 or Amiba3 region play; do not force teacher action or claim third-round development alignment. Assess next from actual autonomous R3 or more controlled original-prefix evidence.",
+  "rows": [
+    {
+      "label": "teacher-r3-before-safety-protocol",
+      "versions": {
+        "208": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-cold-teacher-r3-before-safety-protocol-20261106-v1.json",
+          "evidenceSha256": "6244e94c4b50ac2d71c9ed05aa9ce2b3e4c7100180f1857fc35b475e75ac35b4",
+          "selectedActionId": "card_corner:ab712e76",
+          "value": 118.75,
+          "nativeInputs": 195,
+          "milliseconds": 552.1072919999999,
+          "choices": [
+            {
+              "actionId": "card_corner:ab712e76",
+              "family": "card_corner",
+              "summary": "amiba_0.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 118.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 116,
+              "completion": "complete"
+            },
+            {
+              "actionId": "scan:2d21a323",
+              "family": "scan",
+              "summary": "扫描",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "value": 114.5,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:2f9ae88e",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 113,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:201c00de",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 112,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90,
+              "completion": "complete"
+            }
+          ]
+        },
+        "214": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-cold-teacher-r3-before-safety-protocol-20261106-v1.json",
+          "evidenceSha256": "10de72af0c85f0eff131845e8e05d12929eea37b1e30156349b3f6c8ac87b1cb",
+          "selectedActionId": "play_card:52a456f8",
+          "value": 120,
+          "nativeInputs": 195,
+          "milliseconds": 557.521542,
+          "choices": [
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 120,
+              "completion": "complete"
+            },
+            {
+              "actionId": "card_corner:ab712e76",
+              "family": "card_corner",
+              "summary": "amiba_0.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 118.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "scan:2d21a323",
+              "family": "scan",
+              "summary": "扫描",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "value": 115,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:201c00de",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 113.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:2f9ae88e",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 113.33333333333333,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90,
+              "completion": "complete"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "versions": {
+        "208": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-cold-teacher-r3-after-amiba-reveal-20261106-v1.json",
+          "evidenceSha256": "5d3b657cf952758769a4496988ecc93328da4d92a334d1f449b9af8d2c930034",
+          "selectedActionId": "card_corner:295d3b4f",
+          "value": 118.75,
+          "nativeInputs": 200,
+          "milliseconds": 572.4505,
+          "choices": [
+            {
+              "actionId": "card_corner:295d3b4f",
+              "family": "card_corner",
+              "summary": "amiba_3.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 118.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:e527bf01",
+              "family": "play_card",
+              "summary": "amiba_3.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 116,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 115.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "scan:2d21a323",
+              "family": "scan",
+              "summary": "扫描",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "value": 114.5,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:2f9ae88e",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 110.5,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:201c00de",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 108,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90,
+              "completion": "complete"
+            }
+          ]
+        },
+        "214": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-cold-teacher-r3-after-amiba-reveal-20261106-v1.json",
+          "evidenceSha256": "5a0150c0c74099b0e01abb4e84aa38733caca1ff5f0b031a44980b19f1e4bb3f",
+          "selectedActionId": "play_card:e527bf01",
+          "value": 122,
+          "nativeInputs": 206,
+          "milliseconds": 582.024083,
+          "choices": [
+            {
+              "actionId": "play_card:e527bf01",
+              "family": "play_card",
+              "summary": "amiba_3.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 122,
+              "completion": "complete"
+            },
+            {
+              "actionId": "card_corner:295d3b4f",
+              "family": "card_corner",
+              "summary": "amiba_3.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 118.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 117,
+              "completion": "complete"
+            },
+            {
+              "actionId": "scan:2d21a323",
+              "family": "scan",
+              "summary": "扫描",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "value": 115,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:2f9ae88e",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 110.83333333333333,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:201c00de",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 109.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90,
+              "completion": "complete"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "actual-v203-123",
+      "versions": {
+        "208": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-cold-actual-v203-123-20261106-v1.json",
+          "evidenceSha256": "2dcb059acd9a8825254a4f12522278a7d59fa4c2e66fde484969631047eb4c2c",
+          "selectedActionId": "card_corner:295d3b4f",
+          "value": 116.75,
+          "nativeInputs": 117,
+          "milliseconds": 328.151625,
+          "choices": [
+            {
+              "actionId": "card_corner:295d3b4f",
+              "family": "card_corner",
+              "summary": "amiba_3.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 116.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:a27d2ab4",
+              "family": "play_card",
+              "summary": "amiba_3.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 116,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 113.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:8e0d747b",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 110.5,
+              "completion": "complete"
+            },
+            {
+              "actionId": "quick_trade:f385e2ac",
+              "family": "quick_trade",
+              "summary": "2信用点 → 1能量",
+              "target": {
+                "tradeId": "credits-for-energy"
+              },
+              "value": 109.5,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:ec548c50",
+              "family": "play_card",
+              "summary": "dlc_31.png",
+              "target": {
+                "cardInstanceId": "card-51-0"
+              },
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:1c4e6ebd",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 108,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90.5,
+              "completion": "complete"
+            }
+          ]
+        },
+        "214": {
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-cold-actual-v203-123-20261106-v1.json",
+          "evidenceSha256": "66fa2a742dcbaf51bba0ad1cb8a2a90d191743a99a14942eabf9c27a41661437",
+          "selectedActionId": "play_card:a27d2ab4",
+          "value": 122,
+          "nativeInputs": 117,
+          "milliseconds": 340.293292,
+          "choices": [
+            {
+              "actionId": "play_card:a27d2ab4",
+              "family": "play_card",
+              "summary": "amiba_3.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 122,
+              "completion": "complete"
+            },
+            {
+              "actionId": "card_corner:295d3b4f",
+              "family": "card_corner",
+              "summary": "amiba_3.webp：弃牌角标",
+              "target": {
+                "cardInstanceId": "alien-amiba-3-3"
+              },
+              "value": 116.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:52a456f8",
+              "family": "play_card",
+              "summary": "b_101.webp",
+              "target": {
+                "cardInstanceId": "card-29-pass-2-5"
+              },
+              "value": 115,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:8e0d747b",
+              "family": "play_card",
+              "summary": "amiba_0.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "value": 110.83333333333333,
+              "completion": "complete"
+            },
+            {
+              "actionId": "quick_trade:f385e2ac",
+              "family": "quick_trade",
+              "summary": "2信用点 → 1能量",
+              "target": {
+                "tradeId": "credits-for-energy"
+              },
+              "value": 110,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:1c4e6ebd",
+              "family": "play_card",
+              "summary": "amiba_1.webp",
+              "target": {
+                "cardInstanceId": "alien-amiba-1-2"
+              },
+              "value": 109.75,
+              "completion": "complete"
+            },
+            {
+              "actionId": "launch:c94cda79",
+              "family": "launch",
+              "summary": "发射",
+              "target": null,
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "play_card:ec548c50",
+              "family": "play_card",
+              "summary": "dlc_31.png",
+              "target": {
+                "cardInstanceId": "card-51-0"
+              },
+              "value": 108.25,
+              "completion": "complete"
+            },
+            {
+              "actionId": "pass:a1f33c73",
+              "family": "pass",
+              "summary": "PASS",
+              "target": {
+                "kind": "pass"
+              },
+              "value": 90.5,
+              "completion": "complete"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

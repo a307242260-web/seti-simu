@@ -1,0 +1,20 @@
+{
+  "status": "rejected",
+  "failure": {
+    "label": "teacher-r3-before-safety-protocol",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-safety-protocol-root-20261105-v1.json",
+    "identity": "f6434fe5e33eeb4eee120ec97e79ae1f3795f2948a4e03a11b1e9e9b7bc318ad",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v213-cold-teacher-r3-before-safety-protocol-20261106-v1.json",
+    "nativeInputs": 195,
+    "milliseconds": 631.823083,
+    "value": 120,
+    "actionId": "play_card:52a456f8",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  },
+  "rowsCompleted": 7,
+  "newAutonomousRuns": 0,
+  "production": "V208/V32",
+  "companyInputParityRoots": 322
+}

@@ -561,6 +561,7 @@
     return null;
   }
 
+  let initialCardsModule = null;
   function getPlayerCompanyBaseIncome(player, context = {}, helpers = {}) {
     const resolver = helpers.getPlayerCompanyBaseIncome
       || context.getPlayerCompanyBaseIncome
@@ -591,10 +592,11 @@
     // Browser先加载计分模块，Node存在间接依赖，因此在计分调用时解析模块。
     const initialCards = typeof globalThis !== "undefined" && globalThis.SetiInitialCards
       ? globalThis.SetiInitialCards
-      : typeof require === "function" ? require("./initial-cards") : null;
+      : initialCardsModule || (typeof require === "function" ? require("./initial-cards") : null);
     if (!initialCards?.getIndustryEffect) {
       throw new TypeError("公司收入计分缺少 SetiInitialCards");
     }
+    initialCardsModule = initialCards;
     const effect = initialCards.getIndustryEffect(selectedIndustry);
     if (!effect?.baseIncome) {
       throw new TypeError(`公司收入计分未知公司: ${JSON.stringify(selectedIndustry)}`);

@@ -437,7 +437,7 @@
     return [...byTile.values()];
   }
   function previewIncomeTail({state,seatId,goal}){
-    const original=owner(state,seatId),p=structuredClone(original),card=p.hand.find(c=>c.id===goal.incomeCardId);
+    const original=owner(state,seatId),p={...original,resources:{...original.resources},income:{...original.income},hand:[...original.hand],dataState:structuredClone(original.dataState)},card=p.hand.find(c=>c.id===goal.incomeCardId);
     const remaining=Math.max(0,4-placed(p));
     if(!card||p.resources.availableData<remaining)return{available:false,reason:'income-tail-needs-additional-funding'};
     for(let i=0;i<remaining;i++){

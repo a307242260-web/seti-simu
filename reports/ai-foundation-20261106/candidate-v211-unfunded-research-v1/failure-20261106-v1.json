@@ -1,0 +1,11 @@
+{
+  "status": "rejected",
+  "firstFailure": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-after-amiba-reveal-20261105-v1.json",
+  "nativeInputs": 206,
+  "milliseconds": 611.246667,
+  "complete": true,
+  "newAutonomousRuns": 0,
+  "fullCorpusNotRun": true,
+  "production": "V208/V32",
+  "entirePurposeParityRoots": 322
+}

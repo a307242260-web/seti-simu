@@ -1,0 +1,9 @@
+{
+  "status": "rejected",
+  "nativeInputs": 206,
+  "milliseconds": 619.806375,
+  "complete": true,
+  "reason": "first cold still exceeds600ms; added scalar cache will be removed, original source retained",
+  "newAutonomousRuns": 0,
+  "production": "V208/V32"
+}

@@ -1,0 +1,6 @@
+PASS production-browser-full-parity-search http://127.0.0.1:53346/randomizer/index.html?agent=search
+PASS production-ready-amiba-analysis http://127.0.0.1:53346/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:53346/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:53346/randomizer/index.html
+PASS production-computer-preinvestment http://127.0.0.1:53346/randomizer/index.html
+SUMMARY browserSmoke passed=5 failed=0 total=5

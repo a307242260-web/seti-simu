@@ -5,8 +5,12 @@ try{
  // Playing a landing-pair Type3 does not consume or change computer data.
  const withReserved=cardId=>({...f,reservedCards:[...f.reservedCards,{id:'prepaid-dependency-card',cardId}]});
  assert.equal(ready.prepaidCapital(withReserved('dlc_31.png'),values.DEFAULT_WEIGHTS),q.computerPotential,'landing-pair scoring is independent of existing computer investment');
+ for(const cardId of ['amiba_1.webp','amiba_0.webp'])assert.equal(ready.prepaidCapital(withReserved(cardId),values.DEFAULT_WEIGHTS),q.computerPotential,'research and pink/yellow triggers do not observe computer placement or blue analysis');
  for(const cardId of ['b_30.webp','dlc_8.png','dlc_10.png'])assert.equal(ready.prepaidCapital(withReserved(cardId),values.DEFAULT_WEIGHTS),0,'trace/resource-dependent reservations still require native valuation');
  assert.equal(ready.prepaidCapital({...withReserved('dlc_31.png'),computerSlots:[]},values.DEFAULT_WEIGHTS),0,'an inert scoring card cannot retain consumed computer capital');
+ const controlled=read('reports/ai-foundation-20261105/third-round-teacher-v1/v207-known-computer3-analysis-prefix-20261106-v1.checkpoint.json');
+ for(const [name,envelope]of [['before',controlled.originalEnvelope],['after',controlled.envelope]]){assert(c.lifecycle.restore(envelope).ok);const actual=facts(observe());assert.equal(ready.prepaidCapital(actual,values.DEFAULT_WEIGHTS),name==='before'?1.75:0,'actual safety-protocol root retains data investment; native complete analysis consumes it');}
+ assert(c.lifecycle.restore(original).ok);
  const cleared={...f,computerSlots:[]};assert.equal(ready.prepaidCapital(cleared,values.DEFAULT_WEIGHTS),0);assert.equal(ready.prepaidCapital({...f,analyzeEnergyCost:1},values.DEFAULT_WEIGHTS),0);assert.equal(ready.prepaidCapital({...f,round:4},values.DEFAULT_WEIGHTS),0);
  assert(suffix.rows[0].analysisExecuted&&!suffix.rows[1].analysisExecuted);assert.equal(suffix.rows[0].remainingComputerDataDemand,0);assert.equal(suffix.rows[1].remainingComputerDataDemand,3);assert.deepEqual(suffix.rows[0].scanSpend,suffix.rows[1].scanSpend);
  const triple=structuredClone(f);for(const slot of triple.board.aliens.slots){slot.traces.yellow.firstPlaced=true;slot.traces.pink.firstPlaced=true;slot.traces.blue.firstPlaced=false;}assert.equal(ready.prepaidCapital(triple,values.DEFAULT_WEIGHTS),0);

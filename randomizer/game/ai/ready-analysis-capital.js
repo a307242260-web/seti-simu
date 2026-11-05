@@ -7,8 +7,9 @@
  'use strict';
  const zero=reason=>({value:0,selected:null,reason});
  const weighted=(gain,w)=>Object.entries(gain).reduce((n,[k,v])=>n+v*(k==='score'?1:w[k]||0),0);
- function quiet(cards,allowLandingPairs=false){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&(!m.endGameScoring||allowLandingPairs&&m.endGameScoring.kind==='planetLandingPairs')&&!m?.triggers?.length&&!m?.temporaryTasks?.length;});}
- // Landing-pair scoring depends only on planet markers, never on existing computer data.
+ function quiet(cards,allowLandingPairs=false){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&(!m.endGameScoring||allowLandingPairs&&m.endGameScoring.kind==='planetLandingPairs')&&(!m?.triggers?.length||allowLandingPairs&&m.triggers.every(t=>(t.event?.types||[t.event?.type]).every(type=>type==='researchTech'||type==='alienTrace'&&['pink','yellow'].includes(t.event.traceType))))&&!m?.temporaryTasks?.length;});}
+ // Landing pairs and research/pink/yellow triggers do not observe computer
+ // placement or the future blue trace. The prepaid asset clears with its data.
  function prepaidCapital(facts,weights){
   if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards,true))return 0;
   const slots=[...(facts.computerSlots||[])].sort((a,b)=>a-b);
@@ -27,9 +28,9 @@
  function quote(facts,weights,portfolio,baseValue){
   if(facts.terminal||facts.round+Number(facts.passing)>=4)return zero('analysis-window-closed');
   const placed=[...(facts.computerSlots||[])].sort((a,b)=>a-b),needed=[1,2,3,4,5,6].filter(slot=>!placed.includes(slot));
+  if(facts.researchSymbols?.revealInitialized&&facts.companyState?.abilityId==='deepspace_swap_cards')return amibaAnalysis.quote(facts,weights,portfolio,baseValue);
   if(needed.length&&(placed.length<4||placed.some((slot,index)=>slot!==index+1)
     ||needed.some(slot=>slot<5)||facts.player.availableData<needed.length))return zero('analysis-not-ready');
-  if(facts.researchSymbols?.revealInitialized&&facts.companyState?.abilityId==='deepspace_swap_cards')return amibaAnalysis.quote(facts,weights,portfolio,baseValue);
   if(!quiet(facts.reservedCards))return zero('analysis-reservation-needs-native-value');
   const payment=probe.funding(facts.player,{energy:facts.analyzeEnergyCost},weights);
   if(!payment)return zero('analysis-not-funded');

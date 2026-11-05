@@ -331,7 +331,7 @@
   // Purpose requirements may include a column whose computer prerequisite is
   // not filled yet; the current legal placement menu below remains unchanged.
   function listBluePlacementRequirements(player) {
-    const copy=structuredClone(player),filled=new Set(listBlueBonusPlacedTokens(copy).map(t=>t.blueSlot));
+    const copy={...player},filled=new Set(listBlueBonusPlacedTokens(copy).map(t=>t.blueSlot));
     return placement.BLUE_BONUS_DATA_SLOT_IDS.filter(slot=>hasBlueTechInBoardSlot(copy,slot)&&!filled.has(slot))
       .map(blueSlot=>({target:PLACEMENT_KIND_BLUE_BONUS,blueSlot,requiredComputerSlot:placement.getRequiredComputerSlotForBlueBonus(blueSlot)}));
   }

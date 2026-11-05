@@ -1,0 +1,16 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/adhoc/verify-v211-purpose-parity-20261106-v1.js:4
+for(const row of gate.rows){if(seen.has(row.identity))continue;seen.add(row.identity);const b=fs.readFileSync(row.fixture),f=JSON.parse(b),e=f.compositionEnvelope,state=freeze(e.session?.session?.workingState||JSON.parse(e.committedState)),p=state.players.players.find(p=>p.id===f.seatId),before=JSON.stringify(state),facts={...probe.factsFromState(state,p),supply:state.tech,researchCost:tech.getResearchPublicityCost(p),analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:1},a=prior.purposeCapital(facts),v=current.purposeCapital(facts);assert.deepEqual(v,a,row.label);assert.equal(JSON.stringify(state),before);rows.push({label:row.label,fixture:row.fixture,fixtureSha256:sha(b),entirePurposeSha256:sha(JSON.stringify(v)),total:v.total});}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^
+
+TypeError: industry.canAnalyzeWithoutEnergy is not a function
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v203-teacher-r3-20261106-4ch_cb7q/adhoc/verify-v211-purpose-parity-20261106-v1.js:4:450)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0

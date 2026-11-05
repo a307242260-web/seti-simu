@@ -1,0 +1,17 @@
+PASS production-browser-full-parity-search http://127.0.0.1:57977/randomizer/index.html?agent=search
+PASS production-shared-resource-prefix http://127.0.0.1:57977/randomizer/index.html
+PASS production-resource-goal-plan http://127.0.0.1:57977/randomizer/index.html
+PASS production-winning-income-recovery http://127.0.0.1:57977/randomizer/index.html
+PASS production-funded-research-value http://127.0.0.1:57977/randomizer/index.html
+PASS production-ready-amiba-analysis http://127.0.0.1:57977/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:57977/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:57977/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:57977/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:57977/randomizer/index.html
+PASS production-ready-analysis-capital http://127.0.0.1:57977/randomizer/index.html
+PASS production-known-sector-analysis http://127.0.0.1:57977/randomizer/index.html
+PASS production-computer-preinvestment http://127.0.0.1:57977/randomizer/index.html
+PASS production-purpose-realization http://127.0.0.1:57977/randomizer/index.html
+PASS production-sector-mission-composition http://127.0.0.1:57977/randomizer/index.html
+PASS production-known-movement-tool http://127.0.0.1:57977/randomizer/index.html
+SUMMARY browserSmoke passed=16 failed=0 total=16

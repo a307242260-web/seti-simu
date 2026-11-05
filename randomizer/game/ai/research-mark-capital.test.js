@@ -48,7 +48,7 @@ try{
  // not the historical score or a fabricated observation.
  const actual=read('reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-native-20261106-v1.json'),follow=read('reports/ai-foundation-20261105/third-round-teacher-v1/v204-safety-research-followup-prefix-20261106-v1.checkpoint.json');
  assert(c.lifecycle.restore(actual.branches.safety.envelope).ok);const safetyObservation=c.projection({role:'player',playerId:seatId}).state,safetyState=JSON.parse(actual.branches.safety.envelope.committedState),safetyPlayer=safetyState.players.players.find(p=>p.id===seatId);
- assert.equal(values.evaluateStateValue(safetyObservation,seatId).total,108,'eight currently attained B points must be retained before a funded known research crosses50');
+ assert.equal(values.evaluateStateValue(safetyObservation,seatId).total,109.75,'eight currently attained B points must be retained before a funded known research crosses50');
  const safetyFacts={...probe.factsFromObservation(safetyObservation,seatId),supply:safetyObservation.publicState.board.techSupply},wallet={resources:safetyFacts.player,income:safetyFacts.player.income,startingIncome:0},withNew=values.researchFunding(safetyFacts,wallet),withoutNew={...withNew,newFinalMark:null};
  assert.equal(withNew.newFinalMark.currentValue,8);assert.equal(withNew.newFinalMark.threshold,50);
  const researchCard=safetyObservation.selfState.hand.find(c=>c.cardId==='b_101.webp'),supply={stacks:{orange1:safetyState.tech.stacks.orange1,purple2:safetyState.tech.stacks.purple2}};
@@ -84,9 +84,9 @@ try{
  const noScoreLedger={...projectedFacts,player:{...projectedFacts.player}};delete noScoreLedger.player.score;assert.equal(probe.pendingFinalMarkCapital(noScoreLedger),0,'a balances-only wallet cannot create an earned mark');
  assert.equal(values.researchFunding({...safetyFacts,pendingNativeEffects:true},wallet).newFinalMark,null);
  const nativeFunding=values.researchFunding({...probe.factsFromState(safetyState,safetyPlayer),supply:safetyState.tech},{resources:safetyPlayer.resources,income:safetyPlayer.income,startingIncome:0});assert.deepEqual(nativeFunding.newFinalMark,withNew.newFinalMark);
- const compact=c.projection({role:'player',playerId:seatId,valueOnly:true}).state;assert.equal(values.evaluateStateValue(compact,seatId).total,108);assert.deepEqual(compact.selfState.nextFinalMark,safetyObservation.selfState.nextFinalMark);
+ const compact=c.projection({role:'player',playerId:seatId,valueOnly:true}).state;assert.equal(values.evaluateStateValue(compact,seatId).total,109.75);assert.deepEqual(compact.selfState.nextFinalMark,safetyObservation.selfState.nextFinalMark);
  assert.equal(demand.planningCapital(safetyState,safetyPlayer),['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].reduce((n,k)=>n+values.evaluateStateValue(safetyObservation,seatId).components[k],0));
- assert(c.lifecycle.restore(follow.envelope).ok);const realized=c.projection({role:'player',playerId:seatId}).state;assert.equal(values.evaluateStateValue(realized,seatId).total,109,'a claimed B mark is secured score, not another latent8');
+ assert(c.lifecycle.restore(follow.envelope).ok);const realized=c.projection({role:'player',playerId:seatId}).state;assert.equal(values.evaluateStateValue(realized,seatId).total,112.5,'the claimed B mark and known computer/income analysis plan share the wallet, without another latent8');
  assert.equal(values.researchFunding(probe.factsFromObservation(realized,seatId),{resources:realized.publicState.players.find(p=>p.playerId===seatId),income:realized.publicState.players.find(p=>p.playerId===seatId).income,startingIncome:0}).newFinalMark,null,'70 is not attainable by one ordinary research here');
  assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
  console.log(JSON.stringify({nativeResearchInputs:2,claimedFinalMarkGain:secured,nativeNetValue:6.5,jointD2OddEvenAndD1:true,unfundedAndUnclaimedRejected:true,stateObservationParity:true,mutableQuoteInvalidation:true,rootAndRngUnchanged:true}));

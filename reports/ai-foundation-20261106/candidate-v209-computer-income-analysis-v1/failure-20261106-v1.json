@@ -1,0 +1,13 @@
+{
+  "status": "rejected",
+  "reason": "first case105 cold exceeds600ms",
+  "firstFailure": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-cold-case-105-20261106-v1.json",
+  "nativeInputs": 207,
+  "milliseconds": 637.490459,
+  "complete": true,
+  "fullCorpusNotRun": true,
+  "newAutonomousRuns": 0,
+  "production": "V208/V32",
+  "retainedSecondIndependentFirstCold": "v209-cold-corpus-case-152-20261106-v1.json",
+  "case152SchedulingNote": "The shell continued to the second independent case after Python assertion failed because it had no set-e. Retained original evidence; no samples rerun."
+}
