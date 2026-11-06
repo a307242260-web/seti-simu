@@ -1,0 +1,71 @@
+{
+  "baseCommit": "398cd29eddd5a8611f44f83a110cf698784763ef",
+  "record": "reports/research/0fd517be.398cd29e.quick-400.json",
+  "recordSha256": "cb603292e5f1ba29aa85f16136db4c202d94933b32de02e494c630d78466ec7a",
+  "sourceRuntimeUnchanged": true,
+  "autonomousExperiments": 1,
+  "thirdRoundSettled": true,
+  "newAcceptedInputs": 71,
+  "boardScore": 72,
+  "tech": 4,
+  "maxNativeInputs": 173,
+  "maxMilliseconds": 488.90883399999984,
+  "developmentAligned": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedStageEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "filesSha256": {
+    "adhoc/deliver-v253-r3-results-20261106-v1.py": "c92be5072763607bf9b29d54eb65b302bde86518159cbf159a546f1957f6c7fd",
+    "adhoc/inspect-v253-income-research-loss-20261106-v1.js": "7fcca029083a922ae415eb3e41e1a6c07ae165beec7c02a599a6365d2edd384a",
+    "adhoc/prepare-v253-center-merge-20261106-v1.js": "6234afcfdd6c62886e823c33a6228c54b57c6d9d3ea920d622172b249e901e36",
+    "adhoc/verify-v253-standard-r3-native-20261106-v1.js": "c8274601a271b34f21673851c56feb7ff83c829a86cfedfdcc9ebbe83698c4bc",
+    "docs/human405-third-round-v253-result-20261106.md": "ba803fa876007c327453ac2f35c895cd2fe5230501cf5ebafd1173338c06ff8e",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-center-preservation-plan-20261106-v1.json": "5a8548ab3b00fcd112cecc85b152c56c98fd3eae025bc3c91dee9c84c2d812df",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-committed-source-experiment-verification-20261106-v1.json": "2dbbde97ef8c04e3feb0524621705dcd6cf489ade3c0c5441bb300487b21d8a0",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-income-research-loss-inspection-20261106-v1.json": "96b6ef0672137f7b967421d817b654b93cc81313c31669eb74f01b27b7fe240a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-pre-run-existing-records-20261106-v1.log": "795e577276a428066bc4d0d09245f442c112044067a3fbb6c7f7698163520a4f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-standard-r3-native-verification-20261106-v1.json": "b0a90f8b1c4e5dae6d674a34dd07d85cc8fb4bc87a7882ea92b95f34416e62f8",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v253-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json": "1082ba14238a1faa44058ca7bcb98c4e79111b585bfd3796b8cc80e68d5a3463",
+    "reports/iteration/ai-search-v253-teacher-r3-20261106/0fd517be.398cd29e.quick-400.action-log.html": "5a4cccc99f3c28f3b39801d77ac0f8e77a3a403e9802cb810ad18e732637fa22",
+    "reports/iteration/registry.json": "c8cdf202abfa9b9d58aa6e6602647dc7f705b63613c70e4e381520884987a7e3",
+    "reports/iteration/versions.json": "77e00f2321e4cea77bcc5c3fea6ed45b646e42ecbd8e19d6ae0c43a03ab70522",
+    "reports/research/0fd517be.398cd29e.quick-400.json": "cb603292e5f1ba29aa85f16136db4c202d94933b32de02e494c630d78466ec7a",
+    "reports/research/0fd517be.398cd29e.quick-400.json.decisions.jsonl": "c2510dd31b51c7b9b5b071c2d02d10ce095834b588ab43a6dd4476a60cc1acfc",
+    "reports/research/0fd517be.398cd29e.quick-400.json.round-end-3.checkpoint.json": "224c85cf1c12d00acc861f233d9dac2e9be1bdb3446224af5e31402dbb1a587e",
+    "reports/research/0fd517be.398cd29e.quick-400.json.round-ends.jsonl": "c7f6d54b43ab174c1dac63b91c9a2b221848b5f7b43aa271dc263fa35ed36fa7",
+    "reports/robot-iteration.html": "054c69855655521ca6864b42dc55342537b7be3b0e5f8978ef3d23dfb890a587",
+    "seti-saves/seti-save-research-ai-search-v253-teacher-r3-20261106-398cd29e-quick-400-v80.json": "1d05b57a36c97cb2610ed34148218f747e5f7961d9d702b5b89eb93bfec3fa4a"
+  },
+  "workingCenterPreservation": {
+    "status": "prepared",
+    "sourceCommit": "398cd29eddd5a8611f44f83a110cf698784763ef",
+    "preparedDirectory": "/private/tmp/seti-v253-center-merged-20261106-v1",
+    "beforeFileHashes": {
+      "reports/iteration/versions.json": "3c023d6ceb48f5cbb26140bab1fc3e6c01dd1f2298f88488585f8002568e292d",
+      "reports/iteration/registry.json": "121de722fbc2ad7fdc22ac08faffdb134147db3a5ab07bc5788fa10d5c000c24",
+      "reports/robot-iteration.html": "337c0207a61a42d7db977599cd445c3a533dc129b95a139c76a6a8acba666356"
+    },
+    "afterFileHashes": {
+      "reports/iteration/versions.json": "3e89324f6f20086cd209f9a07d2997f757f47478d818c9c44f5dfdca8da5bc76",
+      "reports/iteration/registry.json": "0b76d3801f845f9d54a0e31d9f39b09f0df55b418db6d48d0bf4b025e772d12e",
+      "reports/robot-iteration.html": "3e6fbb7e36292c1b9716398dccb79123996a370e4dddd7664560742a610d4881"
+    },
+    "addedVersion": "ai-search-v253-teacher-r3-20261106",
+    "workingVersions": 191,
+    "stagedOwnVersions": 190,
+    "foreignWorkingVersions": [
+      {
+        "id": "perf-baseline-lowload-20260913",
+        "sha256": "842e2ef4f4926ba51153f431d190980497046f00f9b5a7a2bec2d4d2701309b6"
+      }
+    ],
+    "foreignV1RegistrySha256": "dcfecf09b07e72599f1fb68431a008e1173695ab64b4c3f65a28a78847330b8b",
+    "allExistingVersionObjectsUnchanged": true,
+    "allExistingResolvedVersionObjectsUnchanged": true,
+    "workingV1RegistryByteEquivalent": true,
+    "workingPageCodeOutsideRegistryUnchanged": true,
+    "stagedArtifactCenterExcludesForeignChanges": true
+  },
+  "privateIndexCenterContainsOnlyOwnVersion": true,
+  "goalStatus": "active"
+}
