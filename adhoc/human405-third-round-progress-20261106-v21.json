@@ -1,0 +1,36 @@
+{
+  "status": "progress",
+  "sourceCommit": "398cd29eddd5a8611f44f83a110cf698784763ef",
+  "recordSha256": "cb603292e5f1ba29aa85f16136db4c202d94933b32de02e494c630d78466ec7a",
+  "newAutonomousExperiments": 1,
+  "thirdRoundSettled": true,
+  "newAcceptedInputs": 71,
+  "boardScore": 72,
+  "tech": 4,
+  "income": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 6,
+    "energy": 3,
+    "handSize": 2,
+    "publicity": 0
+  },
+  "wallMilliseconds": 4791,
+  "maxNativeInputs": 173,
+  "maxRootAndSearchMilliseconds": 488.90883399999984,
+  "developmentAligned": false,
+  "goalStatus": "active",
+  "publishedSource": "398cd29eddd5a8611f44f83a110cf698784763ef",
+  "publishedResults": "bf38ed045fc68d6e63dc7d6734720543f0ac988e",
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "fixedNativeControls": {
+    "purple1Inputs": 22,
+    "purple2Inputs": 23,
+    "teacherR3Inputs": 129
+  },
+  "next": "Resource-constrained recurring scan/movement value; no forced teacher tile/card weights. First actual125/132/151 cold gates then historical/first2 regression before another autonomous experiment. R2-end review and autonomousfirst3 remain."
+}
