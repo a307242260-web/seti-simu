@@ -1,0 +1,249 @@
+{"analysisInvariant":"passed","completeRecordedV50Inputs":580,"selectedAnalysisCases":433,"customCases":48,"reference":{"blueBonusQueries":5014,"symbolCopies":2507},"candidate":{"blueBonusQueries":1010,"symbolCopies":2020},"everyCandidateAndEndpointExact":true,"mutableFrozenAndSourcePreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: changed complete input/weight order must match the uncached V281 portfolio
++ actual - expected
+... Skipped lines
+
+  {
+    analysisPlan: {
+      reason: 'analysis-not-ready',
+      selected: null,
+      value: 0
+...
+    knownPublicIncomeSwapPlan: null,
++   nextIncomeProbePlan: {
++     reason: 'known-income-funded-earth-probe-replacement',
++     scope: 'One ordinary orbit paid from known next-round currency income alone, no current wallet/new card/landing/trace/data. Existing known income-card opportunity cost; positive score floor capped by standard launch replacement cost. Alternative to current mission capital, never a Native successor or admissible bound.',
++     selected: {
++       goalId: '5:orbit:venus:planet',
++       incomeCardOpportunityCost: 1,
++       knownIncomeCardId: 'card-51-0',
++       netScoreFloor: 4,
++       nextIncomeBudget: {
++         credits: 6,
++         energy: 3
++       },
++       payment: {
++         creditPurchases: 0,
++         energyPurchases: 0,
++         spend: {
++           credits: 1,
++           energy: 3
++         },
++         value: 4
++       },
++       planetId: 'venus',
++       replacementCeiling: 2,
++       scoreFloor: 9,
++       value: 2
++     },
++     value: 2
++   },
++   probePotential: 2,
+-   probePotential: 0,
+    researchIncomePlan: {
+      reason: 'reserved-card-needs-native-value',
+      selected: null,
+      value: 0
+    },
+...
+    },
++   total: 6
+-   total: 4
+  }
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-publicity-capital.test.js:46:300)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    handPotential: 0,
+    researchPotential: 4,
+    probePotential: 2,
+    computerPotential: 0,
+    finalMarkPotential: 0,
+    total: 6,
+    analysisPotential: 0,
+    analysisPlan: { value: 0, selected: null, reason: 'analysis-not-ready' },
+    researchIncomePotential: 0,
+    researchIncomePlan: {
+      value: 0,
+      selected: null,
+      reason: 'reserved-card-needs-native-value'
+    },
+    dataPotential: 0,
+    dataPlan: {
+      total: 0,
+      baseline: 0,
+      knownSwapCapital: 0,
+      knownSwapPlan: null,
+      fixed: {
+        value: 0,
+        selected: null,
+        reason: 'reserved-card-needs-native-value'
+      },
+      classes: []
+    },
+    knownPublicIncomeSwapPlan: null,
+    sectorCardPlan: { value: 0, selected: null, reason: 'no-known-sector-tool' },
+    symbolCardPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'no-funded-known-symbol-window'
+    },
+    researchSymbolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-known-research-symbol-window'
+    },
+    toolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-audited-analysis-tool-window'
+    },
+    analysisPublicityPlan: {
+      value: 4,
+      selected: {
+        cornerCardIds: [ 'alien-amiba-3-3' ],
+        incomeCardId: null,
+        targetPublicity: 6,
+        steps: [
+          {
+            cardId: 'alien-amiba-3-3',
+            publicityGain: 2,
+            opportunityCost: 1
+          }
+        ],
+        linear: 0,
+        capitalAfter: 4,
+        netGain: 4
+      },
+      reason: 'known-deferred-publicity-preparation',
+      scope: 'One finite greedy pure-publicity corner sequence from current known owned IDs, protected selected analysis income when applicable, and the same lower shared portfolio. The existing funded analysis purpose or direct research deficit is quoted once, never added together. Uncontested free-analysis company with no turn card bonus; no new card, Native state, action, observation, search or pruning bound. Executing the preparation transfers this potential to the already-funded portfolio.'
+    },
+    nextIncomeProbePlan: {
+      value: 2,
+      selected: {
+        value: 2,
+        goalId: '5:orbit:venus:planet',
+        planetId: 'venus',
+        scoreFloor: 9,
+        payment: {
+          spend: { credits: 1, energy: 3 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 4
+        },
+        knownIncomeCardId: 'card-51-0',
+        incomeCardOpportunityCost: 1,
+        netScoreFloor: 4,
+        replacementCeiling: 2,
+        nextIncomeBudget: { credits: 6, energy: 3 }
+      },
+      reason: 'known-income-funded-earth-probe-replacement',
+      scope: 'One ordinary orbit paid from known next-round currency income alone, no current wallet/new card/landing/trace/data. Existing known income-card opportunity cost; positive score floor capped by standard launch replacement cost. Alternative to current mission capital, never a Native successor or admissible bound.'
+    }
+  },
+  expected: {
+    handPotential: 0,
+    researchPotential: 4,
+    probePotential: 0,
+    computerPotential: 0,
+    finalMarkPotential: 0,
+    total: 4,
+    analysisPotential: 0,
+    analysisPlan: { value: 0, selected: null, reason: 'analysis-not-ready' },
+    researchIncomePotential: 0,
+    researchIncomePlan: {
+      value: 0,
+      selected: null,
+      reason: 'reserved-card-needs-native-value'
+    },
+    dataPotential: 0,
+    dataPlan: {
+      total: 0,
+      baseline: 0,
+      knownSwapCapital: 0,
+      knownSwapPlan: null,
+      fixed: {
+        value: 0,
+        selected: null,
+        reason: 'reserved-card-needs-native-value'
+      },
+      classes: []
+    },
+    knownPublicIncomeSwapPlan: null,
+    sectorCardPlan: { value: 0, selected: null, reason: 'no-known-sector-tool' },
+    symbolCardPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'no-funded-known-symbol-window'
+    },
+    researchSymbolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-known-research-symbol-window'
+    },
+    toolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-audited-analysis-tool-window'
+    },
+    analysisPublicityPlan: {
+      value: 4,
+      selected: {
+        cornerCardIds: [ 'alien-amiba-3-3' ],
+        incomeCardId: null,
+        targetPublicity: 6,
+        steps: [
+          {
+            cardId: 'alien-amiba-3-3',
+            publicityGain: 2,
+            opportunityCost: 1
+          }
+        ],
+        linear: 0,
+        capitalAfter: 4,
+        netGain: 4
+      },
+      reason: 'known-deferred-publicity-preparation',
+      scope: 'One finite greedy pure-publicity corner sequence from current known owned IDs, protected selected analysis income when applicable, and the same lower shared portfolio. The existing funded analysis purpose or direct research deficit is quoted once, never added together. Uncontested free-analysis company with no turn card bonus; no new card, Native state, action, observation, search or pruning bound. Executing the preparation transfers this potential to the already-funded portfolio.'
+    }
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"analysisPublicityPreparation":"passed","before":138.75,"after":138.75,"nativeInputs":1,"existingSourceStillLegal":true,"preparationAlreadyValued":true,"noRepeat":true,"rootAndRngRestored":true}
+{"actual148FundingAfterMain":"passed","actionId":"play_card:52a456f8","value":140.58333333333334,"nativeInputs":126,"rootAndRngRestored":true}
+{"companyFixedIntent":"passed","reusedNativeControlInputs":3,"runs":[{"stage":0,"submissions":3,"reuses":2,"recoveries":0},{"stage":1,"submissions":2,"reuses":1,"recoveries":1},{"stage":2,"submissions":1,"reuses":0,"recoveries":1}],"changedContextGuards":8,"warmColdCompleteNativeState":true,"ruleRngPreserved":true,"siblingIntentIsolation":true,"rootRestored":true,"newAiQueries":0,"newAutonomousRuns":0}
+{"incomeChoiceConsistency":"passed","equalUtility":6,"tieFixture":"case-062 player-blue","actualPublicityOpportunityValues":[{"id":"card-49-0","value":29.083333333333332},{"id":"alien-amiba-9-5","value":16.25}],"preservedPrice":2,"selected":"card-49-0","menuPermutationStable":true,"explicitPurposeRespected":true,"strictlyHigherValueRespected":true,"noNewSearchBranches":true,"nativeInputs":6,"rootAndRngRestored":true,"scalarAnalysisSupplierAligned":true}
+{"localPreviewCopy":"passed","NativePrefixCases":9,"mutableAndFrozenCases":114,"referenceWholePlayerClones":42,"candidateWholePlayerClones":0,"fullPlanResultsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"nextIncomeProbe":"passed","sameNativeR3LaunchDelta":1,"probeReplacementCapital":2,"incomePrincipalUnchanged":true,"fullCompactNativeAgreement":true,"guardsAndOpportunityCost":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"rootAndRngRestored":true}
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+{"singletonResourceRanking":"passed","nativeIncomeChoices":5,"boundIncome":"card-18-0","singleDataCard":"card-49-0","singleSource":"card_corner:ac30be37","unpricedLossIsNull":true,"publicNumericLossPreserved":true,"multiIncomeAndSourceRanked":true,"infeasibleCatalogSuppliersNotPriced":true,"unknownOwnedCardRejected":true,"feasibilityProtectionAndObserverPreserved":true,"newNativeInputs":0,"newAiQueries":0,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"transientCapitalDirect":"passed","actualNativeWalletVariants":12,"exactOriginalFullPortfolio":true,"transientScalarKeyCalls":0,"immutableRepeatedQuotes":12,"immutableFullCalculations":1,"publicScalarCacheUnchanged":true,"sourceUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+SUMMARY unit passed=10 failed=1 total=11 time=5.02s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=8
+FAIL randomizer/game/ai/analysis-publicity-capital.test.js status=1 signal=none

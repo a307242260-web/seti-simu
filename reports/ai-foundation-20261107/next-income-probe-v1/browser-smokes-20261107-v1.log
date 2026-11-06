@@ -1,0 +1,7 @@
+PASS production-next-income-probe-capital http://127.0.0.1:49601/randomizer/index.html
+PASS production-singleton-resource-ranking http://127.0.0.1:49601/randomizer/index.html
+PASS production-company-fixed-intent http://127.0.0.1:49601/randomizer/index.html
+Error: production-analysis-publicity-preparation 操作异常：Error: funding source removed after main
+    at <anonymous>:3:192
+    at runInteractiveSmoke (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:294:11)

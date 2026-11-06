@@ -1,0 +1,35 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress:192 Native orange/investment controls committed/pushedcf9255c12",
+  "thisGoalTurnClassification": "progress:22 Native Venus mission inputs+22 exact independent replay; V292 revealed real composition double count, V293 corrects whole portfolio contribution; 12Node/4Browser/63audit pass,304 first-two V50 root values exact; first cold hard132162/688.413333 fails",
+  "production": "V278/V48",
+  "candidate": "V293/V52",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "newControlledNativeInputs": 22,
+  "independentReplayNativeInputs": 22,
+  "missionOutcome": {
+    "scoreBoth": 91,
+    "sameIncomeHandDataTechReserved": true,
+    "sameRuleRng": true,
+    "earlyCreditsDelta": 2,
+    "earlyEnergyDelta": -1,
+    "mainActionsEarly": 1,
+    "mainActionsLate": 2
+  },
+  "new177FirstCold": {
+    "inputs": 12,
+    "milliseconds": 65.807292,
+    "chosen": "scan4:launch",
+    "complete": true
+  },
+  "hard132FirstCold": {
+    "inputs": 162,
+    "milliseconds": 688.4133330000001,
+    "complete": true,
+    "status": "failed-gate"
+  },
+  "document": "docs/human405-cross-round-probe-investment-20261107.md",
+  "manifest": "reports/ai-foundation-20261107/next-income-probe-joint-v1/source-manifest-20261107-v1.json",
+  "next": "Optimize actual hard132 cost under unchanged256/600 gate; retain correct same-wallet investment, inspect final-round mission window and original entire goal. No autonomy until complete source admission and first-two actual development regression; original23 first3 and R2-end review remain."
+}

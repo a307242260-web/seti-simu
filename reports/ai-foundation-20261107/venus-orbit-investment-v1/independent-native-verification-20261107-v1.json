@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "checkpoint": "reports/ai-foundation-20261107/venus-orbit-investment-v1/native-control-20261107-v1.checkpoint.json",
+  "checkpointSha256": "8767141789ddd315f1d07c05d2730cdbdc46b11a0ebdb7059b843f3cd124b9d2",
+  "independentNativeInputs": 22,
+  "completeStateSessionRngExact": true,
+  "knownR3IncomeCardOnly": true,
+  "comparison": {
+    "score": 91,
+    "sameIncomeHandDataTechReserved": true,
+    "sameRuleRng": true,
+    "earlierCreditsDelta": 2,
+    "earlierEnergyDelta": -1,
+    "earlierMainActions": 1,
+    "laterMainActions": 2
+  },
+  "rootAndRngRestored": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,10 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/next-income-probe-joint-v1');prior=Path('reports/ai-foundation-20261107/next-income-probe-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['adhoc/v293-next-income-probe-joint-contract-20261107-v1.md'];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+added=Path(old['addedCases'])
+m={**old,'valueModel':'seti-purpose-capital-state-value-v52','addedCases':str(added),'addedCasesSha256':sha(added),'searchVersion':'seti-complete-decision-search-v293','resourcePolicy':'seti-goal-resource-preparation-v24','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v293-next-income-probe-joint-contract-20261107-v1.md','failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'V52 fixes real V51 double-counting found by Native income/analysis continuity: future2C replacement contributes only above the entire old current capital composition dependence on this one Earth probe, using scalar-only probe-dependency ablation, no Native observation/state/node.22+22 Native Venus proof retained, R3 realized +1 and old116.5-to116.5 both hold.12 related tests pass. Old forced-publicity Browser assertion aligned to existing same-value optional Native corner contract. V292 first132/721.443792 failure and audit118.5vs116.5 retained. No budget, rules, search pruning or source equivalence change.','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))

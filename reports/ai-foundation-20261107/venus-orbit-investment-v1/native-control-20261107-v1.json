@@ -1,0 +1,283 @@
+{
+  "scope": "Bounded fixed-target Native Venus mission control from two actual R4 roots, passive other seats, no AI search; unexplained Native menus explicitly stop.",
+  "sourcePath": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/next-income-native-control-20261107-v1.checkpoint.json",
+  "sourceSha256": "b80ade899e7d56cc93b971fbf986af9a99e58dd6bc0f22c7f7de58ffc1980253",
+  "checkpoint": "reports/ai-foundation-20261107/venus-orbit-investment-v1/native-control-20261107-v1.checkpoint.json",
+  "checkpointSha256": "8767141789ddd315f1d07c05d2730cdbdc46b11a0ebdb7059b843f3cd124b9d2",
+  "nativeInputs": 22,
+  "branches": {
+    "orange2-skip": {
+      "status": "complete-venus-orbit",
+      "knownIncomeCardId": "card-61-0",
+      "inputs": 14,
+      "mainActions": [
+        {
+          "family": "launch",
+          "turn": 2
+        },
+        {
+          "family": "orbit",
+          "turn": 5
+        }
+      ],
+      "before": {
+        "round": 4,
+        "turn": 1,
+        "currentPlayer": "player-brown",
+        "mainActionCompleted": false,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 82
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-61-0",
+            "cardId": "dlc_24.png"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "rockets": [],
+        "venus": {
+          "landingMarkers": [],
+          "orbitMarkers": [],
+          "satelliteLandings": []
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "after": {
+        "round": 4,
+        "turn": 5,
+        "currentPlayer": "player-white",
+        "mainActionCompleted": true,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 1,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 91
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp"
+          },
+          {
+            "id": "card-71-0",
+            "cardId": "dlc_13.png"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "rockets": [],
+        "venus": {
+          "landingMarkers": [],
+          "orbitMarkers": [
+            {
+              "color": "white",
+              "playerId": "player-white"
+            }
+          ],
+          "satelliteLandings": []
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "rootAndRngRestored": true
+    },
+    "orange2-launch": {
+      "status": "complete-venus-orbit",
+      "knownIncomeCardId": "card-61-0",
+      "inputs": 8,
+      "mainActions": [
+        {
+          "family": "orbit",
+          "turn": 2
+        }
+      ],
+      "before": {
+        "round": 4,
+        "turn": 1,
+        "currentPlayer": "player-brown",
+        "mainActionCompleted": false,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 82
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-61-0",
+            "cardId": "dlc_24.png"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "rockets": [
+          {
+            "angleDegrees": 125.1,
+            "color": "white",
+            "id": 5,
+            "launchGrid": {
+              "x": 4,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 4,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 4,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "venus": {
+          "landingMarkers": [],
+          "orbitMarkers": [],
+          "satelliteLandings": []
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "after": {
+        "round": 4,
+        "turn": 2,
+        "currentPlayer": "player-white",
+        "mainActionCompleted": true,
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 91
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp"
+          },
+          {
+            "id": "card-71-0",
+            "cardId": "dlc_13.png"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "rockets": [],
+        "venus": {
+          "landingMarkers": [],
+          "orbitMarkers": [
+            {
+              "color": "white",
+              "playerId": "player-white"
+            }
+          ],
+          "satelliteLandings": []
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "rootAndRngRestored": true
+    }
+  },
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

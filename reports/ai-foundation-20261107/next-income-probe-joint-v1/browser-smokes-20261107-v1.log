@@ -1,0 +1,5 @@
+PASS production-next-income-probe-capital http://127.0.0.1:53093/randomizer/index.html
+PASS production-singleton-resource-ranking http://127.0.0.1:53093/randomizer/index.html
+PASS production-company-fixed-intent http://127.0.0.1:53093/randomizer/index.html
+PASS production-analysis-publicity-preparation http://127.0.0.1:53093/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4
