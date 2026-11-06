@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "scope": "Link an accepted three-input Native controlled endpoint to the byte-equivalent retained V237 cold root; no second AI run or future hidden-card use. Different own-turn horizons are explicitly reported, not treated as equivalent search windows.",
+  "actualRecord": "reports/research/c0b2b60b.c39f39e8.quick-400.json",
+  "actualRecordSha256": "6445874b79752cedfa1d3ca1a97b4ed1af6d427e997afa94033065cc0c15c5dd",
+  "actualDecisionStep": 123,
+  "actualChosenValue": 122,
+  "actualChosenActionId": "play_card:a27d2ab4",
+  "controlledReport": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-engine-before-research-control-20261106-v1.json",
+  "controlledReportSha256": "9c634bf6ef3a56dfb2ce236ffc98157852aa9f49cdce09f9c0b5366c4bb0f93f",
+  "controlNativeInputs": 3,
+  "controlledEndpointCurrentValue": 113.75,
+  "sameFullNativeEnvelopeAsRetainedFixture": true,
+  "retainedFixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+  "retainedFixtureSha256": "e90d6ad8c7203b1b4a0e4db062cb84514ebeb714d91057afc0506b1d6117e820",
+  "retainedColdEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-cold-corner-safety-purple2-3-20261106-v1.json",
+  "retainedColdEvidenceSha256": "495df4be59f64e5cce689f756d6cd144a55bfb5b5ffaba6978a0637c444b095d",
+  "retainedNextTurnBestValue": 123.58333333333333,
+  "retainedNextTurnBestGoal": "tech:purple1:",
+  "purpleValues": {
+    "purple1": 123.58333333333333,
+    "purple2": 120,
+    "purple3": 120.5
+  },
+  "newAutonomousRuns": 0,
+  "noClaimOfWholeRoundSuperiority": true,
+  "next": "Separate missing fixed investment preparation and value composition across research/marks/known analysis from purple capability valuation; do not force teacher-specific choices."
+}

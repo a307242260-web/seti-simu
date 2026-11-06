@@ -1,0 +1,729 @@
+{
+  "status": "verified",
+  "oldRecord": "reports/research/768b7f09.341f6fad.quick-400.json",
+  "newRecord": "reports/research/c0b2b60b.c39f39e8.quick-400.json",
+  "sameFinalCommittedStateAndRngBytes": true,
+  "sameFinalNativeSession": true,
+  "same112ControlledPrefix": true,
+  "autonomousInputCountOldAndNew": 60,
+  "allActionsIdentical": false,
+  "changedActionSteps": [
+    138,
+    139,
+    140,
+    141,
+    142
+  ],
+  "differences": [
+    {
+      "step": 138,
+      "old": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:7be78a55",
+        "actorId": "player-white",
+        "stateVersion": 55,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:2",
+          "target": "blueBonus",
+          "blueSlot": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue1 \u4e0b\u65b9"
+      },
+      "new": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 55,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 4"
+      }
+    },
+    {
+      "step": 139,
+      "old": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u7ed3\u675f\u56de\u5408"
+      },
+      "new": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b27d2a0c",
+        "actorId": "player-white",
+        "stateVersion": 55,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "income:card-18-0",
+          "cardInstanceId": "card-18-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u6536\u5165 b_48.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_48.webp",
+          "imageAlt": "b_48.webp"
+        }
+      }
+    },
+    {
+      "step": 140,
+      "old": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u653e\u7f6e\u6570\u636e"
+      },
+      "new": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u653e\u7f6e\u6570\u636e"
+      }
+    },
+    {
+      "step": 141,
+      "old": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 4"
+      },
+      "new": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:7be78a55",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:2",
+          "target": "blueBonus",
+          "blueSlot": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue1 \u4e0b\u65b9"
+      }
+    },
+    {
+      "step": 142,
+      "old": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b27d2a0c",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "income:card-18-0",
+          "cardInstanceId": "card-18-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u6536\u5165 b_48.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_48.webp",
+          "imageAlt": "b_48.webp"
+        }
+      },
+      "new": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u7ed3\u675f\u56de\u5408"
+      }
+    }
+  ],
+  "oldWallMilliseconds": 4270,
+  "newWallMilliseconds": 3822,
+  "oldMaxInputs": 163,
+  "newMaxInputs": 70,
+  "oldMaxMilliseconds": 367.5119169999998,
+  "newMaxMilliseconds": 319.562208,
+  "searches": [
+    {
+      "step": 113,
+      "oldAction": "land:d5ee03a2",
+      "newAction": "land:d5ee03a2",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 69,
+      "newInputs": 69
+    },
+    {
+      "step": 114,
+      "oldAction": "choose_target:1035d792",
+      "newAction": "choose_target:1035d792",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 115,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 116,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 117,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 118,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 119,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 102.25,
+      "newValue": 102.25,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 123,
+      "oldAction": "play_card:a27d2ab4",
+      "newAction": "play_card:a27d2ab4",
+      "oldValue": 122,
+      "newValue": 122,
+      "oldInputs": 117,
+      "newInputs": 68
+    },
+    {
+      "step": 124,
+      "oldAction": "choose_target:178e1f5e",
+      "newAction": "choose_target:178e1f5e",
+      "oldValue": 122,
+      "newValue": 122,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 125,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 122,
+      "newValue": 122,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 126,
+      "oldAction": "choose_target:aba3bdc5",
+      "newAction": "choose_target:aba3bdc5",
+      "oldValue": 122,
+      "newValue": 122,
+      "oldInputs": 0,
+      "newInputs": 1
+    },
+    {
+      "step": 127,
+      "oldAction": "play_card:52a456f8",
+      "newAction": "play_card:52a456f8",
+      "oldValue": 126.5,
+      "newValue": 126.5,
+      "oldInputs": 89,
+      "newInputs": 67
+    },
+    {
+      "step": 128,
+      "oldAction": "choose_target:0953ea6c",
+      "newAction": "choose_target:0953ea6c",
+      "oldValue": 126.5,
+      "newValue": 126.5,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 129,
+      "oldAction": "choose_card:56497dc2",
+      "newAction": "choose_card:56497dc2",
+      "oldValue": 126.5,
+      "newValue": 126.5,
+      "oldInputs": 2,
+      "newInputs": 1
+    },
+    {
+      "step": 130,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 126.5,
+      "newValue": 126.5,
+      "oldInputs": 1,
+      "newInputs": 0
+    },
+    {
+      "step": 131,
+      "oldAction": "quick_trade:f385e2ac",
+      "newAction": "quick_trade:f385e2ac",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 110,
+      "newInputs": 70
+    },
+    {
+      "step": 132,
+      "oldAction": "scan:2d21a323",
+      "newAction": "scan:2d21a323",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 133,
+      "oldAction": "choose_target:687150f8",
+      "newAction": "choose_target:687150f8",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 134,
+      "oldAction": "choose_card:a36b7b2f",
+      "newAction": "choose_card:a36b7b2f",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 135,
+      "oldAction": "choose_card:efb772a0",
+      "newAction": "choose_card:efb772a0",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 136,
+      "oldAction": "choose_target:2b379eff",
+      "newAction": "choose_target:2b379eff",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 137,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 3,
+      "newInputs": 0
+    },
+    {
+      "step": 138,
+      "oldAction": "choose_target:7be78a55",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 3
+    },
+    {
+      "step": 139,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "choose_card:b27d2a0c",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 140,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 163,
+      "newInputs": 0
+    },
+    {
+      "step": 141,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:7be78a55",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 1
+    },
+    {
+      "step": 142,
+      "oldAction": "choose_card:b27d2a0c",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 143,
+      "oldAction": "play_card:2f9ae88e",
+      "newAction": "play_card:2f9ae88e",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 50
+    },
+    {
+      "step": 144,
+      "oldAction": "choose_target:2e7a24ba",
+      "newAction": "choose_target:2e7a24ba",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 145,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 128.08333333333334,
+      "newValue": 128.08333333333334,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 146,
+      "oldAction": "play_card:faf2bd47",
+      "newAction": "play_card:faf2bd47",
+      "oldValue": 126.58333333333333,
+      "newValue": 126.58333333333333,
+      "oldInputs": 66,
+      "newInputs": 68
+    },
+    {
+      "step": 147,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 126.58333333333333,
+      "newValue": 126.58333333333333,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 148,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 46,
+      "newInputs": 39
+    },
+    {
+      "step": 149,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 150,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 151,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 152,
+      "oldAction": "analyze:a5629aa3",
+      "newAction": "analyze:a5629aa3",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 153,
+      "oldAction": "choose_target:46f3414a",
+      "newAction": "choose_target:46f3414a",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 154,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 155,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 156,
+      "oldAction": "place_data:8fd12fd3",
+      "newAction": "place_data:8fd12fd3",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 157,
+      "oldAction": "choose_target:29b5215c",
+      "newAction": "choose_target:29b5215c",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 158,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 123,
+      "newValue": 123,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 159,
+      "oldAction": "research_tech:806ccfc8",
+      "newAction": "research_tech:806ccfc8",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 89,
+      "newInputs": 59
+    },
+    {
+      "step": 160,
+      "oldAction": "choose_target:89054c28",
+      "newAction": "choose_target:89054c28",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 161,
+      "oldAction": "accept_optional_effect:38adcce9",
+      "newAction": "accept_optional_effect:38adcce9",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 8,
+      "newInputs": 4
+    },
+    {
+      "step": 162,
+      "oldAction": "choose_target:1cc02962",
+      "newAction": "choose_target:1cc02962",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 163,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 164,
+      "oldAction": "choose_target:4b676cb1",
+      "newAction": "choose_target:4b676cb1",
+      "oldValue": 130,
+      "newValue": 130,
+      "oldInputs": 0,
+      "newInputs": 1
+    },
+    {
+      "step": 165,
+      "oldAction": "play_card:dfc87f9b",
+      "newAction": "play_card:dfc87f9b",
+      "oldValue": 127,
+      "newValue": 127,
+      "oldInputs": 42,
+      "newInputs": 36
+    },
+    {
+      "step": 166,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 127,
+      "newValue": 127,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 167,
+      "oldAction": "move:67939f8f",
+      "newAction": "move:67939f8f",
+      "oldValue": 127.5,
+      "newValue": 127.5,
+      "oldInputs": 42,
+      "newInputs": 32
+    },
+    {
+      "step": 168,
+      "oldAction": "choose_payment:abbb51f1",
+      "newAction": "choose_payment:abbb51f1",
+      "oldValue": 127.5,
+      "newValue": 127.5,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 169,
+      "oldAction": "orbit:cbed3de9",
+      "newAction": "orbit:cbed3de9",
+      "oldValue": 127.5,
+      "newValue": 127.5,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 170,
+      "oldAction": "end_turn:b2f9b29d",
+      "newAction": "end_turn:b2f9b29d",
+      "oldValue": 127.5,
+      "newValue": 127.5,
+      "oldInputs": 0,
+      "newInputs": 0
+    },
+    {
+      "step": 171,
+      "oldAction": "pass:a1f33c73",
+      "newAction": "pass:a1f33c73",
+      "oldValue": 126.5,
+      "newValue": 126.5,
+      "oldInputs": 1,
+      "newInputs": 1
+    },
+    {
+      "step": 172,
+      "oldAction": "choose_card:a0bc5e4f",
+      "newAction": "choose_card:a0bc5e4f",
+      "oldValue": 116,
+      "newValue": 116,
+      "oldInputs": 2,
+      "newInputs": 2
+    }
+  ],
+  "newAutonomousExperiments": 1,
+  "scope": "Offline exact comparison only. Income and blue placement timing differs at138-142; all final Native state/session/RNG bytes equal, not a claim of identical action sequence. This is the one already recorded V237 run. Development does not improve; do not promote baseline."
+}

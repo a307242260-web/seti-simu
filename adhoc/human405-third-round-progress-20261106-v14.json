@@ -1,0 +1,36 @@
+{
+  "status": "active",
+  "runtime": "V237/V42",
+  "sourceCommit": "c39f39e83b852f000e66bbaa499c46bcf36993fa",
+  "sourceAdmitted": true,
+  "sourceCommittedAndPushed": true,
+  "record": "reports/research/c0b2b60b.c39f39e8.quick-400.json",
+  "recordSha256": "6445874b79752cedfa1d3ca1a97b4ed1af6d427e997afa94033065cc0c15c5dd",
+  "autonomousScope": "R3 only from exact fixed112 teacher prefix",
+  "newAutonomousRuns": 1,
+  "wallMilliseconds": 3822,
+  "score": 82,
+  "technologyCount": 5,
+  "incomeCreditsEnergyCards": [
+    6,
+    3,
+    1
+  ],
+  "scanIncome": 1,
+  "searches": 57,
+  "maxInputs": 70,
+  "maxMilliseconds": 319.562208,
+  "nativeReplayInputs": 60,
+  "sameFinalNativeStateSessionRngAsV214": true,
+  "changedActionSteps": [
+    138,
+    139,
+    140,
+    141,
+    142
+  ],
+  "developmentAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029 unchanged",
+  "nextEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-known-engine-horizon-gap-20261106-v1.json",
+  "next": "Fix the measured step123 investment/value horizon gap and separately examine purple1/purple2 continuation values. Preserve same Native root and known information, no card-name preference. Learn R3 before R2 end review and autonomous first3."
+}

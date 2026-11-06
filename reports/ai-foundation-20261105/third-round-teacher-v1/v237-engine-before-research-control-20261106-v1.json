@@ -1,0 +1,458 @@
+{
+  "status": "passed",
+  "scope": "Three bounded controlled Native inputs from the exact actual V237 pre123 root. Play the already-known research engine, use the already-known Amiba3 publicity corner, then end turn. No new autonomous experiment, future draw/type use, synthetic successor or changed source. This proves availability/funding and the missed current-turn preparation, not full-round superiority.",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json",
+  "sourceSha256": "665586a5c3cc4a3a3208d5b96b80576e12babcc869a2a3c35103ddfecc089128",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-engine-before-research-control-20261106-v1.checkpoint.json",
+  "checkpointSha256": "c88d2209a5a92cb8988a27d8b3a39b8a2c1b08f3c98a885dde781fa70f722777",
+  "sourceCommit": "c39f39e83b852f000e66bbaa499c46bcf36993fa",
+  "newNativeInputs": 3,
+  "newAutonomousRuns": 0,
+  "initial": {
+    "score": 48,
+    "finalScore": 55,
+    "credits": 10,
+    "energy": 1,
+    "publicity": 3,
+    "data": 0,
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "hand": [
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png"
+      },
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp"
+      },
+      {
+        "id": "alien-amiba-1-2",
+        "cardId": "amiba_1.webp"
+      },
+      {
+        "id": "alien-amiba-3-3",
+        "cardId": "amiba_3.webp"
+      }
+    ],
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v42",
+      "total": 110.25,
+      "components": {
+        "realizedScore": 48,
+        "currentEndGameBonus": 7,
+        "resources": 13,
+        "hand": 5,
+        "income": 9.5,
+        "technologyPotential": 9,
+        "handPotential": 17,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 1.75,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "endpoint": {
+    "score": 48,
+    "finalScore": 55,
+    "credits": 9,
+    "energy": 1,
+    "publicity": 6,
+    "data": 0,
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "hand": [
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png"
+      },
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp"
+      }
+    ],
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v42",
+      "total": 113.75,
+      "components": {
+        "realizedScore": 48,
+        "currentEndGameBonus": 7,
+        "resources": 13.5,
+        "hand": 3,
+        "income": 9.5,
+        "technologyPotential": 9,
+        "handPotential": 18,
+        "researchPotential": 4,
+        "probePotential": 0,
+        "analysisPotential": 1.75,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "policies": {
+    "resource": {
+      "policy": "seti-goal-resource-preparation-v9",
+      "isEquivalence": false,
+      "plans": [
+        {
+          "id": "effect:tech:card:card-29-pass-2-5",
+          "goal": {
+            "id": "effect:tech:card:card-29-pass-2-5",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-29-pass-2-5",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "play_card:52a456f8",
+          "mode": "greedy",
+          "reason": "start-bound-tech"
+        },
+        {
+          "id": "scan:standard",
+          "goal": {
+            "id": "scan:standard",
+            "kind": "scan",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "quick_trade:f385e2ac",
+          "mode": "greedy",
+          "reason": "greedy-resource-deficit"
+        },
+        {
+          "id": "tech:blue3:3",
+          "goal": {
+            "id": "tech:blue3:3",
+            "kind": "research_tech",
+            "tileId": "blue3",
+            "blueSlot": 3,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:blue4:3",
+          "goal": {
+            "id": "tech:blue4:3",
+            "kind": "research_tech",
+            "tileId": "blue4",
+            "blueSlot": 3,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:orange1:",
+          "goal": {
+            "id": "tech:orange1:",
+            "kind": "research_tech",
+            "tileId": "orange1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:orange2:",
+          "goal": {
+            "id": "tech:orange2:",
+            "kind": "research_tech",
+            "tileId": "orange2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:orange3:",
+          "goal": {
+            "id": "tech:orange3:",
+            "kind": "research_tech",
+            "tileId": "orange3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:orange4:",
+          "goal": {
+            "id": "tech:orange4:",
+            "kind": "research_tech",
+            "tileId": "orange4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:purple1:",
+          "goal": {
+            "id": "tech:purple1:",
+            "kind": "research_tech",
+            "tileId": "purple1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:purple2:",
+          "goal": {
+            "id": "tech:purple2:",
+            "kind": "research_tech",
+            "tileId": "purple2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        },
+        {
+          "id": "tech:purple3:",
+          "goal": {
+            "id": "tech:purple3:",
+            "kind": "research_tech",
+            "tileId": "purple3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "research_tech:806ccfc8",
+          "mode": "greedy",
+          "reason": "funded-goal-action"
+        }
+      ],
+      "retainedActionIds": [
+        "launch:c94cda79",
+        "play_card:ec548c50",
+        "play_card:8e0d747b",
+        "pass:a1f33c73",
+        "quick_trade:49c75492",
+        "quick_trade:37140fcf",
+        "quick_trade:71814d67",
+        "industry:e887dc52"
+      ],
+      "excludedActionIds": [
+        "research_tech:806ccfc8",
+        "play_card:52a456f8",
+        "quick_trade:f385e2ac",
+        "quick_trade:12411a2c",
+        "quick_trade:a39c1a77",
+        "card_corner:68a82599",
+        "card_corner:bd2c359f",
+        "card_corner:ab712e76"
+      ]
+    },
+    "card": {
+      "policy": "seti-purpose-card-pick-policy-v10",
+      "isEquivalence": false,
+      "kind": "card-acquisition-plan",
+      "goal": null,
+      "selectedActionId": null,
+      "selection": null,
+      "discardIds": [],
+      "companySwap": null,
+      "retainedActionIds": [
+        "launch:c94cda79",
+        "research_tech:806ccfc8",
+        "play_card:52a456f8",
+        "play_card:ec548c50",
+        "play_card:8e0d747b",
+        "pass:a1f33c73",
+        "quick_trade:f385e2ac",
+        "quick_trade:12411a2c",
+        "quick_trade:a39c1a77",
+        "card_corner:68a82599",
+        "card_corner:bd2c359f",
+        "card_corner:ab712e76"
+      ],
+      "excludedActionIds": [
+        "quick_trade:49c75492",
+        "quick_trade:37140fcf",
+        "quick_trade:71814d67",
+        "industry:e887dc52"
+      ],
+      "reason": "no-pick-purpose"
+    }
+  },
+  "steps": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:1c4e6ebd",
+      "actorId": "player-white",
+      "stateVersion": 49,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "alien-amiba-1-2"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 3
+      },
+      "decision": null,
+      "summary": "amiba_1.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:295d3b4f",
+      "actorId": "player-white",
+      "stateVersion": 50,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "alien-amiba-3-3"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "amiba_3.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 51,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    }
+  ],
+  "rootAndRngRestored": true
+}
