@@ -28,7 +28,12 @@
  function quote(facts,weights,portfolio,baseValue){
   if(facts.terminal||facts.round+Number(facts.passing)>=4)return zero('analysis-window-closed');
   const placed=[...(facts.computerSlots||[])].sort((a,b)=>a-b),needed=[1,2,3,4,5,6].filter(slot=>!placed.includes(slot));
-  if(facts.researchSymbols?.revealInitialized&&facts.companyState?.abilityId==='deepspace_swap_cards')return amibaAnalysis.quote(facts,weights,portfolio,baseValue);
+  if(facts.researchSymbols?.revealInitialized&&facts.companyState?.abilityId==='deepspace_swap_cards'){
+   // The Amiba income prefix consumes current data too. Its currency-only
+   // income cannot pay for an unfilled computer slot with future resources.
+   if(facts.player.availableData<needed.length)return zero('analysis-not-ready');
+   return amibaAnalysis.quote(facts,weights,portfolio,baseValue);
+  }
   if(needed.length&&(placed.length<4||placed.some((slot,index)=>slot!==index+1)
     ||needed.some(slot=>slot<5)||facts.player.availableData<needed.length))return zero('analysis-not-ready');
   if(!quiet(facts.reservedCards))return zero('analysis-reservation-needs-native-value');

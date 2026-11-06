@@ -213,6 +213,7 @@
         hand: maskUnknownCards(self.hand, knownCardIds),
         reservedCards: maskUnknownCards(self.reservedCards, knownCardIds),
         privateAlienCards: maskUnknownCards(self.privateAlienCards, knownCardIds),
+        ...(Array.isArray(self.pendingHandCardTriggers)?{pendingHandCardTriggers:self.pendingHandCardTriggers.filter(entry=>knownCardIds.has(String(entry.cardInstanceId)))}:{}),
       };
     }
     sanitized.probeRouteRequirements = sanitizeRequirementPlans(

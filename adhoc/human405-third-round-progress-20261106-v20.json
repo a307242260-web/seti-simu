@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-06",
+  "goalStatus": "active",
+  "productionRuntime": "V239/V43",
+  "candidate": "V253/V43",
+  "sourceAdmitted": false,
+  "runtimePromoted": false,
+  "newAutonomousRuns": 0,
+  "firstActual132": {
+    "nativeInputs": 173,
+    "milliseconds": 579.003792,
+    "value": 128.25,
+    "action": "industry:e887dc52",
+    "complete": true
+  },
+  "fullColdCorpus": {
+    "names": 576,
+    "roots": 485,
+    "allClosed": true,
+    "maxInputs": 256,
+    "maxMilliseconds": 579.003792,
+    "fourBudgetsNull": true
+  },
+  "first2Regression": {
+    "roots": 304,
+    "changedValues": 0,
+    "changedActions": 0
+  },
+  "graphParityV250Default": {
+    "roots": 485,
+    "differences": 0,
+    "fields": [
+      "complete",
+      "actionId",
+      "value",
+      "realization",
+      "preparationDebt",
+      "roots",
+      "lines",
+      "sharedPrefixGraph",
+      "candidates"
+    ],
+    "scope": "V250 was NOT admitted due to separate custom-weight order defect; comparison only proves default search graphs unchanged"
+  },
+  "sourceTree": "446e75a5336d001f426b92f7b89c08604260f547",
+  "privateSourceIndex": "/private/tmp/seti-v253-source-admission-20261106-v1.index",
+  "physicalIndependentWorktree": "/private/tmp/seti-v240-known-postdraw-tail-20261106-v1",
+  "fullNodeSession": 30151,
+  "fullNodeLog": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-full-node-20261106-v1.log",
+  "browserPassed": 8,
+  "inputAudit": {
+    "passed": 54,
+    "failed": 1,
+    "legacyAomomoOnly": true
+  },
+  "currentChanges": [
+    "complete-input scalar-only numeric reuse with original enumeration order",
+    "only serialize held/paid trigger siblings once",
+    "omit unused held trigger pricing when no supported held card",
+    "single-side requests keep direct gains API"
+  ],
+  "rejectedOptimizations": [
+    "detail-to-scalar prefill avoids0 computations",
+    "bigger/LRU scalar capacity avoids0 additional misses"
+  ],
+  "next": "Finish confirmed running full Node session, reverify immutable source tree, prove source admission, isolate Chinese commit/push preserving shared index and V1 center state, then exactly one standard third-round experiment from teacher112 prefix; continue R3 learning then R2-end review and autonomousfirst3.",
+  "lastPublishedEvidenceCommit": "146259c8840569d0cd54a87622f66fc7108ab6fc"
+}

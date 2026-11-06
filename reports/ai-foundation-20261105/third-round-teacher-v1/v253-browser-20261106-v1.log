@@ -1,0 +1,9 @@
+PASS production-ready-amiba-analysis http://127.0.0.1:49567/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:49567/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:49567/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:49567/randomizer/index.html
+PASS production-public-amiba-income-swap http://127.0.0.1:49567/randomizer/index.html
+PASS production-research-symbol-composition http://127.0.0.1:49567/randomizer/index.html
+PASS production-known-postdraw-tail http://127.0.0.1:49567/randomizer/index.html
+PASS production-scalar-capital-cache http://127.0.0.1:49567/randomizer/index.html
+SUMMARY browserSmoke passed=8 failed=0 total=8

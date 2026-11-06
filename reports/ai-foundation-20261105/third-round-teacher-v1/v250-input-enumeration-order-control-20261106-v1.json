@@ -1,0 +1,17 @@
+{
+  "scope": "Pure custom-weight evaluation; no Native input, AI search or gate resample. Complete cache keys must preserve input property enumeration order because custom arithmetic intentionally uses caller order.",
+  "found": {
+    "weights": {
+      "credits": 90.66666666666667,
+      "energy": 4.142857142857143,
+      "publicity": 71.45454545454545,
+      "availableData": 41.76923076923077,
+      "additionalPublicScan": 17.647058823529413,
+      "handSize": 3
+    },
+    "first": 139.90909090909088,
+    "reordered": 139.9090909090909,
+    "cachedFirst": 139.90909090909088,
+    "cachedReordered": 139.90909090909088
+  }
+}

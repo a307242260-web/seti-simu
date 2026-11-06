@@ -888,6 +888,31 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+// An actual free alien card may retain a certified root-known fixed tail.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port');
+  const F='reports/ai-foundation-20261105/third-round-teacher-v1/',f=JSON.parse(fs.readFileSync(F+'v239-actual-before-132-root-20261106-v1.json')),cp=JSON.parse(fs.readFileSync(F+'v239-free-alien-card-boundary-control-20261106-v1.checkpoint.json')),seed=f.source.seed,seat=f.seatId;kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope;port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});let node=port.openRoot();for(const id of cp.contexts['387'].path)node=port.expand(node,id);node=port.expand(node,cp.contexts['387'].branches.blind.acceptedActionId);assert.equal(node.status,'stable');const full=node.observation,compact=port.valueObservation(node),value=independentValue.evaluateStateValue(full,seat),formal=outcomeModel.createDecisionObservation(full,{seatId:seat,stateVersion:0,decisionVersion:0});assert.deepEqual(independentValue.evaluateStateValue(compact,seat),value);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert(full.selfState.hand.some(c=>c.hidden&&!c.id&&!c.cardId));const spec=port.turnTailSummary(node,'data-end-turn');assert(spec);assert.equal(spec.requiredNativeInputs,6);assert.equal(independentValue.sumValueParts([value.total,spec.netGain]),125.25);const leaf=port.turnTailBoundary(node,spec);assert.throws(()=>leaf.observation,/NO_SUCCESSOR_OBSERVATION/);assert.deepEqual(c.lifecycle.save().envelope,original);
+  console.log('[PASS] independent-known-postdraw-tail: full/formal/compact anonymous slots and fixed income/blue/end125.25 agree; no new identity, successor observation or root/RNG mutation');
+ }catch(error){console.log(`[FAIL] independent-known-postdraw-tail: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
+// Mutable planning wrappers can share only an exact complete-input scalar.
+{
+ let kernel;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),probe=require('../randomizer/game/ai/probe-capital'),demand=require('../randomizer/game/ai/resource-demand');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json')),seed=f.source.seed,seat=f.seatId;kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,state=JSON.parse(original.committedState),owner=state.players.players.find(p=>p.id===seat),raw=c.projection({role:'player',playerId:seat}).state,value=independentValue.evaluateStateValue(raw,seat),facts={...probe.factsFromState(state,owner),supply:state.tech,researchCost:6,analyzeEnergyCost:0};
+  assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>value.components[k])));
+  for(const credits of [owner.resources.credits,0,1]){const next=structuredClone(facts);next.player.credits=credits;assert.equal(independentValue.purposeCapitalValue(next),independentValue.purposeCapital(next).total);assert.equal(independentValue.purposeCapitalValue(structuredClone(next)),independentValue.purposeCapital(next).total);}
+  const ordered={credits:90.66666666666667,energy:4.142857142857143,publicity:71.45454545454545,availableData:41.76923076923077,additionalPublicScan:17.647058823529413,handSize:3},reversed=Object.fromEntries(Object.entries(ordered).reverse());for(const weights of [ordered,reversed])assert.equal(independentValue.purposeCapitalValue(facts,weights),independentValue.purposeCapital(facts,weights).total);
+  assert.deepEqual(c.lifecycle.save().envelope,original);console.log('[PASS] independent-scalar-capital-cache: complete mutable fact quotes match full portfolio and Native observation components; changed wallet rekeys, scalar only, no root/RNG mutation');
+ }catch(error){console.log(`[FAIL] independent-scalar-capital-cache: ${error.message}`);allPass=false;}
+ finally{kernel?.composition.dispose();}
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

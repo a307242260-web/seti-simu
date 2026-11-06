@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v10';
+  const VERSION='seti-purpose-card-pick-policy-v13';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -100,7 +100,7 @@
         for(const action of trades){
           const cost=action.payload?.cost||{},handCost=cost.handSize||0;
           if(goal.kind==='unused-publicity'&&action.target.tradeId!=='publicity-for-card')continue;
-          const choices=p.hand.map(facts).filter(c=>c.id!==goal.protectedCardId)
+          const choices=p.hand.map(facts).filter(c=>c.id&&c.id!==goal.protectedCardId)
             .sort((a,b)=>a.net-b.net||(goal.kind==='data'?a.data-b.data:a.move-b.move)||(goal.kind==='data'?a.move-b.move:a.data-b.data)||(a.id<b.id?-1:1));
           if(choices.length<handCost)continue;const discarded=choices.slice(0,handCost),remaining=p.hand.map(facts).filter(c=>!discarded.some(d=>d.id===c.id));
           const wallet={...p.resources};for(const[k,v]of Object.entries(cost))if(k!=='handSize')wallet[k]-=v;
@@ -209,8 +209,14 @@
     function plan({state,seatId,actions,status,session,endpoints=()=>[]}){
       const source=session?.journal?.actions?.[0]?.action,head=session?.queue?.[0],pending=head?.payload?.decisionContext;
       const tradePending=pending?.type==='trade'&&TRADE_IDS.has(pending.tradeId)&&['discard','card_selection'].includes(pending.kind);
+      if(status==='decision'&&head?.type==='residual_alien_card_decision'&&head.payload?.speciesId==='amiba'
+        &&actions.length&&actions.every(a=>a.family==='choose_card'&&a.target?.kind==='residual-domain'
+          &&/^amiba:(display:\d+|blind|cancel)$/.test(a.target.choiceId))){
+        const action=actions.find(a=>a.target.source==='display')||actions.find(a=>a.target.source==='blind')||actions.find(a=>a.target.source==='cancel');
+        return fixed(action,{kind:'free-reward',id:'free-amiba-card'},null,[],actions,'fixed-free-amiba-card');
+      }
       if(status==='decision'&&head?.payload?.step==='swap_hand'&&actions.length>0&&actions.every(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('hand:')&&state.players.players.find(p=>p.id===seatId).hand.some(c=>c.id===a.target.cardInstanceId))){
-        const ranked=swapHandRanks(state,seatId).filter(r=>actions.some(a=>a.target.cardInstanceId===r.card.id));
+        const ranked=swapHandRanks(state,seatId).filter(r=>r.card.id&&actions.some(a=>a.target.cardInstanceId===r.card.id));
         const planned=demand.incomeSwapPlan(state,state.players.players.find(p=>p.id===seatId),true);
         const preferred=planned&&actions.find(a=>a.target.cardInstanceId===planned.outgoingCardId),action=preferred||actions.find(a=>a.target.cardInstanceId===ranked[0].card.id);
         return {...fixed(action,{kind:'company-swap',id:'committed-company-swap'},null,[action.target.cardInstanceId],actions,'fixed-swap-outgoing'),
@@ -218,12 +224,22 @@
       }
       if(status==='stable'){
         const trades=actions.filter(isTrade),company=actions.find(swapStart);if(!trades.length&&!company)return null;
-        const chosen=paid(state,seatId,actions,endpoints),selected=chosen?.action,companySwap=company&&swapIntent(state,seatId,endpoints);
+        let chosen=paid(state,seatId,actions,endpoints);
+        const companySwap=company&&swapIntent(state,seatId,endpoints);
+        // Acquisition is one greedy preparation for one purpose. When the
+        // company gets the very same card for that purpose and its outgoing
+        // card is a subset of the paid discard, do not branch over paying more.
+        const preferCompany=chosen&&companySwap&&chosen.goal.id===companySwap.goal.id
+          &&chosen.selection.cardId===companySwap.selection.cardId
+          &&companySwap.discardIds.every(id=>chosen.discardIds.includes(id))
+          &&chosen.price>companySwap.discardIds.length;
+        if(preferCompany)chosen=null;
+        const selected=chosen?.action;
         const retained=a=>isTrade(a)?a===selected:swapStart(a)?Boolean(companySwap):true;
         return{policy:VERSION,isEquivalence:false,kind:'card-acquisition-plan',goal:chosen?.goal||companySwap?.goal||null,
           selectedActionId:selected?.actionId||(companySwap?company.actionId:null),selection:chosen?.selection||companySwap?.selection||null,discardIds:chosen?.discardIds||companySwap?.discardIds||[],
           companySwap:companySwap||null,retainedActionIds:actions.filter(retained).map(a=>a.actionId),excludedActionIds:actions.filter(a=>!retained(a)).map(a=>a.actionId),
-          reason:chosen||companySwap?'explicit-pick-purpose':'no-pick-purpose'};
+          reason:preferCompany?'greedy-company-for-same-pick-purpose':chosen||companySwap?'explicit-pick-purpose':'no-pick-purpose'};
       }
       // DeepSpace's committed swap offers public cards without source/pick fields.
       // Match its exact native menu; income/corner company rewards need their own purpose.

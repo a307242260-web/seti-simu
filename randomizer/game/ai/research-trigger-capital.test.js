@@ -24,6 +24,14 @@ try{
 
  const capped=structuredClone(context);capped.wallet.publicity=require('../players').RESOURCE_LIMITS.publicity;assert.equal(trigger.gains(capped,values.DEFAULT_WEIGHTS)('blue3'),0,'same symbol at the publicity cap is a distinct complete scalar input');
  assert.equal(trigger.gains(capped,values.DEFAULT_WEIGHTS,1)('blue3'),0.5,'paid publicity changes the cap before the same trigger');
+ const Module=require('node:module'),filename=require.resolve('./research-trigger-capital'),loaded=new Module(filename,module);loaded.filename=filename;loaded.paths=module.paths;let serializations=0;globalThis.__setiPreparedTriggerSerializations=()=>{serializations++;};
+ try{
+  loaded._compile(fs.readFileSync(filename,'utf8').replace('const signature=JSON.stringify([context,weights]);','const signature=(globalThis.__setiPreparedTriggerSerializations(),JSON.stringify([context,weights]));'),filename);
+  const beforeInputs=JSON.stringify([context,capped]),prepared=loaded.exports.prepareGains(context,values.DEFAULT_WEIGHTS);
+  assert.equal(prepared(0)('purple2'),4);assert.equal(prepared(0)('blue3','purple2'),4);assert.equal(prepared(6)('purple2'),4);assert.equal(serializations,1,'held and paid sibling quotes serialize their complete shared inputs once');
+  const caps=loaded.exports.prepareGains(capped,values.DEFAULT_WEIGHTS);assert.equal(caps(0)('blue3'),0);assert.equal(caps(1)('blue3'),0.5);assert.equal(serializations,2,'each different context is prepared separately');
+  assert.equal(JSON.stringify([context,capped]),beforeInputs,'different paid reserves change only their private reward wallets');
+ }finally{delete globalThis.__setiPreparedTriggerSerializations;}
  assert.equal(trigger.gains(structuredClone(context),{...values.DEFAULT_WEIGHTS,handSize:2})('orange2'),2,'unknown-card weight participates in the scalar memo key');
  assert.equal(trigger.gains(structuredClone(context),values.DEFAULT_WEIGHTS)('orange2'),1,'a later default-weight query cannot reuse the changed-weight total');
  const consumed=structuredClone(context);consumed.rules=consumed.rules.filter(r=>r.techType!=='purple');assert.equal(trigger.gains(consumed,values.DEFAULT_WEIGHTS)('blue3','purple2'),0.5,'different active rules cannot share the purple symbol movement');
@@ -55,11 +63,16 @@ try{
  const marked=values.researchFunding(nativeFacts,{resources:p.resources,income:p.income,startingIncome:0});
  assert.equal(values.researchCapital({...single,funding:marked}),10.5,'same paid research earns the already-owned marker growth6.5 plus one known4score trigger');
  assert.equal(values.researchCapital({...single,funding:{...marked,researchTriggers:null}}),6.5);
+ const pricingFilename=require.resolve('./state-value'),pricingModule=new Module(pricingFilename,module);pricingModule.filename=pricingFilename;pricingModule.paths=module.paths;const requirePricing=pricingModule.require.bind(pricingModule);let gainCalls=0,preparedCalls=0;
+ pricingModule.require=name=>name==='./research-trigger-capital'?{...trigger,gains(...args){gainCalls++;return trigger.gains(...args);},prepareGains(...args){preparedCalls++;return trigger.prepareGains(...args);}}:requirePricing(name);pricingModule._compile(fs.readFileSync(pricingFilename,'utf8'),pricingFilename);
+ assert.equal(pricingModule.exports.researchCapital({...single,funding:marked}),10.5);assert.equal(gainCalls,1);assert.equal(preparedCalls,0,'without a held research card only the paid-side trigger quote is needed');
+ gainCalls=0;preparedCalls=0;const heldParams={...single,hand:before.selfState.hand,funding:marked};assert.equal(pricingModule.exports.researchCapital(heldParams),values.researchCapital(heldParams));assert.equal(gainCalls,0);assert.equal(preparedCalls,1,'actual held/paid sibling quotes share exactly one preparation');
+ gainCalls=0;preparedCalls=0;assert.equal(pricingModule.exports.handCapital(before.selfState.hand,p.techState,single.supply,3,values.DEFAULT_WEIGHTS,marked),values.handCapital(before.selfState.hand,p.techState,single.supply,3,values.DEFAULT_WEIGHTS,marked));assert.equal(gainCalls,1);assert.equal(preparedCalls,0,'one held-only request keeps the direct gain path');
  const full=values.evaluateStateValue(before,seatId),capital=values.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>full.components[k]));assert.equal(demand.planningCapital(state,p),capital);
  assert(c.lifecycle.restore(original).ok);const launch=c.inputPort.enumerateActions({}).find(a=>a.family==='launch');assert(launch);assert(c.inputPort.submitAction(launch).ok);
  const launched=c.lifecycle.save().envelope;assert(Number.isFinite(values.evaluateStateValue(observe(),seatId).total),'a real launch with active research triggers must support the mission wallet');assert.deepEqual(c.lifecycle.save().envelope,launched);
  assert(c.lifecycle.restore(read(folder+'teacher-before-input-136-20261105-v1.checkpoint.json').coreState.compositionEnvelope).ok);
  apply(136);apply(137);const beforeBlind=observe();apply(138);apply(139);const afterBlind=observe();assert.equal(afterBlind.selfState.hand.length-beforeBlind.selfState.hand.length,1,'ordinary blind reward is quoted as one unknown card, without reading its identity');
  assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
- console.log(JSON.stringify({nativePurpleReward:4,nativeBlindQuantity:1,usedRulesAndMovedSymbolsPublic:true,pendingTriggerDeclines:true,twoColorMovementAndSameColorConsumption:true,nativeObservationParity:true,noHiddenDeckOrSpeciesLeak:true,noRewardFunding:true,rootAndRngUnchanged:true}));
+ console.log(JSON.stringify({nativePurpleReward:4,nativeBlindQuantity:1,usedRulesAndMovedSymbolsPublic:true,pendingTriggerDeclines:true,twoColorMovementAndSameColorConsumption:true,nativeObservationParity:true,noHiddenDeckOrSpeciesLeak:true,noRewardFunding:true,onlyNecessaryHeldAndPaidQuotes:true,siblingSignaturePreparedOnce:true,rootAndRngUnchanged:true}));
 }finally{c.dispose();}

@@ -154,9 +154,9 @@
     return trigger.available?{...result,researchTriggers:trigger}:result?.researchTriggers?{...result,researchTriggers:null}:result;
   }
   const researchMarkQuotes=new Map();
-  function researchPurposeGains(techState, funding, weights, paidPublicity=0) {
+  function researchPurposeGains(techState, funding, weights, paidPublicity=0,triggerGain=null) {
     const marks=funding?.researchMarks||[],opportunity=funding?.newFinalMark;
-    const triggered=researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
+    const triggered=triggerGain||researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
     if(!marks.length&&!opportunity)return triggered;
     const value=tech=>marks.reduce((n,m)=>n+endScoring.getFormulaBaseValue(m.formulaId,{techState:tech},{})*m.multiplier,0);
     const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),quotes=new Map();
@@ -245,13 +245,15 @@
     if (!Number.isSafeInteger(researchCost) || researchCost < 0) throw new TypeError("VALUE_RESEARCH_COST_INVALID");
     if (publicity < researchCost) return 0;
     const targets = researchTargets(techState, supply, planningRound, weights);
-    const markerGain=researchPurposeGains(techState,funding,weights);
+    const hasHeld=hand.some(supportedResearch),hasTrigger=funding?.researchTriggers?.available;
+    const preparedTriggers=hasHeld&&hasTrigger?researchTriggers.prepareGains(funding.researchTriggers,weights):null;
+    const markerGain=hasHeld||!hasTrigger?researchPurposeGains(techState,funding,weights,0,preparedTriggers?.(0)):null;
     const held = handOptions(hand, targets, planningRound, weights, funding, markerGain);
     const currentHand = Math.max(0, ...held.map(o => o.value));
-    return paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights);
+    return paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights,preparedTriggers);
   }
-  function paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights){
-    const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost):markerGain;
+  function paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights,preparedTriggers=null){
+    const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost,preparedTriggers?.(researchCost)):markerGain;
     return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue + paidGain(t.id) - researchCost * weights.publicity
       + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id,o.currentFunded))) - currentHand));
   }
@@ -264,9 +266,13 @@
     if(!Number.isSafeInteger(researchCost)||researchCost<0)throw new TypeError("VALUE_RESEARCH_COST_INVALID");
     const eligible=hand.filter(supportedResearch);
     if(publicity<researchCost&&!eligible.length)return{held:0,paid:0};
-    const targets=researchTargets(techState,supply,planningRound,weights),markerGain=researchPurposeGains(techState,funding,weights);
+    const targets=researchTargets(techState,supply,planningRound,weights),hasTrigger=funding?.researchTriggers?.available;
+    // An absent held research card has no held-side trigger quote. Prepare
+    // shared input only when both the held and paid sides will consume it.
+    const preparedTriggers=eligible.length&&publicity>=researchCost&&hasTrigger?researchTriggers.prepareGains(funding.researchTriggers,weights):null;
+    const markerGain=eligible.length||!hasTrigger?researchPurposeGains(techState,funding,weights,0,preparedTriggers?.(0)):null;
     const options=handOptions(eligible,targets,planningRound,weights,funding,markerGain),held=Math.max(0,...options.map(o=>o.value));
-    const paid=publicity<researchCost?0:paidResearchFromHeld(techState,targets,options,held,markerGain,funding,researchCost,weights);
+    const paid=publicity<researchCost?0:paidResearchFromHeld(techState,targets,options,held,markerGain,funding,researchCost,weights,preparedTriggers);
     return{held,paid};
   }
   function researchCapitalCeiling({ techState, supply, round, researchCost }, weights = DEFAULT_WEIGHTS) {
@@ -427,6 +433,57 @@
       total:arithmetic.sum([base.total,tool.value],weights)};
   }
 
+  // Scalar-only quotes may repeat across mutable planning wrappers. Encode
+  // every input field anew; reference tokens require recursive immutability.
+  // No native node, plan, successor or caller-owned object is stored here.
+  const scalarCapitalQuotes=new Map(),capitalInputRefs=new WeakMap(),capitalKeyStrings=new Map();
+  const unsupportedCapitalInput=Object.freeze({});let nextCapitalInputRef=0;
+  function capitalKeyString(value){
+    if(capitalKeyStrings.has(value))return capitalKeyStrings.get(value);
+    const result=JSON.stringify(value);if(capitalKeyStrings.size>=1024)capitalKeyStrings.delete(capitalKeyStrings.keys().next().value);
+    capitalKeyStrings.set(value,result);return result;
+  }
+  function scalarCapitalKey(input){
+    const active=new Set();
+    function encode(value){
+      if(value===null)return["null",true];
+      if(typeof value==="undefined")return["undefined",true];
+      if(typeof value==="string")return["s"+capitalKeyString(value),true];
+      if(typeof value==="boolean")return[value?"true":"false",true];
+      if(typeof value==="number"){
+        if(!Number.isFinite(value))throw unsupportedCapitalInput;
+        return["n"+(Object.is(value,-0)?"-0":value),true];
+      }
+      if(typeof value!=="object")throw unsupportedCapitalInput;
+      if(capitalInputRefs.has(value))return["r"+capitalInputRefs.get(value),true];
+      if(active.has(value))throw unsupportedCapitalInput;
+      const array=Array.isArray(value),prototype=Object.getPrototypeOf(value),names=Reflect.ownKeys(value);
+      if(array?prototype!==Array.prototype:prototype!==Object.prototype&&prototype!==null)throw unsupportedCapitalInput;
+      if(names.some(key=>typeof key!=="string"))throw unsupportedCapitalInput;
+      active.add(value);let immutable=Object.isFrozen(value),result=array?"array{":prototype===null?"null-object{":"object{";
+      // Enumeration order is part of the input: custom arithmetic and greedy
+      // tie order must not acquire a canonical ordering from this cache.
+      for(const name of names){
+        const descriptor=Object.getOwnPropertyDescriptor(value,name);if(!Object.hasOwn(descriptor,"value"))throw unsupportedCapitalInput;
+        const [key,frozen]=encode(descriptor.value);immutable=immutable&&frozen;result+=capitalKeyString(name)+":"+key+";";
+      }
+      active.delete(value);result+="}";
+      if(immutable){const id=++nextCapitalInputRef;capitalInputRefs.set(value,id);return["r"+id,true];}
+      return[result,false];
+    }
+    try{return encode(input)[0];}catch(error){if(error!==unsupportedCapitalInput)throw error;return null;}
+  }
+  function purposeCapitalValue(facts,weights=DEFAULT_WEIGHTS){
+    const key=scalarCapitalKey([facts,weights]);
+    if(key!==null&&scalarCapitalQuotes.has(key))return scalarCapitalQuotes.get(key);
+    const value=purposeCapital(facts,weights).total;
+    if(key!==null&&Number.isFinite(value)){
+      if(scalarCapitalQuotes.size>=256)scalarCapitalQuotes.delete(scalarCapitalQuotes.keys().next().value);
+      scalarCapitalQuotes.set(key,value);
+    }
+    return value;
+  }
+
   function evaluateStateValue(observation, seatId, options = {}) {
     const player = observation?.publicState?.players?.find(player => player.playerId === seatId);
     if (!player) throw new TypeError(`VALUE_PLAYER_MISSING: ${seatId}`);
@@ -502,7 +559,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, knownPublicIncomeSwapPlan, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSymbolTool:cards=>cards.some(card=>symbolCard.supported(card)), hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, purposeCapitalValue, knownPublicIncomeSwapPlan, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSymbolTool:cards=>cards.some(card=>symbolCard.supported(card)), hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

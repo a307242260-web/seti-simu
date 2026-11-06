@@ -1,0 +1,23 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),Module=require('node:module');
+const values=require('./state-value'),filename=require.resolve('./resource-demand'),loaded=new Module(filename,module);loaded.filename=filename;loaded.paths=module.paths;
+let quotes=0;const nativeRequire=loaded.require.bind(loaded);
+loaded.require=name=>name==='./state-value'?{...values,incomePreparationCapital(...args){quotes++;return values.incomePreparationCapital(...args);}}:nativeRequire(name);
+loaded._compile(fs.readFileSync(filename,'utf8'),filename);const demand=loaded.exports;
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json')));
+const initial=JSON.parse(f.compositionEnvelope.committedState),own=s=>s.players.players.find(p=>p.id===f.seatId);
+function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
+const state=freeze(structuredClone(initial)),p=own(state),card=p.hand.find(c=>c.id==='card-51-0');
+const first=demand.incomeCardValue(state,f.seatId,card),before=quotes;
+for(let i=0;i<12;i++)assert.equal(demand.incomeCardValue(state,f.seatId,card),first);
+assert.equal(quotes,before,'repeat goals reuse only the immutable preparation scalar');
+const offer=demand.incomeOfferValue(state,f.seatId,card,1),afterProjected=quotes;assert(afterProjected>before,'projected data has a separate quote');
+for(let i=0;i<12;i++)assert.equal(demand.incomeOfferValue(state,f.seatId,card,1),offer);
+assert.equal(quotes,afterProjected);
+const mutable=structuredClone(initial),mc=own(mutable).hand.find(c=>c.id===card.id),mutableBefore=quotes;
+assert.equal(demand.incomeCardValue(mutable,f.seatId,mc),first);assert.equal(demand.incomeCardValue(mutable,f.seatId,mc),first);assert.equal(quotes,mutableBefore+4);
+own(mutable).resources.credits=0;const changed=demand.incomeCardValue(mutable,f.seatId,mc);assert(Number.isFinite(changed));assert.equal(quotes,mutableBefore+6);
+const shallow=Object.freeze(structuredClone(initial)),sc=own(shallow).hand.find(c=>c.id===card.id),shallowBefore=quotes;
+demand.incomeCardValue(shallow,f.seatId,sc);demand.incomeCardValue(shallow,f.seatId,sc);assert.equal(quotes,shallowBefore+4,'a frozen wrapper cannot cache mutable descendants');
+assert.deepEqual(state,initial);
+console.log(JSON.stringify({incomePreparationReuse:'passed',repeatedRequests:24,repeatRecomputations:0,separateProjectedData:true,mutableAndShallowFrozenDecline:true,sourceUnchanged:true}));

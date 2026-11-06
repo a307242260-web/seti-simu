@@ -1,0 +1,21 @@
+{
+  "scope": "One source-loader observer diagnostic, not a gate sample. Existing numeric complete keys are observed; detailed quote keys are encoded with the same implementation without adding results to the live cache. Proposed counts replay only scalar cache occupancy at the same256-entry capacity. No candidate computation is skipped in this diagnostic, no Native equivalence/pruning claim, no new autonomous run.",
+  "sourceSearchVersion": "seti-complete-decision-search-v252",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v252-cold-actual-v239-132-20261106-v1.json",
+  "firstSampleSha256": "fce6b001d3a03b75f85217b780db554543bdcb9606b225c02d300eaa95e83aa6",
+  "nativeInputs": 173,
+  "action": "industry:e887dc52",
+  "value": 128.25,
+  "rootAndRngUnchanged": true,
+  "counts": {
+    "requests": 644,
+    "currentHits": 239,
+    "currentMisses": 405,
+    "detailedQuotes": 152,
+    "proposedHits": 239,
+    "proposedMisses": 405,
+    "missesAfterSameDetailedInput": 0
+  },
+  "proposedAvoidedComputations": 0,
+  "keysRecorded": 1440
+}

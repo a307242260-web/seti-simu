@@ -1651,4 +1651,26 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__researchSymbolSmoke?.ok === true',
   obligation:'真实页面研究领域数据、一次公开符号移动、已知受益牌与一次B资本共享账本；原生19输入及延后宣传准备恢复一致',
   counterexample:'漏页面模块、只加触发奖励未移动符号、提前丢受益牌、标记重复计分、读取新牌身份或原根RNG变化',
+}), Object.freeze({
+  id:'production-known-postdraw-tail',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiResourceDemand)',
+  actionExpression:`(async()=>{
+    const F='/reports/ai-foundation-20261105/third-round-teacher-v1/',f=await fetch(F+'v239-actual-before-132-root-20261106-v1.json').then(r=>r.json()),cp=await fetch(F+'v239-free-alien-card-boundary-control-20261106-v1.checkpoint.json').then(r=>r.json()),seed=f.source.seed,seat=f.seatId,v=window.SetiStateValue,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('postdraw root restore');const original=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{p.setResourcePlanning(true);p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});let node=p.openRoot();for(const id of cp.contexts['387'].path)node=p.expand(node,id);node=p.expand(node,cp.contexts['387'].branches.blind.acceptedActionId);if(node.status!=='stable')throw Error('free card lost a certified known tail');const compact=p.valueObservation(node),full=node.observation,spec=p.turnTailSummary(node,'data-end-turn');if(!spec||spec.requiredNativeInputs!==6||v.sumValueParts([v.evaluateStateValue(compact,seat).total,spec.netGain])!==125.25)throw Error('known six-input tail value missing');if(JSON.stringify(v.evaluateStateValue(full,seat))!==JSON.stringify(v.evaluateStateValue(compact,seat)))throw Error('postdraw compact/full disagree');if(compact.selfState.hand.filter(c=>c.hidden).length!==1||compact.selfState.hand.filter(c=>c.hidden).some(c=>c.id||c.cardId))throw Error('anonymous hand leaked an identity');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('postdraw root/RNG changed');window.__knownPostdrawTailSmoke={ok:true};}finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__knownPostdrawTailSmoke?.ok === true',
+  obligation:'Actual free Amiba reward retains only a certified root-known currency-income/blue/end flow; unknown hand identity stays opaque and Native snapshot unchanged',
+  counterexample:'Browser drops the known tail, exposes a new identity, disagrees with compact value or invents a successor',
+}), Object.freeze({
+  id:'production-scalar-capital-cache',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiStateValue?.purposeCapitalValue && window.SetiProbeCapital && window.SetiResourceDemand)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json').then(r=>r.json()),state=JSON.parse(f.compositionEnvelope.committedState),owner=state.players.players.find(p=>p.id===f.seatId),v=window.SetiStateValue,facts={...window.SetiProbeCapital.factsFromState(state,owner),supply:state.tech,researchCost:6,analyzeEnergyCost:0},before=JSON.stringify(state);
+    for(const credits of [owner.resources.credits,0,1]){const next=structuredClone(facts);next.player.credits=credits;const full=v.purposeCapital(next).total;if(v.purposeCapitalValue(next)!==full||v.purposeCapitalValue(structuredClone(next))!==full)throw Error('cached full-input scalar or changed wallet disagrees');}
+    const ordered={credits:90.66666666666667,energy:4.142857142857143,publicity:71.45454545454545,availableData:41.76923076923077,additionalPublicScan:17.647058823529413,handSize:3},reversed=Object.fromEntries(Object.entries(ordered).reverse());for(const weights of [ordered,reversed])if(v.purposeCapitalValue(facts,weights)!==v.purposeCapital(facts,weights).total)throw Error('custom input order lost its formal arithmetic');
+    if(window.SetiResourceDemand.planningCapital(state,owner)!==v.purposeCapital(facts).total)throw Error('production numeric planning bypassed shared value');if(JSON.stringify(state)!==before)throw Error('scalar quote mutated its source');window.__scalarCapitalCacheSmoke={ok:true};
+  })()`,
+  successExpression:'window.__scalarCapitalCacheSmoke?.ok === true',
+  obligation:'Browser mutable numeric planning shares exact complete-input scalar quotes and rekeys changed wallets without altering full-value contracts',
+  counterexample:'Missing page API, partial or stale cache key, changed wallet not repriced, or a caller-owned source is frozen/mutated',
 })]);

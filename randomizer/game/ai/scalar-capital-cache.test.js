@@ -1,0 +1,27 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),Module=require('node:module');
+const filename=require.resolve('./state-value'),loaded=new Module(filename,module);loaded.filename=filename;loaded.paths=module.paths;
+let calls=0;globalThis.__setiScalarCapitalTestCount=()=>{calls++;};
+loaded._compile(fs.readFileSync(filename,'utf8').replace('function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {','function purposeCapital(facts, weights = DEFAULT_WEIGHTS) { globalThis.__setiScalarCapitalTestCount();'),filename);
+const values=loaded.exports,probe=require('./probe-capital'),f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json'))),state=JSON.parse(f.compositionEnvelope.committedState),p=state.players.players.find(p=>p.id===f.seatId),original=JSON.stringify(state),facts={...probe.factsFromState(state,p),supply:state.tech,researchCost:6,analyzeEnergyCost:0};
+function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
+try{
+ const expected=values.purposeCapital(facts).total,first=values.purposeCapitalValue(structuredClone(facts));assert.equal(first,expected);const before=calls;
+ for(let i=0;i<12;i++)assert.equal(values.purposeCapitalValue(structuredClone(facts)),expected);
+ assert.equal(calls,before,'complete mutable value keys reuse a scalar across identical wrappers');
+ const variants=[...['credits','energy','publicity','availableData','score'].map(key=>next=>{next.player[key]++;}),next=>{next.player.income.credits++;},next=>{next.extraUnknownCount++;},next=>{next.board.ordinaryDrawCount--;},next=>{next.companyState.roundMarkRound=next.round;},next=>{next.hand=next.hand.slice(1);},next=>{next.computerSlots=[1,2];},next=>{next.pendingNativeEffects=true;},next=>{next.round=2;}];
+ for(const change of variants){const next=structuredClone(facts);change(next);const value=values.purposeCapital(next).total;assert.equal(values.purposeCapitalValue(next),value);assert.equal(values.purposeCapitalValue(next),value);}
+ const shallow=Object.freeze(structuredClone(facts));values.purposeCapitalValue(shallow);shallow.player.credits=0;const changed=values.purposeCapital(shallow).total;assert.equal(values.purposeCapitalValue(shallow),changed,'a shallow frozen wrapper does not conceal a mutable wallet');
+ const immutable=freeze(structuredClone(facts));values.purposeCapitalValue(immutable);const immutableBefore=calls;assert.equal(values.purposeCapitalValue(immutable),expected);assert.equal(calls,immutableBefore);
+ const custom={...values.DEFAULT_WEIGHTS,credits:2};assert.equal(values.purposeCapitalValue(facts,custom),values.purposeCapital(facts,custom).total);
+ // Custom arithmetic deliberately retains caller enumeration order. These
+ // equal-valued weight objects have different formal floating endpoints.
+ const ordered={credits:90.66666666666667,energy:4.142857142857143,publicity:71.45454545454545,availableData:41.76923076923077,additionalPublicScan:17.647058823529413,handSize:3},reversed=Object.fromEntries(Object.entries(ordered).reverse());
+ const orderedValue=values.purposeCapital(facts,ordered).total,reversedValue=values.purposeCapital(facts,reversed).total;assert.notEqual(orderedValue,reversedValue);
+ assert.equal(values.purposeCapitalValue(facts,ordered),orderedValue);assert.equal(values.purposeCapitalValue(facts,reversed),reversedValue,'cache keys preserve enumeration order instead of canonicalizing custom arithmetic inputs');
+ for(const extra of [()=>{},new Date(0),Symbol('unsupported')]){const next={...facts,unused:extra},at=calls;values.purposeCapitalValue(next);values.purposeCapitalValue(next);assert.equal(calls,at+2,'unsupported input types decline cache without altering the evaluator');}
+ const cycle={};cycle.self=cycle;const cyclic={...facts,unused:cycle},cycleBefore=calls;values.purposeCapitalValue(cyclic);values.purposeCapitalValue(cyclic);assert.equal(calls,cycleBefore+2);
+ let getterCalls=0;const accessor={...facts};Object.defineProperty(accessor,'unused',{enumerable:true,get(){getterCalls++;return 1;}});values.purposeCapital(accessor);const reads=getterCalls;getterCalls=0;const accessorBefore=calls;values.purposeCapitalValue(accessor);values.purposeCapitalValue(accessor);assert.equal(calls,accessorBefore+2);assert.equal(getterCalls,reads*2,'key construction must not invoke accessors');
+ const bounded={...facts,round:4,cacheCase:0};values.purposeCapitalValue(bounded);for(let i=1;i<=256;i++){bounded.cacheCase=i;values.purposeCapitalValue(bounded);}bounded.cacheCase=0;const evicted=calls;values.purposeCapitalValue(bounded);assert.equal(calls,evicted+1,'the oldest quote is evicted at the global entry budget');const hot=calls;values.purposeCapitalValue(bounded);assert.equal(calls,hot);
+ assert.equal(JSON.stringify(state),original);console.log(JSON.stringify({scalarCapitalCache:'passed',identicalMutableWrappers:12,mutatedInputs:variants.length,shallowFrozenRekeyed:true,recursiveImmutableReferenceReuse:true,unsupportedInputsDecline:true,accessorsNotReadByKey:true,entriesBoundedAt:256,customWeightsMatch:true,customEnumerationOrderRetained:true,noNativeExecution:true}));
+}finally{delete globalThis.__setiScalarCapitalTestCount;}

@@ -42,10 +42,21 @@
  }
  const noOutcome=Object.freeze({value:0,dataGain:0});
  const noGain=()=>0;Object.defineProperty(noGain,'outcome',{value:()=>noOutcome});Object.freeze(noGain);
+ const noPreparedGain=Object.freeze(()=>noGain);
+ // Sibling held/paid quotes use one read-only context within the same
+ // synchronous portfolio calculation. Only their publicity payment differs.
+ function prepareGains(context,weights){
+  if(!context?.available)return noPreparedGain;
+  const signature=JSON.stringify([context,weights]);
+  return Object.freeze((paidPublicity=0)=>createGains(context,weights,paidPublicity,
+   signature.slice(0,-1)+','+JSON.stringify(paidPublicity)+']'));
+ }
  function gains(context,weights,paidPublicity=0){
   if(!context?.available)return noGain;
+  return createGains(context,weights,paidPublicity,JSON.stringify([context,weights,paidPublicity]));
+ }
+ function createGains(context,weights,paidPublicity,signature){
   // Only complete pure trigger inputs share numeric reward ledgers, never native nodes.
-  const signature=JSON.stringify([context,weights,paidPublicity]);
   let totals=gainTotals.get(signature);
   if(!totals){
    if(gainTotals.size>=64)gainTotals.delete(gainTotals.keys().next().value);
@@ -77,5 +88,5 @@
   };
   Object.defineProperty(gain,'outcome',{value:ids=>total(ids.map(tech.getTechType))});return Object.freeze(gain);
  }
- return Object.freeze({describe,gains});
+ return Object.freeze({describe,gains,prepareGains});
 });

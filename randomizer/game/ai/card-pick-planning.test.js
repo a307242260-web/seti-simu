@@ -11,6 +11,27 @@ const trades=[['credits-for-card',{credits:2}],['energy-for-card',{energy:2}],['
 const stop={actionId:'end',family:'end_turn',target:{}};
 const offers=s=>s.cards.publicCards.map((c,i)=>({actionId:'pick:'+c.id,family:'choose_card',target:{source:'public',slotIndex:i,cardInstanceId:c.id},payload:{}}));
 function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),extra={}){return planner.plan({state:s,seatId,actions,status:'stable',...extra});}
+// Free Amiba grants use the same fixed acquisition discipline as ordinary
+// free picks. Native settlement still executes; no unseen card model is read.
+{
+ const s=state(),actions=['display:9','blind','cancel'].map((source,i)=>({actionId:'free-amiba:'+i,family:'choose_card',target:{kind:'residual-domain',choiceId:'amiba:'+source,source:source.split(':')[0]}})),session={queue:[{type:'residual_alien_card_decision',payload:{speciesId:'amiba'}}]},planner=api.createCardPickPlanner();
+ const r=plan(s,actions,planner,{status:'decision',session});assert(r.fixed);assert.equal(r.selectedActionId,actions[0].actionId);assert.equal(r.reason,'fixed-free-amiba-card');assert.equal(r.isEquivalence,false);assert.equal(r.excludedActionIds.length,2);
+ const blind=plan(s,actions.slice(1),planner,{status:'decision',session});assert.equal(blind.selectedActionId,actions[1].actionId);
+ const empty=plan(s,actions.slice(2),planner,{status:'decision',session});assert.equal(empty.selectedActionId,actions[2].actionId);
+ const changed=structuredClone(s);changed.aliens.amiba.cardDeck.reverse();assert.equal(plan(changed,actions,planner,{status:'decision',session}).selectedActionId,r.selectedActionId);
+ assert.equal(plan(s,actions,planner,{status:'decision',session:{queue:[{type:'residual_alien_card_decision',payload:{speciesId:'runezu'}}]}}),null);
+}
+// One purpose gets one greedy acquisition method. A same-card company swap
+// that discards a subset of the paid payment takes precedence over paying more.
+{
+ const root=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json'))),s=JSON.parse(root.compositionEnvelope.committedState);
+ const company={actionId:'same-purpose-company',family:'industry',target:{abilityId:'deepspace_swap_cards'}},actions=trades.concat(company,stop),planner=api.createCardPickPlanner();
+ const preferred=planner.plan({state:s,seatId:root.seatId,actions,status:'stable'});
+ assert.equal(preferred.reason,'greedy-company-for-same-pick-purpose');assert.equal(preferred.selectedActionId,company.actionId);assert.equal(preferred.selection.cardId,'card-49-0');assert.deepEqual(preferred.discardIds,['card-51-0']);
+ assert(preferred.excludedActionIds.includes('cards-for-pick-card'));assert.equal(preferred.isEquivalence,false,'company-mark scheduling is a greedy policy, not Native equivalence');
+ const paid=planner.plan({state:s,seatId:root.seatId,actions:actions.filter(a=>a!==company),status:'stable'});
+ assert.equal(paid.selectedActionId,'cards-for-pick-card');assert.equal(paid.selection.cardId,preferred.selection.cardId);assert(paid.discardIds.length>preferred.discardIds.length);assert(preferred.discardIds.every(id=>paid.discardIds.includes(id)));
+}
 // A legal trade is not a purpose. No shortage and remaining technology means no acquisition branch.
 {
  const s=state(),before=structuredClone(s),r=plan(s);assert.equal(r.reason,'no-pick-purpose');assert.equal(r.selectedActionId,null);assert.deepEqual(r.retainedActionIds,['end']);assert.deepEqual(s,before);assert.equal(r.isEquivalence,false);
