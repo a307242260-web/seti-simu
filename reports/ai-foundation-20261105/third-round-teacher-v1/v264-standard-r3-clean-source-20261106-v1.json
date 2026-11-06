@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "4ec84a12453aabc2389f87191d44c9cfa07dbbbb",
+  "sourceAdmitted": true,
+  "runtimeAndAllFrozenInputsExact": true,
+  "onlyUntrackedOwnedNonruntimeArtifacts": [
+    "?? adhoc/audit-v264-run-worktree-20261106-v1.py",
+    "?? reports/ai-foundation-20261105/third-round-teacher-v1/v264-full-run-worktree-audit-20261106-v1.json",
+    "?? reports/ai-foundation-20261105/third-round-teacher-v1/v264-pre-run-research-list-20261106-v1.log",
+    "?? reports/ai-foundation-20261105/third-round-teacher-v1/v264-run-worktree-reuse-20261106-v1.json"
+  ],
+  "researchListCompleted": true,
+  "newAutonomousRuns": 0
+}

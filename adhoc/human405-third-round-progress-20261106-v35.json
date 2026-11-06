@@ -1,0 +1,39 @@
+{
+  "goalStatus": "active",
+  "status": "standard-r3-native-verified-next-data-allocation-gap-proven",
+  "sourceCommit": "4ec84a12453aabc2389f87191d44c9cfa07dbbbb",
+  "runtime": "V264/V47",
+  "record": "reports/research/8c4df576.4ec84a12.quick-400.json",
+  "newAutonomousRuns": 1,
+  "controlledPrefix": 112,
+  "newAcceptedInputs": 79,
+  "boardScore": 81,
+  "technologyCount": 6,
+  "income": "7C3E1card+1scan",
+  "wallMilliseconds": 5073,
+  "searches": 76,
+  "maxNativeInputs": 175,
+  "maxMilliseconds": 447.8421249999999,
+  "allSearchesComplete": true,
+  "nativeStateSessionRngExact": true,
+  "firstDifferentInputFromV263": 176,
+  "exactNativeRootBeforeDifference": true,
+  "nextIssue": {
+    "actualInput": 188,
+    "goalId": "data:blue:1",
+    "computer6LegalButNotExecuted": true,
+    "analysisQuoteZeroReason": "other-revealed-species-needs-native-value",
+    "fixedNativeCounterfactualInputs": 6,
+    "fixedEndpointBoard": 84,
+    "fixedEndpointValue": 141.5,
+    "actualValue": 139.5,
+    "fixedControlIsNotAIRecord": true
+  },
+  "developmentAligned": false,
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87
+  },
+  "next": "Known ordinary extra-blue analysis across revealed species with shared wallet/computer/trigger guards. R3 learning/R2-end review/original23 autonomousfirst3 remain.",
+  "baseline": "V41"
+}

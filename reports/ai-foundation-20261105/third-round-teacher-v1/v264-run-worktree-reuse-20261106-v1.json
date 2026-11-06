@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "4ec84a12453aabc2389f87191d44c9cfa07dbbbb",
+  "worktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "onlyOwnedDetachedHeadAndIndexAligned": true,
+  "allTrackedFilesExact": 58947,
+  "worktreeFilesNotRewritten": true,
+  "sharedIndexUnchanged": true,
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "fullAuditSha256": "96aa469da6f74369e17ec2c91459016f8b6b67b8673c6d526981d21b347ef838",
+  "newAutonomousRuns": 0
+}
