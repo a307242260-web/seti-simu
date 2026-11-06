@@ -1,0 +1,1145 @@
+{
+  "scope": "Exactly two Native round-end card/round-start inputs195..196 per prior actual branch, preserving selected historical semantics. Compare known income and native public route requirements at R4 opening; this is not executed mission reward, an autonomous game, or permission to use the newly drawn card in a prior forecast.",
+  "sourcePath": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/scan-launch-final-tail-native-control-20261107-v1.checkpoint.json",
+  "sourceSha256": "ba695542d42833427af984c555b45046d97803a68f0cbad5f53dadef734c8b5c",
+  "recordPath": "reports/research/3e9df353.dc540a52.quick-400.json",
+  "recordSha256": "784a8d4eb0d9daf1f81a6f59cc77d5f7250145ba2a8449683124f816cbb037c4",
+  "checkpoint": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/next-income-native-control-20261107-v1.checkpoint.json",
+  "checkpointSha256": "b80ade899e7d56cc93b971fbf986af9a99e58dd6bc0f22c7f7de58ffc1980253",
+  "acceptedNativeInputs": 10,
+  "branches": {
+    "orange3": {
+      "round": 4,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 85
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "probes": [],
+      "fundedKnownRoutes": 1,
+      "topKnownRouteRequirements": [
+        {
+          "target": "orbit:venus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 3,
+            "movementSteps": 2,
+            "movementPoints": 2,
+            "paidMovementPoints": 2
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 0,
+            "movementSteps": 2
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 9,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 11.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+            "source": "planetRewards.orbit:venus"
+          }
+        },
+        {
+          "target": "orbit:uranus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 11,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 21,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:uranus"
+          }
+        },
+        {
+          "target": "land:mercury:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 6,
+            "movementSteps": 4,
+            "movementPoints": 4,
+            "paidMovementPoints": 4
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 4
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 12,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 17,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:mercury"
+          }
+        },
+        {
+          "target": "land:neptune:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 8,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 5,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:neptune"
+          }
+        },
+        {
+          "target": "orbit:neptune:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 7,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 4,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:neptune"
+          }
+        },
+        {
+          "target": "land:jupiter:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 7,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 12,
+            "rewardSummary": "获得 7 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:jupiter"
+          }
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v50",
+        "total": 133,
+        "components": {
+          "realizedScore": 85,
+          "currentEndGameBonus": 33,
+          "resources": 12,
+          "hand": 3,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    },
+    "orange2-skip": {
+      "round": 4,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 82
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "probes": [],
+      "fundedKnownRoutes": 1,
+      "topKnownRouteRequirements": [
+        {
+          "target": "orbit:venus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 3,
+            "movementSteps": 2,
+            "movementPoints": 2,
+            "paidMovementPoints": 2
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 0,
+            "movementSteps": 2
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 9,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 11.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+            "source": "planetRewards.orbit:venus"
+          }
+        },
+        {
+          "target": "orbit:uranus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 2,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 11,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 21,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:uranus"
+          }
+        },
+        {
+          "target": "land:mercury:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 7,
+            "movementSteps": 4,
+            "movementPoints": 4,
+            "paidMovementPoints": 4
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 4
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 12,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 17,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:mercury"
+          }
+        },
+        {
+          "target": "orbit:neptune:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 7,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 4,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:neptune"
+          }
+        },
+        {
+          "target": "land:neptune:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 9,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 5,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:neptune"
+          }
+        },
+        {
+          "target": "land:jupiter:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 7,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 12,
+            "rewardSummary": "获得 7 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:jupiter"
+          }
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v50",
+        "total": 131,
+        "components": {
+          "realizedScore": 82,
+          "currentEndGameBonus": 33,
+          "resources": 13,
+          "hand": 3,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    },
+    "orange2-launch": {
+      "round": 4,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 82
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "probes": [
+        {
+          "angleDegrees": 125.1,
+          "color": "white",
+          "id": 5,
+          "launchGrid": {
+            "x": 4,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 4,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 69.42,
+          "sectorX": 4,
+          "sectorY": 1,
+          "slotIndex": 2,
+          "surface": "solar-board"
+        }
+      ],
+      "fundedKnownRoutes": 1,
+      "topKnownRouteRequirements": [
+        {
+          "target": "orbit:venus:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 1,
+            "energy": 3,
+            "movementSteps": 2,
+            "movementPoints": 2,
+            "paidMovementPoints": 2
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 0,
+            "movementSteps": 2
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "benefit": {
+            "score": 9,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 11.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+            "source": "planetRewards.orbit:venus"
+          }
+        },
+        {
+          "target": "orbit:uranus:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 1,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 11,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 21,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:uranus"
+          }
+        },
+        {
+          "target": "land:mercury:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 7,
+            "movementSteps": 4,
+            "movementPoints": 4,
+            "paidMovementPoints": 4
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 4
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "benefit": {
+            "score": 12,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 17,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:mercury"
+          }
+        },
+        {
+          "target": "orbit:neptune:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 1,
+            "energy": 7,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 4,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:neptune"
+          }
+        },
+        {
+          "target": "land:neptune:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 9,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 6,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 3,
+            "grossEquivalentValue": 15,
+            "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:neptune"
+          }
+        },
+        {
+          "target": "land:jupiter:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 7,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 12,
+            "rewardSummary": "获得 7 分；获得 1 个黄色外星人标记",
+            "source": "planetRewards.land:jupiter"
+          }
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v50",
+        "total": 130,
+        "components": {
+          "realizedScore": 82,
+          "currentEndGameBonus": 33,
+          "resources": 12,
+          "hand": 3,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    },
+    "orange4-skip": {
+      "round": 4,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 82
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "probes": [],
+      "fundedKnownRoutes": 1,
+      "topKnownRouteRequirements": [
+        {
+          "target": "orbit:venus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 3,
+            "movementSteps": 2,
+            "movementPoints": 2,
+            "paidMovementPoints": 2
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 0,
+            "movementSteps": 2
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 9,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 11.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+            "source": "planetRewards.orbit:venus"
+          }
+        },
+        {
+          "target": "land:jupiter:satellite:io",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 35,
+            "rewardSummary": "获得 10 分；获得 4 能量",
+            "source": "planetRewards.land:jupiter"
+          }
+        },
+        {
+          "target": "land:neptune:satellite:triton",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 9,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 5,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 26,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 31,
+            "rewardSummary": "获得 26 分",
+            "source": "planetRewards.land:neptune"
+          }
+        },
+        {
+          "target": "land:jupiter:satellite:ganymede",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 12,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 29.5,
+            "rewardSummary": "获得 12 分；获得 5 宣传",
+            "source": "planetRewards.land:jupiter"
+          }
+        },
+        {
+          "target": "land:uranus:satellite:titania",
+          "sourceId": "launch",
+          "required": {
+            "credits": 2,
+            "energy": 8,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 25,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 27.5,
+            "rewardSummary": "获得 25 分",
+            "source": "planetRewards.land:uranus"
+          }
+        },
+        {
+          "target": "orbit:uranus:planet:",
+          "sourceId": "launch",
+          "required": {
+            "credits": 3,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 2,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "launch"
+          },
+          "benefit": {
+            "score": 11,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 21,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:uranus"
+          }
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v50",
+        "total": 131,
+        "components": {
+          "realizedScore": 82,
+          "currentEndGameBonus": 33,
+          "resources": 13,
+          "hand": 3,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    },
+    "orange4-launch": {
+      "round": 4,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 82
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "probes": [
+        {
+          "angleDegrees": 125.1,
+          "color": "white",
+          "id": 5,
+          "launchGrid": {
+            "x": 4,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 4,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 69.42,
+          "sectorX": 4,
+          "sectorY": 1,
+          "slotIndex": 2,
+          "surface": "solar-board"
+        }
+      ],
+      "fundedKnownRoutes": 1,
+      "topKnownRouteRequirements": [
+        {
+          "target": "orbit:venus:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 1,
+            "energy": 3,
+            "movementSteps": 2,
+            "movementPoints": 2,
+            "paidMovementPoints": 2
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 0,
+            "movementSteps": 2
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "benefit": {
+            "score": 9,
+            "incomeCount": 1,
+            "dataCount": 0,
+            "grossEquivalentValue": 11.5,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+            "source": "planetRewards.orbit:venus"
+          }
+        },
+        {
+          "target": "land:jupiter:satellite:io",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 10,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 35,
+            "rewardSummary": "获得 10 分；获得 4 能量",
+            "source": "planetRewards.land:jupiter"
+          }
+        },
+        {
+          "target": "land:neptune:satellite:triton",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 9,
+            "movementSteps": 6,
+            "movementPoints": 6,
+            "paidMovementPoints": 6
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 6,
+            "movementSteps": 6
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 26,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 31,
+            "rewardSummary": "获得 26 分",
+            "source": "planetRewards.land:neptune"
+          }
+        },
+        {
+          "target": "land:jupiter:satellite:ganymede",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 7,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 4,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 12,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 29.5,
+            "rewardSummary": "获得 12 分；获得 5 宣传",
+            "source": "planetRewards.land:jupiter"
+          }
+        },
+        {
+          "target": "land:uranus:satellite:titania",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 0,
+            "energy": 8,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 5,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 25,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 27.5,
+            "rewardSummary": "获得 25 分",
+            "source": "planetRewards.land:uranus"
+          }
+        },
+        {
+          "target": "orbit:uranus:planet:",
+          "sourceId": "rocket:5",
+          "required": {
+            "credits": 1,
+            "energy": 6,
+            "movementSteps": 5,
+            "movementPoints": 5,
+            "paidMovementPoints": 5
+          },
+          "gap": {
+            "credits": 0,
+            "energy": 3,
+            "movementSteps": 5
+          },
+          "nextStep": {
+            "family": "move",
+            "rocketId": 5,
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "benefit": {
+            "score": 11,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 21,
+            "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+            "source": "planetRewards.orbit:uranus"
+          }
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v50",
+        "total": 130,
+        "components": {
+          "realizedScore": 82,
+          "currentEndGameBonus": 33,
+          "resources": 12,
+          "hand": 3,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    }
+  },
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

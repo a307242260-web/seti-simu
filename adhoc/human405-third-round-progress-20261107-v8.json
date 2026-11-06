@@ -1,0 +1,20 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V285-V289 tests and frozen cold failures committed/pushed1268ab206",
+  "thisGoalTurnClassification": "progress: V290/V291 functional proofs and failed first cold tests,192 real Native controls isolate R3 orange technology bonus and cross-round launch opportunity",
+  "production": "V278/V48",
+  "candidate": "V291/V50",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "newAiDiagnosticQueries": 0,
+  "newFixedNativeInputs": 192,
+  "latestCold": {
+    "version": "V291",
+    "nativeInputs": 168,
+    "milliseconds": 680.9148329999999,
+    "complete": true,
+    "status": "failed-gate"
+  },
+  "document": "docs/human405-third-round-orange-investment-learning-20261107.md",
+  "next": "Execute the same known Venus orbit in saved real R4 orange2-skip vs orange2-launch Native roots; preserve known-income/hand funding and prove actual cost before correcting cross-round probe investment. Do not run new autonomy before all admission. Keep first-two asset regression, original23 first3 and R2-end review."
+}

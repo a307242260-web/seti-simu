@@ -1,0 +1,16 @@
+{
+  "scope": "Offline instrumentation of all580 complete recorded production valuation inputs, including nested analysis calls. Exact local-construction dependency projection: full player, hand length/unknown count, computer/blue slots, energy cost, public symbols/traces/alien board/ordinary count, reserved cards, trace/forecast/next marks, final board and complete weights. Guards stay outside; income-prefix identity excluded. No production cache. Not a production cache or acceptance timing.",
+  "trace": "reports/ai-foundation-20261107/company-fixed-intent-v1/complete-capital-inputs-20261107-v1.v8.gz",
+  "traceSha256": "3e8ef62c3e9f92429e4d628ccba9b80f9b9860b3c0cdef68a31b7a60231556b5",
+  "completeInputs": 580,
+  "readyAnalysisCalls": 490,
+  "localCandidates": 2424,
+  "completeLocalInputs": 250,
+  "completeLocalRepeatCalls": 240,
+  "completeGeometryInputs": 17,
+  "completeGeometryRepeats": 473,
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "allFullResultsExact": true
+}

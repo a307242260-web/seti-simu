@@ -1,0 +1,675 @@
+{
+  "status": "completed-controlled-comparison",
+  "scope": "Continue exactly the prior orange2/orange4 Native blocked roots at177. Explicitly choose the new legal scan4 skip or launch opportunity funded by the different research bonus, then attempt original177..194 fixed semantic tail. No autonomous query or newly invented observation; unsupported extra choices stop the branch.",
+  "sourcePath": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/native-control-20261107-v1.checkpoint.json",
+  "sourceSha256": "aef866ee78e5172b8cfbd1fbceb02d0c9f2c9cd53fefd5b4b0e8c2b1b8a5e7b7",
+  "parentReport": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/native-control-20261107-v1.json",
+  "parentReportSha256": "f2c02022abd193c4e858b3e7858245f22a18b954c84de58fec16de37b74bff6f",
+  "checkpoint": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/scan-launch-native-control-20261107-v1.checkpoint.json",
+  "checkpointSha256": "d4127c956f9620ca290b97e0d2c5d0cdd8149da30762a598023ec80eee11b9bb",
+  "acceptedNativeInputs": 44,
+  "baseline": {
+    "round": 3,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 1,
+      "publicity": 3,
+      "score": 85
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange3": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "id": "card-61-0",
+        "cardId": "dlc_24.png"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp",
+        "effectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_117.webp"
+        }
+      },
+      {
+        "id": "card-15-0",
+        "cardId": "dlc_9.png",
+        "effectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "dlc_9.png"
+        }
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp",
+        "effectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_101.webp"
+        }
+      }
+    ],
+    "computer": [],
+    "blue": [],
+    "probes": [],
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "branches": {
+    "orange2-skip": {
+      "status": "fixed-tail-blocked",
+      "acceptedInputs": 11,
+      "blocked": {
+        "originalInput": 187,
+        "expected": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 79,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-5:effect:4",
+          "decisionVersion": 5,
+          "ownerId": "player-white",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5bb27a70",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:launch",
+                "mode": "launch"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "发射探测器"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f042ebe0",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:skip",
+                "mode": "skip"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "跳过"
+            }
+          ]
+        },
+        "actions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5bb27a70",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:launch",
+              "mode": "launch"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "发射探测器"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "跳过"
+          }
+        ]
+      }
+    },
+    "orange2-launch": {
+      "status": "fixed-tail-blocked",
+      "acceptedInputs": 11,
+      "blocked": {
+        "originalInput": 187,
+        "expected": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 79,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-5:effect:4",
+          "decisionVersion": 5,
+          "ownerId": "player-white",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a008f4d7",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:out",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0e69334d",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:cw",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2b379eff",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:ccw",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f042ebe0",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:skip",
+                "mode": "skip"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "跳过"
+            }
+          ]
+        },
+        "actions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:a008f4d7",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:out",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0e69334d",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:cw",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2b379eff",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:ccw",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "跳过"
+          }
+        ]
+      }
+    },
+    "orange4-skip": {
+      "status": "fixed-tail-blocked",
+      "acceptedInputs": 11,
+      "blocked": {
+        "originalInput": 187,
+        "expected": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 79,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-5:effect:4",
+          "decisionVersion": 5,
+          "ownerId": "player-white",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5bb27a70",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:launch",
+                "mode": "launch"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "发射探测器"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f042ebe0",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:skip",
+                "mode": "skip"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "跳过"
+            }
+          ]
+        },
+        "actions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5bb27a70",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:launch",
+              "mode": "launch"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "发射探测器"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "跳过"
+          }
+        ]
+      }
+    },
+    "orange4-launch": {
+      "status": "fixed-tail-blocked",
+      "acceptedInputs": 11,
+      "blocked": {
+        "originalInput": 187,
+        "expected": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 79,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-5:effect:4",
+          "decisionVersion": 5,
+          "ownerId": "player-white",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a008f4d7",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:out",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0e69334d",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:cw",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2b379eff",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:move:5:ccw",
+                "mode": "move",
+                "rocketId": 5,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1
+              },
+              "decision": null,
+              "summary": "移动 5 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f042ebe0",
+              "actorId": "player-white",
+              "stateVersion": 78,
+              "decisionVersion": 3,
+              "target": {
+                "choiceId": "scan4:skip",
+                "mode": "skip"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "跳过"
+            }
+          ]
+        },
+        "actions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:a008f4d7",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:out",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0e69334d",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:cw",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2b379eff",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:move:5:ccw",
+              "mode": "move",
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动 5 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "跳过"
+          }
+        ]
+      }
+    }
+  },
+  "rootAndRngRestored": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

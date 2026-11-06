@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/analysis-geometry-key-v1');prior=Path('reports/ai-foundation-20261107/analysis-geometry-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['randomizer/game/ai/analysis-geometry-key.test.js','adhoc/v291-analysis-geometry-key-contract-20261107-v1.md',str(D/'amiba-analysis-v290-reference-20261107-v1.js')];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+m={**old,'searchVersion':'seti-complete-decision-search-v291','resourcePolicy':'seti-goal-resource-preparation-v24','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v291-analysis-geometry-key-contract-20261107-v1.md','failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'Exact same complete public-geometry key bytes as V290. WeakMap reuses only recursively immutable, own-data, fully encoded subtree strings; mutable and shallow-frozen descendants rekey every call. 256-entry escaped field-name cache. Native identities untouched, original32 layoutFIFO and all per-wallet/full portfolio calculation retained.580 mutable/frozen keys plus24 immutable repeats and guards verified. No extra search pruning or budget changes.','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))

@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/analysis-geometry-v1');prior=Path('reports/ai-foundation-20261107/local-preview-copy-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['randomizer/game/ai/analysis-geometry.test.js','adhoc/v290-analysis-geometry-contract-20261107-v1.md',str(D/'amiba-analysis-v289-reference-20261107-v1.js')];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+m={**old,'searchVersion':'seti-complete-decision-search-v290','resourcePolicy':'seti-goal-resource-preparation-v24','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v290-analysis-geometry-contract-20261107-v1.md','failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'32-entry bounded complete-public-geometry memo for Amiba analysis; full slots, symbols, traces, actor and ordinary draw count, preserving field order and unsupported-input rejection. Cached layouts detach before recursive freeze; no Native or source mutation. Every wallet/reward cap, blue trigger, scoring, local candidate and final portfolio requote remain per-call. Full580 V50 outputs, related Native proofs and mutable/custom contexts retained. No full-value cache, identity, pruning or budget change.','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))
