@@ -1,0 +1,32 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: original23 autonomousfirst3 harness independently validated and pushed39549d648",
+  "thisGoalTurnClassification": "progress: diagnosed V296 exact-portfolio repeats; rejected V297 cache after first691.552333ms; verified22 Native replay/24 observations for final-round probe handoff and V298 window fix; reproduced and fixed auto-target route false infeasible in V299; newR4 root complete263/484.572208 failsinputgate; full unique input distribution recorded",
+  "production": "V278/V48",
+  "candidate": "V299/V54/Resource25",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "newIndependentMissionReplayInputs": 22,
+  "windowFullPlanParity": 1536,
+  "nativeObservations": 24,
+  "actualVenusHandoffs": {
+    "late": 135,
+    "early": 136,
+    "probePotentialBefore": 7,
+    "after": 0
+  },
+  "newR4Cold": {
+    "nativeInputs": 263,
+    "milliseconds": 484.57220800000005,
+    "complete": true,
+    "selected": "industry:e887dc52",
+    "value": 152.5,
+    "restoredOrbitLineValue": 135,
+    "status": "failed-gate"
+  },
+  "inputDistribution": "reports/ai-foundation-20261107/route-endpoint-completion-v1/native-input-distribution-20261107-v1.json",
+  "document": "docs/human405-final-round-probe-and-route-completion-20261107.md",
+  "manifest": "reports/ai-foundation-20261107/route-endpoint-completion-v1/source-manifest-20261107-v1.json",
+  "next": "First audit/fix final-round probe dependency in hasUnprovedProbeCapital and all its proof callers with real Native R4 controls. Then analyze60 fixed data placements+60 slots for typed tail certificates; preserve necessary candidates and256/600. No resourceView cache: measured0calls. Complete1256/Node/Browser/audit admission, actualfirst2 development, original23 autonomousfirst3, R2-end review and teacher105 assets remain. V41 unchanged.",
+  "unresolvedProofDependency": "analysis-port.hasUnprovedProbeCapital still roundNumber<4; R4 mission opening invalidates this old premise in income/data tails, single-blue fallback and postMainValueBound. Audit and fix before any source admission or batching expansion; current263/484.6 not full business acceptance."
+}

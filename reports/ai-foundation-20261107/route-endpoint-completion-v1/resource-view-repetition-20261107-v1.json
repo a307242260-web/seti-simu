@@ -1,0 +1,21 @@
+{
+  "scope": "One explicit diagnostic after V299 first cold failure, not an acceptance timing or cold resample. Counts only exact same immutable source reference plus complete typed control/intent/knowledge barrier/policy flags; no production memo added.",
+  "manifest": "reports/ai-foundation-20261107/route-endpoint-completion-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "007deb33fea609f21b461cd1c25b164e4b37fdcad4abe5569828927adf2c1441",
+  "stats": {
+    "calls": 0,
+    "sourceNodes": 0,
+    "sourceEnvelopes": 0,
+    "uniqueByParentAndControl": 0,
+    "duplicateByParentAndControl": 0,
+    "uniqueByExactEnvelopeAndControl": 0,
+    "duplicateByExactEnvelopeAndControl": 0,
+    "maxSameExactEnvelopeControl": 0
+  },
+  "actionId": "industry:e887dc52",
+  "value": 152.5,
+  "nativeInputs": 263,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

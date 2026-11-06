@@ -1,0 +1,40 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "f10eff53ef4e49a4d229cf8985ca9eebfbb97853b08a6b58aedd84a14c1eedd8",
+  "cases": 1256,
+  "rows": [
+    {
+      "label": "actual-v298-r4-venus-late-orbit",
+      "fixture": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-venus-late-orbit-20261107-v1.root.json",
+      "identity": "c8cc3c5e7ba1d8fb116901f011b2954b43fab901594b781f13496a27cfd306dd",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v298-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+      "nativeInputs": 263,
+      "milliseconds": 511.969875,
+      "value": 152.5,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 1,
+  "maxNativeInputs": 263,
+  "maxMilliseconds": 511.969875,
+  "failure": {
+    "label": "actual-v298-r4-venus-late-orbit",
+    "fixture": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-venus-late-orbit-20261107-v1.root.json",
+    "identity": "c8cc3c5e7ba1d8fb116901f011b2954b43fab901594b781f13496a27cfd306dd",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v298-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+    "nativeInputs": 263,
+    "milliseconds": 511.969875,
+    "value": 152.5,
+    "actionId": "industry:e887dc52",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

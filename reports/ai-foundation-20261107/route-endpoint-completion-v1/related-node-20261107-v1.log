@@ -1,0 +1,2449 @@
+{"finalRoundProbeWindow":"passed","oldInputCases":1536,"unopenedWindowFullPlanParity":1536,"finalRoundChanged":0,"realNativeObservations":24,"actualOrbitHandoffs":2,"missionPotentialBeforeOrbit":7,"lateTotalBeforeAndAfter":135,"earlyTotalBeforeAndAfter":136,"fullCompactNativeParity":true,"passTerminalAndEmptyWalletGuards":true,"noFutureOrHiddenFunding":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"rootAndRngUnchanged":true}
+{"incomeChoiceConsistency":"passed","equalUtility":6,"tieFixture":"case-062 player-blue","actualPublicityOpportunityValues":[{"id":"card-49-0","value":29.083333333333332},{"id":"alien-amiba-9-5","value":16.25}],"preservedPrice":2,"selected":"card-49-0","menuPermutationStable":true,"explicitPurposeRespected":true,"strictlyHigherValueRespected":true,"noNewSearchBranches":true,"nativeInputs":6,"rootAndRngRestored":true,"scalarAnalysisSupplierAligned":true}
+probe resource greedy tests passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+... Skipped lines
+
+  {
+    dataAnalyzeRequirements: {
+      acquisitionPlans: [],
+      availableData: 0,
+      computerPlacedCount: 0,
+...
+    },
+-   decision: {
+-     actorPlayerId: 'player-white',
+-     choiceCount: 0,
+-     currentPlayerId: 'player-white',
+-     decisionType: 'turn_action',
+-     effectOwnerPlayerId: null,
+-     pendingOwnerPlayerId: null,
+-     source: 'current_player'
+-   },
+    incomeGainRequirements: {
+      baseline: {
+        additionalPublicScan: 1,
+        availableData: 0,
+        credits: 8,
+...
+    },
+-   perspectivePlayerId: 'player-white',
+    probeRouteRequirements: {
+      candidates: [
+        {
+          endpointFacts: {
+            cost: {
+...
+    },
++   schemaVersion: 'seti-analysis-observation-v1',
+-   schemaVersion: 'seti-rl-observation-v1',
+    sectorWinRequirements: {
+      accessSources: [
+        {
+          family: 'scan',
+          sectorIds: [
+...
+    },
+-   seed: 'seti-free-analyze-v1',
+    selfState: {
+      companyState: {
+        abilityId: 'deepspace_swap_cards',
+        futureSpan: {
+          card: null,
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/route-endpoint-completion.test.js:8:336)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: {
+    schemaVersion: 'seti-analysis-observation-v1',
+    publicState: {
+      roundNumber: 4,
+      turnNumber: 5,
+      actionCycleNumber: 2,
+      currentPlayerId: 'player-white',
+      passedPlayerIds: [ 'player-brown', 'player-green', 'player-blue' ],
+      passingPlayerIds: [ 'player-brown', 'player-green', 'player-blue' ],
+      completedTurnPlayerIds: [],
+      activePlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      players: [
+        {
+          playerId: 'player-blue',
+          industryAbilityId: 'turing_borrow_tech',
+          color: 'blue',
+          playerLabel: '蓝色玩家',
+          score: 7,
+          finalScore: 7,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 14,
+          energy: 8,
+          publicity: 4,
+          researchPublicityCost: 6,
+          availableData: 3,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 1,
+            credits: 3,
+            energy: 2,
+            handSize: 2,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 2, energy: 2, handSize: 1, availableData: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-green',
+          industryAbilityId: 'huanyu_free_moves',
+          color: 'green',
+          playerLabel: '绿色玩家',
+          score: 7,
+          finalScore: 7,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 11,
+          energy: 6,
+          publicity: 4,
+          researchPublicityCost: 6,
+          availableData: 2,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 3,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 3, energy: 1, handSize: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-brown',
+          industryAbilityId: 'helios_remove_tech_income',
+          color: 'brown',
+          playerLabel: '棕色玩家',
+          score: 8,
+          finalScore: 8,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 12,
+          energy: 5,
+          publicity: 10,
+          researchPublicityCost: 6,
+          availableData: 4,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 1,
+            publicity: 1
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 3, energy: 1, handSize: 1, publicity: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-white',
+          industryAbilityId: 'deepspace_swap_cards',
+          color: 'white',
+          playerLabel: '白色玩家',
+          score: 91,
+          finalScore: 124,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 5,
+          energy: 1,
+          publicity: 5,
+          researchPublicityCost: 6,
+          availableData: 0,
+          additionalPublicScan: 1,
+          handCount: 2,
+          reservedCount: 3,
+          completedTaskCount: 1,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [Array],
+            analyzeReady: false
+          },
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          },
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 8,
+            energy: 3,
+            handSize: 1,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: true,
+          companyBaseIncome: {
+            credits: 2,
+            energy: 2,
+            handSize: 1,
+            additionalPublicScan: 1
+          },
+          securedEndGameBonus: 33
+        }
+      ],
+      board: {
+        rockets: [
+          {
+            angleDegrees: 67.5,
+            color: 'green',
+            id: 1,
+            launchGrid: [Object],
+            launchSectorCoordinate: [Object],
+            playerId: 'player-green',
+            playerSequence: 1,
+            radius: 84.68,
+            sectorX: 3,
+            sectorY: 1,
+            slotIndex: 4,
+            surface: 'solar-board'
+          },
+          {
+            angleDegrees: 54.9,
+            color: 'green',
+            id: 2,
+            launchGrid: [Object],
+            launchSectorCoordinate: [Object],
+            playerId: 'player-green',
+            playerSequence: 2,
+            radius: 69.42,
+            sectorX: 3,
+            sectorY: 1,
+            slotIndex: 0,
+            surface: 'solar-board'
+          }
+        ],
+        planets: {
+          planets: {
+            aomomo: [Object],
+            earth: [Object],
+            jupiter: [Object],
+            mars: [Object],
+            mercury: [Object],
+            neptune: [Object],
+            saturn: [Object],
+            uranus: [Object],
+            venus: [Object]
+          }
+        },
+        data: {
+          nebulae: {
+            aomomo: [Object],
+            'sector-1-a': [Object],
+            'sector-1-b': [Object],
+            'sector-2-a': [Object],
+            'sector-2-b': [Object],
+            'sector-3-a': [Object],
+            'sector-3-b': [Object],
+            'sector-4-a': [Object],
+            'sector-4-b': [Object]
+          },
+          sectorExtraMarks: { 'sector-2-a': [], 'sector-3-a': [] },
+          sectorSettlements: { sectors: [Object], winsByPlayerId: [Object] }
+        },
+        solarSystem: {
+          aomomoActive: false,
+          rotation: {
+            rotationCount: 10,
+            wheel1Steps: -10,
+            wheel2Steps: -27,
+            wheel3Steps: -20,
+            wheel4Steps: -10
+          },
+          sectorBySlot: { '1': 3, '2': 1, '3': 2, '4': 4 }
+        },
+        finalScoring: {
+          tiles: { a: [Object], b: [Object], c: [Object], d: [Object] },
+          marks: {},
+          tileVariants: { a: 2, b: 1, c: 1, d: 2 }
+        },
+        publicCards: [
+          {
+            id: 'card-63-0',
+            cardId: 'dlc_19.png',
+            set: 'space-agency',
+            price: 0,
+            cardTypeCode: 0,
+            discardActionCode: 0,
+            scanActionCode: 0,
+            incomeCode: 1,
+            faceUp: true
+          },
+          {
+            id: 'card-62-0',
+            cardId: 'dlc_20.png',
+            set: 'space-agency',
+            price: 1,
+            cardTypeCode: 0,
+            discardActionCode: 2,
+            scanActionCode: 1,
+            incomeCode: 2,
+            faceUp: true
+          },
+          {
+            id: 'card-50-0',
+            cardId: 'b_14.webp',
+            set: 'basic',
+            price: 2,
+            cardTypeCode: 3,
+            discardActionCode: 0,
+            scanActionCode: 2,
+            incomeCode: 1,
+            faceUp: true
+          }
+        ],
+        discardCount: 40,
+        ordinaryDrawCount: 112,
+        techSupply: {
+          stacks: {
+            blue1: [Object],
+            blue2: [Object],
+            blue3: [Object],
+            blue4: [Object],
+            orange1: [Object],
+            orange2: [Object],
+            orange3: [Object],
+            orange4: [Object],
+            purple1: [Object],
+            purple2: [Object],
+            purple3: [Object],
+            purple4: [Object]
+          }
+        },
+        aliens: {
+          slots: [ [Object], [Object] ],
+          amiba: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 4,
+            displayedCardAvailable: true,
+            displayedCardIndex: 5
+          }
+        }
+      },
+      resident: {
+        initialSetup: {
+          active: false,
+          interactive: false,
+          currentPlayerId: null,
+          offer: null,
+          confirmedPlayerIds: []
+        }
+      },
+      pending: {
+        actorPlayerId: 'player-white',
+        pendingOwnerPlayerId: null,
+        effectOwnerPlayerId: null,
+        currentPlayerId: 'player-white',
+        source: 'current_player',
+        decisionType: 'turn_action',
+        choiceCount: 0
+      }
+    },
+    selfState: {
+      playerId: 'player-white',
+      hand: [
+        {
+          id: 'card-61-0',
+          cardId: 'dlc_24.png',
+          set: 'space-agency',
+          price: 2,
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          scanActionCode: 0,
+          incomeCode: 2,
+          faceUp: true
+        },
+        {
+          id: 'card-30-pass-3-1',
+          cardId: 'b_111.webp',
+          set: 'basic',
+          price: 2,
+          cardTypeCode: 1,
+          discardActionCode: 1,
+          scanActionCode: 1,
+          incomeCode: 1,
+          faceUp: true
+        }
+      ],
+      reservedCards: [
+        {
+          id: 'card-13-0',
+          cardId: 'b_117.webp',
+          set: 'basic',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          scanActionCode: 3,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'b_117.webp',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        },
+        {
+          id: 'card-15-0',
+          cardId: 'dlc_9.png',
+          set: 'space-agency',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 1,
+          scanActionCode: 2,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'dlc_9.png',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        },
+        {
+          id: 'card-29-pass-2-5',
+          cardId: 'b_101.webp',
+          set: 'basic',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          scanActionCode: 0,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'b_101.webp',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        }
+      ],
+      pendingCardTriggers: [],
+      pendingHandCardTriggers: [],
+      pendingNativeEffects: false,
+      turnCardBonusCount: 0,
+      companyState: {
+        abilityId: 'deepspace_swap_cards',
+        roundMarkRound: 0,
+        roundMarkTurn: 0,
+        futureSpan: { card: null, targetScore: 0, playing: false },
+        strategyPassiveSlots: { blue: false, red: false, yellow: false }
+      },
+      privateAlienCards: [],
+      taskState: {},
+      oneTimeAbilities: {},
+      traceCounts: { blue: 3, pink: 2, yellow: 1 },
+      nextFinalMark: null
+    },
+    terminal: false,
+    probeRouteRequirements: {
+      schemaVersion: 'seti-probe-route-requirements-v3',
+      playerId: 'player-white',
+      movementContext: {
+        phase: 'ordinary',
+        cardRemaining: 0,
+        scanRemaining: 0,
+        companyAvailable: false,
+        companyRemaining: 0,
+        usedRocketIds: []
+      },
+      candidates: [
+        {
+          requirementId: 'launch:orbit:uranus:planet:',
+          targetId: 'orbit:uranus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'uranus',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 11,
+            incomeCount: 0,
+            dataCount: 0,
+            grossEquivalentValue: 23.5,
+            rewardSummary: '首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描',
+            source: 'planetRewards.orbit:uranus'
+          },
+          required: {
+            credits: 3,
+            energy: 7,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:jupiter:planet:',
+          targetId: 'land:jupiter:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'jupiter',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: false,
+          targetBenefit: {
+            score: 7,
+            incomeCount: 0,
+            dataCount: 0,
+            grossEquivalentValue: 17,
+            rewardSummary: '获得 7 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:jupiter'
+          },
+          required: {
+            credits: 2,
+            energy: 8,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 4,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 7, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:mercury:planet:',
+          targetId: 'land:mercury:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mercury',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 12,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 17,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:mercury'
+          },
+          required: {
+            credits: 2,
+            energy: 7,
+            movementSteps: 4,
+            movementPoints: 4,
+            paidMovementPoints: 4
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 4 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:neptune:planet:',
+          targetId: 'orbit:neptune:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'neptune',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 10,
+            incomeCount: 0,
+            dataCount: 4,
+            grossEquivalentValue: 15,
+            rewardSummary: '首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描',
+            source: 'planetRewards.orbit:neptune'
+          },
+          required: {
+            credits: 3,
+            energy: 6,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 5, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:neptune:planet:',
+          targetId: 'land:neptune:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'neptune',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 10,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 15,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:neptune'
+          },
+          required: {
+            credits: 2,
+            energy: 8,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 7, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:uranus:planet:',
+          targetId: 'land:uranus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'uranus',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 9,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 14,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 9 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:uranus'
+          },
+          required: {
+            credits: 2,
+            energy: 9,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 8, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:mars:planet:',
+          targetId: 'land:mars:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mars',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 6,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 13.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:mars'
+          },
+          required: {
+            credits: 2,
+            energy: 7,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 3,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:mercury:planet:',
+          targetId: 'orbit:mercury:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mercury',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 3,
+            incomeCount: 1,
+            dataCount: 0,
+            grossEquivalentValue: 10.5,
+            rewardSummary: '首次环绕：额外获得 3 分；盲抽 1 张卡牌；水星扇区扫描 1/2；水星扇区扫描 2/2；获得 1 次收入',
+            source: 'planetRewards.orbit:mercury'
+          },
+          required: {
+            credits: 3,
+            energy: 5,
+            movementSteps: 4,
+            movementPoints: 4,
+            paidMovementPoints: 4
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 4, movementSteps: 4 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:saturn:planet:',
+          targetId: 'land:saturn:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'saturn',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 8,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 10.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:saturn'
+          },
+          required: {
+            credits: 2,
+            energy: 4,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 3, movementSteps: 2 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:venus:planet:',
+          targetId: 'orbit:venus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'venus',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: false,
+          targetBenefit: {
+            score: 6,
+            incomeCount: 1,
+            dataCount: 0,
+            grossEquivalentValue: 8.5,
+            rewardSummary: '获得 6 分；获得 1 次收入',
+            source: 'planetRewards.orbit:venus'
+          },
+          required: {
+            credits: 3,
+            energy: 3,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 2, movementSteps: 2 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:venus:planet:',
+          targetId: 'land:venus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'venus',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 5,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 7.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 5 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:venus'
+          },
+          required: {
+            credits: 2,
+            energy: 4,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 3, movementSteps: 2 },
+          moveTiming: []
+        }
+      ]
+    },
+    dataAnalyzeRequirements: {
+      schemaVersion: 'seti-data-analyze-requirements-v2',
+      playerId: 'player-white',
+      targetId: 'data:analyze',
+      computerPlacedCount: 0,
+      remainingPlacements: 6,
+      availableData: 0,
+      dataNeeded: 6,
+      firstRowComplete: false,
+      firstRowRemainingPlacements: 4,
+      heldDataCanFillFirstRow: false,
+      eligible: false,
+      eligibilityReason: null,
+      nextStep: null,
+      nextCost: { credits: 0, energy: 0 },
+      nextGap: { credits: 0, energy: 0 },
+      acquisitionPlans: [],
+      fieldSources: {
+        dataProgress: 'players[].dataProgress.computerSlots',
+        availableData: 'players[].resources.availableData',
+        scanCost: 'SetiScanEffects.getStandardScanCost',
+        analyzeCost: 'SetiIndustryPassives.canAnalyzeWithoutEnergy'
+      }
+    },
+    sectorWinRequirements: {
+      schemaVersion: 'seti-sector-win-requirements-v1',
+      playerId: 'player-white',
+      candidates: [
+        {
+          targetId: 'sector:win:sector-4-b:1',
+          sectorId: 'sector-4-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 2,
+          nextSlotScore: 0,
+          ownCount: 3,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 2,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-1-a:1',
+          sectorId: 'sector-1-a',
+          nextSettlementNumber: 1,
+          openSlotCount: 3,
+          nextSlotScore: 0,
+          ownCount: 2,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 3,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-3-b:1',
+          sectorId: 'sector-3-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 3,
+          nextSlotScore: 0,
+          ownCount: 1,
+          maxOpponentCount: 2,
+          minimumOwnMarks: 3,
+          ranking: [ [Object], [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-1-b:1',
+          sectorId: 'sector-1-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 4,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 4,
+          ranking: []
+        },
+        {
+          targetId: 'sector:win:sector-3-a:2',
+          sectorId: 'sector-3-a',
+          nextSettlementNumber: 2,
+          openSlotCount: 4,
+          nextSlotScore: 2,
+          ownCount: 0,
+          maxOpponentCount: 1,
+          minimumOwnMarks: 4,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-4-a:1',
+          sectorId: 'sector-4-a',
+          nextSettlementNumber: 1,
+          openSlotCount: 4,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 2,
+          minimumOwnMarks: 4,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-2-b:1',
+          sectorId: 'sector-2-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 5,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 5,
+          ranking: []
+        },
+        {
+          targetId: 'sector:win:sector-2-a:2',
+          sectorId: 'sector-2-a',
+          nextSettlementNumber: 2,
+          openSlotCount: 6,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 6,
+          ranking: []
+        }
+      ],
+      standardScanCost: { credits: 1, energy: 2 },
+      standardScanEarthSource: { nebulaIds: [ 'sector-2-b', 'sector-4-a', 'sector-4-b' ] },
+      accessSources: [
+        {
+          sourceId: 'standard-scan',
+          family: 'scan',
+          sectorIds: [
+            'sector-1-a',
+            'sector-2-a',
+            'sector-2-b',
+            'sector-3-a',
+            'sector-3-b',
+            'sector-4-a',
+            'sector-4-b'
+          ]
+        }
+      ],
+      wins: [
+        { sectorId: 'sector-2-a', settlementNumber: 1 },
+        { sectorId: 'sector-3-a', settlementNumber: 1 }
+      ],
+      fieldSources: {
+        competition: 'data.{nebulae,sectorExtraMarks}',
+        tieBreak: 'data.*.replacementOrder',
+        completion: 'data.sectorSettlements.winsByPlayerId'
+      }
+    },
+    incomeGainRequirements: {
+      schemaVersion: 'seti-income-gain-requirements-v1',
+      playerId: 'player-white',
+      targetId: 'income:gain:8,3,0,0,1,1',
+      baseline: {
+        credits: 8,
+        energy: 3,
+        publicity: 0,
+        availableData: 0,
+        handSize: 1,
+        additionalPublicScan: 1
+      },
+      plans: [
+        {
+          planId: 'probe:launch:orbit:mercury:planet:',
+          kind: 'probe',
+          probeRequirementId: 'launch:orbit:mercury:planet:',
+          nextStep: { family: 'launch' }
+        },
+        {
+          planId: 'probe:launch:orbit:venus:planet:',
+          kind: 'probe',
+          probeRequirementId: 'launch:orbit:venus:planet:',
+          nextStep: { family: 'launch' }
+        },
+        {
+          planId: 'income:data:computer-slot-4',
+          kind: 'data',
+          targetComputerSlot: 4,
+          remainingPlacements: 4,
+          nextStep: { family: 'scan' },
+          nextCost: { credits: 1, energy: 2, handSize: 1 }
+        }
+      ],
+      fieldSources: {
+        baseline: 'players[].income',
+        probe: 'SetiPlanetRewards',
+        data: 'players[].dataProgress.computerSlots',
+        cards: 'SetiCardEffects.buildPlayEffects',
+        industry: 'SetiIndustryAbilities'
+      }
+    },
+    techGainRequirements: {
+      schemaVersion: 'seti-tech-gain-requirements-v2',
+      playerId: 'player-white',
+      researchCost: 6,
+      publicityPreparationPlans: [
+        {
+          planId: 'tech:publicity:corner:card-61-0',
+          kind: 'card_corner',
+          cardInstanceId: 'card-61-0',
+          publicityGain: 1,
+          nextStep: { family: 'card_corner', cardInstanceId: 'card-61-0' }
+        }
+      ],
+      plans: [
+        {
+          targetId: 'tech:gain:blue3',
+          planId: 'tech:blue3:4',
+          tileId: 'blue3',
+          blueSlot: 4,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange1',
+          planId: 'tech:orange1:',
+          tileId: 'orange1',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange3',
+          planId: 'tech:orange3:',
+          tileId: 'orange3',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange4',
+          planId: 'tech:orange4:',
+          tileId: 'orange4',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:purple2',
+          planId: 'tech:purple2:',
+          tileId: 'purple2',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:purple3',
+          planId: 'tech:purple3:',
+          tileId: 'purple3',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        }
+      ],
+      fieldSources: {
+        choices: 'SetiActionResearchTech.getResearchOptions(skipCost)',
+        researchCost: 'SetiTech.resolver.getResearchPublicityCost',
+        publicityPreparation: 'SetiData.COMPUTER_SLOT_BONUSES + SetiCards.getDiscardActionRewardForCard',
+        completion: 'players[].techState.ownedTiles'
+      }
+    }
+  },
+  expected: {
+    schemaVersion: 'seti-rl-observation-v1',
+    seed: 'seti-free-analyze-v1',
+    perspectivePlayerId: 'player-white',
+    publicState: {
+      roundNumber: 4,
+      turnNumber: 5,
+      actionCycleNumber: 2,
+      currentPlayerId: 'player-white',
+      passedPlayerIds: [ 'player-brown', 'player-green', 'player-blue' ],
+      passingPlayerIds: [ 'player-brown', 'player-green', 'player-blue' ],
+      completedTurnPlayerIds: [],
+      activePlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      players: [
+        {
+          playerId: 'player-blue',
+          industryAbilityId: 'turing_borrow_tech',
+          color: 'blue',
+          playerLabel: '蓝色玩家',
+          score: 7,
+          finalScore: 7,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 14,
+          energy: 8,
+          publicity: 4,
+          researchPublicityCost: 6,
+          availableData: 3,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 1,
+            credits: 3,
+            energy: 2,
+            handSize: 2,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 2, energy: 2, handSize: 1, availableData: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-green',
+          industryAbilityId: 'huanyu_free_moves',
+          color: 'green',
+          playerLabel: '绿色玩家',
+          score: 7,
+          finalScore: 7,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 11,
+          energy: 6,
+          publicity: 4,
+          researchPublicityCost: 6,
+          availableData: 2,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 3,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 3, energy: 1, handSize: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-brown',
+          industryAbilityId: 'helios_remove_tech_income',
+          color: 'brown',
+          playerLabel: '棕色玩家',
+          score: 8,
+          finalScore: 8,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 12,
+          energy: 5,
+          publicity: 10,
+          researchPublicityCost: 6,
+          availableData: 4,
+          additionalPublicScan: 0,
+          handCount: 4,
+          reservedCount: 0,
+          completedTaskCount: 0,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [],
+            analyzeReady: false
+          },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} },
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 1,
+            publicity: 1
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: false,
+          companyBaseIncome: { credits: 3, energy: 1, handSize: 1, publicity: 1 },
+          securedEndGameBonus: 0
+        },
+        {
+          playerId: 'player-white',
+          industryAbilityId: 'deepspace_swap_cards',
+          color: 'white',
+          playerLabel: '白色玩家',
+          score: 91,
+          finalScore: 124,
+          scoreBreakdown: null,
+          scoreSources: null,
+          credits: 5,
+          energy: 1,
+          publicity: 5,
+          researchPublicityCost: 6,
+          availableData: 0,
+          additionalPublicScan: 1,
+          handCount: 2,
+          reservedCount: 3,
+          completedTaskCount: 1,
+          dataProgress: {
+            discardedCount: 0,
+            computerSlots: [],
+            blueBonusCount: 0,
+            blueSlots: [Array],
+            analyzeReady: false
+          },
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          },
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 8,
+            energy: 3,
+            handSize: 1,
+            publicity: 0
+          },
+          blueBonusAssets: { credits: 0, energy: 0, ordinaryCards: 0 },
+          passed: false,
+          mainActionCompleted: true,
+          companyBaseIncome: {
+            credits: 2,
+            energy: 2,
+            handSize: 1,
+            additionalPublicScan: 1
+          },
+          securedEndGameBonus: 33
+        }
+      ],
+      board: {
+        rockets: [
+          {
+            angleDegrees: 67.5,
+            color: 'green',
+            id: 1,
+            launchGrid: [Object],
+            launchSectorCoordinate: [Object],
+            playerId: 'player-green',
+            playerSequence: 1,
+            radius: 84.68,
+            sectorX: 3,
+            sectorY: 1,
+            slotIndex: 4,
+            surface: 'solar-board'
+          },
+          {
+            angleDegrees: 54.9,
+            color: 'green',
+            id: 2,
+            launchGrid: [Object],
+            launchSectorCoordinate: [Object],
+            playerId: 'player-green',
+            playerSequence: 2,
+            radius: 69.42,
+            sectorX: 3,
+            sectorY: 1,
+            slotIndex: 0,
+            surface: 'solar-board'
+          }
+        ],
+        planets: {
+          planets: {
+            aomomo: [Object],
+            earth: [Object],
+            jupiter: [Object],
+            mars: [Object],
+            mercury: [Object],
+            neptune: [Object],
+            saturn: [Object],
+            uranus: [Object],
+            venus: [Object]
+          }
+        },
+        data: {
+          nebulae: {
+            aomomo: [Object],
+            'sector-1-a': [Object],
+            'sector-1-b': [Object],
+            'sector-2-a': [Object],
+            'sector-2-b': [Object],
+            'sector-3-a': [Object],
+            'sector-3-b': [Object],
+            'sector-4-a': [Object],
+            'sector-4-b': [Object]
+          },
+          sectorExtraMarks: { 'sector-2-a': [], 'sector-3-a': [] },
+          sectorSettlements: { sectors: [Object], winsByPlayerId: [Object] }
+        },
+        solarSystem: {
+          aomomoActive: false,
+          rotation: {
+            rotationCount: 10,
+            wheel1Steps: -10,
+            wheel2Steps: -27,
+            wheel3Steps: -20,
+            wheel4Steps: -10
+          },
+          sectorBySlot: { '1': 3, '2': 1, '3': 2, '4': 4 }
+        },
+        finalScoring: {
+          tiles: { a: [Object], b: [Object], c: [Object], d: [Object] },
+          marks: {},
+          tileVariants: { a: 2, b: 1, c: 1, d: 2 }
+        },
+        publicCards: [
+          {
+            id: 'card-63-0',
+            cardId: 'dlc_19.png',
+            set: 'space-agency',
+            price: 0,
+            cardTypeCode: 0,
+            discardActionCode: 0,
+            scanActionCode: 0,
+            incomeCode: 1,
+            faceUp: true
+          },
+          {
+            id: 'card-62-0',
+            cardId: 'dlc_20.png',
+            set: 'space-agency',
+            price: 1,
+            cardTypeCode: 0,
+            discardActionCode: 2,
+            scanActionCode: 1,
+            incomeCode: 2,
+            faceUp: true
+          },
+          {
+            id: 'card-50-0',
+            cardId: 'b_14.webp',
+            set: 'basic',
+            price: 2,
+            cardTypeCode: 3,
+            discardActionCode: 0,
+            scanActionCode: 2,
+            incomeCode: 1,
+            faceUp: true
+          }
+        ],
+        discardCount: 40,
+        ordinaryDrawCount: 112,
+        techSupply: {
+          stacks: {
+            blue1: [Object],
+            blue2: [Object],
+            blue3: [Object],
+            blue4: [Object],
+            orange1: [Object],
+            orange2: [Object],
+            orange3: [Object],
+            orange4: [Object],
+            purple1: [Object],
+            purple2: [Object],
+            purple3: [Object],
+            purple4: [Object]
+          }
+        },
+        aliens: {
+          slots: [ [Object], [Object] ],
+          amiba: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 4,
+            displayedCardAvailable: true,
+            displayedCardIndex: 5
+          }
+        }
+      },
+      resident: {
+        initialSetup: {
+          active: false,
+          interactive: false,
+          currentPlayerId: null,
+          offer: null,
+          confirmedPlayerIds: []
+        }
+      },
+      pending: {
+        actorPlayerId: 'player-white',
+        pendingOwnerPlayerId: null,
+        effectOwnerPlayerId: null,
+        currentPlayerId: 'player-white',
+        source: 'current_player',
+        decisionType: 'turn_action',
+        choiceCount: 0
+      }
+    },
+    selfState: {
+      playerId: 'player-white',
+      hand: [
+        {
+          id: 'card-61-0',
+          cardId: 'dlc_24.png',
+          set: 'space-agency',
+          price: 2,
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          scanActionCode: 0,
+          incomeCode: 2,
+          faceUp: true
+        },
+        {
+          id: 'card-30-pass-3-1',
+          cardId: 'b_111.webp',
+          set: 'basic',
+          price: 2,
+          cardTypeCode: 1,
+          discardActionCode: 1,
+          scanActionCode: 1,
+          incomeCode: 1,
+          faceUp: true
+        }
+      ],
+      reservedCards: [
+        {
+          id: 'card-13-0',
+          cardId: 'b_117.webp',
+          set: 'basic',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          scanActionCode: 3,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'b_117.webp',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        },
+        {
+          id: 'card-15-0',
+          cardId: 'dlc_9.png',
+          set: 'space-agency',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 1,
+          scanActionCode: 2,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'dlc_9.png',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        },
+        {
+          id: 'card-29-pass-2-5',
+          cardId: 'b_101.webp',
+          set: 'basic',
+          price: 3,
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          scanActionCode: 0,
+          incomeCode: 2,
+          faceUp: true,
+          cardEffectState: {
+            modelCardId: 'b_101.webp',
+            consumedTriggerIds: [],
+            completedTaskIds: []
+          }
+        }
+      ],
+      pendingCardTriggers: [],
+      pendingHandCardTriggers: [],
+      pendingNativeEffects: false,
+      turnCardBonusCount: 0,
+      companyState: {
+        abilityId: 'deepspace_swap_cards',
+        roundMarkRound: 0,
+        roundMarkTurn: 0,
+        futureSpan: { card: null, targetScore: 0, playing: false },
+        strategyPassiveSlots: { blue: false, red: false, yellow: false }
+      },
+      privateAlienCards: [],
+      taskState: {},
+      oneTimeAbilities: {},
+      traceCounts: { blue: 3, pink: 2, yellow: 1 },
+      nextFinalMark: null
+    },
+    decision: {
+      actorPlayerId: 'player-white',
+      pendingOwnerPlayerId: null,
+      effectOwnerPlayerId: null,
+      currentPlayerId: 'player-white',
+      source: 'current_player',
+      decisionType: 'turn_action',
+      choiceCount: 0
+    },
+    probeRouteRequirements: {
+      schemaVersion: 'seti-probe-route-requirements-v3',
+      playerId: 'player-white',
+      movementContext: {
+        phase: 'ordinary',
+        cardRemaining: 0,
+        scanRemaining: 0,
+        companyAvailable: false,
+        companyRemaining: 0,
+        usedRocketIds: []
+      },
+      candidates: [
+        {
+          requirementId: 'launch:orbit:uranus:planet:',
+          targetId: 'orbit:uranus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'uranus',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 11,
+            incomeCount: 0,
+            dataCount: 0,
+            grossEquivalentValue: 23.5,
+            rewardSummary: '首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描',
+            source: 'planetRewards.orbit:uranus'
+          },
+          required: {
+            credits: 3,
+            energy: 7,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:jupiter:planet:',
+          targetId: 'land:jupiter:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'jupiter',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: false,
+          targetBenefit: {
+            score: 7,
+            incomeCount: 0,
+            dataCount: 0,
+            grossEquivalentValue: 17,
+            rewardSummary: '获得 7 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:jupiter'
+          },
+          required: {
+            credits: 2,
+            energy: 8,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 4,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 7, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:mercury:planet:',
+          targetId: 'land:mercury:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mercury',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 12,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 17,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:mercury'
+          },
+          required: {
+            credits: 2,
+            energy: 7,
+            movementSteps: 4,
+            movementPoints: 4,
+            paidMovementPoints: 4
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 4 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:neptune:planet:',
+          targetId: 'orbit:neptune:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'neptune',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 10,
+            incomeCount: 0,
+            dataCount: 4,
+            grossEquivalentValue: 15,
+            rewardSummary: '首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描',
+            source: 'planetRewards.orbit:neptune'
+          },
+          required: {
+            credits: 3,
+            energy: 6,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 5, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:neptune:planet:',
+          targetId: 'land:neptune:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'neptune',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 10,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 15,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:neptune'
+          },
+          required: {
+            credits: 2,
+            energy: 8,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 7, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:uranus:planet:',
+          targetId: 'land:uranus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'uranus',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 9,
+            incomeCount: 0,
+            dataCount: 3,
+            grossEquivalentValue: 14,
+            rewardSummary: '首次登陆：额外获得 3 个数据；获得 9 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:uranus'
+          },
+          required: {
+            credits: 2,
+            energy: 9,
+            movementSteps: 6,
+            movementPoints: 6,
+            paidMovementPoints: 6
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 8, movementSteps: 6 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:mars:planet:',
+          targetId: 'land:mars:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mars',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 6,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 13.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:mars'
+          },
+          required: {
+            credits: 2,
+            energy: 7,
+            movementSteps: 5,
+            movementPoints: 5,
+            paidMovementPoints: 5
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object], [Object] ],
+          publicityStops: 3,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 6, movementSteps: 5 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:mercury:planet:',
+          targetId: 'orbit:mercury:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'mercury',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 3,
+            incomeCount: 1,
+            dataCount: 0,
+            grossEquivalentValue: 10.5,
+            rewardSummary: '首次环绕：额外获得 3 分；盲抽 1 张卡牌；水星扇区扫描 1/2；水星扇区扫描 2/2；获得 1 次收入',
+            source: 'planetRewards.orbit:mercury'
+          },
+          required: {
+            credits: 3,
+            energy: 5,
+            movementSteps: 4,
+            movementPoints: 4,
+            paidMovementPoints: 4
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object], [Object], [Object] ],
+          publicityStops: 2,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 4, movementSteps: 4 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:saturn:planet:',
+          targetId: 'land:saturn:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'saturn',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 8,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 10.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:saturn'
+          },
+          required: {
+            credits: 2,
+            energy: 4,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 3, movementSteps: 2 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:orbit:venus:planet:',
+          targetId: 'orbit:venus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'venus',
+          endpointFamily: 'orbit',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: false,
+          targetBenefit: {
+            score: 6,
+            incomeCount: 1,
+            dataCount: 0,
+            grossEquivalentValue: 8.5,
+            rewardSummary: '获得 6 分；获得 1 次收入',
+            source: 'planetRewards.orbit:venus'
+          },
+          required: {
+            credits: 3,
+            energy: 3,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.DEFAULT_ORBIT_COST',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 2, movementSteps: 2 },
+          moveTiming: []
+        },
+        {
+          requirementId: 'launch:land:venus:planet:',
+          targetId: 'land:venus:planet:',
+          playerId: 'player-white',
+          sourceId: 'launch',
+          rocketId: null,
+          planetId: 'venus',
+          endpointFamily: 'land',
+          endpointTarget: { type: 'planet' },
+          endpointFacts: { rewards: [Array], cost: [Object], ownMarkers: [Object] },
+          firstRewardSlotOpen: true,
+          targetBenefit: {
+            score: 5,
+            incomeCount: 0,
+            dataCount: 2,
+            grossEquivalentValue: 7.5,
+            rewardSummary: '首次登陆：额外获得 2 个数据；获得 5 分；获得 1 个黄色外星人标记',
+            source: 'planetRewards.land:venus'
+          },
+          required: {
+            credits: 2,
+            energy: 4,
+            movementSteps: 2,
+            movementPoints: 2,
+            paidMovementPoints: 2
+          },
+          nextStep: { family: 'launch' },
+          movementNextSteps: [ [Object] ],
+          path: [ [Object], [Object] ],
+          publicityStops: 1,
+          fieldSources: {
+            topology: 'SetiRocketActions.canMoveFromCoordinate',
+            movementCost: 'SetiAbilityRocket.getRequiredMovePointsFromCoordinate',
+            launchCost: 'SetiAbilityRocket.getLaunchCost',
+            endpointCost: 'SetiAbilityPlanet.getLandEnergyCost',
+            rewards: 'SetiPlanetRewards'
+          },
+          gap: { credits: 0, energy: 3, movementSteps: 2 },
+          moveTiming: []
+        }
+      ]
+    },
+    dataAnalyzeRequirements: {
+      schemaVersion: 'seti-data-analyze-requirements-v2',
+      playerId: 'player-white',
+      targetId: 'data:analyze',
+      computerPlacedCount: 0,
+      remainingPlacements: 6,
+      availableData: 0,
+      dataNeeded: 6,
+      firstRowComplete: false,
+      firstRowRemainingPlacements: 4,
+      heldDataCanFillFirstRow: false,
+      eligible: false,
+      eligibilityReason: null,
+      nextStep: null,
+      nextCost: { credits: 0, energy: 0 },
+      nextGap: { credits: 0, energy: 0 },
+      acquisitionPlans: [],
+      fieldSources: {
+        dataProgress: 'players[].dataProgress.computerSlots',
+        availableData: 'players[].resources.availableData',
+        scanCost: 'SetiScanEffects.getStandardScanCost',
+        analyzeCost: 'SetiIndustryPassives.canAnalyzeWithoutEnergy'
+      }
+    },
+    sectorWinRequirements: {
+      schemaVersion: 'seti-sector-win-requirements-v1',
+      playerId: 'player-white',
+      candidates: [
+        {
+          targetId: 'sector:win:sector-4-b:1',
+          sectorId: 'sector-4-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 2,
+          nextSlotScore: 0,
+          ownCount: 3,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 2,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-1-a:1',
+          sectorId: 'sector-1-a',
+          nextSettlementNumber: 1,
+          openSlotCount: 3,
+          nextSlotScore: 0,
+          ownCount: 2,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 3,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-3-b:1',
+          sectorId: 'sector-3-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 3,
+          nextSlotScore: 0,
+          ownCount: 1,
+          maxOpponentCount: 2,
+          minimumOwnMarks: 3,
+          ranking: [ [Object], [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-1-b:1',
+          sectorId: 'sector-1-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 4,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 4,
+          ranking: []
+        },
+        {
+          targetId: 'sector:win:sector-3-a:2',
+          sectorId: 'sector-3-a',
+          nextSettlementNumber: 2,
+          openSlotCount: 4,
+          nextSlotScore: 2,
+          ownCount: 0,
+          maxOpponentCount: 1,
+          minimumOwnMarks: 4,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-4-a:1',
+          sectorId: 'sector-4-a',
+          nextSettlementNumber: 1,
+          openSlotCount: 4,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 2,
+          minimumOwnMarks: 4,
+          ranking: [ [Object] ]
+        },
+        {
+          targetId: 'sector:win:sector-2-b:1',
+          sectorId: 'sector-2-b',
+          nextSettlementNumber: 1,
+          openSlotCount: 5,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 5,
+          ranking: []
+        },
+        {
+          targetId: 'sector:win:sector-2-a:2',
+          sectorId: 'sector-2-a',
+          nextSettlementNumber: 2,
+          openSlotCount: 6,
+          nextSlotScore: 0,
+          ownCount: 0,
+          maxOpponentCount: 0,
+          minimumOwnMarks: 6,
+          ranking: []
+        }
+      ],
+      standardScanCost: { credits: 1, energy: 2 },
+      standardScanEarthSource: { nebulaIds: [ 'sector-2-b', 'sector-4-a', 'sector-4-b' ] },
+      accessSources: [
+        {
+          sourceId: 'standard-scan',
+          family: 'scan',
+          sectorIds: [
+            'sector-1-a',
+            'sector-2-a',
+            'sector-2-b',
+            'sector-3-a',
+            'sector-3-b',
+            'sector-4-a',
+            'sector-4-b'
+          ]
+        }
+      ],
+      wins: [
+        { sectorId: 'sector-2-a', settlementNumber: 1 },
+        { sectorId: 'sector-3-a', settlementNumber: 1 }
+      ],
+      fieldSources: {
+        competition: 'data.{nebulae,sectorExtraMarks}',
+        tieBreak: 'data.*.replacementOrder',
+        completion: 'data.sectorSettlements.winsByPlayerId'
+      }
+    },
+    incomeGainRequirements: {
+      schemaVersion: 'seti-income-gain-requirements-v1',
+      playerId: 'player-white',
+      targetId: 'income:gain:8,3,0,0,1,1',
+      baseline: {
+        credits: 8,
+        energy: 3,
+        publicity: 0,
+        availableData: 0,
+        handSize: 1,
+        additionalPublicScan: 1
+      },
+      plans: [
+        {
+          planId: 'probe:launch:orbit:mercury:planet:',
+          kind: 'probe',
+          probeRequirementId: 'launch:orbit:mercury:planet:',
+          nextStep: { family: 'launch' }
+        },
+        {
+          planId: 'probe:launch:orbit:venus:planet:',
+          kind: 'probe',
+          probeRequirementId: 'launch:orbit:venus:planet:',
+          nextStep: { family: 'launch' }
+        },
+        {
+          planId: 'income:data:computer-slot-4',
+          kind: 'data',
+          targetComputerSlot: 4,
+          remainingPlacements: 4,
+          nextStep: { family: 'scan' },
+          nextCost: { credits: 1, energy: 2, handSize: 1 }
+        }
+      ],
+      fieldSources: {
+        baseline: 'players[].income',
+        probe: 'SetiPlanetRewards',
+        data: 'players[].dataProgress.computerSlots',
+        cards: 'SetiCardEffects.buildPlayEffects',
+        industry: 'SetiIndustryAbilities'
+      }
+    },
+    techGainRequirements: {
+      schemaVersion: 'seti-tech-gain-requirements-v2',
+      playerId: 'player-white',
+      researchCost: 6,
+      publicityPreparationPlans: [
+        {
+          planId: 'tech:publicity:corner:card-61-0',
+          kind: 'card_corner',
+          cardInstanceId: 'card-61-0',
+          publicityGain: 1,
+          nextStep: { family: 'card_corner', cardInstanceId: 'card-61-0' }
+        }
+      ],
+      plans: [
+        {
+          targetId: 'tech:gain:blue3',
+          planId: 'tech:blue3:4',
+          tileId: 'blue3',
+          blueSlot: 4,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange1',
+          planId: 'tech:orange1:',
+          tileId: 'orange1',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange3',
+          planId: 'tech:orange3:',
+          tileId: 'orange3',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:orange4',
+          planId: 'tech:orange4:',
+          tileId: 'orange4',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:purple2',
+          planId: 'tech:purple2:',
+          tileId: 'purple2',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        },
+        {
+          targetId: 'tech:gain:purple3',
+          planId: 'tech:purple3:',
+          tileId: 'purple3',
+          blueSlot: null,
+          required: { publicity: 6 },
+          gap: { publicity: 1 },
+          nextStep: { family: 'research_tech' }
+        }
+      ],
+      fieldSources: {
+        choices: 'SetiActionResearchTech.getResearchOptions(skipCost)',
+        researchCost: 'SetiTech.resolver.getResearchPublicityCost',
+        publicityPreparation: 'SetiData.COMPUTER_SLOT_BONUSES + SetiCards.getDiscardActionRewardForCard',
+        completion: 'players[].techState.ownedTiles'
+      }
+    },
+    terminal: false
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"sharedResourcePrefixes":"passed","goals":8,"preparationPrefix":7,"guaranteedRewardInputs":1,"uniqueInputs":16,"states":17,"sharedInputs":49,"nativeRootAndRecovery":true}
+SUMMARY unit passed=5 failed=1 total=6 time=3.94s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/heuristic-policy tests=1
+OWNER policy/state-value tests=2
+FAIL randomizer/game/ai/route-endpoint-completion.test.js status=1 signal=none

@@ -1,0 +1,103 @@
+{
+  "scope": "Counts every actually executed unique Native prefix edge, not logical reused steps. Families partition263 inputs; purpose/reason categories may overlap and must not be summed as a partition.",
+  "coldEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v299-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+  "coldEvidenceSha256": "304bdf2a1584348866ae0692ac55ee27f04ef404b19ca278087a807f6349f448",
+  "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v299-cold-actual-v298-r4-venus-late-orbit-20261107-v1.raw.json.gz",
+  "rawSha256": "fc3d6be5f2b6089a70f9cdf6867887171763c73ec9f615173b0c8793cbc0cc77",
+  "nativeInputs": 263,
+  "complete": true,
+  "milliseconds": 484.57220800000005,
+  "byNativeActionFamily": {
+    "choose_target": 117,
+    "place_data": 60,
+    "choose_card": 44,
+    "choose_payment": 7,
+    "play_card": 6,
+    "quick_trade": 6,
+    "move": 4,
+    "land": 4,
+    "card_corner": 4,
+    "pass": 2,
+    "orbit": 2,
+    "research_tech": 2,
+    "scan": 2,
+    "end_turn": 2,
+    "industry": 1
+  },
+  "overlappingFixedStepReasons": {
+    "data-placement-for-goal": 60,
+    "fixed-goal-data-slot": 60,
+    "fixed-scan-card-and-sector": 27,
+    "fixed-goal-target": 12,
+    "fixed-movement-in-scan": 12,
+    "greedy-resource-deficit": 9,
+    "funded-route-endpoint": 6,
+    "fixed-card-in-resource-plan": 6,
+    "fixed-goal-route-step": 4,
+    "fixed-route-payment": 4,
+    "scan-purpose-not-worth-extra-cost": 4,
+    "greedy-fixed-payment": 3,
+    "greedy-income-for-goal": 2,
+    "funded-goal-action": 2,
+    "start-purpose-scan": 2
+  },
+  "overlappingGoalKinds": {
+    "computer-prefix": 72,
+    "blue-data": 50,
+    "scan-flow": 45,
+    "route": 24,
+    "research_tech": 22
+  },
+  "coveredUniqueEdges": 213,
+  "logicalResourceInputs": 257,
+  "sharedResourceInputHits": 44,
+  "resourceGoalPlans": 59,
+  "scanPurposePlans": 15,
+  "standaloneOrbit": {
+    "actionId": "orbit:cbed3de9",
+    "target": 9,
+    "value": 135,
+    "realization": 0,
+    "preparationDebt": 0,
+    "kind": "resource-goal-plan",
+    "goal": {
+      "id": "rocket:5:orbit:venus:planet:",
+      "kind": "route",
+      "family": "orbit",
+      "rocketId": 5,
+      "planetId": "venus",
+      "endpointTarget": {
+        "type": "planet"
+      },
+      "endpointCost": {
+        "credits": 1,
+        "energy": 1
+      },
+      "benefit": {
+        "score": 9,
+        "incomeCount": 1,
+        "dataCount": 0,
+        "grossEquivalentValue": 9,
+        "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+        "source": "planetRewards.orbit:venus"
+      },
+      "coordinate": {
+        "x": 1,
+        "y": 1
+      },
+      "path": [],
+      "movementPoints": 0,
+      "required": {
+        "credits": 1
+      }
+    },
+    "resourceGoalCount": 1,
+    "completion": "complete"
+  },
+  "selected": {
+    "actionId": "industry:e887dc52",
+    "value": 152.5
+  },
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}
