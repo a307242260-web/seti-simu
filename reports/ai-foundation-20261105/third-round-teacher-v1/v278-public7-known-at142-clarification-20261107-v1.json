@@ -1,0 +1,111 @@
+{
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v278-standard-r3-native-verification-prefix-20261107-v1.checkpoint.json",
+  "sourceSha256": "4c6709030d534b7751a54d334537c243da2e65cea0c7ad71e972de8d5516979a",
+  "rows": [
+    {
+      "input": 140,
+      "publicTrace": {
+        "revealedSlotId": 1,
+        "traceSlotsByAlienSlotId": {
+          "1": {
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        "blindCardCount": 6,
+        "displayedCardAvailable": true,
+        "displayedCardIndex": 9
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png"
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp"
+        }
+      ]
+    },
+    {
+      "input": 142,
+      "publicTrace": {
+        "revealedSlotId": 1,
+        "traceSlotsByAlienSlotId": {
+          "1": {
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": {
+                "playerColor": "white",
+                "playerId": "player-white",
+                "position": 4,
+                "rewardApplied": true,
+                "sequence": 4,
+                "traceType": "pink"
+              }
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        "blindCardCount": 5,
+        "displayedCardAvailable": true,
+        "displayedCardIndex": 7
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png"
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp"
+        },
+        {
+          "id": "alien-amiba-9-5",
+          "cardId": "amiba_9.webp"
+        }
+      ]
+    }
+  ],
+  "clarification": "Within the old140 search window the refill after taking public9 is unknown. At the real142 new root, display7 is already public and may support a reachable known-purpose quote. The fixed54 Native tail does not prove a general policy, but its publicity supplier7 is not a blind identity at142. Correct the warning in the original control next field that called7 hidden at142; no Native data or result is changed.",
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

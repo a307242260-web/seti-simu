@@ -1,0 +1,6 @@
+{
+  "status": "not-executed",
+  "reason": "The metadata edit command failed Python stdin UTF-8 parsing before producing the prepare-v278 helper. No central page or Native state changed. Prepared result is v278-center-merge-20261107-v2.json.",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

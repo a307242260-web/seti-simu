@@ -1,0 +1,76 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V278 dc540 source admitted/pushed, unique85 controlledR3 with84Native exact;54Native skip142 control legal with same85/6/7C3E1card andoneextra9 for2publicity trade",
+  "runtime": "V278/V48",
+  "sourceCommit": "dc540a52f7210f4ae73135bdb0cd06bf5d188244",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v278-current-source-admission-20261107-v1.json",
+  "record": "reports/research/3e9df353.dc540a52.quick-400.json",
+  "score": 85,
+  "tech": 6,
+  "income": "7C3E1card+1scan",
+  "milliseconds": 5428,
+  "newAutonomousRuns": 1,
+  "newNativeInputs": 84,
+  "nativeExact": true,
+  "searches": 81,
+  "maxNativeInputs": 178,
+  "maxMilliseconds": 484.06341599999996,
+  "sourceGate": {
+    "cases": 1161,
+    "unique": 751,
+    "maxInputs": 256,
+    "maxMilliseconds": 598.834959,
+    "unit": 203,
+    "flow": 1,
+    "browser": 4,
+    "auditPass": 59,
+    "legacyAomomoFail": 1
+  },
+  "beforePASSInput": 195,
+  "assets": {
+    "C": 0,
+    "E": 0,
+    "publicity": 3,
+    "data": 0,
+    "hand": 1,
+    "computer": [],
+    "blue": [],
+    "standardProbe": 0,
+    "currentEndGameBonus": 33
+  },
+  "teacher": {
+    "score": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan",
+    "computer": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "blue": [
+      1,
+      2
+    ],
+    "poolData": 3,
+    "hand": 3,
+    "specialProbe": 1
+  },
+  "highestControlledR3": 87,
+  "baseline": "V41",
+  "developmentAligned": false,
+  "firstTwoGraphsUnchangedVsV277": 304,
+  "inheritedFirstRoundTimingChanges": 3,
+  "firstTwoAutonomousAssetsVerified": false,
+  "fixedTailControl": {
+    "skip": 142,
+    "NativeInputs": 54,
+    "score": 85,
+    "sameTechIncomeAndRuleRng": true,
+    "extraHand": "Amiba9",
+    "publicityDelta": -2,
+    "newAiQueries": 0,
+    "generalDominanceProven": false
+  },
+  "next": "At actual142 public display7 is known (140window refill was unknown), audit reachable future public-card publicity supply vs preemptively cornering9, and held9 launch/symbol purpose. Do not use later ordinary blind outcomes. Then last188..193 preinvestment trade,R3 tech/income+assets,R2end,inheritedfirst-twoassets and original23 autonomousfirst3."
+}

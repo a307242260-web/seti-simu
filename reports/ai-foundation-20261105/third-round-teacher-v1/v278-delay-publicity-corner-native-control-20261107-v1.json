@@ -1,0 +1,176 @@
+{
+  "status": "passed",
+  "scope": "One fixed Native historical-tail counterfactual, skipping original142 publicity corner and replaying original143..196 through fresh uniquely legal Native semantic targets. This is not an autonomous policy or permission to know later draw identities at142; every subsequent choice is the explicitly fixed historical route. Demonstrates that original142 publicity preparation was unnecessary for that actually realized route, not universal dominance of holding9 over2publicity.",
+  "sourcePath": "reports/ai-foundation-20261105/third-round-teacher-v1/v278-standard-r3-native-verification-prefix-20261107-v1.checkpoint.json",
+  "sourceSha256": "4c6709030d534b7751a54d334537c243da2e65cea0c7ad71e972de8d5516979a",
+  "recordPath": "reports/research/3e9df353.dc540a52.quick-400.json",
+  "recordSha256": "784a8d4eb0d9daf1f81a6f59cc77d5f7250145ba2a8449683124f816cbb037c4",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v278-delay-publicity-corner-native-control-20261107-v1.checkpoint.json",
+  "checkpointSha256": "65bd987cf54ade598211a774579747c3525ccc0369fa4db2017d93a480073b53",
+  "acceptedNativeInputs": 54,
+  "skippedOriginalInput": 142,
+  "actual": {
+    "round": 3,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 1,
+      "publicity": 3,
+      "score": 85
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange3": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "id": "card-61-0",
+        "cardId": "dlc_24.png"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp"
+      },
+      {
+        "id": "card-15-0",
+        "cardId": "dlc_9.png"
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      }
+    ],
+    "computer": [],
+    "blue": [],
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "alternative": {
+    "round": 3,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 2,
+      "publicity": 1,
+      "score": 85
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange3": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "id": "alien-amiba-9-5",
+        "cardId": "amiba_9.webp"
+      },
+      {
+        "id": "card-61-0",
+        "cardId": "dlc_24.png"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp"
+      },
+      {
+        "id": "card-15-0",
+        "cardId": "dlc_9.png"
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      }
+    ],
+    "computer": [],
+    "blue": [],
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "alternativePrePassValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v48",
+    "total": 144.5,
+    "components": {
+      "realizedScore": 85,
+      "currentEndGameBonus": 33,
+      "resources": 0.5,
+      "hand": 2,
+      "income": 11.5,
+      "technologyPotential": 12.5,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "delta": {
+    "boardScore": 0,
+    "technologyCount": 0,
+    "income": 0,
+    "handCount": 1,
+    "publicity": -2
+  },
+  "allFixedLaterTargetsLegal": true,
+  "sameRuleRng": true,
+  "rootAndRngRestored": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "next": "Quote why142 greedily seeks publicity6 before a later main objective, although the actual later known alien7 provides3publicity; evaluate delaying uncommitted publicity preparation and the currently unsupported held9 launch/symbol purpose. Do not deploy a teacher-seed exception or assume hidden future card7 at142."
+}
