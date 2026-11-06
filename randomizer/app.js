@@ -347,7 +347,9 @@
           符文族: "runezu",
         }[alienId];
         const resolvedSpeciesState = state.aliens?.[stateKey] || null;
-        const displayedCardIndex = resolvedSpeciesState?.[displayedCardIndexField[alienId]];
+        const displayedCardIndex = alienId === "阿米巴"
+          ? species?.api?.getPublicTraceState?.(state.aliens, { readOnly: true })?.displayedCardIndex
+          : resolvedSpeciesState?.[displayedCardIndexField[alienId]];
         const statusLines = [];
         if (alienId === "九折") {
           if (resolvedSpeciesState?.freeScoreThreshold != null) {

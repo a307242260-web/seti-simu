@@ -1,0 +1,305 @@
+{
+  "scope": "Read-only search fork; no autonomous run or elapsed-time admission",
+  "out": [
+    {
+      "name": "display",
+      "status": "stable",
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v48",
+        "total": 138,
+        "components": {
+          "realizedScore": 67,
+          "currentEndGameBonus": 22,
+          "resources": 8,
+          "hand": 3,
+          "income": 10.5,
+          "technologyPotential": 10,
+          "handPotential": 0,
+          "researchPotential": 17.5,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "hand": [
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        },
+        {
+          "id": "alien-amiba-9-5",
+          "cardId": "amiba_9.webp",
+          "set": "alien:阿米巴",
+          "price": 2,
+          "cardTypeCode": 1,
+          "discardActionCode": 3,
+          "scanActionCode": 0,
+          "incomeCode": 1,
+          "faceUp": true
+        },
+        {
+          "hidden": true,
+          "faceUp": false
+        }
+      ],
+      "policy": {
+        "policy": "seti-goal-resource-preparation-v23",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:blue:1",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "policy": "seti-greedy-blue-resource-tail-v2",
+            "available": true,
+            "selected": true,
+            "realizesForecast": false,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "fixedComputerTail": {
+          "policy": "seti-greedy-funded-computer-prefix-v1",
+          "available": true,
+          "selected": true,
+          "netGain": 1.5,
+          "placements": 1,
+          "requiredNativeInputs": 2,
+          "targetComputerSlot": 1,
+          "immediateScoreGain": 2,
+          "assumption": "held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:71814d67",
+          "card_corner:792e4fd7",
+          "card_corner:ac30be37",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      },
+      "spec": {
+        "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+        "kind": "blue-end-turn",
+        "firstActionId": "place_data:8fd12fd3",
+        "netGain": 2,
+        "requiredNativeInputs": 5,
+        "dataPlans": [
+          {
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "policy": "seti-greedy-blue-resource-tail-v2",
+            "available": true,
+            "selected": true,
+            "realizesForecast": false,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "markedTiles": [],
+        "publicAmibaCurrencyTail": true,
+        "unrealizedPurposeDelta": 0,
+        "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+        "observationAvailable": false,
+        "successorEnvelopeAvailable": false
+      }
+    },
+    {
+      "name": "blind",
+      "status": "stable",
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v48",
+        "total": 138,
+        "components": {
+          "realizedScore": 67,
+          "currentEndGameBonus": 22,
+          "resources": 8,
+          "hand": 3,
+          "income": 10.5,
+          "technologyPotential": 10,
+          "handPotential": 0,
+          "researchPotential": 17.5,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "hand": [
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        },
+        {
+          "hidden": true,
+          "faceUp": false
+        },
+        {
+          "hidden": true,
+          "faceUp": false
+        }
+      ],
+      "policy": {
+        "policy": "seti-goal-resource-preparation-v23",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "data:blue:1",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "place_data:8fd12fd3",
+            "mode": "greedy",
+            "reason": "data-placement-for-goal"
+          }
+        ],
+        "blueTails": [
+          {
+            "goalId": "data:blue:1",
+            "policy": "seti-greedy-blue-resource-tail-v2",
+            "available": true,
+            "selected": true,
+            "realizesForecast": false,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "fixedComputerTail": {
+          "policy": "seti-greedy-funded-computer-prefix-v1",
+          "available": true,
+          "selected": true,
+          "netGain": 1.5,
+          "placements": 1,
+          "requiredNativeInputs": 2,
+          "targetComputerSlot": 1,
+          "immediateScoreGain": 2,
+          "assumption": "held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:71814d67",
+          "card_corner:792e4fd7",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      },
+      "spec": {
+        "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+        "kind": "blue-end-turn",
+        "firstActionId": "place_data:8fd12fd3",
+        "netGain": 2,
+        "requiredNativeInputs": 5,
+        "dataPlans": [
+          {
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "policy": "seti-greedy-blue-resource-tail-v2",
+            "available": true,
+            "selected": true,
+            "realizesForecast": false,
+            "netGain": 2,
+            "blueSlot": 1,
+            "dataCornerId": null,
+            "dataCornerIds": [],
+            "incomeCardId": null,
+            "computerPlacements": 1,
+            "requiredNativeInputs": 4,
+            "immediateScoreGain": 2,
+            "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+          }
+        ],
+        "markedTiles": [],
+        "publicAmibaCurrencyTail": true,
+        "unrealizedPurposeDelta": 0,
+        "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+        "observationAvailable": false,
+        "successorEnvelopeAvailable": false
+      }
+    }
+  ]
+}

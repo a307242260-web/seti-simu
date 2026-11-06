@@ -160,7 +160,7 @@
     return changed ? { ...techSupply, stacks: masked } : techSupply;
   }
 
-  function maskAlienSlots(aliens, rootSlots) {
+  function maskAlienSlots(aliens, rootSlots, rootAliens) {
     if (!aliens || typeof aliens !== "object") return aliens;
     const slots = aliens.slots || [];
     let changed = false;
@@ -169,7 +169,20 @@
       changed = true;
       return { ...slot, revealed: false, alienId: null };
     });
-    return changed ? { ...aliens, slots: masked } : aliens;
+    let result = changed ? { ...aliens, slots: masked } : aliens;
+    // Species aliases must obey the same root visibility as the slot itself.
+    // The next display is a hidden refill, even when its availability is public.
+    if (aliens.amibaTraces) {
+      const traces = aliens.amibaTraces;
+      if (!rootSlots.some(slot => slot.revealed && slot.alienId === "阿米巴"
+        && Number(slot.slotId) === Number(traces.revealedSlotId))) {
+        result = { ...result, amiba: null, amibaTraces: null };
+      } else if (traces.displayedCardIndex !== rootAliens?.amibaTraces?.displayedCardIndex) {
+        result = { ...result, amibaTraces: { ...traces, displayedCardIndex: null,
+          ...(traces.displayedCardAvailable ? { displayedCardHidden: true } : {}) } };
+      }
+    }
+    return result;
   }
 
   function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier, visibleRootCardIds = []) {
@@ -193,7 +206,7 @@
               board.techSupply,
               rootBoard.techSupply?.stacks || {},
             ),
-            aliens: maskAlienSlots(board.aliens, rootBoard.aliens?.slots || []),
+            aliens: maskAlienSlots(board.aliens, rootBoard.aliens?.slots || [], rootBoard.aliens),
           },
         } : {}),
       } : null,

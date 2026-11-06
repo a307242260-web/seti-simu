@@ -1,0 +1,153 @@
+{
+  "scope": "Same complete fresh Native roots; normalize search label only. Selected contracts are not a claim of full-graph equivalence or identical autonomous development. Both sources contain corrected DLC20 rules. V278 retains actual root-public display acquisitions in local knowledge; new refill and blind identities stay unknown; do not assume first-two parity.",
+  "pairedRoots": 726,
+  "newUniqueRoots": 751,
+  "namedCases": 1161,
+  "byRound": {
+    "3": {
+      "roots": 419,
+      "valueChanged": 15,
+      "choiceChanged": 3
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "changes": [
+    {
+      "label": "actual-v277-132",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "industry:e887dc52",
+      "afterAction": "industry:e887dc52"
+    },
+    {
+      "label": "actual-v277-133",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_card:ddc9d9f0",
+      "afterAction": "choose_card:ddc9d9f0"
+    },
+    {
+      "label": "actual-v277-134",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_card:dfc7d13d",
+      "afterAction": "choose_card:dfc7d13d"
+    },
+    {
+      "label": "actual-v277-135",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "quick_trade:f385e2ac",
+      "afterAction": "quick_trade:f385e2ac"
+    },
+    {
+      "label": "actual-v277-136",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "scan:2d21a323",
+      "afterAction": "scan:2d21a323"
+    },
+    {
+      "label": "actual-v277-137",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_target:af617fe7",
+      "afterAction": "choose_target:af617fe7"
+    },
+    {
+      "label": "actual-v277-138",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_card:836ae617",
+      "afterAction": "choose_card:836ae617"
+    },
+    {
+      "label": "actual-v277-139",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_card:d66e36ec",
+      "afterAction": "choose_card:d66e36ec"
+    },
+    {
+      "label": "actual-v277-140",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_target:f5d036ea",
+      "afterAction": "choose_target:a47b34e4"
+    },
+    {
+      "label": "actual-v253-141",
+      "round": 3,
+      "beforeValue": 128.25,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "choose_card:2ebd81c6",
+      "afterAction": "choose_card:2ebd81c6"
+    },
+    {
+      "label": "energy-income-after-energy-play",
+      "round": 3,
+      "beforeValue": 123.16666666666667,
+      "afterValue": 125.16666666666667,
+      "beforeAction": "industry:e887dc52",
+      "afterAction": "industry:e887dc52"
+    },
+    {
+      "label": "teacher-r3-before-ready-analysis",
+      "round": 3,
+      "beforeValue": 124.58333333333333,
+      "afterValue": 126.08333333333333,
+      "beforeAction": "quick_trade:f385e2ac",
+      "afterAction": "analyze:a5629aa3"
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-13",
+      "round": 3,
+      "beforeValue": 124.58333333333333,
+      "afterValue": 126.08333333333333,
+      "beforeAction": "quick_trade:f385e2ac",
+      "afterAction": "analyze:a5629aa3"
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-14",
+      "round": 3,
+      "beforeValue": 124.08333333333333,
+      "afterValue": 126.08333333333333,
+      "beforeAction": "choose_target:06ca6510",
+      "afterAction": "choose_target:06ca6510"
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-15",
+      "round": 3,
+      "beforeValue": 124.08333333333333,
+      "afterValue": 126.08333333333333,
+      "beforeAction": "choose_card:2ebd81c6",
+      "afterAction": "choose_card:2ebd81c6"
+    }
+  ],
+  "firstTwoRoots": 304,
+  "firstTwoSelectedContractChanges": [],
+  "newAutonomousRuns": 0
+}

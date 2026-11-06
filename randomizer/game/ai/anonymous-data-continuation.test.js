@@ -13,7 +13,10 @@ try{
  for(let rotation=0;rotation<6;rotation++){
   const source=variant(rotation);assert(c.lifecycle.restore(source).ok);const before=c.lifecycle.save().envelope,p=open();
   try{
-   let node=p.openRoot();node=p.expand(node,control.sequence[0]);node=p.expand(node,control.sequence[1]);
+   let node=p.openRoot();node=p.expand(node,control.sequence[0]);
+   // The recorded display9 is public. Use the Native blind alternative to
+   // retain this test's two genuinely anonymous-card obligation.
+   const blind=node.legalActions.find(a=>a.target.choiceId==='amiba:blind');assert(blind);node=p.expand(node,blind.actionId);
    assert.equal(node.status,'stable','two anonymous new cards must not stop the same known funded data plan');
    const observation=p.valueObservation(node),unknown=observation.selfState.hand.filter(card=>card.hidden);
    assert.equal(unknown.length,2);assert(unknown.every(card=>!card.id&&!card.cardId));assert.equal(values.evaluateStateValue(observation,seat).total,138);

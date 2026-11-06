@@ -1,0 +1,13 @@
+{
+  "baseCommit": "992a7fc310ebe26b74e1344358cab5cb300ec059",
+  "files": {
+    "randomizer/game/ai/analysis-port.js": "71ef1ed1a76b3db59c83f5fd1fd50f3544d7ca031447004225131bbdc1dcff51",
+    "randomizer/game/ai/decision-search.js": "3b5e2c7f9d91197925538c0a768f217c3fdf97f920c0541e891c89c56b139983",
+    "randomizer/game/aliens/amiba.js": "3f0566e7fc583e8eef6a2cd8f1acbb6b8c49d66fe9d7e21733df8dacfbcc67ed",
+    "randomizer/game/rule-composition.js": "ad95b8aac52c41acd7cdd748976c6e90d46d2f78a3f1f52dc6ff3258e6550a47",
+    "randomizer/app.js": "53118491c85355a54ee05f8f8ce13a3333c7e4a7ce7b1d2b35110c35f3ebaaa4",
+    "tools/node-test-inventory.js": "a8e509e0d358c5785ee4e38fc0d014dc6b5730507877842abbb6f52bf8e0eaf3",
+    "tools/browser-smoke-inventory.js": "413522472e7ddd16cc0939f12a3456107a58d16491f4a801b57386e34e6bfc2a",
+    "tools/audit_v_state_inputs.js": "e2ada7a5e4bb0e40ef4e6487488f4c88c678d0a63bd87d0747134cbc2e67021d"
+  }
+}

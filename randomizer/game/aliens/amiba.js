@@ -536,7 +536,9 @@
     if(!amiba?.revealInitialized||!slot?.revealed||(slot.alienId||slot.assignedAlienId)!==ALIEN_ID)return null;
     const grid=getTraceGrid(alienState,id);if(!grid)return null;
     return {revealedSlotId:id,traceSlotsByAlienSlotId:{[String(id)]:readOnly?grid:structuredClone(grid)},
-      blindCardCount:Array.isArray(amiba.cardDeck)?amiba.cardDeck.length:null,displayedCardAvailable:amiba.displayedCardIndex!=null};
+      blindCardCount:Array.isArray(amiba.cardDeck)?amiba.cardDeck.length:null,displayedCardAvailable:amiba.displayedCardIndex!=null||amiba.displayedCardHidden===true,
+      displayedCardIndex:amiba.displayedCardIndex??null,
+      ...(amiba.displayedCardHidden===true?{displayedCardHidden:true}:{})};
   }
 
   // Private quote ledgers change only symbol locations, while native/public

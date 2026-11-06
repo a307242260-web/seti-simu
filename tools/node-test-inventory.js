@@ -72,6 +72,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/mixed-blue-analysis.test.js", "policy/state-value", "多物种公开时的蓝色分析共享全局痕迹计数、资金及电脑消费，原生兑现并在下一主行动绑定填6", "第二物种使已知分析归零、额外痕迹改写首放者、错算B1或已付分析的数据被低值蓝槽消耗或非紧急准备改变前两轮"),
     entry("randomizer/game/ai/amiba-analysis-capital.test.js", "policy/state-value", "满电脑及3格加3数据的已知收入/公开阿米巴蓝痕迹/整区/货币蓝尾部共享组合，已得稳定B待领前后同值，与原生执行一致", "保留牌过宽拒绝、重复抽牌/蓝位、匿名牌错误取消用途、读取隐藏身份或伪造后继实体"),
     entry("randomizer/game/ai/blue-data-analysis-capital.test.js", "policy/state-value", "已知蓝痕迹数据触发与分析共用钱包，每事件仅一槽；最后一槽移除保留牌并兑现C标记，原生/冻结/观察一致", "一次痕迹双算两个触发、重复消费数据、漏计任务完成或新牌身份进入资金"),
+    entry("randomizer/game/ai/public-alien-offer.test.js", "architecture/policy-host", "已揭示展示模型公开，实际领取后的新实例仅在本分支保留，盲抽与补出的下一展示仍未知", "展示卡被遮蔽、兄弟知识污染、未知物种或新补牌泄漏、完整与紧凑值不同及根RNG变化"),
     entry("randomizer/game/ai/anonymous-data-continuation.test.js", "policy/decision-search", "两张匿名新牌仍执行同一个已有池数据计划，7输入Native端点和6种双牌堆置换一致", "匿名牌数量为1的门禁截断2张奖励导致不同规划终点比较，或未知身份进入筹资执行"),
     entry("randomizer/game/ai/known-postdraw-tail.test.js", "policy/decision-search", "匿名新牌不截断原根已知收入尾部或已有池数据固定计划，六步标量与四步Native兑现及牌堆置换一致", "新牌截断已知流程、未知类型或ID影响规划、未证明分支放行或伪造后继观察"),
     entry("randomizer/game/ai/exact-data-tail-arithmetic.test.js", "policy/decision-search", "收入与蓝槽固定尾部按统一整数账本累加，六输入原生已知路线保持分数与首步并真正使用数值证明", "浮点一位误差使合法标量证明被严格网格门禁拒绝，反复执行固定准备或原根RNG变化"),

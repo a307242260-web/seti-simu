@@ -1,0 +1,64 @@
+rule composition tests passed
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":112.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+trusted analysis fork isolation and exact reuse passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+1 !== 2
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/anonymous-data-continuation.test.js:19:11)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"knownPassCardPreserved":true,"unknownIncomeDrawMasked":true,"nativeCases":6,"hiddenWorldPairs":3,"sourceCardPoolConserved":true,"positiveKnownPurposeValueDelta":6.000000000000007,"rootAndRngUnchanged":true}
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: display: one fixed income/blue/end proof must cover the remaining known window
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/known-postdraw-tail.test.js:9:126)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: null,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+simulation rules-only composition tests passed
+SUMMARY unit passed=6 failed=2 total=8 time=3.98s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=3
+OWNER architecture/rule-composition tests=1
+OWNER architecture/simulation-host tests=1
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/anonymous-data-continuation.test.js status=1 signal=none
+FAIL randomizer/game/ai/known-postdraw-tail.test.js status=1 signal=none

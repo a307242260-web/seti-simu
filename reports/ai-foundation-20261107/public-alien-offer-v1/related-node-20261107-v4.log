@@ -1,0 +1,15 @@
+rule composition tests passed
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":112.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+trusted analysis fork isolation and exact reuse passed
+{"anonymousKnownDataContinuation":"passed","anonymousCards":2,"hiddenDeckWorlds":6,"preparationNativeInputs":5,"fullNativeControlInputs":7,"before":138,"after":140,"unknownIdentityUsed":false,"rootAndRngRestored":true,"newAiQueries":0}
+{"knownPassCardPreserved":true,"unknownIncomeDrawMasked":true,"nativeCases":6,"hiddenWorldPairs":3,"sourceCardPoolConserved":true,"positiveKnownPurposeValueDelta":6.000000000000007,"rootAndRngUnchanged":true}
+{"knownPostdrawTail":"passed","nativeControlledBranches":2,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+simulation rules-only composition tests passed
+SUMMARY unit passed=8 failed=0 total=8 time=4.68s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=3
+OWNER architecture/rule-composition tests=1
+OWNER architecture/simulation-host tests=1
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=1

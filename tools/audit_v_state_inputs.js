@@ -937,7 +937,7 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
   const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port');
   const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json')),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.root).ok);const original=c.lifecycle.save().envelope;port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});let node=port.openRoot();
   for(let i=0;i<f.sequence.length-1;i++){
-   node=port.expand(node,f.sequence[i]);if(i<1)continue;
+   const id=i===1?node.legalActions.find(a=>a.target.choiceId==='amiba:blind').actionId:f.sequence[i];node=port.expand(node,id);if(i<1)continue;
    const full=node.observation,compact=port.valueObservation(node),formal=outcomeModel.createDecisionObservation(full,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(full,seat);
    assert.deepEqual(independentValue.evaluateStateValue(compact,seat),value);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(value,f.prefixes[i].maskedValue);assert.equal(full.selfState.hand.filter(c=>c.hidden).length,2);assert(full.selfState.hand.filter(c=>c.hidden).every(c=>!c.id&&!c.cardId));
   }
@@ -945,6 +945,23 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
   console.log('[PASS] independent-multi-anonymous-data: two opaque cards, full/formal/compact and each Native prefix138-to140 agree; no new entity payment or root/RNG change');
  }catch(error){console.log(`[FAIL] independent-multi-anonymous-data: ${error.message}`);allPass=false;}
  finally{port?.close();kernel?.composition.dispose();}
+}
+
+// A root-public alien model becomes a real known instance only on its display branch.
+{
+ let kernel,nativeKernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),rules=require('../randomizer/game/rule-composition');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json')),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.root).ok);const original=c.lifecycle.save().envelope;port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});nativeKernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});nativeKernel.newGame({seed});const root=port.openRoot();assert.equal(root.observation.publicState.board.aliens.amibaTraces.displayedCardIndex,9);let node=root;
+  for(let i=0;i<f.sequence.length-1;i++){
+   node=port.expand(node,f.sequence[i]);if(i<1)continue;
+   assert(nativeKernel.composition.lifecycle.restore(f.prefixes[i].envelope).ok);const full=node.observation,compact=port.valueObservation(node),formal=outcomeModel.createDecisionObservation(full,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(full,seat),native=rules.sanitizeHiddenInformationObservation(root.observation,nativeKernel.composition.projection({role:'player',playerId:seat}).state,{code:'hidden_card_draw'},['alien-amiba-9-5']);
+   assert.deepEqual(independentValue.evaluateStateValue(compact,seat),value,"compact index"+i);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value,"formal index"+i);assert.deepEqual(independentValue.evaluateStateValue(native,seat),value,"native index"+i);assert.equal(full.selfState.hand.filter(c=>c.hidden).length,1);assert(full.selfState.hand.some(c=>c.id==='alien-amiba-9-5'&&c.cardId==='amiba_9.webp'));assert.equal(full.publicState.board.aliens.amibaTraces.displayedCardIndex,null);
+  }
+  assert.deepEqual(c.lifecycle.save().envelope,original);
+  console.log('[PASS] independent-public-alien-acquisition: root-public model and actual new ID agree with Native, full/formal/compact and every known data prefix; blind/refill unknown and root/RNG unchanged');
+ }catch(error){console.log(`[FAIL] independent-public-alien-acquisition: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();nativeKernel?.composition.dispose();}
 }
 
 // Mutable planning wrappers can share only an exact complete-input scalar.
