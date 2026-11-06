@@ -1,0 +1,119 @@
+{
+  "goalStatus": "active",
+  "publishedRuntime": "V264/V47",
+  "publishedSource": "4ec84a12453aabc2389f87191d44c9cfa07dbbbb",
+  "publishedResult": "c267098f92c4ed66fc238b5843c4c59d047a9172",
+  "candidate": "V274/V48",
+  "sourceAdmitted": true,
+  "manifest": "reports/ai-foundation-20261106/candidate-v274-mixed-blue-v1/manifest.json",
+  "manifestSha256": "ea49e61ab18ee158986047fd920e48e992f7565b81dd1083f6b72bf6a0486471",
+  "worktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "currentGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-current-source-serial-gate-20261106-v1.json",
+  "gateAtCheckpoint": {
+    "status": "complete",
+    "cases": 951,
+    "measuredUniqueRoots": 695,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 579.935125
+  },
+  "gateExecSession": null,
+  "runtimeRestoredToBaseExceptQuoteInputs": [
+    "resource-demand",
+    "local-decision-plans",
+    "analysis-port",
+    "state-value apart from V48 label",
+    "scalar-cache-test",
+    "stationary-tail-test"
+  ],
+  "actual187AndNextMain": {
+    "postMainAction": "end_turn",
+    "postMainInputs": 1,
+    "postMainValue": 142,
+    "nextMainAction": "place_data for existing analyze purpose",
+    "nextMainInputs": 27,
+    "nextMainValue": 144.5,
+    "quotedNativeAnonymousRouteValue": 142,
+    "routeInputs": 7
+  },
+  "relatedUnitPassed": 8,
+  "newAutonomousRuns": 1,
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "latestPublishedR3": {
+    "version": "V264",
+    "board": 81,
+    "tech": 6,
+    "income": "7C3E1card+1scan"
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "V272": {
+    "gateComplete": true,
+    "named": 949,
+    "unique": 693,
+    "maxNative": 256,
+    "maxMilliseconds": 586.4655,
+    "firstTwoValueChanges": 0,
+    "firstTwoActionChanges": 15,
+    "admitted": false,
+    "superseded": "Nonurgent preparation adds needless R2 changes; following-mark guard also fixed later."
+  },
+  "next": "Deliver results and preserved V1 center via private index, push after verifying remote, open HTML. Then same-state analysis choice/known-public unknown-card option value and concrete technology learning; R2-end review and original23 first3 remain.",
+  "baseline": "V41",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-current-source-admission-20261106-v1.json",
+  "sourceAdmissionSha256": "9a4e38a2052b7ca71e28c9c52ba76f3869cd5925d819b646fb0d12203a1e391d",
+  "fullUnitPassed": 201,
+  "fullFlowPassed": 1,
+  "browserPassed": 2,
+  "inputAudit": {
+    "passed": 56,
+    "failed": 1,
+    "legacyAomomoOnly": true,
+    "failure": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  },
+  "firstTwoFullSerializedGraphsUnchanged": 304,
+  "candidatePublished": false,
+  "sourceCommit": "54a9c02fe8c46b4ec086a709287a93c1c6b43a58",
+  "sourceLocalCommitted": true,
+  "sourcePushed": false,
+  "pushStatus": "First ordinary HTTPS push failed408 and remote stillc267; same commit retry using command-only128MiB buffer and HTTP1.1 is live(session52433).",
+  "record": "reports/research/095880ce.54a9c02f.quick-400.json",
+  "actualR3": {
+    "board": 86,
+    "endGameBonus": 33,
+    "currentFinalPreview": 119,
+    "tech": 6,
+    "income": "7C3E1card+1scan",
+    "milliseconds": 5539,
+    "newInputs": 83,
+    "searches": 80,
+    "maxNative": 175,
+    "maxMilliseconds": 478.63304100000005,
+    "hand": 1,
+    "poolData": 0,
+    "computer": [],
+    "blueSlots": [],
+    "resources": "C0E0pub1",
+    "allComplete": true,
+    "nativeStateSessionRngExact": true
+  },
+  "nativeVerification": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-standard-r3-native-verification-20261106-v1.json",
+  "assetComparison": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-third-round-development-comparison-20261106-v1.json",
+  "firstDifferenceInput": 185,
+  "blueChoiceValues": {
+    "amiba4": 142,
+    "chong8": 142.5,
+    "chong9": 144.5,
+    "semantics": "attained route values in cached complete own-turn window, not long-term optimality"
+  },
+  "centerPrepared": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-center-merge-20261106-v1.json",
+  "reportPath": "reports/iteration/ai-search-v274-teacher-r3-20261106/095880ce.54a9c02f.quick-400.action-log.html"
+}
