@@ -1,0 +1,1057 @@
+{
+  "scope": "Recorded complete Native graphs only. Restore accepted checkpoints to read exact legal descriptors; no submitted input, new AI search or repeated experiment. Inherited nodes are located in their existing completed source graph. Values compare options within each stated source, not across unequal Native states.",
+  "recordPath": "reports/research/15a2ff39.2055cd4f.quick-400.json",
+  "recordSha256": "b3aab5b1aeb4e2c0ed68136302047fb59bebbb801e6150a641894479bc4c39e0",
+  "tracePath": "reports/research/15a2ff39.2055cd4f.quick-400.json.decisions.jsonl",
+  "traceSha256": "15104f5f0196ce6945d9c8b8f6968aea09b2f363c840ea9793c147b09d51756c",
+  "nativeCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v262-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json",
+  "nativeCheckpointSha256": "62537c6c09a1eb4e72bf6ba092b5e58b728bd9fefb5e406653c437a3ffbbd93b",
+  "rows": [
+    {
+      "input": 140,
+      "sourceInput": 132,
+      "node": 79,
+      "selectedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:f5d036ea",
+        "actorId": "player-white",
+        "stateVersion": 56,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:2:pink",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 2 粉色痕迹"
+      },
+      "selectedValue": 135,
+      "sourceWasInherited": true,
+      "alternatives": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:3ef0c79f",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:pink:state-extra",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink",
+              "stateExtra": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 额外痕迹位（3分）"
+          },
+          "actionId": "choose_target:3ef0c79f",
+          "value": 127.25,
+          "realization": -16.25,
+          "steps": [
+            "choose_target:3ef0c79f"
+          ],
+          "targetNode": 104
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:51429f22",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:pink:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉1号位"
+          },
+          "actionId": "choose_target:51429f22",
+          "value": 126.25,
+          "realization": -16.25,
+          "steps": [
+            "choose_target:51429f22"
+          ],
+          "targetNode": 105
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:59bd8770",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:pink:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉2号位（1分）"
+          },
+          "actionId": "choose_target:59bd8770",
+          "value": 127.25,
+          "realization": -16.25,
+          "steps": [
+            "choose_target:59bd8770"
+          ],
+          "targetNode": 106
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:c4e4834a",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:pink:amiba:3",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink",
+              "speciesId": "amiba",
+              "position": 3
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉3号位（外星人牌）"
+          },
+          "actionId": "choose_target:c4e4834a",
+          "value": 127.25,
+          "realization": -16.25,
+          "steps": [
+            "choose_target:c4e4834a",
+            "choose_card:2ebd81c6"
+          ],
+          "targetNode": 107
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:a47b34e4",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:pink:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink",
+              "speciesId": "amiba",
+              "position": 4
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉4号位（1分+外星人牌）"
+          },
+          "actionId": "choose_target:a47b34e4",
+          "value": 128.25,
+          "realization": -16.25,
+          "steps": [
+            "choose_target:a47b34e4",
+            "choose_card:2ebd81c6"
+          ],
+          "targetNode": 108
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f5d036ea",
+            "actorId": "player-white",
+            "stateVersion": 56,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:2:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 粉色痕迹"
+          },
+          "actionId": "choose_target:f5d036ea",
+          "value": 135,
+          "realization": -24,
+          "steps": [
+            "choose_target:f5d036ea"
+          ],
+          "targetNode": 109
+        }
+      ],
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v22",
+        "isEquivalence": false,
+        "plans": [],
+        "retainedActionIds": [
+          "choose_target:3ef0c79f",
+          "choose_target:51429f22",
+          "choose_target:59bd8770",
+          "choose_target:c4e4834a",
+          "choose_target:a47b34e4",
+          "choose_target:f5d036ea"
+        ],
+        "excludedActionIds": []
+      }
+    },
+    {
+      "input": 141,
+      "sourceInput": 141,
+      "node": 0,
+      "selectedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:ab712e76",
+        "actorId": "player-white",
+        "stateVersion": 57,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-amiba-0-1"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_0.webp：弃牌角标"
+      },
+      "selectedValue": 135,
+      "sourceWasInherited": false,
+      "alternatives": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:ab712e76",
+            "actorId": "player-white",
+            "stateVersion": 57,
+            "decisionVersion": 2,
+            "target": {
+              "cardInstanceId": "alien-amiba-0-1"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "amiba_0.webp：弃牌角标"
+          },
+          "actionId": "card_corner:ab712e76",
+          "value": 135,
+          "realization": -24,
+          "steps": [
+            "card_corner:ab712e76"
+          ],
+          "targetNode": 1
+        }
+      ],
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v22",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "analysis:publicity:5",
+            "goal": {
+              "id": "analysis:publicity:5",
+              "kind": "analysis-publicity",
+              "required": {
+                "publicity": 5
+              },
+              "incomeCardId": "card-49-0",
+              "publicityCornerCardIds": [
+                "alien-amiba-0-1"
+              ],
+              "fundingNetGain": 12
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "card_corner:ab712e76",
+            "mode": "greedy",
+            "reason": "known-analysis-publicity-source"
+          }
+        ],
+        "incomeTail": {
+          "policy": "seti-greedy-income-tail-v2",
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 2,
+          "placements": 1,
+          "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "quick_trade:f385e2ac",
+          "quick_trade:49c75492",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "quick_trade:37140fcf",
+          "quick_trade:71814d67",
+          "card_corner:68a82599",
+          "card_corner:4c8b60cc",
+          "card_corner:ab712e76",
+          "place_data:8fd12fd3",
+          "end_turn:b2f9b29d"
+        ]
+      }
+    },
+    {
+      "input": 147,
+      "sourceInput": 146,
+      "node": 4,
+      "selectedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:99e4f6e0",
+        "actorId": "player-white",
+        "stateVersion": 60,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "tech:orange3",
+          "tileId": "orange3",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": true,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 orange3"
+      },
+      "selectedValue": 136.5,
+      "sourceWasInherited": true,
+      "alternatives": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0953ea6c",
+            "actorId": "player-white",
+            "stateVersion": 60,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "tech:orange1",
+              "tileId": "orange1",
+              "blueSlot": null
+            },
+            "payload": {
+              "skipCost": true,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 orange1"
+          },
+          "actionId": "choose_target:0953ea6c",
+          "value": 136.5,
+          "realization": -25.5,
+          "steps": [
+            "choose_target:0953ea6c",
+            "choose_card:8930efbf"
+          ],
+          "targetNode": 51
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e2010426",
+            "actorId": "player-white",
+            "stateVersion": 60,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "tech:orange2",
+              "tileId": "orange2",
+              "blueSlot": null
+            },
+            "payload": {
+              "skipCost": true,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 orange2"
+          },
+          "actionId": "choose_target:e2010426",
+          "value": 133.5,
+          "realization": -23,
+          "steps": [
+            "choose_target:e2010426"
+          ],
+          "targetNode": 52
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:99e4f6e0",
+            "actorId": "player-white",
+            "stateVersion": 60,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "tech:orange3",
+              "tileId": "orange3",
+              "blueSlot": null
+            },
+            "payload": {
+              "skipCost": true,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 orange3"
+          },
+          "actionId": "choose_target:99e4f6e0",
+          "value": 136.5,
+          "realization": -23,
+          "steps": [
+            "choose_target:99e4f6e0"
+          ],
+          "targetNode": 53
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:686a7ac6",
+            "actorId": "player-white",
+            "stateVersion": 60,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "tech:orange4",
+              "tileId": "orange4",
+              "blueSlot": null
+            },
+            "payload": {
+              "skipCost": true,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 orange4"
+          },
+          "actionId": "choose_target:686a7ac6",
+          "value": 133.5,
+          "realization": -23,
+          "steps": [
+            "choose_target:686a7ac6"
+          ],
+          "targetNode": 54
+        }
+      ],
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v22",
+        "isEquivalence": false,
+        "bound": true,
+        "goal": {
+          "id": "effect:tech:card:card-29-pass-2-5",
+          "kind": "effect-purpose",
+          "purpose": "tech",
+          "cardId": "card-29-pass-2-5",
+          "sourceFamily": "play_card",
+          "required": {
+            "credits": 3
+          }
+        },
+        "operation": {
+          "finalPlacement": false,
+          "discardIds": null,
+          "targetStarted": true
+        },
+        "step": {
+          "kind": "fallback",
+          "reason": "purpose-effect-native-choice",
+          "actionIds": [
+            "choose_target:0953ea6c",
+            "choose_target:e2010426",
+            "choose_target:99e4f6e0",
+            "choose_target:686a7ac6"
+          ]
+        },
+        "retainedActionIds": [],
+        "excludedActionIds": [
+          "choose_target:0953ea6c",
+          "choose_target:e2010426",
+          "choose_target:99e4f6e0",
+          "choose_target:686a7ac6"
+        ],
+        "plans": [
+          {
+            "id": "effect:tech:card:card-29-pass-2-5:choose_target:0953ea6c",
+            "goal": {
+              "id": "effect:tech:card:card-29-pass-2-5",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-29-pass-2-5",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "operation": {
+              "finalPlacement": false,
+              "discardIds": null,
+              "targetStarted": true
+            },
+            "firstActionId": "choose_target:0953ea6c",
+            "mode": "search-fallback",
+            "fallbackReason": "purpose-effect-native-choice"
+          },
+          {
+            "id": "effect:tech:card:card-29-pass-2-5:choose_target:e2010426",
+            "goal": {
+              "id": "effect:tech:card:card-29-pass-2-5",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-29-pass-2-5",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "operation": {
+              "finalPlacement": false,
+              "discardIds": null,
+              "targetStarted": true
+            },
+            "firstActionId": "choose_target:e2010426",
+            "mode": "search-fallback",
+            "fallbackReason": "purpose-effect-native-choice"
+          },
+          {
+            "id": "effect:tech:card:card-29-pass-2-5:choose_target:99e4f6e0",
+            "goal": {
+              "id": "effect:tech:card:card-29-pass-2-5",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-29-pass-2-5",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "operation": {
+              "finalPlacement": false,
+              "discardIds": null,
+              "targetStarted": true
+            },
+            "firstActionId": "choose_target:99e4f6e0",
+            "mode": "search-fallback",
+            "fallbackReason": "purpose-effect-native-choice"
+          },
+          {
+            "id": "effect:tech:card:card-29-pass-2-5:choose_target:686a7ac6",
+            "goal": {
+              "id": "effect:tech:card:card-29-pass-2-5",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-29-pass-2-5",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "operation": {
+              "finalPlacement": false,
+              "discardIds": null,
+              "targetStarted": true
+            },
+            "firstActionId": "choose_target:686a7ac6",
+            "mode": "search-fallback",
+            "fallbackReason": "purpose-effect-native-choice"
+          }
+        ]
+      }
+    },
+    {
+      "input": 170,
+      "sourceInput": 170,
+      "node": 0,
+      "selectedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 71,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "selectedValue": 138.5,
+      "sourceWasInherited": false,
+      "alternatives": [
+        {
+          "actionId": "launch:c94cda79",
+          "target": 1,
+          "value": 136.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:c94cda79",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 2,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          }
+        },
+        {
+          "actionId": "play_card:02e71396",
+          "target": 4,
+          "value": 138,
+          "realization": 0,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:alien-chong-7-5",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "alien-chong-7-5",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:02e71396",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 2,
+            "target": {
+              "cardInstanceId": "alien-chong-7-5"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "chong_7.webp"
+          }
+        },
+        {
+          "actionId": "play_card:30484085",
+          "target": 2,
+          "value": 138.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:30484085",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 2,
+            "target": {
+              "cardInstanceId": "alien-chong-2-6"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "chong_2.webp"
+          }
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": 3,
+          "value": 138.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "completion": "complete",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          }
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "target": 5,
+          "value": 138,
+          "realization": 0,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "resourceGoalCount": 12,
+          "completion": "complete",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:f385e2ac",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 2,
+            "target": {
+              "tradeId": "credits-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2信用点 → 1能量"
+          }
+        }
+      ],
+      "resourcePolicy": {
+        "policy": "seti-goal-resource-preparation-v22",
+        "isEquivalence": false,
+        "plans": [
+          {
+            "id": "effect:tech:card:alien-chong-7-5",
+            "goal": {
+              "id": "effect:tech:card:alien-chong-7-5",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "alien-chong-7-5",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "play_card:02e71396",
+            "mode": "greedy",
+            "reason": "start-bound-tech"
+          },
+          {
+            "id": "scan:sector:sector-1-a",
+            "goal": {
+              "id": "scan:sector:sector-1-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-1-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-2-a",
+            "goal": {
+              "id": "scan:sector:sector-2-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-2-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-2-b",
+            "goal": {
+              "id": "scan:sector:sector-2-b",
+              "kind": "scan-flow",
+              "nebulaId": "sector-2-b",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-3-b",
+            "goal": {
+              "id": "scan:sector:sector-3-b",
+              "kind": "scan-flow",
+              "nebulaId": "sector-3-b",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-4-a",
+            "goal": {
+              "id": "scan:sector:sector-4-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-4-b",
+            "goal": {
+              "id": "scan:sector:sector-4-b",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-b",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-1-a:launch",
+            "goal": {
+              "id": "scan:sector:sector-1-a:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-1-a",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-2-a:launch",
+            "goal": {
+              "id": "scan:sector:sector-2-a:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-2-a",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-2-b:launch",
+            "goal": {
+              "id": "scan:sector:sector-2-b:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-2-b",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-3-b:launch",
+            "goal": {
+              "id": "scan:sector:sector-3-b:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-3-b",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-4-a:launch",
+            "goal": {
+              "id": "scan:sector:sector-4-a:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-a",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          },
+          {
+            "id": "scan:sector:sector-4-b:launch",
+            "goal": {
+              "id": "scan:sector:sector-4-b:launch",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-b",
+              "required": {
+                "credits": 1,
+                "energy": 3
+              },
+              "launch": true,
+              "purpose": "scan named sector and fund purple4 native launch"
+            },
+            "operation": {
+              "finalPlacement": false
+            },
+            "firstActionId": "quick_trade:f385e2ac",
+            "mode": "greedy",
+            "reason": "greedy-resource-deficit"
+          }
+        ],
+        "retainedActionIds": [
+          "launch:c94cda79",
+          "play_card:30484085",
+          "pass:a1f33c73",
+          "quick_trade:49c75492",
+          "quick_trade:37140fcf"
+        ],
+        "excludedActionIds": [
+          "play_card:02e71396",
+          "quick_trade:f385e2ac",
+          "quick_trade:12411a2c",
+          "quick_trade:a39c1a77",
+          "card_corner:24c93329",
+          "card_corner:50d05947"
+        ]
+      }
+    }
+  ],
+  "newNativeInputs": 0,
+  "newSearchCalls": 0,
+  "newAutonomousRuns": 0
+}

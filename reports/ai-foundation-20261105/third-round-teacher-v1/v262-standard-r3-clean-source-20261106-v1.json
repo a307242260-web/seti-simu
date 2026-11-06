@@ -1,0 +1,12 @@
+{
+  "head": "2055cd4f2cba4dbc2fee8433c81cd16f9276cd72",
+  "worktree": "/private/tmp/seti-v262-teacher-r3-run-20261106-v1",
+  "gitPorcelain": "",
+  "sourceAdmitted": true,
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v262-current-source-admission-20261106-v1.json",
+  "sourceAdmissionSha256": "f694aad38d650fc750ad057736266c5d2d2119b01e564862a6ff98b7ee699b34",
+  "runtimeAndValidationInputsMatchAdmission": true,
+  "plannedAutonomousRuns": 1,
+  "scenario": "human405-white-teacher-r3-v1",
+  "goalStatus": "active"
+}
