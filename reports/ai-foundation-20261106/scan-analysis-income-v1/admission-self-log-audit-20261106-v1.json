@@ -1,0 +1,10 @@
+{
+  "supersededDraft": "reports/ai-foundation-20261105/third-round-teacher-v1/v264-current-source-admission-20261106-v1.json",
+  "supersededDraftSha256": "75cc18260cb9b82c3db23804e5c5015991d7395152e512981a309b0f1e30c72c",
+  "onlyHashMismatch": [
+    "reports/ai-foundation-20261106/scan-analysis-income-v1/source-admission-cli-20261106-v1.log"
+  ],
+  "reason": "The proof draft hashed its own stdout file before the final summary was written. Source, tests, Native fixtures and all cold evidence hashes are unchanged.",
+  "correction": "Final v2 proof excludes admission stdout logs from its evidence set; no benchmark or experiment rerun.",
+  "authoritativeProof": "reports/ai-foundation-20261105/third-round-teacher-v1/v264-current-source-admission-20261106-v2.json"
+}

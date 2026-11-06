@@ -1,0 +1,17 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/scan-analysis-income-utility.js:26
+    ||stock+2>data.COMPUTER_DATA_SLOT_IDS.length)return zero('scan-analysis-data-gap');
+                                          ^
+
+TypeError: Cannot read properties of undefined (reading 'length')
+    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/scan-analysis-income-utility.js:26:43)
+    at incomePreparationCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:210:66)
+    at Object.incomeChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:540:25)
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/scan-analysis-income-utility.test.js:5:24)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+
+Node.js v22.22.0

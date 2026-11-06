@@ -1,0 +1,12 @@
+from pathlib import Path
+import json,gzip
+P=Path(__file__).resolve().parents[1];F=Path('reports/ai-foundation-20261105/third-round-teacher-v1');read=lambda n:json.loads((P/n).read_text());old={r['identity']:r for r in read(F/'v263-current-source-serial-gate-20261106-v1.json')['rows']};gate=read(F/'v264-current-source-serial-gate-20261106-v1.json');assert gate['status']=='complete'and gate['allClosed'];new={r['identity']:r for r in gate['rows']};byRound={};changes=[];firstTwo=[];count=0;keys=['actionId','value','selectionPlan','selectionContinuation','planContinuation'];normalize=lambda o:json.loads(json.dumps(o).replace('seti-complete-decision-search-v264','seti-complete-decision-search-v263'))
+for identity,row in new.items():
+ before=old.get(identity)
+ if not before:continue
+ f=read(row['fixture']);round=json.loads(f['compositionEnvelope']['committedState'])['turn']['roundNumber'];v=before['value']!=row['value'];a=before['actionId']!=row['actionId'];group=byRound.setdefault(str(round),{'roots':0,'valueChanged':0,'choiceChanged':0});group['roots']+=1;group['valueChanged']+=v;group['choiceChanged']+=a
+ if v or a:changes.append({'label':row['label'],'round':round,'beforeValue':before['value'],'afterValue':row['value'],'beforeAction':before['actionId'],'afterAction':row['actionId']})
+ if round in [1,2]:
+  count+=1;oe=read(before['evidence']);ne=read(row['evidence']);x=json.loads(gzip.decompress((P/oe['rawPath']).read_bytes()));y=json.loads(gzip.decompress((P/ne['rawPath']).read_bytes()));delta={k:{'before':x.get(k),'after':y.get(k)}for k in keys if normalize(x.get(k))!=normalize(y.get(k))}
+  if delta:firstTwo.append({'label':row['label'],'round':round,'fields':delta})
+result={'scope':'Same complete fresh Native roots; normalize search label only. Selected contracts are not a claim of full-graph equivalence or identical autonomous development. Rule repair4d630 is present in new source; legacy V26380 remains annotated invalid after input179.','pairedRoots':len(old),'newUniqueRoots':len(new),'namedCases':len(gate['rows']),'byRound':byRound,'changes':changes,'firstTwoRoots':count,'firstTwoSelectedContractChanges':firstTwo,'newAutonomousRuns':0};out=F/'v264-cold-contracts-v263-comparison-20261106-v1.json';assert not(P/out).exists();(P/out).write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:result[k]for k in ['pairedRoots','newUniqueRoots','namedCases','byRound','firstTwoRoots']}));print('firstTwoChanges',len(firstTwo));print('pairedChanges',len(changes));print(json.dumps(changes))

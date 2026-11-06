@@ -1,0 +1,28 @@
+{
+  "goalStatus": "active",
+  "status": "source-admitted-not-yet-published",
+  "runtime": "V264/V47",
+  "baseCommit": "4d630b38a73492422c96d46e71e1c9acd9214318",
+  "manifest": "reports/ai-foundation-20261106/candidate-v264-scan-analysis-income-v1/manifest.json",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v264-current-source-admission-20261106-v2.json",
+  "snapshotTree": "46f1f4f77eee83814b9c2959ccd22a2bdb118bdd",
+  "namedCases": 867,
+  "uniqueRoots": 675,
+  "maxInputs": 256,
+  "maxMilliseconds": 557.736833,
+  "unitPassed": 200,
+  "fullFlowPassed": 1,
+  "browserPassed": 3,
+  "firstTwoUnchangedGraphs": 304,
+  "pairedRootsUnchanged": 628,
+  "newAutonomousRuns": 0,
+  "developmentAligned": false,
+  "lastActual80ContainsRuleDefect": true,
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87,
+    "income": "7C2E1card+1scan"
+  },
+  "next": "Publish source, standard controlledR3 once, independent replay and beforePASS assets; R3 learning/R2-end review/original23input autonomousfirst3 remain.",
+  "baseline": "V41"
+}

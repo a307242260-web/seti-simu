@@ -74,6 +74,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/known-postdraw-tail.test.js", "policy/decision-search", "实际免费阿米巴牌后保留原根已知收入蓝槽固定尾部，匿名牌不参与选择且六步原生兑现一致", "新牌截断已知流程、未知类型或ID影响规划、未证明分支放行或伪造后继观察"),
     entry("randomizer/game/ai/exact-data-tail-arithmetic.test.js", "policy/decision-search", "收入与蓝槽固定尾部按统一整数账本累加，六输入原生已知路线保持分数与首步并真正使用数值证明", "浮点一位误差使合法标量证明被严格网格门禁拒绝，反复执行固定准备或原根RNG变化"),
     entry("randomizer/game/ai/income-purpose-scheduling.test.js", "policy/decision-search", "无当前钱电需求的货币收入延后主行动，保留主行动后发展、实际筹资和抽牌收入时机", "固定收入先后顺序重复展开，或删除实际筹资与信息边界选择"),
+    entry("randomizer/game/ai/scan-analysis-income-utility.test.js", "policy/state-value", "固定收入选择计入同一钱包下已知非结算扫描、电脑补满及免电分析用途，且不增加搜索分支", "电收入与不能筹资的钱/牌收入同值，预支未知牌、重复扫描token或跨用途共用资源"),
     entry("randomizer/game/ai/income-choice-consistency.test.js", "policy/state-value", "收入严格同值时保留较高费用牌，初始目的、待选恢复和菜单重排一致，明确资金目的及较高收益优先", "卡ID与动作ID平局排序不一致、重排菜单改变选择，或印刷费用压过实际收益"),
     entry("randomizer/game/ai/analysis-publicity-preparation.test.js", "policy/decision-search", "主行动后以已知纯宣传角标补足已筹资分析后的研究缺口，固定一次准备并保留原根/RNG", "只为当前主行动准备资源，删掉打牌后的真实分析筹资，导致继承目标与原生重新规划的价值不同"),
     entry("randomizer/game/ai/company-income-priority.test.js", "policy/decision-search", "固定收入/换牌按统一整数价值贪心排序，严格更高的公司目的优先，同值不展开两种准备顺序", "已算出电收入替换路线却先强制消耗钱收入供应牌，固定准备政策互相覆盖并损失可行融资"),

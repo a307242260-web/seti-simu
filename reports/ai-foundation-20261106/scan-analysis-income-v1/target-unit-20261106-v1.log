@@ -1,0 +1,5 @@
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.28s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

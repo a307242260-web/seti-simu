@@ -1,0 +1,32 @@
+{
+  "scope": "Same complete fresh Native roots; normalize search label only. Selected contracts are not a claim of full-graph equivalence or identical autonomous development. Rule repair4d630 is present in new source; legacy V26380 remains annotated invalid after input179.",
+  "pairedRoots": 628,
+  "newUniqueRoots": 675,
+  "namedCases": 867,
+  "byRound": {
+    "3": {
+      "roots": 321,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "changes": [],
+  "firstTwoRoots": 304,
+  "firstTwoSelectedContractChanges": [],
+  "newAutonomousRuns": 0
+}

@@ -2,11 +2,11 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./income-card-order'):root.SetiIncomeCardOrder);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('./scan-analysis-income-utility'):root.SetiScanAnalysisIncomeUtility);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v22';
+  const VERSION='seti-goal-resource-preparation-v23';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -205,6 +205,9 @@
       const facts=valueFacts(state,p);
       facts.player={...facts.player,availableData:Math.min(players.RESOURCE_LIMITS.availableData,facts.player.availableData+projectedData)};
       prepared=stateValue.incomePreparationCapital(facts);
+      // Ranking only: an already-priced purpose keeps its existing capital.
+      // This fixed known scan cannot become a Native tail/pruning certificate.
+      if(!current&&!prepared&&!projectedData)prepared=scanIncome.quote({state,player:p,weights:stateValue.DEFAULT_WEIGHTS}).value;
       if(immutable){if(!owners){owners=new WeakMap();immutableIncomePreparationQuotes.set(state,owners);}if(!quotes){quotes=new Map();owners.set(p,quotes);}quotes.set(projectedData,prepared);}
     }
     // Current mission and immediate fixed-data preparation are alternatives,

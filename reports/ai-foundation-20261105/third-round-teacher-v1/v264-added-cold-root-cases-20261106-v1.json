@@ -1,0 +1,336 @@
+{
+  "cases": [
+    {
+      "label": "actual-v263-113",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-113-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-114",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-114-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-115",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-115-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-116",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-116-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-117",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-117-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-118",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-118-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-119",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-119-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-123",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-123-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-124",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-124-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-125",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-125-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-126",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-126-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-127",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-127-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-128",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-128-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-129",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-129-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-130",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-130-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-131",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-131-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-132",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-132-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-133",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-133-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-134",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-134-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-135",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-135-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-136",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-136-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-137",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-137-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-138",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-138-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-139",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-139-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-140",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-140-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-141",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-141-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-142",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-142-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-143",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-143-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-144",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-144-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-145",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-145-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-146",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-146-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-147",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-147-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-148",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-148-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-149",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-149-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-150",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-150-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-151",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-151-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-152",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-152-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-153",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-153-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-154",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-154-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-155",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-155-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-156",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-156-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-157",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-157-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-158",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-158-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-159",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-159-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-160",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-160-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-161",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-161-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-162",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-162-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-163",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-163-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-164",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-164-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-165",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-165-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-166",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-166-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-167",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-167-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-168",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-168-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-169",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-169-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-170",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-170-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-171",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-171-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-172",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-172-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-173",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-173-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-174",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-174-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-175",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-175-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-176",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-176-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-177",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-177-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v263-178",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-178-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-1",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-1-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-2",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-2-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-3",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-3-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-4",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-4-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-5",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-5-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-6",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-6-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-7",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-7-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-8",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-8-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-9",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-9-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-10",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-10-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-11",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-11-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-12",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-12-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-13",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-13-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-14",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-14-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-15",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-15-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-16",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-16-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-17",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-17-root-20261106-v1.json"
+    },
+    {
+      "label": "electric-control-before-18",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-18-root-20261106-v1.json"
+    },
+    {
+      "label": "dlc20-current-menu179",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/dlc20-current-menu179-root-20261106-v1.json"
+    }
+  ],
+  "newNativeInputs": 1,
+  "newAutonomousRuns": 0,
+  "excludedHistoricalInputsFrom": 179,
+  "rootAndRngRestored": true
+}

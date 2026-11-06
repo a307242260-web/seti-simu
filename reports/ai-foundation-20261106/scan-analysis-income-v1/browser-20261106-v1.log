@@ -1,0 +1,15 @@
+PASS production-start-button http://127.0.0.1:52963/randomizer/index.html
+PASS production-dlc20-alien-exclusion http://127.0.0.1:52963/randomizer/index.html
+PASS production-scan-analysis-income http://127.0.0.1:52963/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3
+Error: ENOTEMPTY: directory not empty, rmdir '/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-browser-smoke-WMd18r/Default/Cache/Cache_Data'
+    at Object.rmdirSync (node:fs:1200:11)
+    at _rmdirSync (node:internal/fs/rimraf:261:21)
+    at rimrafSync (node:internal/fs/rimraf:194:7)
+    at node:internal/fs/rimraf:254:9
+    at Array.forEach (<anonymous>)
+    at _rmdirSync (node:internal/fs/rimraf:251:7)
+    at rimrafSync (node:internal/fs/rimraf:194:7)
+    at node:internal/fs/rimraf:254:9
+    at Array.forEach (<anonymous>)
+    at _rmdirSync (node:internal/fs/rimraf:251:7)
