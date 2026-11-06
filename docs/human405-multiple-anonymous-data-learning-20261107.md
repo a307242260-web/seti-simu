@@ -27,7 +27,7 @@ V276第156输入的0.5窗口差额来自比较终点不一致，当前未发现�
 
 冻结源码冷测1095具名案例、726不同Native根均闭合，最高256次／543.656167ms。第156首次冷测17Native／95.75ms，选择蓝4，窗口140；不是整轮成绩。与V276配对705根，仅第三轮12处估值、3处首选改变；前两轮304根完整图、动作、值及计划保持。V276相对V274遗留的3处第一轮同值准备时机变化仍需自主资产验证，不能借此宣称与V189旧前两轮完全相同。
 
-两项相关Chrome通过，输入审计58通过及既有aomomo冻结对象异常1项保留。202项单元和1完整流程均通过，冻结源码、完整留存搜索图及独立Git快照已逐项核验准入，尚未运行V277自主轮。最高同教师起点仍V256的87分，最新实际V276为79分，V41整局baseline与Goalactive保持。
+两项相关Chrome通过，输入审计58通过及既有aomomo冻结对象异常1项保留。202项单元和1完整流程均通过，冻结源码、完整留存搜索图及独立Git快照已逐项核验准入，[V277唯一受控第三轮及69输入原生重放](human405-third-round-v277-result-20261107.md)已完成：83分、6科技、收入7钱2电1牌及1扫描，4.490秒；较V276多4分、少2钱并新增1在途探测器。最高同教师起点仍V256的87分，V41整局baseline与Goalactive保持。
 
 ## 下一步与证据
 
@@ -38,3 +38,5 @@ V276第156输入的0.5窗口差额来自比较终点不一致，当前未发现�
 新证据位于`reports/ai-foundation-20261107/anonymous-data-continuation-v1/`：`actual156-blue4-known-data-native`及checkpoint、`source-manifest`、`serial-cold-gate`、`cold-contract-comparison-v276`、`first-two-graph-regression`、`browser`、`input-audit`、`full-node`。执行契约见`adhoc/v277-anonymous-data-continuation-contract-20261107-v1.md`。全部结果区分真实动作、匿名估值、单点窗口和自主轮成绩，不用有利盲牌倒推此前选择。
 
 范围补充：Native数据视图仍不跨收入/角标；原有货币收入视图只取消匿名数量限制，继续要求根已知incomeCardId、C/E收入、唯一固定计划及完整data-end-turn证明。两种路径没有混用证明，详细范围见证据目录scope-clarification。
+
+实际结果来源澄清：第157以及7步控制选中的完整target都是amiba:display:9，不是blind。两张opaque是搜索的新实例表示，其中一张是展示阿米巴9。原生target与agent请求一致，数据收益证明仍有效；公开展示编号缺失和领取后的知识保留是新发现，详见V277结果及v277-public-amiba-choice-descriptor-check。冻结实验和原始证据不重写。

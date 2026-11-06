@@ -1,0 +1,780 @@
+{
+  "scope": "One standard V277 controlled-teacher-prefix third-round experiment. First112 accepted inputs are fixed, not autonomous R1/R2. Both ending states are before PASS card and R4 income; full native checkpoints and public development/preinvestment retained.",
+  "sourceCommit": "5cb4d4edb7d23d1612e83f40d7c8844dbb82a624",
+  "recordPath": "reports/research/eea49fda.5cb4d4ed.quick-400.json",
+  "recordSha256": "18838d7a98ccf33b0c502a966192ddbb3f8d1ce6245a8034c12cea9e7e8fc197",
+  "savePath": "seti-saves/seti-save-research-ai-search-v277-teacher-r3-20261107-5cb4d4ed-quick-400-v77.json",
+  "saveSha256": "e598e78925193affeb28b80379a8fbf31087a5afb76ca5fcd63d60d8d8376eba",
+  "tracePath": "reports/research/eea49fda.5cb4d4ed.quick-400.json.decisions.jsonl",
+  "traceSha256": "7023f42c866c12b23ba4f23d771010a7f72e0ffc03e1b78d877d0acba90eb684",
+  "nativeVerification": "reports/ai-foundation-20261105/third-round-teacher-v1/v277-standard-r3-native-verification-20261107-v1.json",
+  "nativeVerificationSha256": "fedc135faab36fe5e2a4058c89695a781cf4af01d72a0730c8ca39b903494dc9",
+  "assetClassificationCorrection": "Standard/fossil-null formal probe kind is distinct from owned special rocket-layer pieces; every raw Native piece remains in its corresponding asset field.",
+  "autonomousExperiments": 1,
+  "standardScenario": "human405-white-teacher-r3-v1",
+  "controlledPrefixInputs": 112,
+  "newNativeInputsAfterPrefix": 69,
+  "wallMilliseconds": 4490,
+  "searchEvidenceCount": 66,
+  "maxNativeInputs": 170,
+  "maxRootAndSearchMilliseconds": 437.82825,
+  "allSearchEvidenceCompleteAndPassed": true,
+  "goalAchieved": false,
+  "developmentAligned": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "ai": {
+    "checkpointPath": "reports/research/eea49fda.5cb4d4ed.quick-400.json.round-end-3.checkpoint.json",
+    "checkpointSha256": "1f07d8b63bc45439715f7fc0d6491a39b4d0acbf632c2512ca44b3913d812a2d",
+    "phase": "before-PASS-card-and-next-income",
+    "score": 83,
+    "currentFinalScore": 116,
+    "currentEndGameBonus": 33,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 1,
+      "energy": 0,
+      "handSize": 2,
+      "publicity": 1,
+      "score": 83
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange3": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "technologyCount": 6,
+    "hand": [
+      {
+        "id": "card-60-0",
+        "cardId": "dlc_25.png"
+      },
+      {
+        "id": "card-61-0",
+        "cardId": "dlc_24.png"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_117.webp"
+        }
+      },
+      {
+        "id": "card-15-0",
+        "cardId": "dlc_9.png",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "dlc_9.png"
+        }
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_101.webp"
+        }
+      },
+      {
+        "id": "alien-amiba-9-5",
+        "cardId": "amiba_9.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "amiba_9.webp"
+        }
+      }
+    ],
+    "computerSlots": [
+      1,
+      2,
+      3
+    ],
+    "blueSlots": [
+      1
+    ],
+    "poolData": 0,
+    "ownedProbes": [
+      {
+        "angleDegrees": 125.1,
+        "color": "white",
+        "id": 5,
+        "launchGrid": {
+          "x": 4,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 4,
+          "y": 1
+        },
+        "playerId": "player-white",
+        "playerSequence": 1,
+        "radius": 69.42,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 2,
+        "surface": "solar-board"
+      }
+    ],
+    "ownedSpecialPieces": [],
+    "ownPlanetMarkers": {
+      "jupiter": {
+        "orbit": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "landing": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "satellites": []
+      },
+      "mars": {
+        "orbit": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "landing": [],
+        "satellites": []
+      }
+    },
+    "sectorWins": [
+      {
+        "sectorId": "sector-2-a",
+        "settlementNumber": 1
+      },
+      {
+        "sectorId": "sector-3-a",
+        "settlementNumber": 1
+      }
+    ],
+    "scanProgress": [
+      {
+        "sectorId": "sector-1-a",
+        "ownedSlots": [
+          1,
+          2
+        ],
+        "capacity": 5
+      },
+      {
+        "sectorId": "sector-4-b",
+        "ownedSlots": [
+          1,
+          2
+        ],
+        "capacity": 5
+      }
+    ],
+    "publicAliens": {
+      "slots": [
+        {
+          "slotId": 1,
+          "revealed": true,
+          "alienId": "阿米巴",
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      ],
+      "amiba": {
+        "revealInitialized": true,
+        "revealedSlotId": 1,
+        "symbolSlots": {
+          "blue_1": "symbol_3",
+          "orange_2": "symbol_2",
+          "orange_3": "symbol_1",
+          "red_1": "symbol_5",
+          "red_2": "symbol_4"
+        },
+        "symbolsById": {
+          "symbol_1": {
+            "sequence": 3,
+            "slotId": "orange_3",
+            "symbolId": "symbol_1"
+          },
+          "symbol_2": {
+            "sequence": 2,
+            "slotId": "orange_2",
+            "symbolId": "symbol_2"
+          },
+          "symbol_3": {
+            "sequence": 5,
+            "slotId": "blue_1",
+            "symbolId": "symbol_3"
+          },
+          "symbol_4": {
+            "sequence": 1,
+            "slotId": "red_2",
+            "symbolId": "symbol_4"
+          },
+          "symbol_5": {
+            "sequence": 4,
+            "slotId": "red_1",
+            "symbolId": "symbol_5"
+          }
+        }
+      },
+      "amibaTraces": {
+        "revealedSlotId": 1,
+        "traceSlotsByAlienSlotId": {
+          "1": {
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": {
+                "playerColor": "white",
+                "playerId": "player-white",
+                "position": 4,
+                "rewardApplied": true,
+                "sequence": 4,
+                "traceType": "blue"
+              }
+            },
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        "blindCardCount": 5,
+        "displayedCardAvailable": true
+      }
+    },
+    "ownAmibaPositions": {
+      "blue": [
+        4
+      ],
+      "pink": [],
+      "yellow": []
+    },
+    "finalMarks": [
+      {
+        "id": "final-mark-2",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 50,
+        "tileId": "b"
+      },
+      {
+        "id": "final-mark-3",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 70,
+        "tileId": "c"
+      },
+      {
+        "id": "final-mark-1",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 25,
+        "tileId": "d"
+      }
+    ]
+  },
+  "teacher": {
+    "checkpointPath": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-round3-before-pass-current-20261105-v2.checkpoint.json",
+    "checkpointSha256": "e43328241e8d6cc9877151aac4e09fa7b4fc8a426c75296b296fc86bbf33c436",
+    "phase": "before-PASS-card-and-next-income",
+    "score": 105,
+    "currentFinalScore": 162,
+    "currentEndGameBonus": 57,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 3,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 3,
+      "publicity": 5,
+      "score": 105
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "orange2": true,
+        "orange4": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "technologyCount": 6,
+    "hand": [
+      {
+        "id": "alien-chong-2-8",
+        "cardId": "chong_2.webp"
+      },
+      {
+        "id": "alien-chong-8-12",
+        "cardId": "chong_8.webp"
+      },
+      {
+        "id": "alien-chong-4-14",
+        "cardId": "chong_4.webp"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_117.webp"
+        }
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png"
+      },
+      {
+        "id": "alien-amiba-1-2",
+        "cardId": "amiba_1.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [
+            "amiba1-purple-tech",
+            "amiba1-orange-tech"
+          ],
+          "modelCardId": "amiba_1.webp"
+        }
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp",
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_101.webp"
+        }
+      },
+      {
+        "id": "alien-amiba-7-5",
+        "cardId": "amiba_7.webp"
+      },
+      {
+        "id": "alien-chong-3-10",
+        "cardId": "chong_3.webp"
+      }
+    ],
+    "computerSlots": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "blueSlots": [
+      1,
+      2
+    ],
+    "poolData": 3,
+    "ownedProbes": [],
+    "ownedSpecialPieces": [
+      {
+        "angleDegrees": 67.5,
+        "cargo": null,
+        "color": "white",
+        "fossilId": "fossil_07",
+        "id": 6,
+        "kind": "chong-fossil",
+        "launchGrid": {
+          "x": 3,
+          "y": 3
+        },
+        "launchSectorCoordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "playerId": "player-white",
+        "radius": 227.66,
+        "sectorX": 3,
+        "sectorY": 3,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      }
+    ],
+    "ownPlanetMarkers": {
+      "jupiter": {
+        "orbit": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "landing": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "satellites": []
+      },
+      "mars": {
+        "orbit": [
+          {
+            "color": "white",
+            "playerId": "player-white"
+          }
+        ],
+        "landing": [],
+        "satellites": []
+      },
+      "saturn": {
+        "orbit": [],
+        "landing": [],
+        "satellites": [
+          {
+            "color": "white",
+            "playerId": "player-white",
+            "satelliteId": "titan"
+          }
+        ]
+      }
+    },
+    "sectorWins": [
+      {
+        "sectorId": "sector-2-a",
+        "settlementNumber": 1
+      },
+      {
+        "sectorId": "sector-1-a",
+        "settlementNumber": 1
+      },
+      {
+        "sectorId": "sector-3-a",
+        "settlementNumber": 1
+      }
+    ],
+    "scanProgress": [
+      {
+        "sectorId": "sector-2-a",
+        "ownedSlots": [
+          1,
+          2,
+          3
+        ],
+        "capacity": 6
+      },
+      {
+        "sectorId": "sector-3-b",
+        "ownedSlots": [
+          3
+        ],
+        "capacity": 6
+      },
+      {
+        "sectorId": "sector-4-b",
+        "ownedSlots": [
+          1,
+          2,
+          3
+        ],
+        "capacity": 5
+      }
+    ],
+    "publicAliens": {
+      "slots": [
+        {
+          "slotId": 1,
+          "revealed": true,
+          "alienId": "阿米巴",
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": true,
+          "alienId": "虫",
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      ],
+      "amiba": {
+        "revealInitialized": true,
+        "revealedSlotId": 1,
+        "symbolSlots": {
+          "orange_1": "symbol_4",
+          "orange_2": "symbol_2",
+          "orange_3": "symbol_1",
+          "red_1": "symbol_5",
+          "red_2": "symbol_3"
+        },
+        "symbolsById": {
+          "symbol_1": {
+            "sequence": 3,
+            "slotId": "orange_3",
+            "symbolId": "symbol_1"
+          },
+          "symbol_2": {
+            "sequence": 2,
+            "slotId": "orange_2",
+            "symbolId": "symbol_2"
+          },
+          "symbol_3": {
+            "sequence": 5,
+            "slotId": "red_2",
+            "symbolId": "symbol_3"
+          },
+          "symbol_4": {
+            "sequence": 1,
+            "slotId": "orange_1",
+            "symbolId": "symbol_4"
+          },
+          "symbol_5": {
+            "sequence": 4,
+            "slotId": "red_1",
+            "symbolId": "symbol_5"
+          }
+        }
+      },
+      "amibaTraces": {
+        "revealedSlotId": 1,
+        "traceSlotsByAlienSlotId": {
+          "1": {
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": {
+                "playerColor": "white",
+                "playerId": "player-white",
+                "position": 4,
+                "rewardApplied": true,
+                "sequence": 4,
+                "traceType": "blue"
+              }
+            },
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        "blindCardCount": 5,
+        "displayedCardAvailable": true
+      }
+    },
+    "ownAmibaPositions": {
+      "blue": [
+        4
+      ],
+      "pink": [],
+      "yellow": []
+    },
+    "finalMarks": [
+      {
+        "id": "final-mark-2",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 50,
+        "tileId": "b"
+      },
+      {
+        "id": "final-mark-3",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 70,
+        "tileId": "c"
+      },
+      {
+        "id": "final-mark-1",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "slot3Order": null,
+        "slotIndex": 1,
+        "threshold": 25,
+        "tileId": "d"
+      }
+    ]
+  },
+  "differences": {
+    "boardScore": -22,
+    "technologyCount": 0,
+    "income": {
+      "additionalPublicScan": 0,
+      "availableData": 0,
+      "credits": 0,
+      "energy": -2,
+      "handSize": 0,
+      "publicity": 0
+    },
+    "resource": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": -3,
+      "credits": 1,
+      "energy": 0,
+      "handSize": -1,
+      "publicity": -4,
+      "score": -22
+    },
+    "handCount": -1,
+    "computerPlaced": -1,
+    "poolData": -3,
+    "probeCount": 1
+  },
+  "nextIssue": "Compare concrete research, data-cycle and task-purpose differences from this actual route before changing further policy. Continue R3 learning before R2-end review and autonomous first3."
+}

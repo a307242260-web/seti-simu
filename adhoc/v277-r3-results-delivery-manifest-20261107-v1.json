@@ -1,0 +1,81 @@
+{
+  "baseCommit": "5cb4d4edb7d23d1612e83f40d7c8844dbb82a624",
+  "record": "reports/research/eea49fda.5cb4d4ed.quick-400.json",
+  "recordSha256": "18838d7a98ccf33b0c502a966192ddbb3f8d1ce6245a8034c12cea9e7e8fc197",
+  "sourceRuntimeUnchanged": true,
+  "autonomousExperiments": 1,
+  "thirdRoundSettled": true,
+  "newAcceptedInputs": 69,
+  "boardScore": 83,
+  "tech": 6,
+  "maxNativeInputs": 170,
+  "maxMilliseconds": 437.82825,
+  "developmentAligned": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedStageEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "filesSha256": {
+    "adhoc/align-v277-run-worktree-20261107-v1.py": "fcb890b5c285fa95d0321023889e688d32d0f91350683344be7b15be75d40d23",
+    "adhoc/audit-v277-run-worktree-20261107-v1.py": "1ffbdd16c2806a124b7b85324b6febe82c5028856cf4cbe610a28a18abd371ca",
+    "adhoc/deliver-v277-r3-results-20261107-v1.py": "d9b428ee856483a837f961e0612b38ca7b3620b3e0a0c2f81ead5230b500de87",
+    "adhoc/human405-third-round-progress-20261107-v3.json": "83429a5aa4aded81ccc3ac313f2bef6152752092b2af954519d85c793169d60f",
+    "adhoc/prepare-v277-center-merge-20261107-v1.js": "0541337ffe8c2aa24898cc284423bcf1ec04b016f95249b7134d1f3da5c36722",
+    "adhoc/prove-v277-committed-experiment-20261107-v1.py": "433e20f9f29449dd229d8faf8b7193b91c520957aeab115d7dbfe31bbed03031",
+    "adhoc/summarize-v277-actual-route-20261107-v1.js": "dadaba6d452cc9fcd12cd17220607d2ca09f3f4800956cbe46554b894dcb0ff0",
+    "adhoc/summarize-v277-teacher-r3-result-20261107-v1.js": "98dae222e2f9d7319af5d909fe4abef51905634956ad2565762766941db4bb2d",
+    "adhoc/v277-autonomous-first3-next-validation-plan-20261107-v1.md": "b91ec0cb688df766e1c2965312806f51c1d4aa80d3f0bdcc9d454f08251f0d77",
+    "adhoc/v277-public-alien-offer-next-contract-20261107-v1.md": "e3b1790e5b2103768b5296f21ee6ad6ce5ebef2eba24ecec23674976cb8ecbec",
+    "adhoc/verify-v277-standard-r3-native-20261107-v1.js": "1acdd825247fdc4100d7a291153207df170507e7eed39aeb160c90a320bdea6f",
+    "docs/ai-design.md": "91a6aa63c7398ed0dbb415680800bc0457d3bb0ef36ac64f72dbcbeb62c04a83",
+    "docs/human405-multiple-anonymous-data-learning-20261107.md": "a21a2d400df41a14fe21cf358538fea42738c6cf1dbed7b72acc595e3d5a71ff",
+    "docs/human405-third-round-v277-result-20261107.md": "0b684891541b9464ea70c36e76527d332e855350b46d373bf0917ceceeb57527",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-actual-route-and-first-divergence-20261107-v1.json": "e54bee96546ebee25895a1583a00ab64e52fa7c22f68fc7947b9f0e51209c4af",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-center-merge-20261107-v1.json": "9a5625159fb451b72952ed2d72ee2353befdf1ca318581a58e99b1fbf8c6a136",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-committed-source-experiment-verification-20261107-v1.json": "b709c25db108ed0b53deccf4264c51b3412db7c362e3bcf0243d256656197e8d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-public-amiba-choice-descriptor-check-20261107-v1.json": "8701b2e49f27b6507c0e2c2297b29a687a3538b8f6de51ce7092a78716d4a8ae",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-standard-r3-native-verification-20261107-v1.json": "fedc135faab36fe5e2a4058c89695a781cf4af01d72a0730c8ca39b903494dc9",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-standard-r3-native-verification-prefix-20261107-v1.checkpoint.json": "2508a1291b8ea75dc6cecc227db61f277bce7ac6ba716c9fece670607bc5f589",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v277-third-round-development-comparison-20261107-v1.json": "66a935a1970f75a3523cb3565c02e34d6b69fb38a66dff3f42f855976f0ad93c",
+    "reports/iteration/ai-search-v277-teacher-r3-20261107/eea49fda.5cb4d4ed.quick-400.action-log.html": "cd914aeb83a4e95e7294e8a0c29ffb30429fa63b2d3c03b935a51c53ad17e1db",
+    "reports/iteration/registry.json": "96d486ebe31a5918f66af56be2075508016ac8f00e12a88dc02ab3d8ac3625cb",
+    "reports/iteration/versions.json": "a9c7ed315b943cbdd6e3208777b48793b633dce8044d03312cc24bfb31fee0ae",
+    "reports/research/eea49fda.5cb4d4ed.quick-400.json": "18838d7a98ccf33b0c502a966192ddbb3f8d1ce6245a8034c12cea9e7e8fc197",
+    "reports/research/eea49fda.5cb4d4ed.quick-400.json.decisions.jsonl": "7023f42c866c12b23ba4f23d771010a7f72e0ffc03e1b78d877d0acba90eb684",
+    "reports/research/eea49fda.5cb4d4ed.quick-400.json.round-end-3.checkpoint.json": "1f07d8b63bc45439715f7fc0d6491a39b4d0acbf632c2512ca44b3913d812a2d",
+    "reports/research/eea49fda.5cb4d4ed.quick-400.json.round-ends.jsonl": "3fec61f385c1e7517570e10e0749310402b2332b27bac56173e4e9c946d3d532",
+    "reports/robot-iteration.html": "6b8520bcc08868d8345b8dea6783cd20551fd2dd93bf8c01ef9ac2eb2358ab60",
+    "seti-saves/seti-save-research-ai-search-v277-teacher-r3-20261107-5cb4d4ed-quick-400-v77.json": "e598e78925193affeb28b80379a8fbf31087a5afb76ca5fcd63d60d8d8376eba"
+  },
+  "workingCenterPreservation": {
+    "status": "prepared",
+    "sourceCommit": "5cb4d4edb7d23d1612e83f40d7c8844dbb82a624",
+    "preparedDirectory": "/private/tmp/seti-v277-center-merge-20261107-v1",
+    "beforeFileHashes": {
+      "reports/iteration/versions.json": "60434f748a0101e629306cefcd104badafd0794ab72cdfaad626ea11b4464cc3",
+      "reports/iteration/registry.json": "8840804fc3e16b6ab6dec88f46d5c63fb1210f2e9a8df6e99ea97186f3f8e31d",
+      "reports/robot-iteration.html": "02dc5c3ff2b778909d1f1e1072455bfc83715cfd000821c7d7f464c1e363be91"
+    },
+    "afterFileHashes": {
+      "reports/iteration/versions.json": "13c14744be1380cd33409e26c25944c47045883f3aae20b68bf27ee92011586f",
+      "reports/iteration/registry.json": "7d6c220195bde193b6d5440706a9d425791ac7668b9f775fee7feff6c50ef230",
+      "reports/robot-iteration.html": "ec279f3e4cebcf2f868df1ac56a6120c8125eac7653d87cca680da64518fe47e"
+    },
+    "addedVersion": "ai-search-v277-teacher-r3-20261107",
+    "workingVersions": 198,
+    "stagedOwnVersions": 197,
+    "foreignWorkingVersions": [
+      {
+        "id": "perf-baseline-lowload-20260913",
+        "sha256": "842e2ef4f4926ba51153f431d190980497046f00f9b5a7a2bec2d4d2701309b6"
+      }
+    ],
+    "foreignV1RegistrySha256": "dcfecf09b07e72599f1fb68431a008e1173695ab64b4c3f65a28a78847330b8b",
+    "allExistingVersionObjectsUnchanged": true,
+    "allExistingResolvedVersionObjectsUnchanged": true,
+    "workingV1RegistryByteEquivalent": true,
+    "workingPageCodeOutsideRegistryUnchanged": true,
+    "stagedArtifactCenterExcludesForeignChanges": true
+  },
+  "privateIndexCenterContainsOnlyOwnVersion": true,
+  "goalStatus": "active"
+}

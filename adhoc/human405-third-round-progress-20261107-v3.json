@@ -1,0 +1,99 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V276 source/result delivered and unique79Native65verified; current turn independently proves7-input multi-anonymous known-data tail and admits V277",
+  "productionSourceCommitBeforeDelivery": "43bf8cfcec92790deea7225cd1766fcf3a4eb1ad",
+  "productionResultCommitBeforeDelivery": "cdb4af6d4dad239c803326afce136ee52fe3ddb4",
+  "candidateRuntime": "V277/V48",
+  "sourceAdmitted": true,
+  "manifest": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/source-manifest-20261107-v1.json",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v277-current-source-admission-20261107-v1.json",
+  "newNativeControls": 7,
+  "newAutonomousRuns": 1,
+  "actual156Value": {
+    "oldBlue2AfterKnownTail": 139,
+    "oldBlue4CutBeforeKnownTail": 138,
+    "newBlue4AfterKnownTail": 140,
+    "sourceNativeStateSessionRngExact": true,
+    "unknownHandQuantity": 2,
+    "unknownIdentitiesConsumed": false
+  },
+  "coldGate": {
+    "namedCases": 1095,
+    "uniqueNativeRoots": 726,
+    "allClosed": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 543.656167
+  },
+  "validation": {
+    "unitPassed": 202,
+    "fullFlowPassed": 1,
+    "browserPassed": 2,
+    "inputAuditPassed": 58,
+    "existingAomomoFailure": 1,
+    "sixHiddenDeckWorldsPassed": true
+  },
+  "firstTwo": {
+    "fullGraphsActionsValuesAndPlansUnchangedVsV276": 304,
+    "inheritedFirstRoundTimingChangesFromV274": 3,
+    "autonomousAssetVerificationStillPending": true
+  },
+  "latestActualR3": {
+    "version": "V276",
+    "board": 79,
+    "technologyCount": 6,
+    "income": "7C2E1card+1scan",
+    "wallMilliseconds": 4482
+  },
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87
+  },
+  "baseline": "V41",
+  "next": "Publish result center, preserveforeignV1/sharedindex, open report. Audit publicdisplay model/Node acquired-ID knowledge and known-held purposes; no fixed blind preference or lucky-card hindsight. Keep full goal R3development,R2-end review,3 R1 timing/assets and original23 autonomousfirst3.",
+  "productionSourceCommit": "5cb4d4edb7d23d1612e83f40d7c8844dbb82a624",
+  "sourcePushed": true,
+  "record": "reports/research/eea49fda.5cb4d4ed.quick-400.json",
+  "actualR3": {
+    "board": 83,
+    "technologyCount": 6,
+    "income": "7C2E1card+1scan",
+    "wallMilliseconds": 4490,
+    "newNativeInputs": 69,
+    "searches": 66,
+    "maxNativeInputs": 170,
+    "maxMilliseconds": 437.82825,
+    "allComplete": true,
+    "nativeStateSessionRngExact": true,
+    "resources": "C1E0pub1data0",
+    "hand": [
+      "dlc_25.png",
+      "dlc_24.png"
+    ],
+    "computer": [
+      1,
+      2,
+      3
+    ],
+    "blue": [
+      1
+    ],
+    "standardProbes": 1,
+    "specialPieces": 0,
+    "AmibaBluePositions": [
+      4
+    ],
+    "currentEndGameBonus": 33
+  },
+  "firstActualDifference": {
+    "input": 156,
+    "NativeBeforeExactToV276": true,
+    "old": "Amiba blue2",
+    "new": "Amiba blue4"
+  },
+  "actual157Choice": "display Amiba9; same complete Native/agent/control descriptor, not blind",
+  "actual177Benefit": "pay2C,4boardpoints+newstandardprobe; Amiba9 remains reserved",
+  "developmentAligned": false,
+  "highestControlledR3": 87,
+  "firstThreeHarnessPlanOnly": "adhoc/v277-autonomous-first3-next-validation-plan-20261107-v1.md",
+  "nextKnowledgeContractPlanOnly": "adhoc/v277-public-alien-offer-next-contract-20261107-v1.md"
+}

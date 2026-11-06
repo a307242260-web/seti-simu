@@ -1,0 +1,89 @@
+{
+  "scope": "Read-only exact descriptor comparison. Do not infer blind/display semantics from actionId alone; use this context Native target. No new action or AI query.",
+  "record": "reports/research/eea49fda.5cb4d4ed.quick-400.json",
+  "recordSha256": "18838d7a98ccf33b0c502a966192ddbb3f8d1ce6245a8034c12cea9e7e8fc197",
+  "input": 157,
+  "nativeAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:2ebd81c6",
+    "actorId": "player-white",
+    "stateVersion": 64,
+    "decisionVersion": 2,
+    "target": {
+      "kind": "residual-domain",
+      "choiceId": "amiba:display:9",
+      "source": "display",
+      "cardIndex": 9
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "获得展示的低重力研究",
+    "presentation": {
+      "cardKind": "pick",
+      "cardId": "9",
+      "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+      "imageAlt": "低重力研究"
+    }
+  },
+  "agentRequestedActionId": "choose_card:2ebd81c6",
+  "legalDescriptorMatchesNative": true,
+  "controlPath": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json",
+  "controlSha256": "340c1c0d36aaa5b7281cde297a8693683c7efc5a2f3af922818de5083c9d1a3d",
+  "controlDescriptorAlsoDisplay9": true,
+  "searchOpaqueCardsAfterSelection": 2,
+  "publicModelKnownAtMenu": 9,
+  "rootObservationAmibaTracesBefore156": {
+    "revealedSlotId": 1,
+    "traceSlotsByAlienSlotId": {
+      "1": {
+        "pink": {
+          "1": null,
+          "2": null,
+          "3": null,
+          "4": null
+        },
+        "yellow": {
+          "1": null,
+          "2": null,
+          "3": null,
+          "4": null
+        },
+        "blue": {
+          "1": null,
+          "2": null,
+          "3": null,
+          "4": null
+        }
+      }
+    },
+    "blindCardCount": 6,
+    "displayedCardAvailable": true
+  },
+  "laterActualPlayInput": 177,
+  "laterPlayAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "play_card",
+    "phase": "main",
+    "actionId": "play_card:c0e4e29f",
+    "actorId": "player-white",
+    "stateVersion": 74,
+    "decisionVersion": 2,
+    "target": {
+      "cardInstanceId": "alien-amiba-9-5"
+    },
+    "payload": {
+      "cost": {
+        "credits": 2
+      },
+      "handIndex": 1
+    },
+    "decision": null,
+    "summary": "amiba_9.webp"
+  },
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "clarification": "Two opaque slots are search representation, not proof that both cards are blind. Actual and controlled action select public Amiba9; the new owned instance is masked by root-known entity-ID rules. Root observation currently exposes availability but not displayed card index; audit public-display knowledge/purpose before changing fixed greedy selection."
+}
