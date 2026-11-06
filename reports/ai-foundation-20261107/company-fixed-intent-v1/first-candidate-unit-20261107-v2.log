@@ -1,0 +1,23 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: already selected intent must avoid repeated portfolio ranking {"stage":1,"stats":{"rankingCacheEntries":1,"maxRankingCacheEntries":64,"rankingCacheHits":1,"rankingCacheMisses":1,"rankedCards":3,"companyIntentReuses":0,"companyIntentRecoveries":1,"companyIntentGuardRejects":1,"rankingCacheHitsThisRoot":1,"rankingCacheMissesThisRoot":1,"rankedCardsThisRoot":3,"companyIntentReusesThisRoot":0,"companyIntentRecoveriesThisRoot":1,"companyIntentGuardRejectsThisRoot":1}}
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/company-fixed-intent.test.js:15:44)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

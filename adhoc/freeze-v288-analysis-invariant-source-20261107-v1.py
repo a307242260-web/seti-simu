@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/analysis-invariant-v1');prior=Path('reports/ai-foundation-20261107/transient-capital-direct-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['randomizer/game/ai/amiba-analysis-capital.js','randomizer/game/ai/analysis-invariant.test.js','adhoc/v288-analysis-invariant-contract-20261107-v1.md',str(D/'amiba-analysis-v287-reference-20261107-v1.js')];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+m={**old,'searchVersion':'seti-complete-decision-search-v288','resourcePolicy':'seti-goal-resource-preparation-v24','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v288-analysis-invariant-contract-20261107-v1.md','failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'Hoist invariant owned-blue tail requirements, bonuses, column scores and arithmetic key order across each fixed Amiba analysis local-candidate loop. Funding and every candidate endpoint remain unchanged. Non-region candidates borrow read-only symbols while privately copying writable blue traces; region symbol moves keep private copies. All580 complete V50 recorded inputs, mutable/frozen facts and custom-weight quotes match original in full. No new cache, equality, pruning, Native input or budget change.','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))

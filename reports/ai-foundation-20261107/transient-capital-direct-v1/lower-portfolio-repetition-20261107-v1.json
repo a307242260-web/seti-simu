@@ -1,0 +1,15 @@
+{
+  "scope": "Offline replay of all exact 580 previously captured V285 pure valuation inputs; no Native, AI or new state. Full-facts JSON keys diagnostic only, never a production equivalence or cache.",
+  "inputs": 580,
+  "lower": {
+    "calls": 2987,
+    "within": 181,
+    "global": 683
+  },
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "trace": "reports/ai-foundation-20261107/company-fixed-intent-v1/complete-capital-inputs-20261107-v1.v8.gz",
+  "traceSha256": "3e8ef62c3e9f92429e4d628ccba9b80f9b9860b3c0cdef68a31b7a60231556b5",
+  "completePortfolioUnchanged": true
+}

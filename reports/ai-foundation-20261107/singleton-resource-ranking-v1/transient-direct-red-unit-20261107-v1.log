@@ -1,0 +1,17 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/transient-capital-direct.test.js:3
+const filename=require.resolve('./resource-demand'),instance=new Module(filename,module);instance.filename=filename;instance.paths=module.paths;let calls=0;const nativeRequire=instance.require.bind(instance);instance.require=name=>name==='./state-value'?{...values,purposeCapital(...args){calls++;return values.purposeCapital(...args);},purposeCapitalValue(){throw Error('TRANSIENT_PREVIEW_MUST_NOT_BUILD_SCALAR_KEY');}}:nativeRequire(name);instance._compile(fs.readFileSync(filename,'utf8'),filename);const candidate=instance.exports,fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json'))),state=JSON.parse(fixture.compositionEnvelope.committedState),player=state.players.players.find(p=>p.id===fixture.seatId),original=JSON.stringify(state),facts=p=>({...probe.factsFromState(state,p),supply:state.tech,researchCost:6,analyzeEnergyCost:0});
+                                                                                                                                                                                                                                                                                                                                                                       ^
+
+Error: TRANSIENT_PREVIEW_MUST_NOT_BUILD_SCALAR_KEY
+    at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/transient-capital-direct.test.js:3:366)
+    at Object.planningCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:149:19)
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/transient-capital-direct.test.js:4:205)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+
+Node.js v22.22.0

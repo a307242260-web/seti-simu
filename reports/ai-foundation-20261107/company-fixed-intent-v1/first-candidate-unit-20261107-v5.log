@@ -1,0 +1,1 @@
+{"companyFixedIntent":"passed","reusedNativeControlInputs":3,"runs":[{"stage":0,"submissions":3,"reuses":2,"recoveries":0},{"stage":1,"submissions":2,"reuses":1,"recoveries":1},{"stage":2,"submissions":1,"reuses":0,"recoveries":1}],"changedContextGuards":6,"warmColdCompleteNativeState":true,"ruleRngPreserved":true,"rootRestored":true,"newAiQueries":0,"newAutonomousRuns":0}

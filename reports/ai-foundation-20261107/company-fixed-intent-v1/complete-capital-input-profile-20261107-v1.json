@@ -1,0 +1,30 @@
+{
+  "scope": "One separately labelled diagnostic of complete purposeCapital inputs after V285702.389084ms first cold failed. Existing complete scalar keys and V8 value signatures counted separately; instrumented times never replace acceptance. No production source modified, no extra hidden fact or new autonomous episode.",
+  "manifest": "reports/ai-foundation-20261107/company-fixed-intent-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "03cf95e66ab814c395d21be6df975000016ae36761aeea4b84dec79b3b24eb69",
+  "searchVersion": "seti-complete-decision-search-v285",
+  "valueModel": "seti-purpose-capital-state-value-v50",
+  "calls": 580,
+  "uniqueScalarKeys": 580,
+  "scalarRepeatCalls": 0,
+  "maxScalarRepeat": 1,
+  "uniqueSerializedInputs": 580,
+  "serializedRepeatCalls": 0,
+  "maxSerializedRepeat": 1,
+  "keyMilliseconds": 36.46066499999952,
+  "valueMilliseconds": 216.6222409999989,
+  "callers": {
+    "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)": 68,
+    "at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:542:17)": 441,
+    "at evaluateStateValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:580:19)": 70,
+    "at Object.blindIncomeBoundaryCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:249:67)": 1
+  },
+  "trace": "reports/ai-foundation-20261107/company-fixed-intent-v1/complete-capital-inputs-20261107-v1.v8.gz",
+  "traceSha256": "3e8ef62c3e9f92429e4d628ccba9b80f9b9860b3c0cdef68a31b7a60231556b5",
+  "actionId": "industry:e887dc52",
+  "value": 140.08333333333334,
+  "nativeInputs": 168,
+  "rootAndRngRestored": true,
+  "newPolicyDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

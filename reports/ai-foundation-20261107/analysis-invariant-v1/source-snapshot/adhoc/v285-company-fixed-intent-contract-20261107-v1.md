@@ -1,0 +1,13 @@
+# V285 / V50：公司换牌计划跨两个固定菜单复用（2026-11-07）
+
+V284首个实际132根完整168Native/644.880417ms，未准入、不重复取快样本。本轮单列CPU诊断保留原removalIsInert证明，仍同168/140.083333与公司行动；规划总值约204采样、公司swapIntent67、card-pick77、原生身份54。历史V223已证明身份子树缓存80211次写仅1次命中，继续禁用，不恢复旧缓存。
+
+原生3输入控制从实际132根，按起手已选计划：公司行动、换出DLC31、换入DLC32。两个中间菜单相对Session.baseState的完整workingState只改白色玩家industryRoundMarkRound/Turn；手牌、牌列、钱电数据、轮盘、科技、原生ID、RNG等全部未变。旧策略在这两处仍重算incomeSwapPlan及swapIntent，当前样例最终同选但重复估值。此控制不是全状态等价证明，通用复用必须逐次检查来源契约。
+
+契约：只处理Native单一residual_company_decision，原始journal首动作确为本席deepspace_swap_cards，head为swap_hand或swap_public且owner本席。workingState除本席的已花公司回合标记与宿主派生pendingEffectOwnerIds之外，须与完整baseState逐字段/数组顺序完全相同；公司标记须是本轮本turn。guard不能只比较手牌或牌列，不能忽略钱包、科技、其他玩家、轮盘、RNG、模型等。非该契约一律回原既有当前状态固定策略，不能假装等价。
+
+同一个不可变Native分支中，AnalysisPort将已选择的companySwap意图只传给该公司起手以及所选换出牌的后继菜单，使用弱引用并随openRoot/close清空；不会跨兄弟分支、换牌完成后、未知信息或另一个公司操作传播。每个实际菜单仍经过上述完整来源守卫，选项必须从当前Native菜单匹配。冷恢复没有内存计划时，从已验证的Native baseState重建同一贪心意图；换出牌与原计划不同则回原当前状态策略。当前动作actionId只来自当前菜单，不能保存旧actionId跨decision。
+
+不新增搜索根、牌子集、Native后继或剪枝，不减少3个原生输入费用。计划是原固定贪心政策的绑定与恢复，policy版本须更新，不能假称不同手牌/牌列等价。状态规范身份、完整估值V50、四null预算与256Native/600ms门槛不变。先以原生3输入、warm/cold每菜单、完整state/Session/RNG、字段变化和兄弟隔离红测试，再相关测试；冻结新来源后仅一次首测，再全1249旧案例+2新原生待选菜单、前两轮真实选择/资产、完整Node/Browser/输入审计及独立源码快照。未过门槛不跑新对局。最高87/最近85、教师105、V41及原goal范围均不变。
+
+冷恢复反例明确了一个原生诊断字段：prepareRoot在已存Session的base.meta.rngState.branch写true，下一正式保存从workingState移除此标记；原生规范身份早已忽略它。来源守卫只允许这一确切的true→不存在差异（不忽略算法或state数值），并继续完整比较其他RNG字段。测试额外改变真实Mulberry32 state应拒绝复用。对象字段按键集合和值比较，数组顺序仍精确保留；不以JSON对象键插入顺序误判领域状态。初版红测试将不同prepareRoot隐藏世界同原始真实世界直接比较而失败，该测试基线已修正：每份prepared源另起独立Native composition重放，完整committedState/Session/全部RNG逐字相同；原失败日志与有效重算红测试均保留。

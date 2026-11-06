@@ -1,0 +1,2404 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: warm and cold fixed choices reproduce the complete real Native endpoint except the declared fork-only branch marker
++ actual - expected
+... Skipped lines
+
+  {
+    aliens: {
+      aliens: {
+        '1': {
+          alienId: '阿米巴',
+...
+          alienId: null,
++         assignedAlienId: '半人马',
+-         assignedAlienId: '虫',
+          revealed: false,
+          traces: {
+            blue: {
+              extraCount: 0,
+              extraMarkers: [],
+...
+        displayedCardIndex: null,
++       initialConfiguration: null,
+        landingMarkers: [],
+        orbitMarkers: [],
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+...
+        displayedCardIndex: null,
++       initialConfiguration: {
++         cardDeck: [
++           4,
++           6,
++           7,
++           0,
++           1,
++           2,
++           8,
++           3,
++           5,
++           9
++         ]
++       },
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        scoreMarksByPlayerId: {},
+...
+        fossilsById: {},
++       initialConfiguration: null,
+-       initialConfiguration: {
+-         cardDeck: [
+-           9,
+-           0,
+-           7,
+-           2,
+-           3,
+-           8,
+-           4,
+-           6,
+-           1,
+-           5
+-         ],
+-         fossilOrder: [
+-           'fossil_02',
+-           'fossil_05',
+-           'fossil_03',
+-           'fossil_06',
+-           'fossil_01',
+-           'fossil_07',
+-           'fossil_04'
+-         ]
+-       },
+        panelFossilSlots: {},
+        planetFossilIds: {
+          jupiter: [],
+          saturn: []
+        },
+...
+        displayedCard1Index: null,
++       initialConfiguration: null,
+        playerCard2ById: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+...
+        freeScoreThreshold: null,
++       initialConfiguration: null,
+        paidScoreThreshold: null,
+        playerCardsById: {},
+        playerThreatByColor: {},
+        playerThreatById: {},
+        revealInitialized: false,
+...
+        faceSymbolSlots: {},
++       initialConfiguration: null,
+        panelSymbolSlots: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+...
+        displayedCardIndex: null,
++       initialConfiguration: null,
+        nextAnomalySectorX: null,
+        revealEarthX: null,
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+...
+      rngState: {
++       algorithm: 'seti-counterfactual-mulberry32-v2',
++       state: 1973672467
+-       algorithm: 'seti-simulation-mulberry32-v1',
+-       state: 3171573311
+      },
+      rulesetVersion: 'seti-runtime-v1.3',
+      schemaVersion: 'seti-committed-game-state-v1',
+      seed: 'seti-free-analyze-v1',
+      sequences: {
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/company-fixed-intent.test.js:13:86)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    aliens: {
+      aliens: {
+        '1': {
+          alienId: '阿米巴',
+          assignedAlienId: '阿米巴',
+          revealed: true,
+          traces: { blue: [Object], pink: [Object], yellow: [Object] }
+        },
+        '2': {
+          alienId: null,
+          assignedAlienId: '半人马',
+          revealed: false,
+          traces: { blue: [Object], pink: [Object], yellow: [Object] }
+        }
+      },
+      amiba: {
+        cardDeck: [ 7, 5, 2, 8, 4, 6 ],
+        displayedCardIndex: 9,
+        initialConfiguration: {
+          cardDeck: [
+            9, 0, 1, 3, 7,
+            5, 2, 8, 4, 6
+          ],
+          symbolOrder: [
+            'symbol_4',
+            'symbol_2',
+            'symbol_1',
+            'symbol_5',
+            'symbol_3'
+          ]
+        },
+        revealInitialized: true,
+        revealedByPlayerColor: 'white',
+        revealedByPlayerId: 'player-white',
+        revealedSlotId: 1,
+        symbolSlots: {
+          blue_1: 'symbol_3',
+          blue_3: 'symbol_1',
+          orange_1: 'symbol_4',
+          orange_2: 'symbol_2',
+          red_1: 'symbol_5'
+        },
+        symbolsById: {
+          symbol_1: { sequence: 3, slotId: 'blue_3', symbolId: 'symbol_1' },
+          symbol_2: { sequence: 2, slotId: 'orange_2', symbolId: 'symbol_2' },
+          symbol_3: { sequence: 5, slotId: 'blue_1', symbolId: 'symbol_3' },
+          symbol_4: { sequence: 1, slotId: 'orange_1', symbolId: 'symbol_4' },
+          symbol_5: { sequence: 4, slotId: 'red_1', symbolId: 'symbol_5' }
+        },
+        traceSlotsByAlienSlotId: { '1': { blue: [Object], pink: [Object], yellow: [Object] } }
+      },
+      aomomo: {
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        initialConfiguration: null,
+        landingMarkers: [],
+        orbitMarkers: [],
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      },
+      banrenma: {
+        bonusSlots: {},
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        initialConfiguration: {
+          cardDeck: [
+            4, 6, 7, 0, 1,
+            2, 8, 3, 5, 9
+          ]
+        },
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        scoreMarksByPlayerId: {},
+        traceSlotsByAlienSlotId: {}
+      },
+      chong: {
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        completedTransports: [],
+        displayedCardIndex: null,
+        fossilsById: {},
+        initialConfiguration: null,
+        panelFossilSlots: {},
+        planetFossilIds: { jupiter: [], saturn: [] },
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {},
+        transportTasksByRocketId: {},
+        unlockedBluePositions: [ 7, 8, 9 ]
+      },
+      fangzhou: {
+        card1Deck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8
+        ],
+        card1Revealed: [],
+        card1RevealedSinceShuffle: 0,
+        card1ShuffleCount: 0,
+        displayedCard1Index: null,
+        initialConfiguration: null,
+        playerCard2ById: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {},
+        unlockCountByPlayerId: {}
+      },
+      jiuzhe: {
+        cardsDealt: false,
+        freeScoreThreshold: null,
+        initialConfiguration: null,
+        paidScoreThreshold: null,
+        playerCardsById: {},
+        playerThreatByColor: {},
+        playerThreatById: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      },
+      neutralScoreTraceMarks: {},
+      revealPoolAlienIds: [
+        '九折',   '半人马',
+        '奥陌陌', '异常点',
+        '方舟',   '符文族',
+        '虫',     '阿米巴'
+      ],
+      runezu: {
+        availableSymbols: [],
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        faceSymbolSlots: {},
+        initialConfiguration: null,
+        panelSymbolSlots: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        sourceSymbolSlots: {},
+        traceSlotsByAlienSlotId: {}
+      },
+      yichangdian: {
+        anomalies: [],
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        initialConfiguration: null,
+        nextAnomalySectorX: null,
+        revealEarthX: null,
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      }
+    },
+    cards: {
+      discardPile: [
+        {
+          cardId: 'b_75.webp',
+          cardTypeCode: 2,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-8-0',
+          incomeCode: 0,
+          price: 2,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_63.webp',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-45-0',
+          incomeCode: 0,
+          price: 2,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_11.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-44-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_36.png',
+          cardTypeCode: 0,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-43-0',
+          incomeCode: 2,
+          price: 2,
+          scanActionCode: 3,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_114.webp',
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-37-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_34.png',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-46-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 1,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_38.png',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-39-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_106.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-4-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_33.png',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-48-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_109.webp',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-9-0',
+          incomeCode: 1,
+          price: 3,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_2.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-17-0',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_21.png',
+          cardTypeCode: 1,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-19-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_5.png',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-24-pass-1-5',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_37.png',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-42-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_78.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-26-pass-2-2',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_49.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-22-pass-1-3',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_71.webp',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-36-0',
+          incomeCode: 0,
+          price: 0,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_53.webp',
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-28-pass-2-4',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_65.webp',
+          cardTypeCode: 0,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-11-0',
+          incomeCode: 1,
+          price: 3,
+          scanActionCode: 3,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_62.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-54-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_10.webp',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-53-0',
+          incomeCode: 1,
+          price: 0,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_7.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-27-pass-2-3',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 3,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_24.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-21-pass-1-2',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          alienCardId: 3,
+          amibaCard: true,
+          amibaTask: null,
+          cardId: 'amiba_3.webp',
+          cardTypeCode: 0,
+          discardActionCode: 3,
+          faceUp: true,
+          id: 'alien-amiba-3-3',
+          incomeCode: 1,
+          price: 0,
+          scanActionCode: 3,
+          set: 'alien:阿米巴'
+        }
+      ],
+      drawPileCardIds: [
+        'dlc_27.png', 'dlc_26.png', 'dlc_25.png', 'dlc_24.png', 'dlc_20.png',
+        'dlc_19.png', 'b_16.webp',  'dlc_17.png', 'dlc_16.png', 'dlc_15.png',
+        'dlc_14.png', 'b_9.webp',   'b_60.webp',  'dlc_13.png', 'b_17.webp',
+        'dlc_10.png', 'dlc_8.png',  'b_18.webp',  'dlc_7.png',  'dlc_6.png',
+        'dlc_3.png',  'dlc_2.png',  'dlc_1.png',  'b_140.webp', 'b_137.webp',
+        'b_136.webp', 'b_135.webp', 'dlc_41.png', 'b_134.webp', 'b_133.webp',
+        'b_132.webp', 'b_131.webp', 'b_56.webp',  'b_130.webp', 'b_129.webp',
+        'b_128.webp', 'b_127.webp', 'b_64.webp',  'b_116.webp', 'b_82.webp',
+        'b_118.webp', 'b_95.webp',  'b_47.webp',  'b_96.webp',  'b_74.webp',
+        'b_45.webp',  'b_126.webp', 'b_28.webp',  'b_58.webp',  'b_59.webp',
+        'b_39.webp',  'b_122.webp', 'dlc_42.png', 'b_120.webp', 'b_19.webp',
+        'b_37.webp',  'b_61.webp',  'b_91.webp',  'b_8.webp',   'b_84.webp',
+        'b_51.webp',  'b_1.webp',   'b_36.webp',  'b_69.webp',  'b_6.webp',
+        'b_31.webp',  'b_68.webp',  'b_27.webp',  'b_124.webp', 'b_103.webp',
+        'b_34.webp',  'b_81.webp',  'b_102.webp', 'b_70.webp',  'b_105.webp',
+        'b_108.webp', 'b_46.webp',  'b_42.webp',  'b_25.webp',  'b_83.webp',
+        'b_41.webp',  'b_88.webp',  'b_43.webp',  'b_22.webp',  'b_21.webp',
+        'b_23.webp',  'b_85.webp',  'b_93.webp',  'b_112.webp', 'b_121.webp',
+        'b_44.webp',  'b_20.webp',  'b_3.webp',   'b_67.webp',  'b_98.webp',
+        'b_119.webp', 'b_73.webp',  'b_113.webp', 'b_26.webp',  'b_89.webp',
+        ... 25 more items
+      ],
+      passReservePiles: {
+        '1': [
+          {
+            cardId: 'dlc_4.png',
+            cardTypeCode: 0,
+            discardActionCode: 0,
+            faceUp: true,
+            id: 'card-20-pass-1-1',
+            incomeCode: 0,
+            price: 1,
+            scanActionCode: 3,
+            set: 'space-agency'
+          }
+        ],
+        '2': [
+          {
+            cardId: 'dlc_18.png',
+            cardTypeCode: 0,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-25-pass-2-1',
+            incomeCode: 0,
+            price: 2,
+            scanActionCode: 1,
+            set: 'space-agency'
+          }
+        ],
+        '3': [
+          {
+            cardId: 'b_111.webp',
+            cardTypeCode: 1,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-30-pass-3-1',
+            incomeCode: 1,
+            price: 2,
+            scanActionCode: 1,
+            set: 'basic'
+          },
+          {
+            cardId: 'b_32.webp',
+            cardTypeCode: 0,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-32-pass-3-3',
+            incomeCode: 2,
+            price: 1,
+            scanActionCode: 0,
+            set: 'basic'
+          }
+        ]
+      },
+      publicCards: [
+        {
+          cardId: 'dlc_31.png',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-51-0',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_48.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-18-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_14.webp',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-50-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 2,
+          set: 'basic'
+        }
+      ],
+      removedFromGameCardIds: [
+        'b_97.webp',
+        'dlc_22.png',
+        'dlc_35.png',
+        'b_115.webp',
+        'b_66.webp',
+        'b_33.webp',
+        'dlc_40.png',
+        'dlc_39.png'
+      ]
+    },
+    data: {
+      nebulae: {
+        aomomo: { tokens: [ [Object], [Object], [Object] ] },
+        'sector-1-a': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-1-b': { tokens: [ [Object], [Object], [Object], [Object] ] },
+        'sector-2-a': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-2-b': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-3-a': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-3-b': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-4-a': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-4-b': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      },
+      sectorExtraMarks: { 'sector-2-a': [] },
+      sectorSettlements: {
+        sectors: {
+          'sector-2-a': {
+            sectorId: 'sector-2-a',
+            settlementCount: 1,
+            winners: [Array]
+          }
+        },
+        winsByPlayerId: { 'player-white': [ [Object] ] }
+      }
+    },
+    finalScoring: {
+      thresholds: [ 25, 50, 70 ],
+      tileVariants: { a: 2, b: 1, c: 1, d: 2 },
+      tiles: {
+        a: { id: 'a', marks: [] },
+        b: { id: 'b', marks: [ [Object] ] },
+        c: { id: 'c', marks: [] },
+        d: { id: 'd', marks: [ [Object] ] }
+      }
+    },
+    match: {
+      cardPlayContext: {
+        cardLaunch: {
+          actorId: 'player-white',
+          cardInstanceId: 'card-13-0',
+          rocketId: 3,
+          skipped: false
+        },
+        lastScanNebulaId: 'sector-4-b'
+      },
+      decisionVersion: 1
+    },
+    meta: {
+      gameId: 'seti-simulation-runtime',
+      rngState: {
+        algorithm: 'seti-counterfactual-mulberry32-v2',
+        state: 1973672467
+      },
+      rulesetVersion: 'seti-runtime-v1.3',
+      schemaVersion: 'seti-committed-game-state-v1',
+      seed: 'seti-free-analyze-v1',
+      sequences: {
+        alienEntity: 4,
+        card: 58,
+        dataToken: 23,
+        finalMark: 3,
+        nebulaReplacement: 15,
+        nebulaToken: 52,
+        rocket: 5
+      },
+      stateVersion: 55,
+      worldVersion: 'human-405-world-v1'
+    },
+    pieces: {
+      activeRocketId: 2,
+      playerRocketSequences: { 'player-green': [ 1, 2 ], 'player-white': [] },
+      rockets: [
+        {
+          angleDegrees: 202.5,
+          color: 'green',
+          id: 1,
+          launchGrid: { x: 5, y: 1 },
+          launchSectorCoordinate: { x: 5, y: 1 },
+          playerId: 'player-green',
+          playerSequence: 1,
+          radius: 84.68,
+          sectorX: 6,
+          sectorY: 1,
+          slotIndex: 4,
+          surface: 'solar-board'
+        },
+        {
+          angleDegrees: 189.9,
+          color: 'green',
+          id: 2,
+          launchGrid: { x: 5, y: 1 },
+          launchSectorCoordinate: { x: 5, y: 1 },
+          playerId: 'player-green',
+          playerSequence: 2,
+          radius: 69.42,
+          sectorX: 6,
+          sectorY: 1,
+          slotIndex: 0,
+          surface: 'solar-board'
+        }
+      ]
+    },
+    planets: {
+      planets: {
+        aomomo: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        earth: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        jupiter: {
+          landingMarkers: [ [Object] ],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        mars: {
+          landingMarkers: [],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        mercury: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        neptune: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        saturn: {
+          landingMarkers: [],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        uranus: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        venus: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] }
+      }
+    },
+    players: {
+      players: [
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'blue',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-blue',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 1,
+            credits: 3,
+            energy: 2,
+            handSize: 2,
+            publicity: 0
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '蓝色玩家',
+          orbitCount: 1,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 11,
+            energy: 6,
+            handSize: 5,
+            publicity: 4,
+            score: 7
+          },
+          scoreSources: { initialScore: 7 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'green',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-green',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 3,
+            publicity: 0
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '绿色玩家',
+          orbitCount: 0,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 8,
+            energy: 5,
+            handSize: 5,
+            publicity: 3,
+            score: 7
+          },
+          scoreSources: { initialScore: 7 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'brown',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-brown',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 1,
+            publicity: 1
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHeliosPassiveInitialized: true,
+          industryHeliosPassiveSlots: { blue: false, orange: false, purple: false },
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '棕色玩家',
+          orbitCount: 0,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 4,
+            credits: 9,
+            energy: 4,
+            handSize: 5,
+            publicity: 9,
+            score: 8
+          },
+          scoreSources: { initialScore: 8 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'white',
+          completedTaskCount: 0,
+          dataState: {
+            discardedCount: 0,
+            placedTokens: [Array],
+            poolTokens: [Array]
+          },
+          hand: [ [Object], [Object], [Object] ],
+          id: 'player-white',
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 6,
+            energy: 2,
+            handSize: 1,
+            publicity: 0
+          },
+          industryAlienLabPanels: { blue: true, pink: true, yellow: true },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryFutureSpan: { card: null, playing: false, targetScore: 0 },
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 3,
+          industryRoundMarkTurn: 7,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPassiveSlots: { blue: false, red: false, yellow: false },
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '白色玩家',
+          orbitCount: 2,
+          passCompletionPending: false,
+          reservedCards: [ [Object], [Object], [Object] ],
+          resources: {
+            additionalPublicScan: 1,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 9,
+            energy: 1,
+            handSize: 3,
+            publicity: 1,
+            score: 54
+          },
+          scoreSources: {
+            alienEffectScore: 4,
+            alienTraceBlueScore: 5,
+            alienTracePinkScore: 5,
+            alienTraceYellowScore: 5,
+            blueTechScore: 6,
+            initialScore: 6,
+            landScore: 7,
+            orbitScore: 3,
+            scanScore: 2,
+            techBonusScore: 11
+          },
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          }
+        }
+      ]
+    },
+    solarSystem: {
+      aomomoActive: false,
+      rotation: {
+        rotationCount: 7,
+        wheel1Steps: -7,
+        wheel2Steps: -25,
+        wheel3Steps: -19,
+        wheel4Steps: -10
+      },
+      sectorBySlot: { '1': 3, '2': 1, '3': 2, '4': 4 }
+    },
+    tech: {
+      stacks: {
+        blue1: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_3f', 'bonus_1p', 'bonus_1c', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 1,
+          techType: 'blue',
+          tileId: 'blue1'
+        },
+        blue2: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1c', 'bonus_1p', 'bonus_3f', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 2,
+          techType: 'blue',
+          tileId: 'blue2'
+        },
+        blue3: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1m', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'blue',
+          tileId: 'blue3'
+        },
+        blue4: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1c', 'bonus_3f', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 4,
+          techType: 'blue',
+          tileId: 'blue4'
+        },
+        orange1: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1m', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 1,
+          techType: 'orange',
+          tileId: 'orange1'
+        },
+        orange2: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1m', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 2,
+          techType: 'orange',
+          tileId: 'orange2'
+        },
+        orange3: {
+          bonusId: 'bonus_3f',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_3f', 'bonus_1m', 'bonus_1c', 'bonus_1p' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'orange',
+          tileId: 'orange3'
+        },
+        orange4: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1m', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 4,
+          techType: 'orange',
+          tileId: 'orange4'
+        },
+        purple1: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1m', 'bonus_1p', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 1,
+          techType: 'purple',
+          tileId: 'purple1'
+        },
+        purple2: {
+          bonusId: 'bonus_1m',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1m', 'bonus_1c', 'bonus_3f', 'bonus_1p' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 2,
+          techType: 'purple',
+          tileId: 'purple2'
+        },
+        purple3: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1p', 'bonus_1m', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'purple',
+          tileId: 'purple3'
+        },
+        purple4: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1m', 'bonus_1c', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 4,
+          techType: 'purple',
+          tileId: 'purple4'
+        }
+      }
+    },
+    turn: {
+      actionCycleNumber: 4,
+      activePlayerCount: 4,
+      activePlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      cardTurnEventBonuses: [],
+      completedTurnPlayerIds: [],
+      currentPlayerId: 'player-white',
+      gameEndReason: null,
+      gameEnded: false,
+      passedPlayerIds: [ 'player-blue', 'player-brown', 'player-green' ],
+      roundNumber: 3,
+      startPlayerId: 'player-blue',
+      turnNumber: 7,
+      turnOrderPlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      visitedPlanetsByPlayerId: {}
+    }
+  },
+  expected: {
+    aliens: {
+      aliens: {
+        '1': {
+          alienId: '阿米巴',
+          assignedAlienId: '阿米巴',
+          revealed: true,
+          traces: { blue: [Object], pink: [Object], yellow: [Object] }
+        },
+        '2': {
+          alienId: null,
+          assignedAlienId: '虫',
+          revealed: false,
+          traces: { blue: [Object], pink: [Object], yellow: [Object] }
+        }
+      },
+      amiba: {
+        cardDeck: [ 7, 5, 2, 8, 4, 6 ],
+        displayedCardIndex: 9,
+        initialConfiguration: {
+          cardDeck: [
+            9, 0, 1, 3, 7,
+            5, 2, 8, 4, 6
+          ],
+          symbolOrder: [
+            'symbol_4',
+            'symbol_2',
+            'symbol_1',
+            'symbol_5',
+            'symbol_3'
+          ]
+        },
+        revealInitialized: true,
+        revealedByPlayerColor: 'white',
+        revealedByPlayerId: 'player-white',
+        revealedSlotId: 1,
+        symbolSlots: {
+          blue_1: 'symbol_3',
+          blue_3: 'symbol_1',
+          orange_1: 'symbol_4',
+          orange_2: 'symbol_2',
+          red_1: 'symbol_5'
+        },
+        symbolsById: {
+          symbol_1: { sequence: 3, slotId: 'blue_3', symbolId: 'symbol_1' },
+          symbol_2: { sequence: 2, slotId: 'orange_2', symbolId: 'symbol_2' },
+          symbol_3: { sequence: 5, slotId: 'blue_1', symbolId: 'symbol_3' },
+          symbol_4: { sequence: 1, slotId: 'orange_1', symbolId: 'symbol_4' },
+          symbol_5: { sequence: 4, slotId: 'red_1', symbolId: 'symbol_5' }
+        },
+        traceSlotsByAlienSlotId: { '1': { blue: [Object], pink: [Object], yellow: [Object] } }
+      },
+      aomomo: {
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        landingMarkers: [],
+        orbitMarkers: [],
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      },
+      banrenma: {
+        bonusSlots: {},
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        scoreMarksByPlayerId: {},
+        traceSlotsByAlienSlotId: {}
+      },
+      chong: {
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        completedTransports: [],
+        displayedCardIndex: null,
+        fossilsById: {},
+        initialConfiguration: {
+          cardDeck: [
+            9, 0, 7, 2, 3,
+            8, 4, 6, 1, 5
+          ],
+          fossilOrder: [
+            'fossil_02',
+            'fossil_05',
+            'fossil_03',
+            'fossil_06',
+            'fossil_01',
+            'fossil_07',
+            'fossil_04'
+          ]
+        },
+        panelFossilSlots: {},
+        planetFossilIds: { jupiter: [], saturn: [] },
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {},
+        transportTasksByRocketId: {},
+        unlockedBluePositions: [ 7, 8, 9 ]
+      },
+      fangzhou: {
+        card1Deck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8
+        ],
+        card1Revealed: [],
+        card1RevealedSinceShuffle: 0,
+        card1ShuffleCount: 0,
+        displayedCard1Index: null,
+        playerCard2ById: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {},
+        unlockCountByPlayerId: {}
+      },
+      jiuzhe: {
+        cardsDealt: false,
+        freeScoreThreshold: null,
+        paidScoreThreshold: null,
+        playerCardsById: {},
+        playerThreatByColor: {},
+        playerThreatById: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      },
+      neutralScoreTraceMarks: {},
+      revealPoolAlienIds: [
+        '九折',   '半人马',
+        '奥陌陌', '异常点',
+        '方舟',   '符文族',
+        '虫',     '阿米巴'
+      ],
+      runezu: {
+        availableSymbols: [],
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        faceSymbolSlots: {},
+        panelSymbolSlots: {},
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        sourceSymbolSlots: {},
+        traceSlotsByAlienSlotId: {}
+      },
+      yichangdian: {
+        anomalies: [],
+        cardDeck: [
+          0, 1, 2, 3, 4,
+          5, 6, 7, 8, 9
+        ],
+        displayedCardIndex: null,
+        nextAnomalySectorX: null,
+        revealEarthX: null,
+        revealInitialized: false,
+        revealedByPlayerColor: null,
+        revealedByPlayerId: null,
+        revealedSlotId: null,
+        traceSlotsByAlienSlotId: {}
+      }
+    },
+    cards: {
+      discardPile: [
+        {
+          cardId: 'b_75.webp',
+          cardTypeCode: 2,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-8-0',
+          incomeCode: 0,
+          price: 2,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_63.webp',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-45-0',
+          incomeCode: 0,
+          price: 2,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_11.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-44-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_36.png',
+          cardTypeCode: 0,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-43-0',
+          incomeCode: 2,
+          price: 2,
+          scanActionCode: 3,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_114.webp',
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-37-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_34.png',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-46-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 1,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_38.png',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-39-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_106.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-4-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_33.png',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-48-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_109.webp',
+          cardTypeCode: 0,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-9-0',
+          incomeCode: 1,
+          price: 3,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_2.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-17-0',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'dlc_21.png',
+          cardTypeCode: 1,
+          discardActionCode: 1,
+          faceUp: true,
+          id: 'card-19-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_5.png',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-24-pass-1-5',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 2,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'dlc_37.png',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-42-0',
+          incomeCode: 2,
+          price: 0,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_78.webp',
+          cardTypeCode: 1,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-26-pass-2-2',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_49.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-22-pass-1-3',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_71.webp',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-36-0',
+          incomeCode: 0,
+          price: 0,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_53.webp',
+          cardTypeCode: 2,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-28-pass-2-4',
+          incomeCode: 2,
+          price: 1,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_65.webp',
+          cardTypeCode: 0,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-11-0',
+          incomeCode: 1,
+          price: 3,
+          scanActionCode: 3,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_62.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-54-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 2,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_10.webp',
+          cardTypeCode: 1,
+          discardActionCode: 2,
+          faceUp: true,
+          id: 'card-53-0',
+          incomeCode: 1,
+          price: 0,
+          scanActionCode: 1,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_7.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-27-pass-2-3',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 3,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_24.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-21-pass-1-2',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          alienCardId: 3,
+          amibaCard: true,
+          amibaTask: null,
+          cardId: 'amiba_3.webp',
+          cardTypeCode: 0,
+          discardActionCode: 3,
+          faceUp: true,
+          id: 'alien-amiba-3-3',
+          incomeCode: 1,
+          price: 0,
+          scanActionCode: 3,
+          set: 'alien:阿米巴'
+        }
+      ],
+      drawPileCardIds: [
+        'dlc_27.png', 'dlc_26.png', 'dlc_25.png', 'dlc_24.png', 'dlc_20.png',
+        'dlc_19.png', 'b_16.webp',  'dlc_17.png', 'dlc_16.png', 'dlc_15.png',
+        'dlc_14.png', 'b_9.webp',   'b_60.webp',  'dlc_13.png', 'b_17.webp',
+        'dlc_10.png', 'dlc_8.png',  'b_18.webp',  'dlc_7.png',  'dlc_6.png',
+        'dlc_3.png',  'dlc_2.png',  'dlc_1.png',  'b_140.webp', 'b_137.webp',
+        'b_136.webp', 'b_135.webp', 'dlc_41.png', 'b_134.webp', 'b_133.webp',
+        'b_132.webp', 'b_131.webp', 'b_56.webp',  'b_130.webp', 'b_129.webp',
+        'b_128.webp', 'b_127.webp', 'b_64.webp',  'b_116.webp', 'b_82.webp',
+        'b_118.webp', 'b_95.webp',  'b_47.webp',  'b_96.webp',  'b_74.webp',
+        'b_45.webp',  'b_126.webp', 'b_28.webp',  'b_58.webp',  'b_59.webp',
+        'b_39.webp',  'b_122.webp', 'dlc_42.png', 'b_120.webp', 'b_19.webp',
+        'b_37.webp',  'b_61.webp',  'b_91.webp',  'b_8.webp',   'b_84.webp',
+        'b_51.webp',  'b_1.webp',   'b_36.webp',  'b_69.webp',  'b_6.webp',
+        'b_31.webp',  'b_68.webp',  'b_27.webp',  'b_124.webp', 'b_103.webp',
+        'b_34.webp',  'b_81.webp',  'b_102.webp', 'b_70.webp',  'b_105.webp',
+        'b_108.webp', 'b_46.webp',  'b_42.webp',  'b_25.webp',  'b_83.webp',
+        'b_41.webp',  'b_88.webp',  'b_43.webp',  'b_22.webp',  'b_21.webp',
+        'b_23.webp',  'b_85.webp',  'b_93.webp',  'b_112.webp', 'b_121.webp',
+        'b_44.webp',  'b_20.webp',  'b_3.webp',   'b_67.webp',  'b_98.webp',
+        'b_119.webp', 'b_73.webp',  'b_113.webp', 'b_26.webp',  'b_89.webp',
+        ... 25 more items
+      ],
+      passReservePiles: {
+        '1': [
+          {
+            cardId: 'dlc_4.png',
+            cardTypeCode: 0,
+            discardActionCode: 0,
+            faceUp: true,
+            id: 'card-20-pass-1-1',
+            incomeCode: 0,
+            price: 1,
+            scanActionCode: 3,
+            set: 'space-agency'
+          }
+        ],
+        '2': [
+          {
+            cardId: 'dlc_18.png',
+            cardTypeCode: 0,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-25-pass-2-1',
+            incomeCode: 0,
+            price: 2,
+            scanActionCode: 1,
+            set: 'space-agency'
+          }
+        ],
+        '3': [
+          {
+            cardId: 'b_111.webp',
+            cardTypeCode: 1,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-30-pass-3-1',
+            incomeCode: 1,
+            price: 2,
+            scanActionCode: 1,
+            set: 'basic'
+          },
+          {
+            cardId: 'b_32.webp',
+            cardTypeCode: 0,
+            discardActionCode: 1,
+            faceUp: true,
+            id: 'card-32-pass-3-3',
+            incomeCode: 2,
+            price: 1,
+            scanActionCode: 0,
+            set: 'basic'
+          }
+        ]
+      },
+      publicCards: [
+        {
+          cardId: 'dlc_31.png',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-51-0',
+          incomeCode: 0,
+          price: 1,
+          scanActionCode: 0,
+          set: 'space-agency'
+        },
+        {
+          cardId: 'b_48.webp',
+          cardTypeCode: 0,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-18-0',
+          incomeCode: 1,
+          price: 1,
+          scanActionCode: 0,
+          set: 'basic'
+        },
+        {
+          cardId: 'b_14.webp',
+          cardTypeCode: 3,
+          discardActionCode: 0,
+          faceUp: true,
+          id: 'card-50-0',
+          incomeCode: 1,
+          price: 2,
+          scanActionCode: 2,
+          set: 'basic'
+        }
+      ],
+      removedFromGameCardIds: [
+        'b_97.webp',
+        'dlc_22.png',
+        'dlc_35.png',
+        'b_115.webp',
+        'b_66.webp',
+        'b_33.webp',
+        'dlc_40.png',
+        'dlc_39.png'
+      ]
+    },
+    data: {
+      nebulae: {
+        aomomo: { tokens: [ [Object], [Object], [Object] ] },
+        'sector-1-a': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-1-b': { tokens: [ [Object], [Object], [Object], [Object] ] },
+        'sector-2-a': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-2-b': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-3-a': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        'sector-3-b': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-4-a': {
+          tokens: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        },
+        'sector-4-b': {
+          tokens: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      },
+      sectorExtraMarks: { 'sector-2-a': [] },
+      sectorSettlements: {
+        sectors: {
+          'sector-2-a': {
+            sectorId: 'sector-2-a',
+            settlementCount: 1,
+            winners: [Array]
+          }
+        },
+        winsByPlayerId: { 'player-white': [ [Object] ] }
+      }
+    },
+    finalScoring: {
+      thresholds: [ 25, 50, 70 ],
+      tileVariants: { a: 2, b: 1, c: 1, d: 2 },
+      tiles: {
+        a: { id: 'a', marks: [] },
+        b: { id: 'b', marks: [ [Object] ] },
+        c: { id: 'c', marks: [] },
+        d: { id: 'd', marks: [ [Object] ] }
+      }
+    },
+    match: {
+      cardPlayContext: {
+        cardLaunch: {
+          actorId: 'player-white',
+          cardInstanceId: 'card-13-0',
+          rocketId: 3,
+          skipped: false
+        },
+        lastScanNebulaId: 'sector-4-b'
+      },
+      decisionVersion: 1
+    },
+    meta: {
+      gameId: 'seti-simulation-runtime',
+      rngState: { algorithm: 'seti-simulation-mulberry32-v1', state: 3171573311 },
+      rulesetVersion: 'seti-runtime-v1.3',
+      schemaVersion: 'seti-committed-game-state-v1',
+      seed: 'seti-free-analyze-v1',
+      sequences: {
+        alienEntity: 4,
+        card: 58,
+        dataToken: 23,
+        finalMark: 3,
+        nebulaReplacement: 15,
+        nebulaToken: 52,
+        rocket: 5
+      },
+      stateVersion: 55,
+      worldVersion: 'human-405-world-v1'
+    },
+    pieces: {
+      activeRocketId: 2,
+      playerRocketSequences: { 'player-green': [ 1, 2 ], 'player-white': [] },
+      rockets: [
+        {
+          angleDegrees: 202.5,
+          color: 'green',
+          id: 1,
+          launchGrid: { x: 5, y: 1 },
+          launchSectorCoordinate: { x: 5, y: 1 },
+          playerId: 'player-green',
+          playerSequence: 1,
+          radius: 84.68,
+          sectorX: 6,
+          sectorY: 1,
+          slotIndex: 4,
+          surface: 'solar-board'
+        },
+        {
+          angleDegrees: 189.9,
+          color: 'green',
+          id: 2,
+          launchGrid: { x: 5, y: 1 },
+          launchSectorCoordinate: { x: 5, y: 1 },
+          playerId: 'player-green',
+          playerSequence: 2,
+          radius: 69.42,
+          sectorX: 6,
+          sectorY: 1,
+          slotIndex: 0,
+          surface: 'solar-board'
+        }
+      ]
+    },
+    planets: {
+      planets: {
+        aomomo: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        earth: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        jupiter: {
+          landingMarkers: [ [Object] ],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        mars: {
+          landingMarkers: [],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        mercury: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        neptune: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        saturn: {
+          landingMarkers: [],
+          orbitMarkers: [ [Object] ],
+          satelliteLandings: []
+        },
+        uranus: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] },
+        venus: { landingMarkers: [], orbitMarkers: [], satelliteLandings: [] }
+      }
+    },
+    players: {
+      players: [
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'blue',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-blue',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 1,
+            credits: 3,
+            energy: 2,
+            handSize: 2,
+            publicity: 0
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '蓝色玩家',
+          orbitCount: 1,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 11,
+            energy: 6,
+            handSize: 5,
+            publicity: 4,
+            score: 7
+          },
+          scoreSources: { initialScore: 7 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'green',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-green',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 3,
+            publicity: 0
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '绿色玩家',
+          orbitCount: 0,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 8,
+            energy: 5,
+            handSize: 5,
+            publicity: 3,
+            score: 7
+          },
+          scoreSources: { initialScore: 7 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'brown',
+          completedTaskCount: 0,
+          dataState: { discardedCount: 0, placedTokens: [], poolTokens: [Array] },
+          hand: [ [Object], [Object], [Object], [Object], [Object] ],
+          id: 'player-brown',
+          income: {
+            additionalPublicScan: 0,
+            availableData: 0,
+            credits: 3,
+            energy: 1,
+            handSize: 1,
+            publicity: 1
+          },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryHeliosPassiveInitialized: true,
+          industryHeliosPassiveSlots: { blue: false, orange: false, purple: false },
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 0,
+          industryRoundMarkTurn: 0,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '棕色玩家',
+          orbitCount: 0,
+          passCompletionPending: false,
+          reservedCards: [],
+          resources: {
+            additionalPublicScan: 0,
+            aomomoFossils: 0,
+            availableData: 4,
+            credits: 9,
+            energy: 4,
+            handSize: 5,
+            publicity: 9,
+            score: 8
+          },
+          scoreSources: { initialScore: 8 },
+          techState: { blueBoardSlots: {}, disabledTiles: {}, ownedTiles: {} }
+        },
+        {
+          blueBonusResources: { credits: 0, energy: 0 },
+          color: 'white',
+          completedTaskCount: 0,
+          dataState: {
+            discardedCount: 0,
+            placedTokens: [Array],
+            poolTokens: [Array]
+          },
+          hand: [ [Object], [Object], [Object] ],
+          id: 'player-white',
+          income: {
+            additionalPublicScan: 1,
+            availableData: 0,
+            credits: 6,
+            energy: 2,
+            handSize: 1,
+            publicity: 0
+          },
+          industryAlienLabPanels: { blue: true, pink: true, yellow: true },
+          industryBorrowedTechRound: 0,
+          industryBorrowedTechTileId: null,
+          industryBorrowedTechTurn: 0,
+          industryFutureSpan: { card: null, playing: false, targetScore: 0 },
+          industryHuanyuFreeMoveRound: 0,
+          industryHuanyuFreeMoveTurn: 0,
+          industryHuanyuFreeMovesLeft: 0,
+          industryHuanyuMovedRocketIds: [],
+          industryLastPlayedCardThisRound: null,
+          industryPlayedCardRound: 0,
+          industryPlayedCardThisRound: false,
+          industryPlayedCardTurn: 0,
+          industryRoundMarkRound: 3,
+          industryRoundMarkTurn: 7,
+          industrySentinelArmedRound: 0,
+          industrySentinelArmedTurn: 0,
+          industryStrategyPassiveSlots: { blue: false, red: false, yellow: false },
+          industryStrategyPlayInteractionPending: false,
+          industryStrategyPlayInteractionRound: 0,
+          industryStrategyPlayScanCode: null,
+          initialSelection: { industry: [Object], removedInitialCards: [Array] },
+          mainActionCompleted: false,
+          name: '白色玩家',
+          orbitCount: 2,
+          passCompletionPending: false,
+          reservedCards: [ [Object], [Object], [Object] ],
+          resources: {
+            additionalPublicScan: 1,
+            aomomoFossils: 0,
+            availableData: 2,
+            credits: 9,
+            energy: 1,
+            handSize: 3,
+            publicity: 1,
+            score: 54
+          },
+          scoreSources: {
+            alienEffectScore: 4,
+            alienTraceBlueScore: 5,
+            alienTracePinkScore: 5,
+            alienTraceYellowScore: 5,
+            blueTechScore: 6,
+            initialScore: 6,
+            landScore: 7,
+            orbitScore: 3,
+            scanScore: 2,
+            techBonusScore: 11
+          },
+          techState: {
+            blueBoardSlots: [Object],
+            disabledTiles: {},
+            ownedTiles: [Object]
+          }
+        }
+      ]
+    },
+    solarSystem: {
+      aomomoActive: false,
+      rotation: {
+        rotationCount: 7,
+        wheel1Steps: -7,
+        wheel2Steps: -25,
+        wheel3Steps: -19,
+        wheel4Steps: -10
+      },
+      sectorBySlot: { '1': 3, '2': 1, '3': 2, '4': 4 }
+    },
+    tech: {
+      stacks: {
+        blue1: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_3f', 'bonus_1p', 'bonus_1c', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 1,
+          techType: 'blue',
+          tileId: 'blue1'
+        },
+        blue2: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1c', 'bonus_1p', 'bonus_3f', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 2,
+          techType: 'blue',
+          tileId: 'blue2'
+        },
+        blue3: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1m', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'blue',
+          tileId: 'blue3'
+        },
+        blue4: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1c', 'bonus_3f', 'bonus_1m' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 4,
+          techType: 'blue',
+          tileId: 'blue4'
+        },
+        orange1: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1m', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 1,
+          techType: 'orange',
+          tileId: 'orange1'
+        },
+        orange2: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1m', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 2,
+          techType: 'orange',
+          tileId: 'orange2'
+        },
+        orange3: {
+          bonusId: 'bonus_3f',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_3f', 'bonus_1m', 'bonus_1c', 'bonus_1p' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'orange',
+          tileId: 'orange3'
+        },
+        orange4: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1p', 'bonus_1m', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 4,
+          techType: 'orange',
+          tileId: 'orange4'
+        },
+        purple1: {
+          bonusId: 'bonus_1p',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1m', 'bonus_1p', 'bonus_1c', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 1,
+          techType: 'purple',
+          tileId: 'purple1'
+        },
+        purple2: {
+          bonusId: 'bonus_1m',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1m', 'bonus_1c', 'bonus_3f', 'bonus_1p' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 2,
+          techType: 'purple',
+          tileId: 'purple2'
+        },
+        purple3: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 0,
+          bonusQueue: [ 'bonus_1c', 'bonus_1p', 'bonus_1m', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: null,
+          remaining: 4,
+          stackIndex: 3,
+          techType: 'purple',
+          tileId: 'purple3'
+        },
+        purple4: {
+          bonusId: 'bonus_1c',
+          bonusIndex: 1,
+          bonusQueue: [ 'bonus_1m', 'bonus_1c', 'bonus_1p', 'bonus_3f' ],
+          depleted: false,
+          firstTakeClaimedBy: 'player-white',
+          remaining: 3,
+          stackIndex: 4,
+          techType: 'purple',
+          tileId: 'purple4'
+        }
+      }
+    },
+    turn: {
+      actionCycleNumber: 4,
+      activePlayerCount: 4,
+      activePlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      cardTurnEventBonuses: [],
+      completedTurnPlayerIds: [],
+      currentPlayerId: 'player-white',
+      gameEndReason: null,
+      gameEnded: false,
+      passedPlayerIds: [ 'player-blue', 'player-brown', 'player-green' ],
+      roundNumber: 3,
+      startPlayerId: 'player-blue',
+      turnNumber: 7,
+      turnOrderPlayerIds: [ 'player-white', 'player-green', 'player-blue', 'player-brown' ],
+      visitedPlanetsByPlayerId: {}
+    }
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

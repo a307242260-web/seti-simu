@@ -1,0 +1,17 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/singleton-resource-ranking.test.js:4
+const compile=(source,spy=false)=>{const instance=new Module(filename,module);instance.filename=filename;instance.paths=module.paths;const nativeRequire=instance.require.bind(instance);instance.require=name=>spy&&name==='./state-value'?{...values,...Object.fromEntries(['purposeCapital','purposeCapitalValue','incomePreparationCapital','incomeAllocationCapital'].map(name=>[name,(...args)=>{pricing++;if(denyPricing)throw Error('SINGLETON_RANKING_SHOULD_NOT_PRICE');return values[name](...args); }]))}:nativeRequire(name);instance._compile(source,filename);return instance.exports;},reference=compile(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261107/singleton-resource-ranking-v1/resource-demand-v285-reference-20261107-v1.js'),'utf8')),candidate=compile(fs.readFileSync(filename,'utf8'),true);
+                                                                                                                                                                                                                                                                                                                                                                                                                                ^
+
+Error: SINGLETON_RANKING_SHOULD_NOT_PRICE
+    at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/singleton-resource-ranking.test.js:4:423)
+    at planningCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:149:19)
+    at incomePreparationCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:198:33)
+    at Object.incomeChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:540:25)
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/singleton-resource-ranking.test.js:8:46)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+
+Node.js v22.22.0

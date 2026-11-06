@@ -1,0 +1,17 @@
+node:internal/modules/cjs/loader:991
+    ObjectSetPrototypeOf(
+    ^
+
+TypeError: #<Object> is not extensible
+    at setPrototypeOf (<anonymous>)
+    at getExportsForCircularRequire (node:internal/modules/cjs/loader:991:5)
+    at Module._load (node:internal/modules/cjs/loader:1214:14)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.require (node:internal/modules/cjs/loader:1463:12)
+    at require (node:internal/modules/helpers:147:16)
+    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:5:173
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:7:3)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+
+Node.js v22.22.0

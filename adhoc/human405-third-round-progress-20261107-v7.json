@@ -1,0 +1,33 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "no progress: record-status answer only; revalidated runtime and terminal logs before continuing",
+  "thisGoalTurnClassification": "progress: V287/V288/V289 frozen first cold failures,580 exact full valuation inputs and48 custom comparisons,114 Native-prefix pure plans, CPU evidence and non-repetition evidence recorded",
+  "production": "V278/V48",
+  "productionSource": "dc540a52f7210f4ae73135bdb0cd06bf5d188244",
+  "currentIsolatedCandidate": "V289/V50",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "latestR3": {
+    "board": 85,
+    "tech": 6,
+    "income": "7C3E1card+1scan"
+  },
+  "highestSameStartR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "latestFirstCold": {
+    "version": "V289",
+    "nativeInputs": 168,
+    "milliseconds": 665.367167,
+    "complete": true,
+    "actionId": "industry:e887dc52",
+    "value": 140.08333333333334,
+    "rootAndRngUnchanged": true
+  },
+  "document": "docs/human405-analysis-performance-learning-20261107.md",
+  "manifest": "reports/ai-foundation-20261107/local-preview-copy-v1/source-manifest-20261107-v1.json",
+  "next": "Optimize evidenced full-portfolio/Native restoration cost without new broad caching or acceptance resampling; retain full256/600ms gate, all-source admission, actual first-two development and unique original23 autonomous-first3/R2-end review."
+}

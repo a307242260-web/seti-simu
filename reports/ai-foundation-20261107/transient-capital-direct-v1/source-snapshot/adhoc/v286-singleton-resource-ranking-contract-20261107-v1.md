@@ -1,0 +1,12 @@
+# V286 / V50：唯一可行固定选择不再报价排序（2026-11-07）
+
+V285第一次完整168Native/702.389084ms未准入，虽然两个公司流程共4次菜单复用，不能宣称整体提速。单列完整估值诊断捕获580次实际pure-purposeCapital调用；既有完整key均不同，离线按全部字段/undefined/数组与属性顺序比较仍577种，仅3次重复。故不再尝试全组合缓存。保存实际580输入与原结果作为诊断checkpoint，V8字节签名不等于字段值等价，额外离线分析已区分这点；记录器首次CJS loaded标记错误发生于查询开始前，修正后仅一次真实诊断，不替代702ms验收。
+
+只省无比较对象的贪心排序计算，不省可行性、Native输入或最终价值判断：
+
+1. incomeChoice先按原保护牌/绑定incomeCardId筛选，并用完全相同的capacity与incomeFunding规则检查；0项直接原infeasible，1项直接原fixed动作。2项以上才计算原beforeCapital及每牌收入用途值，保持原排序和tie规则。不以唯一选项为有利或免费，不为多个选项返回0。
+2. dataCornerCards、preparations保留公开默认完整排序/损失输出；内部只需要选择来源的三个准备调用点和蓝槽固定规划明确使用selectionOnly。先构造完全相同的可行来源、protectedCard、资源缺口、观察者/失败支付；唯一项时loss为null，明确未算排序成本（不是0价值/剪枝界），多项仍计算原完整机会成本与排序。固定计划完成后照原Native状态完整估值，并没有降低弃牌代价或放开无需求操作。
+
+无全局缓存、别名合并、搜索根剪枝、深度/leaf截断、新Native实体或观察；Native state identity、完整V50、四null预算、必要线闭合以及≤256Native/600ms保持。对已有真实Native收入菜单绑定供应者、实际DLC32数据来源、唯一筹资动作，以冻结V285返回选择/默认完整loss对照；spy证明唯一项确实不进入价值排名，而多项仍调用且同选。再核查资金不足、目标保护、observer和恢复。相关验证后冻结首测，完整1251门槛/前两轮实际行为/Node/Browser/输入审计及独立来源准入之前不运行新局。完整goal（R3发展、R2末复核、原23自主前三轮）保持，最高87/最近85、V41不变。
+
+同一可行性前置也应用到catalog初始收入供应者：原代码先给全部收入牌报价，再find可达者；现先用原capacity筛选，0/1不报价，多项保留完全相同排序。computerIncomeValue已提供分数时，原通用beforeCapital没有被使用，改为仅在fallback实际需要时惰性计算。Native V278第114输入根有收入牌但数据不足以填4，原catalog确实不产生income目标，新的spy证明相同整个目标列表不进入任何收益报价。对非法/未知收入牌descriptor显式报RESOURCE_INCOME_CARD_NOT_KNOWN，不能利用唯一项捷径选择不在已知手牌中的ID。

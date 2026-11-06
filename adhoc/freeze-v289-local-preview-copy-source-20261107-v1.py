@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/local-preview-copy-v1');prior=Path('reports/ai-foundation-20261107/analysis-invariant-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['randomizer/game/ai/local-preview-copy.test.js','adhoc/v289-local-preview-copy-contract-20261107-v1.md',str(D/'local-plans-v288-reference-20261107-v1.js')];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+m={**old,'searchVersion':'seti-complete-decision-search-v289','resourcePolicy':'seti-goal-resource-preparation-v24','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v289-local-preview-copy-contract-20261107-v1.md','failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'Blue and computer previews privately copy only writable player resources, income, hand container and dataState, matching existing previewIncomeTail ownership. Technology/card entities remain read-only; scoring contexts retain existing private copies. Full plans on9 real Native prefixes,114 mutable/deep-frozen cases exact; 42 whole-player copies removed. No cache, equality, pruning, weights, Native input or budget changes. V288 first168/634.229250 retained.','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))

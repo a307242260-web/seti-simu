@@ -1,0 +1,365 @@
+{
+  "scope": "Prior88 existing Native roots plus2 real Native company decision checkpoints. No new Native input or AI query from capture.",
+  "cases": [
+    {
+      "label": "actual-v278-113",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-113-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-114",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-114-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-115",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-115-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-116",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-116-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-117",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-117-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-118",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-118-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-119",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-119-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-123",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-123-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-124",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-124-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-125",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-125-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-126",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-126-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-127",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-127-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-128",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-128-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-129",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-129-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-130",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-130-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-131",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-131-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-132",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-132-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-133",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-133-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-134",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-134-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-135",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-135-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-136",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-136-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-137",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-137-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-138",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-138-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-139",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-139-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-140",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-140-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-141",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-141-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-142",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-142-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-143",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-143-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-144",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-144-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-145",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-145-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-146",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-146-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-147",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-147-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-148",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-148-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-149",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-149-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-150",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-150-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-151",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-151-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-152",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-152-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-153",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-153-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-154",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-154-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-155",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-155-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-156",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-156-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-157",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-157-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-158",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-158-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-159",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-159-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-160",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-160-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-161",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-161-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-162",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-162-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-163",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-163-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-164",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-164-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-165",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-165-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-166",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-166-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-167",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-167-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-168",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-168-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-169",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-169-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-170",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-170-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-171",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-171-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-172",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-172-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-173",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-173-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-174",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-174-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-175",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-175-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-176",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-176-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-177",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-177-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-178",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-178-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-179",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-179-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-180",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-180-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-181",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-181-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-182",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-182-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-183",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-183-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-184",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-184-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-185",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-185-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-186",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-186-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-187",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-187-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-188",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-188-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-189",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-189-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-190",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-190-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-191",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-191-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-192",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-192-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-193",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-193-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-194",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-194-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-195",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-195-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v278-196",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/actual-v278-196-white-root-20261107-v1.json"
+    },
+    {
+      "label": "publicity-commutation-actual142-early",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/publicity-commutation-actual142-early-white-root-20261107-v1.json"
+    },
+    {
+      "label": "publicity-commutation-actual142-late",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/publicity-commutation-actual142-late-white-root-20261107-v1.json"
+    },
+    {
+      "label": "publicity-commutation-legacy259-early",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/publicity-commutation-legacy259-early-white-root-20261107-v1.json"
+    },
+    {
+      "label": "publicity-commutation-legacy259-late",
+      "fixture": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/publicity-commutation-legacy259-late-white-root-20261107-v1.json"
+    },
+    {
+      "label": "publicity-factor-before-analysis",
+      "fixture": "reports/ai-foundation-20261107/publicity-handoff-v1/publicity-factor-before-analysis-20261107-v1.json"
+    },
+    {
+      "label": "publicity-factor-after-analysis",
+      "fixture": "reports/ai-foundation-20261107/publicity-handoff-v1/publicity-factor-after-analysis-20261107-v1.json"
+    },
+    {
+      "label": "publicity-factor-corner-realized",
+      "fixture": "reports/ai-foundation-20261107/publicity-handoff-v1/publicity-factor-corner-realized-20261107-v1.json"
+    },
+    {
+      "label": "company-fixed-intent-pending-1",
+      "fixture": "reports/ai-foundation-20261107/company-fixed-intent-v1/company-fixed-intent-pending-1-20261107-v1.json"
+    },
+    {
+      "label": "company-fixed-intent-pending-2",
+      "fixture": "reports/ai-foundation-20261107/company-fixed-intent-v1/company-fixed-intent-pending-2-20261107-v1.json"
+    }
+  ]
+}

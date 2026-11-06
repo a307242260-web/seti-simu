@@ -1,0 +1,61 @@
+{
+  "scope": "Offline only. V8 binary identity can differ because equal-valued objects have different alias graphs. Rebuild the existing complete scalar key over captured unfrozen data to compare every field, undefined, key order and array order by value; no omitted fields, new Native input, search or autonomous game.",
+  "inputTrace": "reports/ai-foundation-20261107/company-fixed-intent-v1/complete-capital-inputs-20261107-v1.v8.gz",
+  "inputTraceSha256": "3e8ef62c3e9f92429e4d628ccba9b80f9b9860b3c0cdef68a31b7a60231556b5",
+  "calls": 580,
+  "capturedInputs": 580,
+  "completeFieldValueUnique": 577,
+  "completeFieldValueRepeatCalls": 3,
+  "maxRepeat": 2,
+  "duplicateGroups": [
+    {
+      "indices": [
+        5,
+        562
+      ],
+      "totals": [
+        7.25
+      ],
+      "callers": [
+        "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)",
+        "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)"
+      ]
+    },
+    {
+      "indices": [
+        55,
+        62
+      ],
+      "totals": [
+        15.75
+      ],
+      "callers": [
+        "at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:542:17)",
+        "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)"
+      ]
+    },
+    {
+      "indices": [
+        78,
+        85
+      ],
+      "totals": [
+        15.75
+      ],
+      "callers": [
+        "at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:542:17)",
+        "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)"
+      ]
+    }
+  ],
+  "valueMismatchGroups": [],
+  "byCaller": {
+    "at planningCapitalDetails (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:143:28)": 68,
+    "at Object.purposeCapitalValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:542:17)": 441,
+    "at evaluateStateValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:580:19)": 70,
+    "at Object.blindIncomeBoundaryCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:249:67)": 1
+  },
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}
