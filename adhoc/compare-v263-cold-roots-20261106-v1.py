@@ -1,0 +1,13 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];F=Path('reports/ai-foundation-20261105/third-round-teacher-v1');read=lambda p:json.loads((P/p).read_text())
+g=read(F/'v263-current-source-serial-gate-20261106-v1.json');old=read(F/'v262-current-source-serial-gate-20261106-v1.json');oldById={r['identity']:r for r in old['rows']};unique={r['identity']:r for r in g['rows']};changes=[];byRound={};unpaired=[]
+for identity,r in unique.items():
+ f=read(r['fixture']);state=json.loads(f['compositionEnvelope']['committedState']);round=str(state['turn']['roundNumber']);o=oldById.get(identity)
+ if not o:unpaired.append({'label':r['label'],'identity':identity,'round':round});continue
+ v=r['value']!=o['value'];c=r['actionId']!=o['actionId'];row=byRound.setdefault(round,{'roots':0,'valueChanged':0,'choiceChanged':0});row['roots']+=1;row['valueChanged']+=int(v);row['choiceChanged']+=int(c)
+ if v or c:changes.append({'identity':identity,'round':round,'before':o,'after':r})
+record=read('reports/research/85678dfe.e0046883.quick-400.json');trace=[json.loads(l)for l in(P/record['agentTracePath']).read_text().splitlines()];catalog=read(F/'v256-actual-cold-root-catalog-20261106-v1.json')['rows'];byLabel={r['label']:r for r in g['rows']};actual=[]
+for row in catalog:
+ i=int(row['label'].split('-')[-1]);t=trace[i-113];s=t['search'];new=byLabel[row['label']];actual.append({'beforeInput':i,'actualInheritedPlan':bool(s.get('reusedCoverage')),'actualAction':s['actionId'],'actualValue':s['value'],'freshAction':new['actionId'],'freshValue':new['value'],'actionSame':s['actionId']==new['actionId'],'valueSame':s['value']==new['value'],'complete':new['complete'],'inputs':new['nativeInputs'],'milliseconds':new['milliseconds']})
+r={'scope':'Paired historical roots use the same fresh-process Native-only root contract. Actual trace comparison is descriptive: inherited intent/resource plans are NOT imported by a fresh root and must not be attributed to a source change or called full planning-state equivalence. No additional search or autonomous experiment.','pairedRoots':len(oldById),'uniqueRoots':len(unique),'byRound':byRound,'changes':changes,'unpairedNewRoots':unpaired,'actualV256ColdChecks':actual,'newAutonomousRuns':0};out=F/'v263-cold-roots-v262-comparison-20261106-v1.json';assert not(P/out).exists();(P/out).write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'paired':r['pairedRoots'],'unique':len(unique),'byRound':byRound,'pairedChanges':len(changes),'newRoots':len(unpaired),'actualColdChecked':len(actual),'actualInherited':sum(x['actualInheritedPlan']for x in actual),'actualVersusFreshDifferences':sum(not(x['actionSame']and x['valueSame'])for x in actual)}))

@@ -2,7 +2,7 @@
 
 本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。
 
-第三轮新增的[主行动后宣传筹资学习](human405-analysis-publicity-learning-20261106.md)已用49次Native固定控制定位候选缺失。[V262/V46源码准入](human405-analysis-publicity-source-admission-20261106.md)保留该固定准备，并复用同次当前投资及已饱和蓝色分析计分：728冷案例/596不同根最高256次/563.161583ms，前两轮304个已选契约不变，198单元/1完整流程及9项Chrome通过；输入审计保留原有aomomo失败。[V262唯一标准第三轮](human405-third-round-v262-result-20261106.md)为75分/6科技/7钱2电1牌，4.228秒、最高208次/436.784333ms，全部59新增输入经独立Native重放。最高AI第三轮盘面纪录仍V256的87分，未对齐教师；下一步核对相同第147步橙1/橙3同值与后续已知牌用途，V41整局baseline保持。
+第三轮最新[V263研究顺序与C1学习](human405-research-order-mark-learning-20261106.md)以56次固定Native输入确认：持牌研究先行可在阿米巴1完成后领取C1，比反向顺序多4分已确认终局奖励；筹宣传后的分析端点资源、收入及数据精确兑现。V263/V47源码通过785冷案例/628不同根，最高256次/597.93775ms，前两轮304个已选契约不变，199单元/1完整流程/10项相关Chrome通过；输入审计保留既有aomomo失败。尚无新自主成绩：[最近V262标准第三轮](human405-third-round-v262-result-20261106.md)仍75分/6科技/7钱2电1牌、4.228秒，最高AI同起点第三轮仍V256的87分，未对齐教师105分/6科技/7钱4电1牌。下一步从干净提交运行唯一标准第三轮；V41整局baseline不变。
 
 新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
 两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，

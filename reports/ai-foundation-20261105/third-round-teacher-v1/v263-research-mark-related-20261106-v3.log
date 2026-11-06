@@ -1,0 +1,4 @@
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.22s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

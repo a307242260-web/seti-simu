@@ -1,0 +1,4 @@
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"onlyNecessaryHeldAndPaidQuotes":true,"siblingSignaturePreparedOnce":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.25s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

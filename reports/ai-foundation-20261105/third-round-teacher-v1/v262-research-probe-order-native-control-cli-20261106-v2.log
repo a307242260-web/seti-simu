@@ -1,0 +1,27 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: {"spec":{"family":"end_turn"},"actions":[{"schemaVersion":"seti-standard-action-v1","family":"choose_card","phase":"conditional","actionId":"choose_card:9ed5eb04","actorId":"player-white","stateVersion":73,"decisionVersion":3,"target":{"choiceId":"income:alien-amiba-9-5","cardInstanceId":"alien-amiba-9-5"},"payload":{},"decision":null,"summary":"收入 amiba_9.webp","presentation":{"cardKind":"pick","cardId":"alien-amiba-9-5","imageSrc":"../assets/aliens/阿米巴/cards/9.webp","imageAlt":"amiba_9.webp"}},{"schemaVersion":"seti-standard-action-v1","family":"choose_card","phase":"conditional","actionId":"choose_card:b37930f4","actorId":"player-white","stateVersion":73,"decisionVersion":3,"target":{"choiceId":"income:card-50-0","cardInstanceId":"card-50-0"},"payload":{},"decision":null,"summary":"收入 b_14.webp","presentation":{"cardKind":"pick","cardId":"card-50-0","imageSrc":"../assets/cards/basic/split/b_14.webp","imageAlt":"b_14.webp"}}]}
+
+0 !== 1
+
+    at step (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v2.js:13:262)
+    at finish (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v2.js:14:20)
+    at Object.<anonymous> (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v2.js:23:560)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

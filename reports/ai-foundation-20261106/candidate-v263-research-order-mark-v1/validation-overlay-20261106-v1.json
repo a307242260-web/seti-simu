@@ -1,0 +1,14 @@
+{
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v263-research-order-mark-v1/manifest.json",
+  "sourceManifestSha256": "92841a436710fb8226480076e7f9c016dee1cdc6efa5c616a9eb7a3735840dfb",
+  "runtimeChanged": false,
+  "scope": "Validation-only overlay after all785 frozen-runtime cold cases: retain prior137.75 reachable funding floor instead of its old exact scalar, and add production Browser proof of the new4-point first-crossing C1 case. No randomizer/production source changes.",
+  "originalSourceHashes": {
+    "tools/browser-smoke-inventory.js": "210b508bb13df10b1ad3c0978525d4e5947f546fcc691e433e4e6e8dcb18aa95"
+  },
+  "validationSourceHashes": {
+    "tools/browser-smoke-inventory.js": "e914110b5c5ccca98d8afa5de81b4677caa6ce1793c6555c5090d3a387a5943b"
+  },
+  "baseHashSource": "baseRuntimeHashes",
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,55 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 70 is not attainable by one ordinary research here
++ actual - expected
+
++ {
++   availableData: 0,
++   completionMarks: [
++     {
++       currentValue: 0,
++       multiplier: 4
++     }
++   ],
++   currentScore: 50,
++   currentValue: 0,
++   incomeUsed: false,
++   neededData: 1,
++   scoreGains: {},
++   threshold: 70
++ }
+- null
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/research-mark-capital.test.js:92:9)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    currentScore: 50,
+    threshold: 70,
+    currentValue: 0,
+    completionMarks: [ { currentValue: 0, multiplier: 4 } ],
+    scoreGains: {},
+    availableData: 0,
+    neededData: 1,
+    incomeUsed: false
+  },
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=0.20s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/research-mark-capital.test.js status=1 signal=none

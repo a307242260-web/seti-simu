@@ -1,0 +1,4 @@
+{"heldFirstCompletionMark":4,"paidFirstMark":0,"nativeOrdersShareRoot":true,"noDoubleCompletionOrFutureFunding":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.13s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

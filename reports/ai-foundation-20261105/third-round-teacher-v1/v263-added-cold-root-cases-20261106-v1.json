@@ -1,0 +1,235 @@
+{
+  "nativeRoots": 57,
+  "actualV262SearchRoots": 56,
+  "newAutonomousRuns": 0,
+  "cases": [
+    {
+      "label": "funded-analysis-before-research",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-funded-analysis-before-research-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-113",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-113-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-114",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-114-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-115",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-115-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-116",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-116-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-117",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-117-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-118",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-118-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-119",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-119-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-123",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-123-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-124",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-124-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-125",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-125-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-126",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-126-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-127",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-127-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-128",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-128-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-129",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-129-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-130",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-130-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-131",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-131-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-132",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-132-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-133",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-133-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-134",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-134-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-135",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-135-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-136",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-136-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-137",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-137-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-138",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-138-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-139",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-139-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-140",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-140-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-141",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-141-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-142",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-142-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-143",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-143-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-144-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-145-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-146-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-147-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-148-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-149-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-150-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-151",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-151-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-152-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-153-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-154-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-155-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-156-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-157-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-158-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-159-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-160-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-161-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-162-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-163-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-164-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-165",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-165-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-166",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-166-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-167",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-167-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-168-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-169-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-170-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v262-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-171-root-20261106-v1.json"
+    }
+  ]
+}

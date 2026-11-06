@@ -1,0 +1,27 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: {"spec":{"family":"end_turn"},"actions":[{"schemaVersion":"seti-standard-action-v1","family":"accept_optional_effect","phase":"conditional","actionId":"accept_optional_effect:38adcce9","actorId":"player-white","stateVersion":66,"decisionVersion":2,"target":{"kind":"residual-domain","choiceId":"confirm:trigger:alien-amiba-1-2:amiba1-blue-tech","cardInstanceId":"alien-amiba-1-2","ruleId":"amiba1-blue-tech"},"payload":{},"decision":null,"summary":"结算 amiba_1.webp","presentation":{"cardKind":"pick","cardId":"alien-amiba-1-2","imageSrc":"../assets/aliens/阿米巴/cards/1.webp","imageAlt":"amiba_1.webp","detail":"安全协议：蓝色科技，蓝色区域 symbol 奖励"}},{"schemaVersion":"seti-standard-action-v1","family":"accept_optional_effect","phase":"conditional","actionId":"accept_optional_effect:120e10ca","actorId":"player-white","stateVersion":66,"decisionVersion":2,"target":{"kind":"residual-domain","choiceId":"skip:researchTech"},"payload":{},"decision":null,"summary":"跳过"}]}
+
+0 !== 1
+
+    at step (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v1.js:12:262)
+    at finish (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v1.js:13:20)
+    at research (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v1.js:14:710)
+    at Object.<anonymous> (/private/tmp/seti-v262-teacher-r3-run-20261106-v1/adhoc/control-v262-research-probe-order-20261106-v1.js:18:27)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

@@ -18,7 +18,7 @@
   if(Object.isFrozen(model))models.set(model,rules);return rules;
  }
  function describe(facts,funding,publicity=funding?.resources?.publicity){
-  const rules=[];
+  const rules=[],completionGroups=[];
   for(const card of facts.reservedCards||[]){
    const model=effects.getCardModel(card);if(!model) return decline('unknown-reserved-model');
    const candidates=researchRules(model);if(!candidates.length)continue;
@@ -28,6 +28,10 @@
     if(!rule.supported)return decline('unsupported-research-trigger');
     rules.push({cardInstanceId:card.id,ruleId:rule.id,techType:rule.type,region:rule.region});
    }
+   const remaining=(model.triggers||[]).filter(t=>!card.cardEffectState.consumedTriggerIds.includes(t.id));
+   if(model.cardType===1&&!model.tasks?.length&&!model.temporaryTasks?.length&&remaining.length
+     &&remaining.every(t=>candidates.some(r=>r.id===t.id&&r.supported)))
+    completionGroups.push({cardInstanceId:card.id,ruleIds:remaining.map(t=>t.id)});
   }
   if(!rules.length)return decline('no-active-research-trigger');
   if(!Array.isArray(facts.pendingCardTriggers))return decline('missing-pending-trigger-facts');
@@ -38,24 +42,26 @@
   // Use a zero-origin score ledger: only future trigger deltas are priced.
   const wallet={score:0,publicity,availableData:funding.resources.availableData};
   if(Object.values(wallet).some(v=>!Number.isFinite(v)))throw TypeError('RESEARCH_TRIGGER_WALLET_INVALID');
-  return {available:true,rules,symbols:facts.researchSymbols,wallet,reason:'known-once-only-research-symbols'};
+  const maximumScoreGain=Math.min(2,rules.length)*Math.max(0,...Object.keys(facts.researchSymbols.symbolsById).map(id=>amiba.getSymbolReward(id).gain?.score||0));
+  return {available:true,rules,completionGroups,maximumScoreGain,symbols:facts.researchSymbols,wallet,reason:'known-once-only-research-symbols'};
  }
  const noOutcome=Object.freeze({value:0,dataGain:0});
- const noGain=()=>0;Object.defineProperty(noGain,'outcome',{value:()=>noOutcome});Object.freeze(noGain);
+ const noDevelopment=Object.freeze({scoreGain:0,completedTaskGain:0}),noTotal=Object.freeze({value:0,outcome:noOutcome,development:noDevelopment});
+ const noGain=()=>0;Object.defineProperty(noGain,'outcome',{value:()=>noOutcome});Object.defineProperty(noGain,'development',{value:()=>noDevelopment});Object.freeze(noGain);
  const noPreparedGain=Object.freeze(()=>noGain);
  // Sibling held/paid quotes use one read-only context within the same
  // synchronous portfolio calculation. Only their publicity payment differs.
  function prepareGains(context,weights){
   if(!context?.available)return noPreparedGain;
   const signature=JSON.stringify([context,weights]);
-  return Object.freeze((paidPublicity=0)=>createGains(context,weights,paidPublicity,
-   signature.slice(0,-1)+','+JSON.stringify(paidPublicity)+']'));
+  return Object.freeze((paidPublicity=0,paymentAfterFirst=false)=>createGains(context,weights,paidPublicity,paymentAfterFirst,
+   signature.slice(0,-1)+','+JSON.stringify(paidPublicity)+','+JSON.stringify(paymentAfterFirst)+']'));
  }
- function gains(context,weights,paidPublicity=0){
+ function gains(context,weights,paidPublicity=0,paymentAfterFirst=false){
   if(!context?.available)return noGain;
-  return createGains(context,weights,paidPublicity,JSON.stringify([context,weights,paidPublicity]));
+  return createGains(context,weights,paidPublicity,paymentAfterFirst,JSON.stringify([context,weights,paidPublicity,paymentAfterFirst]));
  }
- function createGains(context,weights,paidPublicity,signature){
+ function createGains(context,weights,paidPublicity,paymentAfterFirst,signature){
   // Only complete pure trigger inputs share numeric reward ledgers, never native nodes.
   let totals=gainTotals.get(signature);
   if(!totals){
@@ -70,23 +76,29 @@
   }
   function total(types){
    const key=types.join(':');if(totals.has(key))return totals.get(key);
-   if(!context.rules.some(rule=>types.includes(rule.techType))){totals.set(key,noOutcome);return noOutcome;}
-   const alien={amiba:amiba.copyPublicSymbolState(context.symbols)},wallet={...context.wallet,publicity:Math.max(0,context.wallet.publicity-paidPublicity)},used=new Set();let value=0;
-   for(const type of types)for(const rule of context.rules.filter(r=>r.techType===type)){
+   if(!context.rules.some(rule=>types.includes(rule.techType))){totals.set(key,noTotal);return noTotal;}
+   const alien={amiba:amiba.copyPublicSymbolState(context.symbols)},wallet={...context.wallet,publicity:Math.max(0,context.wallet.publicity-(paymentAfterFirst?0:paidPublicity))},used=new Set(),consumed=new Set();let value=0;
+   for(let index=0;index<types.length;index++){
+    if(index===1&&paymentAfterFirst)wallet.publicity=Math.max(0,wallet.publicity-paidPublicity);
+    for(const rule of context.rules.filter(r=>r.techType===types[index])){
     const id=rule.cardInstanceId+':'+rule.ruleId;if(used.has(id))continue;used.add(id);
     const choices=amiba.listSymbolsInRegion(alien,rule.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
      .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
     if(!choices.length)continue;
     const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId);if(!resolved.ok)throw Error('RESEARCH_TRIGGER_SYMBOL_QUERY_FAILED');
-    value=arithmetic.sum([value,apply(wallet,resolved.reward)],weights);
+    value=arithmetic.sum([value,apply(wallet,resolved.reward)],weights);consumed.add(id);
    }
-   const outcome=Object.freeze({value,dataGain:wallet.availableData-context.wallet.availableData});totals.set(key,outcome);return outcome;
+   }
+   const outcome=Object.freeze({value,dataGain:wallet.availableData-context.wallet.availableData}),development=Object.freeze({scoreGain:wallet.score-context.wallet.score,
+    completedTaskGain:(context.completionGroups||[]).filter(g=>g.ruleIds.every(id=>consumed.has(g.cardInstanceId+':'+id))).length});
+   const result=Object.freeze({value,outcome,development});totals.set(key,result);return result;
   }
   const gain=(id,prior=null)=>{
    const type=tech.getTechType(id),before=prior?[tech.getTechType(prior)]:[];
    return arithmetic.sum([total([...before,type]).value,-total(before).value],weights);
   };
-  Object.defineProperty(gain,'outcome',{value:ids=>total(ids.map(tech.getTechType))});return Object.freeze(gain);
+  Object.defineProperty(gain,'outcome',{value:ids=>total(ids.map(tech.getTechType)).outcome});
+  Object.defineProperty(gain,'development',{value:ids=>total(ids.map(tech.getTechType)).development});return Object.freeze(gain);
  }
  return Object.freeze({describe,gains,prepareGains});
 });

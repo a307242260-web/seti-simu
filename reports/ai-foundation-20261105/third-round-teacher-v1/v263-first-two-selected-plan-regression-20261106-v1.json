@@ -1,0 +1,14 @@
+{
+  "roots": 304,
+  "fields": [
+    "actionId",
+    "value",
+    "selectionPlan",
+    "selectionContinuation",
+    "planContinuation"
+  ],
+  "searchAndValueVersionLabelsNormalizedOnly": true,
+  "changes": [],
+  "claim": "Fresh Native-only roots preserve first action, scalar value and selected plan/continuation contracts. This is not a proof that complete branch graphs or Native asset endpoints are equivalent; inherited intent is not imported.",
+  "newAutonomousRuns": 0
+}

@@ -22,7 +22,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v46";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v47";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -140,8 +140,9 @@
     const scores=Object.fromEntries(Object.entries(facts.supply?.stacks||{}).filter(([id,stack])=>!facts.player.techState.ownedTiles[id]&&stack.remaining>0).map(([id,stack])=>[id,
       (stack.firstTakeClaimedBy==null?techCatalog.FIRST_TAKE_TYPE_SCORE:0)+(!stack.bonusHidden?techCatalog.BONUS_EFFECTS[stack.bonusId]?.score||0:0)]));
     const currentValue=Math.max(0,...opportunity.options.map(option=>option.currentValue));
-    return score+2*Math.max(0,...Object.values(scores))>=opportunity.threshold&&currentValue>0
-      ?{currentScore:score,threshold:opportunity.threshold,currentValue,scoreGains:scores,availableData:funding.resources.availableData,neededData:needed,incomeUsed:facts.computerSlots.includes(4)}:null;
+    const completionMarks=trigger.completionGroups?.length?opportunity.options.filter(o=>o.formulaId==='c1').map(o=>({currentValue:o.currentValue,multiplier:o.multiplier})):[];
+    return score+2*Math.max(0,...Object.values(scores))+(trigger.maximumScoreGain||0)>=opportunity.threshold&&(currentValue>0||completionMarks.length)
+      ?{currentScore:score,threshold:opportunity.threshold,currentValue,completionMarks,scoreGains:scores,availableData:funding.resources.availableData,neededData:needed,incomeUsed:facts.computerSlots.includes(4)}:null;
   }
   function researchFunding(facts, funding, publicity = funding?.resources?.publicity) {
     const board=facts.board?.finalScoring,mark=board?.tiles?.d?.marks?.find(m=>m.playerId===facts.player.id);
@@ -154,9 +155,9 @@
     return trigger.available?{...result,researchTriggers:trigger}:result?.researchTriggers?{...result,researchTriggers:null}:result;
   }
   const researchMarkQuotes=new Map();
-  function researchPurposeGains(techState, funding, weights, paidPublicity=0,triggerGain=null) {
+  function researchPurposeGains(techState, funding, weights, paidPublicity=0,triggerGain=null,paymentAfterFirst=false) {
     const marks=funding?.researchMarks||[],opportunity=funding?.newFinalMark;
-    const triggered=triggerGain||researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity);
+    const triggered=triggerGain||researchTriggers.gains(funding?.researchTriggers,weights,paidPublicity,paymentAfterFirst);
     if(!marks.length&&!opportunity)return triggered;
     const value=tech=>marks.reduce((n,m)=>n+endScoring.getFormulaBaseValue(m.formulaId,{techState:tech},{})*m.multiplier,0);
     const add=(tech,id)=>({...tech,ownedTiles:{...tech.ownedTiles,[id]:true}}),quotes=new Map();
@@ -169,8 +170,18 @@
       if(!markQuotes)return 0;const key=JSON.stringify([prior,id]);if(markQuotes.has(key))return markQuotes.get(key);
       const before=prior?add(techState,prior):techState,gain=value(add(before,id))-value(before);markQuotes.set(key,gain);return gain;
     };
-    const newMark=ids=>opportunity&&(opportunity.incomeUsed||opportunity.availableData+triggered.outcome(ids).dataGain<opportunity.neededData)
-      &&opportunity.currentScore+ids.reduce((n,id)=>n+(opportunity.scoreGains[id]||0),0)>=opportunity.threshold?opportunity.currentValue:0;
+    const newMark=ids=>{
+      if(!opportunity)return 0;
+      for(let count=1;count<=ids.length;count++){
+        const prefix=ids.slice(0,count),development=triggered.development(prefix);
+        if(opportunity.currentScore+prefix.reduce((n,id)=>n+(opportunity.scoreGains[id]||0),0)+development.scoreGain<opportunity.threshold)continue;
+        if(!opportunity.incomeUsed&&opportunity.availableData+triggered.outcome(prefix).dataGain>=opportunity.neededData)return 0;
+        // The mark is chosen at the first crossing. A later completion cannot
+        // replace that already selected tile or claim this threshold again.
+        return Math.max(opportunity.currentValue,...(opportunity.completionMarks||[]).map(o=>o.currentValue+development.completedTaskGain*o.multiplier));
+      }
+      return 0;
+    };
     return(id,prior=null,currentFunded=true)=>{
       const key=JSON.stringify([prior,id,currentFunded]);
       if(quotes.has(key))return quotes.get(key);
@@ -254,8 +265,12 @@
   }
   function paidResearchFromHeld(techState,targets,held,currentHand,markerGain,funding,researchCost,weights,preparedTriggers=null){
     const paidGain=funding?.researchTriggers?.available?researchPurposeGains(techState,funding,weights,researchCost,preparedTriggers?.(researchCost)):markerGain;
-    return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue + paidGain(t.id) - researchCost * weights.publicity
-      + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.baseValue+paidGain(o.id,t.id,o.currentFunded))) - currentHand));
+    const paidLast=funding?.researchTriggers?.available&&held.some(o=>o.currentFunded)
+      ?researchPurposeGains(techState,funding,weights,researchCost,preparedTriggers?.(researchCost,true),true):null;
+    return Math.max(0,...targets.map(t=>t.capability+t.first+t.bonusValue-researchCost*weights.publicity
+      +Math.max(paidGain(t.id),...held.filter(o=>o.id!==t.id).map(o=>Math.max(
+        o.baseValue+paidGain(t.id)+paidGain(o.id,t.id,o.currentFunded),
+        paidLast&&o.currentFunded?o.baseValue+paidLast(o.id)+paidLast(t.id,o.id):-Infinity)))-currentHand));
   }
   // The joint portfolio needs the same held-card options both as an asset and
   // as the opportunity cost of paid research. Build that local array once.
