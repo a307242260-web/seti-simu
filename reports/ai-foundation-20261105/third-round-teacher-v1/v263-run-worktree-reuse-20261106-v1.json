@@ -1,0 +1,15 @@
+{
+  "worktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "action": "Reuse verified exact working bytes; align only this owned detached worktree HEAD/index to the already-pushed commit. No worktree files removed or rewritten.",
+  "previousHead": "02701e180f41ee796cc855d25a7d143279f20c03",
+  "head": "7a747f866aa5876a2e1aba7487a36790cded01c0",
+  "ownIndex": "/Users/bilibili/code/seti-simu/.git/worktrees/seti-v263-research-completion-mark-20261106-v1/index",
+  "sharedIndexUnchanged": true,
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "fullFileAudit": "/private/tmp/seti-v263-temp-cleanup-audit-20261106-v1.json",
+  "fullFileAuditSha256": "a452398cc1abed7db71bd2fd5c54da259d6ac60813153f4a94c23ed190d920d9",
+  "filesVerified": 56723,
+  "bytesVerified": 3787273356,
+  "gitPorcelain": "",
+  "newAutonomousRuns": 0
+}

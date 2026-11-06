@@ -1,0 +1,33 @@
+{
+  "status": "standard-r3-native-verified",
+  "sourceCommit": "7a747f866aa5876a2e1aba7487a36790cded01c0",
+  "runtime": "V263/V47",
+  "record": "reports/research/20fa9816.7a747f86.quick-400.json",
+  "newAutonomousRuns": 1,
+  "controlledPrefixInputs": 112,
+  "newAcceptedInputs": 73,
+  "boardScore": 80,
+  "technologyCount": 6,
+  "income": "7C2E2card+1scan",
+  "wallMilliseconds": 5078,
+  "searches": 70,
+  "allSearchesComplete": true,
+  "maxNativeInputs": 175,
+  "maxMilliseconds": 453.58670900000016,
+  "nativeStateSessionRngExact": true,
+  "developmentAligned": false,
+  "bestControlledR3": {
+    "version": "V256",
+    "boardScore": 87,
+    "income": "7C2E1card+1scan"
+  },
+  "teacher": {
+    "boardScore": 105,
+    "income": "7C4E1card+1scan"
+  },
+  "baselineUnchanged": "V41",
+  "firstActualDivergenceFromV262": 149,
+  "nativeRootBeforeDivergenceExact": true,
+  "next": "At actual176 compare known electricity income with card income by fixed Native controls; continue R3 learning, R2-end review and original-opening autonomous first3.",
+  "goalStatus": "active"
+}

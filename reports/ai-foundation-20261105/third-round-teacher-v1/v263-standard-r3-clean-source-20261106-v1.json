@@ -1,0 +1,16 @@
+{
+  "head": "7a747f866aa5876a2e1aba7487a36790cded01c0",
+  "worktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "gitPorcelain": "?? reports/ai-foundation-20261105/third-round-teacher-v1/v263-pre-run-research-list-20261106-v1.log\n?? reports/ai-foundation-20261105/third-round-teacher-v1/v263-run-worktree-reuse-20261106-v1.json\n",
+  "onlyUntrackedArtifacts": [
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v263-pre-run-research-list-20261106-v1.log",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v263-run-worktree-reuse-20261106-v1.json"
+  ],
+  "runtimeAndValidationInputsCleanAndMatchCommittedAdmission": true,
+  "sourceAdmitted": true,
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-current-source-admission-20261106-v1.json",
+  "sourceAdmissionSha256": "ad20b4959374d1f30a8b6d1a698f5b63d613dce7b56c7fd4f2558dd3d83fe785",
+  "plannedAutonomousRuns": 1,
+  "scenario": "human405-white-teacher-r3-v1",
+  "goalStatus": "active"
+}
