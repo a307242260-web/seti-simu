@@ -24,10 +24,11 @@
     common ? require("./resource-demand") : root.SetiResourceDemand,
     common ? require("./local-decision-plans") : root.SetiLocalDecisionPlans,
     common ? require("./state-value") : root.SetiStateValue,
-    common ? require("./funded-movement-tail") : root.SetiFundedMovementTail);
+    common ? require("./funded-movement-tail") : root.SetiFundedMovementTail,
+    common ? require("../end-game-scoring") : root.SetiEndGameScoring);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -800,7 +801,7 @@
         // resource sink. Keep preparatory/main-action and movement opportunities.
         const noMovement=!state.pieces.rockets.some(r=>(r.surface??"solar-board")==="solar-board"&&[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===player.color));
         if((["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)&&noMovement
-          ||company?.activeAbilityId==="deepspace_swap_cards"&&hasTradeInertReservations(state))
+          ||company?.activeAbilityId==="deepspace_swap_cards"&&hasTradeInertReservations(state,true))
           &&!player.industryBorrowedTechTileId&&!node.legalActions.some(a=>a.family==="complete_task")){
           goals=goals.filter(goal=>{
             if(goal.kind!=="blue-data")return true;
@@ -856,7 +857,7 @@
       // valuable held-card or mission purpose; a cold pending slot must see the same opportunity.
       const competingBlue=blueTail||blueTails.find(t=>t.goalId===bluePlan?.goal.id);
       const forceBlue=competingBlue?.available&&competingBlue.selected
-        &&(incomeCandidate?competingBlue.netGain>incomeTail.netGain:Boolean(blueTail));
+        &&(!incomeCandidate||competingBlue.netGain>incomeTail.netGain);
       const forceIncome=incomeCandidate&&!forceBlue;
       const forceComputer=node.status==="stable"&&computerTail?.selected
         &&(!incomeCandidate||computerTail.netGain>incomeTail.netGain)&&(!forceBlue||computerTail.netGain>competingBlue.netGain);
@@ -1225,6 +1226,8 @@
       if(status==="information-barrier"&&!turnChanged){
         const knownTail=knownPostdrawTailView(envelope,inspection,barrier,intent,resourceControl,sourceAction);
         if(knownTail)return knownTail;
+        const knownData=knownPostdrawDataView(envelope,inspection,barrier,intent,resourceControl);
+        if(knownData)return knownData;
       }
       if (intent) {
         const state = readIdentityState(envelope), ship = state.pieces.rockets.find(r => r.id === intent.rocketId);
@@ -1238,6 +1241,46 @@
         ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
         newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
       return child;
+    }
+
+    function knownPostdrawDataView(envelope,inspection,barrier,intent,resourceControl){
+      // Newly held identities do not affect a fixed plan paid entirely with
+      // existing pool data. Materialize its Native inputs when competing
+      // columns prevent the compound scalar proof; never execute the new card.
+      if(!resourcePlanning||!cardPickPlanning||!movementPlanning||intent||resourceControl
+        ||!["hidden_card_draw","hidden_card_reveal"].includes(barrier?.code))return null;
+      const state=readIdentityState(envelope),owner=state.players.players.find(p=>p.id===seatId);
+      if(industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
+        ||owner.industryRoundMarkRound!==state.turn.roundNumber
+        ||owner.hand.filter(card=>!knownRootCardIds.has(card.id)).length!==1
+        ||[...owner.reservedCards,...(owner.privateAlienCards||[])].some(card=>!knownRootCardIds.has(card.id))
+        ||Object.values(state.aliens.aliens).some(slot=>slot.revealed&&!knownRootAlienIds.has(slot.alienId))
+        ||!state.turn.activePlayerIds?.length
+        ||!state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id)))return null;
+      const actions=knownPostMainActions(envelope,legalActions(fork.composition||fork,inspection),true);
+      if(!actions.length)return null;
+      const pending=envelope.session?.session;
+      if(pending){
+        if(inspection.phase!=="awaiting_input"||pending.queue.length!==1
+          ||pending.queue[0].type!==scienceSession.EFFECT_TYPES.PLACE_DATA
+          ||pending.journal?.actions?.[0]?.action?.family!=="place_data"
+          ||!actions.every(a=>a.family==="choose_target"&&["computer","blueBonus"].includes(a.target?.target)))return null;
+        return createNode(envelope,null,actions,"decision",barrier);
+      }
+      if(inspection.phase!=="idle")return null;
+      const view=createNode(envelope,null,actions,"stable",barrier),policy=resourceSpec(view);
+      if(cardPickSpec(view)?.goal||goalMovementSpec(view)?.selectedActionId)return null;
+      const plan=policy?.plans.length===1&&policy.plans[0];
+      if(plan&&policy.retainedActionIds.length===0
+        &&actions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data")){
+        const projected=readPlanningState(nodes.get(view));
+        const proof=plan.goal.kind==="computer-prefix"?localPlans.computerCompletion({state:projected,seatId,goal:plan.goal})
+          :plan.goal.kind==="blue-data"?localPlans.blueCompletion({state:projected,seatId,goal:plan.goal}):null;
+        if(proof?.available&&!proof.dataCornerId&&!proof.incomeCardId)return view;
+      }
+      if(policy?.plans.length===0&&policy.retainedActionIds.every(id=>actions.find(a=>a.actionId===id)?.family==="end_turn")
+        &&turnTailSummary(view,"end-turn"))return view;
+      return null;
     }
 
     function knownPostdrawTailView(envelope,inspection,barrier,intent,resourceControl,sourceAction){
@@ -1593,11 +1636,12 @@
               "includeCardIds", "excludeCardIds",...(allowAmiba?["traceType"]:[])].includes(key)) || event.types != null && !Array.isArray(event.types)) return false;
           return (event.types?.length ? event.types : [event.type]).every(type => MONEY_INDEPENDENT_EVENTS.has(type)||allowAmiba&&type==="alienTrace");
         }))) return false;
-        const scoring = model.endGameScoring;
+        const scoring = model.endGameScoring || (allowAmiba&&card.set==="alien:阿米巴"
+          ?endScoring.resolveCardEndGameRule(card,cardEffects):null);
         if (model.cardType === 3 && !scoring) return false;
         return !scoring || Object.keys(scoring).every(key => ["kind", "color", "traceType", "techType", "planetId",
           "scorePer", "locationType", "score", "resource", "count"].includes(key))
-          && ["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand", "probeLocation",
+          && ["sectorWinsByColor", "traceCount", ...(allowAmiba?["amibaTraceCount"]:[]), "techCount", "distinctSignalSectors", "planetOrbitOrLand", "probeLocation",
             "unmarkedFinalRightmost", "remainingResource", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
           && (scoring.kind !== "remainingResource" || ["availableData", "publicity"].includes(scoring.resource));
       }));

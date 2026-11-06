@@ -1,0 +1,1 @@
+{"output":"reports/ai-foundation-20261105/third-round-teacher-v1/v276-cold-actual-v256-192-20261106-v1.json","label":"actual-v256-192","action":"pass:a1f33c73","value":143,"inputs":1,"milliseconds":24.091875,"complete":true,"decisionGatePassed":true,"roots":[{"actionId":"pass:a1f33c73","target":1,"value":143,"realization":0,"preparationDebt":0,"completion":"complete"}]}

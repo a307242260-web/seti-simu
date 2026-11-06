@@ -1,0 +1,60 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "no-progress status answer; resumed Native evidence and implementation in current turn",
+  "productionRuntime": "V274/V48",
+  "sourceCommit": "54a9c02fe8c46b4ec086a709287a93c1c6b43a58",
+  "resultCommit": "21486ce48f3c226cdc914c8dc96f768985cfc9d9",
+  "bothPushed": true,
+  "workingTree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "candidate": "V276/V48",
+  "candidateAdmitted": false,
+  "gate": {
+    "named": 1033,
+    "uniqueNativeRoots": 705,
+    "allComplete": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 589.905,
+    "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-current-source-serial-gate-20261106-v2.json",
+    "excludedNonwhiteForcedRoots": 3,
+    "old959FirstMeasurementsPreserved": true
+  },
+  "newLearningFixedNativeInputs": 27,
+  "newLearningColdRootInputs": [
+    83,
+    146
+  ],
+  "newAutonomousRuns": 0,
+  "v275FailedFirstSample": {
+    "inputs": 175,
+    "milliseconds": 662.69625
+  },
+  "knownA7CandidateValue": {
+    "old": 121.5,
+    "new": 130.08333333333334,
+    "winningRootUnchanged": 133.33333333333334,
+    "newInputs": 139,
+    "newMilliseconds": 280.145875
+  },
+  "fullNodeSession": 5274,
+  "browserTerminal": {
+    "oldMixedPassed": true,
+    "newKnownDataFailed": "obsolete test assumes compound proof must be null; verify new formal-rule5-input proof against Native130.0833 before validation-only amendment"
+  },
+  "inputAudit": {
+    "pass": 57,
+    "legacyAomomoFail": 1
+  },
+  "firstTwo": {
+    "roots": 304,
+    "equalValue": 304,
+    "changedSelectedActions": 3,
+    "changedGraphs": 37,
+    "needsNativeTimingOrAutonomousAssetCheck": true
+  },
+  "bestControlledR3": 87,
+  "latestActualR3": 86,
+  "bestWhiteFull": 120,
+  "baseline": "V41",
+  "doc": "docs/human405-postdraw-known-data-learning-20261106.md",
+  "next": "Complete fullNode; fix Browser assertion to accept only Native-certified5-input scalar, declare validation-only overlay; check R1 timing and exact frozen source proof, then publish source and unique registered validation. Continue R3 development, R2 end and original23 autonomousfirst3."
+}

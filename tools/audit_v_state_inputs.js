@@ -910,6 +910,26 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+// New anonymous held cards leave an already-funded Native data plan usable.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json')),seed=f.source.seed,seat=f.seatId;
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope;
+  port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});
+  let node=port.openRoot();for(const id of ['play_card:5d3aef4d','choose_card:3fd1e1f1','choose_target:4ca50ef1'])node=port.expand(node,id);assert.equal(node.status,'stable');
+  const done=port.expandResourcePlan(node,port.resourceSpec(node).plans[0],()=>null);assert(done.complete);assert.equal(done.submissions,4);
+  for(const n of [node,...done.prefixes.slice(1).map(x=>x.node),done.node]){
+   const full=n.observation,compact=port.valueObservation(n),formal=outcomeModel.createDecisionObservation(full,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(full,seat);
+   assert.deepEqual(independentValue.evaluateStateValue(compact,seat),value);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert(full.selfState.hand.filter(c=>c.hidden).every(c=>!c.id&&!c.cardId));
+  }
+  assert.equal(independentValue.evaluateStateValue(port.valueObservation(done.node),seat).total,130.08333333333334);assert.deepEqual(c.lifecycle.save().envelope,original);
+  console.log('[PASS] independent-known-postdraw-native-data: four actual held-data inputs, full/formal/compact130.08333333333334 and anonymous cards agree; root/RNG unchanged');
+ }catch(error){console.log(`[FAIL] independent-known-postdraw-native-data: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
 // Mutable planning wrappers can share only an exact complete-input scalar.
 {
  let kernel;

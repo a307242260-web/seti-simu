@@ -21,5 +21,38 @@ try{for(const name of ['cancel','display','blind']){const p=open();try{let node=
  for(const variant of maskedVariants.slice(1))assert.deepEqual(maskedVariants[0],variant,'unknown alien identities cannot influence value, fixed suppliers, Native selections or hand-history facts');assert(c.lifecycle.restore(original).ok);
  const disabled=open();try{let node=disabled.openRoot();for(const id of controls.contexts['387'].path)node=disabled.expand(node,id);disabled.setResourcePlanning(false);node=disabled.expand(node,controls.contexts['387'].branches.blind.acceptedActionId);assert.equal(node.status,'information-barrier','without a fixed-resource proof the original boundary remains');assert.deepEqual(c.lifecycle.save().envelope,original);}finally{disabled.close();}
  const p=open();try{let node=p.openRoot();for(const id of controls.contexts['125'].path)node=p.expand(node,id);node=p.expand(node,controls.contexts['125'].branches.display.acceptedActionId);assert.equal(node.status,'information-barrier','no certified fixed resource tail keeps its original boundary');assert.deepEqual(c.lifecycle.save().envelope,original);}finally{p.close();}
- console.log(JSON.stringify({knownPostdrawTail:'passed',nativeControlledBranches:checked,referenceNativeInputs:18,anonymousCardUsed:false,freeCardValue:125.25,cancelValue:124.25,hiddenDeckWorldsIndependent:6,closedUnprovedBoundary:true,rootAndRngUnchanged:true,newAiSearches:0}));
+ // A known main card's blind reward must not cut a fixed held-data plan.
+ // The complete compound scalar proof declines competing computer/blue goals;
+ // these four actual inputs must still be materialized, with new cards opaque.
+ const teacher=read('reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json'),native=read(F+'v274-teacher167-postdraw-blue-native-control-20261106-v1.json');
+ const maskedDataWorlds=[];
+ for(let rotation=0;rotation<6;rotation++){
+  const state=JSON.parse(teacher.compositionEnvelope.committedState),deck=state.cards.drawPileCardIds;
+  state.cards.drawPileCardIds=[...deck.slice(rotation),...deck.slice(0,rotation)];
+  const source={...teacher.compositionEnvelope,committedState:JSON.stringify(state)};
+  assert(c.lifecycle.restore(source).ok);const before=c.lifecycle.save().envelope,q=open();
+  try{
+   const knownRoot=q.openRoot();let node=knownRoot;for(const id of ['play_card:5d3aef4d','choose_card:3fd1e1f1','choose_target:4ca50ef1'])node=q.expand(node,id);
+   assert.equal(node.status,'stable','a new blind card cannot cut an existing funded data plan');
+   const policy=q.resourceSpec(node);assert.equal(policy.plans.length,1);assert.equal(policy.plans[0].goal.kind,'blue-data');
+   // An applicable scalar proof may replace these same Native inputs; the independent replay still checks them.
+   const view=q.valueObservation(node);assert.equal(view.selfState.hand.filter(c=>c.hidden).length,1);
+   assert(view.selfState.hand.filter(c=>c.hidden).every(c=>!c.id&&!c.cardId));
+   const done=q.expandResourcePlan(node,policy.plans[0],()=>null);assert(done.complete);assert.equal(done.submissions,4);
+   assert.equal(done.goalStatus,'boundary');assert.equal(done.node.status,'information-barrier','uncovered later actions keep an explicit boundary');
+   for(let i=0;i<4;i++){
+    assert.equal(done.prefixes[i].action.actionId,native.prefixes[i+4].action.actionId);
+    assert.deepEqual(done.prefixes[i].action.target,native.prefixes[i+4].action.target);
+    assert.deepEqual(values.evaluateStateValue(q.valueObservation(i<3?done.prefixes[i+1].node:done.node),seat),values.evaluateStateValue(require('../rule-composition').sanitizeHiddenInformationObservation(knownRoot.observation,buildRuleObservation(JSON.parse(native.prefixes[i+4].envelope.committedState),seed,seat),{code:'hidden_card_draw'}),seat));
+   }
+   const value=values.evaluateStateValue(q.valueObservation(done.node),seat);assert.equal(value.total,native.branches.blue.maskedValue.total);
+   maskedDataWorlds.push({policy,value,legalActions:node.legalActions,steps:done.prefixes.map(x=>x.action.actionId)});
+   assert.deepEqual(c.lifecycle.save().envelope,before);
+  }finally{q.close();}
+ }
+ for(const result of maskedDataWorlds.slice(1))assert.deepEqual(result,maskedDataWorlds[0],'unknown ordinary deck identities cannot affect a fixed data plan');
+ assert(c.lifecycle.restore(teacher.compositionEnvelope).ok);const noMovement=open();
+ try{noMovement.setMovementPlanning(false);let node=noMovement.openRoot();for(const id of ['play_card:5d3aef4d','choose_card:3fd1e1f1','choose_target:4ca50ef1'])node=noMovement.expand(node,id);assert.equal(node.status,'information-barrier','without movement timing policy the Native continuation is unproved');}finally{noMovement.close();}
+ assert(c.lifecycle.restore(original).ok);
+ console.log(JSON.stringify({knownPostdrawTail:'passed',nativeControlledBranches:checked,referenceNativeInputs:18,anonymousCardUsed:false,freeCardValue:125.25,cancelValue:124.25,hiddenDeckWorldsIndependent:6,closedUnprovedBoundary:true,rootAndRngUnchanged:true,fixedPostdrawDataNativeInputs:4,ordinaryDeckWorldsIndependent:6,newAiSearches:0}));
 }finally{c.dispose();}

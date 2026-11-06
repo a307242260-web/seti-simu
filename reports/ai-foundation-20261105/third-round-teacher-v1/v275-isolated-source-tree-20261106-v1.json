@@ -1,0 +1,52 @@
+{
+  "status": "source-tree-verified-not-yet-admitted",
+  "baseCommit": "21486ce48f3c226cdc914c8dc96f768985cfc9d9",
+  "snapshotTree": "7046c2a236597ae92e19e93d93a4edb6f7f0b1bd",
+  "physicalIndependentWorktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "privateIndex": "/private/tmp/seti-v275-source-admission-20261106-v1.index",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexPreserved": true,
+  "productionBranchUnchanged": true,
+  "frozenSourceManifest": "reports/ai-foundation-20261106/candidate-v275-known-postdraw-data-v1/manifest.json",
+  "frozenSourceManifestSha256": "97f2c389e7c16e3353dba283332c47c137376181aa92791fde6e33c3dc5ba332",
+  "ownedSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "3b22cb2bb5782d143c610b069ecd9312fe5715e29819b6d4c6e860b5a7125c5d",
+    "randomizer/game/ai/decision-search.js": "60f0fae1607fa0f2696f49d1549f6f21c4b272b50de9b48c81f3dd8aaacfd55d",
+    "randomizer/game/ai/known-postdraw-tail.test.js": "4338e26f67932b1fc3c1967279d35b543755250451b889d0b0cfbb269f372acf",
+    "tools/node-test-inventory.js": "c747263cffa6272a3f7b3e8d4692cca195c0b75e1af9a9a3d956013fe0873a7c",
+    "tools/browser-smoke-inventory.js": "5626eeb6353f1e9d58f11c430e3fd410d5722f3654e94193fa149169dce6acbd",
+    "tools/audit_v_state_inputs.js": "5a4aee925cda222089703b8b279a65c038e3f84b74cd7e527ec8cde8fcc04be7",
+    "adhoc/v275-analysis-choice-learning-contract-20261106-v1.md": "56e8ffdc14406ca4c6b2756301045c1122927b1e8adadc4e11c869640087eec9",
+    "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json": "d8906bfe0b11dd46f1de27953638a9f39bd45e9d0f2e4ea2be78a918cca4f2ac",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v274-teacher167-computer-prefix-native-control-20261106-v1.json": "ce13a27a2b43218cf20c6f145bc2e0666eaefe25cfe640c5d268ff95cf545abf"
+  },
+  "frozenSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "3b22cb2bb5782d143c610b069ecd9312fe5715e29819b6d4c6e860b5a7125c5d",
+    "randomizer/game/ai/decision-search.js": "60f0fae1607fa0f2696f49d1549f6f21c4b272b50de9b48c81f3dd8aaacfd55d",
+    "randomizer/game/ai/known-postdraw-tail.test.js": "4338e26f67932b1fc3c1967279d35b543755250451b889d0b0cfbb269f372acf",
+    "tools/node-test-inventory.js": "c747263cffa6272a3f7b3e8d4692cca195c0b75e1af9a9a3d956013fe0873a7c",
+    "tools/browser-smoke-inventory.js": "5626eeb6353f1e9d58f11c430e3fd410d5722f3654e94193fa149169dce6acbd",
+    "tools/audit_v_state_inputs.js": "5a4aee925cda222089703b8b279a65c038e3f84b74cd7e527ec8cde8fcc04be7",
+    "adhoc/v275-analysis-choice-learning-contract-20261106-v1.md": "56e8ffdc14406ca4c6b2756301045c1122927b1e8adadc4e11c869640087eec9",
+    "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json": "d8906bfe0b11dd46f1de27953638a9f39bd45e9d0f2e4ea2be78a918cca4f2ac",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v274-teacher167-computer-prefix-native-control-20261106-v1.json": "ce13a27a2b43218cf20c6f145bc2e0666eaefe25cfe640c5d268ff95cf545abf"
+  },
+  "validationOverlay": null,
+  "validationOverlaySha256": null,
+  "runtimeUnchangedFromFrozenCandidate": true,
+  "changedPaths": [
+    "adhoc/v275-analysis-choice-learning-contract-20261106-v1.md",
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/known-postdraw-tail.test.js",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v274-teacher167-computer-prefix-native-control-20261106-v1.json",
+    "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "runtimeAssetToolsExactToStagedTree": true,
+  "runtimeAssetPathsVerified": 950,
+  "noUnstagedOrUntrackedRuntimeInputs": true,
+  "scope": "The existing isolated worktree is independently proven byte-identical to a private-index tree made from committedc267098f plus the frozen owned source/test inputs and the explicitly declared validation-only Browser test overlay. Production runtime bytes remain frozen. All other randomizer/tools/assets files match that tree by actual Git blob content and executable modes, independently of unrefreshed index stat records. Functional validation runs in this physical independent tree; no shared-root edits or index refresh are used. This is a source snapshot proof, not completed source admission or a new autonomous game."
+}

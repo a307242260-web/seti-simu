@@ -1,0 +1,28 @@
+{
+  "runtime": "V275/V48",
+  "status": "not-admitted",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v275-known-postdraw-data-v1/manifest.json",
+  "sourceManifestSha256": "97f2c389e7c16e3353dba283332c47c137376181aa92791fde6e33c3dc5ba332",
+  "coldGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v275-current-source-serial-gate-20261106-v1.json",
+  "measuredNamedRoots": 8,
+  "firstFailure": {
+    "label": "actual-v256-132",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+    "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v275-cold-actual-v256-132-20261106-v1.json",
+    "nativeInputs": 175,
+    "milliseconds": 662.69625,
+    "value": 139,
+    "actionId": "industry:e887dc52",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  },
+  "teacher167": {
+    "inputs": 150,
+    "milliseconds": 334.48375,
+    "selectedValue": 133.33333333333334
+  },
+  "newAutonomousRuns": 0,
+  "scope": "Closed search175 but first sample662.69625ms fails600ms; preserved and never re-benchmarked for a faster sample. New Native helper correctly executes fixed four-input data plan; another distinct greedy omission is now evidenced: revealed Amiba prevents blue quote while computer-prefix can force itself."
+}

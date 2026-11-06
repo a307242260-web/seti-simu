@@ -1,0 +1,18 @@
+{
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v276-known-postdraw-blue-v1/manifest.json",
+  "sourceManifestSha256": "9495f11d117b61c108a816ae6b4f7f3df3471e5ce4b4170331fd8a4307e55efa",
+  "runtimeChanged": false,
+  "reason": "Only Browser validation changes: after formal Amiba type3 support the complete5-input proof legitimately exists and must match existing independent Native130.08333333333334, rather than being required null. No runtime or cold-source retry. Mixed analysis already passed under exact same runtime. The old immediate-income assertion is replaced with complete Native realization after a strictly better audited blue plan (2+3 inputs); the unchanged prepaid-income requirement still must hold.",
+  "originalSourceHashes": {
+    "tools/browser-smoke-inventory.js": "d6663d010dda0f77c112e3eb35b49155c13c1c26eed317a865c5670425af958c",
+    "randomizer/game/ai/public-amiba-income-swap.test.js": "273f9bc13eac80ce6d0dcd71920277e99cf10ebeb5bf02b648bb93b07b27e7b7"
+  },
+  "validationSourceHashes": {
+    "tools/browser-smoke-inventory.js": "a094d09ee93513b3d984877bac89d2092c28928da2c328955fbde84eecf50bdc",
+    "randomizer/game/ai/public-amiba-income-swap.test.js": "ec5fd7608cf1920ea1f21075f6784b9d8f95961de7562069220cb79c64603ef2"
+  },
+  "priorFailureLog": "reports/ai-foundation-20261106/known-postdraw-data-v1/v276-browser-20261106-v1.log",
+  "priorValidationOverlay": "reports/ai-foundation-20261106/candidate-v276-known-postdraw-blue-v1/validation-overlay-20261106-v1.json",
+  "priorValidationOverlaySha256": "3a616275c5aae589ceb1d4e46713e30b068f9982ca390f7ce86e069e4764e05c",
+  "priorUnitFailureLog": "reports/ai-foundation-20261106/known-postdraw-data-v1/v276-full-node-20261106-v1.log"
+}

@@ -1,0 +1,4 @@
+{"publicAmibaIncomeSwap":"passed","rows":[{"branch":"DLC31","before":123.58333333333333,"after":123.58333333333333},{"branch":"ordinary","before":118.58333333333333,"after":118.58333333333333}],"nativeIncomeControlInputs":6,"newAutonomousRuns":0,"rootAndRngRestored":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.40s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

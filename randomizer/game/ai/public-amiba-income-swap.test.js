@@ -34,9 +34,19 @@ try{for(const[name,b]of Object.entries(prior.branches)){
  if(name==='DLC31')for(const index of [2,4]){
   assert(c.lifecycle.restore(suffix.branches[name].prefixes[index]).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
   try{p.setResourcePlanning(true);p.setCardPickPlanning(true);const root=p.openRoot(),spec=p.resourceSpec(root),plan=spec.plans.find(p=>p.goal.kind==='income'&&p.goal.incomeCardId==='card-18-0');
-   assert(spec.incomeTail.realizesForecast);assert.equal(spec.incomeTail.netGain,0);assert(plan,'prepaid analysis income must still be executed');
-   const result=p.expandResourcePlan(root,plan,()=>null);assert(result.complete);assert.equal(result.submissions,3);const after=p.valueObservation(result.node),actor=after.publicState.players.find(p=>p.playerId===seat);assert.equal(actor.income.energy,3);assert.equal(after.selfState.hand.length,0);assert.deepEqual(c.lifecycle.save().envelope,original);
+   assert(spec.incomeTail.realizesForecast);assert.equal(spec.incomeTail.netGain,0);
+   let current=root,incomePlan=plan,preparationInputs=0;
+   if(!incomePlan){
+    assert.equal(spec.plans.length,1);const blue=spec.plans[0];assert.equal(blue.goal.kind,'blue-data');assert.equal(blue.goal.blueSlot,2);
+    assert(spec.blueTails.some(t=>t.goalId===blue.goal.id&&t.available&&t.netGain>spec.incomeTail.netGain),'only a better audited currency goal may precede prepaid income');
+    const prepared=p.expandResourcePlan(root,blue,()=>null);assert(prepared.complete);assert.equal(prepared.submissions,2);preparationInputs=prepared.submissions;current=prepared.node;
+    const next=p.resourceSpec(current);assert(next.incomeTail.realizesForecast);assert.equal(next.incomeTail.netGain,0);
+    incomePlan=next.plans.find(p=>p.goal.kind==='income'&&p.goal.incomeCardId==='card-18-0');
+   }
+   assert(incomePlan,'prepaid analysis income must still be executed after any better fixed preparation');
+   const result=p.expandResourcePlan(current,incomePlan,()=>null);assert(result.complete);assert.equal(result.submissions,3);assert.equal(preparationInputs,index===2?2:0);
+   const after=p.valueObservation(result.node),actor=after.publicState.players.find(p=>p.playerId===seat);assert.equal(actor.income.energy,3);assert.equal(after.selfState.hand.length,0);assert.deepEqual(c.lifecycle.save().envelope,original);
   }finally{p.close();}
  }
  rows.push({branch:name,before:v.total,after:afterV.total});assert(c.lifecycle.restore(before).ok);assert.deepEqual(c.lifecycle.save().envelope,before);
-}console.log(JSON.stringify({publicAmibaIncomeSwap:'passed',rows,nativeIncomeControlInputs:6,newAutonomousRuns:0,rootAndRngRestored:true}));}finally{c.dispose();}
+}console.log(JSON.stringify({publicAmibaIncomeSwap:'passed',rows,nativeIncomeControlInputs:8,newAutonomousRuns:0,rootAndRngRestored:true}));}finally{c.dispose();}

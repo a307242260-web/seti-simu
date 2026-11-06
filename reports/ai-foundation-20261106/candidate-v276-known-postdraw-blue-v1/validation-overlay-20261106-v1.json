@@ -1,0 +1,13 @@
+{
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v276-known-postdraw-blue-v1/manifest.json",
+  "sourceManifestSha256": "9495f11d117b61c108a816ae6b4f7f3df3471e5ce4b4170331fd8a4307e55efa",
+  "runtimeChanged": false,
+  "reason": "Only Browser validation changes: after formal Amiba type3 support the complete5-input proof legitimately exists and must match existing independent Native130.08333333333334, rather than being required null. No runtime or cold-source retry. Mixed analysis already passed under exact same runtime.",
+  "originalSourceHashes": {
+    "tools/browser-smoke-inventory.js": "d6663d010dda0f77c112e3eb35b49155c13c1c26eed317a865c5670425af958c"
+  },
+  "validationSourceHashes": {
+    "tools/browser-smoke-inventory.js": "a094d09ee93513b3d984877bac89d2092c28928da2c328955fbde84eecf50bdc"
+  },
+  "priorFailureLog": "reports/ai-foundation-20261106/known-postdraw-data-v1/v276-browser-20261106-v1.log"
+}

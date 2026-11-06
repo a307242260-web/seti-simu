@@ -1,0 +1,2 @@
+PASS production-known-postdraw-tail http://127.0.0.1:57957/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

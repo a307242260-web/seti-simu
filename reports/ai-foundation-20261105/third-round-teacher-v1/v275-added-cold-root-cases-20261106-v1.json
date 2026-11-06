@@ -1,0 +1,347 @@
+{
+  "cases": [
+    {
+      "label": "actual-v274-113",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-113-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-114",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-114-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-115",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-115-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-116",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-116-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-117",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-117-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-118",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-118-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-119",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-119-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-120",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-120-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-121",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-121-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-122",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-122-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-123",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-123-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-124",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-124-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-125",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-125-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-126",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-126-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-127",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-127-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-128",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-128-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-129",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-129-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-130",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-130-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-131",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-131-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-132",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-132-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-133",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-133-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-134",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-134-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-135",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-135-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-136",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-136-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-137",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-137-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-138",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-138-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-139",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-139-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-140",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-140-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-141",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-141-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-142",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-142-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-143",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-143-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-144",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-144-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-145",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-145-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-146",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-146-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-147",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-147-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-148",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-148-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-149",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-149-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-150",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-150-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-151",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-151-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-152",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-152-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-153",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-153-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-154",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-154-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-155",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-155-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-156",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-156-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-157",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-157-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-158",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-158-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-159",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-159-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-160",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-160-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-161",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-161-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-162",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-162-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-163",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-163-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-164",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-164-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-165",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-165-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-166",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-166-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-167",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-167-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-168",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-168-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-169",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-169-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-170",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-170-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-171",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-171-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-172",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-172-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-173",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-173-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-174",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-174-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-175",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-175-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-176",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-176-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-177",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-177-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-178",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-178-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-179",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-179-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-180",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-180-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-181",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-181-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-182",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-182-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-183",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-183-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-184",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-184-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-185",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-185-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-186",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-186-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-187",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-187-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-188",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-188-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-189",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-189-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-190",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-190-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-191",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-191-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-192",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-192-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-193",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-193-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-194",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-194-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v274-195",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-195-root-20261106-v1.json"
+    },
+    {
+      "label": "teacher167-known-amiba7",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json"
+    },
+    {
+      "label": "amiba4-next-main",
+      "fixture": "reports/ai-foundation-20261106/analysis-blue-choice-v1/amiba4-next-main-root-20261106-v1.json"
+    }
+  ],
+  "capturedPrefixSha256": "bff26ef66702f4bb701cc24b53ce51199461626ab853c89491da8839c562ea4d",
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}
