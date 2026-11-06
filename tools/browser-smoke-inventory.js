@@ -1713,4 +1713,14 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__incomePurposeEligibilitySmoke?.ok === true',
   obligation:'Production Browser preserves the pre-main energy-income supplier and the complete Native window value, with shared cost tie ordering and unchanged root/RNG',
   counterexample:'A tied credit supplier suppresses all income preparation, loses the known48 window, omits the shared dependency or mutates the source',
+}), Object.freeze({
+  id:'production-company-income-priority',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiDecisionSearch && window.SetiSearchAgent)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-post-main-root-20261106-v1.json').then(r=>r.json()),seat=f.seatId,seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('company income fixture restore');const original=JSON.stringify(c.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{const evaluate=window.SetiStateValue.createStateValueEvaluator(seat),r=window.SetiDecisionSearch.searchDecision({port,root:port.openRoot(),evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});if(!r.complete||r.value<123.08333333333333||r.actionId!=='industry:e887dc52'||r.diagnostics.nativeExecutions>256)throw Error('positive known swap suppressed by income tail');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('company income root/RNG changed');window.__companyIncomePrioritySmoke={ok:true};}finally{port.close();c.dispose();}
+  })()`,
+  successExpression:'window.__companyIncomePrioritySmoke?.ok === true',
+  obligation:'A strictly higher known company purpose precedes fixed income preparation and improves the complete Native window without card subset expansion',
+  counterexample:'The greedy income tail consumes the outgoing card before the selected swap, loses its Native financing improvement or mutates root/RNG',
 })]);

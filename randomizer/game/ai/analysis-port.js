@@ -756,7 +756,8 @@
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
-      if(cardPickSpec(node)?.fixed){resourceSpecs.set(node,null);return null;}
+      const cardPick=cardPickSpec(node);
+      if(cardPick?.fixed){resourceSpecs.set(node,null);return null;}
       const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
       let goals=[],source=null,operation={},incomeTail=null,blueTails=[],computerTail=null;
       if(stored.resourceControl){
@@ -860,9 +861,18 @@
       const forceComputer=node.status==="stable"&&computerTail?.selected
         &&(!incomeCandidate||computerTail.netGain>incomeTail.netGain)&&(!forceBlue||computerTail.netGain>competingBlue.netGain);
       const forcedKind=forceComputer?"computer-prefix":forceIncome?"income":forceBlue?"blue-data":null;
-      const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
+      // Use the same greedy preparation ranking for a known company swap.
+      // Compare canonical ledger units: subtracting two portfolio scalars can
+      // otherwise make an exact4.75 tie look like4.750000000000002.
+      const competingSwap=forcedKind&&cardPick?.companySwap;
+      const forcedGain=forceComputer?computerTail.netGain:forceIncome?incomeTail.netGain:forceBlue?competingBlue.netGain:0;
+      const swapGain=competingSwap?stateValue.normalizeValue(competingSwap.goal.netGain):0;
+      const swapAction=swapGain>Math.max(0,stateValue.normalizeValue(forcedGain))&&node.legalActions.find(a=>a.actionId===cardPick.selectedActionId
+        &&a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards");
+      const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:swapAction?[]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
-        retainedActionIds:forcedKind?[]:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind?node.legalActions.map(a=>a.actionId):excluded.map(a=>a.actionId)});
+        ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
+        retainedActionIds:forcedKind?(swapAction?[swapAction.actionId]:[]):node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind?node.legalActions.filter(a=>a!==swapAction).map(a=>a.actionId):excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
 

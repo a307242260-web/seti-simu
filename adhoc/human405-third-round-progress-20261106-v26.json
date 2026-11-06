@@ -1,0 +1,85 @@
+{
+  "status": "progress",
+  "sourceAdmitted": true,
+  "baseCommit": "d0ee6893c3392f9b0425ec9457e74e8ccbfbd08e",
+  "runtime": "V258/V46",
+  "manifest": "reports/ai-foundation-20261106/candidate-v258-company-income-greedy-order-v1/manifest.json",
+  "manifestSha256": "5a524feab000d3a1bdaacb4deac646685ff259dce00eb8fd88939c6a331df442",
+  "snapshotTree": "a05a5ef6e771ade7375c7a548568b9094f1b1bd1",
+  "namedCases": 727,
+  "uniqueNativeRoots": 595,
+  "allComplete": true,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 575.242125,
+  "nodeVerification": {
+    "initialFullUnitPassed": 196,
+    "initialFullUnitFailed": 1,
+    "fullFlowPassed": 1,
+    "validationOnlyObsoleteShapeAssertion": "proofs.size>=14; all Native behavior checks retained",
+    "finalRelatedUnitPassed": 4,
+    "allCurrentUnitBusinessObligationsPassed": 197,
+    "initialFailureRetained": true,
+    "doesNotClaimOneGreenFullRun": true
+  },
+  "browserRelatedPassed": 8,
+  "inputAudit": {
+    "passed": 55,
+    "failed": 1,
+    "legacyAomomoOnly": true
+  },
+  "firstTwoRoundRegression": {
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "3": {
+      "roots": 237,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "pairedHistoricalRoots": 544,
+  "historicalChanges": [],
+  "actualV256ColdRootsChecked": 78,
+  "actualV256NonInheritedChoiceAndValueUnchanged": 24,
+  "firstTwoSelectedPlanContractsUnchanged": 304,
+  "fourProductionBudgetsStillNull": true,
+  "nativeStateActorSessionRngAndIntentIdentityRulesUnchanged": true,
+  "coldSnapshotTree": "daa4b4268abb4aeb44c5995845645b070fa94367",
+  "runtimeSnapshotBeforeAfterExact": true,
+  "finalValidationSnapshotBeforeAfterExact": true,
+  "validationOnlyTestDelta": [
+    "randomizer/game/ai/amiba-blind-income.test.js"
+  ],
+  "firstFailedCandidatesRetained": true,
+  "newAutonomousRuns": 0,
+  "developmentAligned": false,
+  "lastActualR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "baseline": "V41",
+  "goalStatus": "active",
+  "next": "Publish admitted greedy preparation repair. No new game merely for an unselected-branch correction: all24 non-inherited actual V256 decisions and544 paired historical fresh roots preserve first choices/values. Investigate the actual149/150 inherited-goal versus fresh-root difference with Native controlled continuations before changing candidates/forecast. R3 learning, R2-end review and autonomous first3 remain; V41 baseline unchanged.",
+  "previousGoalTurnClassification": "progress",
+  "newNativeControlInputs": 26,
+  "pending": "isolated Chinese source/evidence commit and push; Native study actual149/150 before another game"
+}

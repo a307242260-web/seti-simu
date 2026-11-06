@@ -1,0 +1,66 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261106/candidate-v257-company-income-order-v1/manifest.json",
+  "manifestSha256": "2164740993c92955329a6946904a6a1ef2eb06eb31cb5b2d24b92e41ebe24394",
+  "cases": 727,
+  "rows": [
+    {
+      "label": "energy-income-post-main",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-post-main-root-20261106-v1.json",
+      "identity": "f3eaa53d5ce73bb464dd64f3acc23e3adfdf9f0b3edbdf0704329e46756914db",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v257-cold-energy-income-post-main-20261106-v1.json",
+      "nativeInputs": 6,
+      "milliseconds": 54.430792,
+      "value": 123.08333333333333,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "energy-income-before-preparation",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-before-preparation-root-20261106-v1.json",
+      "identity": "d393f6431e4455cba5ac24ff80e3204d01fa4c9db8bec7c1880010006e96d948",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v257-cold-energy-income-before-preparation-20261106-v1.json",
+      "nativeInputs": 20,
+      "milliseconds": 94.96816700000001,
+      "value": 123.08333333333333,
+      "actionId": "play_card:592155ba",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "corpus-teacher-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "identity": "d25c7af93de99a5b67d9555aee163a526d0f24fbf3136d18799f532059ff9eda",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v257-cold-corpus-teacher-039-20261106-v1.json",
+      "nativeInputs": 262,
+      "milliseconds": 472.36183400000004,
+      "value": 68.50732600732601,
+      "actionId": "orbit:44937d1f",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 3,
+  "maxNativeInputs": 262,
+  "maxMilliseconds": 472.36183400000004,
+  "failure": {
+    "label": "corpus-teacher-039",
+    "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+    "identity": "d25c7af93de99a5b67d9555aee163a526d0f24fbf3136d18799f532059ff9eda",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v257-cold-corpus-teacher-039-20261106-v1.json",
+    "nativeInputs": 262,
+    "milliseconds": 472.36183400000004,
+    "value": 68.50732600732601,
+    "actionId": "orbit:44937d1f",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

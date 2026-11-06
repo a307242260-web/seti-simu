@@ -1,0 +1,17 @@
+{
+  "status": "not-admitted",
+  "runtime": "V257/V46",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v257-company-income-order-v1/manifest.json",
+  "sourceSnapshotTree": "8c37a9f19ba94d12e93056b82c10ab7e793a906f",
+  "firstFailedGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v257-current-source-serial-gate-20261106-v1.json",
+  "failure": {
+    "label": "corpus-teacher-039",
+    "nativeInputs": 262,
+    "milliseconds": 472.36183400000004,
+    "value": 68.50732600732601,
+    "complete": true
+  },
+  "cause": "Keeping both fixed preparation orders adds two3-input company exchanges when both orders end at the same full window value. Their declared gains4.75 and4.750000000000002 differ only by subtraction drift. Preserve failure; use canonical value units and the existing single greedy preparation ranking in a new source version, not another cap or relaxed budget.",
+  "newAutonomousRuns": 0,
+  "productionStill": "V256/V46"
+}
