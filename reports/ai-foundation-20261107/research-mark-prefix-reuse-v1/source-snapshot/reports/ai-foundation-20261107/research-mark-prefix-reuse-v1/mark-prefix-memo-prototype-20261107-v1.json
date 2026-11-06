@@ -1,0 +1,16 @@
+{
+  "scope": "One in-memory prototype after failed V303: one synchronous researchPurposeGains quote reuses already-computed first-crossing status/award for the same ordered tech prefix. Null means not crossed, zero means crossed but unavailable; first crossing and shared data guard preserved. Full serialized roots exact, no runtime change/acceptance timing/resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/trigger-cache-capacity-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "06179c22561171cc3071db3d76e60cb00b3261b8c200028d89f2bcd1a182cc43",
+  "stats": {
+    "prefixRequests": 46116,
+    "prefixMemoHits": 21280,
+    "prefixComputations": 24836
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

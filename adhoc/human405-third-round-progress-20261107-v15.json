@@ -1,0 +1,52 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V303 default scalar delta memo verified, first cold672.560709 still failed, evidence pushed7c60dbc08",
+  "thisGoalTurnClassification": "progress: V304 local ordered-prefix first-crossing memo verified over1824 full plans,9Node6Chrome64audit+old1; staleBrowser112.5 independently disproved by old/new116.5 withno new mark; first cold673.040541 fails. New in-memory conservative single-research score ceiling prunes24909 of46116 impossible prefix details with all roots exact; not implemented. No autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V304/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/research-mark-prefix-reuse-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "fb5f92474320086ee33b2dfcf792498dad522538a3ee17da0daa265b72b6a44c",
+  "sourceHashesUnchangedAfterFreeze": 114,
+  "coldGate": {
+    "cases": 1258,
+    "measured": 1,
+    "status": "failed-gate",
+    "label": "actual-v256-132",
+    "NativeInputs": 162,
+    "milliseconds": 673.040541,
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "relatedNodePassed": 9,
+  "BrowserPassed": 6,
+  "inputAuditPassed": 64,
+  "existingAomomoAuditFailures": 1,
+  "pairedPortfolios": 1536,
+  "controlledWalletThresholdWeights": 288,
+  "developmentCalls": {
+    "reference": 101686,
+    "candidate": 50278
+  },
+  "outcomeCalls": {
+    "reference": 12493,
+    "candidate": 7101
+  },
+  "staleBrowserExpected": {
+    "old": 112.5,
+    "referenceV303": 116.5,
+    "candidateV304": 116.5,
+    "newFinalMark": null
+  },
+  "nextPrototype": {
+    "path": "reports/ai-foundation-20261107/research-mark-score-ceiling-v1/single-research-score-ceiling-prototype-20261107-v1.json",
+    "implemented": false,
+    "prefixChecks": 46116,
+    "provenUnreachableInPrototype": 24909,
+    "fullRootsExact": true,
+    "NativeInputs": 162
+  },
+  "newAutonomousRuns": 0,
+  "document": "docs/human405-research-mark-prefix-cpu-20261107.md",
+  "next": "Verify conservative per-research Native score ceiling across symbols, colors, consumption, movement and missing-upper manual funding; retain0/null first crossing and data guards. Then only implement justified bound and first cold new source. Still full1258/Node/Chrome/audit, actualfirst2 assets, original23 autonomousfirst3 andR2-end review. Teacher105/6tech/7C4E1card+scan not aligned; V41 unchanged."
+}
