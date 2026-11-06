@@ -8,13 +8,19 @@
 })(typeof globalThis!=='undefined'?globalThis:window,function(amiba,aliens,players,placement,effects,end,probe,arithmetic,cards){
  'use strict';const zero=reason=>({value:0,selected:null,reason});
  const inertScores=new Set(['sectorWinsByColor','techCount','distinctSignalSectors','planetOrbitOrLand','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost']);
+ const blueDataRule=t=>t.event?.type==='alienTrace'&&t.event.traceType==='blue'
+  &&Object.keys(t.event).every(k=>['type','traceType'].includes(k))&&t.effect?.type==='gain_data'
+  &&Number.isSafeInteger(t.effect.options?.count)&&t.effect.options.count>0
+  &&Object.keys(t.effect.options).every(k=>['count','repeat'].includes(k))&&(t.effect.options.repeat??1)===1;
  function reservationsSafe(facts){
   return facts.reservedCards.every(card=>{
    const m=effects.getCardModel(card);if(!m||m.temporaryTasks?.length)return false;
    const consumed=card.cardEffectState?.modelCardId===card.cardId?card.cardEffectState.consumedTriggerIds||[]:[];
    if((m.triggers||[]).some(t=>!consumed.includes(t.id)&&!(t.event?.types||[t.event?.type]).every(type=>
      ['researchTech','move','visitPlanet','visitAsteroid','visitComet','launch','orbit','land'].includes(type)
-     ||type==='alienTrace'&&['pink','yellow'].includes(t.event.traceType))))return false;
+     ||type==='alienTrace'&&(['pink','yellow'].includes(t.event.traceType)||blueDataRule(t)))))return false;
+   if((m.triggers||[]).some(t=>!consumed.includes(t.id)&&blueDataRule(t))
+     &&(card.cardEffectState?.modelCardId!==card.cardId||!Array.isArray(card.cardEffectState?.consumedTriggerIds)))return false;
    if((m.tasks||[]).some(t=>!card.cardEffectState?.completedTaskIds?.includes(t.id)
      &&(!['orbitOrLandCount','completedSectors','completedSectorsByColor','probeDistanceFromEarth','traceCount'].includes(t.condition?.type)
        ||t.condition.type==='traceCount'&&(!t.condition.traceType||t.condition.traceType==='blue'))))return false;
@@ -33,16 +39,42 @@
    amiba:{...amiba.copyPublicSymbolState(source.amiba),
     traceSlotsByAlienSlotId:Object.fromEntries(Object.entries(source.amiba.traceSlotsByAlienSlotId).map(([id,grid])=>[id,{...grid,blue:{...grid.blue}}]))}};
  }
- // Only current blue-trace metrics can change. Other scored facts are held
- // fixed by the reservation guard; unknown new cards never become Type3 facts.
+ // Blue-trace metrics and one known completed trigger card can change.
+ // Unknown new cards never become Type3 scoring facts.
  function secured(aliensState,facts){
-  const actor={id:facts.player.id,color:facts.player.color,reservedCards:facts.reservedCards,techState:facts.player.techState},context={aliens:aliensState};let value=0;
+  const actor={id:facts.player.id,color:facts.player.color,reservedCards:facts.reservedCards,techState:facts.player.techState,completedTaskCount:facts.player.completedTaskCount},context={aliens:aliensState};let value=0;
   const board=facts.board.finalScoring,mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id)||(facts.forecastFinalMark?.tileId==='b'?facts.forecastFinalMark:null),formula=board&&end.getFormulaId('b',board.tileVariants.b);
   if(mark&&formula==='b1')value+=end.getFormulaBaseValue(formula,actor,context)*end.getSlotMultiplier(formula,mark.slotIndex);
+  const cMark=board?.tiles?.c?.marks?.find(m=>m.playerId===actor.id),cFormula=board&&end.getFormulaId('c',board.tileVariants.c);
+  if(cMark)value+=end.getFormulaBaseValue(cFormula,actor,context)*end.getSlotMultiplier(cFormula,cMark.slotIndex);
   for(const card of facts.reservedCards){const rule=end.resolveCardEndGameRule(card,effects);
    if(rule&&['traceCount','amibaTraceCount'].includes(rule.kind)&&rule.traceType==='blue')value+=end.scoreCardEndGameRule(rule,actor,context);
   }
   return value;
+ }
+ // Native merges every matching slot/card into one choice for this event.
+ // Keep the selected consumption in the typed endpoint; another blue trace
+ // may consume another slot, never this same one for a second time.
+ function blueDataChoice(facts,weights,wallet,context){
+  const choices=[];
+  for(const card of facts.reservedCards){
+   const model=effects.getCardModel(card),consumed=card.cardEffectState?.consumedTriggerIds||[];
+   for(const trigger of model.triggers||[]){
+    if(consumed.includes(trigger.id)||!blueDataRule(trigger))continue;
+    const copy=structuredClone(card);effects.consumeTrigger(copy,trigger.id);
+    const completed=effects.areAllTriggersConsumed(copy);
+    if(completed&&(!Number.isSafeInteger(wallet.completedTaskCount)||wallet.completedTaskCount<0))throw TypeError('VALUE_COMPLETED_TASK_COUNT_INVALID');
+    const after={...wallet,...(completed?{completedTaskCount:wallet.completedTaskCount+1}:{})};
+    players.gainResources({resources:after},{availableData:trigger.effect.options.count});
+    const reservedCards=facts.reservedCards.flatMap(c=>c!==card?[c]:completed?[]:[copy]);
+    const nextFacts={...facts,player:after,reservedCards},gain=after.availableData-wallet.availableData;
+    const net=gain*weights.availableData+secured(context,nextFacts)-secured(context,{...facts,player:wallet});
+    choices.push({available:true,wallet:after,reservedCards,trigger:{cardInstanceId:card.id,ruleId:trigger.id,gainedData:gain,completed},net});
+   }
+  }
+  choices.sort((a,b)=>b.net-a.net||Number(b.trigger.completed)-Number(a.trigger.completed)||a.trigger.cardInstanceId.localeCompare(b.trigger.cardInstanceId)||a.trigger.ruleId.localeCompare(b.trigger.ruleId));
+  const selected=choices[0];
+  return selected&&(selected.trigger.gainedData>0||selected.trigger.completed)?selected:null;
  }
  function incomePreparation(facts,weights,portfolio,baseValue){
   const placed=facts.computerSlots;
@@ -127,12 +159,15 @@
    if(choice.reward.region){region=amiba.resolveRegionReward(context,choice.reward.region);if(!region.ok)throw Error('AMIBA_ANALYSIS_REGION_QUERY_FAILED');let valid=true;
     for(const r of region.results)if(!apply(r.reward)){valid=false;break;}if(!valid)continue;
    }
+   const trigger=blueDataChoice(facts,weights,wallet,context);
+   if(trigger)Object.assign(wallet,trigger.wallet);
    wallet.handSize+=unknownCards;
    const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,context.amiba[k]])),traces={revealedSlotId:id,traceSlotsByAlienSlotId:context.amiba.traceSlotsByAlienSlotId,
     blindCardCount:context.amiba.blindCardCount,displayedCardAvailable:context.amiba.displayedCardAvailable},slots=Object.entries(context.aliens).map(([slotId,s])=>({...s,slotId:Number(slotId)}));
    const cleared={computerSlots:[],blueSlots:(facts.blueSlots||[]).map(b=>({...b,occupied:false,unlocked:false})),researchSymbols:symbols,amibaTraces:traces,
-    extraUnknownCount:facts.extraUnknownCount+unknownCards,aliens:{...facts.board.aliens,slots,amiba:symbols,amibaTraces:traces},ordinaryDrawCount:ordinaryLeft};
-   const securedGain=secured(context,facts)-beforeSecured;
+    extraUnknownCount:facts.extraUnknownCount+unknownCards,aliens:{...facts.board.aliens,slots,amiba:symbols,amibaTraces:traces},ordinaryDrawCount:ordinaryLeft,
+    ...(trigger?{reservedCards:trigger.reservedCards,nextFinalMark:facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>o.tileId==='c'?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,{...wallet,reservedCards:trigger.reservedCards},{})*o.multiplier}:o)}}:{})};
+   const securedGain=secured(context,{...facts,player:wallet,reservedCards:trigger?.reservedCards||facts.reservedCards})-beforeSecured;
    const delta=w=>arithmetic.sum([w.score-initial.score,securedGain,unknownCards*weights.handSize,...Object.keys(weights).filter(k=>k!=='handSize').map(k=>(w[k]-initial[k])*weights[k])],weights);
    let best={value:delta(wallet),wallet,progress:cleared,blueSlot:null};
    for(const[tileId,slot]of Object.entries(initial.techState.blueBoardSlots)){
@@ -146,7 +181,7 @@
     if(value>best.value)best={value,wallet:after,progress,blueSlot:Number(slot)};
    }
    candidates.push({slotId:choice.slot.slotId,position:choice.position||null,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:best.blueSlot,
-    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet),securedGain,unknownCards,region,endpoint:{resources:best.wallet,...best.progress}});
+    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet),securedGain,unknownCards,region,...(trigger?{blueDataTrigger:trigger.trigger}:{}),endpoint:{resources:best.wallet,...best.progress}});
   }
   candidates.sort((a,b)=>b.localPlanValue-a.localPlanValue||a.slotId-b.slotId||(b.position||0)-(a.position||0));
   const selected=candidates[0];

@@ -1,0 +1,72 @@
+{
+  "status": "progress",
+  "sourceAdmitted": true,
+  "baseCommit": "5ce0df6be1a490ca41ba9af1cd3b7b163d293325",
+  "runtime": "V254/V44",
+  "manifest": "reports/ai-foundation-20261106/candidate-v254-known-blue-data-v1/manifest.json",
+  "manifestSha256": "fb4b722c7988dacc6edec15fe02d33b3c3867e9bbae6ed1a32356888ca67586c",
+  "snapshotTree": "2a8c4c0ab431630659a5e78384cce1ee7e5fbf4d",
+  "namedCases": 645,
+  "uniqueNativeRoots": 543,
+  "allComplete": true,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 566.204792,
+  "fullNode": {
+    "unitPassed": 194,
+    "fullFlowPassed": 1,
+    "failed": 0
+  },
+  "browserRelatedPassed": 5,
+  "inputAudit": {
+    "passed": 55,
+    "failed": 1,
+    "legacyAomomoOnly": true
+  },
+  "firstTwoRoundRegression": {
+    "3": {
+      "roots": 178,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "pairedHistoricalRootsUnchanged": 485,
+  "actualV253ColdRootsChecked": 68,
+  "fourProductionBudgetsStillNull": true,
+  "nativeStateActorSessionRngAndIntentEquivalenceUnchanged": true,
+  "sourceSnapshotBeforeAfterExact": true,
+  "firstFailedCandidatesRetained": true,
+  "newAutonomousRuns": 0,
+  "developmentAligned": false,
+  "lastActualR3": {
+    "version": "V253",
+    "board": 72,
+    "tech": 4,
+    "income": "6C3E2card+1scan"
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "baseline": "V41",
+  "goalStatus": "active",
+  "next": "Publish verified blue-trigger and public-counter fix. Test an equal-value income tie policy consistently in initial/pending plans before another autonomous experiment. No new game merely for this source parity; third-round learning, R2-end review and autonomousfirst3 remain.",
+  "newAutonomousExperiments": 0,
+  "previousGoalTurnClassification": "progress",
+  "pending": "isolate Chinese commit/push; next V255 tests equal-value income card preservation consistently in source/pending plans"
+}

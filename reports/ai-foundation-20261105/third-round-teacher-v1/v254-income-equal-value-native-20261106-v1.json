@@ -1,0 +1,370 @@
+{
+  "scope": "No additional game/search/replay. Compare two already independently verified Native endpoints from the same input142 source. Equal numeric V is not Native state equivalence: money/energy income and retained known card differ. Printed prices are observed card facts, not new score weights.",
+  "rows": [
+    {
+      "label": "income-energy-amiba9",
+      "envelopeSha256": "8a4d760c39061a5641a918150cbc584358b1f21776b0b51c09af3d872795fe93",
+      "value": 128.25,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 7,
+        "energy": 1,
+        "handSize": 3,
+        "publicity": 2,
+        "score": 57
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "price": 3,
+          "play": [
+            {
+              "id": "b101-orange-tech",
+              "type": "card_research_tech",
+              "label": "科技（只能选择橙色）",
+              "icon": "research_tech",
+              "options": {
+                "skipCost": true,
+                "techTypes": [
+                  "orange"
+                ],
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "dlc_32.png",
+          "price": 1,
+          "play": [
+            {
+              "id": "dlc32-discard-all",
+              "type": "card_discard_all_hand",
+              "label": "弃掉全部手牌，获得1宣传2盲抽",
+              "icon": "discard",
+              "options": {
+                "rewards": [
+                  {
+                    "id": "dlc32-publicity",
+                    "type": "gain_resources",
+                    "label": "弃手牌：1宣传",
+                    "icon": "publicity",
+                    "options": {
+                      "gain": {
+                        "publicity": 1
+                      }
+                    }
+                  },
+                  {
+                    "id": "dlc32-draw",
+                    "type": "draw_cards",
+                    "label": "弃手牌：2盲抽",
+                    "icon": "blind_card",
+                    "options": {
+                      "count": 2
+                    }
+                  }
+                ],
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "price": 2,
+          "play": [
+            {
+              "id": "amiba-0-data",
+              "type": "gain_data",
+              "label": "阿米巴0：3数据",
+              "icon": "data",
+              "options": {
+                "count": 3,
+                "repeat": 1
+              },
+              "status": "pending"
+            },
+            {
+              "id": "amiba-0-blue-symbol",
+              "type": "amiba_choose_symbol_reward",
+              "label": "阿米巴0：蓝色区域 symbol 奖励",
+              "icon": "alien_trace",
+              "options": {
+                "region": "blue",
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "computer": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-16",
+            "index": 9,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-17",
+            "index": 10,
+            "placementKind": "blueBonus"
+          },
+          {
+            "id": "data-token-19",
+            "index": 11,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-20",
+            "index": 12,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-21",
+            "index": 13,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 2,
+            "id": "data-token-22",
+            "index": 14,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": [
+          {
+            "id": "data-token-23",
+            "index": 15,
+            "slotIndex": 3
+          },
+          {
+            "id": "data-token-24",
+            "index": 16,
+            "slotIndex": 4
+          },
+          {
+            "id": "data-token-25",
+            "index": 17,
+            "slotIndex": 5
+          }
+        ]
+      },
+      "source": "v253-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json"
+    },
+    {
+      "label": "income-credit-dlc32",
+      "envelopeSha256": "4e03888c605eb13ee2bd7a79e106f15616172a6f1e2c3dadfb75c4a8be7d4ddd",
+      "value": 128.25,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 8,
+        "energy": 0,
+        "handSize": 3,
+        "publicity": 2,
+        "score": 57
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "price": 3,
+          "play": [
+            {
+              "id": "b101-orange-tech",
+              "type": "card_research_tech",
+              "label": "科技（只能选择橙色）",
+              "icon": "research_tech",
+              "options": {
+                "skipCost": true,
+                "techTypes": [
+                  "orange"
+                ],
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "id": "alien-amiba-0-1",
+          "cardId": "amiba_0.webp",
+          "price": 2,
+          "play": [
+            {
+              "id": "amiba-0-data",
+              "type": "gain_data",
+              "label": "阿米巴0：3数据",
+              "icon": "data",
+              "options": {
+                "count": 3,
+                "repeat": 1
+              },
+              "status": "pending"
+            },
+            {
+              "id": "amiba-0-blue-symbol",
+              "type": "amiba_choose_symbol_reward",
+              "label": "阿米巴0：蓝色区域 symbol 奖励",
+              "icon": "alien_trace",
+              "options": {
+                "region": "blue",
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "id": "alien-amiba-9-5",
+          "cardId": "amiba_9.webp",
+          "price": 2,
+          "play": [
+            {
+              "id": "amiba-9-launch",
+              "type": "launch",
+              "label": "阿米巴9：发射",
+              "icon": "launch",
+              "options": {
+                "skipCost": true,
+                "cost": {},
+                "source": "amiba",
+                "repeat": 1
+              },
+              "status": "pending"
+            },
+            {
+              "id": "amiba-9-orange-symbol",
+              "type": "amiba_choose_symbol_reward",
+              "label": "阿米巴9：橙色区域 symbol 奖励",
+              "icon": "alien_trace",
+              "options": {
+                "region": "orange",
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "computer": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-16",
+            "index": 9,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-17",
+            "index": 10,
+            "placementKind": "blueBonus"
+          },
+          {
+            "id": "data-token-19",
+            "index": 11,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-20",
+            "index": 12,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-21",
+            "index": 13,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 2,
+            "id": "data-token-22",
+            "index": 14,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": [
+          {
+            "id": "data-token-23",
+            "index": 15,
+            "slotIndex": 3
+          },
+          {
+            "id": "data-token-24",
+            "index": 16,
+            "slotIndex": 4
+          },
+          {
+            "id": "data-token-25",
+            "index": 17,
+            "slotIndex": 5
+          }
+        ]
+      },
+      "source": "v254-known-blue-data-native-control-20261106-v1.json"
+    }
+  ],
+  "nextHypothesis": "On exactly equal greedy income utility, retain the higher-cost known card instead of lexical instance ID; validate both initial plan and pending choice together, without epsilon scores, extra search branches or card-name bonus."
+}

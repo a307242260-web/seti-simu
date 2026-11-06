@@ -1673,4 +1673,20 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__scalarCapitalCacheSmoke?.ok === true',
   obligation:'Browser mutable numeric planning shares exact complete-input scalar quotes and rekeys changed wallets without altering full-value contracts',
   counterexample:'Missing page API, partial or stale cache key, changed wallet not repriced, or a caller-owned source is frozen/mutated',
+}), Object.freeze({
+  id:'production-blue-data-analysis',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAmibaAnalysisCapital && window.SetiStateValue && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v254-blue-data-before-analysis-root-20261106-v1.json').then(r=>r.json()),e=structuredClone(f.compositionEnvelope),state=JSON.parse(e.committedState),seat=f.seatId,seed=state.meta.seed,v=window.SetiStateValue,p=state.players.players.find(p=>p.id===seat),card=p.reservedCards.find(c=>c.cardId==='amiba_9.webp');p.completedTaskCount=2;p.taskState={staleLegacy:true};card.cardEffectState.consumedTriggerIds=['amiba9-blue-data-1'];e.committedState=JSON.stringify(state);
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('blue data fixture restore');
+    const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state;
+    try{const o=observe(),owner=o.publicState.players.find(p=>p.playerId===seat),facts={...window.SetiProbeCapital.factsFromObservation(o,seat),supply:o.publicState.board.techSupply,researchCost:6,analyzeEnergyCost:0},q=v.purposeCapital(facts).analysisPlan;if(owner.completedTaskCount!==2||q.selected?.blueDataTrigger?.ruleId!=='amiba9-blue-data-2'||q.selected.blueDataTrigger.gainedData!==1||q.selected.endpoint.resources.completedTaskCount!==3)throw Error('canonical completion or one-event-one-slot quote disagrees');
+      const port=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const root=port.openRoot();if(JSON.stringify(v.evaluateStateValue(port.valueObservation(root),seat))!==JSON.stringify(v.evaluateStateValue(root.observation,seat)))throw Error('compact completion facts disagree');}finally{port.close();}
+      for(const accept of [a=>a.family==='analyze',a=>a.target?.choiceId==='trace:1:blue:amiba:2',a=>a.target?.ruleId==='amiba9-blue-data-2']){const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(accept);if(!a)throw Error('missing Native blue data input');const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):c.inputPort.submitAction(a);if(!r.ok)throw Error('Native blue data rejected');}
+      const after=observe();if(after.publicState.players.find(p=>p.playerId===seat).completedTaskCount!==3||after.selfState.reservedCards.some(c=>c.id===card.id))throw Error('last slot Native consumption or completion projection wrong');if(!c.lifecycle.restore(e).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('blue data root/RNG changed');window.__blueDataAnalysisSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__blueDataAnalysisSmoke?.ok === true',
+  obligation:'Canonical completion count, one blue trigger slot and the consumed-card analysis endpoint agree in production Browser, full and compact values',
+  counterexample:'Legacy taskState replaces real completion count, both blue slots are priced for one event, final-slot card remains reserved or root/RNG changes',
 })]);

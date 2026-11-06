@@ -102,7 +102,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
     reservedCount: Array.isArray(player?.reservedCards)
       ? player.reservedCards.length
       : Math.max(0, Math.round(Number(player?.reservedCount) || 0)),
-    completedTaskCount: Object.values(player?.taskState || {}).filter(Boolean).length,
+    completedTaskCount: Math.max(0, Math.round(Number(player?.completedTaskCount) || 0)),
     dataProgress: {
       discardedCount: Number(player?.dataState?.discardedCount) || 0,
       computerSlots: computerDataSlots,

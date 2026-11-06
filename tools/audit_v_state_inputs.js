@@ -913,6 +913,20 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{kernel?.composition.dispose();}
 }
 
+// Canonical completed tasks and one blue event/one slot reach every V path.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),probe=require('../randomizer/game/ai/probe-capital'),demand=require('../randomizer/game/ai/resource-demand');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/v254-blue-data-before-analysis-root-20261106-v1.json')),e=structuredClone(f.compositionEnvelope),state=JSON.parse(e.committedState),owner=state.players.players.find(p=>p.id===f.seatId),seat=f.seatId,seed=state.meta.seed;owner.completedTaskCount=2;owner.taskState={staleLegacy:true};owner.reservedCards.find(c=>c.cardId==='amiba_9.webp').cardEffectState.consumedTriggerIds=['amiba9-blue-data-1'];e.committedState=JSON.stringify(state);
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(e).ok);const original=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(raw,seat),facts={...probe.factsFromState(state,owner),supply:state.tech,researchCost:6,analyzeEnergyCost:0};port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const root=port.openRoot();
+  assert.equal(raw.publicState.players.find(p=>p.playerId===seat).completedTaskCount,2);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(independentValue.evaluateStateValue(port.valueObservation(root),seat),value);const q=independentValue.purposeCapital(facts).analysisPlan;assert.equal(q.selected.blueDataTrigger.ruleId,'amiba9-blue-data-2');assert.equal(q.selected.blueDataTrigger.gainedData,1);assert.equal(q.selected.endpoint.resources.completedTaskCount,3);assert(!q.selected.endpoint.reservedCards.some(c=>c.cardId==='amiba_9.webp'));assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>value.components[k])));assert.deepEqual(c.lifecycle.save().envelope,original);
+  console.log('[PASS] independent-blue-data-analysis: canonical completion2 not legacy1; Native/formal/full/compact one-event-one-slot, consumed endpoint completion3 and same-wallet capital agree; root/RNG unchanged');
+ }catch(error){console.log(`[FAIL] independent-blue-data-analysis: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

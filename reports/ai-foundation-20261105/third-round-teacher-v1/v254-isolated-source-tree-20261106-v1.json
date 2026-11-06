@@ -1,0 +1,38 @@
+{
+  "status": "source-tree-verified-not-yet-admitted",
+  "baseCommit": "5ce0df6be1a490ca41ba9af1cd3b7b163d293325",
+  "snapshotTree": "2a8c4c0ab431630659a5e78384cce1ee7e5fbf4d",
+  "physicalIndependentWorktree": "/private/tmp/seti-v253-teacher-r3-run-20261106-v1",
+  "privateIndex": "/private/tmp/seti-v254-source-admission-20261106-v2.index",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexPreserved": true,
+  "productionBranchUnchanged": true,
+  "frozenSourceManifest": "reports/ai-foundation-20261106/candidate-v254-known-blue-data-v1/manifest.json",
+  "frozenSourceManifestSha256": "fb4b722c7988dacc6edec15fe02d33b3c3867e9bbae6ed1a32356888ca67586c",
+  "ownedSourceHashes": {
+    "randomizer/app/simulation-contract.js": "3342cf862e87c80bfd34a38f27b5f969ea1945f7346f9580d36a9914c00d84d1",
+    "randomizer/game/ai/amiba-analysis-capital.js": "f8cbcf07495e99179cfcc083089f303d9daad918df02ca59e3f1b25e3b79d8a3",
+    "randomizer/game/ai/probe-capital.js": "70292926044c2091ff734b8bda738f89848f3d1e5fe35b3eae119423b7d187ea",
+    "randomizer/game/ai/blue-data-analysis-capital.test.js": "629ecd0a7d6246c2374729d8fae4ac49f94f98094b5876de15595a226c27e207",
+    "randomizer/game/ai/state-value.js": "c67688698a09c9e8fc0af8bb69f39440e608c45b0c8bbe2f1d4981d428fb52ca",
+    "randomizer/game/ai/decision-search.js": "a99066d63a02d879c21f670cf860a093d9c7a414a3275fa8dfa95fcb78dc0bb2",
+    "tools/node-test-inventory.js": "859814eed63967c7b5f6bebe8ee614302dedd0a8e3cef46fda599c8e5bbc46f7",
+    "tools/audit_v_state_inputs.js": "1b15e1baddd3340ae9c5610354b2992e4b408983f7a5bc13ab772d277284e82a",
+    "tools/browser-smoke-inventory.js": "049867e700108283b315bc35c01a1b08ed6ac468a1901cba3aff5e0c3895fdf3"
+  },
+  "changedPaths": [
+    "randomizer/app/simulation-contract.js",
+    "randomizer/game/ai/amiba-analysis-capital.js",
+    "randomizer/game/ai/blue-data-analysis-capital.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/probe-capital.js",
+    "randomizer/game/ai/state-value.js",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "runtimeAssetToolsExactToStagedTree": true,
+  "runtimeAssetPathsVerified": 941,
+  "noUnstagedOrUntrackedRuntimeInputs": true,
+  "scope": "The existing isolated worktree is independently proven byte-identical to a private-index tree made from committed146259c8 plus exactly the frozen owned source/test/tool overlays. All other randomizer/tools/assets files match that tree by actual Git blob content and executable modes, independently of unrefreshed index stat records. Functional validation runs in this physical independent tree; no shared-root edits or index refresh are used. This is a source snapshot proof, not completed source admission or a new autonomous game."
+}

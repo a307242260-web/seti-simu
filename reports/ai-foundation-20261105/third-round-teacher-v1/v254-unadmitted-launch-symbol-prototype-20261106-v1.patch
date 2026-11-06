@@ -1,0 +1,102 @@
+diff --git a/randomizer/game/ai/known-symbol-capital.js b/randomizer/game/ai/known-symbol-capital.js
+index 98064280b..849da8a0f 100644
+--- a/randomizer/game/ai/known-symbol-capital.js
++++ b/randomizer/game/ai/known-symbol-capital.js
+@@ -1,26 +1,29 @@
+ (function(root,factory){
+  'use strict';const common=typeof module==='object'&&module.exports;
+  const api=factory(common?require('../cards/effects'):root.SetiCardEffects,common?require('../aliens/amiba'):root.SetiAlienAmiba,
+-  common?require('../players'):root.SetiPlayers,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic);
++  common?require('../players'):root.SetiPlayers,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,
++  common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../../solar-system/core'):root.SetiSolarSystem);
+  if(common)module.exports=api;else root.SetiKnownSymbolCapital=api;
+-})(typeof globalThis!=='undefined'?globalThis:window,function(effects,amiba,players,probe,arithmetic){
++})(typeof globalThis!=='undefined'?globalThis:window,function(effects,amiba,players,probe,arithmetic,rocket,pieces,solar){
+  'use strict';
+  const zero=reason=>({value:0,selected:null,candidates:[],reason}),models=new WeakMap();
+  const keys=(value,allowed)=>Object.keys(value||{}).every(k=>allowed.includes(k));
+  function supported(card){
+   if(!card?.cardId||card.hidden)return null;
+   const m=effects.getCardModel(card);if(!m)return null;if(models.has(m))return models.get(m);
+-  const body=effects.buildPlayEffects(card),[data,symbol]=body;
+-  const result=m.cardType===1&&!m.tasks?.length&&!m.temporaryTasks?.length&&!m.endGameScoring&&body.length===2
+-   &&data.type==='gain_data'&&Number.isSafeInteger(data.options.count)&&data.options.count>0&&keys(data.options,['count','repeat'])
++  const body=effects.buildPlayEffects(card),[first,symbol]=body;
++  const data=first?.type==='gain_data'&&Number.isSafeInteger(first.options.count)&&first.options.count>0&&keys(first.options,['count','repeat']);
++  const launch=first?.type==='launch'&&first.options?.skipCost===true&&keys(first.options,['skipCost','cost','source','repeat'])&&keys(first.options.cost,[])
++   &&(m.triggers||[]).every(t=>t.event?.type==='alienTrace'&&t.event.traceType==='blue'&&t.effect?.type==='gain_data');
++  const result=m.cardType===1&&!m.tasks?.length&&!m.temporaryTasks?.length&&!m.endGameScoring&&body.length===2&&(data||launch)
+    &&symbol.type==='amiba_choose_symbol_reward'&&Object.hasOwn(amiba.REGION_SYMBOL_SLOTS,symbol.options?.region)
+    &&keys(symbol.options,['region','repeat'])&&body.every(e=>(e.options?.repeat??1)===1)
+    &&(m.triggers||[]).every(t=>t.event?.type==='alienTrace'&&t.effect?.type==='gain_data')
+-    ?{dataCount:data.options.count,region:symbol.options.region}:null;
++    ?{dataCount:data?first.options.count:0,launch:Boolean(launch),region:symbol.options.region}:null;
+   if(Object.isFrozen(m))models.set(m,result);return result;
+  }
+- function quote(facts,weights,portfolio,currentCapital){
+-  const eligible=facts.hand.filter(supported);
++ function quote(facts,weights,portfolio,currentCapital,continuationKind='either'){
++  const eligible=facts.hand.filter(c=>{const body=supported(c);return body&&(continuationKind==='either'||body.launch===(continuationKind==='launch'));});
+   if(!eligible.length||facts.terminal||facts.passing||facts.round>=4)return zero('no-funded-known-symbol-window');
+   if(facts.companyState?.abilityId!=='deepspace_swap_cards')return zero('symbol-card-company-not-audited');
+   if(!facts.researchSymbols?.revealInitialized)return zero('no-public-symbol-layout');
+@@ -31,11 +34,12 @@
+     ||m.endGameScoring&&!['sectorWinsByColor','traceCount','techCount','distinctSignalSectors','planetOrbitOrLand','probeLocation','unmarkedFinalRightmost','planetLandingPairs','allOrbitOrLand'].includes(m.endGameScoring.kind)
+     ||(m.triggers||[]).some(t=>!['researchTech','alienTrace'].includes(t.event?.type));}))return zero('symbol-card-reservation-needs-native-value');
+   const candidates=[];
++  const drawCount=reward=>{if(!reward.drawCards)return 0;if(!Number.isSafeInteger(facts.board.ordinaryDrawCount)||facts.board.ordinaryDrawCount<0)throw Error('SYMBOL_CARD_DRAW_COUNT_MISSING');return Math.min(reward.drawCards,facts.board.ordinaryDrawCount);};
+   function apply(wallet,reward){
+    const before={...wallet};players.gainResources({resources:wallet},reward.gain||{});
+    if(reward.dataCount)players.gainResources({resources:wallet},{availableData:reward.dataCount});
+    return arithmetic.sum([wallet.score-before.score,(wallet.publicity-before.publicity)*weights.publicity,
+-    (wallet.availableData-before.availableData)*weights.availableData,(reward.drawCards||0)*weights.handSize],weights);
++    (wallet.availableData-before.availableData)*weights.availableData,drawCount(reward)*weights.handSize],weights);
+   }
+   for(const card of eligible){
+    if(facts.pendingHandCardTriggers.some(t=>t.cardInstanceId===card.id))continue;
+@@ -45,27 +49,40 @@
+    const body=supported(card),wallet={...facts.player,credits:facts.player.credits-payment.spend.credits,
+     energy:facts.player.energy-payment.spend.energy,handSize:facts.hand.length+facts.extraUnknownCount-1};
+    players.gainResources({resources:wallet},{availableData:body.dataCount});
++   let rockets=facts.board.rockets,prospectiveLaunch=null;
++   if(body.launch){
++    if(facts.reservedCards.some(c=>effects.getCardModel(c)?.endGameScoring?.kind==='probeLocation'))continue;
++    const actor={id:wallet.id,color:wallet.color,resources:wallet,techState:wallet.techState};
++    if(rocket.getActiveRocketCountForPlayer({rockets},wallet.id)>=rocket.getRocketLimitForPlayer(actor))continue;
++    const earth=solar.collectPlanetLocations(facts.board.solarSystem).find(p=>p.planetId==='earth');if(!earth)throw Error('SYMBOL_LAUNCH_EARTH_MISSING');
++    const slot=pieces.findAvailableSlotIndex({rockets},earth.x,earth.y);if(slot==null)continue;
++    // Typed prospective geometry only. It is never submitted to inputPort or
++    // presented as an allocated Native entity or successor observation.
++    prospectiveLaunch={coordinate:{x:earth.x,y:earth.y},slotIndex:slot};
++    rockets=[...rockets,{id:-1,playerId:wallet.id,color:wallet.color,kind:'standard',surface:'solar-board',sectorX:earth.x,sectorY:earth.y,slotIndex:slot}];
++   }
+    const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
+    const choices=amiba.listSymbolsInRegion(alien,body.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
+     .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
+    if(!choices.length)continue;
+    const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+-   apply(wallet,resolved.reward);const blindCount=resolved.reward.drawCards||0;wallet.handSize+=blindCount;
++   apply(wallet,resolved.reward);const blindCount=drawCount(resolved.reward);wallet.handSize+=blindCount;
+    const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,alien.amiba[k]]));
+    const reserved=structuredClone(card);effects.ensureCardEffectState(reserved);
+    const after={...facts,player:wallet,hand:facts.hand.filter(c=>c.id!==card.id),extraUnknownCount:facts.extraUnknownCount+blindCount,
+     reservedCards:[...facts.reservedCards,reserved],researchSymbols:symbols,
+     pendingHandCardTriggers:facts.pendingHandCardTriggers.filter(t=>t.cardInstanceId!==card.id),
+-    board:{...facts.board,aliens:{...facts.board.aliens,amiba:symbols}}};
++    board:{...facts.board,rockets,ordinaryDrawCount:facts.board.ordinaryDrawCount-blindCount,aliens:{...facts.board.aliens,amiba:symbols}}};
+    const linear=arithmetic.sum([wallet.score-facts.player.score,...Object.entries(weights).map(([k,w])=>(k==='handSize'?blindCount-1:wallet[k]-facts.player[k])*w)],weights);
+-   const afterCapital=portfolio(after),netGain=arithmetic.sum([linear,afterCapital,-currentCapital],weights);
++   const baseAfter=portfolio(after),continuation=continuationKind==='either'?quote(after,weights,portfolio,baseAfter,body.launch?'data':'launch'):null;
++   const afterCapital=arithmetic.sum([baseAfter,continuation?.value||0],weights),netGain=arithmetic.sum([linear,afterCapital,-currentCapital],weights);
+    if(!Number.isFinite(netGain))throw Error('KNOWN_SYMBOL_CARD_VALUE_INVALID');
+    candidates.push({cardId:card.id,payment,slotId:choices[0].entry.slotId,reward:resolved.reward,move:resolved.move,
+-    linear,afterCapital,netGain,wallet,symbols});
++    linear,afterCapital,netGain,wallet,symbols,...(prospectiveLaunch?{prospectiveLaunch}:{}),...(continuation?.value>0?{continuation:continuation.selected}:{})});
+   }
+   candidates.sort((a,b)=>b.netGain-a.netGain||a.cardId.localeCompare(b.cardId));
+   return{value:Math.max(0,candidates[0]?.netGain||0),selected:candidates[0]||null,candidates,
+-   scope:'One currently funded known data/region-symbol card, greedy current public reward and formal symbol movement, then the existing shared-wallet portfolio without this card; no future draw identity, native successor, new final mark, repeated latent trigger or pruning bound.'};
++   scope:'One funded known data/symbol card or one free-launch/symbol card followed by at most one known data/symbol card; each is consumed once, symbols move formally, and the same wallet/remaining deck count funds one shared analysis portfolio. Launch geometry is typed, never a Native entity. No future income, hidden identity, successor observation or pruning bound.'};
+  }
+  return Object.freeze({supported,quote});
+ });

@@ -1,0 +1,1207 @@
+{
+  "scope": "Paired historical roots use the same fresh-process Native-only root contract. Actual trace comparison is descriptive: inherited intent/resource plans are NOT imported by a fresh root and must not be attributed to a source change or called full planning-state equivalence. No additional search or autonomous experiment.",
+  "pairedRoots": 485,
+  "uniqueRoots": 543,
+  "byRound": {
+    "3": {
+      "roots": 178,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "changes": [],
+  "unpairedNewRoots": [
+    {
+      "label": "actual-v253-124",
+      "identity": "9feb3e4da383d6e5daf9526fa20490610c1aaf72c5a5d7b7d518cb9447a4b5f9",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-127",
+      "identity": "72fdadf103a2eeccf2c0b491bcce49d47f31b69a8ffafa60e2964f21d9242731",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-128",
+      "identity": "b99dcb7539558330952d089ea17834320818c4dfd1c733c5736ceb4ac5efa8fb",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-129",
+      "identity": "7ac499a5af5fb9647c59655d09046ad97ec2f9b8f9b46925933b21edd1a81204",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-130",
+      "identity": "ee3a980fa5d6896958e1b4917c52cee90876181c780d990097ba8df7b522f71a",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-131",
+      "identity": "f261ed7dbc2a7cd25799e56b3ccea617454f8161d279082b8aa9b4258b811656",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-133",
+      "identity": "cf3abb4254102ef7aad50192da3d3ffa9fcd47e527d284a2ff041aab52dc51e5",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-134",
+      "identity": "3fe868fa7afc7790b10ec0cbe7f11edfd2a06f5872d82eecb72e3e3505ea9948",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-135",
+      "identity": "2ad86fd77bf3d2d75324781fa1ce97a26c28b753a80f803d413c7ba999a7c1ef",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-136",
+      "identity": "658c669724d031aaa696593c21e3e2cb471c2c314415ade6706dc40ad1a29e3c",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-137",
+      "identity": "f503a79fcbde365bfb0f15d20a13f484d57b334377af15d7ee34222da442b281",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-138",
+      "identity": "f0113a749bd9ea71a7aeed6c273fa8c19320ceb75045ea2075994ca1f075c127",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-139",
+      "identity": "abe6ee8ba7d0bba7c882cf8c217bea7cd9ae425e0798a0fad1a0575e925efedd",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-140",
+      "identity": "419ebd67cee41527c52ef96322245d12543e7f4c2b3b6e2ab2b0b0d40173339b",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-141",
+      "identity": "7d1e996fc01fdcdf9f80e2b661b5f390a4edd11221dd92a829d99a742f300b59",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-142",
+      "identity": "d9d9730e75c06120ab5772c43bd0bf60b4fa0ff150600f57729954cee61500e4",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-143",
+      "identity": "ff3a18e4af18b66320d8f1202a362be8c5e0455a7f6bb8d64c434cccb6dbf655",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-144",
+      "identity": "5578d5e5f277e672e82f39b2ae0d19e4fd5f13321264e0477f295902bb01c481",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-145",
+      "identity": "da8140913c5ff1a2eebaf2a5e7e6e6719e76d36dce14056f60d38b4c95d37dda",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-146",
+      "identity": "c74d4213ae22208240709371de8ecba46e1eb56b490b94ab2986b6af007f424b",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-147",
+      "identity": "6ebf427dce9d5537f1e1435a35724331edc3c899e90df02a4421be197c778927",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-148",
+      "identity": "b48bb4fc550db8e7938c466868da588a438c13c541422ee72d2ac86efd366b03",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-149",
+      "identity": "25974b759c899d5bd77e61d1f5380dcf6bf2547398ddf87bf04eae12d0559c78",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-150",
+      "identity": "0b8cb50a4b1216a983d897b52af3d2dabe468d9eb022e27c412ffae3ec11e7bb",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-151",
+      "identity": "e929cb3b861e8f260e1d101f13b7411d671c7b04b3854144a94f29bc2c003953",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-152",
+      "identity": "3721cabddf5c255bb094fd42e699fd7fb9d5a9b0a9556f73729d80da02e476a0",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-153",
+      "identity": "7b17c1fa00eed7a6bb3e3364e5f942f5f40b16018bf85df6b07e15fda96f2cf3",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-154",
+      "identity": "41874db8b526e48a21cc6bffcfe9f8dcf78dde72d7f2e29bd8f4831983c68224",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-155",
+      "identity": "40299b1fedd75a5b1b17276ed0a097a715a72615b9a60e8a2aa9966acb33fa29",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-156",
+      "identity": "e69db39e5a8277711b764ef5ed9708941d53bd84143ebde055953b84f41bcc3b",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-157",
+      "identity": "1e2a239ea90468320db90b5e3d2132a330c003477c861880e1257f1ff2178bb3",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-158",
+      "identity": "bed6cf1b6902c1e595ee2f0c6fe68891ca0aac54647f01a85ceb31b3773e631d",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-159",
+      "identity": "773b05449284119ed26dcb212e8c7de113d06e73a977309bf529cdbb2ac91100",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-160",
+      "identity": "4488e2cbe379019cf7bd9fbc2fe7e214f41c4efcaf95a04cd91b037b0e8d84e8",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-161",
+      "identity": "299858ba3a7e86214c44fde61f84781652c870ab9bff78912354b872e40b07cc",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-162",
+      "identity": "19666b928300afe4a6ccee6ee9c625d333f2a99f032db7a6470210f80d748982",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-163",
+      "identity": "5fa03aa0bd1d154353701856ef44eaaf7f8b41bf38347749617488de23131db9",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-164",
+      "identity": "b19d22f8ed2c36c3882eff90cf4503df8480b3100166aebe19cc557f9609fb48",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-165",
+      "identity": "03e1b1fc69aef1c4ed935c019ed2779c6fcbcd5fade5266938b53a8b2c24c4ae",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-166",
+      "identity": "39166999d09baec65b8df54186a78e94139c563245db2b0a3f74f79351092a33",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-167",
+      "identity": "d58f15930a8e15074583c7626530c32826baf542d53763eda5c6e613caa15154",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-168",
+      "identity": "931963d59fac33838a4b83e8d97d79105e428cab33c5d0c9c341d4aee89d79b0",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-169",
+      "identity": "4a5f34b9adb15250ab1b4095f0d3404e1754ab25e57518e919f6c0f7cc0e4902",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-170",
+      "identity": "74c7dcfff44debe290d859181e1e69cb5b3e073d91de77e1f162e7e3702278f7",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-171",
+      "identity": "1b4324bce3b1846288c2259585676ed4e5d57a42264a581f6b24f61844113779",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-172",
+      "identity": "303e666a7aba9808b8ef286e185610bc063a2f0106ffa312f6101b8e88d8cbf6",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-173",
+      "identity": "ae90c04d918a6128d2d711309bbf10bddd42031213f90d4baf2af2d2420b8c3d",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-174",
+      "identity": "e164f1f5acb04ff39dc8dd0e55a50cbfac5f1216e804f05b07d465803b0282ab",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-175",
+      "identity": "9762aceb5b4602185ac5da9838eb9d25368edfa2819daa70a823c7101ff78cdf",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-176",
+      "identity": "abac20253f35b198dea28b27d4dd0b5d7fefe28c2ea10d56f30c87abcd34a02a",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-177",
+      "identity": "15978157f2a3a04ff03ec805a970e40e083684a9416cd52dcc6cba9b17c4cd79",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-178",
+      "identity": "c1780cb064c2ebb228ce8251505a8fc9045a1f5c51652f1779d5f08d3832f6ed",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-179",
+      "identity": "2d2a592f27bffc7b9ee67fa40a0003cd8e57a8cf3108bb773abc70c6b5788170",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-180",
+      "identity": "34fee14479c0aec1cdec0cc739dce88d69d0f1389dbc1edd4aa2e7157a6f98de",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-181",
+      "identity": "97ed71c74d1b413c5c30bec1d94822cd03183c1fb34d286ec67dec4e05f43cd0",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-182",
+      "identity": "b3e7564eca802c0bcaf58331cc974de808f25ac92b108ffb5a38ebf0e1b4567a",
+      "round": "3"
+    },
+    {
+      "label": "actual-v253-183",
+      "identity": "146e9d912f3f17ec3c1da649867107690f5b5615248577992480ad6981aa0c81",
+      "round": "3"
+    },
+    {
+      "label": "known-blue-data-analysis",
+      "identity": "d66794f96c0147c248f79f8712297420222f8674d8d7632d38dad0f07fe0e020",
+      "round": "3"
+    }
+  ],
+  "actualV253ColdChecks": [
+    {
+      "beforeInput": 113,
+      "actualInheritedPlan": false,
+      "actualAction": "land:d5ee03a2",
+      "actualValue": 102.25,
+      "freshAction": "land:d5ee03a2",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 69,
+      "milliseconds": 327.872417
+    },
+    {
+      "beforeInput": 114,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:1035d792",
+      "actualValue": 102.25,
+      "freshAction": "choose_target:1035d792",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 7,
+      "milliseconds": 53.976583000000005
+    },
+    {
+      "beforeInput": 115,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 102.25,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 5,
+      "milliseconds": 39.147667
+    },
+    {
+      "beforeInput": 116,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 102.25,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 4,
+      "milliseconds": 40.729500000000016
+    },
+    {
+      "beforeInput": 117,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 102.25,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 3,
+      "milliseconds": 34.325040999999985
+    },
+    {
+      "beforeInput": 118,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 102.25,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 2,
+      "milliseconds": 36.02216700000001
+    },
+    {
+      "beforeInput": 119,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 102.25,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 102.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 26.367500000000007
+    },
+    {
+      "beforeInput": 123,
+      "actualInheritedPlan": false,
+      "actualAction": "play_card:1c4e6ebd",
+      "actualValue": 123.58333333333333,
+      "freshAction": "play_card:1c4e6ebd",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 68,
+      "milliseconds": 328.041958
+    },
+    {
+      "beforeInput": 124,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 123.58333333333333,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 42.138959000000014
+    },
+    {
+      "beforeInput": 125,
+      "actualInheritedPlan": false,
+      "actualAction": "card_corner:295d3b4f",
+      "actualValue": 123.58333333333333,
+      "freshAction": "card_corner:295d3b4f",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 117,
+      "milliseconds": 540.6817080000001
+    },
+    {
+      "beforeInput": 126,
+      "actualInheritedPlan": true,
+      "actualAction": "research_tech:806ccfc8",
+      "actualValue": 123.58333333333333,
+      "freshAction": "research_tech:806ccfc8",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 112,
+      "milliseconds": 541.190708
+    },
+    {
+      "beforeInput": 127,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:405d1e5d",
+      "actualValue": 123.58333333333333,
+      "freshAction": "choose_target:405d1e5d",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 48,
+      "milliseconds": 278.39716699999997
+    },
+    {
+      "beforeInput": 128,
+      "actualInheritedPlan": false,
+      "actualAction": "accept_optional_effect:1e93b329",
+      "actualValue": 123.58333333333333,
+      "freshAction": "accept_optional_effect:1e93b329",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 6,
+      "milliseconds": 79.43745799999999
+    },
+    {
+      "beforeInput": 129,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:dc367eeb",
+      "actualValue": 123.58333333333333,
+      "freshAction": "choose_target:dc367eeb",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 2,
+      "milliseconds": 59.83587499999999
+    },
+    {
+      "beforeInput": 130,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 123.58333333333333,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 37.15595899999998
+    },
+    {
+      "beforeInput": 131,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:aba3bdc5",
+      "actualValue": 123.58333333333333,
+      "freshAction": "choose_target:aba3bdc5",
+      "freshValue": 123.58333333333333,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 29.077167000000003
+    },
+    {
+      "beforeInput": 132,
+      "actualInheritedPlan": false,
+      "actualAction": "industry:e887dc52",
+      "actualValue": 128.25,
+      "freshAction": "industry:e887dc52",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 173,
+      "milliseconds": 566.204792
+    },
+    {
+      "beforeInput": 133,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:ddc9d9f0",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:ddc9d9f0",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 85,
+      "milliseconds": 313.124334
+    },
+    {
+      "beforeInput": 134,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:dfc7d13d",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:dfc7d13d",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 84,
+      "milliseconds": 311.792875
+    },
+    {
+      "beforeInput": 135,
+      "actualInheritedPlan": true,
+      "actualAction": "quick_trade:f385e2ac",
+      "actualValue": 128.25,
+      "freshAction": "quick_trade:f385e2ac",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 83,
+      "milliseconds": 305.44675
+    },
+    {
+      "beforeInput": 136,
+      "actualInheritedPlan": true,
+      "actualAction": "scan:2d21a323",
+      "actualValue": 128.25,
+      "freshAction": "scan:2d21a323",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 82,
+      "milliseconds": 306.15720799999997
+    },
+    {
+      "beforeInput": 137,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:af617fe7",
+      "actualValue": 128.25,
+      "freshAction": "choose_target:af617fe7",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 21,
+      "milliseconds": 124.06775
+    },
+    {
+      "beforeInput": 138,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:836ae617",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:836ae617",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 16,
+      "milliseconds": 121.763542
+    },
+    {
+      "beforeInput": 139,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:d66e36ec",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:d66e36ec",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 12,
+      "milliseconds": 118.01783300000001
+    },
+    {
+      "beforeInput": 140,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:a47b34e4",
+      "actualValue": 128.25,
+      "freshAction": "choose_target:a47b34e4",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 8,
+      "milliseconds": 99.81095799999999
+    },
+    {
+      "beforeInput": 141,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:2ebd81c6",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:2ebd81c6",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 48.32362499999999
+    },
+    {
+      "beforeInput": 142,
+      "actualInheritedPlan": false,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 128.25,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 31.155124999999998
+    },
+    {
+      "beforeInput": 143,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 128.25,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 3,
+      "milliseconds": 53.773792000000014
+    },
+    {
+      "beforeInput": 144,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:9ed5eb04",
+      "actualValue": 128.25,
+      "freshAction": "choose_card:59a790c0",
+      "freshValue": 128.25,
+      "actionSame": false,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 4,
+      "milliseconds": 53.101040999999995
+    },
+    {
+      "beforeInput": 145,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 128.25,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 26.712125
+    },
+    {
+      "beforeInput": 146,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:7be78a55",
+      "actualValue": 128.25,
+      "freshAction": "choose_target:7be78a55",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 30.492666999999997
+    },
+    {
+      "beforeInput": 147,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 128.25,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 22.212666999999996
+    },
+    {
+      "beforeInput": 148,
+      "actualInheritedPlan": false,
+      "actualAction": "play_card:8e0d747b",
+      "actualValue": 128.25,
+      "freshAction": "play_card:8e0d747b",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 74,
+      "milliseconds": 201.56554100000002
+    },
+    {
+      "beforeInput": 149,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:2e7a24ba",
+      "actualValue": 128.25,
+      "freshAction": "choose_target:2e7a24ba",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 2,
+      "milliseconds": 36.00191699999999
+    },
+    {
+      "beforeInput": 150,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 128.25,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 128.25,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 21.624834000000007
+    },
+    {
+      "beforeInput": 151,
+      "actualInheritedPlan": false,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 90,
+      "milliseconds": 197.984875
+    },
+    {
+      "beforeInput": 152,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 39,
+      "milliseconds": 110.53845799999999
+    },
+    {
+      "beforeInput": 153,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 88,
+      "milliseconds": 200.19937499999997
+    },
+    {
+      "beforeInput": 154,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 37,
+      "milliseconds": 103.59666600000001
+    },
+    {
+      "beforeInput": 155,
+      "actualInheritedPlan": true,
+      "actualAction": "analyze:a5629aa3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "analyze:a5629aa3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 86,
+      "milliseconds": 193.698167
+    },
+    {
+      "beforeInput": 156,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:411af34c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:411af34c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 35,
+      "milliseconds": 107.706292
+    },
+    {
+      "beforeInput": 157,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 24.872833999999997
+    },
+    {
+      "beforeInput": 158,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 13,
+      "milliseconds": 65.798709
+    },
+    {
+      "beforeInput": 159,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 24.5625
+    },
+    {
+      "beforeInput": 160,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 11,
+      "milliseconds": 64.506958
+    },
+    {
+      "beforeInput": 161,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 24.31725
+    },
+    {
+      "beforeInput": 162,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 7,
+      "milliseconds": 57.01845800000001
+    },
+    {
+      "beforeInput": 163,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 135.83333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 23.025042
+    },
+    {
+      "beforeInput": 164,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:29b5215c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:29b5215c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 3,
+      "milliseconds": 46.125
+    },
+    {
+      "beforeInput": 165,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:49c9e29c",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_card:49c9e29c",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 34.86512499999999
+    },
+    {
+      "beforeInput": 166,
+      "actualInheritedPlan": false,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 135.83333333333334,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 25.958458000000007
+    },
+    {
+      "beforeInput": 167,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:4b676cb1",
+      "actualValue": 135.83333333333334,
+      "freshAction": "choose_target:4b676cb1",
+      "freshValue": 135.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 27.23700000000001
+    },
+    {
+      "beforeInput": 168,
+      "actualInheritedPlan": false,
+      "actualAction": "card_corner:4c8b60cc",
+      "actualValue": 138.83333333333334,
+      "freshAction": "card_corner:4c8b60cc",
+      "freshValue": 138.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 59,
+      "milliseconds": 165.97958300000002
+    },
+    {
+      "beforeInput": 169,
+      "actualInheritedPlan": true,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 138.83333333333334,
+      "freshAction": "launch:c94cda79",
+      "freshValue": 138.83333333333334,
+      "actionSame": false,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 29,
+      "milliseconds": 109.84825000000001
+    },
+    {
+      "beforeInput": 170,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:44b74627",
+      "actualValue": 138.83333333333334,
+      "freshAction": "choose_target:44b74627",
+      "freshValue": 136.33333333333334,
+      "actionSame": true,
+      "valueSame": false,
+      "complete": true,
+      "inputs": 25,
+      "milliseconds": 98.65625000000001
+    },
+    {
+      "beforeInput": 171,
+      "actualInheritedPlan": true,
+      "actualAction": "launch:c94cda79",
+      "actualValue": 138.83333333333334,
+      "freshAction": "launch:c94cda79",
+      "freshValue": 138.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 27,
+      "milliseconds": 100.0885
+    },
+    {
+      "beforeInput": 172,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 138.83333333333334,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 138.83333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 24.44570800000001
+    },
+    {
+      "beforeInput": 173,
+      "actualInheritedPlan": false,
+      "actualAction": "scan:2d21a323",
+      "actualValue": 134.33333333333334,
+      "freshAction": "scan:2d21a323",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 32,
+      "milliseconds": 109.27041700000001
+    },
+    {
+      "beforeInput": 174,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:af617fe7",
+      "actualValue": 134.33333333333334,
+      "freshAction": "choose_target:50c45347",
+      "freshValue": 134.33333333333334,
+      "actionSame": false,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 23,
+      "milliseconds": 102.13029199999998
+    },
+    {
+      "beforeInput": 175,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_card:037e0398",
+      "actualValue": 134.33333333333334,
+      "freshAction": "choose_card:037e0398",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 16,
+      "milliseconds": 94.770334
+    },
+    {
+      "beforeInput": 176,
+      "actualInheritedPlan": true,
+      "actualAction": "choose_target:2b379eff",
+      "actualValue": 134.33333333333334,
+      "freshAction": "choose_target:2b379eff",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 3,
+      "milliseconds": 54.280249999999995
+    },
+    {
+      "beforeInput": 177,
+      "actualInheritedPlan": false,
+      "actualAction": "place_data:8fd12fd3",
+      "actualValue": 134.33333333333334,
+      "freshAction": "place_data:8fd12fd3",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 29.378249999999994
+    },
+    {
+      "beforeInput": 178,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_target:7be78a55",
+      "actualValue": 134.33333333333334,
+      "freshAction": "choose_target:7be78a55",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 32.145667
+    },
+    {
+      "beforeInput": 179,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 134.33333333333334,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 134.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 22.870625000000004
+    },
+    {
+      "beforeInput": 180,
+      "actualInheritedPlan": false,
+      "actualAction": "play_card:33938133",
+      "actualValue": 132.33333333333334,
+      "freshAction": "play_card:33938133",
+      "freshValue": 132.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 2,
+      "milliseconds": 29.66145800000001
+    },
+    {
+      "beforeInput": 181,
+      "actualInheritedPlan": true,
+      "actualAction": "end_turn:b2f9b29d",
+      "actualValue": 132.33333333333334,
+      "freshAction": "end_turn:b2f9b29d",
+      "freshValue": 132.33333333333334,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 0,
+      "milliseconds": 20.946000000000012
+    },
+    {
+      "beforeInput": 182,
+      "actualInheritedPlan": false,
+      "actualAction": "pass:a1f33c73",
+      "actualValue": 130,
+      "freshAction": "pass:a1f33c73",
+      "freshValue": 130,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 1,
+      "milliseconds": 23.186082999999996
+    },
+    {
+      "beforeInput": 183,
+      "actualInheritedPlan": false,
+      "actualAction": "choose_card:a0bc5e4f",
+      "actualValue": 122,
+      "freshAction": "choose_card:a0bc5e4f",
+      "freshValue": 122,
+      "actionSame": true,
+      "valueSame": true,
+      "complete": true,
+      "inputs": 2,
+      "milliseconds": 31.830333999999993
+    }
+  ],
+  "newAutonomousRuns": 0
+}
