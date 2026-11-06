@@ -17,10 +17,10 @@
     common ? require("./value-arithmetic") : root.SetiValueArithmetic,
     common ? require("../cards/effects") : root.SetiCardEffects,
     common ? require("../aliens/amiba") : root.SetiAlienAmiba,
-    common ? require("../end-game-scoring") : root.SetiEndGameScoring);
+    common ? require("../end-game-scoring") : root.SetiEndGameScoring,common?require('./income-card-order'):root.SetiIncomeCardOrder);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic, cardEffects, amiba, endScoring) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog, arithmetic, cardEffects, amiba, endScoring,incomeOrder) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -289,7 +289,7 @@
     const placed=facts.computerSlots?.length||0;
     const incomeCard=placed<4&&facts.player.availableData>=4-placed?facts.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
       const value=c=>Object.entries(cards.getIncomeGainForCard(c)).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
-      return value(b)-value(a)||(a.id<b.id?-1:a.id>b.id?1:0);
+      return value(b)-value(a)||incomeOrder.compare(a,b);
     })[0]:null;
     const projected={income:{...facts.player.income},companyBaseIncome:facts.player.companyBaseIncome};
     for(const[k,v]of Object.entries(incomeCard?cards.getIncomeGainForCard(incomeCard):{}))projected.income[k]=(projected.income[k]||0)+v;

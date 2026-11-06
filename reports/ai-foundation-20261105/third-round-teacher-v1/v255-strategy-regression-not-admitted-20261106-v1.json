@@ -1,0 +1,26 @@
+{
+  "status": "not-admitted-strategy-regression",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v255-income-consistency-v1/manifest.json",
+  "coldCases": 646,
+  "coldRoots": 544,
+  "allClosed": true,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 582.233,
+  "fullUnitPassed": 195,
+  "fullFlowPassed": 1,
+  "browserPassed": 6,
+  "inputAuditPassed": 55,
+  "legacyInputAuditFailures": 1,
+  "firstTwoRound304ChoicesAndValuesUnchanged": true,
+  "failure": {
+    "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+    "beforeValue": 48,
+    "candidateValue": 45,
+    "sameFirstAction": true,
+    "diagnosis": "The globally selected tied cheapest currency income is credits, but pre-main deficits need energy. Checking its purpose after selection drops the entire income branch although eligible energy suppliers exist. Reproducible pure single-variable filter overlay restores the energy goal."
+  },
+  "noNewAutonomousExperiments": true,
+  "next": "V256 filters currency suppliers by real pre-main need before ranking; preserve pending/post-main behavior, revalidate case152, then complete admission before any new autonomous run.",
+  "productionStill": "V254/V44",
+  "goalStatus": "active"
+}

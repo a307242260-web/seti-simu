@@ -1,0 +1,147 @@
+{
+  "status": "progress",
+  "sourceAdmitted": true,
+  "baseCommit": "1e01587cd9e40e47287d344f370824a253f85121",
+  "runtime": "V256/V46",
+  "manifest": "reports/ai-foundation-20261106/candidate-v256-purpose-income-consistency-v1/manifest.json",
+  "manifestSha256": "e600f13bf96a820464969424ce25404c636e0b82498f618e739f469d58add852",
+  "snapshotTree": "eb5c400de1e60b92020df1fa903d5c66f7cb9eaf",
+  "namedCases": 646,
+  "uniqueNativeRoots": 544,
+  "allComplete": true,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 592.4532919999999,
+  "relatedNode": {
+    "unitPassed": 23,
+    "failed": 0
+  },
+  "parentFunctionalFullSuite": {
+    "runtime": "V255/V45",
+    "unitPassed": 195,
+    "fullFlowPassed": 1,
+    "failed": 0,
+    "doesNotClaimCurrentFullSuite": true,
+    "changedPathsFromParent": [
+      "randomizer/game/ai/decision-search.js",
+      "randomizer/game/ai/income-purpose-eligibility.test.js",
+      "randomizer/game/ai/resource-demand.js",
+      "randomizer/game/ai/state-value.js",
+      "tools/browser-smoke-inventory.js",
+      "tools/node-test-inventory.js"
+    ]
+  },
+  "browserRelatedPassed": 7,
+  "inputAudit": {
+    "passed": 55,
+    "failed": 1,
+    "legacyAomomoOnly": true
+  },
+  "firstTwoRoundRegression": {
+    "3": {
+      "roots": 236,
+      "valueChanged": 0,
+      "choiceChanged": 1
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 1,
+      "choiceChanged": 0
+    }
+  },
+  "firstTwoSelectedPlanContractsUnchanged": 304,
+  "historicalChanges": [
+    {
+      "identity": "f429f3936f0e2fe348d22e7800a5f11815b1055db1cd82b79fc1f4d6571722ed",
+      "round": "4",
+      "before": {
+        "label": "corpus-case-152",
+        "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+        "identity": "f429f3936f0e2fe348d22e7800a5f11815b1055db1cd82b79fc1f4d6571722ed",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v254-cold-corpus-case-152-20261106-v1.json",
+        "nativeInputs": 248,
+        "milliseconds": 535.61725,
+        "value": 48,
+        "actionId": "place_data:50a9ac16",
+        "complete": true,
+        "decisionGatePassed": true,
+        "rootAndRngUnchanged": true
+      },
+      "after": {
+        "label": "corpus-case-152",
+        "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+        "identity": "f429f3936f0e2fe348d22e7800a5f11815b1055db1cd82b79fc1f4d6571722ed",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-cold-corpus-case-152-20261106-v1.json",
+        "nativeInputs": 223,
+        "milliseconds": 480.16116700000003,
+        "value": 49,
+        "actionId": "place_data:50a9ac16",
+        "complete": true,
+        "decisionGatePassed": true,
+        "rootAndRngUnchanged": true
+      }
+    },
+    {
+      "identity": "5071a2cc6a5b97355a7372b6596091c7920fed91fab23716651218e8ebcbbe28",
+      "round": "3",
+      "before": {
+        "label": "paired-paired-scan-setup-ordinary-4",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-4-root-20261106-v1.json",
+        "identity": "5071a2cc6a5b97355a7372b6596091c7920fed91fab23716651218e8ebcbbe28",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v254-cold-paired-paired-scan-setup-ordinary-4-20261106-v1.json",
+        "nativeInputs": 0,
+        "milliseconds": 33.41225,
+        "value": 118,
+        "actionId": "place_data:8fd12fd3",
+        "complete": true,
+        "decisionGatePassed": true,
+        "rootAndRngUnchanged": true
+      },
+      "after": {
+        "label": "paired-paired-scan-setup-ordinary-4",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-4-root-20261106-v1.json",
+        "identity": "5071a2cc6a5b97355a7372b6596091c7920fed91fab23716651218e8ebcbbe28",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-cold-paired-paired-scan-setup-ordinary-4-20261106-v1.json",
+        "nativeInputs": 2,
+        "milliseconds": 41.639042,
+        "value": 118,
+        "actionId": "end_turn:b2f9b29d",
+        "complete": true,
+        "decisionGatePassed": true,
+        "rootAndRngUnchanged": true
+      }
+    }
+  ],
+  "actualV253ColdRootsChecked": 68,
+  "fourProductionBudgetsStillNull": true,
+  "nativeStateActorSessionRngAndIntentIdentityRulesUnchanged": true,
+  "sourceSnapshotBeforeAfterExact": true,
+  "allNamedAliasFixturesIncluded": true,
+  "firstFailedCandidatesRetained": true,
+  "newAutonomousRuns": 0,
+  "developmentAligned": false,
+  "lastActualR3": {
+    "version": "V253",
+    "board": 72,
+    "tech": 4,
+    "income": "6C3E2card+1scan"
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "baseline": "V41",
+  "goalStatus": "active",
+  "next": "Publish frozen source, run exactly one standard controlled R3 from teacher112 prefix, independently replay it and compare settled assets. Continue R3 learning before R2-end review and autonomous first3.",
+  "pending": "isolate Chinese commit/push; run one controlled R3 and independently replay settled result"
+}

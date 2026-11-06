@@ -1,0 +1,28 @@
+{
+  "scope": "Pure diagnostic Module overlay, not production code or a benchmark. Same root/requirements; only pre-main supplier eligibility changes before sorting. No AI game or Native input.",
+  "fixture": {
+    "run": "ai-foundation-dev-00-20261022",
+    "seed": "seti-free-analyze-v1",
+    "savePath": "seti-saves/seti-save-research-ai-foundation-dev-00-20261022-2bc7b88c-full-v126.json",
+    "saveSha256": "97824de4cfb14528a1e0dd92ecd20947a853e6ac27574d29e27d96c3f794347f",
+    "confirmedInputIndex": 192,
+    "originalActionId": "play_card:3e8e8ea5"
+  },
+  "unmodifiedIncomeGoal": null,
+  "filteredIncomeGoal": {
+    "id": "data:income:4",
+    "kind": "income",
+    "targetComputerSlot": 4,
+    "incomeCardId": "card-54-0",
+    "incomeBefore": 6,
+    "required": {}
+  },
+  "selected": {
+    "id": "card-54-0",
+    "cardId": "b_62.webp",
+    "income": {
+      "energy": 1
+    }
+  },
+  "sourceUnchanged": true
+}

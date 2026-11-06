@@ -1,0 +1,22 @@
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open 'reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-123-root-20261106-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at read (/private/tmp/seti-v255-income-tie-20261106-v1/adhoc/gate-v255-income-source-20261106-v1.js:3:93)
+    at Object.<anonymous> (/private/tmp/seti-v255-income-tie-20261106-v1/adhoc/gate-v255-income-source-20261106-v1.js:15:98)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-123-root-20261106-v1.json'
+}
+
+Node.js v22.22.0

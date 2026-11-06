@@ -73,6 +73,8 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/known-postdraw-tail.test.js", "policy/decision-search", "实际免费阿米巴牌后保留原根已知收入蓝槽固定尾部，匿名牌不参与选择且六步原生兑现一致", "新牌截断已知流程、未知类型或ID影响规划、未证明分支放行或伪造后继观察"),
     entry("randomizer/game/ai/exact-data-tail-arithmetic.test.js", "policy/decision-search", "收入与蓝槽固定尾部按统一整数账本累加，六输入原生已知路线保持分数与首步并真正使用数值证明", "浮点一位误差使合法标量证明被严格网格门禁拒绝，反复执行固定准备或原根RNG变化"),
     entry("randomizer/game/ai/income-purpose-scheduling.test.js", "policy/decision-search", "无当前钱电需求的货币收入延后主行动，保留主行动后发展、实际筹资和抽牌收入时机", "固定收入先后顺序重复展开，或删除实际筹资与信息边界选择"),
+    entry("randomizer/game/ai/income-choice-consistency.test.js", "policy/state-value", "收入严格同值时保留较高费用牌，初始目的、待选恢复和菜单重排一致，明确资金目的及较高收益优先", "卡ID与动作ID平局排序不一致、重排菜单改变选择，或印刷费用压过实际收益"),
+    entry("randomizer/game/ai/income-purpose-eligibility.test.js", "policy/state-value", "主行动前先过滤不能满足当前货币需求的收入牌，再比较价值和平局；已开始及主行动后收入保持", "缺电时平局选钱牌再删除整条收入准备，遗漏可达的电收入路线并损失末轮窗口价值"),
     entry("randomizer/game/ai/income-preparation-cache.test.js", "policy/decision-search", "完整不可变状态与玩家的收入准备标量按投影数据分别复用，可变及浅冻结状态实时重算", "跨数据数量或可变状态复用过期值，或将不同调用者的资本基线缓存为收益差"),
     entry("randomizer/game/ai/analysis-data-lower-bound.test.js", "policy/state-value", "阿米巴收入分析先核对当前数据下界，缺数据时不计算细节，可支付时保持原报价", "预支未来收入补当前数据，或早退删除可支付的收入分析路径"),
     entry("randomizer/game/ai/scalar-capital-cache.test.js", "policy/state-value", "完整估值事实只复用标量，活动钱包逐字段重建键，冻结引用需递归证明，异常类型回退且容量有界", "过期钱包或隐藏字段跨输入命中、浅冻结绕过校验、缓存读访问器、保存可执行计划或缓存无界"),

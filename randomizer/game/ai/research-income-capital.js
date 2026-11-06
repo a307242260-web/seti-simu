@@ -3,9 +3,9 @@
  const api=factory(common?require('../data/placement'):root.SetiDataPlacement,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../players'):root.SetiPlayers,common?require('../tech/catalog'):root.SetiTechCatalog,
-  common?require('../../solar-system/core'):root.SetiSolarSystem,common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('./value-arithmetic'):root.SetiValueArithmetic);
+  common?require('../../solar-system/core'):root.SetiSolarSystem,common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('./value-arithmetic'):root.SetiValueArithmetic,common?require('./income-card-order'):root.SetiIncomeCardOrder);
  if(common)module.exports=api;else root.SetiResearchIncomeCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(placement,cards,effects,players,tech,solar,rocketAbility,arithmetic){
+})(typeof globalThis!=='undefined'?globalThis:window,function(placement,cards,effects,players,tech,solar,rocketAbility,arithmetic,incomeOrder){
  'use strict';
 const zero = reason => ({ value: 0, selected: null, reason });
 const quiet = cards => (cards || []).every(c => {
@@ -30,6 +30,7 @@ function quote(facts, weights, portfolio, baseValue, technologyCapital) {
   if (facts.player.publicity < facts.researchCost) return zero('research-not-funded');
   const known = facts.board.publicCards.filter(c => c?.cardId && !c.hidden && cards.getIncomeGainForCard(c));
   if (!known.length) return zero('known-income-card-missing');
+  const incomeCardsById=new Map(known.map(c=>[c.id,c]));
   const oldTech = facts.player.techState, blueSlot = blueSlotFor(oldTech, facts.computerSlots);
   const targets = Object.entries(facts.supply.stacks).filter(([id, stack]) => !oldTech.ownedTiles[id]
     && stack.remaining > 0 && !stack.bonusHidden && stack.bonusId === 'bonus_1c'
@@ -80,7 +81,7 @@ function quote(facts, weights, portfolio, baseValue, technologyCapital) {
         wallet, computerSlots: after.computerSlots });
     }
   }
-  candidates.sort((a, b) => b.netGain - a.netGain || a.tileId.localeCompare(b.tileId) || a.incomeCardId.localeCompare(b.incomeCardId));
+  candidates.sort((a, b) => b.netGain - a.netGain || a.tileId.localeCompare(b.tileId) || incomeOrder.compare(incomeCardsById.get(a.incomeCardId),incomeCardsById.get(b.incomeCardId)));
   return { value: Math.max(0, candidates[0].netGain), selected: candidates[0], candidates,
     reason: candidates[0].netGain > 0 ? 'funded-research-income' : 'research-income-not-profitable',
     scope: 'One funded visible-selection research and known public income via existing data; joint wallet and native public rotation, no replacement card/bonus identity, no observation, search or pruning guarantee.' };
@@ -121,6 +122,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
  const available=active.filter(b=>!b.occupied);
  const base=investment(hand,wallet.publicity,{resources:wallet,income,startingIncome:0},{computerSlots:slots,blueSlots:blues}),candidates=[];
  const incomeCards=slots.includes(4)?[]:hand.filter(c=>!c.hidden&&c.cardId&&(()=>{const gain=incomeGainFor(c);return gain&&Object.keys(gain).every(k=>['credits','energy'].includes(k));})());
+ const incomeCardsById=new Map(incomeCards.map(c=>[c.id,c]));
  for(const blue of [null,...available]){
   if(!blue&&slots.includes(4))continue;
   const bonus=blue&&placement.getBlueTileDataBonus(blue.tileId);
@@ -143,7 +145,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
    candidates.push({blueSlot:blue?.slot||null,blueTileId:blue?.tileId||null,incomeCardId:incomeCard?.id||null,neededData:need,computerSlots:[...slots,...missing].sort((a,b)=>a-b),wallet:next,income:nextIncome,handIds:remaining.map(c=>c.id),scoreGain:score,linear,baseCapital:base,afterCapital:after,value});
   }
  }
- candidates.sort((a,b)=>b.value-a.value||a.neededData-b.neededData||a.blueSlot-b.blueSlot||String(a.incomeCardId).localeCompare(String(b.incomeCardId)));
+ candidates.sort((a,b)=>b.value-a.value||a.neededData-b.neededData||a.blueSlot-b.blueSlot||incomeOrder.compare(incomeCardsById.get(a.incomeCardId),incomeCardsById.get(b.incomeCardId))||String(a.incomeCardId).localeCompare(String(b.incomeCardId)));
  return{value:Math.max(0,candidates[0]?.value||0),selected:candidates[0]||null,candidates,reason:'one-fixed-income-and-optional-currency-blue-tail',scope:'One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds.'};
 }
 

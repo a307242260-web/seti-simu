@@ -1,0 +1,8 @@
+PASS production-ready-amiba-analysis http://127.0.0.1:53306/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:53306/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:53306/randomizer/index.html
+PASS production-search-agent-parity http://127.0.0.1:53306/randomizer/index.html?agent=search
+PASS production-blue-data-analysis http://127.0.0.1:53306/randomizer/index.html
+PASS production-income-choice-consistency http://127.0.0.1:53306/randomizer/index.html
+PASS production-income-purpose-eligibility http://127.0.0.1:53306/randomizer/index.html
+SUMMARY browserSmoke passed=7 failed=0 total=7

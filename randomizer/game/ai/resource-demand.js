@@ -2,11 +2,11 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./income-card-order'):root.SetiIncomeCardOrder);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v17';
+  const VERSION='seti-goal-resource-preparation-v19';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -106,7 +106,7 @@
       &&Object.entries(goal.required||{}).every(([key,n])=>p.resources[key]+(gain[key]||0)>=n)
       &&p.resources.availableData+p.hand.filter(c=>c.id!==goal.cardId&&c.id!==card.id).reduce((n,c)=>n+cornerData(c)*multiplier,0)>=4-placed(p));
     const value=gain=>Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
-    choices.sort((a,b)=>value(b.gain)-value(a.gain)||(a.card.id<b.card.id?-1:1));
+    choices.sort((a,b)=>value(b.gain)-value(a.gain)||incomeOrder.compare(a.card,b.card));
     const card=choices[0]?.card;
     return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
   }
@@ -336,10 +336,12 @@
     const incomeNeeded=p.mainActionCompleted||committedData||p.hand.some(card=>helpsIncome(cards.getIncomeGainForCard(card)));
     if(incomeNeeded&&placed(p)<4&&p.hand.some(c=>cards.getIncomeGainForCard(c))){
       const beforeCapital=incomePreparationCapital(state,p);
+      // Reject unneeded currency suppliers before ranking, so a tied credit
+      // card cannot hide a needed energy source (or the reverse).
       // Quote each supplier once, using the same post-income wallet as the
       // native choice. Sorting must not repeatedly simulate an unchanged source.
-      const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).map(card=>({card,value:computerIncomeValue(state,seatId,card)??incomeValueWithCapital(state,p,card,beforeCapital)}))
-        .sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1))
+      const incomeCard=p.hand.filter(c=>{const gain=cards.getIncomeGainForCard(c);return gain&&(p.mainActionCompleted||committedData||!Object.keys(gain).every(k=>['credits','energy'].includes(k))||helpsIncome(gain));}).map(card=>({card,value:computerIncomeValue(state,seatId,card)??incomeValueWithCapital(state,p,card,beforeCapital)}))
+        .sort((a,b)=>b.value-a.value||incomeOrder.compare(a.card,b.card))
         .find(row=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:row.card.id,required:{}}))?.card;
       if(incomeCard){
         const gain=cards.getIncomeGainForCard(incomeCard),currencyOnly=Object.keys(gain).every(k=>['credits','energy'].includes(k));
@@ -503,8 +505,8 @@
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
       if(goal.incomeFunding&&card.id===goal.incomeCardId)players.gainResources(owner(next,seatId),gain);
-      return{action:a,value:incomeValueWithCapital(state,p,card,beforeCapital),feasible:capacity(next,seatId,goal)};
-    }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
+      return{action:a,card,value:incomeValueWithCapital(state,p,card,beforeCapital),feasible:capacity(next,seatId,goal)};
+    }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||incomeOrder.compare(a.card,b.card));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
   }
   function greedyTechPlans({state,seatId,plans}){

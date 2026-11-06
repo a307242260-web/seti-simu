@@ -3,9 +3,9 @@
  const api=factory(common?require('../aliens/amiba'):root.SetiAlienAmiba,common?require('../aliens/state'):root.SetiAlienState,
   common?require('../players'):root.SetiPlayers,common?require('../data/placement'):root.SetiDataPlacement,
   common?require('../cards/effects'):root.SetiCardEffects,common?require('../end-game-scoring'):root.SetiEndGameScoring,
-  common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,common?require('../cards/deck'):root.SetiCards);
+  common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,common?require('../cards/deck'):root.SetiCards,common?require('./income-card-order'):root.SetiIncomeCardOrder);
  if(common)module.exports=api;else root.SetiAmibaAnalysisCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(amiba,aliens,players,placement,effects,end,probe,arithmetic,cards){
+})(typeof globalThis!=='undefined'?globalThis:window,function(amiba,aliens,players,placement,effects,end,probe,arithmetic,cards,incomeOrder){
  'use strict';const zero=reason=>({value:0,selected:null,reason});
  const inertScores=new Set(['sectorWinsByColor','techCount','distinctSignalSectors','planetOrbitOrLand','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost']);
  const blueDataRule=t=>t.event?.type==='alienTrace'&&t.event.traceType==='blue'
@@ -81,7 +81,7 @@
   if(placed.length!==3||placed.some((s,i)=>s!==i+1)||facts.player.availableData<3)return zero('analysis-not-ready');
   const initial=facts.player,board=facts.board.finalScoring,aMark=board?.tiles?.a?.marks?.find(m=>m.playerId===initial.id);
   const formula=aMark&&end.getFormulaId('a',board.tileVariants.a),incomeScore=wallet=>aMark?end.getFormulaBaseValue(formula,wallet,{})*end.getSlotMultiplier(formula,aMark.slotIndex):0;
-  const scalarQuotes=new Map();
+  const scalarQuotes=new Map(),incomeCards=new Map(facts.hand.map(c=>[c.id,c]));
   const options=facts.hand.filter(c=>c.cardId&&!c.hidden).flatMap(card=>{
    const gain=cards.getIncomeGainForCard(card);if(!gain||!Object.keys(gain).length||Object.keys(gain).some(k=>!['credits','energy'].includes(k)))return[];
    const wallet={...initial,availableData:initial.availableData-1,handSize:facts.hand.length+facts.extraUnknownCount-1,income:{...initial.income}};
@@ -97,7 +97,7 @@
     ...Object.entries(weights).filter(([k])=>k!=='handSize').map(([k,w])=>(wallet[k]-initial[k])*w),
     ...Object.entries(gain).map(([k,v])=>v*(weights[k]||0)*(4-facts.round))],weights);
    return[{cardId:card.id,wallet,progress,after,linear,value:arithmetic.sum([linear,after,-baseValue],weights)}];
-  }).sort((a,b)=>b.value-a.value||a.cardId.localeCompare(b.cardId));
+  }).sort((a,b)=>b.value-a.value||incomeOrder.compare(incomeCards.get(a.cardId),incomeCards.get(b.cardId)));
   const selected=options[0];if(!selected)return zero('analysis-known-currency-income-missing');
   const next={...facts,...selected.progress,player:selected.wallet},tail=quote(next,weights,(wallet,slots,progress={})=>portfolio(wallet,slots,{...selected.progress,...progress}),selected.after);
   if(!tail.selected)return zero('income-analysis-tail-unavailable');
