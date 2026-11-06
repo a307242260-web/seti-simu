@@ -1,0 +1,9 @@
+{
+  "tools/research-human405-round1.js": "571594593dadb4539af62dc38bd2e1f61e92c990be740fda0243bb9d8df7dc8a",
+  "tools/run_research_validation.js": "93aa4bb95f2b0be7722a548cf2ed47766f1dd5df1545bc2297cff420fc9eabd6",
+  "tools/robot-iteration-lib.js": "8ecc312e7e0c1ad8d77a9987331522f744bb4d004e844a4d5afe4a99961ff594",
+  "tools/node-test-inventory.js": "ef00ac335f7eefa3aa41e90b36171a8df16fcce88979187cdf268835d8f8492b",
+  "reports/iteration/page-template.html": "8f7cf0a45552fa58e688c45b8f65b259b73bf8993463c77b96da54179cf83e70",
+  "docs/robot-iteration-registry.md": "f0dc91af176430a56b6a131304f57c80f1554ab61892c4d9e72b3753f09e4fef",
+  "tools/robot-ai-generation.test.js": "98d68dd085faa2d0a4617020bd723fd5dd698898833cfe6c473e333a929cc667"
+}

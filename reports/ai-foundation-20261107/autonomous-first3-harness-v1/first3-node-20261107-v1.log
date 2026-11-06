@@ -1,0 +1,46 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: [world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[scenario] human405-white-first3-v1 opening=194 learner=player-white opponents=PASS
+[轮末-选牌收入前] {"round":3,"phase":"before-pass-card-and-income","beforeInput":195,"checkpointPath":"../../../var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-first3-harness-dpgyqU/partial/1760bbbd.dc540a52.quick-400.json.round-end-3.checkpoint.json","checkpointSha256":"0af04887142d4c5dcc139ce033b6146b19232f0cdabc97b8b7285a58d2c48689","score":85,"resources":{"additionalPublicScan":0,"aomomoFossils":0,"availableData":0,"credits":0,"energy":0,"handSize":1,"publicity":3,"score":85},"income":{"additionalPublicScan":1,"availableData":0,"credits":7,"energy":3,"handSize":1,"publicity":0},"technology":{"blueBoardSlots":{"blue1":2,"blue2":1,"blue4":3},"disabledTiles":{},"ownedTiles":{"blue1":true,"blue2":true,"blue4":true,"orange3":true,"purple1":true,"purple4":true}},"hand":["dlc_24.png"],"playedCards":["b_117.webp","dlc_9.png","b_101.webp"],"data":{"discardedCount":0,"placedTokens":[],"poolTokens":[]},"probes":[],"sectorWins":[{"sectorId":"sector-2-a","settlementNumber":1},{"sectorId":"sector-3-a","settlementNumber":1}],"scanProgress":[{"sectorId":"sector-1-a","ownedSlots":[1,2],"capacity":5},{"sectorId":"sector-3-b","ownedSlots":[3],"capacity":6},{"sectorId":"sector-4-b","ownedSlots":[1,2,3],"capacity":5}],"alienTraceSlots":[{"slotId":1,"revealed":true,"alienId":"阿米巴","traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"aliens":{"slots":[{"slotId":1,"revealed":true,"alienId":"阿米巴","traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"amiba":{"revealInitialized":true,"revealedSlotId":1,"symbolSlots":{"orange_1":"symbol_3","orange_2":"symbol_2","orange_3":"symbol_1","red_1":"symbol_4","red_2":"symbol_5"},"symbolsById":{"symbol_1":{"sequence":3,"slotId":"orange_3","symbolId":"symbol_1"},"symbol_2":{"sequence":2,"slotId":"orange_2","symbolId":"symbol_2"},"symbol_3":{"sequence":5,"slotId":"orange_1","symbolId":"symbol_3"},"symbol_4":{"sequence":1,"slotId":"red_1","symbolId":"symbol_4"},"symbol_5":{"sequence":4,"slotId":"red_2","symbolId":"symbol_5"}}},"amibaTraces":{"revealedSlotId":1,"traceSlotsByAlienSlotId":{"1":{"blue":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":6,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":4,"traceType":"pink"}},"yellow":{"1":null,"2":null,"3":null,"4":null}}},"blindCardCount":4,"displayedCardAvailable":true,"displayedCardIndex":5}},"finalScoring":{"thresholds":[25,50,70],"tileVariants":{"a":2,"b":1,"c":1,"d":2},"tiles":{"a":{"id":"a","marks":[]},"b":{"id":"b","marks":[{"id":"final-mark-2","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":50,"tileId":"b"}]},"c":{"id":"c","marks":[{"id":"final-mark-3","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":70,"tileId":"c"}]},"d":{"id":"d","marks":[{"id":"final-mark-1","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":25,"tileId":"d"}]}}},"projectedFinalScore":118}
+
+===== quick-400（seti-free-analyze-v1）=====
+步骤=196（上限 400） 终局=false 耗时=0.1s
+均分=26.75 各席=player-blue=7 player-green=7 player-brown=8 player-white=85
+  player-blue 行动族={"choose_card":9,"choose_payment":2,"pass":3}
+  player-green 行动族={"choose_card":10,"choose_payment":2,"pass":3}
+  player-brown 行动族={"choose_card":9,"pass":3}
+  player-white 行动族={"choose_card":26,"choose_payment":2,"play_card":7,"quick_trade":3,"choose_target":50,"end_turn":20,"research_tech":4,"orbit":1,"industry":2,"place_data":22,"pass":3,"scan":4,"analyze":3,"land":1,"card_corner":4,"accept_optional_effect":3}
+白色 quick_trade=3 研究步=[35,92,126,168]
+外星人: 首放 5 次、揭示 1 次
+反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）
+
+记录: ../../../var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-first3-harness-dpgyqU/partial/1760bbbd.dc540a52.quick-400.json
+
+
+0 !== 1
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/research-human405-first3.test.js:28:98)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=1.72s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=1
+FAIL tools/research-human405-first3.test.js status=1 signal=none

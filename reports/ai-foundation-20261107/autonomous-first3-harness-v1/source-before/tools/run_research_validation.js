@@ -1,0 +1,811 @@
+#!/usr/bin/env node
+"use strict";
+
+/**
+ * 机器人调研验证工具（对齐调研流程，2026-08-17 用户确认）：
+ *
+ *   1) 每次调研默认跑 200 步快速验证（--steps N 可调）验证效果方向；
+ *   2) 行为方向合理（有机会）时用 --full 跑全盘验证——若已有同实验快速记录，
+ *      自动从快速记录存档续跑，不重跑前 200 步；
+ *   3) 每次验证都落盘记录（默认 reports/research/），供 --list/--show 复盘；
+ *   4) 同一实验绝不重跑：指纹 = seed + activePlayerCount + aiDifficulty +
+ *      policyVersion + config 开关；同指纹同模式已存在记录时拒绝执行
+ *      （--force 才允许覆盖）。全盘记录已存在时快速验证视为被覆盖，同样拒绝。
+ *
+ * 用法：
+ *   node tools/run_research_validation.js --name baseline                     # 默认 200 步快速验证
+ *   node tools/run_research_validation.js --name baseline --full              # 全盘验证
+ *   node tools/run_research_validation.js --list                              # 列出全部记录
+ *   node tools/run_research_validation.js --show <name|指纹前缀>               # 查看某记录
+ *   node tools/run_research_validation.js --name x --config k=v,k2=v2 --steps 300 --force
+ *
+ * 可选参数：
+ *   --seed <seed>      盘面 seed，默认 seti-free-analyze-v1
+ *   --config k=v,...   行为配置开关：planContinuationFastPath /
+ *                      planNewTurnReuse / vStateValueEnabled /
+ *                      traceCounterfactualGoalClusters / compactReplay /
+ *                      aiDifficulty / activePlayerCount（搜索机制统一，
+ *                      无 unifiedSearch 分桶开关）
+ *   --steps <N>        快速验证步数，默认 200（--full 时忽略）
+ *   --full             全盘验证（跑到终局，安全上限 4000 决策）
+ *   --force            允许覆盖已有同指纹记录（会写明覆盖原因）
+ *   --no-save          不写 seti-saves 存档（默认写，快速验证存档供全盘续跑）
+ *   --records-dir <p>  记录目录，默认 reports/research/
+ *
+ * 记录 schema：seti-research-validation-record-v1（见 RECORD_SCHEMA_VERSION）。
+ */
+
+const fs = require("node:fs");
+const path = require("node:path");
+const crypto = require("node:crypto");
+const { execFileSync } = require("node:child_process");
+const { createSimulationEnv } = require("../randomizer/app/simulation-env");
+const heuristicPolicy = require("../randomizer/game/ai/heuristic-policy");
+const completionAgent = require("../randomizer/game/ai/completion-agent");
+const searchAgent = require("../randomizer/game/ai/search-agent");
+const { createStepProgressReporter } = require("./progress");
+const { buildWorldIdentity } = require("./fixed-world-identity");
+const whiteRound1 = require("./research-human405-round1");
+const whiteFull = require("./research-human405-full");
+
+const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
+const DEFAULT_SEED = "seti-free-analyze-v1";
+const DEFAULT_STEPS = 200;
+const MAX_DECISIONS = 4000;
+let RECORDS_DIR = path.join(__dirname, "..", "reports", "research");
+const SAVES_DIR = path.join(__dirname, "..", "seti-saves");
+const POLICY_VERSION = heuristicPolicy.POLICY_VERSION;
+
+const FLAG_KEYS = [
+  "planContinuationFastPath",
+  "planNewTurnReuse",
+  "vStateValueEnabled",
+  "traceCounterfactualGoalClusters",
+  "compactReplay",
+  "scenario",
+];
+const IDENTITY_KEYS = ["seed", "activePlayerCount", "aiDifficulty", "policyVersion"];
+
+// ---------------------------------------------------------------------------
+// 小工具
+// ---------------------------------------------------------------------------
+
+function stableSerialize(value) {
+  if (value == null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => (
+    `${JSON.stringify(key)}:${stableSerialize(value[key])}`
+  )).join(",")}}`;
+}
+
+function sha256(text) {
+  return crypto.createHash("sha256").update(text).digest("hex");
+}
+
+function gitCommit() {
+  try {
+    return execFileSync("git", ["rev-parse", "--short", "HEAD"], {
+      cwd: path.join(__dirname, ".."),
+      encoding: "utf8",
+    }).trim();
+  } catch (_error) {
+    return null;
+  }
+}
+
+function parseConfig(raw) {
+  const config = {};
+  for (const pair of String(raw || "").split(",")) {
+    if (!pair) continue;
+    const eq = pair.indexOf("=");
+    if (eq <= 0) throw new Error(`--config 需要 k=v 格式：${pair}`);
+    const key = pair.slice(0, eq).trim();
+    const value = pair.slice(eq + 1).trim();
+    if (!FLAG_KEYS.includes(key) && !["aiDifficulty", "activePlayerCount", "agentType"].includes(key)) {
+      throw new Error(`未知配置键：${key}（允许：${[...FLAG_KEYS, "aiDifficulty", "activePlayerCount", "agentType"].join(", ")}）`);
+    }
+    config[key] = value === "true" ? true
+      : value === "false" ? false
+        : /^-?\d+$/.test(value) ? Number(value)
+          : value;
+  }
+  return config;
+}
+
+function buildIdentity(options) {
+  const config = { ...options.config };
+  const agentType = config.agentType || "heuristic";
+  if (!["heuristic", "completion", "search"].includes(agentType)) throw new Error(`未知 AI 类型: ${agentType}`);
+  const identity = {
+    seed: options.seed || DEFAULT_SEED,
+    activePlayerCount: Number(config.activePlayerCount || 4),
+    aiDifficulty: config.aiDifficulty || "laughable",
+    policyVersion: agentType === "completion" ? completionAgent.VERSION
+      : agentType === "search" ? searchAgent.VERSION : POLICY_VERSION,
+    flags: {},
+    gitCommit: gitCommit() || "dirty",
+  };
+  for (const key of FLAG_KEYS) {
+    if (config[key] !== undefined) identity.flags[key] = config[key];
+  }
+  if (agentType !== "heuristic") identity.agentType = agentType;
+  if (config.scenario != null) {
+    identity.scenario = ([whiteFull.ID,whiteFull.V189_ID].includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
+    identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
+  }
+  identity.world = buildWorldIdentity(identity);
+  return identity;
+}
+
+function fingerprintOf(identity) {
+  const payload = {};
+  for (const key of IDENTITY_KEYS) payload[key] = identity[key];
+  payload.flags = identity.flags;
+  // 指纹含 gitCommit：同一实验（seed+policy+flags）不同代码版本产生不同指纹，
+  // 记录天然隔离（2026-08-20 缺陷修复——此前指纹不含 commit，行为变化会静默
+  // 覆盖旧记录或拒绝重跑，无法追溯每条记录对应的精确代码版本）。
+  payload.gitCommit = identity.gitCommit || "dirty";
+  if (identity.agentType) payload.agentType = identity.agentType;
+  if (identity.scenario) payload.scenario = identity.scenario;
+  payload.world = identity.world;
+  return sha256(stableSerialize(payload));
+}
+
+function recordFileOf(fingerprint, mode, commit) {
+  const suffix = commit ? `.${String(commit).slice(0, 8)}` : "";
+  return path.join(RECORDS_DIR, `${fingerprint.slice(0, 8)}${suffix}.${mode}.json`);
+}
+
+function modeOf(options) {
+  return options.full ? "full" : `quick-${options.steps}`;
+}
+
+function listRecords() {
+  if (!fs.existsSync(RECORDS_DIR)) return [];
+  return fs.readdirSync(RECORDS_DIR)
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, file), "utf8"));
+      } catch (_error) {
+        return null;
+      }
+    })
+    .filter(record => record?.schemaVersion === RECORD_SCHEMA_VERSION)
+    .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+function findRecord(fingerprint, mode, commit) {
+  const file = recordFileOf(fingerprint, mode, commit);
+  if (!fs.existsSync(file)) return null;
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+
+function findRecordByFingerprint(fingerprint) {
+  return listRecords().find((record) => record.fingerprint === fingerprint) || null;
+}
+
+// ---------------------------------------------------------------------------
+// 指标收集
+// ---------------------------------------------------------------------------
+
+function createCollector() {
+  return {
+    famsBySeat: {},
+    whiteQuickTrade: 0,
+    whiteResearchSteps: [],
+    traceEvents: [],       // {step, seat, slotId, tt, owner}
+    revealEvents: [],      // {step, seat, slotId, alienId}
+    lastTraceOwner: new Map(),
+    revealedKeys: new Set(),
+    budgetHits: [],        // 反事实搜索触顶 maxExecutionNodes 的决策（用户裁定：触碰 4096 截断要记录并在终局输出）
+    searches: [],          // 仅本次真实evaluate；计划复用不重复记数。
+  };
+}
+
+function slotsOf(obs) {
+  return obs?.publicState?.board?.aliens?.slots || obs?.publicState?.aliens?.slots || [];
+}
+
+function familyOf(actionId) {
+  return String(actionId || "").split(":")[0] || "<none>";
+}
+
+// 记录一步决策的指标（stepIndex 从 1 开始）。
+function collectStep(collector, stepIndex, result) {
+  const pd = result?.policyDecision || {};
+  const seat = String(pd.seatId || "");
+  const fam = familyOf(pd.actionId);
+  collector.famsBySeat[seat] = collector.famsBySeat[seat] || {};
+  collector.famsBySeat[seat][fam] = (collector.famsBySeat[seat][fam] || 0) + 1;
+  if (seat === "player-white" && fam === "quick_trade") collector.whiteQuickTrade += 1;
+  if (seat === "player-white" && fam === "research_tech") collector.whiteResearchSteps.push(stepIndex);
+}
+
+// 按本次evaluate列表记录控制/策略搜索；计划复用为[]，不能读取上次缓存诊断。
+// budgetHits沿用“执行触顶且仍有frontier”；满额分布从searches按实际节点上限筛选。
+function collectBudgetHits(collector, stepIndex, result) {
+  if (!Array.isArray(result?.searches)) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 缺少本次搜索列表");
+  const pd = result?.policyDecision || {};
+  for (const [index, search] of result.searches.entries()) {
+    const diag = search.diagnostics;
+    if (!diag) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 本次evaluate没有诊断");
+    const identity = { step: stepIndex, searchIndex: index,
+      seat: String(pd.seatId || "?"), action: String(pd.actionId || "") };
+    collector.searches.push({ ...identity, ...structuredClone(search) });
+    for (const [name, limit] of Object.entries(diag.budgetLimits || {})) {
+      if (limit.enabled && (limit.reached || limit.truncated)) {
+        console.log(`[搜索触限] 步${stepIndex} ${identity.seat} ${search.kind} #${index}`
+          + ` ${name}=${JSON.stringify(limit)} action=${identity.action}`);
+      }
+    }
+    if (diag.executionLimitReached === true) collector.budgetHits.push({
+      ...identity, kind: search.kind,
+      executedNodeCount: diag.executedNodeCount,
+      maxExecutionNodes: diag.maxExecutionNodes,
+      frontierOriginCountByFamily: structuredClone(diag.frontierOriginCountByFamily || null),
+    });
+  }
+}
+
+// 从观测更新外星人时间线（trace 首放事件 / 揭示事件）。
+function collectAliens(collector, stepIndex, obs, seat) {
+  const slots = slotsOf(obs);
+  for (const [idx, slot] of slots.entries()) {
+    if (!slot) continue;
+    for (const [tt, trace] of Object.entries(slot.traces || {})) {
+      if (!trace || !trace.firstPlaced) continue;
+      const key = `${idx + 1}:${tt}`;
+      const owner = trace.ownerPlayerColor || "?";
+      if (collector.lastTraceOwner.get(key) !== owner) {
+        collector.lastTraceOwner.set(key, owner);
+        collector.traceEvents.push({ step: stepIndex, seat, slotId: idx + 1, tt, owner });
+      }
+    }
+    if (slot.revealed && slot.alienId) {
+      const rk = `slot${idx + 1}:${slot.alienId}`;
+      if (!collector.revealedKeys.has(rk)) {
+        collector.revealedKeys.add(rk);
+        collector.revealEvents.push({ step: stepIndex, seat, slotId: idx + 1, alienId: slot.alienId });
+      }
+    }
+  }
+}
+
+// 把已有 collector 的状态（fams / 时间线）播种到新 collector（用于全盘续跑时合并）。
+function seedCollectorFrom(collector, source) {
+  if (!Array.isArray(source.searches)) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 旧快速记录无法补齐逐次统计，不允许冒充完整覆盖");
+  collector.searches.push(...structuredClone(source.searches));
+  for (const [seat, fams] of Object.entries(source.famsBySeat || {})) {
+    collector.famsBySeat[seat] = collector.famsBySeat[seat] || {};
+    for (const [fam, count] of Object.entries(fams)) {
+      collector.famsBySeat[seat][fam] = (collector.famsBySeat[seat][fam] || 0) + count;
+    }
+  }
+  collector.whiteQuickTrade += Number(source.whiteQuickTrade) || 0;
+  for (const step of source.whiteResearchSteps || []) collector.whiteResearchSteps.push(step);
+  for (const event of source.traceEvents || []) {
+    collector.lastTraceOwner.set(`${event.slotId}:${event.tt}`, event.owner);
+    collector.traceEvents.push(event);
+  }
+  for (const event of source.revealEvents || []) {
+    collector.revealedKeys.add(`slot${event.slotId}:${event.alienId}`);
+    collector.revealEvents.push(event);
+  }
+  for (const hit of source.budgetHits || []) collector.budgetHits.push(hit);
+}
+
+function seatScores(obs) {
+  const players = obs?.publicState?.players || [];
+  const scores = {};
+  for (const p of players) {
+    const id = p.playerId || p.id || p.color;
+    if (!id) continue;
+    scores[id] = Number(p.finalScore ?? p.score) || 0;
+  }
+  return scores;
+}
+
+function summaryOf(obs, { boardOnly = false } = {}) {
+  const players = obs?.publicState?.players || [];
+  const scores = boardOnly ? Object.fromEntries(players.map(p => {
+    if (!Number.isFinite(p.score)) throw new Error("ROUND_END_BOARD_SCORE_MISSING");
+    return [p.playerId || p.id, p.score];
+  })) : seatScores(obs);
+  const avg = players.length
+    ? Object.values(scores).reduce((sum, score) => sum + score, 0) / players.length
+    : 0;
+  return {
+    round: obs?.publicState?.roundNumber ?? null,
+    terminal: Boolean(obs?.publicState?.terminal || obs?.terminal),
+    scores,
+    avgScore: Number(avg.toFixed(2)),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 运行
+// ---------------------------------------------------------------------------
+
+function buildSavePath(options, name, mode, stateVersion) {
+  const safe = String(name || "game")
+    .replace(/[^\w\u4e00-\u9fa5-]/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60) || "game";
+  // 存档名带 gitCommit 前缀（2026-08-21 用户要求"不同版本分文件/分目录存档"）：
+  // <name>-<commit8>-<mode>-v<stateVersion>，杜绝"这个档是哪个版本跑的"混乱。
+  const commit = String(gitCommit() || "dirty").slice(0, 8);
+  return path.join(SAVES_DIR, `seti-save-research-${safe}-${commit}-${mode}-v${stateVersion}.json`);
+}
+
+// 从浏览器存档构建 checkpoint（与 tools/load_save_simulation.js 同构）。
+function checkpointFromSave(save, resetConfig) {
+  const state = JSON.parse(save.committedState);
+  const committed = JSON.stringify(state);
+  return {
+    schemaVersion: "seti-rl-checkpoint-v1",
+    coreState: {
+      version: 2,
+      committedState: committed,
+      compositionEnvelope: {
+        schemaVersion: "seti-rule-composition-save-v1",
+        committedState: committed,
+        session: save.session ?? null,
+      },
+    },
+    config: resetConfig,
+    replayCursor: { seed: save.seed || resetConfig.seed, stepIndex: 0 },
+    replaySteps: null,
+    // 浏览器格式历史原样带进恢复后的 env：续跑后再存盘，replaySteps 完整不丢。
+    machineAI: save.machineAI || {},
+    browserReplaySteps: Array.isArray(save.replaySteps) ? save.replaySteps : [],
+  };
+}
+
+function runValidation(options) {
+  const identity = buildIdentity(options);
+  const fingerprint = fingerprintOf(identity);
+  const mode = modeOf(options);
+  const commit = identity.gitCommit;
+  const recordPath = recordFileOf(fingerprint, mode, commit);
+
+  // ---- 去重（绝不跑同一个实验同一代码版本多遍）----
+  // 指纹含 gitCommit：同 seed+policy+flags 不同代码版本 → 不同指纹 → 各自留档，
+  // 互不覆盖（2026-08-20 缺陷修复，此前指纹不含 commit，行为变化会被误判为
+  // 同一实验而拒绝重跑或 --force 覆盖旧记录）。
+  const existing = findRecord(fingerprint, mode, commit);
+  if (existing && !options.force) {
+    console.log(`[skip] 同一实验同一代码版本同模式已存在记录（指纹 ${fingerprint.slice(0, 12)}，${mode}），不重跑。`);
+    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordPath)}  createdAt=${existing.createdAt} gitCommit=${existing.gitCommit}`);
+    console.log(`  如需强制重跑请加 --force（并在提交说明里写明覆盖原因）。`);
+    process.exit(2);
+  }
+  const fullExisting = options.full ? null : findRecord(fingerprint, "full", commit);
+  if (fullExisting && !options.force) {
+    console.log(`[skip] 该实验该代码版本已有全盘记录（${fullExisting.createdAt}），快速验证被全盘覆盖，不重跑。`);
+    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordFileOf(fingerprint, "full", commit))}`);
+    console.log(`  如需强制快速验证请加 --force。`);
+    process.exit(2);
+  }
+  if (existing && options.force) {
+    // --force 覆盖前自动备份旧记录，保留对比基准（2026-08-20 缺陷修复）。
+    const backupPath = `${recordPath}.bak-${Date.now()}`;
+    try {
+      fs.copyFileSync(recordPath, backupPath);
+      console.log(`[backup] 覆盖前备份旧记录 → ${path.relative(path.join(__dirname, ".."), backupPath)}`);
+    } catch (_error) {
+      // 旧记录刚被并发删除/不存在时跳过备份（不阻断本次运行）。
+    }
+  }
+
+  // ---- 全盘续跑：优先复用同实验任意快速记录的存档 ----
+  let resumedFrom = null;
+  let resumeStep = 0;
+  const quickRecord = options.full && !options.noSave
+    ? listRecords().find((r) => (
+      r.fingerprint === fingerprint
+      && String(r.mode).startsWith("quick-")
+      && r.savePath
+      && fs.existsSync(path.join(__dirname, "..", r.savePath))
+    ))
+    : null;
+  if (quickRecord) {
+    resumedFrom = quickRecord.savePath;
+    resumeStep = Number(quickRecord.steps) || 0;
+    console.log(`[resume] 从快速验证存档续跑（前 ${resumeStep} 步不重跑）：${quickRecord.savePath}`);
+  }
+
+  // ---- 运行 ----
+  console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
+  const scenario = [whiteFull.ID,whiteFull.V189_ID].includes(identity.scenario?.id) ? whiteFull : whiteRound1;
+  const fullWhite = scenario === whiteFull;
+  const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
+  let nextRoundToRecord = 1;
+  const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
+  let failedTrace = null;
+  const roundEnds = [];
+  let continuationSource = null;
+  let lastRoundEndObservation = null;
+  const env = identity.scenario ? scenario.createEnvironment({ onAgentDecision(trace) {
+    const action = trace.context.legalActions.find(a => a.actionId === trace.actionId);
+    if (identity.scenario.roundEndPhase === "before-pass-card-and-income"
+      && trace.context.seatId === identity.scenario.learnerSeat && action?.family === "pass") {
+      const observation = trace.context.observation, round = observation.publicState.roundNumber;
+      const checkpoint = env.createCheckpoint(), checkpointPath = `${recordPath}.round-end-${round}.checkpoint.json`;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`);
+      const state = checkpoint.coreState.compositionEnvelope.session?.session?.workingState
+        || JSON.parse(checkpoint.coreState.committedState);
+      const owner = state.players.players.find(p => p.id === identity.scenario.learnerSeat);
+      const row = { round, phase: identity.scenario.roundEndPhase, beforeInput: steps + 1,
+        checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
+        checkpointSha256: sha256(fs.readFileSync(checkpointPath)), score: owner.resources.score,
+        resources: owner.resources, income: owner.income, technology: owner.techState,
+        hand: owner.hand.map(c => c.cardId), playedCards: owner.reservedCards.map(c => c.cardId),
+        data: owner.dataState, probes: state.pieces.rockets.filter(p => p.playerId === owner.id),
+        sectorWins: state.data.sectorSettlements.winsByPlayerId[owner.id] || [],
+        scanProgress: Object.entries(state.data.nebulae).map(([id, bucket]) => ({ sectorId: id,
+          ownedSlots: bucket.tokens.filter(t => t.replacedByPlayerId === owner.id).map(t => t.slotIndex),
+          capacity: bucket.tokens.length })).filter(p => p.ownedSlots.length),
+        alienTraceSlots: observation.publicState.board.aliens.slots };
+      roundEnds.push(row); lastRoundEndObservation = observation;
+      fs.appendFileSync(`${recordPath}.round-ends.jsonl`, `${JSON.stringify(row)}\n`);
+      console.log(`[轮末-选牌收入前] ${JSON.stringify(row)}`);
+    }
+    if (trace.actionId == null) {
+      failedTrace = trace;
+      fs.mkdirSync(RECORDS_DIR, { recursive: true });
+      fs.appendFileSync(failedAttemptsPath, `${JSON.stringify(trace)}\n`, "utf8");
+    }
+  } }, identity.scenario) : createSimulationEnv();
+  const resetConfig = {
+    seed: identity.seed,
+    activePlayerCount: identity.activePlayerCount,
+    aiDifficulty: identity.aiDifficulty,
+    policyVersion: identity.policyVersion,
+    agentType: identity.agentType || "heuristic",
+    episodeId: `research-${options.name || fingerprint.slice(0, 8)}-${Date.now()}`,
+    ...identity.flags,
+  };
+
+  const startedAt = Date.now();
+  const collector = createCollector();
+  let steps = 0;
+  let terminal = false;
+  let savePath = null;
+  let initialized = false;
+  let decisionStartSteps = null;
+  const agentTracePath = identity.agentType ? `${recordPath}.decisions.jsonl` : null;
+  if (agentTracePath) fs.mkdirSync(RECORDS_DIR, { recursive: true });
+  if (identity.scenario && agentTracePath) {
+    if (!options.force && fs.existsSync(agentTracePath)) throw new Error("SCENARIO_PARTIAL_TRACE_EXISTS: retain the earlier attempt instead of rerunning");
+    fs.writeFileSync(agentTracePath, "", "utf8");
+  }
+
+  try {
+    if (resumedFrom) {
+      const save = JSON.parse(fs.readFileSync(path.join(__dirname, "..", resumedFrom), "utf8"));
+      env.loadCheckpoint(checkpointFromSave(save, resetConfig));
+      steps = resumeStep;
+      seedCollectorFrom(collector, quickRecord.metrics);
+      console.log(`[resume] 存档加载完成，当前：R${env.observe()?.publicState?.roundNumber ?? "?"} 步 ${steps}`);
+    } else if (identity.scenario) {
+      const opening = scenario.initialize(env, resetConfig, identity.scenario, { checkpointFromSave });
+      steps = opening.length;
+      if (fullWhite) {
+        const source = whiteFull.continuation(identity.scenario.id);
+        continuationSource = source;
+        resumedFrom = source.provenance.savePath; resumeStep = steps;
+        seedCollectorFrom(collector, source.record.metrics);
+        fs.writeFileSync(agentTracePath, fs.readFileSync(path.join(__dirname, "..", source.provenance.tracePath)));
+      } else opening.forEach((entry, i) => collectStep(collector, i + 1, {
+        policyDecision: { seatId: entry.actorPlayerId, actionId: entry.action.actionId },
+      }));
+      console.log(`[scenario] ${identity.scenario.id} opening=${steps} learner=${identity.scenario.learnerSeat} opponents=PASS`);
+    } else {
+      env.reset(resetConfig);
+    }
+    initialized = true;
+
+    function recordRound(round) {
+      const checkpoint = env.createCheckpoint();
+      const checkpointPath = `${recordPath}.round-${round}.checkpoint.json`;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`);
+      const row = whiteFull.roundSummary(env, round, Date.now() - startedAt);
+      row.checkpointPath = path.relative(path.join(__dirname, ".."), checkpointPath);
+      row.checkpointSha256 = sha256(fs.readFileSync(checkpointPath));
+      row.cumulativeWallMsIncludingSourcePrefix = row.elapsedMs + identity.scenario.continuation.sourceRoundWallMs;
+      if (!identity.scenario.continuation.sourceCompletedRounds) row.cumulativeWallMsIncludingSourceRound1 = row.cumulativeWallMsIncludingSourcePrefix;
+      if (identity.scenario.continuation.sourceCompletedRounds === 2) row.phase = 'after-settlement-and-next-income';
+      roundSummaries.push(row); fs.appendFileSync(roundSummariesPath, `${JSON.stringify(row)}\n`);
+      console.log(`[轮末] ${JSON.stringify(row)}`);
+    }
+    if (fullWhite) {
+      if (identity.scenario.continuation.sourceCompletedRounds === 2) {
+        roundEnds.push(...continuationSource.record.roundEnds);
+        for (const row of roundEnds) fs.appendFileSync(`${recordPath}.round-ends.jsonl`, `${JSON.stringify(row)}\n`);
+        nextRoundToRecord = 3;
+      } else { recordRound(1); nextRoundToRecord = 2; }
+    }
+
+    const unboundedSearch = identity.agentType === "search" && Object.values(searchAgent.BUDGET).every(value => value === null);
+    const limit = options.full ? (unboundedSearch ? null : MAX_DECISIONS) : options.steps;
+    // 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"；
+    // 与 --progress 的固定步数节流并存（--progress 保持原语义）。
+    const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
+    while (!env.isTerminal() && (limit === null || steps < limit)) {
+      const obsBefore = env.observe();
+      if (identity.scenario && scenario.settled(obsBefore, identity.scenario)) break;
+      const seat = obsBefore?.decision?.actorPlayerId || null;
+      decisionStartSteps = steps;
+      const result = env.runAgentDecision();
+      if (agentTracePath) fs.appendFileSync(agentTracePath, `${JSON.stringify(result.agentTrace)}\n`, "utf8");
+      steps += 1;
+      collectStep(collector, steps, result);
+      collectBudgetHits(collector, steps, result);
+      const obsAfter = result?.observation || env.observe();
+      collectAliens(collector, steps, obsAfter, seat);
+      const ps = obsAfter?.publicState || {};
+      if (fullWhite) {
+        for (const evidence of result.searches || []) if (evidence.diagnostics.nativeExecutions > 256 || evidence.rootAndSearchMilliseconds > 600) {
+          console.log(`[单点超标] step=${steps} native=${evidence.diagnostics.nativeExecutions} ms=${evidence.rootAndSearchMilliseconds} complete=${evidence.complete}`);
+        }
+        const completed = env.isTerminal() ? ps.roundNumber : ps.roundNumber - 1;
+        if (completed >= nextRoundToRecord && !env.createCheckpoint().coreState.compositionEnvelope.session) {
+          if (completed !== nextRoundToRecord) throw Error("ROUND_SUMMARY_SKIPPED_BOUNDARY");
+          recordRound(nextRoundToRecord++);
+        }
+      }
+      progress.report({
+        steps,
+        maxSteps: limit,
+        round: ps.roundNumber,
+        turn: ps.turnNumber,
+        seat,
+        action: String(result?.policyDecision?.actionId || ""),
+        scores: (ps.players || []).map((p) => ({
+          label: p.playerLabel || p.playerId || p.color,
+          score: p.score ?? p.finalScore ?? "?",
+        })),
+        startedAt,
+      });
+      if (options.progressEvery > 0 && steps % options.progressEvery === 0) {
+        const sum = summaryOf(env.observe());
+        process.stderr.write(
+          `[progress] mode=${mode} step=${steps} round=${sum.round} avg=${sum.avgScore}\n`,
+        );
+      }
+      decisionStartSteps = null;
+    }
+    terminal = env.isTerminal();
+    const finalObs = env.observe();
+    const terminalFull = fullWhite && terminal;
+    const summary = summaryOf(terminalFull ? finalObs : (lastRoundEndObservation || finalObs), { boardOnly: !terminalFull && Boolean(lastRoundEndObservation) });
+    const wallMs = Date.now() - startedAt;
+
+    // ---- 存档（快速验证存档供全盘续跑；全盘存档供复盘/快进）----
+    if (!options.noSave) {
+      const payload = env.saveBrowserSave({ name: `${options.name || "research"}-${mode}` });
+      const sv = payload.stateVersion ?? 0;
+      savePath = path.relative(path.join(__dirname, ".."), buildSavePath(options, options.name, mode, sv));
+      fs.mkdirSync(path.dirname(path.join(__dirname, "..", savePath)), { recursive: true });
+      fs.writeFileSync(path.join(__dirname, "..", savePath), JSON.stringify(payload, null, 2), "utf8");
+    }
+
+    const record = {
+      schemaVersion: RECORD_SCHEMA_VERSION,
+      name: options.name || null,
+      fingerprint,
+      mode,
+      seed: identity.seed,
+      activePlayerCount: identity.activePlayerCount,
+      world: identity.world,
+      aiDifficulty: identity.aiDifficulty,
+      policyVersion: identity.policyVersion,
+      ...(identity.agentType ? { agentType: identity.agentType,
+        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath),
+        searchCoverage: "not-evaluated" } : {}),
+      flags: identity.flags,
+      ...(identity.scenario ? { scenario: identity.scenario,
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(finalObs, identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: steps - identity.scenario.openingInputs } : {}), ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(identity.scenario.continuation.sourceCompletedRounds === 2 ? [1,2] : []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
+        stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? "third-round-settled" : identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
+        scoreSemantics: identity.scenario.scoreSemantics } : {}),
+      createdAt: new Date().toISOString(),
+      gitCommit: gitCommit(),
+      steps,
+      stepsLimit: options.full ? null : options.steps,
+      terminal,
+      wallMs,
+      ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
+      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), ...(identity.scenario.continuation.sourceCompletedRounds === 2 ? {wallMsIncludingSourcePrefix:wallMs+identity.scenario.continuation.sourceGameWallMs} : {wallMsIncludingSourceRound1:wallMs+identity.scenario.continuation.sourceRoundWallMs}) } : {}),
+      resumedFrom,
+      resumeStep,
+      savePath,
+      summary,
+      metrics: {
+        famsBySeat: collector.famsBySeat,
+        whiteQuickTrade: collector.whiteQuickTrade,
+        whiteResearchSteps: collector.whiteResearchSteps,
+        traceEvents: collector.traceEvents,
+        revealEvents: collector.revealEvents,
+        budgetHits: collector.budgetHits,
+        searches: collector.searches,
+      },
+    };
+    fs.mkdirSync(RECORDS_DIR, { recursive: true });
+    fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+
+    printSummary(record);
+    console.log(`\n记录: ${path.relative(path.join(__dirname, ".."), recordPath)}`);
+    if (savePath) console.log(`存档: ${savePath}`);
+    return record;
+  } catch (error) {
+    if (identity.scenario && initialized) {
+      // A failed gate is a reproducible attempt, not permission to rerun the
+      // same fingerprint or to substitute a PASS. Preserve its unchanged root.
+      const checkpointPath = `${recordPath}.failed-checkpoint.json`;
+      const checkpoint = env.createCheckpoint();
+      const checkpointSteps = fullWhite ? whiteFull.inputCount(checkpoint) : checkpoint.replayCursor.stepIndex;
+      const failedDecisionCommitted = decisionStartSteps == null ? null : checkpointSteps > decisionStartSteps;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`, "utf8");
+      if (!options.noSave) {
+        const payload = env.saveBrowserSave({ name: `${options.name}-failed` });
+        savePath = path.relative(path.join(__dirname, ".."), buildSavePath(options, options.name, `${mode}-failed`, payload.stateVersion));
+        fs.mkdirSync(SAVES_DIR, { recursive: true });
+        fs.writeFileSync(path.join(__dirname, "..", savePath), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+      }
+      if (error.search) {
+        collectBudgetHits(collector, steps + 1, { policyDecision: { seatId: failedTrace?.context?.seatId || "player-white", actionId: null }, searches: [error.search] });
+        collector.searches.at(-1).committed = false;
+      }
+      const record = { schemaVersion: RECORD_SCHEMA_VERSION, name: options.name || null, fingerprint, mode,
+        seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
+        aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
+        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
+        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: whiteRound1.settled(env.observe()), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(env.observe(), identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: checkpointSteps - identity.scenario.openingInputs } : {}) },
+        createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpointSteps, stepsLimit: options.steps,
+        terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
+        ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath) } : {}),
+        ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
+        summary: { round: env.observe().publicState.roundNumber, terminal: false, scores: {}, avgScore: null },
+        metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
+          whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,
+          revealEvents: collector.revealEvents, budgetHits: collector.budgetHits, searches: collector.searches },
+        failure: { code: error.code || "SCENARIO_FAILED", message: error.message,
+          checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
+          attemptTracePath: fs.existsSync(failedAttemptsPath) ? path.relative(path.join(__dirname, ".."), failedAttemptsPath) : null,
+          searchGraphClosed: error.search?.complete === true,
+          decisionAdmitted: failedDecisionCommitted,
+          failedDecisionCommitted } };
+      fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+    }
+    throw error;
+  } finally {
+    env.dispose();
+  }
+}
+
+function printSummary(record) {
+  const { summary, metrics } = record;
+  const seats = Object.keys(summary.scores);
+  console.log(`\n===== ${record.mode}（${record.seed}）=====`);
+  console.log(`步骤=${record.steps}${record.stepsLimit ? `（上限 ${record.stepsLimit}）` : ""}`
+    + ` 终局=${record.terminal} 耗时=${(record.wallMs / 1000).toFixed(1)}s`
+    + (record.resumedFrom ? ` 续跑自 ${record.resumeStep} 步` : ""));
+  console.log(`均分=${summary.avgScore} 各席=${seats.map((s) => `${s}=${summary.scores[s]}`).join(" ")}`);
+  for (const seat of seats) {
+    const fams = metrics.famsBySeat[seat] || {};
+    console.log(`  ${seat} 行动族=${JSON.stringify(fams)}`);
+  }
+  console.log(`白色 quick_trade=${metrics.whiteQuickTrade} 研究步=[${metrics.whiteResearchSteps.join(",")}]`);
+  console.log(`外星人: 首放 ${metrics.traceEvents.length} 次、揭示 ${metrics.revealEvents.length} 次`);
+  if (record.terminal) console.log(`终局轮=${summary.round}`);
+  // 触顶 4096 截断的决策（用户裁定必须可见）：按席位汇总 + Top 明细。
+  const hits = metrics.budgetHits || [];
+  if (hits.length) {
+    const bySeat = {};
+    for (const h of hits) bySeat[h.seat] = (bySeat[h.seat] || 0) + 1;
+    console.log(`反事实搜索触顶 ${hits.length}/${record.steps} 次决策（maxExecutionNodes 预算耗尽）按席位: ${JSON.stringify(bySeat)}`);
+    const top = [...hits].sort((a, b) => (b.executedNodeCount || 0) - (a.executedNodeCount || 0)).slice(0, 20);
+    for (const h of top) {
+      const origin = h.frontierOriginCountByFamily
+        ? Object.entries(h.frontierOriginCountByFamily)
+          .sort((a, b) => b[1] - a[1]).slice(0, 3)
+          .map(([f, n]) => `${f}×${n}`).join(" ")
+        : "";
+      console.log(`  步${h.step} ${h.seat} ${familyOf(h.action).padEnd(14)} 节点=${h.executedNodeCount}/${h.maxExecutionNodes}${origin ? ` 前沿来源: ${origin}` : ""}`);
+    }
+  } else {
+    console.log(`反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 复盘辅助
+// ---------------------------------------------------------------------------
+
+function printList() {
+  const records = listRecords();
+  if (!records.length) {
+    console.log("（无记录，先用 --name 跑一次验证）");
+    return;
+  }
+  console.log(`${"模式".padEnd(10)} ${"名称".padEnd(20)} ${"seed".padEnd(22)} ${"步骤".padEnd(6)} ${"终局".padEnd(5)} ${"均分".padEnd(6)} ${"commit".padEnd(10)} ${"创建时间".padEnd(20)} 指纹`);
+  for (const r of records) {
+    console.log(
+      `${String(r.mode).padEnd(10)} ${String(r.name || "-").padEnd(20)} ${String(r.seed).padEnd(22)}`
+      + ` ${String(r.steps).padEnd(6)} ${r.terminal ? "是" : "否"}  ${String(r.summary?.avgScore ?? "-").padEnd(6)}`
+      + ` ${String(r.gitCommit || "-").slice(0, 8).padEnd(10)}`
+      + ` ${String(r.createdAt).padEnd(20)} ${r.fingerprint.slice(0, 12)}`,
+    );
+  }
+  console.log(`\n共 ${records.length} 条记录，目录：${RECORDS_DIR}`);
+}
+
+function printShow(query) {
+  const records = listRecords().filter((r) => (
+    r.name === query || r.fingerprint.startsWith(query)
+  ));
+  if (!records.length) {
+    console.log(`未找到匹配记录：${query}`);
+    process.exit(1);
+  }
+  for (const r of records) {
+    console.log(JSON.stringify(r, null, 2));
+    console.log("");
+  }
+}
+
+// ---------------------------------------------------------------------------
+// CLI
+// ---------------------------------------------------------------------------
+
+function parseArgs(argv) {
+  const options = {
+    config: {},
+    steps: DEFAULT_STEPS,
+    progressEvery: 0,
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    const next = () => argv[i + 1];
+    switch (arg) {
+      case "--name": options.name = next(); i += 1; break;
+      case "--seed": options.seed = next(); i += 1; break;
+      case "--config": Object.assign(options.config, parseConfig(next())); i += 1; break;
+      case "--steps": options.steps = Math.max(1, Number(next()) || DEFAULT_STEPS); i += 1; break;
+      case "--full": options.full = true; break;
+      case "--force": options.force = true; break;
+      case "--no-save": options.noSave = true; break;
+      case "--progress": options.progressEvery = Math.max(0, Number(next()) || 0); i += 1; break;
+      case "--list": options.list = true; break;
+      case "--show": options.show = next(); i += 1; break;
+      case "--records-dir": {
+        const dir = next(); i += 1;
+        if (dir) RECORDS_DIR = path.resolve(dir);
+        break;
+      }
+      case "--help": case "-h": options.help = true; break;
+      default:
+        throw new Error(`未知参数：${arg}（--help 查看用法）`);
+    }
+  }
+  return options;
+}
+
+function main() {
+  const options = parseArgs(process.argv.slice(2));
+  if (options.help) {
+    console.log(fs.readFileSync(__filename, "utf8").split("\n").slice(0, 44).join("\n"));
+    return;
+  }
+  if (options.list) { printList(); return; }
+  if (options.show) { printShow(options.show); return; }
+  if (!options.name) throw new Error("需要 --name <实验名>（用于记录命名与复盘检索）");
+  if (options.full && options.config.steps) {
+    console.log("[warn] --full 时忽略 --steps");
+  }
+  runValidation(options);
+}
+
+if (require.main === module) main();
+module.exports = { summaryOf, createCollector, collectBudgetHits, seedCollectorFrom, checkpointFromSave, buildIdentity, fingerprintOf };

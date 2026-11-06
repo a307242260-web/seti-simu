@@ -1,0 +1,5 @@
+# V289 / V50：数据计划只复制可写玩家字段（2026-11-07）
+
+V288首测168Native/634.229250ms仍失败；580完整估值与48自定义权重全部候选结果保持。V287 CPU记录指向蓝数据计划玩家structuredClone。本次仅将previewBlueCompletion和previewComputerCompletion整玩家深复制改为与已有resourceDemand.previewIncomeTail相同的写集合：顶层玩家副本、resources、income、hand数组及dataState私有复制。借用的科技、手牌实体、预留卡和其他玩家属性均只读；电脑/蓝槽操作只改私有dataState和资源，收入只改私有income，角标/收入换手牌均重新过滤数组，原生规则检查继续执行。
+
+本次不改变scoring context的aliens/data/finalScoring复制，它们的辅助查询可能执行ensure。也不改公司、规则或其他用途。逐个真实原生prefix上对照冻结V288实现，mutable和deep-frozen来源结果完全相同且原来源/RNG不变。无新缓存/状态等价/剪枝或预算变化；先相关测试，冻结首测，失败即停止，不跑整局。

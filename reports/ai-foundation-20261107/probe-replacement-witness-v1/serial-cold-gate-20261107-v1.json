@@ -1,0 +1,53 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/probe-replacement-witness-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "b070d9352287c85bc11d3758999d118dba7d0a26f44769364eefc588afd17598",
+  "cases": 1252,
+  "rows": [
+    {
+      "label": "actual-v292-scan-launch-177",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v292-orange2-scan-launch-177-root-20261107-v1.json",
+      "identity": "abc83a04f646667ae331ad10a2335dee4e9b0c0f2d75966760d7ae379cacf423",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v295-cold-actual-v292-scan-launch-177-20261107-v1.json",
+      "nativeInputs": 12,
+      "milliseconds": 65.366292,
+      "value": 143.33333333333334,
+      "actionId": "choose_target:5bb27a70",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "actual-v256-132",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+      "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v295-cold-actual-v256-132-20261107-v1.json",
+      "nativeInputs": 162,
+      "milliseconds": 704.88275,
+      "value": 140.08333333333334,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 2,
+  "maxNativeInputs": 162,
+  "maxMilliseconds": 704.88275,
+  "failure": {
+    "label": "actual-v256-132",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+    "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v295-cold-actual-v256-132-20261107-v1.json",
+    "nativeInputs": 162,
+    "milliseconds": 704.88275,
+    "value": 140.08333333333334,
+    "actionId": "industry:e887dc52",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

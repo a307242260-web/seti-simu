@@ -12,6 +12,7 @@ const effects = require("../randomizer/game/cards/effects");
 
 const ID = "human405-white-round1-v1";
 const TWO_ROUND_ID = "human405-white-first2-v1";
+const FIRST_THREE_ROUNDS_ID = "human405-white-first3-v1";
 const THIRD_ROUND_ID = "human405-white-teacher-r3-v1";
 const B117_PREFIX_ID = "human405-white-round1-b117-prefix-v1";
 const TEACHER_SAVE = "seti-saves/seti-save-537-merged.json";
@@ -84,22 +85,24 @@ function teacherPrefix() {
 }
 
 function describe(identity, options = {}) {
-  if (![ID, B117_PREFIX_ID, TWO_ROUND_ID, THIRD_ROUND_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
+  if (![ID, B117_PREFIX_ID, TWO_ROUND_ID, FIRST_THREE_ROUNDS_ID, THIRD_ROUND_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
   if (options.full) throw new Error("WHITE_ONLY_ROUND1_REQUIRES_QUICK_MODE");
   if (identity.agentType !== "search" || identity.activePlayerCount !== 4
     || identity.seed !== "seti-free-analyze-v1") throw new Error("WHITE_ONLY_ROUND1_CONFIGURATION_INVALID");
   const thirdRound = identity.flags.scenario === THIRD_ROUND_ID;
   const source = thirdRound ? thirdRoundOpening() : opening();
+  const firstThreeRounds = identity.flags.scenario === FIRST_THREE_ROUNDS_ID;
   const twoRounds = identity.flags.scenario === TWO_ROUND_ID;
   return {
     id: identity.flags.scenario, learnerSeat: LEARNER, learnerAgentType: "search", hostAgentFactory: "custom-seat-roles",
     opponentPolicyVersion: thirdRound ? THIRD_OPPONENT_VERSION : OPPONENT_VERSION, opponentReserveRule: "historical-preference-if-offered-otherwise-stable-action-id",
     ...(thirdRound ? { passiveReservePreferences: THIRD_RESERVE } : {}),
     roles: { "player-white": "shared-search", "player-green": "pass-only", "player-blue": "pass-only", "player-brown": "pass-only" },
-    openingInputs: thirdRound ? 112 : 23, openingCheckpointSha256: source.sha256, stopAfterRound: thirdRound ? 3 : twoRounds ? 2 : 1,
-    comparisonScope: thirdRound ? "white-only-third-round-from-exact-teacher-start" : twoRounds ? "white-only-first-two-rounds" : "white-only-first-round",
-    scoreSemantics: thirdRound ? "provisional-third-round-before-pass-card-and-next-income" : twoRounds ? "provisional-before-end-card-and-next-income" : "provisional-after-round1-settlement",
-    ...(twoRounds || thirdRound ? { roundEndPhase: "before-pass-card-and-income" } : {}),
+    openingInputs: thirdRound ? 112 : 23, openingCheckpointSha256: source.sha256, stopAfterRound: thirdRound || firstThreeRounds ? 3 : twoRounds ? 2 : 1,
+    comparisonScope: firstThreeRounds ? "white-only-first-three-rounds" : thirdRound ? "white-only-third-round-from-exact-teacher-start" : twoRounds ? "white-only-first-two-rounds" : "white-only-first-round",
+    scoreSemantics: firstThreeRounds ? "provisional-first-three-rounds-before-pass-card-and-next-income" : thirdRound ? "provisional-third-round-before-pass-card-and-next-income" : twoRounds ? "provisional-before-end-card-and-next-income" : "provisional-after-round1-settlement",
+    ...(twoRounds || thirdRound || firstThreeRounds ? { roundEndPhase: "before-pass-card-and-income" } : {}),
+    ...(firstThreeRounds ? { autonomousScope: "rounds1-3", baselineEligible: false } : {}),
     ...(thirdRound ? { originalOpeningInputs: 23, controlledTeacherPrefix: source.provenance } : {}),
     decisionGate: { nativeInputs: 256, milliseconds: 600 },
     ...(identity.flags.scenario === B117_PREFIX_ID ? {
@@ -204,10 +207,10 @@ function initialize(env, config, metadata) {
     assert.equal(env.observe().publicState.currentPlayerId, "player-green");
     return env.createCheckpoint().replaySteps;
   }
-  assert([ID, TWO_ROUND_ID].includes(metadata.id), "RESEARCH_SCENARIO_UNKNOWN");
+  assert([ID, TWO_ROUND_ID, FIRST_THREE_ROUNDS_ID].includes(metadata.id), "RESEARCH_SCENARIO_UNKNOWN");
   return checkpoint.replaySteps;
 }
 
 function settled(observation, metadata = {}) { return observation.publicState.roundNumber > (metadata.stopAfterRound || 1); }
 
-module.exports = { ID, TWO_ROUND_ID, THIRD_ROUND_ID, B117_PREFIX_ID, thirdRoundOpening, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };
+module.exports = { ID, TWO_ROUND_ID, FIRST_THREE_ROUNDS_ID, THIRD_ROUND_ID, B117_PREFIX_ID, thirdRoundOpening, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };

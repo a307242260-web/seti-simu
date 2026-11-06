@@ -506,3 +506,11 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 仅第三轮白席由当前共享搜索自主决策。绿席尚未PASS，其强制保留牌优先教师已记录且菜单中已提供的b138；不在菜单则稳定选择。被动席使用独立`seti-human405-pass-only-teacher-r3-v1`身份，其他入口的被动政策不变。白席每次提交前检查完整搜索与256原生输入/600ms；失败保存未提交尝试和原生检查点，不以PASS代替，也不重跑同指纹。
 
 quick模式在R3 PASS结算并进入R4后停止；成绩取白席提交R3 PASS前保存的轮末checkpoint，轮末选牌和R4收入不计入。`scenarioResult.newInputsAfterControlledPrefix`单独给出112输入之后新增数量。实验范围为`white-only-third-round-from-exact-teacher-start`，不宣称前两轮是本版自主成绩，不替代从23输入开局的最终自主前三轮回归。该受控实验独立指纹、`baselineEligible:false`，V41四AI整局baseline保留。
+
+
+## 原23输入自主前三轮验收（2026-11-07）
+
+`robot_iterate run --config agentType=search,scenario=human405-white-first3-v1,compactReplay=true --steps 400`
+恢复同一23输入完整原生开局及RNG，白席自主进行前三轮，其他三席沿用原开局PASS/强制选择政策；不继承教师112输入或V189前两轮。独立身份`white-only-first-three-rounds`、`autonomousScope=rounds1-3`，只接受quick模式。必须先完成当前源码单点256原生输入/600ms准入；本入口的行为测试不代表已运行自主前三轮。
+
+推进R4后停止，停因为`first-three-rounds-settled`；记录`firstThreeRoundsSettled`、`newInputsAfterOpening`和`completedRoundEnds`，失败记录保留这些计数及未提交原根，仍拒绝同指纹重复。每轮沿用PASS提交前checkpoint与六收入、具体科技/槽位/失效、库存、手牌/已投入牌、电脑蓝槽、探测器、扫描进度/胜利；另外记录公开外星人完整预投入、终局标记和当前终局预测值。summary取最后一份轮末盘面；预测终局值单列，PASS选牌/R4收入只存在于之后的存档。实验中心明确显示“自主前三轮 · 轮末盘面（选牌/收入前）”，保留轮末证据，不进入四AI完整局排行榜、不晋升V41 baseline。

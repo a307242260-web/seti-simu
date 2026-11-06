@@ -94,7 +94,7 @@ function rel(p){return p?p.replace(/^reports\//,""):null;}
 function scoreCell(r){
   if(!r) return "—";
   const cells=ORDER.map(k=>r.scores&&r.scores[k]!=null?`<b>${r.scores[k]}</b>`:"—").join(" / ");
-  return `<span class="scores">${cells}</span><br><span class="src">${r.scoreSource==="save-final"?"完整终局 (save-final)":r.scoreSource==="roadmap"?"roadmap 文档":"记录口径 (record)"}</span>`;
+  return `<span class="scores">${cells}</span><br><span class="src">${r.scoreSource==="save-final"?"完整终局 (save-final)":r.scoreSource==="roadmap"?"roadmap 文档":r.comparisonScope==="white-only-first-three-rounds"?"自主前三轮 · 轮末盘面（选牌/收入前）":"记录口径 (record)"}</span>`;
 }
 function avgCell(r){return r&&r.avgScore!=null?r.avgScore.toFixed(2):"—";}
 function stepsCell(r){return r?`${r.steps}${r.stepsLimit&&!r.terminal?` / ${r.stepsLimit}`:""}${r.terminal?" · 终局":""}`:"—";}

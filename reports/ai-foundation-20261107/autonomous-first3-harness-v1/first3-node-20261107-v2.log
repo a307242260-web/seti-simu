@@ -1,0 +1,4 @@
+{"autonomousFirstThreeRoundsHarness":"passed","original23FullNativeEnvelopeAndRng":true,"noTeacher112Prefix":true,"originalPassivePolicy":true,"noAiQueries":true,"noAutonomousRuns":true,"realNativePassBoundaryAndFault":true,"roundEndBeforeCardAndIncome":true,"normalAndFailedDuplicateGuard":true,"provisionalRegistryAndRenderedLabel":true,"excludedFromFullGameLeaderboardAndBaseline":true}
+SUMMARY unit passed=1 failed=0 total=1 time=1.77s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=1

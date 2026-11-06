@@ -299,7 +299,8 @@ function resolveVersionResults(version, recordsByFile) {
       resumeStep: rec.resumeStep,
       seed: rec.seed,
       world: rec.world || null,
-      ...(rec.scenario ? { comparisonScope: rec.scenario.comparisonScope } : {}),
+      ...(rec.scenario ? { comparisonScope: rec.scenario.comparisonScope, scoreSemantics: rec.scoreSemantics,
+        scenarioResult: rec.scenarioResult, roundEnds: rec.roundEnds || [] } : {}),
       note: meta?.note || null,
     };
     // 分数来源优先级：save-final（完整终局）> record-summary；键统一为 player-<color>
@@ -312,7 +313,7 @@ function resolveVersionResults(version, recordsByFile) {
     r.scoreSource = "record-summary";
     const savePath = meta?.saveOverride || rec.savePath;
     if (savePath && fs.existsSync(path.join(REPO_ROOT, savePath))) {
-      const enriched = readSaveFinalScores(savePath);
+      const enriched = rec.terminal ? readSaveFinalScores(savePath) : null;
       if (enriched && enriched.avgScore != null) {
         r.scores = enriched.scores;
         r.avgScore = enriched.avgScore;

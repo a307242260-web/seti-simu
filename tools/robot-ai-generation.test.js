@@ -66,6 +66,7 @@ for(const version of newVersions)for(const result of version.results){assert(!re
 const incompleteSearch=built.versions.filter(v=>v.agentType==="search"||v.results.some(r=>r.agentType==="search")).flatMap(v=>v.results.filter(r=>!r.terminal).map(r=>({version:v,result:r})));
 const roundScenarios=require('./research-human405-round1'),provisionalSemantics={
  [roundScenarios.ID]:'provisional-after-round1-settlement',[roundScenarios.B117_PREFIX_ID]:'provisional-after-round1-settlement',
+ [roundScenarios.FIRST_THREE_ROUNDS_ID]:'provisional-first-three-rounds-before-pass-card-and-next-income',
  [roundScenarios.TWO_ROUND_ID]:'provisional-before-end-card-and-next-income',
  [roundScenarios.THIRD_ROUND_ID]:'provisional-third-round-before-pass-card-and-next-income'};
 for(const {version,result} of incompleteSearch){assert.equal(version.baselineEligible,false);assert.equal(version.isHead,false);assert.notEqual(built.generations.v2.currentBaseline,version.id);

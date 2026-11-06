@@ -1,0 +1,13 @@
+{"firstTwoRoundsScenario":true,"endBeforePassCardAndIncome":true,"nativeBeforeExecutionCallback":true,"sourceEndMoney":1,"nextStartMoney":5,"independentIdentityAndDuplicateGuard":true}
+{"autonomousFirstThreeRoundsHarness":"passed","original23FullNativeEnvelopeAndRng":true,"noTeacher112Prefix":true,"originalPassivePolicy":true,"noAiQueries":true,"noAutonomousRuns":true,"realNativePassBoundaryAndFault":true,"roundEndBeforeCardAndIncome":true,"normalAndFailedDuplicateGuard":true,"provisionalRegistryAndRenderedLabel":true,"excludedFromFullGameLeaderboardAndBaseline":true}
+{"frozenV123Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR1":true}
+{"frozenV189Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR2":true}
+{"whiteOnlyScenario":"passed","controlledOpening":true,"passiveNativeDecisions":3,"scenarioIdentitySeparated":true}
+{"exactTeacher113NativeEnvelopeAndRng":true,"original23OpeningPreserved":true,"teacherFirstTwoRoundsExplicitlyControlled":true,"thirdRoundOnlyAutonomousScope":true,"blueBrownAlreadyPassedGreenPassOnly":true,"noPrefixReexecution":true,"noPolicyDecisionInTest":true,"independentIdentityAndDuplicateGuard":true,"endBeforePassCardAndNextIncome":true}
+{"incompleteSearchAttempts":43,"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchCompleteGames":4,"templateQueries":3,"registrationRejects":2}
+robot report record links passed
+robot report world comparison passed
+robot report replay failures and metadata preservation passed
+SUMMARY unit passed=8 failed=0 total=8 time=10.17s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=8
