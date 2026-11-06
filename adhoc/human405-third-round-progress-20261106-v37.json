@@ -1,0 +1,84 @@
+{
+  "goalStatus": "active",
+  "publishedRuntime": "V264/V47",
+  "publishedSource": "4ec84a12453aabc2389f87191d44c9cfa07dbbbb",
+  "publishedResult": "c267098f92c4ed66fc238b5843c4c59d047a9172",
+  "candidate": "V274/V48",
+  "sourceAdmitted": true,
+  "manifest": "reports/ai-foundation-20261106/candidate-v274-mixed-blue-v1/manifest.json",
+  "manifestSha256": "ea49e61ab18ee158986047fd920e48e992f7565b81dd1083f6b72bf6a0486471",
+  "worktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "currentGate": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-current-source-serial-gate-20261106-v1.json",
+  "gateAtCheckpoint": {
+    "status": "complete",
+    "cases": 951,
+    "measuredUniqueRoots": 695,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 579.935125
+  },
+  "gateExecSession": null,
+  "runtimeRestoredToBaseExceptQuoteInputs": [
+    "resource-demand",
+    "local-decision-plans",
+    "analysis-port",
+    "state-value apart from V48 label",
+    "scalar-cache-test",
+    "stationary-tail-test"
+  ],
+  "actual187AndNextMain": {
+    "postMainAction": "end_turn",
+    "postMainInputs": 1,
+    "postMainValue": 142,
+    "nextMainAction": "place_data for existing analyze purpose",
+    "nextMainInputs": 27,
+    "nextMainValue": 144.5,
+    "quotedNativeAnonymousRouteValue": 142,
+    "routeInputs": 7
+  },
+  "relatedUnitPassed": 8,
+  "newAutonomousRuns": 0,
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "latestPublishedR3": {
+    "version": "V264",
+    "board": 81,
+    "tech": 6,
+    "income": "7C3E1card+1scan"
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "V272": {
+    "gateComplete": true,
+    "named": 949,
+    "unique": 693,
+    "maxNative": 256,
+    "maxMilliseconds": 586.4655,
+    "firstTwoValueChanges": 0,
+    "firstTwoActionChanges": 15,
+    "admitted": false,
+    "superseded": "Nonurgent preparation adds needless R2 changes; following-mark guard also fixed later."
+  },
+  "next": "Isolate source delivery/private index and push origin/dev; verify every tracked file in reused run worktree and align only owned HEAD/index; run one registry controlled R3 and independent Native replay beforePASS assets. R3 learning/R2-end review/original23 first3 remain.",
+  "baseline": "V41",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-current-source-admission-20261106-v1.json",
+  "sourceAdmissionSha256": "9a4e38a2052b7ca71e28c9c52ba76f3869cd5925d819b646fb0d12203a1e391d",
+  "fullUnitPassed": 201,
+  "fullFlowPassed": 1,
+  "browserPassed": 2,
+  "inputAudit": {
+    "passed": 56,
+    "failed": 1,
+    "legacyAomomoOnly": true,
+    "failure": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  },
+  "firstTwoFullSerializedGraphsUnchanged": 304,
+  "candidatePublished": false
+}

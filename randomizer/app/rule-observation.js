@@ -136,6 +136,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   const cheap = options.cheap === true;
   const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
   const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
+  if(selfState)selfState.traceCounts=endGameScoring.getPlayerTraceCounts(selfPlayer,state.aliens);
   if(selfState&&!cheap)selfState.nextFinalMark=endGameScoring.describeNextFinalMark({...state,cardEffects,
     getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},selfPlayer);
 

@@ -69,6 +69,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/computer-prefix-plan.test.js", "policy/decision-search", "主行动后电脑宣传及蓝列作为固定前缀，跨线待领取标记与实际领取价值连续，报价/原生逐步恢复一致", "只剩结束turn、为局部准备弃牌补数据、跨收入选牌、重复领取格位奖励或预算中断污染原根"),
     entry("randomizer/game/ai/research-order-mark.test.js", "policy/state-value", "已筹资持牌和宣传研究两种顺序按首次阈值及已知触发完成计价，原生C1收益和根隔离一致", "只报价宣传研究先行、漏计零当前价值C1的确定任务完成，或将后续完成倒灌到较早标记"),
     entry("randomizer/game/ai/research-mark-capital.test.js", "policy/state-value", "延后研究计入已得D标记增值与当前筹资跨阈值的新标记用途，手牌/宣传共享一次领取，原生/完整/紧凑观察一致", "遗漏已得标记增长或确定可跨阈值的新标记、D2/D1及新标记重复计价、借未来支付和当前收益、收入改变固定排序仍报价"),
+    entry("randomizer/game/ai/mixed-blue-analysis.test.js", "policy/state-value", "多物种公开时的蓝色分析共享全局痕迹计数、资金及电脑消费，原生兑现并在下一主行动绑定填6", "第二物种使已知分析归零、额外痕迹改写首放者、错算B1或已付分析的数据被低值蓝槽消耗或非紧急准备改变前两轮"),
     entry("randomizer/game/ai/amiba-analysis-capital.test.js", "policy/state-value", "满电脑及3格加3数据的已知收入/公开阿米巴蓝痕迹/整区/货币蓝尾部共享组合，已得稳定B待领前后同值，与原生执行一致", "保留牌过宽拒绝、重复抽牌/蓝位、匿名牌错误取消用途、读取隐藏身份或伪造后继实体"),
     entry("randomizer/game/ai/blue-data-analysis-capital.test.js", "policy/state-value", "已知蓝痕迹数据触发与分析共用钱包，每事件仅一槽；最后一槽移除保留牌并兑现C标记，原生/冻结/观察一致", "一次痕迹双算两个触发、重复消费数据、漏计任务完成或新牌身份进入资金"),
     entry("randomizer/game/ai/known-postdraw-tail.test.js", "policy/decision-search", "实际免费阿米巴牌后保留原根已知收入蓝槽固定尾部，匿名牌不参与选择且六步原生兑现一致", "新牌截断已知流程、未知类型或ID影响规划、未证明分支放行或伪造后继观察"),

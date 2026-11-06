@@ -1,0 +1,16 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/check-mixed-analysis-following-mark-20261106-v2.js:1
+'use strict';const fs=require('node:fs'),assert=require('node:assert/strict'),probe=require('../randomizer/game/ai/probe-capital'),analysis=require('../randomizer/game/ai/amiba-analysis-capital'),v=require('../randomizer/game/ai/state-value'),{buildRuleObservation}=require('../randomizer/app/rule-observation');const cp=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json')),s=JSON.parse(cp.prefixes['1'].committedState),o=buildRuleObservation(s,s.meta.seed,'player-white'),f={...probe.factsFromObservation(o,'player-white'),supply:s.tech,researchCost:6,analyzeEnergyCost:0,nextFinalMark:{threshold:50,currentScore:68,followingThreshold:70}}};f.player={...f.player,score:68};f.board.finalScoring=structuredClone(f.board.finalScoring);f.board.finalScoring.tiles.b.marks=[];f.board.finalScoring.tiles.c.marks=[];const q=analysis.quote(f,v.DEFAULT_WEIGHTS,()=>0,0);assert(q.candidates.every(c=>c.endpoint.resources.score<70),'an already-earned first mark must not hide a second newly crossed unmodeled mark');console.log('following-mark guard passed');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
+
+SyntaxError: Unexpected token '}'
+    at wrapSafe (node:internal/modules/cjs/loader:1638:18)
+    at Module._compile (node:internal/modules/cjs/loader:1680:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0

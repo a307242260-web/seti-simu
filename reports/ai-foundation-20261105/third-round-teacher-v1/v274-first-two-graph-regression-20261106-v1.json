@@ -1,0 +1,23 @@
+{
+  "roots": 304,
+  "fields": [
+    "actionId",
+    "value",
+    "selectionPlan",
+    "selectionContinuation",
+    "planContinuation",
+    "planEvidence",
+    "roots",
+    "lines",
+    "sharedPrefixGraph",
+    "candidates",
+    "unresolved"
+  ],
+  "labelsNormalizedOnly": [
+    "search-v274 to v264",
+    "resource-preparation-v23 to v22"
+  ],
+  "changes": [],
+  "claim": "Compare serialized full roots, candidate list, action lines, shared-prefix graph and planEvidence as well as selected scalar/plan contracts. This validates the stored fresh-root search structure; it does not prove identical future autonomous trajectories.",
+  "newAutonomousRuns": 0
+}

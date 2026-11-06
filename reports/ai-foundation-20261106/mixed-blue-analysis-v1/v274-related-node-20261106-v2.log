@@ -1,0 +1,12 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":112.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":6.666666666666667,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+{"incomePreparationReuse":"passed","repeatedRequests":24,"repeatRecomputations":0,"separateProjectedData":true,"mutableAndShallowFrozenDecline":true,"sourceUnchanged":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"status":"passed","actual187Value":142,"analysisIncrement":3,"quotedAmibaNativeInputs":7,"anonymousCards":2,"ordinaryExtraNativeInputs":6,"foreignFirstOwnerPreserved":true,"globalB1Increment":8,"fullCompactNativeCountsEqual":true,"dataPreservedForNextMainAnalysis":true,"postMainInputs":1,"nextMainInputs":27,"postMainValue":142,"nextMainValue":144.5,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"scalarCapitalCache":"passed","identicalMutableWrappers":12,"mutatedInputs":13,"shallowFrozenRekeyed":true,"recursiveImmutableReferenceReuse":true,"unsupportedInputsDecline":true,"accessorsNotReadByKey":true,"entriesBoundedAt":256,"customWeightsMatch":true,"customEnumerationOrderRetained":true,"noNativeExecution":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=8 failed=0 total=8 time=3.41s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=3

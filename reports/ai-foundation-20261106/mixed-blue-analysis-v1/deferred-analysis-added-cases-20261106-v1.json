@@ -1,0 +1,15 @@
+{
+  "cases": [
+    {
+      "label": "deferred-analysis-next-main",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/deferred-analysis-next-main-root-20261106-v1.json"
+    },
+    {
+      "label": "deferred-analysis-data-menu",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/deferred-analysis-data-menu-root-20261106-v1.json"
+    }
+  ],
+  "nativeInputs": 2,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

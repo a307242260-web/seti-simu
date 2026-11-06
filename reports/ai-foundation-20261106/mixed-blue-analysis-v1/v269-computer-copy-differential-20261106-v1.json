@@ -1,0 +1,3990 @@
+{
+  "status": "passed",
+  "uniqueRoots": 693,
+  "comparedQuotes": 284,
+  "recursivelyFrozenInputs": true,
+  "allResultsExact": true,
+  "rootsUnchanged": true,
+  "noNativeExecutions": true,
+  "newAutonomousRuns": 0,
+  "currentSourceSha256": "18709efeb93fc59e55819ca7a0e2c5d709ca62be427a4488fcacbb152be08037",
+  "referenceSource": "reports/ai-foundation-20261106/candidate-v268-mixed-blue-v1/source-snapshot/randomizer/game/ai/local-decision-plans.js",
+  "rows": [
+    {
+      "label": "analysis-publicity-post-main",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-post-main-root-20261106-v1.json",
+      "fixtureSha256": "18a7f9337d560c796738a40c5f38602dd588ea2c4274a5901c4e9bee925c01b3",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-114",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-114-root-20261106-v1.json",
+      "fixtureSha256": "39418202f4ac3ccbe524338da20f18fbb8d85e42b5fded7183e95f780c64b86e",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-114",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-114-root-20261106-v1.json",
+      "fixtureSha256": "39418202f4ac3ccbe524338da20f18fbb8d85e42b5fded7183e95f780c64b86e",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-115",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-115-root-20261106-v1.json",
+      "fixtureSha256": "7aeb39b230828c50da7bfc8f2da9787368dcf44a3a55fb4d19ea3c3f9f973544",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-115",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-115-root-20261106-v1.json",
+      "fixtureSha256": "7aeb39b230828c50da7bfc8f2da9787368dcf44a3a55fb4d19ea3c3f9f973544",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-116",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-116-root-20261106-v1.json",
+      "fixtureSha256": "99a5518cd5d8c4f2c93e3f4aa1d570b2915fb9e22f723a24de1e68755554190b",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-116",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-116-root-20261106-v1.json",
+      "fixtureSha256": "99a5518cd5d8c4f2c93e3f4aa1d570b2915fb9e22f723a24de1e68755554190b",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-117",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-117-root-20261106-v1.json",
+      "fixtureSha256": "1be2146718ed2278b84857519d862ed03f26ceabd6c6f6e70065dbea1ea989d1",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-118",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-118-root-20261106-v1.json",
+      "fixtureSha256": "07b25fc255bf91b44b338935f69fc8a16b161d5756b1f65ec72553201f8447cf",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-144-root-20261106-v1.json",
+      "fixtureSha256": "ff966859881c2dcc63c725ae549a6e44adafa7fdef4ef1595d6742d6b27d5382",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-145-root-20261106-v1.json",
+      "fixtureSha256": "a440eb2097876cf190851d6686fa1968a57cca027f262c806384d52fc835691d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-146-root-20261106-v1.json",
+      "fixtureSha256": "b15a360cd7e3fa8e1c6fbf1f14b6629b777d76b321f839a79aa63c31ee33f0cc",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-147-root-20261106-v1.json",
+      "fixtureSha256": "29e7fddd884fdfd377e599755bad29bb09bb67efcb5c1e5652609e4a4ad5d13d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-152-root-20261106-v1.json",
+      "fixtureSha256": "5b98b329063116d6d06394ea102ab2613a9e70e0d82badc7ab42be9043dcf9fc",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "actual-v256-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-152-root-20261106-v1.json",
+      "fixtureSha256": "5b98b329063116d6d06394ea102ab2613a9e70e0d82badc7ab42be9043dcf9fc",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-153-root-20261106-v1.json",
+      "fixtureSha256": "f42386c089af3bf5217006dc0165e9ed43f6175f9ad315ad07787a1a0a8ba225",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "actual-v256-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-153-root-20261106-v1.json",
+      "fixtureSha256": "f42386c089af3bf5217006dc0165e9ed43f6175f9ad315ad07787a1a0a8ba225",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-154-root-20261106-v1.json",
+      "fixtureSha256": "9b4c0dd2b00da63651c9912aee606f0a7752c55188fc8ce2d41bdaac53a94299",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0.9166666666666666,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-154-root-20261106-v1.json",
+      "fixtureSha256": "9b4c0dd2b00da63651c9912aee606f0a7752c55188fc8ce2d41bdaac53a94299",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-155-root-20261106-v1.json",
+      "fixtureSha256": "75de7b316feab1607a2d56e522922dd136f35285f36e7bafb20d6b710d09f270",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0.9166666666666666,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-155-root-20261106-v1.json",
+      "fixtureSha256": "75de7b316feab1607a2d56e522922dd136f35285f36e7bafb20d6b710d09f270",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-160-root-20261106-v1.json",
+      "fixtureSha256": "a5f1d93b662d42e6dead5b3de51faf4a551a283a5c7b758c6fa3c736c7f4c985",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-161-root-20261106-v1.json",
+      "fixtureSha256": "f8af1d1725c33dd48033432a3321f2d4106267b60ca1bb6755751e8a2dbc851d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-162-root-20261106-v1.json",
+      "fixtureSha256": "d5e2935d573618bb02e7951a0c31360556d40f8cdcc9d93417d7d6e1b45b11b0",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-163-root-20261106-v1.json",
+      "fixtureSha256": "23435374700b797f3f00be0fe228a8f3d173b7a620210d6c6c545837406e80ec",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-164-root-20261106-v1.json",
+      "fixtureSha256": "954661411468520633a3276920365459e7dd8035081e5e26f1c1a2b8e6589fad",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-168-root-20261106-v1.json",
+      "fixtureSha256": "8a01b0fd737dc552bb93813cee15f6fd05a862edd82abe7c251ef48e424bacf1",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-169-root-20261106-v1.json",
+      "fixtureSha256": "be64317da1de35b6a1c1c217c700b2976cd6551671fabf946ba19adf14614917",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-169-root-20261106-v1.json",
+      "fixtureSha256": "be64317da1de35b6a1c1c217c700b2976cd6551671fabf946ba19adf14614917",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-170-root-20261106-v1.json",
+      "fixtureSha256": "11c3aae8f83f7995d85f27ef00600117a12ce1c872a54c4ba192b4ddb750614a",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-170-root-20261106-v1.json",
+      "fixtureSha256": "11c3aae8f83f7995d85f27ef00600117a12ce1c872a54c4ba192b4ddb750614a",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-171-root-20261106-v1.json",
+      "fixtureSha256": "1bb8a60a310648cd1ace052505e9328fd510fa89a8e021973cec44a58c749855",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-172",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-172-root-20261106-v1.json",
+      "fixtureSha256": "376343d800f8f20f00f4513a9be01aa6bd4ab88e60872bb08116a12a28dde46b",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-176",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-176-root-20261106-v1.json",
+      "fixtureSha256": "e489dd943955e6d10e0ed59bc96e59d1022ad1eddded260ce3b99bb256be64a1",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v256-177",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-177-root-20261106-v1.json",
+      "fixtureSha256": "98886472f3e5788169ee6b05db8e686bb8fb85dffe4af3f23219f06a64f18cf6",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-145-root-20261106-v1.json",
+      "fixtureSha256": "328a845bb4dbb2a3745cc07e360f47cfdf8255553f09bd7f8282556d6581681f",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-146-root-20261106-v1.json",
+      "fixtureSha256": "fd1550487b432c65795042ec63c5faec2c805e3e3e171cde28df8c4178e173aa",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-147-root-20261106-v1.json",
+      "fixtureSha256": "61f5efe021fec7f732a056bf4704a37912cd021e6137f365f4053d6258598169",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-149-root-20261106-v1.json",
+      "fixtureSha256": "3de6064c5e7be712fb17dc7702a16583c8ec31e41881f748ea1af5e9704347b2",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-150-root-20261106-v1.json",
+      "fixtureSha256": "7442548f6078d38ec46a421ec0d0669b14cd90e8aacec9a4185df42c9276742c",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-156-root-20261106-v1.json",
+      "fixtureSha256": "95189fb85d3babdcebb54d31784fb70429fc3d76d40f7c9ed5a601fac8467560",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-156-root-20261106-v1.json",
+      "fixtureSha256": "95189fb85d3babdcebb54d31784fb70429fc3d76d40f7c9ed5a601fac8467560",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-156-root-20261106-v1.json",
+      "fixtureSha256": "95189fb85d3babdcebb54d31784fb70429fc3d76d40f7c9ed5a601fac8467560",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 4.75,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-157-root-20261106-v1.json",
+      "fixtureSha256": "b0da75b0a0d2325017df1cffa8ceb3861659c50bc147cd91008cd188a15e9671",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-157-root-20261106-v1.json",
+      "fixtureSha256": "b0da75b0a0d2325017df1cffa8ceb3861659c50bc147cd91008cd188a15e9671",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-157-root-20261106-v1.json",
+      "fixtureSha256": "b0da75b0a0d2325017df1cffa8ceb3861659c50bc147cd91008cd188a15e9671",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 4.75,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-158-root-20261106-v1.json",
+      "fixtureSha256": "ffbae6e45dc451fb05083ecccf127c8f881efa36ce208d24024ff322867017ae",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-158-root-20261106-v1.json",
+      "fixtureSha256": "ffbae6e45dc451fb05083ecccf127c8f881efa36ce208d24024ff322867017ae",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-158-root-20261106-v1.json",
+      "fixtureSha256": "ffbae6e45dc451fb05083ecccf127c8f881efa36ce208d24024ff322867017ae",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 4.75,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-159-root-20261106-v1.json",
+      "fixtureSha256": "e4dc269c77437d9b34e62b2bab0195d4af84139212c4326dff310338a15b5499",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-159-root-20261106-v1.json",
+      "fixtureSha256": "e4dc269c77437d9b34e62b2bab0195d4af84139212c4326dff310338a15b5499",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-160-root-20261106-v1.json",
+      "fixtureSha256": "23b801692376e211fd173e4870e632b32681e041c4aa9661e275eac9f42f350a",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-160-root-20261106-v1.json",
+      "fixtureSha256": "23b801692376e211fd173e4870e632b32681e041c4aa9661e275eac9f42f350a",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-161-root-20261106-v1.json",
+      "fixtureSha256": "330052e6ce079af0064238cc5698eae2ff29f7ebd8a30cca97048546c48de4c0",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-162-root-20261106-v1.json",
+      "fixtureSha256": "2ef422ecc6b68ff72123ec85ff91faae891eff49e3fa1077589b8f4a0633eea5",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-176",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-176-root-20261106-v1.json",
+      "fixtureSha256": "70a1ca4dd90622ff566a8c560d92572ab6c67cc5320562af4f182001c25533fd",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-177",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-177-root-20261106-v1.json",
+      "fixtureSha256": "9cab5ad8d98709260cdca7323fe8f2dccda7fe41629d383422cf8f4a4956b6f1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v253-178",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-178-root-20261106-v1.json",
+      "fixtureSha256": "1b221fcab6a7d57b3ce8b94bf86b6bd6738daa17e228da4fd892639b51c04721",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-025",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "fixtureSha256": "b044fcd7d74def9e0220e895139ff296f9117df8924b70e593e8b6194344b767",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -2,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-026-20261104-v1.json",
+      "fixtureSha256": "6859cd8c37d2dbb04f731fc2da864d9774fbbe90edf2654786ced56eb0570af4",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -2,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-027-20261104-v1.json",
+      "fixtureSha256": "07294c0ec8a15bed23406c9bf6a5aaf8473cc3cd88be1c1412ae5b2df1652b3b",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -2,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "fixtureSha256": "cff2e8848d46378871f775b02ae719acc979e6c6d5091404cd7b362cfd072409",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "fixtureSha256": "cff2e8848d46378871f775b02ae719acc979e6c6d5091404cd7b362cfd072409",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.9166666666666666,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "fixtureSha256": "7c2a6cbcb9159b7f5451184e25fd5fc8f8512b736bca38eb6057cd1827aa6990",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "fixtureSha256": "7c2a6cbcb9159b7f5451184e25fd5fc8f8512b736bca38eb6057cd1827aa6990",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-040-20261104-v1.json",
+      "fixtureSha256": "3f6506dbfdf0d631b3eee83c5b13bbe20a0c8963508264f8ccd478cde4f40f2e",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-040-20261104-v1.json",
+      "fixtureSha256": "3f6506dbfdf0d631b3eee83c5b13bbe20a0c8963508264f8ccd478cde4f40f2e",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-041-20261104-v1.json",
+      "fixtureSha256": "46a9799ed6f6264523e380372b83556a9d1f24cf71ddfe18109678ea34b5d8c4",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-041-20261104-v1.json",
+      "fixtureSha256": "46a9799ed6f6264523e380372b83556a9d1f24cf71ddfe18109678ea34b5d8c4",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-042-20261104-v1.json",
+      "fixtureSha256": "3c15737b1f6076690f894e5d7bd995abded6bd3b8a1d6765f483cb5005cd06ae",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-042-20261104-v1.json",
+      "fixtureSha256": "3c15737b1f6076690f894e5d7bd995abded6bd3b8a1d6765f483cb5005cd06ae",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-043-20261104-v1.json",
+      "fixtureSha256": "ba1d5f5dd8d343ac2c8112831455f6d5085a1196cb6a556f183cf139c38b2297",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-043-20261104-v1.json",
+      "fixtureSha256": "ba1d5f5dd8d343ac2c8112831455f6d5085a1196cb6a556f183cf139c38b2297",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-075-20261104-v1.json",
+      "fixtureSha256": "ec5453a081a655487bd54e93d870cb34c1fcd05f11c7fd7d849b6cb3061e3e64",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -17.583333333333332,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-076-20261104-v1.json",
+      "fixtureSha256": "5a785c192b4d5a7f59597091afcd0edc63a14187869c34b700fbb600a0d1164b",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -10.583333333333334,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-077-20261104-v1.json",
+      "fixtureSha256": "0d70c9bf2e7d10952fe18600d509369e260597c804882746f686fd909b3697f9",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -11.583333333333334,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-079-20261104-v1.json",
+      "fixtureSha256": "da33844162c000f36faf553a084f8ac9d02ecfdc6c6c35334188039557147c0b",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-080-20261104-v1.json",
+      "fixtureSha256": "d27f3a7a08ad52e3cb49d00736c1fc557dcbd21895eb26b55b4a866318b3c3a9",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -1,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-082-20261104-v1.json",
+      "fixtureSha256": "e5bcf47d690063fb0c78f9c582772f55a2623964dd0491d531ac0a25b861d608",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-083-20261104-v1.json",
+      "fixtureSha256": "f02715f255e33af4194f1f6a7eab85f87f0e4d311083a4a72d81abe81f80d44f",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-085-20261104-v1.json",
+      "fixtureSha256": "6f229ea1451501e30bc3176a4e474430991b0e26fef1ba95d3c3571d041e75e8",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-086-20261104-v1.json",
+      "fixtureSha256": "b4bd36613c28c10d4bfe2564ebb079a76d78704f04d00f05c980ecdc26716c64",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-087-20261104-v1.json",
+      "fixtureSha256": "153932bf3f7fe72d5a403206180cfee35bf5939a340f656f1b39a786d66c7965",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-088-20261104-v1.json",
+      "fixtureSha256": "4860d08303f535b4df6633caafa9af5c99bbb41570f94cfa1df4952852477444",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-089-20261104-v1.json",
+      "fixtureSha256": "a015d49028bc8fb1093c3ad65b0d526579f965774b24d3df04e9a06f1c0e97da",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-090-20261104-v1.json",
+      "fixtureSha256": "0ef70f665c7c727c8eeed80aac31cb7ed89f23f0405a2c474372f0e4dedc1b81",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-099-20261104-v1.json",
+      "fixtureSha256": "0bc933f81ef65e6b922de5084aa30dca1c87af58c7602cb7636a7cc43158058c",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-099-20261104-v1.json",
+      "fixtureSha256": "0bc933f81ef65e6b922de5084aa30dca1c87af58c7602cb7636a7cc43158058c",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-100-20261104-v1.json",
+      "fixtureSha256": "ee4e3c61a92791bb074d807a30619578e7421bedbc730d6aa7da542bbe895813",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-100-20261104-v1.json",
+      "fixtureSha256": "ee4e3c61a92791bb074d807a30619578e7421bedbc730d6aa7da542bbe895813",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-101-20261104-v1.json",
+      "fixtureSha256": "8629218c9cd3bbf29981f21548b2a4c5ba84a1046e8c8579dd979c60fc949490",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-101-20261104-v1.json",
+      "fixtureSha256": "8629218c9cd3bbf29981f21548b2a4c5ba84a1046e8c8579dd979c60fc949490",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-102-20261104-v1.json",
+      "fixtureSha256": "2c0862882aafe69a6d3693fafb3d27785ed59b0f55be656999939705d1a4992f",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-teacher-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-103-20261104-v1.json",
+      "fixtureSha256": "0edcb0f61889f19fffd9b5f773a0d346608a7a082f8973403e6aa0f456f48fb5",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-case-011",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+      "fixtureSha256": "10ae734103d0bdacc79dc5d7d97ec0d5bb7d0152256b4d851faf12d6bbc711bb",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -0.5,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-case-009",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-009-20261023-v1.json",
+      "fixtureSha256": "01464efd955b55860f7718e4a31c0754ea8649c50db64b4b790ccd0d2586edea",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -0.5,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step026-20261105-v1.json",
+      "fixtureSha256": "f2e019a4f0e056f3a15ad9a4ef20bbf1d3a50d9e47eea862e99efb9a9494bb70",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -2,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step027-20261105-v1.json",
+      "fixtureSha256": "497b816beaf078fffcbc4f2c8fb30567e82e66f287a54237cad5e6155df4d6c1",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": -2,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step037-20261105-v1.json",
+      "fixtureSha256": "ae679d040697f4dd7c0b5b35507d46c721f0ff77ca11eb8bf17dd01faa5de735",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step037-20261105-v1.json",
+      "fixtureSha256": "ae679d040697f4dd7c0b5b35507d46c721f0ff77ca11eb8bf17dd01faa5de735",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.9166666666666666,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step038-20261105-v1.json",
+      "fixtureSha256": "c1ae79bd3fdaee5b28e3cfe87e39d167e0a7026fa79650d34ca0dec5e87f57b3",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step038-20261105-v1.json",
+      "fixtureSha256": "c1ae79bd3fdaee5b28e3cfe87e39d167e0a7026fa79650d34ca0dec5e87f57b3",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step040-20261105-v1.json",
+      "fixtureSha256": "b2c6bba5ec166a6fdc0da757d0e7228e504730aa005ea53d9eba2bdd3e5ce4a3",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step040-20261105-v1.json",
+      "fixtureSha256": "b2c6bba5ec166a6fdc0da757d0e7228e504730aa005ea53d9eba2bdd3e5ce4a3",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step041-20261105-v1.json",
+      "fixtureSha256": "d0c05df26838ba28d87c9f6d4f869d723a870e2070d2edade446f757b6500a0c",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step041-20261105-v1.json",
+      "fixtureSha256": "d0c05df26838ba28d87c9f6d4f869d723a870e2070d2edade446f757b6500a0c",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step042-20261105-v1.json",
+      "fixtureSha256": "01330a2a82407eee19341bd49684461ecd695d43c1ee4c8f88ccf90dd5fed19f",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step042-20261105-v1.json",
+      "fixtureSha256": "01330a2a82407eee19341bd49684461ecd695d43c1ee4c8f88ccf90dd5fed19f",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step043-20261105-v1.json",
+      "fixtureSha256": "918b4ef7682299a6a31708dc7426192aa11d674bb3839b93424b3a7646a3250e",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step043-20261105-v1.json",
+      "fixtureSha256": "918b4ef7682299a6a31708dc7426192aa11d674bb3839b93424b3a7646a3250e",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step082-20261105-v1.json",
+      "fixtureSha256": "7a1dc7be3ed41cdd48c20d5567d022a01d64af5358086d5ce674c6f35a007cf0",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step083-20261105-v1.json",
+      "fixtureSha256": "0b65206b52b0ff675fd2c21d8adc8dd9545ea84b7f04a72b9ec7c16d911d6883",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step084-20261105-v1.json",
+      "fixtureSha256": "62b2fd7042bf8e6af1a910d53e5098d4cbadccae608b04d69cb0a5e75cb26558",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step090-20261105-v1.json",
+      "fixtureSha256": "d8c8b10ee0b0ec8c1b57fad058c226a62932e4edaf16ceefb9c1b139c9ca25fb",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step090-20261105-v1.json",
+      "fixtureSha256": "d8c8b10ee0b0ec8c1b57fad058c226a62932e4edaf16ceefb9c1b139c9ca25fb",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 7.916666666666667,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step091-20261105-v1.json",
+      "fixtureSha256": "e13c15a912fdca12fa3680c260c56550f3726b4840c1ccb6e51c9d3b7bb0407c",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step091-20261105-v1.json",
+      "fixtureSha256": "e13c15a912fdca12fa3680c260c56550f3726b4840c1ccb6e51c9d3b7bb0407c",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step094-20261105-v1.json",
+      "fixtureSha256": "1b9ca410386b4a09979f250fcc1b3825827037275d9c062587f939c492c9b84f",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step094-20261105-v1.json",
+      "fixtureSha256": "1b9ca410386b4a09979f250fcc1b3825827037275d9c062587f939c492c9b84f",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step094-20261105-v1.json",
+      "fixtureSha256": "1b9ca410386b4a09979f250fcc1b3825827037275d9c062587f939c492c9b84f",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.1666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step104-20261105-v1.json",
+      "fixtureSha256": "b03558ac5ec4684286854f629361371c56849b5fead01cf9dc0d0025e06223e7",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step105-20261105-v1.json",
+      "fixtureSha256": "7a463ecaf4c4a6c4257d3fd81082768407e20a656fa549a25b074499787d6479",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step105-20261105-v1.json",
+      "fixtureSha256": "7a463ecaf4c4a6c4257d3fd81082768407e20a656fa549a25b074499787d6479",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step106-20261105-v1.json",
+      "fixtureSha256": "396df4a7533f2dd8af3c4ead4cdf18a6a0e9c65d5387c23f265c3304acc96de2",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step106-20261105-v1.json",
+      "fixtureSha256": "396df4a7533f2dd8af3c4ead4cdf18a6a0e9c65d5387c23f265c3304acc96de2",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-107",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step107-20261105-v1.json",
+      "fixtureSha256": "fd0f18df365c5ee2ed1e331d70ede39184185df6ea75e6c54ea97216a5ebac27",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-107",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step107-20261105-v1.json",
+      "fixtureSha256": "fd0f18df365c5ee2ed1e331d70ede39184185df6ea75e6c54ea97216a5ebac27",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-108",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step108-20261105-v1.json",
+      "fixtureSha256": "2b40c90497667fc176d56a617ce10a338203314991c4b3e58104309c70f636ee",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-108",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step108-20261105-v1.json",
+      "fixtureSha256": "2b40c90497667fc176d56a617ce10a338203314991c4b3e58104309c70f636ee",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-109",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step109-20261105-v1.json",
+      "fixtureSha256": "14db55e67a4bffce70d8a19cb81203735ab4516d2c034d160dfb181d53f0f91b",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v178-110",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step110-20261105-v1.json",
+      "fixtureSha256": "6dced863f30434a7c005add0d77c055112900d72b241822c693de4f352751c97",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step075-20261105-v1.json",
+      "fixtureSha256": "a6f326f34f5fb54a984d282bfc678cf3912ca48acc03cf59de3337880bce88d8",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step076-20261105-v1.json",
+      "fixtureSha256": "1f3dc3b773fa16537055814322c486322a7ed125cdc23f0e5b2309e933fafb5f",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step077-20261105-v1.json",
+      "fixtureSha256": "05055d8e6559217dcca4589870cbd58e344c6cf3f352b2ff49fe7a9a0b802cdc",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step080-20261105-v1.json",
+      "fixtureSha256": "e631cea9d53f8a58ae440d0842d6b901e0ae635c9a4aeee0e401d469aa3f858a",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step081-20261105-v1.json",
+      "fixtureSha256": "2cc37ed3eccfd7658d5ac20be610d418e57c6c2f24659938748327e0b3cf3ab1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step082-20261105-v1.json",
+      "fixtureSha256": "2fc25157b0055f7b1db8132173c82fe66f674c72e7ad4d78b4eb370dda64a756",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step083-20261105-v1.json",
+      "fixtureSha256": "f8103c00de0d18f04b72c8210a80c2912d10970fe1d8f72a588fab279f2f8b96",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step087-20261105-v1.json",
+      "fixtureSha256": "ee0ef3aa14ff190bb3b7116c12c029515803c2d27983b04a9d278993606881a1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step088-20261105-v1.json",
+      "fixtureSha256": "274a387fafdcdc9b1ac7fed5d5c04d3dca23fdc1c6f9546bdc7d604b87488318",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step089-20261105-v1.json",
+      "fixtureSha256": "895e974fefb0eb1424200a9173a0c7caa477694cc02f3eb3efc575efbe8d852a",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v184-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step090-20261105-v1.json",
+      "fixtureSha256": "2bafb9c5e9cbd4397c57a1bcde04e78aa5750aa02af4aff0a94b6cc22f7eae48",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step044-20261105-v1.json",
+      "fixtureSha256": "d17117d5803efff02812c9b9cd353b09c349a5fc66d3da149fb135e1c1be1f75",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step044-20261105-v1.json",
+      "fixtureSha256": "d17117d5803efff02812c9b9cd353b09c349a5fc66d3da149fb135e1c1be1f75",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step045-20261105-v1.json",
+      "fixtureSha256": "22c60940f7a5c91a62143d43b3f8802d56eb772f0dc83cce90ff266f6462348f",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step046-20261105-v1.json",
+      "fixtureSha256": "304660346fca3003555186e45723daea4fe236adb5bead8c5156d4a6d8080e36",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step047-20261105-v1.json",
+      "fixtureSha256": "3ca120e370f95f1596273414a67cea3d6c4e8fcaa9ba40d8eb00a4d68e4dd1dc",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step075-20261105-v1.json",
+      "fixtureSha256": "370291da0aed782aa117dc40b88fc7eb27ebebe929c553ada2703e7eafa3019f",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step076-20261105-v1.json",
+      "fixtureSha256": "d0b5a5e8c9d02e2b4e83f1440e2ba4de4384e98ab68c1c340485be21306d3c08",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step077-20261105-v1.json",
+      "fixtureSha256": "678bc4cbe0db92699c3e411756f83ffba1e429f185445687d66ecacb224c9f18",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step080-20261105-v1.json",
+      "fixtureSha256": "3080fcf37cde14108f25068b82a58375b3b97eaec10e6392c0e3450e1c59c15d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step081-20261105-v1.json",
+      "fixtureSha256": "1cbc1269c0466818ba12760a674089ae34cd2b0efe73dd2cc31010fe4f40d6ab",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step082-20261105-v1.json",
+      "fixtureSha256": "98339789705afe396fae3c90b401001e5a7761113c8244e5fa6e01dbdef793fc",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step083-20261105-v1.json",
+      "fixtureSha256": "171768e66e0d15f80ae5148859ba8b0362d1923a623cca501a617eab03d93806",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step087-20261105-v1.json",
+      "fixtureSha256": "9e36096e6c889199bf2ac6522dc872ff3d54909ee8f4c9a6edf4009bcbdbecd9",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step088-20261105-v1.json",
+      "fixtureSha256": "e39bc7e05c5b31c8180addb34147a936900e3fbdad1109b596ae56c4de73e293",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step089-20261105-v1.json",
+      "fixtureSha256": "3972de8b06cc2c6a04d82cbef48994af726733939c44953349bbf1e05b0754d6",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step090-20261105-v1.json",
+      "fixtureSha256": "46135293d7ad272b9a946d39695acd966285965ffe0df0dacf6199f8580b2347",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step096-20261105-v1.json",
+      "fixtureSha256": "2cb7f4fd28ede9b46482a9232842520727317cb3deb28c2b564545cbeda23c15",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step096-20261105-v1.json",
+      "fixtureSha256": "2cb7f4fd28ede9b46482a9232842520727317cb3deb28c2b564545cbeda23c15",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.4166666666666667,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step097-20261105-v1.json",
+      "fixtureSha256": "579cf6ddf20d85f2341872a23257580f931ab600fc2bb4b76862ea0026d5ddad",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step097-20261105-v1.json",
+      "fixtureSha256": "579cf6ddf20d85f2341872a23257580f931ab600fc2bb4b76862ea0026d5ddad",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.08333333333333333,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step098-20261105-v1.json",
+      "fixtureSha256": "f21f1c6fb3fb862d6c8a4c6afe15c7e995047152fff4836c207f0627f2adf2ba",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step098-20261105-v1.json",
+      "fixtureSha256": "f21f1c6fb3fb862d6c8a4c6afe15c7e995047152fff4836c207f0627f2adf2ba",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.08333333333333333,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step099-20261105-v1.json",
+      "fixtureSha256": "31a21731fff1dc5af3e349fdcac60523f259deb39f4c993226e8c7687f8263f2",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.08333333333333333,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v186-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step100-20261105-v1.json",
+      "fixtureSha256": "11a9eaecf9e3a5fd1d6a4601720cd6a4c1ecaafbb3711e648881dc30e879b998",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.08333333333333333,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-control-tool-step-78",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-78-20261105-v1.json",
+      "fixtureSha256": "841547c62e111ce76c41f5254abb33688df9164616704560acfbf0556b9f1d5c",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-control-tool-step-81",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-81-20261105-v1.json",
+      "fixtureSha256": "99f99932eee8d6601fad78dd18cd1f433342e2a7b0d100cad79fa72b2a9ee1f4",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step078-20261105-v1.json",
+      "fixtureSha256": "9477408b7772cb2d3f6d05a12c8a3b52231d91f90900109d056dd4c11e5a47de",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -20.333333333333332,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step079-20261105-v1.json",
+      "fixtureSha256": "0df1eca49abe9e5b1773b8a4c89e12527e35a41d8649ec8fea2aacbf76beb6be",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -20.333333333333332,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step080-20261105-v1.json",
+      "fixtureSha256": "84b7afadc12dcdfcfe621874ade206135a7eb9ad5bfdcd163ab0c3274285a0cd",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -21.333333333333332,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step082-20261105-v1.json",
+      "fixtureSha256": "6002151215b4e4a2a306b81b5b2254a63507970e549c12853a52519d27f9b0ab",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step083-20261105-v1.json",
+      "fixtureSha256": "17d72262f2ebb0e06a12f7d9ee39e62423621a784e2e4ce6c373695280203416",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -10.75,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step085-20261105-v1.json",
+      "fixtureSha256": "2116037941ab1d9dbd1346c2e1b90bdb422abbedf1767d947aa8e90e9b788bf1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step086-20261105-v1.json",
+      "fixtureSha256": "68cedf42db87fe172b1d24e43b1174b9df466fafe123ec9fbcf2fb23965c4ded",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step092-20261105-v1.json",
+      "fixtureSha256": "037b93536d996c3506396ba96add2573c0f0fae82c43ab5288c67ef457633fd1",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step092-20261105-v1.json",
+      "fixtureSha256": "037b93536d996c3506396ba96add2573c0f0fae82c43ab5288c67ef457633fd1",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.9166666666666666,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step093-20261105-v1.json",
+      "fixtureSha256": "e18385260de417a8a9987bfa7d8ff5328ec24635efa26e10ffdaae6102b2eb67",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step093-20261105-v1.json",
+      "fixtureSha256": "e18385260de417a8a9987bfa7d8ff5328ec24635efa26e10ffdaae6102b2eb67",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 14.083333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step094-20261105-v1.json",
+      "fixtureSha256": "a09994c3f91d32fc4b0db07c9a3c76dc63d2e8ad2cedcf405ae3bcb6b7a6c933",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step094-20261105-v1.json",
+      "fixtureSha256": "a09994c3f91d32fc4b0db07c9a3c76dc63d2e8ad2cedcf405ae3bcb6b7a6c933",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 14.083333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step095-20261105-v1.json",
+      "fixtureSha256": "610789e4f59dbd6899ece0ed2fa484c9f7f689162770db26c7702f3969295e1b",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 14.083333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step096-20261105-v1.json",
+      "fixtureSha256": "b6b5848c088d84229563a191463e970f3f3c1b0a01b1511f5dadd0bc33ca4cbb",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 14.083333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step097-20261105-v1.json",
+      "fixtureSha256": "0abd5f1d4b69a992331f9b988f388e919e2119fbca73d0348f996c9d67c562ae",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step102-20261105-v1.json",
+      "fixtureSha256": "66de57dab75bae12544ba986f26b27a665c8d531f075cf23b17935e1ac21b921",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step103-20261105-v1.json",
+      "fixtureSha256": "b74a4d79ba28859656c8b39649974eabb807d705922b121ae0ccc548378b3a46",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step104-20261105-v1.json",
+      "fixtureSha256": "b23f34163b9b403f7f51f6d5fd3371c3fbaef4e7bceb334f3fd73018c7be308a",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-109",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step109-20261105-v1.json",
+      "fixtureSha256": "5a95498e3bb9b0cde741ebe78da6f9962b5b3f501c1cc5e65b021430c2b92e44",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-110",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step110-20261105-v1.json",
+      "fixtureSha256": "1f1cc9235a9245006dd4be89b8a8cdae9e268b7b5281b1aa31992825b3dc7202",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-111",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step111-20261105-v1.json",
+      "fixtureSha256": "44635f689c16036710941a8a953e21befb7a2fad229c7177d59c39a81951b097",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-114",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step114-20261105-v1.json",
+      "fixtureSha256": "6fb7aaa320484057ab3ef969b33fdfe2539c712b1fca80bbc34450fadd08889f",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -0.3333333333333333,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-115",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step115-20261105-v1.json",
+      "fixtureSha256": "997a5bc1a78155fe0b7754dfff1b985e2c92b9d05894101415b6bd9bad4d14b3",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": -0.3333333333333333,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "corpus-actual-v187-116",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step116-20261105-v1.json",
+      "fixtureSha256": "516df12a7489bd93627314dd541653f4a96fedb26c38501092a4b5173108910d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-86",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-86-20261105-v1.json",
+      "fixtureSha256": "450c3b15866de139312b646d6333855917770255c44bdf58238285eaee798311",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-88",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-88-20261105-v1.json",
+      "fixtureSha256": "c7f87ccfe155b81bc950675488aac3d83cbd6d7a1a5f52911bc9925a7356782c",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-144-root-20261106-v1.json",
+      "fixtureSha256": "911cab022c766387d90ae524555f20baa696102044986dc7eadaa31dddd6c4b1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-145-root-20261106-v1.json",
+      "fixtureSha256": "3132181a24401f0608a512f809d9ba32452bdf1baebcf4269f5962bdf2665aa1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-147-root-20261106-v1.json",
+      "fixtureSha256": "27ee4a4ef275ad1a1931be429a3be706e8515f21b620f1434083cfceaa93c791",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-153-root-20261106-v1.json",
+      "fixtureSha256": "9a0feb92c221fa2fc804f43681b165e2e2017b9536c58daf8bbd94803f433279",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-153-root-20261106-v1.json",
+      "fixtureSha256": "9a0feb92c221fa2fc804f43681b165e2e2017b9536c58daf8bbd94803f433279",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-154-root-20261106-v1.json",
+      "fixtureSha256": "1503dc48853017d85a8122f6230b2714e5a57a405dbb4249bf62df9adf9227ea",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-154-root-20261106-v1.json",
+      "fixtureSha256": "1503dc48853017d85a8122f6230b2714e5a57a405dbb4249bf62df9adf9227ea",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 9,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-155-root-20261106-v1.json",
+      "fixtureSha256": "56e73546f78f7c244414e68e8346acf8b095ef502a2919d84d96e2fb5aa2ac67",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-155-root-20261106-v1.json",
+      "fixtureSha256": "56e73546f78f7c244414e68e8346acf8b095ef502a2919d84d96e2fb5aa2ac67",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 9,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-156-root-20261106-v1.json",
+      "fixtureSha256": "58cd612b69e8b2276e931b2f16ae042b916c06244aac0506786649c1ba431629",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 7,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v214-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-157-root-20261106-v1.json",
+      "fixtureSha256": "8f2a8e8761e463595c91c30d77323ce2bc6347a27f902c69eb2a2f3bf752dc05",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 7,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-7-root-20261106-v1.json",
+      "fixtureSha256": "f337f439d26f678b0db287fe40c6df91b547694a95de423da5f35881bd21abdf",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-8-root-20261106-v1.json",
+      "fixtureSha256": "8e33eff5ef0fe3ce08e112a31e16a8348f5632ff76ba2eb5c4edfb6b0d51f7e1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-9-root-20261106-v1.json",
+      "fixtureSha256": "57285decbe2a176f2a9ba2b5d99d8aa2f77a25c6498b2af9bae0ecd6921bfd63",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-10-root-20261106-v1.json",
+      "fixtureSha256": "0363c1d7618690824a94112d83d6d5093d75cb95769e9e8cc980305187016b24",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-11-root-20261106-v1.json",
+      "fixtureSha256": "ff48a6e9f6eb4355b3122790af1228e7e5c9732ebc32e7272a92a624464c32c4",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-14-root-20261106-v1.json",
+      "fixtureSha256": "76f5742d634ca22545a35877189cb43e5cbfdb8d184451abfc2ac6e21362c7c1",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-14-root-20261106-v1.json",
+      "fixtureSha256": "76f5742d634ca22545a35877189cb43e5cbfdb8d184451abfc2ac6e21362c7c1",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-15-root-20261106-v1.json",
+      "fixtureSha256": "0170edf77240bf7a821c7962dbd47534c2ec6023bdf7a628713b679e4bd85fc0",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-15-root-20261106-v1.json",
+      "fixtureSha256": "0170edf77240bf7a821c7962dbd47534c2ec6023bdf7a628713b679e4bd85fc0",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-16-root-20261106-v1.json",
+      "fixtureSha256": "01be3a227269e401ec6db13021a4f782af18f3d824a21949da0f2092199197fe",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-16-root-20261106-v1.json",
+      "fixtureSha256": "01be3a227269e401ec6db13021a4f782af18f3d824a21949da0f2092199197fe",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-17-root-20261106-v1.json",
+      "fixtureSha256": "fbc5d20a7da3dea05ce4b50599d520fae2f26268569d9c40e349f4c32e963125",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-17-root-20261106-v1.json",
+      "fixtureSha256": "fbc5d20a7da3dea05ce4b50599d520fae2f26268569d9c40e349f4c32e963125",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-18",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-18-root-20261106-v1.json",
+      "fixtureSha256": "b79169883c4fdca2d24326813318b595ccd0a2e4e180010fe4546d8d5fc9a971",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-19",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-19-root-20261106-v1.json",
+      "fixtureSha256": "8738b162593e91e6e482576fa397f9616f8e587cdd511c12eccb1e64b241148a",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-7-root-20261106-v1.json",
+      "fixtureSha256": "b2740a639cc72dc0a0ce6d01e9b8b016dbf06556505ecb5197ceaa909f1a72d1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-8-root-20261106-v1.json",
+      "fixtureSha256": "f7d34f6daf22dacd93cc3e89185bee211787a5de003c9ac1ee44d9c8954cc35d",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-9-root-20261106-v1.json",
+      "fixtureSha256": "251284a2b3820d84a5aea240218fa8a8f6bab93bc94945072033dd698e5c830e",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-10-root-20261106-v1.json",
+      "fixtureSha256": "30518576de91f087643ab393d9973ad36c9f76436debbc1ce06d32da9f7e5488",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-11-root-20261106-v1.json",
+      "fixtureSha256": "9a88ca6593ddc788a1331c869e5f74c0a8a3e12c330d33ab2de0b1d583dbd4ef",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-14-root-20261106-v1.json",
+      "fixtureSha256": "1b669a8b8aa8b0f8a15c00f7651c64dcae086dafb7a625b18791fba40596db05",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-14-root-20261106-v1.json",
+      "fixtureSha256": "1b669a8b8aa8b0f8a15c00f7651c64dcae086dafb7a625b18791fba40596db05",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-15-root-20261106-v1.json",
+      "fixtureSha256": "2b331f55c4825481f92eae10c199198368ba43fb817ed0d7a5b445f6d5a385eb",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-15-root-20261106-v1.json",
+      "fixtureSha256": "2b331f55c4825481f92eae10c199198368ba43fb817ed0d7a5b445f6d5a385eb",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-16-root-20261106-v1.json",
+      "fixtureSha256": "dc91996fe51d4cb9bdf4f5f9f8ed7c9a102212d3f4c0fdf0f2e5620a761dcafd",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-16-root-20261106-v1.json",
+      "fixtureSha256": "dc91996fe51d4cb9bdf4f5f9f8ed7c9a102212d3f4c0fdf0f2e5620a761dcafd",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-17-root-20261106-v1.json",
+      "fixtureSha256": "39ec751a80e5f02be4b1cf0ffe47fe8816b14144fcf958c4bbf02099f4f019c1",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2.0833333333333335,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-17-root-20261106-v1.json",
+      "fixtureSha256": "39ec751a80e5f02be4b1cf0ffe47fe8816b14144fcf958c4bbf02099f4f019c1",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.6666666666666665,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-18",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-18-root-20261106-v1.json",
+      "fixtureSha256": "9117bb6e752098d57e410c876e15ab79550f376d3368b0140f121050de314e8e",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-19",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-19-root-20261106-v1.json",
+      "fixtureSha256": "a4175b512d103b357518309c2cded5676688ab1a5ded031d66e801b80262343a",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5833333333333334,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-144-root-20261106-v1.json",
+      "fixtureSha256": "f230fff15d900b89820ec9fb16b13e410a62127c43f12190c1cabc61061898d1",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-145-root-20261106-v1.json",
+      "fixtureSha256": "d13dbebd8ad140d5706a4d61ed3c76fb6a8713018e5bccf1d12a1ab4f9881c04",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-147-root-20261106-v1.json",
+      "fixtureSha256": "e5515fa86487cf4bf1a3d963acb1a8945ca9e143569f4addb2e2ccba5b418d70",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-148-root-20261106-v1.json",
+      "fixtureSha256": "c994953e21f1d4939d5713f4a25ffc557d1116afe65f546c933c887bbbc36b26",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-149-root-20261106-v1.json",
+      "fixtureSha256": "a29d8d0cce2b79a3e7cb9a700c8e2667f0d8fd3fbac216fa491600123739c276",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-150-root-20261106-v1.json",
+      "fixtureSha256": "3aa5202b04ebefd176fb2ee4b88d0cf6c63d10b5a9199ca9c77b8813bb33f0c2",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-156-root-20261106-v1.json",
+      "fixtureSha256": "f53c783733b4bf2c2fe4bb7f49ca6a5e2ea6fb7b565da29d315259b652693070",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-156-root-20261106-v1.json",
+      "fixtureSha256": "f53c783733b4bf2c2fe4bb7f49ca6a5e2ea6fb7b565da29d315259b652693070",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 19,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-156-root-20261106-v1.json",
+      "fixtureSha256": "f53c783733b4bf2c2fe4bb7f49ca6a5e2ea6fb7b565da29d315259b652693070",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 20.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-157-root-20261106-v1.json",
+      "fixtureSha256": "3d25eab04eb30bf85d6ce90ced981cd21708267673e452cdbcb5a96a56a98ed5",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-157-root-20261106-v1.json",
+      "fixtureSha256": "3d25eab04eb30bf85d6ce90ced981cd21708267673e452cdbcb5a96a56a98ed5",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-157-root-20261106-v1.json",
+      "fixtureSha256": "3d25eab04eb30bf85d6ce90ced981cd21708267673e452cdbcb5a96a56a98ed5",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 4.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-158-root-20261106-v1.json",
+      "fixtureSha256": "16c07333035104ec6ad85bed59f0714a172ab2843c2d9974990b8cacc1d219e2",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-158-root-20261106-v1.json",
+      "fixtureSha256": "16c07333035104ec6ad85bed59f0714a172ab2843c2d9974990b8cacc1d219e2",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-158-root-20261106-v1.json",
+      "fixtureSha256": "16c07333035104ec6ad85bed59f0714a172ab2843c2d9974990b8cacc1d219e2",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 4.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-159-root-20261106-v1.json",
+      "fixtureSha256": "b2e366471075ea26f56e1b79f65c3956a7aa49ab5fe5d0686752dc285e6cc51c",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-159-root-20261106-v1.json",
+      "fixtureSha256": "b2e366471075ea26f56e1b79f65c3956a7aa49ab5fe5d0686752dc285e6cc51c",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-160-root-20261106-v1.json",
+      "fixtureSha256": "c8cddb4571a64b8bf497f605334aef0aaad0952b342817ebfec79462d493dadd",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-160-root-20261106-v1.json",
+      "fixtureSha256": "c8cddb4571a64b8bf497f605334aef0aaad0952b342817ebfec79462d493dadd",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-161-root-20261106-v1.json",
+      "fixtureSha256": "a005000370b8e57f2edfa9bed20ee61b6ca39c909b0f548434c6e1e141021de0",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v262-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-162-root-20261106-v1.json",
+      "fixtureSha256": "085c492988135520be6e492f626428fb8e886b89e7be4346f2ca87b70559d0c8",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-150",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-150-root-20261106-v1.json",
+      "fixtureSha256": "c28ba625b63006c8b6deebdd87d1dbab28b72684ed4efa7b982b2ba09c396908",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-156",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-156-root-20261106-v1.json",
+      "fixtureSha256": "34e3a0f5e61f3d4dac314c36e89699afc2e2940c1b4b5c7a997b95bfafaaeeda",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-156",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-156-root-20261106-v1.json",
+      "fixtureSha256": "34e3a0f5e61f3d4dac314c36e89699afc2e2940c1b4b5c7a997b95bfafaaeeda",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 19,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-157",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-157-root-20261106-v1.json",
+      "fixtureSha256": "13f7c0fea95d577ab1579a761445de5128f438f665a3751d10a4c175327fce9c",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-157",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-157-root-20261106-v1.json",
+      "fixtureSha256": "13f7c0fea95d577ab1579a761445de5128f438f665a3751d10a4c175327fce9c",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-158",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-158-root-20261106-v1.json",
+      "fixtureSha256": "9292662d880deefb4796468a073d77058dbdfc78310c4e6773be42dab8373b6e",
+      "goal": {
+        "id": "data:computer-prefix:1",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "value": 2,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-158",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-158-root-20261106-v1.json",
+      "fixtureSha256": "9292662d880deefb4796468a073d77058dbdfc78310c4e6773be42dab8373b6e",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 2.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-159",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-159-root-20261106-v1.json",
+      "fixtureSha256": "a7ecb36c9b41c97deecfc7f74371d6c6e9c17329050df14226e3afadd0761603",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-160",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-160-root-20261106-v1.json",
+      "fixtureSha256": "75f21233c632a9d74805f66a859b162117a965990d2fadfdc30b165e6f2254ed",
+      "goal": {
+        "id": "data:computer-prefix:2",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 2,
+        "required": {}
+      },
+      "value": 0.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-171",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-171-root-20261106-v1.json",
+      "fixtureSha256": "a5c94008b1ff11e5207ee7524b6ad8937b3664d058803276f7a672ab90f37ced",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-172",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-172-root-20261106-v1.json",
+      "fixtureSha256": "3dded1e3ea001f1ea722eff28bf985f7141c0e4a9efdf92047cc267407d95390",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v263-173",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-173-root-20261106-v1.json",
+      "fixtureSha256": "0a94166d0f0867518e32a14946ef0b08648decae173f1eaf0b5e4cc63146fe1e",
+      "goal": {
+        "id": "data:computer-prefix:3",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 3,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-9",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-9-root-20261106-v1.json",
+      "fixtureSha256": "1b6d2efdf9c5424dd1000e53e31cda2f5e563f7011657bffde02dcf37439d2cd",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-10",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-10-root-20261106-v1.json",
+      "fixtureSha256": "1f1bf9163cf2db796c11c6eff136f15a9683fa47255f74a4f7a11937654ca3a9",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-10",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-10-root-20261106-v1.json",
+      "fixtureSha256": "1f1bf9163cf2db796c11c6eff136f15a9683fa47255f74a4f7a11937654ca3a9",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-11",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-11-root-20261106-v1.json",
+      "fixtureSha256": "48f54a8ea79991406395a963c0c87cd5f33a7a458411e8f1e9df27867acf4460",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-11",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-11-root-20261106-v1.json",
+      "fixtureSha256": "48f54a8ea79991406395a963c0c87cd5f33a7a458411e8f1e9df27867acf4460",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-12",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-12-root-20261106-v1.json",
+      "fixtureSha256": "4ad71b7295edb1c08e6795249eb1f19548bcf9841c8dcc17ca80cc2a9a912d84",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "electric-control-before-13",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-13-root-20261106-v1.json",
+      "fixtureSha256": "530d317c75e6e18ad7fcab39e60c617c385058af147807be88acd120b5ba1930",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v264-184",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-184-root-20261106-v1.json",
+      "fixtureSha256": "3cd1b5a9fcaa7fae97375bc2bd11ae10ca9ac5952ce2b6f0d533b4f7402917ba",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 1.5,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v264-185",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-185-root-20261106-v1.json",
+      "fixtureSha256": "77c2f6f162555b4bf1c740251e9234390bba5bb3dd34c5408883de4b6ee62dd6",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "actual-v264-185",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-185-root-20261106-v1.json",
+      "fixtureSha256": "77c2f6f162555b4bf1c740251e9234390bba5bb3dd34c5408883de4b6ee62dd6",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v264-186",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-186-root-20261106-v1.json",
+      "fixtureSha256": "6a1f11cc44c010f311de54641e64770726814e45f3f9d8728df53e191a2f0f4b",
+      "goal": {
+        "id": "data:computer-prefix:5",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 5,
+        "required": {}
+      },
+      "value": 0,
+      "selected": false,
+      "available": true
+    },
+    {
+      "label": "actual-v264-186",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-186-root-20261106-v1.json",
+      "fixtureSha256": "6a1f11cc44c010f311de54641e64770726814e45f3f9d8728df53e191a2f0f4b",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v264-187",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-187-root-20261106-v1.json",
+      "fixtureSha256": "c71293720ed41f9d95473b1b75e6228cda40acaea08c76f6ef9a2a70a9724bdb",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "actual-v264-188",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-188-root-20261106-v1.json",
+      "fixtureSha256": "2dc46e9957a92e8376187428a40132a1660cd6abbaed09d041ac4f963f8877fa",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    },
+    {
+      "label": "extra-blue-control-2",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-2-root-20261106-v1.json",
+      "fixtureSha256": "f12352a3bf71b8a0d63f72ae03733bd6d98dc27a108decf92f5685b81efc2035",
+      "goal": {
+        "id": "data:computer-prefix:6",
+        "kind": "computer-prefix",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "value": 0,
+      "selected": true,
+      "available": true
+    }
+  ]
+}

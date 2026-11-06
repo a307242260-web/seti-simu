@@ -1,0 +1,1187 @@
+{
+  "roots": 304,
+  "fields": [
+    "actionId",
+    "value",
+    "selectionPlan",
+    "selectionContinuation",
+    "planContinuation",
+    "planEvidence",
+    "roots",
+    "lines",
+    "sharedPrefixGraph",
+    "candidates",
+    "unresolved"
+  ],
+  "labelsNormalizedOnly": [
+    "search-v272 to v264",
+    "resource-preparation-v23 to v22"
+  ],
+  "changes": [
+    {
+      "label": "teacher-039",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-039",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-044",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-045",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-046",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-047",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-048",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-049",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-050",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-051",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-052",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-053",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-054",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-055",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-056",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-057",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-058",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-059",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-078",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-teacher-081",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-teacher-082",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-083",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-teacher-084",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-085",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-086",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-teacher-087",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-teacher-088",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-teacher-089",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-teacher-090",
+      "round": 2,
+      "fields": [
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-autonomous-pass",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual044-funding",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual050-funding",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v148-077-ready-analysis",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v158-048",
+      "round": 1,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v161-66",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v161-75",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v161-77",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v165-65",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v165-67",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-blue-exchange-funding",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-044",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-045",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-046",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-047",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-048",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-049",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-050",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-051",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-052",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-053",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-054",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-055",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-056",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-057",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-072",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-074",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-075",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-076",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-077",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-078",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-079",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-080",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-081",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-082",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-083",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-085",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v178-087",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-073",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-074",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-075",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-076",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-077",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-078",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-079",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-080",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-081",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-082",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-083",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-084",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-085",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-086",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-087",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-088",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-089",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v184-091",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-048",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-049",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-050",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-051",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-052",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-053",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-054",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-055",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-056",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-057",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-058",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-059",
+      "round": 1,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-072",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-073",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-074",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-075",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-076",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-077",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-control-dlc4-skip-after-native-end",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-079",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-080",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-081",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-082",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-083",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-084",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-085",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-086",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-087",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-088",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-089",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-091",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v186-093",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-control-dlc4-launch-after-native-end",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-control-dlc5-skip-after-native-end",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-control-dlc5-launch-after-native-end",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-control-tool-step-80",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-control-tool-step-81",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-081",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-084",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-085",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-086",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-087",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-089",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-098",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-099",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-100",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-101",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-102",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-103",
+      "round": 2,
+      "fields": [
+        "roots",
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-104",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-105",
+      "round": 2,
+      "fields": [
+        "roots",
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-106",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-107",
+      "round": 2,
+      "fields": [
+        "roots",
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-108",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-109",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-110",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-112",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-113",
+      "round": 2,
+      "fields": [
+        "planEvidence",
+        "roots",
+        "lines",
+        "sharedPrefixGraph"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-114",
+      "round": 2,
+      "fields": [
+        "roots",
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-115",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-actual-v187-116",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-sector-mission-before-sector-card",
+      "round": 2,
+      "fields": [
+        "lines"
+      ]
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-86",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-88",
+      "round": 2,
+      "fields": [
+        "actionId",
+        "roots",
+        "lines",
+        "candidates"
+      ]
+    }
+  ],
+  "claim": "Compare serialized full roots, candidate list, action lines, shared-prefix graph and planEvidence as well as selected scalar/plan contracts. This validates the stored fresh-root search structure; it does not prove identical future autonomous trajectories.",
+  "newAutonomousRuns": 0
+}

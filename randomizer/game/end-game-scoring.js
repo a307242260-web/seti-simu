@@ -340,6 +340,12 @@
     return count;
   }
 
+  function getPlayerTraceCounts(player, aliensState) {
+    return Object.fromEntries(["blue", "pink", "yellow"].map((type) => (
+      [type, countTraceMarkers(player, aliensState, type)]
+    )));
+  }
+
   function countOwnedTech(player, techType) {
     const ownedTiles = player?.techState?.ownedTiles || {};
     return Object.keys(ownedTiles)
@@ -921,6 +927,7 @@
     countSectorWinsByColor,
     countSectorWins,
     countTraceMarkers,
+    getPlayerTraceCounts,
     countOwnedTech,
     countTotalOwnedTech,
     countPlanetMarkers,

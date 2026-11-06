@@ -1,0 +1,7830 @@
+{
+  "scope": "One diagnostic CPU sample after first gate failure, no new admission timing or autonomous experiment. Original failed623.9555ms sample remains authoritative.",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+  "raw": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/v266-analysis132-diagnostic-profile-20261106-v1.cpuprofile",
+  "complete": true,
+  "nativeInputs": 175,
+  "value": 139,
+  "actionId": "industry:e887dc52",
+  "rootAndRngUnchanged": true,
+  "topSelf": [
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "line": 0,
+      "samples": 96
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 44
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 152,
+      "samples": 18
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 17
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 14
+    },
+    {
+      "function": "snapshot",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 394,
+      "samples": 13
+    },
+    {
+      "function": "searchDecision",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 14,
+      "samples": 10
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 152,
+      "samples": 10
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 152,
+      "samples": 10
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 10
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 10
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 9
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 9
+    },
+    {
+      "function": "add",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 215,
+      "samples": 8
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 8
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 7
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 6
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 6
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 6
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 6
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 6
+    },
+    {
+      "function": "",
+      "url": "file:///adhoc/profile-v266-analysis132-20261106-v1.js",
+      "line": 4,
+      "samples": 5
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 5
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 5
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 5
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 5
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 5
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 5
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 5
+    },
+    {
+      "function": "restoreCheckpoint",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 899,
+      "samples": 5
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 5
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 5
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 5
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 40,
+      "samples": 5
+    },
+    {
+      "function": "getNebulaAtCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 573,
+      "samples": 5
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 4
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 4
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 4
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 4
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 4
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 4
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 4
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 4
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 4
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 4
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 4
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 4
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 4
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 4
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 4
+    },
+    {
+      "function": "resourceStep",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 727,
+      "samples": 4
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 4
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 4
+    },
+    {
+      "function": "probeStructureKey",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 725,
+      "samples": 4
+    },
+    {
+      "function": "catalog",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 291,
+      "samples": 4
+    },
+    {
+      "function": "resourceSpec",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 754,
+      "samples": 3
+    },
+    {
+      "function": "catalog",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 291,
+      "samples": 3
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 3
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 3
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 3
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 3
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 3
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 40,
+      "samples": 3
+    },
+    {
+      "function": "buildProbeCandidateStructures",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 738,
+      "samples": 3
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 3
+    },
+    {
+      "function": "mod8",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 91,
+      "samples": 3
+    },
+    {
+      "function": "getNebulaAtCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 573,
+      "samples": 3
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 3
+    },
+    {
+      "function": "placeTraceForActor",
+      "url": "file:///randomizer/game/aliens/index.js",
+      "line": 189,
+      "samples": 3
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 3
+    },
+    {
+      "function": "snapshot",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 394,
+      "samples": 3
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 3
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 3
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 3
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 3
+    },
+    {
+      "function": "expandResourcePlan",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 912,
+      "samples": 3
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 26,
+      "samples": 3
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 3
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 3
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 3
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 3
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 3
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 3
+    },
+    {
+      "function": "forwardIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 152,
+      "samples": 3
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 3
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 3
+    },
+    {
+      "function": "resourceStateAdditions",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 165,
+      "samples": 3
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 3
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 3
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 3
+    },
+    {
+      "function": "compactObject",
+      "url": "file:///randomizer/app/simulation-contract.js",
+      "line": 45,
+      "samples": 3
+    },
+    {
+      "function": "turnTailSummary",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2047,
+      "samples": 3
+    },
+    {
+      "function": "createSolarSnapshot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 722,
+      "samples": 3
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 3
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 3
+    },
+    {
+      "function": "previewComputerCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 162,
+      "samples": 3
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 3
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 3
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 3
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1634,
+      "samples": 3
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 3
+    },
+    {
+      "function": "compileForInternalLoader",
+      "url": "node:internal/bootstrap/realm",
+      "line": 385,
+      "samples": 2
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "jointResearchCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 277,
+      "samples": 2
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 2
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 2
+    },
+    {
+      "function": "listBluePlacementRequirements",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 333,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "previewIncomeTail",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 566,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 41,
+      "samples": 2
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-movement-capital.js",
+      "line": 28,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "capitalKeyString",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 461,
+      "samples": 2
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 2
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 2
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 2
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 2
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 2
+    },
+    {
+      "function": "resourceStep",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 727,
+      "samples": 2
+    },
+    {
+      "function": "incomeCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 104,
+      "samples": 2
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 2
+    },
+    {
+      "function": "rewardScore",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 304,
+      "samples": 2
+    },
+    {
+      "function": "collectPlanetLocations",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 666,
+      "samples": 2
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 599,
+      "samples": 2
+    },
+    {
+      "function": "expand",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 573,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "createSpawnedCardEffect",
+      "url": "file:///randomizer/game/cards/play-domain.js",
+      "line": 489,
+      "samples": 2
+    },
+    {
+      "function": "resolveDecision",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 2084,
+      "samples": 2
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 2
+    },
+    {
+      "function": "enumerate",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 822,
+      "samples": 2
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 2
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 2
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 2
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 888,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "expand",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 573,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 2
+    },
+    {
+      "function": "resolveDecision",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 727,
+      "samples": 2
+    },
+    {
+      "function": "settleRocketsAfterSolarRotation",
+      "url": "file:///randomizer/game/abilities/rocket.js",
+      "line": 573,
+      "samples": 2
+    },
+    {
+      "function": "applyFormalCardEffects",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 1072,
+      "samples": 2
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 23,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 238,
+      "samples": 2
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 40,
+      "samples": 2
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 2
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 2
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 40,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 2
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 2
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 2
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 2
+    },
+    {
+      "function": "getOptions",
+      "url": "file:///randomizer/game/effects/probe-turn-session.js",
+      "line": 160,
+      "samples": 2
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 2
+    },
+    {
+      "function": "purposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 449,
+      "samples": 2
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 17,
+      "samples": 2
+    },
+    {
+      "function": "buildState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 155,
+      "samples": 2
+    },
+    {
+      "function": "nodeIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 312,
+      "samples": 2
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 2
+    },
+    {
+      "function": "nodeIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 312,
+      "samples": 2
+    },
+    {
+      "function": "sanitizeSelfPlayer",
+      "url": "file:///randomizer/app/simulation-contract.js",
+      "line": 131,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 2
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 2
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 599,
+      "samples": 2
+    },
+    {
+      "function": "getNebulaLocations",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 545,
+      "samples": 2
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 576,
+      "samples": 2
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 888,
+      "samples": 2
+    },
+    {
+      "function": "ensureCardEffectState",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3874,
+      "samples": 2
+    },
+    {
+      "function": "collectMatchingTriggers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3964,
+      "samples": 2
+    },
+    {
+      "function": "ensureCardEffectState",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3874,
+      "samples": 2
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 2
+    },
+    {
+      "function": "swapIntent",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 176,
+      "samples": 2
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 2
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 2
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 2
+    },
+    {
+      "function": "getPlayerTraceCounts",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 343,
+      "samples": 2
+    },
+    {
+      "function": "paid",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 94,
+      "samples": 2
+    },
+    {
+      "function": "cloneEffectNode",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3773,
+      "samples": 2
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 77,
+      "samples": 2
+    },
+    {
+      "function": "getTradeAction",
+      "url": "file:///randomizer/game/actions/quick-trades.js",
+      "line": 79,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 28,
+      "samples": 2
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 2
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 2
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 237,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 2
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 335,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 2
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 2
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 2
+    },
+    {
+      "function": "readCommittedState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 495,
+      "samples": 2
+    },
+    {
+      "function": "ordered",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 137,
+      "samples": 2
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "line": 0,
+      "samples": 2
+    },
+    {
+      "function": "post",
+      "url": "node:inspector",
+      "line": 118,
+      "samples": 1
+    },
+    {
+      "function": "dispatch",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "openRoot",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 521,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "buildIncomeGainRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1278,
+      "samples": 1
+    },
+    {
+      "function": "scorePlayedCards",
+      "url": "file:///randomizer/game/aliens/jiuzhe.js",
+      "line": 797,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "canExecuteTrade",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 731,
+      "samples": 1
+    },
+    {
+      "function": "canAfford",
+      "url": "file:///randomizer/game/players.js",
+      "line": 245,
+      "samples": 1
+    },
+    {
+      "function": "normalizeDescriptor",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "getPlacementList",
+      "url": "file:///randomizer/game/abilities/planet.js",
+      "line": 103,
+      "samples": 1
+    },
+    {
+      "function": "cloneDiscardActionReward",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 196,
+      "samples": 1
+    },
+    {
+      "function": "listCardSettlements",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 829,
+      "samples": 1
+    },
+    {
+      "function": "buildCardTaskContext",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 808,
+      "samples": 1
+    },
+    {
+      "function": "wrappedFn",
+      "url": "node:internal/errors",
+      "line": 535,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 65,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 1
+    },
+    {
+      "function": "hashCounterfactualSeed",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 48,
+      "samples": 1
+    },
+    {
+      "function": "normalizePlayerTechState",
+      "url": "file:///randomizer/game/players.js",
+      "line": 174,
+      "samples": 1
+    },
+    {
+      "function": "validateLowCouplingInvariants",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 175,
+      "samples": 1
+    },
+    {
+      "function": "deserialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 317,
+      "samples": 1
+    },
+    {
+      "function": "validateSerializableGraph",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 86,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 336,
+      "samples": 1
+    },
+    {
+      "function": "buildSectorWinRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1156,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "freeze",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 124,
+      "samples": 1
+    },
+    {
+      "function": "paid",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 94,
+      "samples": 1
+    },
+    {
+      "function": "getOccupiedBlueSlots",
+      "url": "file:///randomizer/game/tech/player-tech.js",
+      "line": 101,
+      "samples": 1
+    },
+    {
+      "function": "swapIntent",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 176,
+      "samples": 1
+    },
+    {
+      "function": "publicIncomeSwapInputs",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 379,
+      "samples": 1
+    },
+    {
+      "function": "incomeAllocationCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 326,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolEntry",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 520,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 241,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "buildState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 155,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 168,
+      "samples": 1
+    },
+    {
+      "function": "nodeIdentity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 312,
+      "samples": 1
+    },
+    {
+      "function": "getResourceGoalRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1869,
+      "samples": 1
+    },
+    {
+      "function": "buildTechGainRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1358,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 449,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutSymbols",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 439,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutSector",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 434,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 108,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 184,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "blueFunding",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 62,
+      "samples": 1
+    },
+    {
+      "function": "incomeTailCapital",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 233,
+      "samples": 1
+    },
+    {
+      "function": "listPlacedTokens",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 123,
+      "samples": 1
+    },
+    {
+      "function": "placeDataToComputer",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 448,
+      "samples": 1
+    },
+    {
+      "function": "canPlaceDataToComputer",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 297,
+      "samples": 1
+    },
+    {
+      "function": "getBlueBoardSlotForComputerSlot",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 117,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "applyImmediateIncomeReward",
+      "url": "file:///randomizer/game/players.js",
+      "line": 388,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 398,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutTools",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 444,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 16,
+      "samples": 1
+    },
+    {
+      "function": "value",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 101,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 138,
+      "samples": 1
+    },
+    {
+      "function": "pendingFinalMarkCapital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 305,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 18,
+      "samples": 1
+    },
+    {
+      "function": "jointResearchCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 277,
+      "samples": 1
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 41,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "securedScope",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 70,
+      "samples": 1
+    },
+    {
+      "function": "portfolio",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 349,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 118,
+      "samples": 1
+    },
+    {
+      "function": "publicIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 407,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "prepareGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 54,
+      "samples": 1
+    },
+    {
+      "function": "isAmibaRevealedSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 211,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "securedScope",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "reservationsSafe",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 16,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 546,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "moveSymbolFromSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 588,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "getCardPlayCost",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 388,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "missionDataContinuation",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "capitalKeyString",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 461,
+      "samples": 1
+    },
+    {
+      "function": "capitalKeyString",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 461,
+      "samples": 1
+    },
+    {
+      "function": "valueFacts",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 131,
+      "samples": 1
+    },
+    {
+      "function": "hasActiveAlienLabPanel",
+      "url": "file:///randomizer/game/industry/passives.js",
+      "line": 35,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 344,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerKeys",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 208,
+      "samples": 1
+    },
+    {
+      "function": "getFormulaBaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 621,
+      "samples": 1
+    },
+    {
+      "function": "listComputerPlacedTokens",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 127,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparationCapital",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 203,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 15,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "researchPurposeGains",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 158,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "valueFacts",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 131,
+      "samples": 1
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3981,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 593,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 870,
+      "samples": 1
+    },
+    {
+      "function": "getJiuzheModule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 72,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 334,
+      "samples": 1
+    },
+    {
+      "function": "countStateTraceMarkersForPlayer",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 253,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 346,
+      "samples": 1
+    },
+    {
+      "function": "listComputerPlacedTokens",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 127,
+      "samples": 1
+    },
+    {
+      "function": "pendingFinalMarkOption",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 290,
+      "samples": 1
+    },
+    {
+      "function": "playerHasActiveTile",
+      "url": "file:///randomizer/game/tech/player-tech.js",
+      "line": 97,
+      "samples": 1
+    },
+    {
+      "function": "needs",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 140,
+      "samples": 1
+    },
+    {
+      "function": "capital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 116,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 226,
+      "samples": 1
+    },
+    {
+      "function": "valueFacts",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 131,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 402,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerIndustryLabel",
+      "url": "file:///randomizer/game/industry/catalog.js",
+      "line": 95,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerCompanyBaseIncome",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 571,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 108,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "getTechType",
+      "url": "file:///randomizer/game/tech/catalog.js",
+      "line": 57,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "supportedResearch",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 117,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 31,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 18,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 148,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3981,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerCompanyBaseIncome",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 571,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 876,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "owner",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 12,
+      "samples": 1
+    },
+    {
+      "function": "step",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 599,
+      "samples": 1
+    },
+    {
+      "function": "preparations",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 500,
+      "samples": 1
+    },
+    {
+      "function": "project",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 483,
+      "samples": 1
+    },
+    {
+      "function": "utility",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 474,
+      "samples": 1
+    },
+    {
+      "function": "needs",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 12,
+      "samples": 1
+    },
+    {
+      "function": "readPlanningState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 630,
+      "samples": 1
+    },
+    {
+      "function": "readCommittedState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 495,
+      "samples": 1
+    },
+    {
+      "function": "incomeChoice",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerTileScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 782,
+      "samples": 1
+    },
+    {
+      "function": "getFormulaBaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 621,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "ensureFinalScoringState",
+      "url": "file:///randomizer/game/final-scoring.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "countPlanetLandingPairs",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 449,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 858,
+      "samples": 1
+    },
+    {
+      "function": "computerCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 186,
+      "samples": 1
+    },
+    {
+      "function": "previewComputerCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 162,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 41,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 1
+    },
+    {
+      "function": "freeze",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 124,
+      "samples": 1
+    },
+    {
+      "function": "freeze",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 124,
+      "samples": 1
+    },
+    {
+      "function": "observeEnvelope",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 421,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "compactObject",
+      "url": "file:///randomizer/app/simulation-contract.js",
+      "line": 45,
+      "samples": 1
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3981,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerCardScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 818,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerTileScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 782,
+      "samples": 1
+    },
+    {
+      "function": "playerHasPassive",
+      "url": "file:///randomizer/game/industry/passives.js",
+      "line": 26,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "freeze",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 124,
+      "samples": 1
+    },
+    {
+      "function": "evaluateStateValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 507,
+      "samples": 1
+    },
+    {
+      "function": "factsFromObservation",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 309,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 449,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutTools",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 444,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 1
+    },
+    {
+      "function": "capital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 116,
+      "samples": 1
+    },
+    {
+      "function": "newMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 173,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 143,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 25,
+      "samples": 1
+    },
+    {
+      "function": "incomeAllocationCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 326,
+      "samples": 1
+    },
+    {
+      "function": "getCardModel",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3817,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 31,
+      "samples": 1
+    },
+    {
+      "function": "missionDataContinuation",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "capital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 116,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "publicIncomeSwapInputs",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 379,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 196,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "immutableTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 74,
+      "samples": 1
+    },
+    {
+      "function": "reservationsSafe",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 16,
+      "samples": 1
+    },
+    {
+      "function": "goalMovementSpec",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1030,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "findAvailableSlotIndex",
+      "url": "file:///randomizer/game/rockets.js",
+      "line": 235,
+      "samples": 1
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 576,
+      "samples": 1
+    },
+    {
+      "function": "probeRouteTopology",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 562,
+      "samples": 1
+    },
+    {
+      "function": "buildTopologyBody",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 444,
+      "samples": 1
+    },
+    {
+      "function": "normalizeSolarInput",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 162,
+      "samples": 1
+    },
+    {
+      "function": "routeKey",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 464,
+      "samples": 1
+    },
+    {
+      "function": "formatChoiceLabel",
+      "url": "file:///randomizer/game/abilities/planet.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "rewardEquivalentValue",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 334,
+      "samples": 1
+    },
+    {
+      "function": "createSolarSnapshot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 722,
+      "samples": 1
+    },
+    {
+      "function": "getWheelCellAtDisplayCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 526,
+      "samples": 1
+    },
+    {
+      "function": "getWheelStep",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 182,
+      "samples": 1
+    },
+    {
+      "function": "result",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "arrivalValue",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 80,
+      "samples": 1
+    },
+    {
+      "function": "realizationForNode",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 66,
+      "samples": 1
+    },
+    {
+      "function": "observeEnvelope",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 421,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "releaseBoundaryObservation",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 3084,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 340,
+      "samples": 1
+    },
+    {
+      "function": "expandWithCardPick",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 671,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "stableHash",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 43,
+      "samples": 1
+    },
+    {
+      "function": "createSession",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 158,
+      "samples": 1
+    },
+    {
+      "function": "drain",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 708,
+      "samples": 1
+    },
+    {
+      "function": "runWithWorkingState",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1646,
+      "samples": 1
+    },
+    {
+      "function": "getSectorCoordinateBoundary",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 362,
+      "samples": 1
+    },
+    {
+      "function": "applyHandoff",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 1755,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/cards/play-domain.js",
+      "line": 802,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 487,
+      "samples": 1
+    },
+    {
+      "function": "augmentEffectResult",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 1379,
+      "samples": 1
+    },
+    {
+      "function": "collectType1TriggerMatches",
+      "url": "file:///randomizer/game/cards/task-state.js",
+      "line": 91,
+      "samples": 1
+    },
+    {
+      "function": "collectMatchingTriggers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3964,
+      "samples": 1
+    },
+    {
+      "function": "isTriggerConsumed",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3890,
+      "samples": 1
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 1
+    },
+    {
+      "function": "validateCards",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 220,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 258,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "clone",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 19,
+      "samples": 1
+    },
+    {
+      "function": "companyQueue",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 388,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "placeAlienTrace",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 619,
+      "samples": 1
+    },
+    {
+      "function": "getNextSymbolSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 576,
+      "samples": 1
+    },
+    {
+      "function": "collectMatchingTriggers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3964,
+      "samples": 1
+    },
+    {
+      "function": "isTriggerConsumed",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3890,
+      "samples": 1
+    },
+    {
+      "function": "actionContext",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 380,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 471,
+      "samples": 1
+    },
+    {
+      "function": "getCardSrc",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 81,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "applyResult",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 587,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "validateLowCouplingInvariants",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 175,
+      "samples": 1
+    },
+    {
+      "function": "validateForbiddenFields",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "validateHighCouplingInvariants",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 353,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 63,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 258,
+      "samples": 1
+    },
+    {
+      "function": "validateLowCouplingInvariants",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 175,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 40,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "collectPassReserveCardIds",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 357,
+      "samples": 1
+    },
+    {
+      "function": "applyResult",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 587,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "clone",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "moveChoices",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 172,
+      "samples": 1
+    },
+    {
+      "function": "getTradeAction",
+      "url": "file:///randomizer/game/actions/quick-trades.js",
+      "line": 79,
+      "samples": 1
+    },
+    {
+      "function": "normalizeDescriptor",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "getOptions",
+      "url": "file:///randomizer/game/effects/probe-turn-session.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "buildProbeLocationData",
+      "url": "file:///randomizer/game/rockets.js",
+      "line": 46,
+      "samples": 1
+    },
+    {
+      "function": "collectVisibleCoordinateContents",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 653,
+      "samples": 1
+    },
+    {
+      "function": "save",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 816,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "createCheckpoint",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 878,
+      "samples": 1
+    },
+    {
+      "function": "inspect",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 612,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutTools",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 444,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerKeys",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 208,
+      "samples": 1
+    },
+    {
+      "function": "supportedResearch",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 117,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 213,
+      "samples": 1
+    },
+    {
+      "function": "fixed",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 274,
+      "samples": 1
+    },
+    {
+      "function": "knownPostdrawTailView",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1249,
+      "samples": 1
+    },
+    {
+      "function": "getDiscardActionRewardForCard",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 226,
+      "samples": 1
+    },
+    {
+      "function": "listTraceEntries",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 339,
+      "samples": 1
+    },
+    {
+      "function": "immutableTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 74,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "immutableTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 74,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "getTraceEntries",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 303,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "getTraceGrid",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "securedScope",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-movement-capital.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerTraceCounts",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "getTraceEntries",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 303,
+      "samples": 1
+    },
+    {
+      "function": "turnTailSummary",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2047,
+      "samples": 1
+    },
+    {
+      "function": "isTriggerConsumed",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3890,
+      "samples": 1
+    },
+    {
+      "function": "buildOrbitRewardEffects",
+      "url": "file:///randomizer/game/actions/planet-rewards.js",
+      "line": 374,
+      "samples": 1
+    },
+    {
+      "function": "cloneCost",
+      "url": "file:///randomizer/game/abilities/planet.js",
+      "line": 50,
+      "samples": 1
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 599,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "getCardModel",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3817,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "supported",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "previewComputerCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 162,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "getCardModel",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3817,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerTraceCounts",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 207,
+      "samples": 1
+    },
+    {
+      "function": "getHighestThreatPlayers",
+      "url": "file:///randomizer/game/aliens/jiuzhe.js",
+      "line": 811,
+      "samples": 1
+    },
+    {
+      "function": "getCardId",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3811,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "countStateTraceMarkersForPlayer",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 253,
+      "samples": 1
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "getCatalogEntryForCard",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 171,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "countSectorWins",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 235,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 838,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "readCommittedState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 495,
+      "samples": 1
+    },
+    {
+      "function": "swapIntent",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 176,
+      "samples": 1
+    },
+    {
+      "function": "getMappedCompanyBaseIncome",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 553,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "normalizeSolarInput",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 162,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "listNebulaChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerCompanyBaseIncome",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 571,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "capitalKeyString",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 461,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "createSolarSnapshot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 722,
+      "samples": 1
+    },
+    {
+      "function": "normalizeRotationState",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 146,
+      "samples": 1
+    },
+    {
+      "function": "normalizeSolarInput",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 162,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "publicIncomeSwapEligible",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 367,
+      "samples": 1
+    },
+    {
+      "function": "getIncomeIncreaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 613,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 163,
+      "samples": 1
+    },
+    {
+      "function": "expandEffects",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3798,
+      "samples": 1
+    },
+    {
+      "function": "planningState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 608,
+      "samples": 1
+    },
+    {
+      "function": "localDecisionSpec",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 689,
+      "samples": 1
+    },
+    {
+      "function": "actionContext",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 380,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "noop",
+      "url": "node:internal/util/debuglog",
+      "line": 57,
+      "samples": 1
+    },
+    {
+      "function": "scanQueue",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 936,
+      "samples": 1
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "stableHash",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 226,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/data/nebula-state.js",
+      "line": 383,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "getCurrentPlayer",
+      "url": "file:///randomizer/game/players.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "executeQuickTrade",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 685,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "validateRootSchema",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "listPlaceDataChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 1520,
+      "samples": 1
+    },
+    {
+      "function": "isActive",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 241,
+      "samples": 1
+    },
+    {
+      "function": "createActionContext",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 1519,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "replaceNextNebulaDataToken",
+      "url": "file:///randomizer/game/data/nebula-state.js",
+      "line": 673,
+      "samples": 1
+    },
+    {
+      "function": "ensureNebulaBucket",
+      "url": "file:///randomizer/game/data/nebula-state.js",
+      "line": 207,
+      "samples": 1
+    },
+    {
+      "function": "listNebulaChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "hasCost",
+      "url": "file:///randomizer/game/abilities/rocket.js",
+      "line": 53,
+      "samples": 1
+    },
+    {
+      "function": "solarGridToGlobalPoint",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "getUnwrappedCardinalAngles",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 259,
+      "samples": 1
+    },
+    {
+      "function": "getPointBounds",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 275,
+      "samples": 1
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 1
+    },
+    {
+      "function": "rotateForResearch",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 329,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/abilities/rocket.js",
+      "line": 585,
+      "samples": 1
+    },
+    {
+      "function": "getWheelStep",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 182,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "claimTechSymbol",
+      "url": "file:///randomizer/game/aliens/runezu.js",
+      "line": 737,
+      "samples": 1
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 599,
+      "samples": 1
+    },
+    {
+      "function": "getWheelCellAtDisplayCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 526,
+      "samples": 1
+    },
+    {
+      "function": "genericResolve",
+      "url": "file:///randomizer/game/cards/play-domain.js",
+      "line": 2132,
+      "samples": 1
+    },
+    {
+      "function": "resolveSymbolAtSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 608,
+      "samples": 1
+    },
+    {
+      "function": "moveSymbolFromSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 588,
+      "samples": 1
+    },
+    {
+      "function": "awardAmibaSymbols",
+      "url": "file:///randomizer/game/cards/play-domain.js",
+      "line": 1651,
+      "samples": 1
+    },
+    {
+      "function": "getCatalogEntryByCardId",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 130,
+      "samples": 1
+    },
+    {
+      "function": "settleCardDecision",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 1609,
+      "samples": 1
+    },
+    {
+      "function": "countAomomoPlanetMarkers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 4134,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 487,
+      "samples": 1
+    },
+    {
+      "function": "augmentEffectResult",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 1379,
+      "samples": 1
+    },
+    {
+      "function": "getDecisionSnapshot",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 249,
+      "samples": 1
+    },
+    {
+      "function": "runWithWorkingStateContext",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 386,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 237,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "listNebulaChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/data/nebula-state.js",
+      "line": 383,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "node:internal/webidl",
+      "line": 287,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 477,
+      "samples": 1
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "url": "file:///randomizer/game/tech/resolver.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "validateLowCouplingInvariants",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 175,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "inferSequence",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 88,
+      "samples": 1
+    },
+    {
+      "function": "validateHighCouplingInvariants",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 353,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "scanForbidden",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 224,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 132,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 40,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 26,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "advance",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 665,
+      "samples": 1
+    },
+    {
+      "function": "formalizeChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 236,
+      "samples": 1
+    },
+    {
+      "function": "stableHash",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 226,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "getCardDefinition",
+      "url": "file:///randomizer/game/aliens/chong.js",
+      "line": 474,
+      "samples": 1
+    },
+    {
+      "function": "getLegalChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 1691,
+      "samples": 1
+    },
+    {
+      "function": "validateOwner",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "visit",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/low-coupling-slices.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "validateHighCouplingInvariants",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 353,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 224,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 132,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/state/high-coupling-slices.js",
+      "line": 284,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "collectClaimedCardIds",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 409,
+      "samples": 1
+    },
+    {
+      "function": "collectLiveCardIds",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 373,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "listNebulaChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "wrappedFn",
+      "url": "node:internal/errors",
+      "line": 535,
+      "samples": 1
+    },
+    {
+      "function": "finishChild",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1195,
+      "samples": 1
+    },
+    {
+      "function": "serializeForkSnapshot",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 482,
+      "samples": 1
+    },
+    {
+      "function": "stableSerialize",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 59,
+      "samples": 1
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 1
+    },
+    {
+      "function": "serializeString",
+      "url": "file:///randomizer/game/state/state-store.js",
+      "line": 49,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "enumerate",
+      "url": "file:///randomizer/game/production-composition.js",
+      "line": 822,
+      "samples": 1
+    },
+    {
+      "function": "enumerate",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 126,
+      "samples": 1
+    },
+    {
+      "function": "normalizeDescriptor",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/probe-turn-session.js",
+      "line": 177,
+      "samples": 1
+    },
+    {
+      "function": "listPlayerMoveChoices",
+      "url": "file:///randomizer/game/abilities/rocket.js",
+      "line": 372,
+      "samples": 1
+    },
+    {
+      "function": "actor",
+      "url": "file:///randomizer/game/effects/probe-turn-session.js",
+      "line": 75,
+      "samples": 1
+    },
+    {
+      "function": "getActiveRocket",
+      "url": "file:///randomizer/game/rockets.js",
+      "line": 460,
+      "samples": 1
+    },
+    {
+      "function": "enumerate",
+      "url": "file:///randomizer/game/actions/standard-action.js",
+      "line": 126,
+      "samples": 1
+    },
+    {
+      "function": "getOptions",
+      "url": "file:///randomizer/game/effects/residual-domain-session.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "createSolarSnapshot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 722,
+      "samples": 1
+    },
+    {
+      "function": "collectVisibleCoordinateContents",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 653,
+      "samples": 1
+    },
+    {
+      "function": "getRocketSectorCoordinate",
+      "url": "file:///randomizer/game/rockets.js",
+      "line": 288,
+      "samples": 1
+    },
+    {
+      "function": "countPlayerPlanetMarkers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 4398,
+      "samples": 1
+    },
+    {
+      "function": "countAomomoPlanetMarkers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 4134,
+      "samples": 1
+    },
+    {
+      "function": "describePlacementBonuses",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 206,
+      "samples": 1
+    },
+    {
+      "function": "createNode",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 451,
+      "samples": 1
+    },
+    {
+      "function": "readPlanningState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 630,
+      "samples": 1
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "queuedIncomeGoal",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 141,
+      "samples": 1
+    },
+    {
+      "function": "fixed",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 274,
+      "samples": 1
+    },
+    {
+      "function": "isHiddenInformationBarrier",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 83,
+      "samples": 1
+    },
+    {
+      "function": "inspect",
+      "url": "file:///randomizer/game/effects/session-runtime.js",
+      "line": 291,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 883,
+      "samples": 1
+    },
+    {
+      "function": "listGenericChoices",
+      "url": "file:///randomizer/game/cards/play-domain.js",
+      "line": 1909,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 237,
+      "samples": 1
+    },
+    {
+      "function": "listAlienTraceChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 492,
+      "samples": 1
+    },
+    {
+      "function": "known",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1176,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1182,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1174,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "get",
+      "url": "node:internal/util",
+      "line": 631,
+      "samples": 1
+    },
+    {
+      "function": "now",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "finish",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 916,
+      "samples": 1
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "goals",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/tech/player-tech.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "listPlacedTokens",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 123,
+      "samples": 1
+    },
+    {
+      "function": "select",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 35,
+      "samples": 1
+    },
+    {
+      "function": "swapIntent",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 176,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "immutableCapitalInput",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 122,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "getBlueTileDataBonus",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 125,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "apply",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 168,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "missionDataContinuation",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "listLandRequirementsAt",
+      "url": "file:///randomizer/game/abilities/planet.js",
+      "line": 395,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "funding",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 270,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "pendingFinalMarkCapital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 305,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 108,
+      "samples": 1
+    },
+    {
+      "function": "isChongEcosystemStudyCard",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 672,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 25,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "researchPurposeGains",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 158,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 45,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolEntry",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 520,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 159,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "incomeOptions",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "bestFor",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 173,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "supported",
+      "url": "file:///randomizer/game/ai/known-movement-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "cloneReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "samples": 1
+    },
+    {
+      "function": "isAmibaFinalTraceCard",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 679,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "resolveSymbolAtSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 608,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "analysisPortfolio.incomeRemovalClass",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 357,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 25,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "incomeOptions",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "node:internal/webidl",
+      "line": 287,
+      "samples": 1
+    },
+    {
+      "function": "valueFacts",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 131,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 867,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "ordinaryIncomeSwapCard",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 375,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 339,
+      "samples": 1
+    },
+    {
+      "function": "isTrade",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "planningState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 608,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 618,
+      "samples": 1
+    },
+    {
+      "function": "freeze",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 124,
+      "samples": 1
+    },
+    {
+      "function": "get identity",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 475,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 168,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "project",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 483,
+      "samples": 1
+    },
+    {
+      "function": "resourcePreview",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 437,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "getNextDataIndex",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "needs",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 473,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 480,
+      "samples": 1
+    },
+    {
+      "function": "getTechType",
+      "url": "file:///randomizer/game/tech/catalog.js",
+      "line": 57,
+      "samples": 1
+    },
+    {
+      "function": "scanStep",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 351,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "getSectorRanking",
+      "url": "file:///randomizer/game/data/nebula-state.js",
+      "line": 543,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 548,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 18,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "readCommittedState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 495,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "normalizeObject",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "normalize",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 204,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "committedProjection",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 572,
+      "samples": 1
+    },
+    {
+      "function": "buildRuleObservation",
+      "url": "file:///randomizer/app/rule-observation.js",
+      "line": 126,
+      "samples": 1
+    },
+    {
+      "function": "getBaseScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 216,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerTileScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 782,
+      "samples": 1
+    },
+    {
+      "function": "sanitizePublicPlayer",
+      "url": "file:///randomizer/app/simulation-contract.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "playerHasPassive",
+      "url": "file:///randomizer/game/industry/passives.js",
+      "line": 26,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 870,
+      "samples": 1
+    },
+    {
+      "function": "sanitizeTechSupply",
+      "url": "file:///randomizer/app/simulation-contract.js",
+      "line": 174,
+      "samples": 1
+    },
+    {
+      "function": "getPassingPlayerIds",
+      "url": "file:///randomizer/game/effects/probe-turn-session.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "node:internal/webidl",
+      "line": 287,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "deepFreeze",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "sanitizeHiddenInformationObservation",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 175,
+      "samples": 1
+    },
+    {
+      "function": "maskTechSupplyStacks",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "clone",
+      "url": "file:///randomizer/game/rule-composition.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "dataTailCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 212,
+      "samples": 1
+    },
+    {
+      "function": "canLeaveProbeStationary",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2121,
+      "samples": 1
+    },
+    {
+      "function": "add",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 82,
+      "samples": 1
+    },
+    {
+      "function": "collectVisibleCoordinateContents",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 653,
+      "samples": 1
+    },
+    {
+      "function": "getWheelCellAtDisplayCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 526,
+      "samples": 1
+    },
+    {
+      "function": "asInactiveCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 488,
+      "samples": 1
+    },
+    {
+      "function": "readWheelStep",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 135,
+      "samples": 1
+    },
+    {
+      "function": "mod8",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 91,
+      "samples": 1
+    },
+    {
+      "function": "probeRouteTopologyKey",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 417,
+      "samples": 1
+    },
+    {
+      "function": "readProbeMovementContext",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 384,
+      "samples": 1
+    },
+    {
+      "function": "getOccupiedSlotIndices",
+      "url": "file:///randomizer/game/rockets.js",
+      "line": 229,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "normalizeRotationState",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 146,
+      "samples": 1
+    },
+    {
+      "function": "routes",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "goalMovementSpec",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1030,
+      "samples": 1
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 205,
+      "samples": 1
+    },
+    {
+      "function": "shouldPreserveRepeatInBuildEffects",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3782,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 344,
+      "samples": 1
+    },
+    {
+      "function": "getPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 526,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerIndustryLabel",
+      "url": "file:///randomizer/game/industry/catalog.js",
+      "line": 95,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 449,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "publicAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 32,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "canPlaceAmibaTrace",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 232,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "gain",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 96,
+      "samples": 1
+    },
+    {
+      "function": "researchPurposeGains",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 158,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "publicIncomeSwapInputs",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 379,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/sector-card-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "resolveSymbolAtSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 608,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/research-symbol-capital.js",
+      "line": 44,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "getIndustryEffect",
+      "url": "file:///randomizer/game/initial-cards.js",
+      "line": 234,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 593,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerTraceCounts",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 343,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "listPlacedTokens",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 123,
+      "samples": 1
+    },
+    {
+      "function": "normalizeIndustryLabel",
+      "url": "file:///randomizer/game/industry/catalog.js",
+      "line": 73,
+      "samples": 1
+    },
+    {
+      "function": "facts",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 16,
+      "samples": 1
+    },
+    {
+      "function": "buildPlayEffects",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3866,
+      "samples": 1
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3981,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 868,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "goals",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "buildPlayEffects",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3866,
+      "samples": 1
+    },
+    {
+      "function": "retained",
+      "url": "file:///randomizer/game/ai/card-pick-planning.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "weighted",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 140,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 143,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 17,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 18,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "newMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 173,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "analysisPortfolio",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 350,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 71,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "getFirstTraceRewardForSlot",
+      "url": "file:///randomizer/game/aliens/state.js",
+      "line": 128,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 546,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 207,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-symbol-capital.js",
+      "line": 51,
+      "samples": 1
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 99,
+      "samples": 1
+    },
+    {
+      "function": "capital",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 116,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 209,
+      "samples": 1
+    },
+    {
+      "function": "getNebulaAtCoordinate",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 573,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "supported",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 118,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/research-symbol-capital.js",
+      "line": 44,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 234,
+      "samples": 1
+    },
+    {
+      "function": "getBlueBoardSlotForComputerSlot",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 117,
+      "samples": 1
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutSymbols",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 439,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 308,
+      "samples": 1
+    },
+    {
+      "function": "dataContinuation",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 344,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 34,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "getFirstTraceRewardForSlot",
+      "url": "file:///randomizer/game/aliens/state.js",
+      "line": 128,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "analysisAliens",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "getBlueTileDataBonus",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 125,
+      "samples": 1
+    },
+    {
+      "function": "apply",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 168,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "ownedProbes",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 30,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "gain",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 96,
+      "samples": 1
+    },
+    {
+      "function": "getRequiredComputerSlotForBlueBonus",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 109,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "missionDataContinuation",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "isChongEcosystemStudyCard",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 672,
+      "samples": 1
+    },
+    {
+      "function": "getIncomeIncreaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 613,
+      "samples": 1
+    },
+    {
+      "function": "getIndustryEffect",
+      "url": "file:///randomizer/game/initial-cards.js",
+      "line": 234,
+      "samples": 1
+    },
+    {
+      "function": "shouldApplyJiuzheThreatPenalty",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 854,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 128,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalWithoutTools",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 444,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 41,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 225,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "cardResearchOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 193,
+      "samples": 1
+    },
+    {
+      "function": "sum",
+      "url": "file:///randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 145,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 17,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "missionDataContinuation",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/known-movement-capital.js",
+      "line": 29,
+      "samples": 1
+    },
+    {
+      "function": "normalizeIndustryLabel",
+      "url": "file:///randomizer/game/initial-cards.js",
+      "line": 224,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "getSlotMultiplier",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 540,
+      "samples": 1
+    },
+    {
+      "function": "canPlaceDataToComputer",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 297,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerFinalScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 881,
+      "samples": 1
+    },
+    {
+      "function": "getHighestThreatPlayers",
+      "url": "file:///randomizer/game/aliens/jiuzhe.js",
+      "line": 811,
+      "samples": 1
+    },
+    {
+      "function": "getFormulaBaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 621,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 323,
+      "samples": 1
+    },
+    {
+      "function": "owner",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "blueCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 161,
+      "samples": 1
+    },
+    {
+      "function": "previewBlueCompletion",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 113,
+      "samples": 1
+    },
+    {
+      "function": "getPlacementKind",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 42,
+      "samples": 1
+    },
+    {
+      "function": "planningCapital",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "factsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 333,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 128,
+      "samples": 1
+    },
+    {
+      "function": "researchFactsFromState",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 328,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 870,
+      "samples": 1
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 348,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 31,
+      "samples": 1
+    },
+    {
+      "function": "listNebulaChoices",
+      "url": "file:///randomizer/game/effects/science-session.js",
+      "line": 273,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 289,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "jointResearchCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 277,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "gain",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 96,
+      "samples": 1
+    },
+    {
+      "function": "total",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 77,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 626,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 569,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 28,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 142,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 39,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 17,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "formatRegionLabel",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 695,
+      "samples": 1
+    },
+    {
+      "function": "dataInvestmentFor",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 319,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 18,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "getTraceEntries",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 303,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "getSymbolResolutionOrder",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 566,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 571,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 31,
+      "samples": 1
+    },
+    {
+      "function": "gainResources",
+      "url": "file:///randomizer/game/players.js",
+      "line": 307,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "quiet",
+      "url": "file:///randomizer/game/ai/research-income-capital.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/sector-card-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 270,
+      "samples": 1
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 568,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3981,
+      "samples": 1
+    },
+    {
+      "function": "getSlotMultiplier",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 540,
+      "samples": 1
+    },
+    {
+      "function": "resolveCardEndGameRule",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 697,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "owner",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 10,
+      "samples": 1
+    },
+    {
+      "function": "placeDataToComputer",
+      "url": "file:///randomizer/game/data/state.js",
+      "line": 448,
+      "samples": 1
+    },
+    {
+      "function": "canLeaveProbeStationary",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2121,
+      "samples": 1
+    },
+    {
+      "function": "plan",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 40,
+      "samples": 1
+    },
+    {
+      "function": "createSolarSnapshot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 722,
+      "samples": 1
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 599,
+      "samples": 1
+    },
+    {
+      "function": "normalizeSectorBySlot",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 115,
+      "samples": 1
+    },
+    {
+      "function": "getBaseWheelCell",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 500,
+      "samples": 1
+    },
+    {
+      "function": "mod8",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 91,
+      "samples": 1
+    },
+    {
+      "function": "routes",
+      "url": "file:///randomizer/game/ai/goal-movement.js",
+      "line": 23,
+      "samples": 1
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 576,
+      "samples": 1
+    },
+    {
+      "function": "probeStructureKey",
+      "url": "file:///randomizer/game/production-kernel.js",
+      "line": 725,
+      "samples": 1
+    },
+    {
+      "function": "readWheelStep",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 135,
+      "samples": 1
+    },
+    {
+      "function": "collectMatchingTriggers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3964,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "moveSymbolFromSlot",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 588,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 195,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerCompanyBaseIncome",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 571,
+      "samples": 1
+    },
+    {
+      "function": "getSlotMultiplier",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 540,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 867,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 321,
+      "samples": 1
+    },
+    {
+      "function": "researchFunding",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 147,
+      "samples": 1
+    },
+    {
+      "function": "cloneDiscardActionReward",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 196,
+      "samples": 1
+    },
+    {
+      "function": "getCardTypeCode",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 199,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/resource-demand.js",
+      "line": 480,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 218,
+      "samples": 1
+    },
+    {
+      "function": "getBlueBoardSlotForComputerSlot",
+      "url": "file:///randomizer/game/data/placement.js",
+      "line": 117,
+      "samples": 1
+    },
+    {
+      "function": "listPendingMarks",
+      "url": "file:///randomizer/game/final-scoring.js",
+      "line": 134,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerFinalScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 881,
+      "samples": 1
+    },
+    {
+      "function": "getHighestThreatPlayers",
+      "url": "file:///randomizer/game/aliens/jiuzhe.js",
+      "line": 811,
+      "samples": 1
+    },
+    {
+      "function": "computePlayerTileScore",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 782,
+      "samples": 1
+    },
+    {
+      "function": "purposeCapitalValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 496,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "getTraceEntries",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 303,
+      "samples": 1
+    },
+    {
+      "function": "getPlayerJiuzheCards",
+      "url": "file:///randomizer/game/aliens/jiuzhe.js",
+      "line": 440,
+      "samples": 1
+    },
+    {
+      "function": "encode",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 468,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 49,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "basePurposeCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 338,
+      "samples": 1
+    },
+    {
+      "function": "gain",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 96,
+      "samples": 1
+    },
+    {
+      "function": "owner",
+      "url": "file:///randomizer/game/ai/local-decision-plans.js",
+      "line": 11,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1627,
+      "samples": 1
+    },
+    {
+      "function": "mod8",
+      "url": "file:///randomizer/solar-system/core.js",
+      "line": 91,
+      "samples": 1
+    },
+    {
+      "function": "countAomomoPlanetMarkers",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 4134,
+      "samples": 1
+    },
+    {
+      "function": "getCardModel",
+      "url": "file:///randomizer/game/cards/effects.js",
+      "line": 3817,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2107,
+      "samples": 1
+    },
+    {
+      "function": "describeNextFinalMark",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 864,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "samples": 1
+    },
+    {
+      "function": "resolveRegionReward",
+      "url": "file:///randomizer/game/aliens/amiba.js",
+      "line": 623,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "researchTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 87,
+      "samples": 1
+    },
+    {
+      "function": "advanceTurnAfterPlayerAction",
+      "url": "file:///randomizer/game/turn-flow.js",
+      "line": 134,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "",
+      "line": 0,
+      "samples": 1
+    },
+    {
+      "function": "countTraceMarkers",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "samples": 1
+    },
+    {
+      "function": "evaluateStateValue",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 507,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "quote",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 1
+    },
+    {
+      "function": "delta",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 200,
+      "samples": 1
+    },
+    {
+      "function": "jointResearchCapital",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 277,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "markGain",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 169,
+      "samples": 1
+    },
+    {
+      "function": "researchPurposeGains",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 158,
+      "samples": 1
+    },
+    {
+      "function": "gains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 60,
+      "samples": 1
+    },
+    {
+      "function": "immutableTargets",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 74,
+      "samples": 1
+    },
+    {
+      "function": "prepaidCapital",
+      "url": "file:///randomizer/game/ai/ready-analysis-capital.js",
+      "line": 13,
+      "samples": 1
+    },
+    {
+      "function": "funding",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 270,
+      "samples": 1
+    },
+    {
+      "function": "securedScope",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 56,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "handOptions",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 238,
+      "samples": 1
+    },
+    {
+      "function": "requirements",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 68,
+      "samples": 1
+    },
+    {
+      "function": "researchRules",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 9,
+      "samples": 1
+    },
+    {
+      "function": "incomePreparation",
+      "url": "file:///randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 1
+    },
+    {
+      "function": "getIncomeIncreaseValue",
+      "url": "file:///randomizer/game/end-game-scoring.js",
+      "line": 613,
+      "samples": 1
+    },
+    {
+      "function": "newResearchMark",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 133,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/state-value.js",
+      "line": 185,
+      "samples": 1
+    },
+    {
+      "function": "createGains",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 64,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "factsFromObservation",
+      "url": "file:///randomizer/game/ai/probe-capital.js",
+      "line": 309,
+      "samples": 1
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 1
+    },
+    {
+      "function": "incomePlanSummary",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2205,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 2223,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1586,
+      "samples": 1
+    },
+    {
+      "function": "sanitizeDrawPileCardIds",
+      "url": "file:///randomizer/game/cards/deck.js",
+      "line": 448,
+      "samples": 1
+    },
+    {
+      "function": "describe",
+      "url": "file:///randomizer/game/ai/research-trigger-capital.js",
+      "line": 20,
+      "samples": 1
+    },
+    {
+      "function": "standardScanValueBound",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 1924,
+      "samples": 1
+    },
+    {
+      "function": "readCommittedState",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 495,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 818,
+      "samples": 1
+    },
+    {
+      "function": "actionSetKey",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 136,
+      "samples": 1
+    },
+    {
+      "function": "policyDependencyKey",
+      "url": "file:///randomizer/game/ai/analysis-port.js",
+      "line": 318,
+      "samples": 1
+    },
+    {
+      "function": "",
+      "url": "file:///randomizer/game/ai/decision-search.js",
+      "line": 945,
+      "samples": 1
+    }
+  ]
+}

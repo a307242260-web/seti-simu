@@ -1,0 +1,4863 @@
+{
+  "status": "passed",
+  "uniqueRoots": 693,
+  "comparedPredicates": 2079,
+  "allTotalsExact": true,
+  "allInputsUnchanged": true,
+  "newAutonomousRuns": 0,
+  "noNativeExecutions": true,
+  "sourceSha256": "2505c7e83b6e099aafb19041feab660a9dfb0fe0efd74c09f3e44335a22bc5d0",
+  "rows": [
+    {
+      "label": "actual-v263-176",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-176-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-132",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "funded-analysis-before-research",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-funded-analysis-before-research-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-146-root-20261106-v1.json",
+      "analysisValue": 25,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-148-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "analysis-publicity-post-main",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-post-main-root-20261106-v1.json",
+      "analysisValue": 8.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-152",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v203-123",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-123-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "case-105",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "energy-income-post-main",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-post-main-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "energy-income-before-preparation",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-before-preparation-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "corpus-actual-v187-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step039-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-113",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-113-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-114",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-114-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-115",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-115-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-116",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-116-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-117",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-117-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-118",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-118-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-119",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-119-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-124",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-124-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-125",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-125-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-127",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-127-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-128",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-128-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-129",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-129-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-130",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-130-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-131",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-131-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-133",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-133-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-134",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-134-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-135",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-135-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-136",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-136-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-137",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-137-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-138",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-138-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-139",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-139-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-140",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-140-root-20261106-v1.json",
+      "analysisValue": 6.833333333333333,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-141",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-141-root-20261106-v1.json",
+      "analysisValue": 6.833333333333333,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-142",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-142-root-20261106-v1.json",
+      "analysisValue": 6.833333333333333,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-143",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-143-root-20261106-v1.json",
+      "analysisValue": 6.833333333333333,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v256-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-144-root-20261106-v1.json",
+      "analysisValue": 5.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-145-root-20261106-v1.json",
+      "analysisValue": 5.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-146-root-20261106-v1.json",
+      "analysisValue": 5.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-147-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-149-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-150-root-20261106-v1.json",
+      "analysisValue": 7.166666666666667,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-151",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-151-root-20261106-v1.json",
+      "analysisValue": 7.166666666666667,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-152-root-20261106-v1.json",
+      "analysisValue": 5.166666666666667,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-153-root-20261106-v1.json",
+      "analysisValue": 9.166666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-154-root-20261106-v1.json",
+      "analysisValue": 5.166666666666667,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-155-root-20261106-v1.json",
+      "analysisValue": 5.166666666666667,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v256-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-156-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-157-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-158-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-159-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-160-root-20261106-v1.json",
+      "analysisValue": 3.0833333333333335,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-161-root-20261106-v1.json",
+      "analysisValue": 2.0833333333333335,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-162-root-20261106-v1.json",
+      "analysisValue": 3.0833333333333335,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-163-root-20261106-v1.json",
+      "analysisValue": 7.083333333333333,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-164-root-20261106-v1.json",
+      "analysisValue": 11.166666666666666,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-165",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-165-root-20261106-v1.json",
+      "analysisValue": 11.166666666666666,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-166",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-166-root-20261106-v1.json",
+      "analysisValue": 11.166666666666666,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v256-167",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-167-root-20261106-v1.json",
+      "analysisValue": 14.583333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v256-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-168-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-169-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-170-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-171-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-172",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-172-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-173",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-173-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-174",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-174-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-175",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-175-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-176",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-176-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-177",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-177-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-178",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-178-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-179",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-179-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-180",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-180-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-181",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-181-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-182",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-182-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-183",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-183-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-184",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-184-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-185",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-185-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-186",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-186-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-187",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-187-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-188",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-188-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-189",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-189-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-190",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-190-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-191",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-191-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-192",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-192-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v256-193",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-193-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "energy-income-after-energy-play",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-after-energy-play-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v253-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-145-root-20261106-v1.json",
+      "analysisValue": 5.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-146-root-20261106-v1.json",
+      "analysisValue": 5.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-147-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-148-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-149-root-20261106-v1.json",
+      "analysisValue": 8.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-150-root-20261106-v1.json",
+      "analysisValue": 8.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-151",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-151-root-20261106-v1.json",
+      "analysisValue": 8.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-152-root-20261106-v1.json",
+      "analysisValue": 8.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-153-root-20261106-v1.json",
+      "analysisValue": 8.333333333333334,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v253-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-154-root-20261106-v1.json",
+      "analysisValue": 8.333333333333334,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v253-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-155-root-20261106-v1.json",
+      "analysisValue": 11.75,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v253-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-156-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-157-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-158-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-159-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-160-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-161-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-162-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-163-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-164-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-165",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-165-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-166",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-166-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-167",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-167-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-168-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-169-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-170-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-171-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-172",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-172-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-173",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-173-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-174",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-174-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-175",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-175-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-176",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-176-root-20261106-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-177",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-177-root-20261106-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-178",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-178-root-20261106-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v253-179",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-179-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-180",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-180-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-181",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-181-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-182",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-182-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v253-183",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-actual-before-183-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "known-blue-data-analysis",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v254-blue-data-before-analysis-root-20261106-v1.json",
+      "analysisValue": 8,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-3-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "public-income-before-swap",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-public-income-before-swap-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "scan-launch-gap",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v219-scan-launch-gap-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "earned-b-pending",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-earned-b-pending-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v197-after-orange1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v197-actual-orange1-after-turn-root-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-after-amiba-reveal-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "teacher-r3-before-first-research",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-first-research-root-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "teacher-r3-before-ready-analysis",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-ready-analysis-root-20261105-v1.json",
+      "analysisValue": 10.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "teacher-r3-before-safety-protocol",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-safety-protocol-root-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v203-124",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-124-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v203-130",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-130-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v203-136",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-136-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v203-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-155-root-20261106-v1.json",
+      "analysisValue": 2.25,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v203-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-168-root-20261106-v1.json",
+      "analysisValue": 0.08333333333333333,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v203-175",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-175-root-20261106-v1.json",
+      "analysisValue": 8.25,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v203-185",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-185-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "income-after-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-after-amiba-root-20261106-v1.json",
+      "analysisValue": 6.25,
+      "income": "alien-amiba-3-3",
+      "placements": 3
+    },
+    {
+      "label": "corpus-teacher-024",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-024-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-025",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-026-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-027-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-040-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-041-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-042-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-043-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-044-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-045-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-046-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-047-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-048-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-049-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-050-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-051-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-052-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-053-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-054-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-055-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-056-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-057-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-058-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-059-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-060-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-061-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-062-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-072-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-073-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-074-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-075-20261104-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-076-20261104-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-077-20261104-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-078-20261104-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-079-20261104-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-080-20261104-v1.json",
+      "analysisValue": 11.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-081-20261104-v1.json",
+      "analysisValue": 11.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-082-20261104-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-083-20261104-v1.json",
+      "analysisValue": 20.916666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-084-20261104-v1.json",
+      "analysisValue": 20.916666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-085-20261104-v1.json",
+      "analysisValue": 20.916666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-086-20261104-v1.json",
+      "analysisValue": 20.916666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-087-20261104-v1.json",
+      "analysisValue": 13.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-088-20261104-v1.json",
+      "analysisValue": 13.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-teacher-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-089-20261104-v1.json",
+      "analysisValue": 13.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-teacher-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-090-20261104-v1.json",
+      "analysisValue": 13.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-teacher-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-091-20261104-v1.json",
+      "analysisValue": 18.583333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-092-20261104-v1.json",
+      "analysisValue": 18.583333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-093-20261104-v1.json",
+      "analysisValue": 18.583333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-094-20261104-v1.json",
+      "analysisValue": 19.75,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-095-20261104-v1.json",
+      "analysisValue": 19.75,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-096-20261104-v1.json",
+      "analysisValue": 10.25,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-097-20261104-v1.json",
+      "analysisValue": 10.25,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-098-20261104-v1.json",
+      "analysisValue": 10.25,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-teacher-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-099-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-100-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-101-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-102-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-103-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-104-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-105-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-teacher-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-106-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-001",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-001-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-003",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-008",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-011",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-009",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-009-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-case-062",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-baseline-r1-t8-blue",
+      "fixture": "adhoc/ai-decision-corpus-20261029-v38/baseline-r1-t8-blue-20261029-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-baseline-r2-t9-white",
+      "fixture": "adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-step317",
+      "fixture": "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-terminal",
+      "fixture": "adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-autonomous-pass",
+      "fixture": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-before-pass-20261031-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-pass095",
+      "fixture": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual044-funding",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step044-first-blue-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual050-funding",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v148-077-ready-analysis",
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v148-step77-technology-20261104-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v158-048",
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-048-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v158-055",
+      "fixture": "adhoc/human405-v158-native-20261105-v1/ai-step-055-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v161-66",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step066-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v161-75",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step075-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v161-77",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step077-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v161-99",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v161-step099-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v165-65",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step065-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v165-67",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step067-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v165-76",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step076-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-blue-exchange-funding",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step026-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step027-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step035-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step036-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step037-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step038-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step040-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step041-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step042-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step043-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step044-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step045-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step046-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step047-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step048-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step049-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step050-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step051-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step052-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step053-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step054-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step055-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step056-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step057-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step058-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step059-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step060-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step061-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step062-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step072-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step073-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step074-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step075-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step076-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step077-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step078-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step079-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step080-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step081-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step082-20261105-v1.json",
+      "analysisValue": 10.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v178-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step083-20261105-v1.json",
+      "analysisValue": 10.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v178-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step084-20261105-v1.json",
+      "analysisValue": 10.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v178-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step085-20261105-v1.json",
+      "analysisValue": 10.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v178-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step086-20261105-v1.json",
+      "analysisValue": 10.416666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v178-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step087-20261105-v1.json",
+      "analysisValue": 10,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v178-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step088-20261105-v1.json",
+      "analysisValue": 10,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v178-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step089-20261105-v1.json",
+      "analysisValue": 15.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-actual-v178-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step090-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step091-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step092-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step093-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step094-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step095-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step096-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step097-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step098-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step099-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step100-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step101-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step102-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step103-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step104-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step105-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step106-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-107",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step107-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-108",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step108-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-109",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step109-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-110",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step110-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-111",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step111-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-112",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step112-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-113",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step113-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-114",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step114-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v178-115",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step115-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-controlled-dlc5-r2-opening",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-controlled-dlc5-r2-opening-root-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v184-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step073-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v184-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step074-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v184-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step075-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step076-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step077-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step078-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step079-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step080-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step081-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step082-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step083-20261105-v1.json",
+      "analysisValue": 17.416666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step084-20261105-v1.json",
+      "analysisValue": 17.416666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step085-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step086-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step087-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step088-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step089-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step090-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step091-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v184-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-actual-step092-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step044-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step045-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step046-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step047-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step048-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step049-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step050-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step051-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step052-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step053-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step054-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step055-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step056-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step057-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step058-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step059-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step060-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step061-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step062-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step072-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step073-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step074-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step075-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step076-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step077-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step078-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step079-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step080-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step081-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step082-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step083-20261105-v1.json",
+      "analysisValue": 17.416666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step084-20261105-v1.json",
+      "analysisValue": 17.416666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step085-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step086-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step087-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step088-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step089-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step090-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step091-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step092-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v186-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step093-20261105-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v186-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step094-20261105-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v186-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step095-20261105-v1.json",
+      "analysisValue": 8.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-actual-v186-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step096-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step097-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step098-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step099-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step100-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step101-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step102-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step103-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step104-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step105-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v186-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step106-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-control-dlc4-launch-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc4-launch-after-native-end-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-control-dlc5-skip-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc5-skip-after-native-end-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-control-dlc5-launch-after-native-end",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-dlc5-launch-after-native-end-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-control-tool-step-78",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-78-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-control-tool-step-80",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-80-20261105-v1.json",
+      "analysisValue": 11.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-control-tool-step-81",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-control-tool-step-81-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step072-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step073-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step074-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step075-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step076-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step077-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step078-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step079-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step080-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step081-20261105-v1.json",
+      "analysisValue": 0.8333333333333334,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step082-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step083-20261105-v1.json",
+      "analysisValue": 11.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step084-20261105-v1.json",
+      "analysisValue": 11.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step085-20261105-v1.json",
+      "analysisValue": 3.4166666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step086-20261105-v1.json",
+      "analysisValue": 23.666666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step087-20261105-v1.json",
+      "analysisValue": 23.666666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step088-20261105-v1.json",
+      "analysisValue": 23.666666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step089-20261105-v1.json",
+      "analysisValue": 23.25,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v187-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step090-20261105-v1.json",
+      "analysisValue": 23.25,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v187-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step091-20261105-v1.json",
+      "analysisValue": 28.333333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-actual-v187-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step092-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step093-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step094-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step095-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step096-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step097-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step098-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step099-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step100-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step101-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step102-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step103-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step104-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step105-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step106-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-107",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step107-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-108",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step108-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-109",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step109-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-110",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step110-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-111",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step111-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-112",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step112-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-113",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step113-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-114",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step114-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-115",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step115-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-116",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step116-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-117",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step117-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-118",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step118-20261105-v1.json",
+      "analysisValue": 0.16666666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-actual-v187-119",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step119-20261105-v1.json",
+      "analysisValue": 0.08333333333333333,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v187-120",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step120-20261105-v1.json",
+      "analysisValue": 0.08333333333333333,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-actual-v187-121",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step121-20261105-v1.json",
+      "analysisValue": 3.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-actual-v187-122",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step122-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-123",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step123-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-124",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step124-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-actual-v187-125",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-actual-step125-20261105-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corpus-sector-mission-before-sector-card",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-before-sector-card-20261105-v1.json",
+      "analysisValue": 20.916666666666668,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-86",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-86-20261105-v1.json",
+      "analysisValue": 13.916666666666666,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-88",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-88-20261105-v1.json",
+      "analysisValue": 13.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-90",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-90-20261105-v1.json",
+      "analysisValue": 18.583333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "corpus-sector-mission-after-teacher-91",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v188-control-after-teacher-91-20261105-v1.json",
+      "analysisValue": 18.583333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v214-124",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-124-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-125",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-125-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-126",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-126-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-127",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-127-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-128",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-128-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-129",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-129-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-130",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-130-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-131",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-131-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-132",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-132-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-133",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-133-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-134",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-134-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-135",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-135-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-136",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-136-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "alien-amiba-1-2",
+      "placements": 3
+    },
+    {
+      "label": "actual-v214-137",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-137-root-20261106-v1.json",
+      "analysisValue": 10.25,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v214-138",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-138-root-20261106-v1.json",
+      "analysisValue": 10.25,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v214-139",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-139-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-140",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-140-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-141",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-141-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-142",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-142-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-143",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-143-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-144-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-145-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-146",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-146-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-147-root-20261106-v1.json",
+      "analysisValue": 12.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-148-root-20261106-v1.json",
+      "analysisValue": 12.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-149-root-20261106-v1.json",
+      "analysisValue": 12.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v214-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-150-root-20261106-v1.json",
+      "analysisValue": 12.666666666666666,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v214-151",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-151-root-20261106-v1.json",
+      "analysisValue": 12.666666666666666,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v214-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-152-root-20261106-v1.json",
+      "analysisValue": 16.083333333333332,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v214-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-153-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-154-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-155-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-156-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-157-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-158-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-159-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-160-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-161-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-162-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-163-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-164-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-165",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-165-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-166",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-166-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-167",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-167-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-168-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-169-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-170-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-171-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v214-172",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-actual-v214-172-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-2-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-4-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-5-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-6-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-8-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "corner-safety-purple2-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-9-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-1-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-2-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-4-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-5-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-6-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-7-root-20261106-v1.json",
+      "analysisValue": 3.1666666666666665,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-8-root-20261106-v1.json",
+      "analysisValue": 3.0833333333333335,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-9-root-20261106-v1.json",
+      "analysisValue": 3.0833333333333335,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-10-root-20261106-v1.json",
+      "analysisValue": 6.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-11-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-12",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-12-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-13",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-13-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-purple2-known-analysis-single-14-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-3-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-4-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-5-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-6-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-7-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-8-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-9-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-10-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-11-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-12",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-12-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-13",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-13-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-14-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-16-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-17-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-18",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-18-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-19",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-19-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-20",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-dlc31-20-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-setup-ordinary-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-1-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-setup-ordinary-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-2-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-setup-ordinary-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-3-root-20261106-v1.json",
+      "analysisValue": 4.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-setup-ordinary-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-setup-ordinary-4-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-dlc31-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-dlc31-1-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-visible-scan-dlc31-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-dlc31-2-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-visible-scan-dlc31-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-dlc31-3-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-visible-scan-dlc31-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-dlc31-4-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-visible-scan-dlc31-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-dlc31-5-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-1-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-2-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-3-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-4-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-5-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-6-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-visible-scan-ordinary-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-visible-scan-ordinary-7-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-1-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-2-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-3-root-20261106-v1.json",
+      "analysisValue": 11.833333333333334,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-4-root-20261106-v1.json",
+      "analysisValue": 11.833333333333334,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-5-root-20261106-v1.json",
+      "analysisValue": 11.833333333333334,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-6-root-20261106-v1.json",
+      "analysisValue": 11.833333333333334,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-7-root-20261106-v1.json",
+      "analysisValue": 11.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-8-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-9-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-10-root-20261106-v1.json",
+      "analysisValue": 6.666666666666667,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-11-root-20261106-v1.json",
+      "analysisValue": 6.666666666666667,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-12",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-12-root-20261106-v1.json",
+      "analysisValue": 10.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-13",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-13-root-20261106-v1.json",
+      "analysisValue": 10.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-14-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-15-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-16-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-17-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-18",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-18-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-19",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-19-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-20",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-20-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-dlc31-21",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-dlc31-21-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-1-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-2-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-3-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-4-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-5",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-5-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-6",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-6-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-18-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-7",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-7-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-8",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-8-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-9",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-9-root-20261106-v1.json",
+      "analysisValue": 6.75,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-10",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-10-root-20261106-v1.json",
+      "analysisValue": 6.666666666666667,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-11",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-11-root-20261106-v1.json",
+      "analysisValue": 6.666666666666667,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-12",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-12-root-20261106-v1.json",
+      "analysisValue": 10.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-13",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-13-root-20261106-v1.json",
+      "analysisValue": 10.083333333333334,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-14",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-14-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-15",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-15-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-16",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-16-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-17",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-17-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-18",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-18-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-19",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-19-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-20",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-20-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-paired-scan-income-analysis-ordinary-21",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-paired-scan-income-analysis-ordinary-21-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "paired-scan-launch-reserve-gap-single-1",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-scan-launch-reserve-gap-single-1-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-scan-launch-reserve-gap-single-2",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-scan-launch-reserve-gap-single-2-root-20261106-v1.json",
+      "analysisValue": 5.25,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-scan-launch-reserve-gap-single-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-scan-launch-reserve-gap-single-3-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "paired-scan-launch-reserve-gap-single-4",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v237-paired-scan-launch-reserve-gap-single-4-root-20261106-v1.json",
+      "analysisValue": 7.833333333333333,
+      "income": "card-51-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v262-141",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-141-root-20261106-v1.json",
+      "analysisValue": 8,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v262-142",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-142-root-20261106-v1.json",
+      "analysisValue": 25.5,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v262-143",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-143-root-20261106-v1.json",
+      "analysisValue": 25.5,
+      "income": "card-49-0",
+      "placements": 3
+    },
+    {
+      "label": "actual-v262-144",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-144-root-20261106-v1.json",
+      "analysisValue": 25,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-145",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-145-root-20261106-v1.json",
+      "analysisValue": 25,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-147",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-147-root-20261106-v1.json",
+      "analysisValue": 14,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-148",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-148-root-20261106-v1.json",
+      "analysisValue": 21,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-149",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-149-root-20261106-v1.json",
+      "analysisValue": 25,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-150",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-150-root-20261106-v1.json",
+      "analysisValue": 23,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-151",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-151-root-20261106-v1.json",
+      "analysisValue": 23,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-152",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-152-root-20261106-v1.json",
+      "analysisValue": 23,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v262-153",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-153-root-20261106-v1.json",
+      "analysisValue": 23.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v262-154",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-154-root-20261106-v1.json",
+      "analysisValue": 23.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v262-155",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-155-root-20261106-v1.json",
+      "analysisValue": 24,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v262-156",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-156-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-157",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-157-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-158",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-158-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-159",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-159-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-160",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-160-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-161",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-161-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-162",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-162-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-163",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-163-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-164",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-164-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-165",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-165-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-166",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-166-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-167",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-167-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-168",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-168-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-169",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-169-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-170",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-170-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v262-171",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-actual-v262-before-171-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-150",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-150-root-20261106-v1.json",
+      "analysisValue": 26,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v263-151",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-151-root-20261106-v1.json",
+      "analysisValue": 26,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v263-152",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-152-root-20261106-v1.json",
+      "analysisValue": 26,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v263-153",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-153-root-20261106-v1.json",
+      "analysisValue": 26.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v263-154",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-154-root-20261106-v1.json",
+      "analysisValue": 26.5,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v263-155",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-155-root-20261106-v1.json",
+      "analysisValue": 27,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "actual-v263-156",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-156-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-157",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-157-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-158",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-158-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-159",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-159-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-160",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-160-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-161",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-161-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-162",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-162-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-163",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-163-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-164",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-164-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-165",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-165-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-166",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-166-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-167",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-167-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-168",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-168-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-169",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-169-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-170",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-170-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-171",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-171-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-172",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-172-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-173",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-173-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-174",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-174-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-175",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-175-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-177",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-177-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v263-178",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-178-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-2",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-2-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-3",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-3-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-4",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-4-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-5",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-5-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-6",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-6-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-7",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-7-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-8",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-8-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-9",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-9-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-10",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-10-root-20261106-v1.json",
+      "analysisValue": 4.5,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "electric-control-before-11",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-11-root-20261106-v1.json",
+      "analysisValue": 4.5,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "electric-control-before-12",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-12-root-20261106-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "electric-control-before-13",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-13-root-20261106-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "electric-control-before-14",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-14-root-20261106-v1.json",
+      "analysisValue": 3.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "electric-control-before-15",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-15-root-20261106-v1.json",
+      "analysisValue": 3.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "electric-control-before-16",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-16-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-17",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-17-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "electric-control-before-18",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/electric-control-before-18-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "dlc20-current-menu179",
+      "fixture": "reports/ai-foundation-20261106/scan-analysis-income-v1/dlc20-current-menu179-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-179",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-179-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-180",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-180-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-181",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-181-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-182",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-182-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-183",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-183-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-184",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-184-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-185",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-185-root-20261106-v1.json",
+      "analysisValue": 4.5,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v264-186",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-186-root-20261106-v1.json",
+      "analysisValue": 4.5,
+      "income": null,
+      "placements": 2
+    },
+    {
+      "label": "actual-v264-187",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-187-root-20261106-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v264-188",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-188-root-20261106-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "actual-v264-189",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-189-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-190",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-190-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "actual-v264-191",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-191-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "extra-blue-control-2",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-2-root-20261106-v1.json",
+      "analysisValue": 3,
+      "income": null,
+      "placements": 1
+    },
+    {
+      "label": "extra-blue-control-3",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-3-root-20261106-v1.json",
+      "analysisValue": 3.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "extra-blue-control-4",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-4-root-20261106-v1.json",
+      "analysisValue": 3.5,
+      "income": null,
+      "placements": 0
+    },
+    {
+      "label": "extra-blue-control-5",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-5-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    },
+    {
+      "label": "extra-blue-control-6",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-6-root-20261106-v1.json",
+      "analysisValue": 0,
+      "income": null,
+      "placements": null
+    }
+  ]
+}

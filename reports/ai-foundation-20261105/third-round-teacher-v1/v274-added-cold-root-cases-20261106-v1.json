@@ -1,0 +1,343 @@
+{
+  "cases": [
+    {
+      "label": "actual-v264-113",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-113-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-114",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-114-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-115",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-115-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-116",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-116-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-117",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-117-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-118",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-118-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-119",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-119-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-123",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-123-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-124",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-124-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-125",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-125-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-126",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-126-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-127",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-127-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-128",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-128-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-129",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-129-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-130",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-130-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-131",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-131-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-132",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-132-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-133",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-133-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-134",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-134-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-135",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-135-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-136",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-136-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-137",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-137-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-138",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-138-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-139",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-139-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-140",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-140-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-141",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-141-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-142",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-142-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-143",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-143-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-144",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-144-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-145",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-145-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-146",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-146-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-147",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-147-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-148",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-148-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-149",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-149-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-150",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-150-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-151",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-151-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-152",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-152-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-153",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-153-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-154",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-154-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-155",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-155-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-156",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-156-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-157",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-157-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-158",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-158-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-159",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-159-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-160",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-160-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-161",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-161-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-162",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-162-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-163",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-163-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-164",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-164-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-165",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-165-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-166",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-166-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-167",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-167-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-168",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-168-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-169",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-169-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-170",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-170-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-171",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-171-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-172",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-172-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-173",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-173-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-174",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-174-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-175",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-175-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-176",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-176-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-177",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-177-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-178",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-178-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-179",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-179-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-180",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-180-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-181",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-181-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-182",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-182-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-183",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-183-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-184",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-184-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-185",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-185-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-186",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-186-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-187",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-187-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-188",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-188-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-189",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-189-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-190",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-190-root-20261106-v1.json"
+    },
+    {
+      "label": "actual-v264-191",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-191-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-1",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-1-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-2",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-2-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-3",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-3-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-4",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-4-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-5",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-5-root-20261106-v1.json"
+    },
+    {
+      "label": "extra-blue-control-6",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/extra-blue-control-6-root-20261106-v1.json"
+    },
+    {
+      "label": "deferred-analysis-next-main",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/deferred-analysis-next-main-root-20261106-v1.json"
+    },
+    {
+      "label": "deferred-analysis-data-menu",
+      "fixture": "reports/ai-foundation-20261106/mixed-blue-analysis-v1/deferred-analysis-data-menu-root-20261106-v1.json"
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0,
+  "allRulesCurrent": true
+}

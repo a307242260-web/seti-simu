@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "scope": "Synthetic scoring ablations only; formal V271 full score reference, no new game, no native node or successor.",
+  "rows": [
+    {
+      "variant": "ordinary",
+      "value": 0,
+      "selected": true,
+      "currentFullScoringCalls": 0,
+      "referenceFullScoringCalls": 2
+    },
+    {
+      "variant": "data-score-card",
+      "value": -3.5,
+      "selected": false,
+      "currentFullScoringCalls": 0,
+      "referenceFullScoringCalls": 2
+    },
+    {
+      "variant": "publicity-score-card",
+      "value": -0.5,
+      "selected": false,
+      "currentFullScoringCalls": 0,
+      "referenceFullScoringCalls": 2
+    },
+    {
+      "variant": "jiuzhe-penalty",
+      "value": 0,
+      "selected": true,
+      "currentFullScoringCalls": 2,
+      "referenceFullScoringCalls": 2
+    }
+  ],
+  "rootsUnchanged": true,
+  "newAutonomousRuns": 0
+}

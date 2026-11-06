@@ -1311,6 +1311,22 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation:'真实页面公开原生研究费用，宣传与持牌科技在PASS奖励期间转入下一轮，紧凑观察与根隔离保持',
   counterexample:'Node单独可用而页面未装配费用来源、PASS完成前仍计本轮投资、同一科技重复计价或估值读取隐藏奖励',
 }), Object.freeze({
+  id:'production-mixed-blue-analysis',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiEndGameScoring?.getPlayerTraceCounts && window.SetiAmibaAnalysisCapital && window.SetiStateValue)',
+  actionExpression:`(async()=>{
+    const control=await fetch('/reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json').then(r=>r.json()),e=control.prefixes['1'],s=JSON.parse(e.committedState),seed=s.meta.seed,seat='player-white',v=window.SetiStateValue;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(e).ok)throw Error('mixed analysis restore');const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state,legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});let inputs=0;
+    const submit=predicate=>{const a=legal().find(predicate);if(!a)throw Error('mixed analysis input missing');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('mixed analysis rejected');inputs++;};
+    try{const root=observe(),f={...window.SetiProbeCapital.factsFromObservation(root,seat),supply:s.tech,researchCost:6,analyzeEnergyCost:0},q=v.purposeCapital(f).analysisPlan;if(v.evaluateStateValue(root,seat).total!==142||q.value!==3||q.selected.position!==4||JSON.stringify(f.traceCounts)!==JSON.stringify(window.SetiEndGameScoring.getPlayerTraceCounts(s.players.players.find(p=>p.id===seat),s.aliens)))throw Error('mixed global counts or funded quote differs');
+      const p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const n=p.openRoot();p.setResourcePlanning(true);if(v.evaluateStateValue(p.valueObservation(n),seat).total!==142||p.resourceSpec(n).plans.some(p=>p.goal.kind==='blue-data')||p.postMainValueBound(n)!==null)throw Error('mixed compact/preparation/ceiling contract differs');}finally{p.close();}
+      submit(a=>a.family==='end_turn');submit(a=>a.family==='place_data');submit(a=>a.target?.target==='computer');submit(a=>a.family==='analyze');submit(a=>a.target?.choiceId==='trace:1:blue:amiba:4');submit(a=>a.target?.choiceId==='amiba:blind');submit(a=>a.family==='end_turn');const masked=window.SetiRuleComposition.sanitizeHiddenInformationObservation(root,observe(),{code:'hidden_card_reveal'});if(inputs!==7||v.evaluateStateValue(masked,seat).total!==142||masked.selfState.traceCounts.blue!==3||masked.selfState.hand.filter(c=>c.hidden).length!==2)throw Error('mixed native anonymous realization differs');if(!c.lifecycle.restore(e).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('mixed analysis mutated root/RNG');window.__mixedBlueAnalysisSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__mixedBlueAnalysisSmoke?.ok === true',
+  obligation:'多物种公开痕迹计数在页面/紧凑/Native一致；实际187根保留数据并在下一主行动固定填6、免电分析及匿名两牌原生兑现142V，拒绝套用安静剪枝',
+  counterexample:'页面漏正式计数API、第二物种使分析归零、固定准备被丢弃、未知牌筹资或原根/RNG变化',
+}), 
+Object.freeze({
   id:'production-ready-amiba-analysis',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiAmibaAnalysisCapital && window.SetiAlienAmiba?.getPublicTraceState && window.SetiStateValue)',
   actionExpression:`(async()=>{

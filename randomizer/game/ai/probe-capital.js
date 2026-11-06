@@ -310,7 +310,7 @@
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
     const facts={ player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
-      nextFinalMark:observation.selfState.nextFinalMark,
+      nextFinalMark:observation.selfState.nextFinalMark,traceCounts:observation.selfState.traceCounts,
       uncontestedRound:Array.isArray(pub.activePlayerIds)&&pub.activePlayerIds.length>0&&pub.activePlayerIds.filter(id=>id!==seatId).every(id=>pub.passingPlayerIds.includes(id)),
       reservedCards: observation.selfState.reservedCards, pendingCardTriggers: observation.selfState.pendingCardTriggers,
       pendingHandCardTriggers: observation.selfState.pendingHandCardTriggers,
@@ -340,7 +340,7 @@
     const unknown=state.cards?.unknownPublicSlotIndices,publicCards=unknown?.length?state.cards.publicCards.map((card,index)=>card||(unknown.includes(index)?{hidden:true,faceUp:false}:null)):state.cards?.publicCards;
     const nextFinalMark=endScoring.describeNextFinalMark({...state,cardEffects,getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},player);
     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
-    const facts={ ...researchFactsFromState(state,player),nextFinalMark,uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income,completedTaskCount:player.completedTaskCount,companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player) },
+    const facts={ ...researchFactsFromState(state,player),nextFinalMark,traceCounts:endScoring.getPlayerTraceCounts(player,state.aliens),uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income,completedTaskCount:player.completedTaskCount,companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player) },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem, finalScoring: state.finalScoring,
         publicCards, ordinaryDrawCount:Array.isArray(state.cards?.drawPileCardIds)?state.cards.drawPileCardIds.length:null, aliens: { slots } }, hand: player.hand,
       companyState: blueSlots.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))?{ abilityId: industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId ?? null, roundMarkRound: Number(player.industryRoundMarkRound) || 0, roundMarkTurn: Number(player.industryRoundMarkTurn) || 0 }:null,

@@ -1,0 +1,14 @@
+error: unable to create temporary file: Operation not permitted
+error: randomizer/app/rule-observation.js: failed to insert into database
+error: unable to index file 'randomizer/app/rule-observation.js'
+fatal: updating files failed
+Traceback (most recent call last):
+  File "/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/verify-v265-isolated-source-tree-20261106-v1.py", line 25, in <module>
+    git('add','--',*paths)
+  File "/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/verify-v265-isolated-source-tree-20261106-v1.py", line 22, in git
+    def git(*args):return subprocess.check_output(['git','--git-dir='+str(repo/'.git'),'--work-tree='+str(stage),*args],env=env)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 424, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '--git-dir=/Users/bilibili/code/seti-simu/.git', '--work-tree=/private/tmp/seti-v263-research-completion-mark-20261106-v1', 'add', '--', 'adhoc/mixed-blue-analysis-contract-20261106-v1.md', 'randomizer/app/rule-observation.js', 'randomizer/game/ai/amiba-analysis-capital.js', 'randomizer/game/ai/amiba-analysis-capital.test.js', 'randomizer/game/ai/decision-search.js', 'randomizer/game/ai/local-decision-plans.js', 'randomizer/game/ai/mixed-blue-analysis.test.js', 'randomizer/game/ai/probe-capital.js', 'randomizer/game/ai/resource-demand.js', 'randomizer/game/ai/state-value.js', 'randomizer/game/end-game-scoring.js', 'reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json', 'tools/audit_v_state_inputs.js', 'tools/browser-smoke-inventory.js', 'tools/node-test-inventory.js']' returned non-zero exit status 128.

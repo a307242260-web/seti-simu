@@ -861,6 +861,17 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+// Complete current public trace counts include every revealed species.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),probe=require('../randomizer/game/ai/probe-capital'),end=require('../randomizer/game/end-game-scoring');
+  const control=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json')),e=control.prefixes['1'],s=JSON.parse(e.committedState),seed=s.meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(e).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),owner=s.players.players.find(p=>p.id===seat),counts=end.getPlayerTraceCounts(owner,s.aliens),f={...probe.factsFromObservation(raw,seat),supply:s.tech,researchCost:6,analyzeEnergyCost:0};port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const root=port.openRoot(),compact=port.valueObservation(root);assert.deepEqual(counts,{blue:2,pink:2,yellow:1});for(const o of[raw,formal,compact]){assert.deepEqual(o.selfState.traceCounts,counts);assert.equal(independentValue.evaluateStateValue(o,seat).total,142);}assert.deepEqual(probe.factsFromState(s,owner).traceCounts,counts);assert.equal(independentValue.purposeCapital(f).analysisPlan.value,3);port.setResourcePlanning(true);assert(!port.resourceSpec(root).plans.some(p=>p.goal.kind==='blue-data'));assert.equal(port.postMainValueBound(root),null);assert.deepEqual(c.lifecycle.save().envelope,before);
+  console.log('[PASS] independent-mixed-blue-analysis: formal/full/compact/native complete public counts2/2/1, funded analysis3V and last data retained for the next main purpose, no hidden future inputs or root/RNG mutation');
+ }catch(error){console.log(`[FAIL] independent-mixed-blue-analysis: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
 // Revealed Amiba positions and draw quantities are public inputs. Its funded
 // ready-analysis value must agree without inspecting either new card identity.
 {

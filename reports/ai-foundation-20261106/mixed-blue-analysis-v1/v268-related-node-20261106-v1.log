@@ -1,0 +1,10 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":112.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+{"incomePreparationReuse":"passed","repeatedRequests":24,"repeatRecomputations":0,"separateProjectedData":true,"mutableAndShallowFrozenDecline":true,"sourceUnchanged":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"status":"passed","actual187Value":142,"analysisIncrement":3,"quotedAmibaNativeInputs":7,"anonymousCards":2,"ordinaryExtraNativeInputs":6,"foreignFirstOwnerPreserved":true,"globalB1Increment":8,"fullCompactNativeCountsEqual":true,"initialPendingComputer6Purpose":true,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"scalarCapitalCache":"passed","identicalMutableWrappers":12,"mutatedInputs":13,"shallowFrozenRekeyed":true,"recursiveImmutableReferenceReuse":true,"unsupportedInputsDecline":true,"accessorsNotReadByKey":true,"entriesBoundedAt":256,"customWeightsMatch":true,"customEnumerationOrderRetained":true,"noNativeExecution":true}
+SUMMARY unit passed=6 failed=0 total=6 time=2.36s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=3

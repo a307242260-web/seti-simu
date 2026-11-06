@@ -1,0 +1,17 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:58
+  const mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id)||(facts.forecastFinalMark?.tileId==='b'?facts.forecastFinalMark:null);
+                                                          ^
+
+ReferenceError: actor is not defined
+    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:58:59
+    at Array.find (<anonymous>)
+    at securedScope (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:58:38)
+    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:157:50)
+    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/ready-analysis-capital.js:35:25)
+    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:358:34)
+    at capitalWithoutSector (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:435:16)
+    at purposeCapitalWithoutSymbols (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:440:16)
+    at purposeCapitalWithoutTools (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:445:16)
+    at Object.purposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:450:17)
+
+Node.js v22.22.0
