@@ -1,0 +1,58 @@
+standard full-flow v2 passed
+{"allMatchingNativeTeacher":true,"repeatWithinOneSector":true,"noDataGain":true,"settleOnce":true,"coldRestoreAndRng":true}
+card deck tests passed
+card effects tests passed
+PASS 普通牌按顶牌盲抽
+PASS 公共牌补充按同一牌堆顶牌
+PASS 耗尽不回洗弃牌
+PASS amiba盲抽按顶牌
+PASS amiba盲抽耗尽不重建
+PASS amiba领取最后展示牌后不重建
+PASS chong盲抽按顶牌
+PASS chong盲抽耗尽不重建
+PASS chong领取最后展示牌后不重建
+PASS aomomo盲抽按顶牌
+PASS aomomo盲抽耗尽不重建
+PASS aomomo领取最后展示牌后不重建
+PASS banrenma盲抽按顶牌
+PASS banrenma盲抽耗尽不重建
+PASS banrenma领取最后展示牌后不重建
+PASS runezu盲抽按顶牌
+PASS runezu盲抽耗尽不重建
+PASS runezu领取最后展示牌后不重建
+PASS yichangdian盲抽按顶牌
+PASS yichangdian盲抽耗尽不重建
+PASS yichangdian领取最后展示牌后不重建
+PASS amiba配置生成不执行揭示且同seed完整排列一致
+PASS chong配置生成不执行揭示且同seed完整排列一致
+PASS aomomo随机配置可独立生成且不冻结揭示时动态状态
+PASS banrenma随机配置可独立生成且不冻结揭示时动态状态
+PASS runezu随机配置可独立生成且不冻结揭示时动态状态
+PASS yichangdian随机配置可独立生成且不冻结揭示时动态状态
+PASS jiuzhe随机配置可独立生成且不冻结揭示时动态状态
+PASS 方舟配置固定九张奖励牌及各玩家三色解锁牌
+PASS amiba揭示读取预生成配置且不重抽
+PASS chong揭示读取预生成配置且不重抽
+PASS aomomo揭示读取预生成配置且不重抽
+PASS banrenma揭示读取预生成配置且不重抽
+PASS runezu揭示读取预生成配置且不重抽
+PASS yichangdian揭示读取预生成配置且不重抽
+PASS jiuzhe揭示读取预生成配置且不重抽
+PASS fangzhou揭示读取预生成配置且不重抽
+PASS 方舟缺少玩家配置时不得临时随机补牌或部分揭示
+PASS 方舟多次混洗与外部随机消耗隔离且非零检查点恢复一致
+PASS 正式内核隐藏配置差分与lifecycle恢复
+PASS 开局仅两个槽位分配互异物种且尚未揭示
+PASS 预定物种的揭示次序不改身份也不再抽随机数
+PASS 免电固定盘面只分配阿米巴与虫且不抽取其他身份
+PASS 未揭示身份差异不进入公共物种观察
+PASS 405分局四席起始公司与起始卡选项继承原局
+固定牌堆与物种契约：45/45通过
+card play domain production composition tests passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+task-state.test.js: all tests passed
+SUMMARY unit passed=7 failed=0 total=7 time=2.37s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.52s
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER rules/card-play tests=2
+OWNER rules/cards tests=5

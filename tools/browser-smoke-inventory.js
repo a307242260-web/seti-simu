@@ -1751,4 +1751,20 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__researchOrderMarkSmoke?.ok === true',
   obligation:'Known paid/held research orders price the first earned C1 mark with one Type1 completion and match retained Native end-game totals in production Browser',
   counterexample:'Browser lacks completion/ordered-publicity ledger, ignores a zero-current-value C1, double claims the mark or changes the Native root/RNG',
+}), Object.freeze({
+  id:'production-dlc20-alien-exclusion',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiProductionKernel && window.SetiRuleObservation && window.SetiRandom)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261106/dlc20-alien-legality-v1/actual-before-dlc20-178-20261106-v1.json').then(r=>r.json()),e=f.compositionEnvelope,seed=JSON.parse(e.committedState).meta.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    try{if(!c.lifecycle.restore(e).ok)throw Error('DLC20 actual root restore');const original=JSON.stringify(c.lifecycle.save().envelope),a=c.inputPort.enumerateActions({}).find(a=>a.family==='play_card'&&a.target.cardInstanceId===f.playAction.target.cardInstanceId);if(!a)throw Error('DLC20 actual play missing '+JSON.stringify(c.inputPort.enumerateActions({})));const played=c.inputPort.submitAction(a);if(!played.ok)throw Error('DLC20 actual play rejected '+JSON.stringify(played));
+      const d=c.inspect().session.decision;if(JSON.stringify(d.choices.map(a=>a.target.cardInstanceId))!==JSON.stringify(['card-60-0']))throw Error('DLC20 offers alien or omits ordinary card');const saved=JSON.stringify(c.lifecycle.save().envelope),base={decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId};
+      if(c.inputPort.submitDecision({...base,choice:f.historicalIllegalChoice}).ok||JSON.stringify(c.lifecycle.save().envelope)!==saved)throw Error('DLC20 accepts alien or mutates rejected input');
+      if(!c.inputPort.submitDecision({...base,choice:d.choices[0]}).ok)throw Error('DLC20 rejects ordinary');const p=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id==='player-white');if(p.resources.score!==77||p.resources.publicity!==5||p.hand.length!==1||p.hand[0].cardId!=='chong_7.webp')throw Error('DLC20 normal triple corner endpoint');
+      if(!c.lifecycle.restore(e).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('DLC20 root/RNG restore');window.__dlc20AlienSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__dlc20AlienSmoke?.ok === true',
+  obligation:'Browser Production rejects the historical DLC20 alien discard without mutation and pays an ordinary corner exactly three times',
+  counterexample:'Species cardId does not start with alien, stale historical choice bypasses legality, or repeated reward/source RNG changes',
 })]);

@@ -1,0 +1,5 @@
+PASS production-start-button http://127.0.0.1:63970/randomizer/index.html
+Error: production-dlc20-alien-exclusion 操作异常：Error: DLC20 actual play
+    at <anonymous>:4:263
+    at runInteractiveSmoke (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:294:11)

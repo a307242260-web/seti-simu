@@ -1,0 +1,28 @@
+{
+  "goalStatus": "active",
+  "status": "dlc20-rule-repaired-income-purpose-proven",
+  "baseResultCommit": "374242cc5c01a1024e66cd133665e1abdc50342b",
+  "runtimePolicy": "V263/V47 unchanged",
+  "historical80IsCorrectedRuleResult": false,
+  "newAutonomousExperiments": 0,
+  "nativeFixedInputs": 20,
+  "unitPassed": 7,
+  "fullFlowPassed": 1,
+  "browserRelatedPassed": 3,
+  "broaderBrowserParity": "candidate and unmodified baseline Runtime.evaluate timeout",
+  "electricIncomeGreedyValue": 2,
+  "cardIncomeGreedyValue": 2,
+  "fixedElectricEndpoint": {
+    "boardScore": 80,
+    "income": "7C3E1card+1scan",
+    "newAmibaBluePosition": 4,
+    "autonomous": false,
+    "round3Complete": false
+  },
+  "highestControlledR3": {
+    "version": "V256",
+    "boardScore": 87,
+    "dlc20Played": false
+  },
+  "next": "Known scan-analysis purpose, one shared wallet and unknown boundary, opportunity costs, single-decision gates then autonomy; retain R3/R2-end/autonomousfirst3 goal."
+}

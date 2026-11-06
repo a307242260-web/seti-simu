@@ -1,0 +1,153 @@
+{
+  "status": "verified-rule-repair-and-fixed-native-learning",
+  "baseResultCommit": "374242cc5c01a1024e66cd133665e1abdc50342b",
+  "historicalSourceCommit": "7a747f866aa5876a2e1aba7487a36790cded01c0",
+  "historicalScore": {
+    "board": 80,
+    "interpretation": "Old-kernel observation; DLC20 Native179 wrongly accepted alien chong7 and granted3score. Do not certify corrected-rule80 or arithmetically substitute77 as autonomous result."
+  },
+  "productionChanges": [
+    "randomizer/game/cards/play-domain.js",
+    "randomizer/index.html",
+    "tools/browser-smoke-inventory.js"
+  ],
+  "productionHashes": {
+    "randomizer/game/cards/play-domain.js": "de2b41ffca69a190938e28a393d7a48fedeeae8bd0866cc683688c51d772ec1f",
+    "randomizer/index.html": "f9c59b55dffd7c39e97b2c4d19bab25a76e43f20aaa7bf2f9962b2c570ab6d8f",
+    "tools/browser-smoke-inventory.js": "323775984fd13ecfc54252f374f2ca9a2c3c537058051f43c1913385b868a05a"
+  },
+  "failedCounterexampleLog": "reports/ai-foundation-20261106/dlc20-alien-legality-v1/before-fix-20261106-v1.log",
+  "unitPassed": 7,
+  "fullFlowPassed": 1,
+  "browserRelatedPassed": 3,
+  "browserBroadParity": {
+    "candidate": "Runtime.evaluate timeout",
+    "unmodifiedBaseline": "same timeout",
+    "passed": false
+  },
+  "fixedNativeInputs": 20,
+  "dlc20AcceptedInputs": 2,
+  "electricAcceptedInputs": 18,
+  "rootSessionAndRngRestored": true,
+  "greedyIncomeValues": [
+    {
+      "cardId": "dlc_25.png",
+      "id": "card-60-0",
+      "income": {
+        "energy": 1
+      },
+      "price": 1,
+      "greedyValue": 2
+    },
+    {
+      "cardId": "chong_7.webp",
+      "id": "alien-chong-7-5",
+      "income": {
+        "credits": 1
+      },
+      "price": 3,
+      "greedyValue": 2
+    },
+    {
+      "cardId": "chong_2.webp",
+      "id": "alien-chong-2-6",
+      "income": {
+        "handSize": 1
+      },
+      "price": 1,
+      "greedyValue": 2
+    }
+  ],
+  "endpointQuotesWithAnonymousNewOrdinaryCards": {
+    "actualBefore176": {
+      "modelVersion": "seti-purpose-capital-state-value-v47",
+      "total": 137.5,
+      "components": {
+        "realizedScore": 77,
+        "currentEndGameBonus": 33,
+        "resources": 1.5,
+        "hand": 3,
+        "income": 10.5,
+        "technologyPotential": 12.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "actualHandIncomeAfter176": {
+      "modelVersion": "seti-purpose-capital-state-value-v47",
+      "total": 138.5,
+      "components": {
+        "realizedScore": 77,
+        "currentEndGameBonus": 33,
+        "resources": 1.5,
+        "hand": 3,
+        "income": 11.5,
+        "technologyPotential": 12.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "fixedLegalDlc20Endpoint": {
+      "modelVersion": "seti-purpose-capital-state-value-v47",
+      "total": 137.5,
+      "components": {
+        "realizedScore": 77,
+        "currentEndGameBonus": 33,
+        "resources": 2.5,
+        "hand": 1,
+        "income": 11.5,
+        "technologyPotential": 12.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "fixedElectricScanAnalysisEndpoint": {
+      "modelVersion": "seti-purpose-capital-state-value-v47",
+      "total": 140,
+      "components": {
+        "realizedScore": 80,
+        "currentEndGameBonus": 33,
+        "resources": 1,
+        "hand": 2,
+        "income": 11.5,
+        "technologyPotential": 12.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "nativeControlsAreNotAutonomousResults": true,
+  "newAutonomousExperiments": 0,
+  "goalStatus": "active",
+  "developmentAligned": false,
+  "baselineUnchanged": "V41",
+  "next": "Price the currently funded scan/analysis purpose once across income choice without unknown identity or enumerating income cards. First prove resource bounds, state identity and opportunity costs, then single-decision gates before any new autonomous game."
+}

@@ -2051,7 +2051,7 @@
       }
       if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT) {
         return listCardChoices((actor.hand || []).filter((card) => (
-          !options.excludeAlienCards || !String(card.cardId || "").startsWith("alien")
+          !options.excludeAlienCards || !industryAbilities.isAlienCard(card)
         )));
       }
       if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {

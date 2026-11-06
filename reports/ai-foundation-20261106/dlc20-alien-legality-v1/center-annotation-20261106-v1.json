@@ -1,0 +1,20 @@
+{
+  "preparedDirectory": "/private/tmp/seti-dlc20-center-annotation-20261106-v1",
+  "annotatedVersion": "ai-search-v263-teacher-r3-20261106",
+  "note": "已知规则错误：旧内核DLC20错误允许弃虫7并获得3分；80分仅作历史记录，不是修正规则后的有效成绩。固定原生控制已验证，未重跑AI局。",
+  "beforeFileHashes": {
+    "reports/iteration/versions.json": "bd5e2f3e1e8c92759a56f2fe4e4bfc51b64792e5c1aca2b9d73aaa650bd89bd9",
+    "reports/iteration/registry.json": "93517192eb8713b7e70fdb5cb254e00b6c8b90ffe54733b413505301c547f281",
+    "reports/robot-iteration.html": "f74524aa4e6d7271d185fd0c8491e9093b3525a40dee09738f3cb000e3055240"
+  },
+  "afterFileHashes": {
+    "reports/iteration/versions.json": "f29e26c1df690876466856a64f030bc719ba1ae77408f759cd50f12d633ed039",
+    "reports/iteration/registry.json": "d4fc0cc7deccd350971a496947eacacaae76b48450d3f431fc39ec3508fb47c9",
+    "reports/robot-iteration.html": "8ee94dc82c68eb7777a944ddf308cf21419480a115988b0b0fd92632ebd0d9b3"
+  },
+  "foreignObjectsPreserved": true,
+  "pageCodeOutsideRegistryUnchanged": true,
+  "stagedVersions": 193,
+  "workingVersions": 194,
+  "foreignV1Sha256": "dcfecf09b07e72599f1fb68431a008e1173695ab64b4c3f65a28a78847330b8b"
+}

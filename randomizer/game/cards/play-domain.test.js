@@ -1980,4 +1980,47 @@ for (const branchIndex of [0, 1]) {
     assert.deepEqual(composition.lifecycle.save().envelope, after, "盲抽恢复保持牌实体、RNG和日志一致");
   } finally { composition.dispose(); }
 }
+// DLC20只允许普通牌；外星卡的正式cardId并不以alien开头。
+for (const hasOrdinary of [true, false]) {
+  const root = createCanonicalState("dlc_20.png");
+  const actor = root.players.players[0];
+  const alienCards = ["chong", "amiba", "aomomo", "runezu", "fangzhou", "yichangdian", "banrenma"]
+    .map((name) => ({ id: `foreign:${name}`, cardId: `${name}_1.webp` }));
+  alienCards.push({ id: "foreign:set-only", cardId: "custom.webp", set: "alien:custom" });
+  if (hasOrdinary) actor.hand.push({ id: "ordinary-corner", cardId: "b_2.webp" });
+  actor.hand.push(...alienCards);
+  actor.resources.handSize = actor.hand.length;
+  const { composition } = createIntegratedComposition("dlc_20.png", { state: root });
+  try {
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    if (!hasOrdinary) {
+      assert.equal(composition.inspect().phase, "idle");
+      const committed = composition.stateSourcePort.getSnapshot();
+      assert.equal(committed.players.players[0].resources.publicity, 1);
+      assert.deepEqual(committed.players.players[0].hand.map((card) => card.id), alienCards.map((card) => card.id));
+      continue;
+    }
+    const decision = composition.inspect().session.decision;
+    assert.deepEqual(decision.choices.map((choice) => choice.target.cardInstanceId), ["ordinary-corner"],
+      "DLC20不得提供任何外星牌，包括只有set标记的卡");
+    const saved = composition.lifecycle.save().envelope;
+    const ordinary = decision.choices[0];
+    const forged = { ...ordinary, target: { ...ordinary.target,
+      choiceId: alienCards[0].id, cardInstanceId: alienCards[0].id } };
+    const input = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId };
+    assert.equal(composition.inputPort.submitDecision({ ...input, choice: forged }).ok, false);
+    assert.deepEqual(composition.lifecycle.save().envelope, saved);
+    const result = composition.inputPort.submitDecision({ ...input, choice: ordinary });
+    assert.equal(result.ok, true); assert.equal(result.phase, "completed");
+    const committed = composition.stateSourcePort.getSnapshot();
+    assert.equal(committed.players.players[0].resources.publicity, 4,
+      "保留DLC20的1宣传及普通牌角标重复三次");
+    assert.deepEqual(committed.players.players[0].hand.map((card) => card.id), alienCards.map((card) => card.id));
+    const after = composition.lifecycle.save().envelope;
+    assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+    assert.equal(composition.inputPort.submitDecision({ ...input, choice: ordinary }).ok, true);
+    assert.deepEqual(composition.lifecycle.save().envelope, after);
+  } finally { composition.dispose(); }
+}
 console.log("card play domain production composition tests passed");
