@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-v239-teacher-r3-20261106",
+      "name": "第三轮学习 V239：第132步搜索超限",
+      "date": "2026-11-06",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "ab20f1b98ab8e5869768b1200d8e0b3adf18306c",
+      "commits": [
+        "ab20f1b98ab8e5869768b1200d8e0b3adf18306c"
+      ],
+      "summary": "唯一试跑止于131输入，新增19个原生输入；已执行研究引擎和紫1。第132步闭合484次输入/1036.545ms，动作未提交，未完成第三轮。失败checkpoint和完整attempt保留。",
+      "records": {
+        "5f86db3c.ab20f1b9.quick-400.json": {}
+      },
+      "roadmap": null,
+      "aiGeneration": "v2",
+      "baselineEligible": false,
+      "agentType": "search"
+    },
+    {
       "id": "ai-search-v237-teacher-r3-20261106",
       "aiGeneration": "v2",
       "agentType": "search",

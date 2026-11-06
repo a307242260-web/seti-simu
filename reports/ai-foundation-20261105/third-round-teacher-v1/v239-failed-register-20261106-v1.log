@@ -1,0 +1,11 @@
+Error: AI_BASELINE_GENERATION_MISMATCH: ai-search-v239-teacher-r3-20261106 -> ai-search-v41-baseline-20261029
+    at validateAIGenerations (/private/tmp/seti-v239-r3-run-20261106-v1/tools/robot-iteration-lib.js:187:11)
+    at saveVersions (/private/tmp/seti-v239-r3-run-20261106-v1/tools/robot-iteration-lib.js:194:3)
+    at cmdRegister (/private/tmp/seti-v239-r3-run-20261106-v1/tools/robot_iterate.js:269:3)
+    at main (/private/tmp/seti-v239-r3-run-20261106-v1/tools/robot_iterate.js:425:22)
+    at Object.<anonymous> (/private/tmp/seti-v239-r3-run-20261106-v1/tools/robot_iterate.js:440:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)

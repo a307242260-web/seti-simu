@@ -1,0 +1,126 @@
+{
+  "status": "failed-at-new-root-native-verified",
+  "sourceCommit": "ab20f1b98ab8e5869768b1200d8e0b3adf18306c",
+  "scope": "One standard attempted R3 experiment, exactly19 newly accepted Native inputs replayed independently. Before-next-input132 is not a round-end. No AI rerun, future decision, gate resampling or committed failed action.",
+  "recordPath": "reports/research/5f86db3c.ab20f1b9.quick-400.json",
+  "recordSha256": "7be89e300b5706313a98d771ce23d73cceac020cf2f1da03ea98e4ee9307a1aa",
+  "savePath": "seti-saves/seti-save-research-ai-search-v239-teacher-r3-20261106-ab20f1b9-quick-400-failed-v54.json",
+  "saveSha256": "b9d9d1154f193bc3b892f5ef164c2abe11a097124ef6c619dd285aa0f001335c",
+  "tracePath": "reports/research/5f86db3c.ab20f1b9.quick-400.json.decisions.jsonl",
+  "traceSha256": "3550be1806683a5976a5a12d57fedb5682a7c965584cc8a81909932c1dc87745",
+  "attemptPath": "reports/research/5f86db3c.ab20f1b9.quick-400.json.attempts.jsonl",
+  "attemptSha256": "e84e0c33c58c865919d50bae3ebca837d44548a534f3a08f255807ba2e761ca9",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-failed-r3-native-prefix-20261106-v1.checkpoint.json",
+  "checkpointSha256": "da3595b83e87863c8fec240343bd1d20b4ef519ae9a3258f136aad1972d122f9",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json",
+  "fixtureSha256": "5b79644ca497f8b339c6d92f4cb21ffbf7d1fc00f62bfd179d054d2fa2d1e47d",
+  "controlledPrefixInputs": 112,
+  "acceptedNativeInputs": 19,
+  "lastAcceptedInput": 131,
+  "failedBeforeInput": 132,
+  "failedDecisionCommitted": false,
+  "failedSearchComplete": true,
+  "failedNativeInputs": 484,
+  "failedRootAndSearchMilliseconds": 1036.5453750000001,
+  "failedAction": "industry:e887dc52",
+  "failedValue": 127.25,
+  "uniqueNativeEdgeFamilies": {
+    "launch": 5,
+    "play_card": 12,
+    "pass": 5,
+    "quick_trade": 12,
+    "choose_payment": 6,
+    "choose_card": 182,
+    "industry": 4,
+    "place_data": 24,
+    "choose_target": 181,
+    "scan": 10,
+    "accept_optional_effect": 40,
+    "card_corner": 2,
+    "analyze": 1
+  },
+  "acceptedSearchEvidenceCount": 16,
+  "maxAcceptedNativeInputs": 117,
+  "maxAcceptedRootAndSearchMilliseconds": 446.36979099999985,
+  "wallMilliseconds": 2866,
+  "nativeFinalEnvelopeSessionRngExact": true,
+  "rootAndRngRestored": true,
+  "recordSummaryFlagDisagreesWithCanonicalAttempt": true,
+  "summaryFlagExplanation": "The coordinator wraps the gate error in cause; the outer record did not receive error.search. Retained complete attempt trace is authoritative; original record unchanged.",
+  "currentState": {
+    "score": 54,
+    "finalScore": 76,
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "purple4": true,
+        "purple1": true
+      }
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "resources": {
+      "credits": 9,
+      "energy": 1,
+      "publicity": 1,
+      "data": 2
+    },
+    "computer": [
+      1,
+      2,
+      3
+    ],
+    "hand": [
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp",
+        "set": "basic",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 2,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 3,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 0,
+        "faceUp": true
+      },
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp",
+        "set": "alien:阿米巴",
+        "price": 2,
+        "cardTypeCode": 1,
+        "discardActionCode": 3,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      }
+    ]
+  },
+  "roundEndAvailable": false,
+  "developmentAligned": false,
+  "goalStatus": "active",
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "newAutonomousRuns": 0
+}

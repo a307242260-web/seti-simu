@@ -1,0 +1,152 @@
+{
+  "scope": "Read complete retained V239 failure graph only; no new AI search, Native input, gate sample or game. Native classified descriptors identify both alternatives as the known orange-research trigger. Higher current-window search value does not by itself prove higher long-term game value. Do not blindly fix acceptance merely because immediate reward is positive.",
+  "source": "reports/research/5f86db3c.ab20f1b9.quick-400.json.attempts.jsonl",
+  "sourceSha256": "e84e0c33c58c865919d50bae3ebca837d44548a534f3a08f255807ba2e761ca9",
+  "contexts": 20,
+  "acceptBetter": 3,
+  "skipBetter": 17,
+  "rows": [
+    {
+      "node": 71,
+      "acceptValue": 123.25,
+      "skipValue": 124.58333333333333,
+      "acceptTarget": 99,
+      "skipTarget": 100
+    },
+    {
+      "node": 72,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 91,
+      "skipTarget": 92
+    },
+    {
+      "node": 73,
+      "acceptValue": 122.25,
+      "skipValue": 122.58333333333333,
+      "acceptTarget": 83,
+      "skipTarget": 84
+    },
+    {
+      "node": 74,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 75,
+      "skipTarget": 76
+    },
+    {
+      "node": 160,
+      "acceptValue": 123.25,
+      "skipValue": 124.58333333333333,
+      "acceptTarget": 188,
+      "skipTarget": 189
+    },
+    {
+      "node": 161,
+      "acceptValue": 115.5,
+      "skipValue": 111.83333333333333,
+      "acceptTarget": 180,
+      "skipTarget": 181
+    },
+    {
+      "node": 162,
+      "acceptValue": 118.5,
+      "skipValue": 114.83333333333333,
+      "acceptTarget": 172,
+      "skipTarget": 173
+    },
+    {
+      "node": 163,
+      "acceptValue": 115.5,
+      "skipValue": 111.83333333333333,
+      "acceptTarget": 164,
+      "skipTarget": 165
+    },
+    {
+      "node": 214,
+      "acceptValue": 124.25,
+      "skipValue": 125.58333333333333,
+      "acceptTarget": 238,
+      "skipTarget": 239
+    },
+    {
+      "node": 215,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 231,
+      "skipTarget": 232
+    },
+    {
+      "node": 216,
+      "acceptValue": 122.25,
+      "skipValue": 122.58333333333333,
+      "acceptTarget": 225,
+      "skipTarget": 226
+    },
+    {
+      "node": 217,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 218,
+      "skipTarget": 219
+    },
+    {
+      "node": 340,
+      "acceptValue": 123.25,
+      "skipValue": 124.58333333333333,
+      "acceptTarget": 368,
+      "skipTarget": 369
+    },
+    {
+      "node": 341,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 360,
+      "skipTarget": 361
+    },
+    {
+      "node": 342,
+      "acceptValue": 122.25,
+      "skipValue": 122.58333333333333,
+      "acceptTarget": 352,
+      "skipTarget": 353
+    },
+    {
+      "node": 343,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 344,
+      "skipTarget": 345
+    },
+    {
+      "node": 416,
+      "acceptValue": 124.25,
+      "skipValue": 125.58333333333333,
+      "acceptTarget": 440,
+      "skipTarget": 441
+    },
+    {
+      "node": 417,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 433,
+      "skipTarget": 434
+    },
+    {
+      "node": 418,
+      "acceptValue": 122.25,
+      "skipValue": 122.58333333333333,
+      "acceptTarget": 427,
+      "skipTarget": 428
+    },
+    {
+      "node": 419,
+      "acceptValue": 119.25,
+      "skipValue": 119.58333333333333,
+      "acceptTarget": 420,
+      "skipTarget": 421
+    }
+  ],
+  "rootAndRngUntouched": true,
+  "newAutonomousRuns": 0
+}
