@@ -1,0 +1,59 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V303/V304 numeric reuse,1824 plan parity and staleBrowser112.5 repair pushed99e6cab49",
+  "thisGoalTurnClassification": "progress: V305 strict single-research score ceiling proved9072bounds/1824plans/7fallbacks,10Node7Chrome65audit+old1; first668.866417 fails. V306 sameNative explicit immutable reward query saves54994 temporary quotes, independent full module graphs1824 exact,15Node8Chrome65audit+old1; first672.901375 fails. CurrentCPU and exact high-level pairs locate61 stable mutable re-computations~25.88ms. No autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V306/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/read-only-rewards-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "0efff735623fc3433b8b60219d7dc20267743b6c10bd44cd9f33a14d70e0311f",
+  "sourceHashesUnchangedAfterFreeze": 134,
+  "V305": {
+    "NativeInputs": 162,
+    "milliseconds": 668.866417,
+    "relatedNodePassed": 10,
+    "BrowserPassed": 7,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "boundCases": 9072,
+    "planCases": 1824,
+    "invalidHintFallbackCases": 7
+  },
+  "V306": {
+    "NativeInputs": 162,
+    "milliseconds": 672.901375,
+    "relatedNodePassed": 15,
+    "BrowserPassed": 8,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "completeIndependentGraphCases": 1824,
+    "catalogBoundaryCases": 35,
+    "centralMoves": 8,
+    "temporaryRewardQuotesAvoidedInPrototype": 54994
+  },
+  "coldGate": {
+    "cases": 1258,
+    "measured": 1,
+    "failure": "actual-v256-132",
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "nextDiagnostic": {
+    "file": "reports/ai-foundation-20261107/planning-source-immutability-v1/planning-capital-complete-pair-repetition-20261107-v1.json",
+    "planningCapitalCalls": 937,
+    "samePairs": 328,
+    "changedInputPairs": 0,
+    "stableMutableRepeats": 61,
+    "instrumentedRepeatedMilliseconds": 25.883793,
+    "blueBeforeCapitalRepeats": 21,
+    "tailPurposeDeltaRepeats": 40,
+    "runtimeCacheOrFreezingImplemented": false
+  },
+  "rejectedPreferredIncomeOrder": {
+    "supplierCallsUnchanged": 447,
+    "implemented": false
+  },
+  "newAutonomousRuns": 0,
+  "document": "docs/human405-score-ceiling-and-readonly-rewards-20261107.md",
+  "next": "Verify exact full valuation facts equivalence for player override vs wrapped state, then carry fixed-plan before/after capital scalars and default-ledger telescope. Preserve all state/hand/board effects, negative blue recursion, source income and final marks, missing metadata fallback; no reference-only cache. Need new-source single256/600 and complete1258/source admission, actualfirst2 assets, original23first3 andR2-end review. Teacher105 complete development not aligned;V41 unchanged."
+}

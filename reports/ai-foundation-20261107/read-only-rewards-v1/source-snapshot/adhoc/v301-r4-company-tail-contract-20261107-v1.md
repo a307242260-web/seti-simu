@@ -1,0 +1,9 @@
+# V301 / V54：R4复用已被当前政策排除公司的固定数据尾部（2026-11-07）
+
+V300修正最终轮探测器的旧证明前提后，两个24上界反例根首次完整2Native/37.261583和37.47ms，实际窗口43.5/29；旧R4 Venus late根完整263/466.156875ms仍超256，保留首次样本不重测。原整个goal、SOURCE准入和1258根完整覆盖、原23自主前三轮/前两轮资产/R2轮末回查仍未完成。
+
+定位到turnTailSummary的公司政策预检仅在round<4取cardPickSpec。R4一律null，即使当前同一贪心政策已排除该公司动作，仍禁止合并数据尾部。纯源码原型只移除这一个轮数条件：所有轮次用当前cardPickSpec；公司动作仍被政策保留时继续拒绝。保留逐边界canContinue的新获取目的检查、V300每阶段stationary movement检查、完整purposeDelta、Native收入/蓝槽/终局标记和未知牌守卫；不改贪心公司选牌或候选策略。
+
+源码未变的一次明确非验收诊断编译此一行原型：旧263→245 Native，所有根action/goal/value/completion/valueType精确一致，仍industry152.5。13个typed尾部逐个在同一原始root知识域内展开67个Native输入，值、用途增量及输入数全部与证明一致；另从每个真实Native source独立重放67输入，完整state/session/RNG精确一致。快照重放只验证Native规则，不能把source当新信息根重跑AI偷看原先未知手牌。回归测试先在V300复现263≠245。
+
+只复用已有条件证明，不创建Native后继或观察，不删除未覆盖分支，不改变状态等价/去重、可达性/资源下界。四null全局budget及单点256Native/600ms保持；不把18条省掉的Native模拟冒充实际正式执行无需输入。测试充分后冻结新SOURCE首次冷测；通过1258根全部单点、完整Node/Browser/输入审计及前两轮实际发展回归后才运行新自主轮。当前11Node4Chrome64audit通过+旧aomomo失败1是V300证据，V301须补相关校验，不能继承声明全绿。

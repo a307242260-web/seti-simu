@@ -1,0 +1,16 @@
+{
+  "scope": "One in-memory known future income source ordering prototype after failed V305: try already-planned known income supplier first, still fully price each examined source, stop only at existing universal replacement cap; unsaturated sources remain exhaustive. Whole roots exact, original Native/RNG restored, no runtime change or cold timing/resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/research-mark-score-ceiling-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6d6eeb32aca5b843d7a1fee3be8e4862e9d670b70be2ae727382d34eb6843ad2",
+  "stats": {
+    "futureCalls": 743,
+    "supplierCalls": 447,
+    "preferredAvailable": 222
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

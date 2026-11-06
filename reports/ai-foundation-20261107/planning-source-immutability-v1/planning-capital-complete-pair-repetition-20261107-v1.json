@@ -1,0 +1,30 @@
+{
+  "scope": "One full Native state/player pair-repetition diagnostic after failed V306. Source references are diagnostic only, every repeated pair compared using full serialized Native state/player, changed values distinguished, no runtime cache or freezing implemented. Component elapsed time is instrumented, not acceptance timing. Whole roots and162Native exact; source/RNG restored, no cold resampling or autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/read-only-rewards-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "0efff735623fc3433b8b60219d7dc20267743b6c10bd44cd9f33a14d70e0311f",
+  "stats": {
+    "calls": 937,
+    "immutablePairs": 329,
+    "repeatedPairs": 328,
+    "changedInputPairs": 0,
+    "stableMutableRepeats": 61,
+    "stableMutableMilliseconds": 25.88379300000031,
+    "totalMilliseconds": 254.2991369999993
+  },
+  "mutableRepeatSites": [
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:158:58)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:258:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "count": 21
+    },
+    {
+      "stack": "    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:280:73)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)\n    at Object.searchDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:542:123)",
+      "count": 40
+    }
+  ],
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

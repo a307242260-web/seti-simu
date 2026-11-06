@@ -1,0 +1,8 @@
+PASS production-research-score-ceiling http://127.0.0.1:55005/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:55005/randomizer/index.html
+PASS production-trigger-delta-memo http://127.0.0.1:55005/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:55005/randomizer/index.html
+PASS production-research-symbol-composition http://127.0.0.1:55005/randomizer/index.html
+PASS production-r4-company-tail http://127.0.0.1:55005/randomizer/index.html
+PASS production-final-round-proof-guard http://127.0.0.1:55005/randomizer/index.html
+SUMMARY browserSmoke passed=7 failed=0 total=7

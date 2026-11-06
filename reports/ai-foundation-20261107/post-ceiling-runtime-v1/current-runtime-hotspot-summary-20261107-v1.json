@@ -1,0 +1,429 @@
+{
+  "scope": "CurrentV305 CPU diagnostic only. Inclusive functions counted once per sample; stacks overlap, counts are not milliseconds or acceptance samples.",
+  "profileSha256": "8a4e67c7c63ed096d988f09496c9ad13a97d481e3764036f9dfe952303892e6a",
+  "samples": 2557,
+  "self": [
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "samples": 270
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "samples": 95
+    },
+    {
+      "function": "quote",
+      "file": "amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 92
+    },
+    {
+      "function": "requirements",
+      "file": "probe-capital.js",
+      "line": 68,
+      "samples": 78
+    },
+    {
+      "function": "normalizeObject",
+      "file": "analysis-port.js",
+      "line": 226,
+      "samples": 51
+    },
+    {
+      "function": "gains",
+      "file": "research-trigger-capital.js",
+      "line": 61,
+      "samples": 42
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "analysis-port.js",
+      "line": 153,
+      "samples": 40
+    },
+    {
+      "function": "stableSerialize",
+      "file": "state-store.js",
+      "line": 59,
+      "samples": 37
+    },
+    {
+      "function": "quote",
+      "file": "probe-capital.js",
+      "line": 99,
+      "samples": 37
+    },
+    {
+      "function": "copyPublicSymbolState",
+      "file": "amiba.js",
+      "line": 546,
+      "samples": 35
+    },
+    {
+      "function": "createGains",
+      "file": "research-trigger-capital.js",
+      "line": 65,
+      "samples": 33
+    },
+    {
+      "function": "visit",
+      "file": "low-coupling-slices.js",
+      "line": 110,
+      "samples": 30
+    },
+    {
+      "function": "deepFreeze",
+      "file": "rule-composition.js",
+      "line": 42,
+      "samples": 27
+    },
+    {
+      "function": "normalize",
+      "file": "analysis-port.js",
+      "line": 205,
+      "samples": 26
+    },
+    {
+      "function": "basePurposeCapital",
+      "file": "state-value.js",
+      "line": 357,
+      "samples": 26
+    },
+    {
+      "function": "",
+      "file": "state-value.js",
+      "line": 204,
+      "samples": 25
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "resource-demand.js",
+      "line": 122,
+      "samples": 24
+    },
+    {
+      "function": "delta",
+      "file": "amiba-analysis-capital.js",
+      "line": 212,
+      "samples": 23
+    },
+    {
+      "function": "analysisAliens",
+      "file": "amiba-analysis-capital.js",
+      "line": 36,
+      "samples": 23
+    },
+    {
+      "function": "moveSymbolFromSlot",
+      "file": "amiba.js",
+      "line": 590,
+      "samples": 22
+    },
+    {
+      "function": "incomePreparation",
+      "file": "amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 22
+    },
+    {
+      "function": "researchPurposeGains",
+      "file": "state-value.js",
+      "line": 159,
+      "samples": 22
+    },
+    {
+      "function": "newResearchMark",
+      "file": "state-value.js",
+      "line": 134,
+      "samples": 20
+    },
+    {
+      "function": "prepaidCapital",
+      "file": "ready-analysis-capital.js",
+      "line": 13,
+      "samples": 18
+    },
+    {
+      "function": "",
+      "file": "amiba-analysis-capital.js",
+      "line": 41,
+      "samples": 18
+    },
+    {
+      "function": "describe",
+      "file": "research-trigger-capital.js",
+      "line": 20,
+      "samples": 17
+    },
+    {
+      "function": "quote",
+      "file": "ready-analysis-capital.js",
+      "line": 28,
+      "samples": 17
+    },
+    {
+      "function": "sum",
+      "file": "value-arithmetic.js",
+      "line": 28,
+      "samples": 17
+    },
+    {
+      "function": "resolveRegionReward",
+      "file": "amiba.js",
+      "line": 625,
+      "samples": 17
+    },
+    {
+      "function": "factsFromState",
+      "file": "probe-capital.js",
+      "line": 401,
+      "samples": 15
+    }
+  ],
+  "inclusive": [
+    {
+      "function": "(root)",
+      "file": "",
+      "line": 0,
+      "samples": 2557
+    },
+    {
+      "function": "",
+      "file": "profile-v305-current-runtime-hotspots-20261107-v1.js",
+      "line": 8,
+      "samples": 2462
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "samples": 2420
+    },
+    {
+      "function": "purposeCapital",
+      "file": "state-value.js",
+      "line": 509,
+      "samples": 1133
+    },
+    {
+      "function": "purposeCapitalWithoutFutureProbe",
+      "file": "state-value.js",
+      "line": 501,
+      "samples": 1117
+    },
+    {
+      "function": "purposeCapitalWithoutPublicityPreparation",
+      "file": "state-value.js",
+      "line": 494,
+      "samples": 1108
+    },
+    {
+      "function": "purposeCapitalWithoutTools",
+      "file": "state-value.js",
+      "line": 489,
+      "samples": 1093
+    },
+    {
+      "function": "purposeCapitalWithoutSymbols",
+      "file": "state-value.js",
+      "line": 484,
+      "samples": 1041
+    },
+    {
+      "function": "capitalWithoutSector",
+      "file": "state-value.js",
+      "line": 479,
+      "samples": 1037
+    },
+    {
+      "function": "capitalWithoutIncomeSwap",
+      "file": "state-value.js",
+      "line": 369,
+      "samples": 1017
+    },
+    {
+      "function": "planningCapital",
+      "file": "resource-demand.js",
+      "line": 147,
+      "samples": 948
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 215,
+      "samples": 795
+    },
+    {
+      "function": "quote",
+      "file": "ready-analysis-capital.js",
+      "line": 28,
+      "samples": 790
+    },
+    {
+      "function": "quote",
+      "file": "amiba-analysis-capital.js",
+      "line": 139,
+      "samples": 772
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "line": 950,
+      "samples": 662
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 798,
+      "samples": 622
+    },
+    {
+      "function": "turnTailSummary",
+      "file": "analysis-port.js",
+      "line": 2141,
+      "samples": 569
+    },
+    {
+      "function": "dataTailCompletion",
+      "file": "local-decision-plans.js",
+      "line": 206,
+      "samples": 557
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 605,
+      "samples": 540
+    },
+    {
+      "function": "basePurposeCapital",
+      "file": "state-value.js",
+      "line": 357,
+      "samples": 529
+    },
+    {
+      "function": "resourceCatalog",
+      "file": "analysis-port.js",
+      "line": 755,
+      "samples": 427
+    },
+    {
+      "function": "catalog",
+      "file": "resource-demand.js",
+      "line": 287,
+      "samples": 426
+    },
+    {
+      "function": "incomePreparation",
+      "file": "amiba-analysis-capital.js",
+      "line": 102,
+      "samples": 406
+    },
+    {
+      "function": "quote",
+      "file": "known-symbol-capital.js",
+      "line": 22,
+      "samples": 404
+    },
+    {
+      "function": "plan",
+      "file": "card-pick-planning.js",
+      "line": 232,
+      "samples": 403
+    },
+    {
+      "function": "swapIntent",
+      "file": "card-pick-planning.js",
+      "line": 176,
+      "samples": 379
+    },
+    {
+      "function": "",
+      "file": "state-value.js",
+      "line": 490,
+      "samples": 361
+    },
+    {
+      "function": "analysisPortfolio",
+      "file": "state-value.js",
+      "line": 378,
+      "samples": 361
+    },
+    {
+      "function": "previewBlueCompletion",
+      "file": "local-decision-plans.js",
+      "line": 116,
+      "samples": 322
+    },
+    {
+      "function": "executeCurrent",
+      "file": "analysis-port.js",
+      "line": 1170,
+      "samples": 289
+    },
+    {
+      "function": "nextIncomeLaunchReplacement",
+      "file": "profile-v305-current-runtime-hotspots-20261107-v1.js",
+      "line": 6,
+      "samples": 288
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "samples": 283
+    },
+    {
+      "function": "nextIncomeLaunchReplacement",
+      "file": "probe-capital.js",
+      "line": 261,
+      "samples": 281
+    },
+    {
+      "function": "",
+      "file": "state-value.js",
+      "line": 511,
+      "samples": 274
+    },
+    {
+      "function": "",
+      "file": "profile-v305-current-runtime-hotspots-20261107-v1.js",
+      "line": 6,
+      "samples": 274
+    },
+    {
+      "function": "sufficientIncome",
+      "file": "probe-capital.js",
+      "line": 285,
+      "samples": 274
+    },
+    {
+      "function": "computerIncomeValue",
+      "file": "resource-demand.js",
+      "line": 220,
+      "samples": 259
+    },
+    {
+      "function": "",
+      "file": "resource-demand.js",
+      "line": 352,
+      "samples": 259
+    },
+    {
+      "function": "incomeTailCapital",
+      "file": "resource-demand.js",
+      "line": 227,
+      "samples": 257
+    },
+    {
+      "function": "quote",
+      "file": "analysis-publicity-capital.js",
+      "line": 9,
+      "samples": 246
+    }
+  ]
+}
