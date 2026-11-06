@@ -1,0 +1,49 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: current CPU profile and rejected low-value reference/cache approaches deliveredf818291c5",
+  "thisGoalTurnClassification": "progress: complete semantic access-stream diagnosis identifies32084 gain requests and84 signatures; same-key default delta memo removes54704 ledger lookups with full root equality. Implemented isolatedV303,10465 component cases8Node5Chrome pass,64audit+old1; first cold162/672.560709 fails. Whole goal remains, no new autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V303/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/trigger-cache-capacity-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "06179c22561171cc3071db3d76e60cb00b3261b8c200028d89f2bcd1a182cc43",
+  "sourceHashesUnchangedAfterFreeze": 109,
+  "coldGate": {
+    "totalNamedCases": 1258,
+    "measured": 1,
+    "status": "failed-gate",
+    "label": "actual-v256-132",
+    "NativeInputs": 162,
+    "milliseconds": 672.560709,
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "relatedNodePassed": 8,
+  "browserPassed": 5,
+  "auditPassed": 64,
+  "oldAomomoAuditFailure": 1,
+  "defaultGainMemo": {
+    "gainCalls": 32084,
+    "hits": 27352,
+    "originalLedgerCalls": 117019,
+    "candidateLedgerCalls": 62315,
+    "contextCapacityUnchanged": 64
+  },
+  "closedComputerPrototype": {
+    "implemented": false,
+    "investmentCalls": 2308,
+    "closedComputerCalls": 114
+  },
+  "newAutonomousRuns": 0,
+  "newFullGames": 0,
+  "document": "docs/human405-trigger-delta-cpu-20261107.md",
+  "remaining": [
+    "Hard132<=256Native/600ms with a frozen new source",
+    "Full1258 and source Node/Browser/input audit admission",
+    "Actual first2 asset regression",
+    "Original23 autonomous first3 and complete same-phase development comparison",
+    "Teacher legal105/6tech/7C4E1card+scan alignment or evidence of equivalent tradeoff",
+    "Review second-round end decisions afterwards"
+  ],
+  "baseline": "V41"
+}

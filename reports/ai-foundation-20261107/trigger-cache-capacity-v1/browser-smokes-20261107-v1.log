@@ -1,0 +1,6 @@
+PASS production-trigger-delta-memo http://127.0.0.1:49824/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:49824/randomizer/index.html
+PASS production-r4-company-tail http://127.0.0.1:49824/randomizer/index.html
+PASS production-final-round-proof-guard http://127.0.0.1:49824/randomizer/index.html
+PASS production-next-income-probe-capital http://127.0.0.1:49824/randomizer/index.html
+SUMMARY browserSmoke passed=5 failed=0 total=5

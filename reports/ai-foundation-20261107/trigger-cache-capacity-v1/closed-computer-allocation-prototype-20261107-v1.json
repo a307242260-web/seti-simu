@@ -1,0 +1,15 @@
+{
+  "scope": "One in-memory prototype after failed V303: empty/full computer prepaid value is zero, retaining original investment calculation/order and normalized sum. Avoid allocation for unused prepaid facts. Full serialized roots exact, no source change or acceptance timing/cold resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/trigger-cache-capacity-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "06179c22561171cc3071db3d76e60cb00b3261b8c200028d89f2bcd1a182cc43",
+  "stats": {
+    "investmentCalls": 2308,
+    "closedComputerCalls": 114
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

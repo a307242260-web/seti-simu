@@ -1,0 +1,40 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/trigger-cache-capacity-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "06179c22561171cc3071db3d76e60cb00b3261b8c200028d89f2bcd1a182cc43",
+  "cases": 1258,
+  "rows": [
+    {
+      "label": "actual-v256-132",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+      "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v303-cold-actual-v256-132-20261107-v1.json",
+      "nativeInputs": 162,
+      "milliseconds": 672.560709,
+      "value": 140.08333333333334,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 1,
+  "maxNativeInputs": 162,
+  "maxMilliseconds": 672.560709,
+  "failure": {
+    "label": "actual-v256-132",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+    "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v303-cold-actual-v256-132-20261107-v1.json",
+    "nativeInputs": 162,
+    "milliseconds": 672.560709,
+    "value": 140.08333333333334,
+    "actionId": "industry:e887dc52",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}
