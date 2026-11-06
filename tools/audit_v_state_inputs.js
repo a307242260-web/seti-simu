@@ -876,6 +876,18 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+// Current known research and later held-symbol use share one readonly ledger.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),demand=require('../randomizer/game/ai/resource-demand');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json')),seed=f.source.seed,seat=f.seatId;kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const before=c.lifecycle.save().envelope,raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seat),value=independentValue.evaluateStateValue(raw,seat);port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const root=port.openRoot();
+  assert.equal(value.total,123.58333333333333);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(independentValue.evaluateStateValue(port.valueObservation(root),seat),value);assert.equal(demand.planningCapital(state,owner),independentValue.sumValueParts(['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential','finalMarkPotential'].map(k=>value.components[k])));assert.deepEqual(c.lifecycle.save().envelope,before);
+  console.log('[PASS] independent-research-symbol-composition: native/formal/full/compact ledger123.583333 agrees; no fabricated Native observation/entity or root/RNG mutation');
+ }catch(error){console.log(`[FAIL] independent-research-symbol-composition: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

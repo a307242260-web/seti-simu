@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v9';
+  const VERSION='seti-goal-resource-preparation-v11';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -34,7 +34,7 @@
       publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
     return d;
   }
-  const protectedCard=(c,g)=>c.id===g.cardId||c.id===g.incomeCardId;
+  const protectedCard=(c,g)=>c.id===g.cardId||c.id===g.incomeCardId||c.id===g.continuationCardId;
   const targetSlot=(p,g)=>g.publicityData&&p.resources.publicity>=(g.required.publicity||0)?0:g.targetComputerSlot||0;
   const deficit=d=>Object.values(d).reduce((n,v)=>n+v,0);
   function capacity(state,seatId,goal,allowBlue=true){
@@ -174,9 +174,21 @@
     // Anonymous quantity can fund a forecast, never an executable selection.
     return planned?.outgoingCardId?planned:stateValue.incomeAllocationCapital(facts).knownSwapPlan;
   }
+  const immutableRemovalCapital=new WeakMap();
   function incomeOpportunityCost(state,p,card,beforeCapital=planningCapital(state,p)){
-    const hand=p.hand.filter(c=>c.id!==card.id);
-    return stateValue.sumValueParts([beforeCapital,-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}})]);
+    // Different goals repeatedly remove the very same card from one complete
+    // immutable Native source. Share only that pure remaining-capital scalar;
+    // callers may supply a different baseline (for example income preparation).
+    const immutable=card&&Object.isFrozen(state)&&Object.isFrozen(p)&&Object.isFrozen(card)
+      &&immutableCapitalInput(state)&&immutableCapitalInput(p)&&immutableCapitalInput(card);
+    let owners=immutable?immutableRemovalCapital.get(state):null,quotes=owners?.get(p),after;
+    if(quotes?.has(card))after=quotes.get(card);
+    else{
+      const hand=p.hand.filter(c=>c.id!==card.id);
+      after=planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
+      if(immutable){if(!owners){owners=new WeakMap();immutableRemovalCapital.set(state,owners);}if(!quotes){quotes=new WeakMap();owners.set(p,quotes);}quotes.set(card,after);}
+    }
+    return stateValue.sumValueParts([beforeCapital,-after]);
   }
   function incomePreparationCapital(state,p,projectedData=0,knownCapital=null){
     const current=knownCapital??planningCapital(state,p);
@@ -268,7 +280,13 @@
       }
       if(Object.entries(requirements.scanCost).some(([k,v])=>p.resources[k]<v))add({id:'scan:standard',kind:'scan',required:requirements.scanCost});
       if(requirements.launchPossible&&Object.entries(requirements.launchCost).some(([k,v])=>p.resources[k]<v))add({id:'launch:earth',kind:'launch',required:requirements.launchCost});
-      for(const t of greedyTechPlans({state,seatId,plans:requirements.techPlans}))add({id:t.planId,kind:'research_tech',tileId:t.tileId,blueSlot:t.blueSlot,required:t.required});
+      const researchContinuation=p.resources.publicity<techResolver.getResearchPublicityCost(p)&&stateValue.hasKnownSymbolTool(p.hand)
+        ?planningCapitalDetails(state,p).researchSymbolPlan:null;
+      for(const t of greedyTechPlans({state,seatId,plans:requirements.techPlans})){
+        const continuation=researchContinuation?.candidates.find(c=>c.tileId===t.tileId);
+        add({id:t.planId,kind:'research_tech',tileId:t.tileId,blueSlot:t.blueSlot,required:t.required,
+          ...(continuation?{continuationCardId:continuation.beneficiaryCardId,publicityCornerCardId:continuation.cornerCardId}:{})});
+      }
       for(const c of requirements.probeCandidates.filter(c=>!c.launchRequired&&c.rocketId!=null)){
         const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);if(!probe)continue;
         let at=rockets.getRocketSectorCoordinate(probe),path=[],points=0;
@@ -419,7 +437,11 @@
       if(!dataOrder)dataOrder=new Map(dataCornerCards({state,seatId,goal}).map((x,i)=>[x.card.id,i]));
       return dataOrder.get(action.target?.cardInstanceId);
     };
-    out.sort((a,b)=>a.loss*b.reduction-b.loss*a.reduction||a.inputs-b.inputs
+    // A quoted research continuation consumes its known publicity supplier,
+    // preserving the symbol card whose later value funded that same plan.
+    const preferred=c=>before.publicity>0&&goal.publicityCornerCardId
+      &&actions.find(a=>a.actionId===c.actionId)?.target?.cardInstanceId===goal.publicityCornerCardId?1:0;
+    out.sort((a,b)=>preferred(b)-preferred(a)||a.loss*b.reduction-b.loss*a.reduction||a.inputs-b.inputs
       ||(rank(a)!=null&&rank(b)!=null?rank(a)-rank(b):0)||(a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0));
     return out;
   }

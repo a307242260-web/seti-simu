@@ -1,0 +1,31 @@
+from pathlib import Path
+import hashlib,json
+w=Path(__file__).resolve().parents[1];F=Path('reports/ai-foundation-20261105/third-round-teacher-v1');mp=Path('reports/ai-foundation-20261106/candidate-v239-research-symbol-v1/manifest.json');read=lambda p:json.loads((w/p).read_text());sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();m=read(mp);out=w/F/'v239-current-source-admission-20261106-v1.json';assert not out.exists();checkedHashes={}
+def checked(n,h):
+ if n not in checkedHashes:checkedHashes[n]=sha(w/n)
+ assert checkedHashes[n]==h,n
+for n,h in {**m['baseRuntimeHashes'],**m['sourceHashes']}.items():checked(n,h)
+gate=read(F/'v239-current-source-serial-gate-20261106-v1.json');assert gate['status']=='complete'and len(gate['rows'])==575 and gate['measuredUniqueRoots']==484
+runtime={};seen=set()
+for row in gate['rows']:
+ e=read(row['evidence']);checked(e['fixture'],e['fixtureSha256']);checked(e['rawPath'],e['rawSha256']);assert e['candidateSourceManifestSha256']==sha(w/mp)
+ assert e['complete']and e['decisionGatePassed']and e['rootAndRngUnchanged']and e['nativeInputs']<=256 and e['milliseconds']<=600
+ assert len(e['diagnostics']['limits'])==4 and all(v is None for v in e['diagnostics']['limits'].values())
+ for n,h in e['sourceHashes'].items():checked(n,h);assert runtime.get(n,h)==h;runtime[n]=h
+ seen.add(row['identity'])
+assert len(seen)==484
+snapshot=F/'v239-admission-independent-snapshot-20261106-v1.json';snap=read(snapshot);assert snap['status']=='passed'and snap['testsPassed']==27 and len(snap['fixtureHashes'])==331 and snap['ownedSourceHashes']==m['sourceHashes']
+for n,h in {**snap['logsSha256'],**snap['fixtureHashes']}.items():checked(n,h)
+parent=read('reports/ai-foundation-20261106/candidate-v238-research-symbol-v1/manifest.json');changed={n for n,h in m['sourceHashes'].items()if parent['sourceHashes'].get(n)!=h};assert changed=={'randomizer/game/ai/resource-demand.js','randomizer/game/ai/decision-search.js','randomizer/game/ai/research-symbol-composition.test.js'}
+full=(w/F/'v238-full-node-20261106-v1.log').read_text();assert 'SUMMARY unit passed=187 failed=0 total=187'in full and 'SUMMARY fullFlow passed=1 failed=0 total=1'in full
+browser=(w/F/'v239-browser-20261106-v1.log').read_text();assert 'SUMMARY browserSmoke passed=6 failed=0 total=6'in browser
+audit=(w/F/'v239-input-audit-20261106-v1.log').read_text();assert audit.count('[PASS]')==52 and audit.count('[FAIL]')==1 and 'Cannot add property aomomo'in audit
+comparison=read(F/'v239-cold-roots-v237-comparison-20261106-v1.json');assert comparison['uniqueRoots']==484
+for r in ['1','2']:assert comparison['byRound'][r]['valueChanged']==comparison['byRound'][r]['choiceChanged']==0
+assert sum(comparison['byRound'][r]['roots']for r in ['1','2'])==304 and len(comparison['unpairedNewRoots'])==1
+before=read(F/'v238-card-removal-reuse-diagnostic-20261106-v1.json');after=read(F/'v239-card-removal-reuse-diagnostic-20261106-v1.json');assert before['requests']==after['requests']==120 and before['portfolioCalls']==121 and after['portfolioCalls']==4 and before['rows']==after['rows']
+failure=read(F/'v238-current-source-serial-gate-20261106-v1.json');assert failure['status']=='failed-gate'and failure['failure']['nativeInputs']==112 and failure['failure']['milliseconds']==601.435667
+engine=read(F/'v237-engine-before-research-control-20261106-v1.checkpoint.json');root=read(F/'v239-cold-actual-v203-123-20261106-v1.json');action=next(a for a in root['rootActions']if a['actionId']==root['actionId']);assert action['target']['cardInstanceId']==engine['plan']['engine']and root['value']==123.58333333333333
+files=[p for p in(w/F).iterdir()if p.is_file()and p.name.startswith(('v238-','v239-'))]
+result={'status':'source-admitted','sourceAdmitted':True,'baseCommit':m['baseCommit'],'runtime':'V239/V43','manifest':str(mp),'manifestSha256':sha(w/mp),'runtimeSourceHashes':runtime,'ownedSourceHashes':m['sourceHashes'],'scope':m['scope'],'namedCases':575,'uniqueNativeRoots':484,'allComplete':True,'maxNativeInputs':gate['maxNativeInputs'],'maxMilliseconds':gate['maxMilliseconds'],'parentFullRegression':{'runtime':'V238/V43','unitPassed':187,'fullFlowPassed':1,'scope':'Before immutable scalar reuse; not represented as a V239 full-suite run.'},'currentSourceRegression':{'independentSnapshot':str(snapshot),'tests':27,'fixtureHashes':331,'includesNativeDomainLedgerSearchAndOnlyFullFlow':True,'changesFromFullTestedParent':sorted(changed)},'browserRelatedPassed':6,'inputAudit':{'pass':52,'fail':1,'legacyAomomoFailureUnchanged':True,'allGreen':False},'legacyHeuristicFullPageTimeoutUnresolved':True,'firstTwoRoundRegression':{'roots':304,'changedValues':0,'changedChoices':0},'pairedThirdRoundChanges':comparison['changes'],'extraDeferredPublicityRoot':comparison['unpairedNewRoots'],'immutableRemovalReuse':{'requests':120,'distinctCompleteStatePlayerCardInputs':3,'beforeRecomputations':121,'afterRecomputations':4,'allResultsIdentical':True,'mutableAndShallowFrozenDecline':True,'callerBaselinesNotCachedAsDifference':True},'nativeSymbolResearchLedger':{'knownResearchValues':[123.58333333333333,120,120.5],'nativeSourceInputsReplayed':19,'fullNativeEnvelopeAndRngIdentical':True,'fixedPublicityPreservesRealBeneficiary':True,'formalAndCompactParity':True,'forecastBProfileCreatesNoNativeEntity':True},'fourProductionBudgetsStillNull':True,'nativeStateActorSessionRngAndIntentEquivalenceUnchanged':True,'firstFailedCandidateRetained':failure['failure'],'newAutonomousRuns':0,'lastActualR3':{'runtime':'V237/V42','score':82,'tech':5,'incomeCreditsEnergyCards':[6,3,1],'scanIncome':1},'teacherR3':{'score':105,'tech':6,'incomeCreditsEnergyCards':[7,4,1],'scanIncome':1},'developmentAligned':False,'baseline':'ai-search-v41-baseline-20261029 unchanged','goalStatus':'active','next':'Commit/push admitted source and run one unique standard R3-only experiment; then continue R3 learning before R2 end review and autonomous first3.','evidenceSha256':{str(p.relative_to(w)):sha(p)for p in sorted(files)}}
+out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');print(json.dumps({'out':str(out.relative_to(w)),'sourceAdmitted':True,'cases':575,'roots':484,'maxInputs':result['maxNativeInputs'],'maxMilliseconds':result['maxMilliseconds'],'currentSourceTests':27,'browser':6,'newAutonomousRuns':0}))

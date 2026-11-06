@@ -1,0 +1,22 @@
+{
+  "scope": "Pure diagnostic only. The exact frozen retained Native state/player/card objects are repeatedly passed to existing card opportunity-cost helper. Module loader counts calls only, delegates to unchanged V238 evaluator; no source-file mutation, Native input, AI search, gate resample or autonomous run.",
+  "requests": 120,
+  "distinctFullStatePlayerCardInputs": 3,
+  "portfolioCalls": 121,
+  "milliseconds": 118.207833,
+  "rows": [
+    {
+      "cardId": "card-29-pass-2-5",
+      "value": 3
+    },
+    {
+      "cardId": "card-51-0",
+      "value": 9.833333333333334
+    },
+    {
+      "cardId": "alien-amiba-0-1",
+      "value": 9.833333333333334
+    }
+  ],
+  "rootAndRngUnchanged": true
+}

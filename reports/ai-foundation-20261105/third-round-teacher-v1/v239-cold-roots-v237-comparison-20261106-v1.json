@@ -1,0 +1,66 @@
+{
+  "uniqueRoots": 484,
+  "byRound": {
+    "3": {
+      "roots": 176,
+      "valueChanged": 3,
+      "choiceChanged": 2
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "changes": [
+    {
+      "label": "actual-v203-123",
+      "round": "3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-123-root-20261106-v1.json",
+      "priorValue": 122,
+      "value": 123.58333333333333,
+      "priorAction": "play_card:a27d2ab4",
+      "action": "play_card:1c4e6ebd",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-cold-actual-v203-123-20261106-v1.json"
+    },
+    {
+      "label": "actual-v203-124",
+      "round": "3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-124-root-20261106-v1.json",
+      "priorValue": 118,
+      "value": 123.58333333333333,
+      "priorAction": "play_card:52a456f8",
+      "action": "play_card:1c4e6ebd",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-cold-actual-v203-124-20261106-v1.json"
+    },
+    {
+      "label": "corner-safety-purple2-2",
+      "round": "3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-2-root-20261106-v1.json",
+      "priorValue": 113.75,
+      "value": 123.58333333333333,
+      "priorAction": "end_turn:b2f9b29d",
+      "action": "end_turn:b2f9b29d",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-cold-corner-safety-purple2-2-20261106-v1.json"
+    }
+  ],
+  "unpairedNewRoots": [
+    {
+      "label": "deferred-publicity-before-research",
+      "round": "3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-deferred-publicity-before-research-root-20261106-v1.json",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-cold-deferred-publicity-before-research-20261106-v1.json"
+    }
+  ],
+  "newAutonomousRuns": 0
+}

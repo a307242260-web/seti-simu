@@ -1,0 +1,53 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261106/candidate-v238-research-symbol-v1/manifest.json",
+  "manifestSha256": "32dbca5cb4daac4b19a617018faf83924238e609dde65f753c54e6f8c3bb8440",
+  "cases": 574,
+  "rows": [
+    {
+      "label": "actual-v203-123",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v203-actual-before-123-root-20261106-v1.json",
+      "identity": "a775efa34a0e96ae306b3173d27dca915acf6d1f9f4f61376445ed14fb339d3b",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v238-cold-actual-v203-123-20261106-v1.json",
+      "nativeInputs": 68,
+      "milliseconds": 342.566875,
+      "value": 123.58333333333333,
+      "actionId": "play_card:1c4e6ebd",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "corner-safety-purple2-3",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+      "identity": "a094188e998f6c24fa49d20f4e9d6b6cb7c53235bc1f004405a67998cc7f2a21",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v238-cold-corner-safety-purple2-3-20261106-v1.json",
+      "nativeInputs": 112,
+      "milliseconds": 601.435667,
+      "value": 123.58333333333333,
+      "actionId": "research_tech:806ccfc8",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 2,
+  "maxNativeInputs": 112,
+  "maxMilliseconds": 601.435667,
+  "failure": {
+    "label": "corner-safety-purple2-3",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+    "identity": "a094188e998f6c24fa49d20f4e9d6b6cb7c53235bc1f004405a67998cc7f2a21",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v238-cold-corner-safety-purple2-3-20261106-v1.json",
+    "nativeInputs": 112,
+    "milliseconds": 601.435667,
+    "value": 123.58333333333333,
+    "actionId": "research_tech:806ccfc8",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

@@ -469,9 +469,8 @@
         publicity: industryPassives.getTuringBlueTechPublicityGain(),
       });
     }
-    if (result.tileId === "purple1") {
-      data.gainData(actor, { source: "purple1", root });
-      data.gainData(actor, { source: "purple1", root });
+    for (let i = 0; i < getResearchDataCount(result.tileId); i++) {
+      data.gainData(actor, { source: result.tileId, root });
     }
     applyHeliosReward(root, actor, result.techType, result.tileId, events);
     const after = options.afterResearchReward;
@@ -1956,6 +1955,8 @@
     return { sectorX: planet.x };
   }
 
+  function getResearchDataCount(tileId) { return tileId === "purple1" ? 2 : 0; }
+
   return Object.freeze({
     DOMAIN_ID,
     ACTION_FAMILIES,
@@ -1976,6 +1977,7 @@
     listIncomeChoices,
     listResearchChoices,
     executeResearchChoice,
+    getResearchDataCount,
     formalizeChoices,
   });
 });

@@ -15,13 +15,14 @@
     common ? require("../end-game-scoring") : root.SetiEndGameScoring,
     common ? require("./research-trigger-capital") : root.SetiResearchTriggerCapital,
     common ? require("./known-symbol-capital") : root.SetiKnownSymbolCapital,
-    common ? require("../cards/deck") : root.SetiCards);
+    common ? require("../cards/deck") : root.SetiCards,
+    common ? require("./research-symbol-capital") : root.SetiResearchSymbolCapital);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v42";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v43";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -420,7 +421,8 @@
   }
 
   function purposeCapital(facts, weights = DEFAULT_WEIGHTS) {
-    const base=purposeCapitalWithoutTools(facts,weights),tool=movementTool.quote(facts,weights,next=>purposeCapitalWithoutTools(next,weights).total);
+    const lower=purposeCapitalWithoutTools(facts,weights),research=researchSymbol.quote(facts,weights,next=>purposeCapitalWithoutTools(next,weights).total,lower.total,technologyCapital);
+    const base={...lower,researchPotential:arithmetic.sum([lower.researchPotential,research.value],weights),researchSymbolPlan:research,total:arithmetic.sum([lower.total,research.value],weights)},tool=movementTool.quote(facts,weights,next=>purposeCapitalWithoutTools(next,weights).total);
     return {...base,handPotential:arithmetic.sum([base.handPotential,tool.value],weights),toolPlan:tool,
       total:arithmetic.sum([base.total,tool.value],weights)};
   }
@@ -500,7 +502,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, knownPublicIncomeSwapPlan, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, valueScale:arithmetic.scale, normalizeValue:arithmetic.normalize, sumValueParts:arithmetic.sum, technologyCapital, knownCardCapital, handCapital, researchFunding, researchCapital, researchCapitalCeiling, probePotential, purposeCapital, knownPublicIncomeSwapPlan, incomePreparationCapital, incomeAllocationCapital, prepaidComputerCapital:readyAnalysis.prepaidCapital, hasKnownSymbolTool:cards=>cards.some(card=>symbolCard.supported(card)), hasKnownSectorTool:cards=>cards.some(card=>sectorCard.supported(card)), hasKnownMovementTool:cards=>cards.some(movementTool.supported), readyAnalysisUpperBound:(slots,progress)=>readyAnalysis.upperBound(slots,DEFAULT_WEIGHTS,progress),
     researchIncomeUpperBound:facts=>researchIncome.upperBound(facts,DEFAULT_WEIGHTS,technologyCapital),
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),

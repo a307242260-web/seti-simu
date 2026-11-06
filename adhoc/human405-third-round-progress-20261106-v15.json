@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-06",
+  "runtime": "V239/V43",
+  "status": "source-admitted-awaiting-unique-r3",
+  "goalStatus": "active",
+  "gate": {
+    "namedCases": 575,
+    "uniqueRoots": 484,
+    "maxInputs": 256,
+    "maxMilliseconds": 568.122333
+  },
+  "firstTwoRounds": {
+    "roots": 304,
+    "changedValues": 0,
+    "changedChoices": 0
+  },
+  "actualPre123": {
+    "action": "play known Amiba1 research engine",
+    "inputs": 68,
+    "milliseconds": 316.393667,
+    "value": 123.58333333333333
+  },
+  "deferredPublicity": {
+    "inputs": 117,
+    "milliseconds": 558.953375,
+    "action": "fixed real Amiba3 publicity corner; Amiba0 beneficiary protected"
+  },
+  "parentV238Failure": {
+    "inputs": 112,
+    "milliseconds": 601.435667,
+    "retained": true,
+    "newGames": 0
+  },
+  "currentSourceValidation": {
+    "independentTests": 27,
+    "fixtureHashes": 331,
+    "browserSmokes": 6,
+    "auditPassed": 52,
+    "legacyAuditFailed": 1
+  },
+  "parentV238FullNode": {
+    "unit": 187,
+    "fullFlow": 1,
+    "beforeV239CacheChange": true
+  },
+  "sourceProof": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-current-source-admission-20261106-v1.json",
+  "lastActualR3": {
+    "runtime": "V237",
+    "score": 82,
+    "tech": 5,
+    "income": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherR3": {
+    "score": 105,
+    "tech": 6,
+    "income": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "newAutonomousRuns": 0,
+  "baseline": "V41 unchanged",
+  "next": "Commit/push admitted source; one unique standard R3-only run; learn remaining R3 differences before reviewing R2 end and autonomous first3."
+}

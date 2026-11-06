@@ -1,0 +1,162 @@
+{
+  "scope": "CPU diagnostic only: 400 pure purpose quotes on the retained Native observation and its existing opportunity-cost removal facts; zero Native inputs, zero AI searches, no acceptance timing resample.",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v238-research-symbol-v1/manifest.json",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+  "quotes": 400,
+  "milliseconds": 471.78350000000006,
+  "raw": "reports/ai-foundation-20261105/third-round-teacher-v1/v238-research-symbol-pure-profile-20261106-v1.cpuprofile",
+  "rawSha256": "f6693df8c33330af8c9188978585b76bdc6823da53db528ae5479d4fe25d0c60",
+  "rootAndRngUnchanged": true,
+  "hot": [
+    {
+      "name": "post",
+      "file": "node:inspector",
+      "line": 118,
+      "selfMilliseconds": 14.209
+    },
+    {
+      "name": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "selfMilliseconds": 12.837
+    },
+    {
+      "name": "quote",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 84,
+      "selfMilliseconds": 10.249
+    },
+    {
+      "name": "countTraceMarkers",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "selfMilliseconds": 7.958
+    },
+    {
+      "name": "quote",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/research-symbol-capital.js",
+      "line": 44,
+      "selfMilliseconds": 7.748
+    },
+    {
+      "name": "copyPublicSymbolState",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "selfMilliseconds": 7.416
+    },
+    {
+      "name": "copyPublicSymbolState",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/aliens/amiba.js",
+      "line": 544,
+      "selfMilliseconds": 7.247
+    },
+    {
+      "name": "incomePreparation",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 47,
+      "selfMilliseconds": 5.877
+    },
+    {
+      "name": "quote",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 84,
+      "selfMilliseconds": 5.71
+    },
+    {
+      "name": "incomePreparation",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 47,
+      "selfMilliseconds": 5.706
+    },
+    {
+      "name": "countTraceMarkers",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "selfMilliseconds": 4.79
+    },
+    {
+      "name": "analysisAliens",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 29,
+      "selfMilliseconds": 4.459
+    },
+    {
+      "name": "",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 34,
+      "selfMilliseconds": 4.331
+    },
+    {
+      "name": "quote",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/known-symbol-capital.js",
+      "line": 22,
+      "selfMilliseconds": 3.832
+    },
+    {
+      "name": "",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 53,
+      "selfMilliseconds": 3.584
+    },
+    {
+      "name": "",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 53,
+      "selfMilliseconds": 3.46
+    },
+    {
+      "name": "gains",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/research-trigger-capital.js",
+      "line": 45,
+      "selfMilliseconds": 3.331
+    },
+    {
+      "name": "analysisAliens",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 29,
+      "selfMilliseconds": 3.25
+    },
+    {
+      "name": "",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/state-value.js",
+      "line": 174,
+      "selfMilliseconds": 3.166
+    },
+    {
+      "name": "delta",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 136,
+      "selfMilliseconds": 3.083
+    },
+    {
+      "name": "gains",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/research-trigger-capital.js",
+      "line": 45,
+      "selfMilliseconds": 3.042
+    },
+    {
+      "name": "",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js",
+      "line": 34,
+      "selfMilliseconds": 3.001
+    },
+    {
+      "name": "gains",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/research-trigger-capital.js",
+      "line": 45,
+      "selfMilliseconds": 2.957
+    },
+    {
+      "name": "gains",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/ai/research-trigger-capital.js",
+      "line": 45,
+      "selfMilliseconds": 2.914
+    },
+    {
+      "name": "getFormulaBaseValue",
+      "file": "file:///private/tmp/seti-v238-known-research-20261106-v1/randomizer/game/end-game-scoring.js",
+      "line": 615,
+      "selfMilliseconds": 2.912
+    }
+  ]
+}

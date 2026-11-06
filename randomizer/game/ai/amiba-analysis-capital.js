@@ -37,7 +37,7 @@
  // fixed by the reservation guard; unknown new cards never become Type3 facts.
  function secured(aliensState,facts){
   const actor={id:facts.player.id,color:facts.player.color,reservedCards:facts.reservedCards,techState:facts.player.techState},context={aliens:aliensState};let value=0;
-  const board=facts.board.finalScoring,mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id),formula=board&&end.getFormulaId('b',board.tileVariants.b);
+  const board=facts.board.finalScoring,mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id)||(facts.forecastFinalMark?.tileId==='b'?facts.forecastFinalMark:null),formula=board&&end.getFormulaId('b',board.tileVariants.b);
   if(mark&&formula==='b1')value+=end.getFormulaBaseValue(formula,actor,context)*end.getSlotMultiplier(formula,mark.slotIndex);
   for(const card of facts.reservedCards){const rule=end.resolveCardEndGameRule(card,effects);
    if(rule&&['traceCount','amibaTraceCount'].includes(rule.kind)&&rule.traceType==='blue')value+=end.scoreCardEndGameRule(rule,actor,context);
