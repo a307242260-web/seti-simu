@@ -930,6 +930,23 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+// Anonymous count cannot change a root-known held-pool-data continuation.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port');
+  const f=JSON.parse(fs.readFileSync('reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json')),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(f.root).ok);const original=c.lifecycle.save().envelope;port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});let node=port.openRoot();
+  for(let i=0;i<f.sequence.length-1;i++){
+   node=port.expand(node,f.sequence[i]);if(i<1)continue;
+   const full=node.observation,compact=port.valueObservation(node),formal=outcomeModel.createDecisionObservation(full,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(full,seat);
+   assert.deepEqual(independentValue.evaluateStateValue(compact,seat),value);assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.deepEqual(value,f.prefixes[i].maskedValue);assert.equal(full.selfState.hand.filter(c=>c.hidden).length,2);assert(full.selfState.hand.filter(c=>c.hidden).every(c=>!c.id&&!c.cardId));
+  }
+  assert.equal(independentValue.evaluateStateValue(port.valueObservation(node),seat).total,140);assert.deepEqual(c.lifecycle.save().envelope,original);
+  console.log('[PASS] independent-multi-anonymous-data: two opaque cards, full/formal/compact and each Native prefix138-to140 agree; no new entity payment or root/RNG change');
+ }catch(error){console.log(`[FAIL] independent-multi-anonymous-data: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
+}
+
 // Mutable planning wrappers can share only an exact complete-input scalar.
 {
  let kernel;

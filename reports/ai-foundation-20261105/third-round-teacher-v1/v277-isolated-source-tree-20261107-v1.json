@@ -1,0 +1,49 @@
+{
+  "status": "source-tree-verified-not-yet-admitted",
+  "baseCommit": "cdb4af6d4dad239c803326afce136ee52fe3ddb4",
+  "snapshotTree": "f56ed7eac36a4133d8bc01c2a5d008bd615d2dcd",
+  "physicalIndependentWorktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "privateIndex": "/private/tmp/seti-v277-source-admission-20261107-v1.index",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexPreserved": true,
+  "productionBranchUnchanged": true,
+  "frozenSourceManifest": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/source-manifest-20261107-v1.json",
+  "frozenSourceManifestSha256": "5936fb86061a12439790ea9c95122deca9b164b2319820d6debc5f9db6140c9e",
+  "ownedSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "71ef1ed1a76b3db59c83f5fd1fd50f3544d7ca031447004225131bbdc1dcff51",
+    "randomizer/game/ai/decision-search.js": "3b5e2c7f9d91197925538c0a768f217c3fdf97f920c0541e891c89c56b139983",
+    "randomizer/game/ai/anonymous-data-continuation.test.js": "30f577bc727587a2824c14bf9198e24795091bb9e15c9adab5f8f01e87fb5cb9",
+    "tools/node-test-inventory.js": "a8e509e0d358c5785ee4e38fc0d014dc6b5730507877842abbb6f52bf8e0eaf3",
+    "tools/browser-smoke-inventory.js": "413522472e7ddd16cc0939f12a3456107a58d16491f4a801b57386e34e6bfc2a",
+    "tools/audit_v_state_inputs.js": "e2ada7a5e4bb0e40ef4e6487488f4c88c678d0a63bd87d0747134cbc2e67021d",
+    "adhoc/v277-anonymous-data-continuation-contract-20261107-v1.md": "d820c59baf4d49b77080ecd8fcdeab15ce8aa60e839106c419f1740b8cc4acc9",
+    "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json": "340c1c0d36aaa5b7281cde297a8693683c7efc5a2f3af922818de5083c9d1a3d"
+  },
+  "frozenSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "71ef1ed1a76b3db59c83f5fd1fd50f3544d7ca031447004225131bbdc1dcff51",
+    "randomizer/game/ai/decision-search.js": "3b5e2c7f9d91197925538c0a768f217c3fdf97f920c0541e891c89c56b139983",
+    "randomizer/game/ai/anonymous-data-continuation.test.js": "30f577bc727587a2824c14bf9198e24795091bb9e15c9adab5f8f01e87fb5cb9",
+    "tools/node-test-inventory.js": "a8e509e0d358c5785ee4e38fc0d014dc6b5730507877842abbb6f52bf8e0eaf3",
+    "tools/browser-smoke-inventory.js": "413522472e7ddd16cc0939f12a3456107a58d16491f4a801b57386e34e6bfc2a",
+    "tools/audit_v_state_inputs.js": "e2ada7a5e4bb0e40ef4e6487488f4c88c678d0a63bd87d0747134cbc2e67021d",
+    "adhoc/v277-anonymous-data-continuation-contract-20261107-v1.md": "d820c59baf4d49b77080ecd8fcdeab15ce8aa60e839106c419f1740b8cc4acc9",
+    "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json": "340c1c0d36aaa5b7281cde297a8693683c7efc5a2f3af922818de5083c9d1a3d"
+  },
+  "validationOverlay": null,
+  "validationOverlaySha256": null,
+  "runtimeUnchangedFromFrozenCandidate": true,
+  "changedPaths": [
+    "adhoc/v277-anonymous-data-continuation-contract-20261107-v1.md",
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/anonymous-data-continuation.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "runtimeAssetToolsExactToStagedTree": true,
+  "runtimeAssetPathsVerified": 951,
+  "noUnstagedOrUntrackedRuntimeInputs": true,
+  "scope": "The existing isolated worktree is independently proven byte-identical to a private-index tree made from committedcdb4af6d plus the frozen owned source/test inputs and the explicitly declared declared validation-only overlay. Production runtime bytes remain frozen. All other randomizer/tools/assets files match that tree by actual Git blob content and executable modes, independently of unrefreshed index stat records. Functional validation runs in this physical independent tree; no shared-root edits or index refresh are used. This is a source snapshot proof, not completed source admission or a new autonomous game."
+}

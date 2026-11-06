@@ -1252,7 +1252,7 @@
       const state=readIdentityState(envelope),owner=state.players.players.find(p=>p.id===seatId);
       if(industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
         ||owner.industryRoundMarkRound!==state.turn.roundNumber
-        ||owner.hand.filter(card=>!knownRootCardIds.has(card.id)).length!==1
+        ||!owner.hand.some(card=>!knownRootCardIds.has(card.id))
         ||[...owner.reservedCards,...(owner.privateAlienCards||[])].some(card=>!knownRootCardIds.has(card.id))
         ||Object.values(state.aliens.aliens).some(slot=>slot.revealed&&!knownRootAlienIds.has(slot.alienId))
         ||!state.turn.activePlayerIds?.length
@@ -1295,7 +1295,7 @@
       if(resourceControl)return null;
       if(industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
         ||owner.industryRoundMarkRound!==state.turn.roundNumber
-        ||owner.hand.filter(card=>!knownRootCardIds.has(card.id)).length!==1
+        ||!owner.hand.some(card=>!knownRootCardIds.has(card.id))
         ||!state.turn.activePlayerIds?.length
         ||!state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id)))return null;
       const actions=knownPostMainActions(envelope,legalActions(fork.composition||fork,inspection),true);

@@ -1668,6 +1668,16 @@ Object.freeze({
   obligation:'真实页面研究领域数据、一次公开符号移动、已知受益牌与一次B资本共享账本；原生19输入及延后宣传准备恢复一致',
   counterexample:'漏页面模块、只加触发奖励未移动符号、提前丢受益牌、标记重复计分、读取新牌身份或原根RNG变化',
 }), Object.freeze({
+  id:'production-anonymous-data-continuation',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiProductionKernel)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json').then(r=>r.json()),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white',v=window.SetiStateValue,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.root).ok)throw Error('anonymous root restore');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{p.setResourcePlanning(true);p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});let n=p.openRoot();for(const id of f.sequence.slice(0,2))n=p.expand(n,id);if(n.status!=='stable')throw Error('two-card reward cut known data');const o=p.valueObservation(n),hidden=o.selfState.hand.filter(c=>c.hidden),spec=p.turnTailSummary(n,'blue-end-turn');if(hidden.length!==2||hidden.some(c=>c.id||c.cardId)||v.evaluateStateValue(o,seat).total!==138)throw Error('two-card anonymous quantity/value');if(!spec||spec.requiredNativeInputs!==5||spec.netGain!==2)throw Error('known five-input suffix');for(const id of f.sequence.slice(2,-1))n=p.expand(n,id);if(v.evaluateStateValue(p.valueObservation(n),seat).total!==140||n.status!=='information-barrier')throw Error('Native data endpoint');if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('anonymous root/RNG changed');window.__anonymousDataContinuationSmoke={ok:true};}finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__anonymousDataContinuationSmoke?.ok === true',
+  obligation:'Two anonymous newly held cards retain the same root-known held-data plan, with a five-input scalar matching independent Native140 and no identity use',
+  counterexample:'Hand-count gate cuts a safe known tail, new identities enter payment, portfolio differs from Native or root/RNG changes',
+}), Object.freeze({
   id:'production-known-postdraw-tail',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiStateValue && window.SetiResourceDemand)',
   actionExpression:`(async()=>{

@@ -1,0 +1,12 @@
+{
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-first-landing-finance-control-20261106-v1.json",
+  "sourceSha256": "58fde7f63153297b04a82ecbbe6886689ec7864f4814d36d2b95ec6b282dec20",
+  "currentNativeCheckpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json",
+  "currentNativeCheckpointSha256": "401a0cdb11b1288854691c8a00f8c02f19c202aeae94d73537a7a34240a375e1",
+  "ordinaryEndpointExactToActualBeforeInput": 120,
+  "stateSessionRngExact": true,
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "conclusion": "Existing financial control is current Native state. Ordinary retains DLC31 with10C1E, free-card route9C3E withoutDLC31. Equal historical scalar is not state equivalence or a complete later-purpose proof; no policy change justified by electricity alone."
+}

@@ -1,0 +1,5 @@
+{"anonymousKnownDataContinuation":"passed","anonymousCards":2,"hiddenDeckWorlds":6,"preparationNativeInputs":5,"fullNativeControlInputs":7,"before":138,"after":140,"unknownIdentityUsed":false,"rootAndRngRestored":true,"newAiQueries":0}
+{"knownPostdrawTail":"passed","nativeControlledBranches":3,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+SUMMARY unit passed=2 failed=0 total=2 time=1.12s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2

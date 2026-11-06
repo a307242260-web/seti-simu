@@ -1,0 +1,269 @@
+{
+  "cases": [
+    {
+      "label": "actual-v276-113",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-113-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-114",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-114-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-115",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-115-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-116",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-116-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-117",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-117-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-118",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-118-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-119",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-119-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-123",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-123-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-124",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-124-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-125",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-125-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-126",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-126-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-127",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-127-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-128",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-128-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-129",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-129-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-130",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-130-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-131",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-131-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-132",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-132-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-133",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-133-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-134",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-134-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-135",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-135-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-136",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-136-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-137",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-137-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-138",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-138-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-139",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-139-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-140",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-140-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-141",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-141-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-142",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-142-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-143",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-143-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-144",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-144-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-145",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-145-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-146",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-146-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-147",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-147-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-148",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-148-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-149",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-149-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-150",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-150-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-151",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-151-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-152",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-152-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-153",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-153-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-154",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-154-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-155",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-155-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-156",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-156-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-157",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-157-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-158",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-158-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-159",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-159-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-160",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-160-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-161",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-161-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-162",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-162-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-163",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-163-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-164",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-164-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-165",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-165-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-166",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-166-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-167",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-167-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-168",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-168-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-169",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-169-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-170",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-170-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-171",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-171-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-172",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-172-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-173",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-173-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-174",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-174-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-175",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-175-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-176",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-176-white-root-20261107-v1.json"
+    },
+    {
+      "label": "actual-v276-177",
+      "fixture": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/v276-before-177-white-root-20261107-v1.json"
+    }
+  ],
+  "excluded": [
+    {
+      "input": 120,
+      "owner": "player-green"
+    },
+    {
+      "input": 121,
+      "owner": "player-green"
+    },
+    {
+      "input": 122,
+      "owner": "player-green"
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

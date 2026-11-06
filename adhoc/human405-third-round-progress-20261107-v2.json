@@ -1,0 +1,53 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V276 source/result delivered and unique79Native65verified; current turn independently proves7-input multi-anonymous known-data tail and admits V277",
+  "productionSourceCommitBeforeDelivery": "43bf8cfcec92790deea7225cd1766fcf3a4eb1ad",
+  "productionResultCommitBeforeDelivery": "cdb4af6d4dad239c803326afce136ee52fe3ddb4",
+  "candidateRuntime": "V277/V48",
+  "sourceAdmitted": true,
+  "manifest": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/source-manifest-20261107-v1.json",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v277-current-source-admission-20261107-v1.json",
+  "newNativeControls": 7,
+  "newAutonomousRuns": 0,
+  "actual156Value": {
+    "oldBlue2AfterKnownTail": 139,
+    "oldBlue4CutBeforeKnownTail": 138,
+    "newBlue4AfterKnownTail": 140,
+    "sourceNativeStateSessionRngExact": true,
+    "unknownHandQuantity": 2,
+    "unknownIdentitiesConsumed": false
+  },
+  "coldGate": {
+    "namedCases": 1095,
+    "uniqueNativeRoots": 726,
+    "allClosed": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 543.656167
+  },
+  "validation": {
+    "unitPassed": 202,
+    "fullFlowPassed": 1,
+    "browserPassed": 2,
+    "inputAuditPassed": 58,
+    "existingAomomoFailure": 1,
+    "sixHiddenDeckWorldsPassed": true
+  },
+  "firstTwo": {
+    "fullGraphsActionsValuesAndPlansUnchangedVsV276": 304,
+    "inheritedFirstRoundTimingChangesFromV274": 3,
+    "autonomousAssetVerificationStillPending": true
+  },
+  "latestActualR3": {
+    "version": "V276",
+    "board": 79,
+    "technologyCount": 6,
+    "income": "7C2E1card+1scan",
+    "wallMilliseconds": 4482
+  },
+  "bestControlledR3": {
+    "version": "V256",
+    "board": 87
+  },
+  "baseline": "V41",
+  "next": "Isolatedsourcecommit/push then unique standardteacherR3 and Native replay. Continue unknown-species frontier/113 shared-wallet purposes; verify first-two assets, R3 tech/income, R2-end and original23 autonomousfirst3."
+}
