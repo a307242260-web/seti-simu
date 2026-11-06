@@ -1,0 +1,8 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":116.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+{"analysisPublicityCapital":"passed","NativeCommutationInputsReused":10,"newNativeInputs":0,"fullFormalCompactAndState":true,"unknownAndUnsafeRejected":true,"rootAndRngRestored":true,"results":[{"case":"actual142","before":140.08333333333334,"preparationCapital":0,"corners":["alien-amiba-9-5","alien-amiba-0-1"]},{"case":"legacy259","before":138.75,"preparationCapital":10.5,"corners":["alien-amiba-9-5"]}],"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisPublicityPreparation":"passed","before":138.75,"after":138.75,"nativeInputs":1,"existingSourceStillLegal":true,"preparationAlreadyValued":true,"noRepeat":true,"rootAndRngRestored":true}
+{"actual148FundingAfterMain":"passed","actionId":"play_card:52a456f8","value":140.58333333333334,"nativeInputs":126,"rootAndRngRestored":true}
+SUMMARY unit passed=3 failed=0 total=3 time=1.17s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=2

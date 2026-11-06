@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parents[1];D=Path('reports/ai-foundation-20261107/publicity-reachability-v1');prior=Path('reports/ai-foundation-20261107/publicity-base-scalar-reuse-v1/source-manifest-20261107-v1.json');old=json.loads((P/prior).read_text());out=P/D/'source-manifest-20261107-v1.json';assert not out.exists();sha=lambda n:hashlib.sha256((P/n).read_bytes()).hexdigest()
+names=list(old['sourceHashes'])+['adhoc/v283-publicity-reachability-contract-20261107-v1.md'];assert len(names)==len(set(names))
+for n,h in old['baseRuntimeHashes'].items():
+ if n not in names:assert sha(n)==h,n
+for n in names:
+ target=P/D/'source-snapshot'/n;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((P/n).read_bytes())
+m={**old,'searchVersion':'seti-complete-decision-search-v283','sourceHashes':{n:sha(n)for n in names},'contract':'adhoc/v283-publicity-reachability-contract-20261107-v1.md','semanticContract':old['contract'],'failedParentManifest':str(prior),'failedParentManifestSha256':sha(prior),'scope':'V281/V50 semantics preserved; failed V282 complete-key cache removed. Skip research trigger/mark construction only for a valid research fee with insufficient real publicity and no held supported research card, retaining joint validation and all other purposes. Ordinary currency income callback may share removal scalars only when all remaining known publicity sources provably cannot fund research; funded source categories remain distinct. Original fixed Native flow, finite greedy plan, source bound, identity and four null budgets unchanged. First V281/V282 timing failures retained. No autonomous run before complete admission','newAutonomousRuns':0,'candidateAdmitted':False};out.write_text(json.dumps(m,indent=2)+'\n');print(json.dumps({'manifest':str(out.relative_to(P)),'sha256':sha(out.relative_to(P)),'owned':len(names),'runtime':len(m['baseRuntimeHashes'])}))

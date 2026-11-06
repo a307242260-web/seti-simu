@@ -1,0 +1,31 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value'),probe=require('./probe-capital'),rules=require('../production-kernel'),demand=require('./resource-demand'),outcomes=require('./outcome-model');
+const control=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261107/publicity-deferral-learning-v1/native-commutation-20261107-v1.json')));assert.equal(control.status,'exact');const results=[];
+for(const f of control.results){
+ const seed=JSON.parse(f.sourceEnvelope.committedState).meta.seed,seat='player-white',k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;
+ try{
+  assert(c.lifecycle.restore(f.sourceEnvelope).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+  try{
+   p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot(),full=root.observation,compact=p.valueObservation(root),formal=outcomes.createDecisionObservation(full,{seatId:seat}),before=values.evaluateStateValue(full,seat),expected=f.arms.early.value.total;
+   assert.equal(before.total,expected,'known still-executable publicity preparation must be valued before discarding its cards');
+   assert.deepEqual(values.evaluateStateValue(compact,seat),before);assert.deepEqual(values.evaluateStateValue(formal,seat),before);
+   const player=full.publicState.players.find(p=>p.playerId===seat),facts={...probe.factsFromObservation(full,seat),supply:full.publicState.board.techSupply,researchCost:player.researchPublicityCost,analyzeEnergyCost:0},capital=values.purposeCapital(facts),plan=capital.analysisPublicityPlan;
+   assert(plan.value>0);assert.equal(plan.selected.cornerCardIds.length,f.id==='actual142'?2:1);assert(plan.selected.cornerCardIds.every(id=>full.selfState.hand.some(c=>c.id===id)));assert(!plan.selected.cornerCardIds.includes(plan.selected.incomeCardId));assert(!p.resourceSpec(root).plans.some(p=>p.goal.kind==='analysis-publicity'),'already-valued preparation cannot force a current-turn discard for a later main purpose');
+   for(const alter of [x=>x.turnCardBonusCount=1,x=>delete x.turnCardBonusCount,x=>x.pendingNativeEffects=true,x=>x.uncontestedRound=false,x=>x.passing=true,x=>x.round=4]){const changed=structuredClone(facts);alter(changed);assert.equal(values.purposeCapital(changed).analysisPublicityPlan.value,0);}
+   const hidden=structuredClone(facts);for(const card of hidden.hand)if(plan.selected.cornerCardIds.includes(card.id))Object.assign(card,{hidden:true});assert.equal(values.purposeCapital(hidden).analysisPublicityPlan.value,0,'hidden card metadata is never a supplier');
+   // Performance-only resource bound: compare the complete frozen V279 quote.
+   const Module=require('node:module'),filename=require.resolve('./analysis-publicity-capital'),reference=new Module(filename,module);reference.filename=filename;reference.paths=module.paths;reference._compile(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261107/publicity-deferral-learning-v1/source-snapshot/randomizer/game/ai/analysis-publicity-capital.js'),'utf8'),filename);
+   const current=require('./analysis-publicity-capital'),base=f.sourceCapital,lower=x=>({total:x.hand.length*.25+x.player.publicity*.75});
+   assert.deepEqual(current.quote(facts,values.DEFAULT_WEIGHTS,lower,base),reference.exports.quote(facts,values.DEFAULT_WEIGHTS,lower,base),'reachable whole quote, source sequence and wallet unchanged');
+   if(f.id==='actual142'){
+    const insufficient={...facts,hand:facts.hand.filter(c=>c.id!=='alien-amiba-0-1')};let oldCalls=0,newCalls=0;
+    const oldQuote=reference.exports.quote(insufficient,values.DEFAULT_WEIGHTS,x=>{oldCalls++;return lower(x);},base),newQuote=current.quote(insufficient,values.DEFAULT_WEIGHTS,x=>{newCalls++;return lower(x);},base);
+    assert.deepEqual(newQuote,oldQuote);assert.equal(newQuote.reason,'known-publicity-suppliers-insufficient');assert(oldCalls>0);assert.equal(newCalls,0,'proven insufficient known publicity must not construct any lower portfolio');
+   }
+   assert.equal(facts.turnCardBonusCount,0);const state=JSON.parse(original.committedState),owner=state.players.players.find(p=>p.id===seat),stateFacts=probe.factsFromState(state,owner);assert.equal(stateFacts.turnCardBonusCount,facts.turnCardBonusCount);assert.equal(demand.planningCapital(state,owner),capital.total);assert.deepEqual(c.lifecycle.save().envelope,original);results.push({case:f.id,before:before.total,preparationCapital:plan.value,corners:plan.selected.cornerCardIds});
+  }finally{p.close();}
+  for(const arm of ['early','late']){assert(c.lifecycle.restore(f.arms[arm].envelope).ok);const full=c.projection({role:'player',playerId:seat}).state;assert.equal(values.evaluateStateValue(full,seat).total,f.arms.early.value.total,'Native consumed preparation capital hands off to the same funded portfolio');const player=full.publicState.players.find(p=>p.playerId===seat),facts={...probe.factsFromObservation(full,seat),supply:full.publicState.board.techSupply,researchCost:player.researchPublicityCost,analyzeEnergyCost:0};assert.equal(values.purposeCapital(facts).analysisPublicityPlan.value,0,'fulfilled preparation cannot be counted twice');}
+  assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
+ }finally{c.dispose();}
+}
+console.log(JSON.stringify({analysisPublicityCapital:'passed',NativeCommutationInputsReused:10,newNativeInputs:0,fullFormalCompactAndState:true,unknownAndUnsafeRejected:true,rootAndRngRestored:true,results,newAiQueries:0,newAutonomousRuns:0}));

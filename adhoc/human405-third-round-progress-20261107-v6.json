@@ -1,0 +1,65 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: Native1 actual publicity handoff proves4V-to0 without changing116.5; fixed income plan and actual choice aligned to B48, old same-wallet116/112.5 discontinuity repaired. V2801246 cold pass rejected by functional tests; V281-V284 first timing failures retained, no new autonomous game. V2816/304 historic second-round values changed; no blanket first-two parity claim. Candidate code remains isolated, evidence delivery only.",
+  "productionRuntime": "V278/V48",
+  "sourceCommit": "dc540a52f7210f4ae73135bdb0cd06bf5d188244",
+  "resultCommit": "8190a6718a15f441a076c9fab5a43b4aca3634a2",
+  "latestActualR3": {
+    "score": 85,
+    "tech": 6,
+    "income": "7C3E1card+1scan",
+    "milliseconds": 5428
+  },
+  "bestActualControlledR3": {
+    "version": "V256",
+    "score": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "teacherCurrentRules": {
+    "score": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "candidate": "V284/V50",
+  "candidateAdmitted": false,
+  "candidateManifest": "reports/ai-foundation-20261107/publicity-inert-removal-v1/source-manifest-20261107-v1.json",
+  "candidateSourceTree": "d15e42e95597595ce6518e0ffbac04f5bfbdbad2",
+  "candidateOwnPaths": 27,
+  "isolatedWorktree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "newLearningFixedNativeInputs": 1,
+  "inheritedCommutationInputs": 10,
+  "newAutonomousRuns": 0,
+  "candidateCold": {
+    "status": "failed-gate",
+    "complete": true,
+    "nativeInputs": 168,
+    "milliseconds": 644.8804170000001,
+    "action": "industry:e887dc52",
+    "value": 140.08333333333334
+  },
+  "currentRelatedUnitPass": 8,
+  "parentV281BrowserPass": 6,
+  "parentV281InputPass": 60,
+  "existingInputAomomoFailure": 1,
+  "parentV281FullNode": {
+    "pass": 201,
+    "fail": 3,
+    "fullFlowPass": 1,
+    "validationOnlyCorrectionsThenRelatedPass": 3
+  },
+  "V284FullNodeBrowserAuditGateComplete": false,
+  "parentV281FirstTwoRootValues": {
+    "total": 304,
+    "round1": 93,
+    "round1Changed": 0,
+    "round2": 211,
+    "round2Changed": 6,
+    "newAiQueries": 0,
+    "actualDevelopmentPreservedProven": false
+  },
+  "runtimeCodeDeliveredToProduction": false,
+  "evidenceDocument": "docs/human405-publicity-handoff-learning-20261107.md",
+  "baseline": "V41",
+  "next": "Need a measured substantial actual132 optimization, not cold resampling. Failed full-facts cache removed. Then fresh frozen source cold gate, first-two graph+actual development, full independent admission; only then unique teacher112 R3+Native verification. R2-end review and original23 autonomous-first3 remain required."
+}

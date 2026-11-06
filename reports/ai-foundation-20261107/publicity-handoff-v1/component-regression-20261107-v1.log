@@ -1,0 +1,6 @@
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"knownSectorAndAnalysis":"passed","nativeInputs":13,"stablePrefixes":5,"moneyControls":84,"value":82.5,"sectorCapital":8,"preparedAnalysisCapital":17.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+SUMMARY unit passed=3 failed=0 total=3 time=1.39s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=3

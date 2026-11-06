@@ -1,0 +1,137 @@
+{
+  "scope": "Same complete fresh Native roots; normalize search label only. Selected contracts are not a claim of full-graph equivalence or identical autonomous development. Both sources contain corrected DLC20 rules. V280/V49 prices one known-owned publicity preparation as latent capital before Native use; resource upper bound rejects only impossible source totals. No forced early discard, new Native identity or budget change; do not assume first-two parity.",
+  "pairedRoots": 751,
+  "newUniqueRoots": 807,
+  "namedCases": 1246,
+  "byRound": {
+    "3": {
+      "roots": 444,
+      "valueChanged": 3,
+      "choiceChanged": 11
+    },
+    "1": {
+      "roots": 93,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "4": {
+      "roots": 3,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    },
+    "2": {
+      "roots": 211,
+      "valueChanged": 0,
+      "choiceChanged": 0
+    }
+  },
+  "changes": [
+    {
+      "label": "actual-v253-142",
+      "round": 3,
+      "beforeValue": 140.08333333333334,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "card_corner:ac30be37",
+      "afterAction": "place_data:8fd12fd3"
+    },
+    {
+      "label": "analysis-publicity-post-main",
+      "round": 3,
+      "beforeValue": 138.75,
+      "afterValue": 138.75,
+      "beforeAction": "card_corner:ac30be37",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v256-145",
+      "round": 3,
+      "beforeValue": 140.08333333333334,
+      "afterValue": 140.08333333333334,
+      "beforeAction": "card_corner:ac30be37",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v256-147",
+      "round": 3,
+      "beforeValue": 138,
+      "afterValue": 138,
+      "beforeAction": "card_corner:ac30be37",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v253-177",
+      "round": 3,
+      "beforeValue": 137.5,
+      "afterValue": 137.5,
+      "beforeAction": "card_corner:792e4fd7",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v203-130",
+      "round": 3,
+      "beforeValue": 118.58333333333333,
+      "afterValue": 121.58333333333333,
+      "beforeAction": "quick_trade:f385e2ac",
+      "afterAction": "quick_trade:f385e2ac"
+    },
+    {
+      "label": "actual-v203-136",
+      "round": 3,
+      "beforeValue": 117.5,
+      "afterValue": 120.5,
+      "beforeAction": "quick_trade:f385e2ac",
+      "afterAction": "quick_trade:f385e2ac"
+    },
+    {
+      "label": "actual-v203-155",
+      "round": 3,
+      "beforeValue": 121.58333333333333,
+      "afterValue": 121.58333333333333,
+      "beforeAction": "card_corner:ac30be37",
+      "afterAction": "card_corner:792e4fd7"
+    },
+    {
+      "label": "income-after-amiba",
+      "round": 3,
+      "beforeValue": 116,
+      "afterValue": 116.5,
+      "beforeAction": "card_corner:33692f4e",
+      "afterAction": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v214-137",
+      "round": 3,
+      "beforeValue": 130.58333333333334,
+      "afterValue": 130.58333333333334,
+      "beforeAction": "card_corner:bd2c359f",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v214-138",
+      "round": 3,
+      "beforeValue": 128.08333333333334,
+      "afterValue": 128.08333333333334,
+      "beforeAction": "choose_target:29b5215c",
+      "afterAction": "choose_target:7be78a55"
+    },
+    {
+      "label": "actual-v214-147",
+      "round": 3,
+      "beforeValue": 128.08333333333334,
+      "afterValue": 128.08333333333334,
+      "beforeAction": "card_corner:bd2c359f",
+      "afterAction": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v277-141",
+      "round": 3,
+      "beforeValue": 139,
+      "afterValue": 139,
+      "beforeAction": "card_corner:ab712e76",
+      "afterAction": "place_data:8fd12fd3"
+    }
+  ],
+  "firstTwoRoots": 304,
+  "firstTwoSelectedContractChanges": [],
+  "newAutonomousRuns": 0
+}

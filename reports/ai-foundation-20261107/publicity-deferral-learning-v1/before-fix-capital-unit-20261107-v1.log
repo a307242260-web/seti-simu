@@ -1,0 +1,28 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: known still-executable publicity preparation must be valued before discarding its cards
++ actual - expected
+
++ 124.08333333333333
+- 140.08333333333334
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-publicity-capital.test.js:10:11)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 124.08333333333333,
+  expected: 140.08333333333334,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

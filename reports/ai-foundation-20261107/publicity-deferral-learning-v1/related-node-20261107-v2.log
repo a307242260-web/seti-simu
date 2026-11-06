@@ -1,0 +1,14 @@
+{"analysisPublicityCapital":"passed","NativeCommutationInputsReused":10,"newNativeInputs":0,"fullFormalCompactAndState":true,"unknownAndUnsafeRejected":true,"rootAndRngRestored":true,"results":[{"case":"actual142","before":140.08333333333334,"preparationCapital":16,"corners":["alien-amiba-9-5","alien-amiba-0-1"]},{"case":"legacy259","before":138.75,"preparationCapital":10.5,"corners":["alien-amiba-9-5"]}],"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisPublicityPreparation":"passed","before":138.75,"after":138.75,"nativeInputs":1,"existingSourceStillLegal":true,"preparationAlreadyValued":true,"noRepeat":true,"rootAndRngRestored":true}
+{"actual148FundingAfterMain":"passed","actionId":"play_card:52a456f8","value":140.58333333333334,"nativeInputs":126,"rootAndRngRestored":true}
+{"anonymousKnownDataContinuation":"passed","anonymousCards":2,"hiddenDeckWorlds":6,"preparationNativeInputs":5,"fullNativeControlInputs":7,"before":138,"after":140,"unknownIdentityUsed":false,"rootAndRngRestored":true,"newAiQueries":0}
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+{"knownPostdrawTail":"passed","nativeControlledBranches":2,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+{"scalarCapitalCache":"passed","identicalMutableWrappers":12,"mutatedInputs":13,"shallowFrozenRekeyed":true,"recursiveImmutableReferenceReuse":true,"unsupportedInputsDecline":true,"accessorsNotReadByKey":true,"entriesBoundedAt":256,"customWeightsMatch":true,"customEnumerationOrderRetained":true,"noNativeExecution":true}
+SUMMARY unit passed=7 failed=0 total=7 time=3.32s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=4
+OWNER policy/state-value tests=2

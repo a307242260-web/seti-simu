@@ -1,0 +1,116 @@
+{"analysisPublicityCapital":"passed","NativeCommutationInputsReused":10,"newNativeInputs":0,"fullFormalCompactAndState":true,"unknownAndUnsafeRejected":true,"rootAndRngRestored":true,"results":[{"case":"actual142","before":140.08333333333334,"preparationCapital":16,"corners":["alien-amiba-9-5","alien-amiba-0-1"]},{"case":"legacy259","before":138.75,"preparationCapital":10.5,"corners":["alien-amiba-9-5"]}],"newAiQueries":0,"newAutonomousRuns":0}
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: post-main analysis funding must retain its real publicity supply
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-publicity-preparation.test.js:4:171)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: same Native input and masked portfolio at every prefix
++ actual - expected
+... Skipped lines
+
+  {
+    components: {
+      analysisPotential: 0,
+      currentEndGameBonus: 22,
+      dataPotential: 0,
+...
+    },
++   modelVersion: 'seti-purpose-capital-state-value-v49',
+-   modelVersion: 'seti-purpose-capital-state-value-v48',
+    purposePreparationDebt: 0,
+    terminal: false,
+    total: 130
+  }
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/anonymous-data-continuation.test.js:29:48)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    modelVersion: 'seti-purpose-capital-state-value-v49',
+    total: 130,
+    components: {
+      realizedScore: 67,
+      currentEndGameBonus: 22,
+      resources: 8,
+      hand: 3,
+      income: 10.5,
+      technologyPotential: 10,
+      handPotential: 0,
+      researchPotential: 9.5,
+      probePotential: 0,
+      analysisPotential: 0,
+      researchIncomePotential: 0,
+      dataPotential: 0,
+      finalMarkPotential: 0
+    },
+    terminal: false,
+    purposePreparationDebt: 0
+  },
+  expected: {
+    modelVersion: 'seti-purpose-capital-state-value-v48',
+    total: 130,
+    components: {
+      realizedScore: 67,
+      currentEndGameBonus: 22,
+      resources: 8,
+      hand: 3,
+      income: 10.5,
+      technologyPotential: 10,
+      handPotential: 0,
+      researchPotential: 9.5,
+      probePotential: 0,
+      analysisPotential: 0,
+      researchIncomePotential: 0,
+      dataPotential: 0,
+      finalMarkPotential: 0
+    },
+    terminal: false,
+    purposePreparationDebt: 0
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+{"knownPostdrawTail":"passed","nativeControlledBranches":2,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+{"scalarCapitalCache":"passed","identicalMutableWrappers":12,"mutatedInputs":13,"shallowFrozenRekeyed":true,"recursiveImmutableReferenceReuse":true,"unsupportedInputsDecline":true,"accessorsNotReadByKey":true,"entriesBoundedAt":256,"customWeightsMatch":true,"customEnumerationOrderRetained":true,"noNativeExecution":true}
+SUMMARY unit passed=5 failed=2 total=7 time=2.58s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=4
+OWNER policy/state-value tests=2
+FAIL randomizer/game/ai/analysis-publicity-preparation.test.js status=1 signal=none
+FAIL randomizer/game/ai/anonymous-data-continuation.test.js status=1 signal=none

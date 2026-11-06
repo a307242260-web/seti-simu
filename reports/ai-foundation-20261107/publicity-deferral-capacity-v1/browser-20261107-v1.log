@@ -1,0 +1,6 @@
+PASS production-start-button http://127.0.0.1:63998/randomizer/index.html
+PASS production-deferred-publicity-capital http://127.0.0.1:63998/randomizer/index.html
+PASS production-public-alien-offer http://127.0.0.1:63998/randomizer/index.html
+PASS production-anonymous-data-continuation http://127.0.0.1:63998/randomizer/index.html
+PASS production-known-postdraw-tail http://127.0.0.1:63998/randomizer/index.html
+SUMMARY browserSmoke passed=5 failed=0 total=5
