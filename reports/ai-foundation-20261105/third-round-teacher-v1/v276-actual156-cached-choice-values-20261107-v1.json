@@ -1,0 +1,371 @@
+{
+  "scope": "Existing cold graphs at exact same full Native before156; no AI query or new action. Actual before156 state/Session/RNG independently matches both unique records. A half-point window gap does not prove superior round development or justify fixed reveal preference.",
+  "identity": "914aac2b285e750d8da8c92390b82d91b0e8d612ba863380818247f4e0dba9ed",
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "sources": {
+    "v274": {
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v274-cold-actual-v263-156-20261106-v1.json",
+      "sha256": "e80d4c896143b4919f4aa7fb1cd9688d0955cffdec15f96adc964d30a091d4f9",
+      "rootValue": 138.5,
+      "selected": "choose_target:46f3414a",
+      "branches": [
+        {
+          "actionId": "choose_target:0c6b3a23",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0c6b3a23",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:state-extra",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "stateExtra": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 额外痕迹位（3分）"
+          },
+          "value": 135,
+          "status": "stable",
+          "boundary": null,
+          "steps": [
+            "choose_target:0c6b3a23"
+          ]
+        },
+        {
+          "actionId": "choose_target:66e46f42",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:66e46f42",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝1号位"
+          },
+          "value": 136,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:66e46f42"
+          ]
+        },
+        {
+          "actionId": "choose_target:411af34c",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:411af34c",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝2号位（1分）"
+          },
+          "value": 137,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:411af34c"
+          ]
+        },
+        {
+          "actionId": "choose_target:5c6d197a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5c6d197a",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:3",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 3
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝3号位（外星人牌）"
+          },
+          "value": 137,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:5c6d197a",
+            "choose_card:2ebd81c6"
+          ]
+        },
+        {
+          "actionId": "choose_target:06ca6510",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:06ca6510",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 4
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝4号位（1分+外星人牌）"
+          },
+          "value": 138,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:06ca6510",
+            "choose_card:2ebd81c6"
+          ]
+        },
+        {
+          "actionId": "choose_target:46f3414a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:46f3414a",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:2:blue",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝色痕迹"
+          },
+          "value": 138.5,
+          "status": "stable",
+          "boundary": null,
+          "steps": [
+            "choose_target:46f3414a"
+          ]
+        }
+      ]
+    },
+    "v276": {
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-cold-actual-v263-156-20261106-v1.json",
+      "sha256": "d151543d401efcb78cfec56a9e24166446e2c941c6620edb587f46f5e8624b2e",
+      "rootValue": 139,
+      "selected": "choose_target:411af34c",
+      "branches": [
+        {
+          "actionId": "choose_target:0c6b3a23",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0c6b3a23",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:state-extra",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "stateExtra": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 额外痕迹位（3分）"
+          },
+          "value": 135,
+          "status": "stable",
+          "boundary": null,
+          "steps": [
+            "choose_target:0c6b3a23"
+          ]
+        },
+        {
+          "actionId": "choose_target:66e46f42",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:66e46f42",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝1号位"
+          },
+          "value": 138,
+          "status": "stable",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:66e46f42"
+          ]
+        },
+        {
+          "actionId": "choose_target:411af34c",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:411af34c",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝2号位（1分）"
+          },
+          "value": 139,
+          "status": "stable",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:411af34c"
+          ]
+        },
+        {
+          "actionId": "choose_target:5c6d197a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5c6d197a",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:3",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 3
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝3号位（外星人牌）"
+          },
+          "value": 137,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:5c6d197a",
+            "choose_card:2ebd81c6"
+          ]
+        },
+        {
+          "actionId": "choose_target:06ca6510",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:06ca6510",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 4
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝4号位（1分+外星人牌）"
+          },
+          "value": 138,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "steps": [
+            "choose_target:06ca6510",
+            "choose_card:2ebd81c6"
+          ]
+        },
+        {
+          "actionId": "choose_target:46f3414a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:46f3414a",
+            "actorId": "player-white",
+            "stateVersion": 64,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "trace:2:blue",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝色痕迹"
+          },
+          "value": 138.5,
+          "status": "stable",
+          "boundary": null,
+          "steps": [
+            "choose_target:46f3414a"
+          ]
+        }
+      ]
+    }
+  }
+}

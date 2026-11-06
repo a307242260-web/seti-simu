@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "scope": "Independent native replay of the newly accepted inputs only, from exact teacher113 checkpoint. No AI factory, policy query, new game experiment, prefix112 replay or future-identity selection. Every descriptor and before-PASS/final state/session/RNG checked; resume saved accepted prefix if interrupted.",
+  "recordPath": "reports/research/c1769e51.43bf8cfc.quick-400.json",
+  "recordSha256": "be36d8b65123506a1d212156d5fcfce11b71b336dc6369e200d65705bf0c50d5",
+  "savePath": "seti-saves/seti-save-research-ai-search-v276-teacher-r3-20261106-43bf8cfc-quick-400-v75.json",
+  "saveSha256": "bcbe4179d379969da0979d5532cf39a377d230bc84e1b8eca199a7ce7bcffea7",
+  "tracePath": "reports/research/c1769e51.43bf8cfc.quick-400.json.decisions.jsonl",
+  "traceSha256": "034f9163e4fb66004fe4d0bd9e0d1459fc283c885aefdd59d879ea1ce7c14cb4",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-113-20261105-v1.checkpoint.json",
+  "sourceSha256": "0c7659905b151fff67495722e53dddb398fe41f0e07c83edc210008e562dea4f",
+  "checkpoint": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json",
+  "checkpointSha256": "401a0cdb11b1288854691c8a00f8c02f19c202aeae94d73537a7a34240a375e1",
+  "nativeInputs": 65,
+  "prePassAndFinalNativeStateSessionRngExact": true,
+  "allSearchEvidenceCompleteAndPassed": true,
+  "searchEvidenceCount": 62,
+  "maxNativeInputs": 170,
+  "maxRootAndSearchMilliseconds": 505.15791699999977,
+  "wallMilliseconds": 4482,
+  "rootAndRngRestored": true,
+  "newAutonomousRuns": 0
+}

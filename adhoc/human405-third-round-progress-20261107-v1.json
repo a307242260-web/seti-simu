@@ -1,0 +1,113 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "no-progress status answer; resumed Native evidence and implementation in current turn",
+  "productionRuntime": "V276/V48",
+  "sourceCommit": "43bf8cfcec92790deea7225cd1766fcf3a4eb1ad",
+  "resultCommit": null,
+  "bothPushed": true,
+  "workingTree": "/private/tmp/seti-v263-research-completion-mark-20261106-v1",
+  "candidate": "V276/V48",
+  "candidateAdmitted": true,
+  "gate": {
+    "named": 1033,
+    "uniqueNativeRoots": 705,
+    "allComplete": true,
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 589.905,
+    "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-current-source-serial-gate-20261106-v2.json",
+    "excludedNonwhiteForcedRoots": 3,
+    "old959FirstMeasurementsPreserved": true
+  },
+  "newLearningFixedNativeInputs": 27,
+  "newLearningColdRootInputs": [
+    83,
+    146
+  ],
+  "newAutonomousRuns": 1,
+  "v275FailedFirstSample": {
+    "inputs": 175,
+    "milliseconds": 662.69625
+  },
+  "knownA7CandidateValue": {
+    "old": 121.5,
+    "new": 130.08333333333334,
+    "winningRootUnchanged": 133.33333333333334,
+    "newInputs": 139,
+    "newMilliseconds": 280.145875
+  },
+  "fullNodeSession": null,
+  "browserTerminal": {
+    "oldMixedPassed": true,
+    "newKnownDataFailed": "obsolete test assumes compound proof must be null; verify new formal-rule5-input proof against Native130.0833 before validation-only amendment"
+  },
+  "inputAudit": {
+    "pass": 57,
+    "legacyAomomoFail": 1
+  },
+  "firstTwo": {
+    "roots": 304,
+    "equalValue": 304,
+    "changedSelectedActions": 3,
+    "changedGraphs": 37,
+    "needsNativeTimingOrAutonomousAssetCheck": true
+  },
+  "bestControlledR3": 87,
+  "latestActualR3": 79,
+  "bestWhiteFull": 120,
+  "baseline": "V41",
+  "doc": "docs/human405-postdraw-known-data-learning-20261106.md",
+  "next": "Finish result center merge and private-index commit/push, open report. Continue actual156 known-blue preparation versus unknown-species development without lucky-card hindsight; verify3 R1 timing/asset changes, R3 technology and R2-end decisions, then original23 autonomousfirst3.",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v276-current-source-admission-20261106-v1.json",
+  "validation": {
+    "unitBusinessObligationsPassed": 201,
+    "originalFullUnitPassed": 200,
+    "originalFullUnitFailedOldOrderAssertion": 1,
+    "targetedValidationOnlyTestPassed": 1,
+    "fullFlowPassed": 1,
+    "browserRelatedPassed": 2,
+    "inputAuditPassed": 57,
+    "existingAomomoAuditFail": 1,
+    "runtimeUnchangedSinceFrozenColdGate": true
+  },
+  "sourcePushed": true,
+  "resultPushed": false,
+  "record": "reports/research/c1769e51.43bf8cfc.quick-400.json",
+  "actualR3": {
+    "score": 79,
+    "technologyCount": 6,
+    "income": "7C2E1card+1scan",
+    "wallMilliseconds": 4482,
+    "newInputsAfterTeacher112": 65,
+    "searches": 62,
+    "maxNativeInputs": 170,
+    "maxMilliseconds": 505.15791699999977,
+    "allComplete": true,
+    "nativeReplayExact": true,
+    "resources": "C3E0pub1data0",
+    "hand": [
+      "dlc_25.png",
+      "dlc_24.png"
+    ],
+    "computer": [
+      1,
+      2,
+      3
+    ],
+    "blue": [
+      1
+    ],
+    "currentEndGameBonus": 33
+  },
+  "firstActualDifference": {
+    "input": 156,
+    "nativeStateSessionRngBeforeExact": true,
+    "old": "trace2blue -> reveal other species",
+    "new": "Amiba blue2",
+    "oldAmiba2Value": 137,
+    "newAmiba2Value": 139,
+    "otherSpeciesValueUnchanged": 138.5
+  },
+  "developmentAligned": false,
+  "highestControlledR3": 87,
+  "latestResultDoc": "docs/human405-third-round-v276-result-20261107.md"
+}
