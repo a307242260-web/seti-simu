@@ -1,0 +1,25 @@
+{
+  "scope": "One explicit pure geometry-key timing/recursive immutable reference diagnostic after V301 cold failure. No cache implemented, no acceptance timing or cold resampling, source unchanged.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "requirements": {
+      "calls": 3889,
+      "keyMilliseconds": 12.685371999998353,
+      "fullyFrozen": 0,
+      "repeatedFrozenTuple": 0
+    },
+    "routes": {
+      "calls": 3,
+      "keyMilliseconds": 0.009790999999950145,
+      "fullyFrozen": 3,
+      "repeatedFrozenTuple": 0
+    }
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

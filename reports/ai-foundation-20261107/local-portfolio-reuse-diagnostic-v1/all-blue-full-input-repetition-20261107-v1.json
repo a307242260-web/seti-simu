@@ -1,0 +1,19 @@
+{
+  "scope": "One explicit all blue-preview source/goal identity diagnostic, every reference reuse checked against full serialized inputs and prior output mutation. Diagnostic references are not production equality. No runtime cache/change, no acceptance timing/cold resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "calls": 110,
+    "sameStateAndGoal": 3,
+    "inputChanged": 0,
+    "priorOutputChanged": 0,
+    "repeatedCallMilliseconds": 0.35233400000004167,
+    "totalMilliseconds": 91.83671799999954
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

@@ -1,0 +1,6 @@
+{
+  "status": "verification-failed-before-report",
+  "reason": "deepStrictEqual compared raw runtime -0 to serialized reference 0 in realization, not a proved policy mismatch; no cold timing recorded or runtime changed",
+  "expectedRawProperty": "roots",
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,20 @@
+{
+  "scope": "One explicit in-memory lazy complete probe contribution prototype. Verified chosen action/value/Native input count only; full root-array equality was not checked because the diagnostic named the wrong raw property. No acceptance timing/resampling or source changes.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "contributionCalls": 220,
+    "contributionMilliseconds": 64.22749099999984,
+    "saturated": 0,
+    "supplierCalls": 447,
+    "supplierMilliseconds": 76.99832300000025
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true,
+  "fullRootParityVerified": false,
+  "decision": "Reject without runtime implementation: zero saturated shared contribution among220 queries; speculative work cannot avoid a single supplier quote."
+}

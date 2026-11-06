@@ -1,0 +1,20 @@
+{
+  "corpus": "reports/ai-foundation-20261107/local-portfolio-reuse-diagnostic-v1/quiet-end-native-sources-20261107-v1.v8.gz",
+  "corpusSha256": "1ab6ba94ca4b374f9ad51f187e3b7a77c54aa9b6817ef338f38704a5234d253e",
+  "fullRootParityVerified": true,
+  "scope": "One explicit in-memory no-pending-mark quiet-end prototype after V301 cold failure. Compare each complete old/new typed result and entire root action/goal/value/completion arrays, no acceptance timing/resampling or runtime changes.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "quietEndCalls": 9,
+    "noPending": 9,
+    "oldMilliseconds": 0.35791700000009996,
+    "newMilliseconds": 0.07595700000007355
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

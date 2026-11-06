@@ -1,0 +1,16 @@
+{
+  "scope": "One in-memory resourceSpec same synchronous full-source exact-goal blue quote reuse diagnostic. Entire root action/goal/value/completion arrays exact versus V301. No acceptance timing/cold resampling, Native successor or runtime source changes.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "blueCalls": 61,
+    "blueMilliseconds": 41.79396100000005,
+    "reusedBlueQuotes": 0
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

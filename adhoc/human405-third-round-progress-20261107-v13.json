@@ -1,0 +1,28 @@
+{
+  "goalStatus": "active",
+  "production": "V278/V48",
+  "candidate": "V301/V54/Resource25",
+  "candidateAdmitted": false,
+  "previousGoalTurnClassification": "no progress: status/record verification only",
+  "thisGoalTurnClassification": "progress: delivered283 V300/V301 evidence files22f260371, verified remote dev and339 Production files unchanged. New current CPU profile and5 distinct diagnostics reject geometry/reference reuse and ineffective shared ceiling/no-pending-mark approaches. No runtime mutation or new autonomous run.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "sourceHashesUnchanged": 102,
+  "newAutonomousRuns": 0,
+  "newAcceptedColdSamples": 0,
+  "coldFailure": {
+    "label": "actual-v256-132",
+    "NativeInputs": 162,
+    "milliseconds": 688.0945
+  },
+  "diagnosticDocument": "docs/human405-hard132-cpu-investigation-20261107.md",
+  "requiredRemaining": [
+    "Actual hard132 CPU reduction and first new-source256/600 check",
+    "Complete1258 and current source Node/Browser/input audit admission",
+    "Actual first2 asset regression",
+    "Original23 autonomous first3 with other3PASS/forced",
+    "Teacher legal105/6tech/7C4E1card+scan or evidenced equivalent development",
+    "Review second-round end decisions afterwards"
+  ],
+  "baseline": "V41"
+}
