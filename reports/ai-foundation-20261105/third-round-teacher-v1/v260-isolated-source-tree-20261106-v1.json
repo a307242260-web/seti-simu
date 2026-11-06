@@ -1,0 +1,36 @@
+{
+  "status": "source-tree-verified-not-yet-admitted",
+  "baseCommit": "32c3a8fe4b0993caa4f8a376bf83135b1f2877d8",
+  "snapshotTree": "ef096a4d1723b2e945c5ca10fc387c27972809c1",
+  "physicalIndependentWorktree": "/private/tmp/seti-v260-default-weight-proof-20261106-v1",
+  "privateIndex": "/private/tmp/seti-v260-source-admission-20261106-v1.index",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexPreserved": true,
+  "productionBranchUnchanged": true,
+  "frozenSourceManifest": "reports/ai-foundation-20261106/candidate-v260-default-weight-proof-v1/manifest.json",
+  "frozenSourceManifestSha256": "7c0d7c5db7faa45768b1d03bdbc667d7f034baea2ed9fabe71021cc26b2dfe9b",
+  "ownedSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "a5da7b4b8188d76f177af0385e35e8db0c50ef45abc78441f9eea57f4fd04b67",
+    "randomizer/game/ai/decision-search.js": "761de7f7b9e4e9f9582b67aee215823da30edc83da6b1f3cc93ac1b87d9feea0",
+    "randomizer/game/ai/resource-demand.js": "2a6038dc05b432bb91a67c3d0d2551cd18e18f5615cf38f19c8bb06133699c8e",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js": "bcc216785e398bd01070fc02f5a525819dcba30050eaedb2fa321e81324bfbcd",
+    "tools/node-test-inventory.js": "fe765359f3037d80c10435ccc60eaeb304362bf29ee674ad4189b639b3a5c55c",
+    "tools/browser-smoke-inventory.js": "210b508bb13df10b1ad3c0978525d4e5947f546fcc691e433e4e6e8dcb18aa95",
+    "randomizer/game/ai/value-arithmetic.js": "0a8d7945ff77ee6d5ef2e58c1aaf3b2a99ab90ccd6476ab312391656cd660f84",
+    "randomizer/game/ai/exact-data-tail-arithmetic.test.js": "f8b9b5d9eb0279df21a3a8136229d01335f3f15e0558d6cde7d4b54062348d9f"
+  },
+  "changedPaths": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/exact-data-tail-arithmetic.test.js",
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/value-arithmetic.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "runtimeAssetToolsExactToStagedTree": true,
+  "runtimeAssetPathsVerified": 946,
+  "noUnstagedOrUntrackedRuntimeInputs": true,
+  "scope": "The existing isolated worktree is independently proven byte-identical to a private-index tree made from committed32c3a8fe plus exactly the frozen owned source/test/tool overlays. All other randomizer/tools/assets files match that tree by actual Git blob content and executable modes, independently of unrefreshed index stat records. Functional validation runs in this physical independent tree; no shared-root edits or index refresh are used. This is a source snapshot proof, not completed source admission or a new autonomous game."
+}

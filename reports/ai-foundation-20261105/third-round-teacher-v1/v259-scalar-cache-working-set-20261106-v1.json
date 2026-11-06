@@ -1,0 +1,109 @@
+{
+  "scope": "One source-loader observer diagnostic, not a gate sample. Existing numeric complete keys are observed; detailed quote keys are encoded with the same implementation without adding results to the live cache. Proposed counts replay only scalar cache occupancy at the same256-entry capacity. No candidate computation is skipped in this diagnostic, no Native equivalence/pruning claim, no new autonomous run.",
+  "sourceSearchVersion": "seti-complete-decision-search-v259",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-132-20261106-v1.json",
+  "firstSampleSha256": "fddf3b6ae0f67f2dce264764a98b6a24a8bbf6e49ff004692eb5d2545445e436",
+  "nativeInputs": 175,
+  "action": "industry:e887dc52",
+  "value": 135,
+  "rootAndRngUnchanged": true,
+  "counts": {
+    "requests": 652,
+    "currentHits": 239,
+    "currentMisses": 413,
+    "detailedQuotes": 154,
+    "proposedHits": 239,
+    "proposedMisses": 413,
+    "missesAfterSameDetailedInput": 0
+  },
+  "capacity": [
+    {
+      "entries": 64,
+      "replacement": "fifo",
+      "hits": 228,
+      "misses": 424,
+      "maxKeyUtf16Bytes": 368144
+    },
+    {
+      "entries": 64,
+      "replacement": "lru",
+      "hits": 228,
+      "misses": 424,
+      "maxKeyUtf16Bytes": 368056
+    },
+    {
+      "entries": 128,
+      "replacement": "fifo",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 718244
+    },
+    {
+      "entries": 128,
+      "replacement": "lru",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 706442
+    },
+    {
+      "entries": 256,
+      "replacement": "fifo",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 1392028
+    },
+    {
+      "entries": 256,
+      "replacement": "lru",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 1391216
+    },
+    {
+      "entries": 512,
+      "replacement": "fifo",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    },
+    {
+      "entries": 512,
+      "replacement": "lru",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    },
+    {
+      "entries": 1024,
+      "replacement": "fifo",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    },
+    {
+      "entries": 1024,
+      "replacement": "lru",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    },
+    {
+      "entries": 2048,
+      "replacement": "fifo",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    },
+    {
+      "entries": 2048,
+      "replacement": "lru",
+      "hits": 239,
+      "misses": 413,
+      "maxKeyUtf16Bytes": 2171518
+    }
+  ],
+  "eventPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-scalar-cache-working-set-20261106-v1.events.json",
+  "eventSha256": "e3709e5f9274082c7117817425b5f4f1dbed7deda4229454af4c58e2a4f961aa",
+  "proposedAvoidedComputations": 0,
+  "keysRecorded": 1458
+}

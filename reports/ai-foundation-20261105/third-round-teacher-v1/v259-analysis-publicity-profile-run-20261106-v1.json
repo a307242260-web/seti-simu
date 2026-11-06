@@ -1,0 +1,11 @@
+{
+  "scope": "One necessary CPU diagnostic of the retained641.947833ms failure. NOT another cold sample, admission evidence, score experiment or timing replacement.",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v259-analysis-publicity-preparation-v1/manifest.json",
+  "sourceManifestSha256": "4340e6548e5557c645baf5884a2e212def119688cdb744d5e88552bfb20695c2",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+  "value": 135,
+  "nativeInputs": 175,
+  "rootAndRngRestored": true,
+  "rawCpuProfile": "/private/tmp/seti-v259-analysis-publicity-20261106-v1.cpuprofile",
+  "newAutonomousRuns": 0
+}

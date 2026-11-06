@@ -1,0 +1,32 @@
+{
+  "status": "source-tree-verified-not-yet-admitted",
+  "baseCommit": "32c3a8fe4b0993caa4f8a376bf83135b1f2877d8",
+  "snapshotTree": "2f710bcc3914a26650aa002c45c95214b1195453",
+  "physicalIndependentWorktree": "/private/tmp/seti-v259-analysis-publicity-20261106-v1",
+  "privateIndex": "/private/tmp/seti-v259-source-admission-20261106-v1.index",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "sharedIndexPreserved": true,
+  "productionBranchUnchanged": true,
+  "frozenSourceManifest": "reports/ai-foundation-20261106/candidate-v259-analysis-publicity-preparation-v1/manifest.json",
+  "frozenSourceManifestSha256": "4340e6548e5557c645baf5884a2e212def119688cdb744d5e88552bfb20695c2",
+  "ownedSourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "a5da7b4b8188d76f177af0385e35e8db0c50ef45abc78441f9eea57f4fd04b67",
+    "randomizer/game/ai/decision-search.js": "ca49addc5194ac4932b8fa1fa27424a4648784f704b701e1ba4fae446684c843",
+    "randomizer/game/ai/resource-demand.js": "2a6038dc05b432bb91a67c3d0d2551cd18e18f5615cf38f19c8bb06133699c8e",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js": "bcc216785e398bd01070fc02f5a525819dcba30050eaedb2fa321e81324bfbcd",
+    "tools/node-test-inventory.js": "fe765359f3037d80c10435ccc60eaeb304362bf29ee674ad4189b639b3a5c55c",
+    "tools/browser-smoke-inventory.js": "210b508bb13df10b1ad3c0978525d4e5947f546fcc691e433e4e6e8dcb18aa95"
+  },
+  "changedPaths": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/resource-demand.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "runtimeAssetToolsExactToStagedTree": true,
+  "runtimeAssetPathsVerified": 946,
+  "noUnstagedOrUntrackedRuntimeInputs": true,
+  "scope": "The existing isolated worktree is independently proven byte-identical to a private-index tree made from committed32c3a8fe plus exactly the frozen owned source/test/tool overlays. All other randomizer/tools/assets files match that tree by actual Git blob content and executable modes, independently of unrefreshed index stat records. Functional validation runs in this physical independent tree; no shared-root edits or index refresh are used. This is a source snapshot proof, not completed source admission or a new autonomous game."
+}

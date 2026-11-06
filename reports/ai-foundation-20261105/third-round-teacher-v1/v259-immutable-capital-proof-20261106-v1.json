@@ -1,0 +1,12 @@
+{
+  "scope": "Necessary paired immutable-proof diagnostic at the retained V259 failure; same full recursive frozen/prototype proof, no skipped fields or new cache eligibility. Alternating implementation order. Not cold admission or a new autonomous run.",
+  "calls": 1952,
+  "oldMilliseconds": 7.643955000000318,
+  "newMilliseconds": 8.567517999999467,
+  "allProofResultsEqual": true,
+  "nativeInputs": 175,
+  "value": 135,
+  "actionId": "industry:e887dc52",
+  "rootAndRngUnchanged": true,
+  "proposedImplementation": "  function immutableCapitalInput(value){\n    if(!value||typeof value!=='object')return true;\n    if(immutableCapitalInputs.has(value))return true;\n    if(!Object.isFrozen(value))return false;\n    const prototype=Object.getPrototypeOf(value);\n    if(!Array.isArray(value)&&prototype!==Object.prototype&&prototype!==null)return false;\n    for(const item of Object.values(value))if(item&&typeof item==='object'&&!immutableCapitalInput(item))return false;\n    immutableCapitalInputs.add(value);return true;\n  }\n"
+}

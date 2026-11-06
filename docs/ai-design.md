@@ -2,6 +2,8 @@
 
 本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。
 
+第三轮新增的[主行动后宣传筹资学习](human405-analysis-publicity-learning-20261106.md)已用49次Native固定控制定位候选缺失。V259与V260均因实际132步首次冷测超过600ms而未准入；生产仍V258/V46，真实第三轮仍V256的87分/6科技/7钱2电1牌，没有新自主局。
+
 新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
 两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，
 不调用下文旧heuristic的目标选择、估值或计划缓存；具体入口、完成证据与失败语义见

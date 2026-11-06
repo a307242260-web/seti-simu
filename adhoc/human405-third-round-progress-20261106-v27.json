@@ -1,0 +1,222 @@
+{
+  "status": "progress",
+  "goalStatus": "active",
+  "publishedRuntime": "V258/V46",
+  "publishedSourceCommit": "32c3a8fe4b0993caa4f8a376bf83135b1f2877d8",
+  "newAutonomousRuns": 0,
+  "newNativeControlInputs": 49,
+  "controls": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v1.json": {
+      "sha256": "2d36d0059d97518aae21a42b1a144b8cf5ecb6483e3478a98406fa65590e405d",
+      "nativeInputs": 31
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v2.json": {
+      "sha256": "9640295b6911d2153707bc896643681616e292d3b3c2a7d1afddcd8b0dedad36",
+      "nativeInputs": 8
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v3.json": {
+      "sha256": "0f6f0f90943b11503358ba92f818fda85496b28c9a241e1bd8ab54756adc071a",
+      "nativeInputs": 8
+    },
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-analysis-publicity-funding-inspection-20261106-v1.json": {
+      "sha256": "27b68fb9f4c3468093ee03922916cb9b4d2173fcf095511e90b42e9d9f744b1a",
+      "nativeInputs": 2
+    }
+  },
+  "nativeLearning": {
+    "recordedBlue4": {
+      "inputs": 11,
+      "board": 65,
+      "credits": 8,
+      "energy": 1,
+      "publicity": 2,
+      "pool": 1,
+      "tech": 5,
+      "computerSlots": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value": 136.5
+    },
+    "cornerThenAmiba0": {
+      "inputs": 8,
+      "board": 61,
+      "credits": 6,
+      "energy": 0,
+      "publicity": 4,
+      "pool": 4,
+      "tech": 4,
+      "computerSlots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "value": 137.75
+    },
+    "amiba0ThenCorner": {
+      "inputs": 8,
+      "sameFinalAssetsAsCornerFirst": true,
+      "value": 137.75
+    },
+    "correctFresh150B101": {
+      "inputs": 8,
+      "board": 59,
+      "credits": 5,
+      "energy": 0,
+      "publicity": 6,
+      "pool": 4,
+      "tech": 5,
+      "value": 137.58333333333334
+    },
+    "fundingFactorization": {
+      "publicityBefore": 2,
+      "publicityAfter": 4,
+      "currentAnalysisPotential": 10.75,
+      "fundedAnalysisPotential": 20.25,
+      "removingAmiba9AloneChangesCapital": false,
+      "futureAnalysisEndpointPublicityBefore": 4,
+      "futureAnalysisEndpointPublicityAfter": 6
+    }
+  },
+  "candidateGates": {
+    "259": {
+      "gate": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-current-source-serial-gate-20261106-v1.json",
+      "gateSha256": "94d476632a6c5222519b0320828e915d8a8ade4193560af400c0ee90a900d7c4",
+      "sourceAdmitted": false,
+      "newAutonomousRuns": 0,
+      "namedCasesMeasured": 3,
+      "failure": {
+        "label": "actual-v256-132",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+        "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-132-20261106-v1.json",
+        "nativeInputs": 175,
+        "milliseconds": 641.9478330000001,
+        "value": 135,
+        "actionId": "industry:e887dc52",
+        "complete": true,
+        "decisionGatePassed": false,
+        "rootAndRngUnchanged": true
+      }
+    },
+    "260": {
+      "gate": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-current-source-serial-gate-20261106-v1.json",
+      "gateSha256": "bbff53b5d0d05483bb43727aeeaa634f0a35c30d2b503d8069fba46b38468a7a",
+      "sourceAdmitted": false,
+      "newAutonomousRuns": 0,
+      "namedCasesMeasured": 1,
+      "failure": {
+        "label": "actual-v256-132",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+        "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.json",
+        "nativeInputs": 175,
+        "milliseconds": 639.8043329999999,
+        "value": 135,
+        "actionId": "industry:e887dc52",
+        "complete": true,
+        "decisionGatePassed": false,
+        "rootAndRngUnchanged": true
+      }
+    }
+  },
+  "rejectedPerformanceDirections": {
+    "detailedToScalarCacheSeedingAvoidedComputations": 0,
+    "basePortfolioFifo256": {
+      "hits": 180,
+      "calls": 2023,
+      "adopted": false
+    },
+    "exactKeyPair": {
+      "calls": 652,
+      "oldMilliseconds": 30.305327000000716,
+      "newMilliseconds": 28.948907999999847,
+      "adopted": false
+    },
+    "immutableProofPair": {
+      "calls": 1952,
+      "oldMilliseconds": 7.643955000000318,
+      "newMilliseconds": 8.567517999999467,
+      "adopted": false
+    }
+  },
+  "reportingCorrections": [
+    "v259-base-portfolio-duplication-v2 filters only miss events; v1 accidentally included base events in scalar misses. Base duplication counts unchanged.",
+    "The retained Native controls total31+8+8+2=49. Earlier contract text mis-added this as51; no missing Native inputs or new autonomous run."
+  ],
+  "sourceSnapshotsRetained": true,
+  "developmentAligned": false,
+  "lastActualR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan",
+    "milliseconds": 5528
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "baseline": "V41",
+  "remaining": [
+    "Reduce structural fixed-preparation/portfolio execution cost; preserve both failed first cold samples.",
+    "Admit all728 cold cases and first-two behavior before one new standard R3 game.",
+    "Continue R3 teacher asset learning, review R2 end decisions, validate autonomous first3."
+  ],
+  "evidenceSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-scalar-cache-working-set-20261106-v1.json": "b7ee4aab0437a14f12885ca4c73e161a4bf132aedddd5fe003cdc93a756feab8",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-cli-20261106-v1.log": "2356c23a7156cf9580b18def667d41dd124cd6cec3349d2d033d6f55bb196ec0",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-20261106-v1.cpuprofile": "dcaa1e626193159e9b0f8e3b6600c6aae9a398bee46ca19906cddc071379d1f4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-cli-20261106-v3.log": "5f6cbcb5bd2a279535d3bb4913dff957ebf943e9d7055b73a1a9650c71f243c4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-cli-20261106-v2.log": "d1a47c6b769297f2c14ada1131c66f1c0d14a8364c0b82ec0d6205d3a6b11ff0",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-capital-key-construction-20261106-v1.json": "92cda60b8dff4d542aa0fbf5533b9c23bed41ef78fa0e7bbbb4b55ac18daf001",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-serial-gate-cli-20261106-v1.log": "11bccf5f129ffe7d0388809d7c3cb6fd44d50466804b0b78ed147f461609b33f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-scalar-cache-working-set-cli-20261106-v1.log": "d03dae1435d1764c81a1e1b919e52dd69d0296cf53146e4932dcdbf44dea3a0b",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-actual-v256-132-cli-20261106-v1.log": "e173f03d41695fae1bdd013de6154104e75e42249a803fa1e55be4e660954d70",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-scalar-cache-working-set-20261106-v1.events.json": "e3709e5f9274082c7117817425b5f4f1dbed7deda4229454af4c58e2a4f961aa",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-base-portfolio-duplication-20261106-v1.events.json": "6703fc3de9fdf41df0d40d3487d225da57b772688282fd298d1e0df9d1f4c934",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-post-main-cli-20261106-v1.log": "f264580f5b9533d70bc84357ca1377cf2e398d51a2fd07950e9cc9abfe74d216",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v3.json": "0f6f0f90943b11503358ba92f818fda85496b28c9a241e1bd8ab54756adc071a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-base-portfolio-duplication-20261106-v1.json": "43297d62b95c87a3a6348a1377d81b1573ac6c1caa2c5fd072533af3dd6e8efb",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-current-source-serial-gate-20261106-v1.json": "94d476632a6c5222519b0320828e915d8a8ade4193560af400c0ee90a900d7c4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-profile-run-20261106-v1.json": "0ffacca359faa7678df30836c6e4de23d3dced77b9f829e91482236228c454ba",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.json": "54ddd015dc4d067dd5e503de97d4a638a6e02f25805e1c36eda96137792c237c",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.raw.json.gz": "d481975fa2fd69a85d6ffa0e79624e039707af10ea1d33cec7713b816d64e520",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-isolated-source-tree-20261106-v1.json": "9f63498ac10d6ea69525385c13dd9d2ae221eb93a2af39268fa14540848cfa68",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v2.json": "9640295b6911d2153707bc896643681616e292d3b3c2a7d1afddcd8b0dedad36",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-immutable-capital-proof-20261106-v1.json": "ddd7bdaa29658e9799fb02ab5a818a7dbc6131e78009c58cc2ee209364856645",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-analysis-publicity-post-main-20261106-v1.raw.json.gz": "186ff957a20b7bfe57f59a03498db1ac07d27800d4b03f8c12e730337effa75e",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-actual-goal-switch-native-control-20261106-v1.json": "2d36d0059d97518aae21a42b1a144b8cf5ecb6483e3478a98406fa65590e405d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-preparation-red-20261106-v1.log": "b1bc405ec5bb0e20281513dfccd319979e6c135e03cc15bab5fc9c8775bba56f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-analysis-publicity-funding-cli-20261106-v1.log": "0f23d829ca8cbc0c12d80099647a4a1fddb4e8ef379c48265ccae21a3e58f0fe",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-preparation-green-20261106-v4.log": "d52769c444e3589f3b1a9866d1157eff460d2bdbe1397e92b3a557d115fc6530",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-preparation-green-20261106-v1.log": "b1bc405ec5bb0e20281513dfccd319979e6c135e03cc15bab5fc9c8775bba56f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-actual-v256-132-cli-20261106-v1.log": "507d7524cdb5c0ef80575657fc32576d53e23d63c195d20a5aea3304d63d824d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-preparation-green-20261106-v2.log": "d52769c444e3589f3b1a9866d1157eff460d2bdbe1397e92b3a557d115fc6530",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-serial-gate-cli-20261106-v1.log": "898d543c47d27481738671fdea63fb628b6a1c18f7ab91d3bcd25a8f5fb077dd",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-current-source-serial-gate-20261106-v1.json": "bbff53b5d0d05483bb43727aeeaa634f0a35c30d2b503d8069fba46b38468a7a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-base-portfolio-duplication-20261106-v2.json": "adf0d9e949b172adce0ad6630cf512c1f3b7e45fccf63eb505f1b6e03586bab6",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-preparation-green-20261106-v3.log": "d52769c444e3589f3b1a9866d1157eff460d2bdbe1397e92b3a557d115fc6530",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-base-portfolio-duplication-cli-20261106-v1.log": "1184b1fa78a025659dc2876411999d168b79a801d9a83c958a733b9a53fbc80f",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-actual-v256-148-cli-20261106-v1.log": "6c8c1cd1b1c8e92a14c017991a4c57a5c53a5e79e86fb1ec651f38429bbb1c8c",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-post-main-root-20261106-v1.json": "18a7f9337d560c796738a40c5f38602dd588ea2c4274a5901c4e9bee925c01b3",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-analysis-publicity-post-main-20261106-v1.json": "393637bca1c4cc979416fd1556896cf147bd5da6cbb3e298387e555e32db1cc2",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-132-20261106-v1.raw.json.gz": "9d5d718a68435a10b80ffc63d4c69e714208541a58c1870cbab81602ab8aed9d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-cpu-attribution-20261106-v1.json": "a778898f16c7a62e7c155bb82b4243d5667e39a9492cb774caffb15b4a026d73",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-132-20261106-v1.json": "fddf3b6ae0f67f2dce264764a98b6a24a8bbf6e49ff004692eb5d2545445e436",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-related-functional-20261106-v1.log": "ff21276b43154473e2e9e9e9d5f00679c275eaf41d8802f4203427639faefb1a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-profile-cli-20261106-v1.log": "29dbcdec4aa0452e25ae119c0922730af825ecf737d83336e98e4dbcba7fc7fe",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v260-isolated-source-tree-20261106-v1.json": "1cb336f7506b62f4e7fd7652bb760b1302956f75c3a55e93f59fe80145ee2bb9",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-148-20261106-v1.json": "62ca98625e910c6c8b4931bc83fb8ac79510940ea6af030e7ac464c5eb3e5f28",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v258-analysis-publicity-funding-inspection-20261106-v1.json": "27b68fb9f4c3468093ee03922916cb9b4d2173fcf095511e90b42e9d9f744b1a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-148-20261106-v1.raw.json.gz": "1fd53582e5e972d317c561ca26f617dc0f2e162059b1527425e9ec2e3724ca3e"
+  },
+  "V260RelatedFunctionalTestsPassed": 5
+}

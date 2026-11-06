@@ -1,0 +1,18 @@
+{
+  "status": "failed-gate-not-admitted",
+  "sourceManifest": "manifest.json",
+  "sourceManifestSha256": "7c0d7c5db7faa45768b1d03bdbc667d7f034baea2ed9fabe71021cc26b2dfe9b",
+  "snapshotHashesMatchManifest": true,
+  "files": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js",
+    "tools/node-test-inventory.js",
+    "tools/browser-smoke-inventory.js",
+    "randomizer/game/ai/value-arithmetic.js",
+    "randomizer/game/ai/exact-data-tail-arithmetic.test.js"
+  ],
+  "gate": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-current-source-serial-gate-20261106-v1.json",
+  "scope": "Historical candidate bytes only. These files are not installed as production runtime or admitted. Original cold failures retained; no new autonomous run."
+}

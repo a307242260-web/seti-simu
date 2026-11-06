@@ -1,0 +1,114 @@
+{
+  "scope": "One source-loader observer diagnostic, not a gate sample. Existing numeric complete keys are observed; detailed quote keys are encoded with the same implementation without adding results to the live cache. Proposed counts replay only scalar cache occupancy at the same256-entry capacity. No candidate computation is skipped in this diagnostic, no Native equivalence/pruning claim, no new autonomous run.",
+  "sourceSearchVersion": "seti-complete-decision-search-v259",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-cold-actual-v256-132-20261106-v1.json",
+  "firstSampleSha256": "fddf3b6ae0f67f2dce264764a98b6a24a8bbf6e49ff004692eb5d2545445e436",
+  "nativeInputs": 175,
+  "action": "industry:e887dc52",
+  "value": 135,
+  "rootAndRngUnchanged": true,
+  "counts": {
+    "requests": 652,
+    "currentHits": 239,
+    "currentMisses": 2436,
+    "detailedQuotes": 154,
+    "proposedHits": 239,
+    "proposedMisses": 413,
+    "missesAfterSameDetailedInput": 154
+  },
+  "baseCounts": {
+    "requests": 2023,
+    "unique": 1827,
+    "unsupported": 0
+  },
+  "capacity": [
+    {
+      "entries": 64,
+      "replacement": "fifo",
+      "hits": 172,
+      "misses": 1851,
+      "maxKeyUtf16Bytes": 515468
+    },
+    {
+      "entries": 64,
+      "replacement": "lru",
+      "hits": 172,
+      "misses": 1851,
+      "maxKeyUtf16Bytes": 515468
+    },
+    {
+      "entries": 128,
+      "replacement": "fifo",
+      "hits": 174,
+      "misses": 1849,
+      "maxKeyUtf16Bytes": 970606
+    },
+    {
+      "entries": 128,
+      "replacement": "lru",
+      "hits": 174,
+      "misses": 1849,
+      "maxKeyUtf16Bytes": 970662
+    },
+    {
+      "entries": 256,
+      "replacement": "fifo",
+      "hits": 180,
+      "misses": 1843,
+      "maxKeyUtf16Bytes": 1904358
+    },
+    {
+      "entries": 256,
+      "replacement": "lru",
+      "hits": 180,
+      "misses": 1843,
+      "maxKeyUtf16Bytes": 1904358
+    },
+    {
+      "entries": 512,
+      "replacement": "fifo",
+      "hits": 194,
+      "misses": 1829,
+      "maxKeyUtf16Bytes": 3731704
+    },
+    {
+      "entries": 512,
+      "replacement": "lru",
+      "hits": 194,
+      "misses": 1829,
+      "maxKeyUtf16Bytes": 3713376
+    },
+    {
+      "entries": 1024,
+      "replacement": "fifo",
+      "hits": 196,
+      "misses": 1827,
+      "maxKeyUtf16Bytes": 7386608
+    },
+    {
+      "entries": 1024,
+      "replacement": "lru",
+      "hits": 196,
+      "misses": 1827,
+      "maxKeyUtf16Bytes": 7377538
+    },
+    {
+      "entries": 2048,
+      "replacement": "fifo",
+      "hits": 196,
+      "misses": 1827,
+      "maxKeyUtf16Bytes": 12774092
+    },
+    {
+      "entries": 2048,
+      "replacement": "lru",
+      "hits": 196,
+      "misses": 1827,
+      "maxKeyUtf16Bytes": 12774092
+    }
+  ],
+  "eventPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-base-portfolio-duplication-20261106-v1.events.json",
+  "eventSha256": "6703fc3de9fdf41df0d40d3487d225da57b772688282fd298d1e0df9d1f4c934",
+  "proposedAvoidedComputations": 2023,
+  "keysRecorded": 3481
+}
