@@ -1,0 +1,12 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":97,"nativeTailControls":21,"nativeTailInputs":86,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"finalRoundProofGuard":"passed","reusedIndependentlyVerifiedNativeInputs":140,"sourceAndEndpointObservationPairs":14,"oldBoundViolations":2,"oldUpper":24,"actualEndpoints":[43.5,29],"stationaryChecks":2,"noProbeBoundCases":2,"noNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"fullCompactNativeParity":true,"sourceAndRngRestored":true}
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":17,"value":17},{"name":"one-energy","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18},{"name":"two-energy","raw":81,"bounded":63,"prunes":9,"upper":19,"value":19},{"name":"cash-income","raw":405,"bounded":54,"prunes":18,"upper":20,"value":20},{"name":"neutral-data-visits","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18}]}
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":46},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":46.5},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":46.5},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":48}],"strictAndTieAndWatchdog":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=8 failed=0 total=8 time=5.84s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=7
+OWNER policy/state-value tests=1

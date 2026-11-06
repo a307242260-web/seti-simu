@@ -1,0 +1,9 @@
+# V284 / V50：普通宣传来源移除的零边际证明（2026-11-07）
+
+V283第一次完整168Native/668.418667ms仍失败；源码与失败保留，不重测取快样本。保留其两条资源可达性优化，V282新增的全事实缓存继续不采用。不是每项微优化都足以达到总时限，不能把减少函数调用当成性能达标。
+
+本项先读basePurposeCapital四个来源：jointResearchCapital仅将supportedResearch手牌当用途；researchFunding只依赖保留牌/研究符号/现钱包/电脑/科技/标记，不依赖普通手牌ID或手牌数；readyAnalysis.prepaidCapital与手牌无关；probeCapital.quote在没有ownedProbes（solar-board、standard、非fossil、属于当前玩家）时为0；pendingFinalMarkCapital在无已得标记时为0。因此，在这个特定base portfolio内部、没有该类探测器、没有已得安全标记、来源牌不是supportedResearch时，只移除一张普通手牌并更改handSize不会改变base.total。线性的手牌损失仍按原公式单独扣除。
+
+只给分析callback使用的base portfolio增加removalIsInert谓词，宣传贪心排序遇到已证明的零边际移除时用已计算的currentCapital，不再为同一普通移除重算base。宣传真正增加后的base仍正常重算；任何有研究用途的牌、在途普通探测器、已得标记均正常重算；外层完整组合含区域牌、符号、移动工具等用途，绝不配置此谓词，不能把它们视为无机会成本。没有新增缓存、Native后继、观察、预算、手牌子集或剪枝边界。
+
+与冻结V281完整portfolio/组件/计划比较两套真实Native信息来源（实际142、固定分析后收入B48）各12次，另11类字段变更×3权重及顺序；保持相同来源贪心、总价值和固定Native交接。反例必须覆盖有在途探测器、supportedResearch自有牌、已得标记；完整相关现有测试后冻结，首测重根，再完整1249案例≤256/600，失败不跑自主轮。前两轮304根中6个历史第二轮根值变化、实际开局资产回归、同教师112第三轮、R2末和原23自主前三轮继续保留，不缩小goal。V27885/6/7C3E最近、V25687最高、V41baseline不变。

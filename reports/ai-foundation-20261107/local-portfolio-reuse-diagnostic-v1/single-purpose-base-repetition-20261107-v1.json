@@ -1,0 +1,165 @@
+{
+  "scope": "One explicit instrumented single-query diagnostic after V301 first cold failure. Counts reuse within one synchronous full-purpose call only, no cache implemented. Reference tuples are diagnostic opportunities, not production equality proofs. No acceptance timing/resampling or autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "purposeCalls": 743,
+    "baseCalls": 6158,
+    "outsidePurpose": 0,
+    "unsupportedInputs": 0,
+    "exactFullRepeatsWithinPurpose": 497,
+    "sameFactsObjectWithinPurpose": 0,
+    "sameTopReferenceTupleWithinPurpose": 283,
+    "sameShallowReferenceTupleWithinPurpose": 30,
+    "shallowTupleDifferentFullValue": 0,
+    "baseInputMutation": 3
+  },
+  "largestContexts": [
+    {
+      "id": 423,
+      "baseCalls": 104,
+      "fullUnique": 72,
+      "topUnique": 88,
+      "shallowUnique": 102
+    },
+    {
+      "id": 436,
+      "baseCalls": 104,
+      "fullUnique": 72,
+      "topUnique": 88,
+      "shallowUnique": 102
+    },
+    {
+      "id": 415,
+      "baseCalls": 102,
+      "fullUnique": 66,
+      "topUnique": 86,
+      "shallowUnique": 100
+    },
+    {
+      "id": 427,
+      "baseCalls": 102,
+      "fullUnique": 68,
+      "topUnique": 86,
+      "shallowUnique": 102
+    },
+    {
+      "id": 428,
+      "baseCalls": 102,
+      "fullUnique": 66,
+      "topUnique": 86,
+      "shallowUnique": 100
+    },
+    {
+      "id": 440,
+      "baseCalls": 102,
+      "fullUnique": 68,
+      "topUnique": 86,
+      "shallowUnique": 102
+    },
+    {
+      "id": 432,
+      "baseCalls": 76,
+      "fullUnique": 57,
+      "topUnique": 62,
+      "shallowUnique": 76
+    },
+    {
+      "id": 419,
+      "baseCalls": 71,
+      "fullUnique": 57,
+      "topUnique": 59,
+      "shallowUnique": 71
+    },
+    {
+      "id": 433,
+      "baseCalls": 60,
+      "fullUnique": 38,
+      "topUnique": 48,
+      "shallowUnique": 58
+    },
+    {
+      "id": 437,
+      "baseCalls": 60,
+      "fullUnique": 44,
+      "topUnique": 48,
+      "shallowUnique": 58
+    },
+    {
+      "id": 438,
+      "baseCalls": 60,
+      "fullUnique": 38,
+      "topUnique": 48,
+      "shallowUnique": 58
+    },
+    {
+      "id": 439,
+      "baseCalls": 60,
+      "fullUnique": 38,
+      "topUnique": 48,
+      "shallowUnique": 58
+    },
+    {
+      "id": 420,
+      "baseCalls": 56,
+      "fullUnique": 38,
+      "topUnique": 46,
+      "shallowUnique": 54
+    },
+    {
+      "id": 424,
+      "baseCalls": 56,
+      "fullUnique": 38,
+      "topUnique": 46,
+      "shallowUnique": 54
+    },
+    {
+      "id": 425,
+      "baseCalls": 56,
+      "fullUnique": 38,
+      "topUnique": 46,
+      "shallowUnique": 54
+    },
+    {
+      "id": 426,
+      "baseCalls": 56,
+      "fullUnique": 38,
+      "topUnique": 46,
+      "shallowUnique": 54
+    },
+    {
+      "id": 514,
+      "baseCalls": 36,
+      "fullUnique": 32,
+      "topUnique": 34,
+      "shallowUnique": 36
+    },
+    {
+      "id": 522,
+      "baseCalls": 36,
+      "fullUnique": 32,
+      "topUnique": 34,
+      "shallowUnique": 36
+    },
+    {
+      "id": 526,
+      "baseCalls": 36,
+      "fullUnique": 32,
+      "topUnique": 34,
+      "shallowUnique": 36
+    },
+    {
+      "id": 527,
+      "baseCalls": 36,
+      "fullUnique": 32,
+      "topUnique": 34,
+      "shallowUnique": 36
+    }
+  ],
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "rootAndRngRestored": true
+}

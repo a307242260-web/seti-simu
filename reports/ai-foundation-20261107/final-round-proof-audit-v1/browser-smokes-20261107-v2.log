@@ -1,0 +1,5 @@
+PASS production-quiet-data-tail http://127.0.0.1:60030/randomizer/index.html
+PASS production-final-round-proof-guard http://127.0.0.1:60030/randomizer/index.html
+PASS production-final-round-probe-route http://127.0.0.1:60030/randomizer/index.html
+PASS production-next-income-probe-capital http://127.0.0.1:60030/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

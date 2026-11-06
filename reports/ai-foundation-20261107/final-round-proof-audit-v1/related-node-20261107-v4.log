@@ -1,0 +1,42 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":97,"nativeTailControls":21,"nativeTailInputs":86,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"finalRoundProofGuard":"passed","reusedIndependentlyVerifiedNativeInputs":140,"sourceAndEndpointObservationPairs":14,"oldBoundViolations":2,"oldUpper":24,"actualEndpoints":[43.5,29],"stationaryChecks":2,"noProbeBoundCases":2,"noNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"fullCompactNativeParity":true,"sourceAndRngRestored":true}
+{"productionPostMainPlan":"passed","actualInputs":12,"reusedPrefixes":10,"freshNativeAtEveryPrefix":true,"changedDependenciesRejected":true}
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(out.diagnostics.cardCornerProofNodes>0)
+
+    at run (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/post-main-corner-choice.test.js:26:414)
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/post-main-corner-choice.test.js:28:31)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"postMainMovement":"passed","rawInputs":282,"prunedInputs":282,"payments":95,"arrivals":29,"twoPointPayments":16}
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":17,"value":17},{"name":"one-energy","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18},{"name":"two-energy","raw":81,"bounded":63,"prunes":9,"upper":19,"value":19},{"name":"cash-income","raw":405,"bounded":54,"prunes":18,"upper":20,"value":20},{"name":"neutral-data-visits","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18}]}
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":46},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":46.5},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":46.5},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":48}],"strictAndTieAndWatchdog":true}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=10 failed=1 total=11 time=18.77s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=10
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/post-main-corner-choice.test.js status=1 signal=none

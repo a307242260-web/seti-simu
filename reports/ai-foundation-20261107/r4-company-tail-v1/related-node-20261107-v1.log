@@ -1,0 +1,11 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":97,"nativeTailControls":21,"nativeTailInputs":86,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"finalRoundProofGuard":"passed","reusedIndependentlyVerifiedNativeInputs":140,"sourceAndEndpointObservationPairs":14,"oldBoundViolations":2,"oldUpper":24,"actualEndpoints":[43.5,29],"stationaryChecks":2,"noProbeBoundCases":2,"noNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"fullCompactNativeParity":true,"sourceAndRngRestored":true}
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"r4CompanyTail":"passed","fullRootActionsGoalsValuesCompletionsExact":true,"baselineNativeInputs":263,"actualNativeInputs":245,"provedTailCount":13,"materializedNativeInputs":67,"independentNativeInputsReused":67,"noNewCardOrNativeObservationFromProof":true,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=7 failed=0 total=7 time=4.42s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=6
+OWNER policy/state-value tests=1

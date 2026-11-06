@@ -1,0 +1,38 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V298 final-round mission and V299 automatic route completion evidence pusheda6591b833; remaining old proof premise explicitly recorded",
+  "thisGoalTurnClassification": "progress:140 Native finance controls+140 exact independent replay prove24 bound violated by43.5/29. V300 guards unified legacy domain/scans/postmain and per-boundary movement. V301 one-line current company policy use enables13 proved tails67 Native+67 exact independent replay; realR4 cold263→245/464.149334ms. Seven new roots pass, old132162/688.0945 fails. No autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V301/V54/Resource25",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "nativeFinanceControlInputs": 140,
+  "independentFinanceReplayInputs": 140,
+  "tailMaterializationInputs": 67,
+  "independentTailReplayInputs": 67,
+  "oldBoundCounterexamples": {
+    "upper": 24,
+    "actualValue": [
+      43.5,
+      29
+    ]
+  },
+  "latestRelatedNodePassed": 7,
+  "latestBrowserPassed": 5,
+  "latestInputAuditPassed": 64,
+  "existingAomomoAuditFailures": 1,
+  "coldGate": {
+    "cases": 1258,
+    "measuredNamedCases": 8,
+    "first7Passed": true,
+    "maxR4Native": 245,
+    "maxR4Milliseconds": 464.14933399999995,
+    "failureLabel": "actual-v256-132",
+    "failureInputs": 162,
+    "failureMilliseconds": 688.0944999999999,
+    "allMeasuredComplete": true
+  },
+  "document": "docs/human405-r4-proof-domain-and-fixed-tail-20261107.md",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "next": "Reduce actual R3 hard132 valuation CPU by>=88ms without reference-only or stale caches, dropped necessary branches, budget changes or cold resampling. Keep corrected final-round proof domain and13 Native-verified company-excluded data tails. Need complete1258/source Node/Browser/audit admission, actualfirst2 assets, original23 autonomousfirst3 and R2-end review; teacher105/6tech/7C4E1card+scan development not aligned. V41 unchanged."
+}

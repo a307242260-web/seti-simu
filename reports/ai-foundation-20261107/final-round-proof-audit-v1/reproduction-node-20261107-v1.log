@@ -1,0 +1,116 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: old capital ceiling must decline a live final-round probe whose Native income unlocks mission value
++ actual - expected
+
++ {
++   analysisReachableByFixedDataPolicy: true,
++   capitalUpperIncrease: 0,
++   capitalValueModel: 'seti-purpose-capital-state-value-v54',
++   incomeUpper: 0,
++   linearSourceProof: 'seti-post-main-visit-income-value-bound-v2',
++   maximumAnalysisLinear: 0,
++   maximumAnalysisPublicity: 0,
++   maximumMovePoints: 7,
++   maximumNativeArrivalValue: 0.5,
++   maximumPrepaidAnalysisCapital: 0,
++   maximumPublicHandCapital: 0,
++   maximumPublicity: 11,
++   maximumPurposeCapital: 0,
++   maximumResearchAfterIncome: 0,
++   maximumResearchCapital: 0,
++   maximumResearchIncomeLinear: 0,
++   maximumValueIncrease: 0,
++   minimumDataCorners: 0,
++   minimumFirstPositiveMoves: 4,
++   minimumMoveCostValue: 1,
++   movementUpper: 0,
++   permanentTechnologyGainAdmitted: false,
++   positiveRewardSurplus: 0.5,
++   proof: 'seti-post-main-capital-upper-v4',
++   sourceAnalysisCapital: 0,
++   sourceHandCapital: 0,
++   sourcePurposeCapital: 0,
++   sourceResearchCapital: 0,
++   stockUpper: 4,
++   visitRewardSlots: [
++     {
++       cardInstanceId: 'card-36-0',
++       ruleId: 'b71-mercury-draw',
++       value: 1
++     },
++     {
++       cardInstanceId: 'card-36-0',
++       ruleId: 'b71-venus-publicity',
++       value: 0.5
++     }
++   ]
++ }
+- null
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/final-round-proof-guard.test.js:5:400)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    proof: 'seti-post-main-capital-upper-v4',
+    maximumValueIncrease: 0,
+    maximumPublicity: 11,
+    maximumMovePoints: 7,
+    movementUpper: 0,
+    incomeUpper: 0,
+    stockUpper: 4,
+    minimumDataCorners: 0,
+    minimumFirstPositiveMoves: 4,
+    positiveRewardSurplus: 0.5,
+    visitRewardSlots: [
+      {
+        cardInstanceId: 'card-36-0',
+        ruleId: 'b71-mercury-draw',
+        value: 1
+      },
+      {
+        cardInstanceId: 'card-36-0',
+        ruleId: 'b71-venus-publicity',
+        value: 0.5
+      }
+    ],
+    minimumMoveCostValue: 1,
+    maximumNativeArrivalValue: 0.5,
+    linearSourceProof: 'seti-post-main-visit-income-value-bound-v2',
+    capitalUpperIncrease: 0,
+    capitalValueModel: 'seti-purpose-capital-state-value-v54',
+    sourceHandCapital: 0,
+    maximumPublicHandCapital: 0,
+    sourceResearchCapital: 0,
+    maximumResearchCapital: 0,
+    sourceAnalysisCapital: 0,
+    maximumAnalysisLinear: 0,
+    maximumAnalysisPublicity: 0,
+    maximumPrepaidAnalysisCapital: 0,
+    analysisReachableByFixedDataPolicy: true,
+    maximumResearchIncomeLinear: 0,
+    maximumResearchAfterIncome: 0,
+    sourcePurposeCapital: 0,
+    maximumPurposeCapital: 0,
+    permanentTechnologyGainAdmitted: false
+  },
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=0.32s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+FAIL randomizer/game/ai/final-round-proof-guard.test.js status=1 signal=none
