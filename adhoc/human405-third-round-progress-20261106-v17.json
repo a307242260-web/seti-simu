@@ -1,0 +1,134 @@
+{
+  "date": "2026-11-06",
+  "goalStatus": "active",
+  "production": "V239/V43",
+  "candidate": "V248/V43",
+  "status": "new132-passed-but-full-serial-gate-failed-last-research-root",
+  "firstSamples": [
+    {
+      "searchVersion": "seti-complete-decision-search-v240",
+      "nativeInputs": 436,
+      "milliseconds": 1065.857625,
+      "value": 127.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v241",
+      "nativeInputs": 436,
+      "milliseconds": 1092.8245,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v242",
+      "nativeInputs": 186,
+      "milliseconds": 649.662375,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v243",
+      "nativeInputs": 186,
+      "milliseconds": 648.2776250000001,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v244",
+      "nativeInputs": 181,
+      "milliseconds": 646.533291,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v245",
+      "nativeInputs": 173,
+      "milliseconds": 602.605458,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v246",
+      "nativeInputs": 173,
+      "milliseconds": 601.5743339999999,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v247",
+      "nativeInputs": 173,
+      "milliseconds": 616.512042,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": false
+    },
+    {
+      "searchVersion": "seti-complete-decision-search-v248",
+      "nativeInputs": 173,
+      "milliseconds": 598.00625,
+      "value": 128.25,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": true
+    }
+  ],
+  "runtimePromoted": false,
+  "newAutonomousRuns": 0,
+  "first2Regression": {
+    "roots": 304,
+    "changedChoices": 0,
+    "changedValues": 0
+  },
+  "latestCompletedR3": {
+    "version": "V237",
+    "boardScore": 82,
+    "tech": 5,
+    "income": {
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "additionalPublicScan": 1
+    }
+  },
+  "teacherCurrentRulesR3": {
+    "boardScore": 105,
+    "tech": 6,
+    "income": {
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "additionalPublicScan": 1
+    }
+  },
+  "scope": "Fixed unknown-card postdraw known tail; exact ledger; purpose-bound income timing; same-purpose company acquisition; fixed free Amiba pick; immutable scalar reuse; current-data lower bound. Not a new round result.",
+  "next": "Finish current V248 full Node validation without mutating source. Preserve source+first samples. V249 must retain explicit committed place_data income recovery, restore two paired values, then profile deferred research root before another admission. No new game.",
+  "serialGate": {
+    "namedCases": 576,
+    "uniqueRoots": 485,
+    "allSearchesClosed": true,
+    "failedCases": 1,
+    "failure": "deferred-publicity-before-research",
+    "inputs": 117,
+    "milliseconds": 610.314167
+  },
+  "thirdRoundRegression": {
+    "changedChoices": 0,
+    "changedValues": 2,
+    "rootCause": "pending pre-main place_data recovery inferred analyze commitment after removing unneeded standalone income; preserve already-started income completion before releasing main choice"
+  }
+}

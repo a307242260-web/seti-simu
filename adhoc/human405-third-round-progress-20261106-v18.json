@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-06",
+  "goalStatus": "active",
+  "productionRuntime": "V239/V43",
+  "candidate": "V249/V43",
+  "candidateAdmitted": false,
+  "runtimePromoted": false,
+  "newAutonomousRuns": 0,
+  "actual132": {
+    "priorInputs": 484,
+    "inputs": 173,
+    "milliseconds": 617.889916,
+    "value": 128.25,
+    "action": "industry:e887dc52",
+    "complete": true,
+    "gatePassed": false
+  },
+  "lastFailedDeferredResearchRoot": {
+    "V248": {
+      "inputs": 117,
+      "milliseconds": 610.314167,
+      "passed": false
+    },
+    "V249": {
+      "inputs": 117,
+      "milliseconds": 578.216292,
+      "passed": true
+    }
+  },
+  "V248Serial": {
+    "cases": 576,
+    "roots": 485,
+    "allSearchesClosed": true,
+    "gatePassed": false,
+    "failedCases": 1,
+    "first2Roots": 304,
+    "first2ValuesChanged": 0,
+    "first2ActionsChanged": 0
+  },
+  "V249PendingIncomeRecovery": {
+    "cases": 2,
+    "valuesRestored": 124.58333333333333,
+    "inputs": [
+      87,
+      86
+    ],
+    "milliseconds": [
+      235.688333,
+      234.548
+    ]
+  },
+  "validation": {
+    "V248FullUnit": 192,
+    "V248FullFlow": 1,
+    "V248BrowserNewSmoke": 1,
+    "V248InputAudit": {
+      "pass": 53,
+      "fail": 1,
+      "existingFailure": "aomomo nonextensible property"
+    },
+    "V249FullSuiteRun": false,
+    "V249FocusedLog": "reports/ai-foundation-20261105/third-round-teacher-v1/v249-focused-20261106-v1.log"
+  },
+  "latestCompletedR3": {
+    "version": "V237",
+    "board": 82,
+    "tech": 5,
+    "incomeCreditsEnergyCards": [
+      6,
+      3,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "teacherCurrentRulesR3": {
+    "board": 105,
+    "tech": 6,
+    "incomeCreditsEnergyCards": [
+      7,
+      4,
+      1
+    ],
+    "scanIncome": 1
+  },
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v249-committed-income-recovery-v1/manifest.json",
+  "workingDirectory": "/private/tmp/seti-v240-known-postdraw-tail-20261106-v1",
+  "next": "Preserve and publish frozen candidate/evidence without promoting runtime. Profile actual132 pure purpose valuation and remove enough deterministic repeated work to give buffer; no same-source resampling or new game. Then complete source admission and unique R3, R2-end review, autonomousfirst3."
+}

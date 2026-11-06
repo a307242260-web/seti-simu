@@ -1,0 +1,9 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":170,"nativeTailControls":43,"nativeTailInputs":155,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":6.666666666666667,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":120.08333333333333,"netGain":4.166666666666667,"final":124.25,"actualSearchNativeInputs":12,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+SUMMARY unit passed=6 failed=0 total=6 time=2.06s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=6

@@ -1,0 +1,9 @@
+{"publicAmibaBlindIncome":true,"nativeSearchInputs":177,"nativeIncomeControls":14,"nativeIncomeInputs":42,"exactUnknownBoundaryValueAndRealization":true,"publicDeckCountConsumedOnce":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":120.08333333333333,"netGain":4.166666666666667,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"incomePreparationReuse":"passed","repeatedRequests":24,"repeatRecomputations":0,"separateProjectedData":true,"mutableAndShallowFrozenDecline":true,"sourceUnchanged":true}
+{"incomePurposeScheduling":"passed","deferredOnlyUnneededCurrency":true,"postMainDevelopmentRetained":true,"realFundingRetained":true,"blindIncomeTimingRetained":true,"newAiSearches":0}
+{"knownPostdrawTail":"passed","nativeControlledBranches":3,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"newAiSearches":0}
+SUMMARY unit passed=6 failed=0 total=6 time=1.84s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=6

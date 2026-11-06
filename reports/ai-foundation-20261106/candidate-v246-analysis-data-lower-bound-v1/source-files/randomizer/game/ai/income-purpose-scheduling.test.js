@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const demand=require('./resource-demand'),kernel=require('../production-kernel'),cards=require('../cards/deck');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json')));
+const state=JSON.parse(f.compositionEnvelope.committedState),owner=state.players.players.find(p=>p.id===f.seatId),original=structuredClone(state);
+const goals=()=>demand.catalog({state,seatId:f.seatId,requirements:kernel.getResourceGoalRequirements(state,f.seatId)});
+assert.equal(owner.mainActionCompleted,false);assert.equal(owner.resources.credits,9);
+assert(!goals().some(g=>g.kind==='income'),'unneeded currency preparation must not create a second main-action ordering tree');
+owner.mainActionCompleted=true;
+const postMain=goals().find(g=>g.kind==='income');assert(postMain,'the same permanent development remains after the main action');
+assert.equal(postMain.incomeCardId,'card-51-0');assert.deepEqual(cards.getIncomeGainForCard(owner.hand.find(c=>c.id===postMain.incomeCardId)),{credits:1});
+owner.mainActionCompleted=false;owner.resources.credits=0;
+assert(goals().some(g=>g.kind==='income'),'a real money deficit retains its income preparation');
+owner.resources.credits=9;owner.hand=owner.hand.filter(c=>c.id!=='card-51-0');owner.resources.handSize=owner.hand.length;
+assert(goals().some(g=>g.kind==='income'),'information-bearing card income keeps its original timing choices');
+assert.deepEqual(JSON.parse(f.compositionEnvelope.committedState),original,'the retained fixture is never mutated');
+console.log(JSON.stringify({incomePurposeScheduling:'passed',deferredOnlyUnneededCurrency:true,postMainDevelopmentRetained:true,realFundingRetained:true,blindIncomeTimingRetained:true,newAiSearches:0}));

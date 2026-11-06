@@ -1,0 +1,20 @@
+{
+  "status": "failed-single-root-gate",
+  "sourceManifest": "reports/ai-foundation-20261106/candidate-v240-data-tail-ledger-v1/manifest.json",
+  "sourceManifestSha256": "f1900bc2fb3d722a12058c19e104e730d9c6d7ba6e4a92f91dd7a8b5faf23590",
+  "nativeInputs": 436,
+  "milliseconds": 1065.857625,
+  "complete": true,
+  "value": 127.25,
+  "actionId": "industry:e887dc52",
+  "allRootValuesChoicesRealizationsUnchanged": true,
+  "savedInputsAgainstActualV239Failure": 48,
+  "currentGatePassed": false,
+  "newAutonomousRuns": 0,
+  "focusedTestsPassed": 6,
+  "singleTailTestCounterScope": "Reported15->12 includes12 replay/setup inputs; the certified six-step branch itself goes3->0 new Native inputs. Fresh-root436 is the performance metric.",
+  "baselineUnchanged": "V41",
+  "productionStillV239": true,
+  "goalStatus": "active",
+  "next": "Investigate only certified root-known currency-income/blue/end flow after a free Amiba card. V240 arithmetic retained; no general unknown-owned-card continuation."
+}

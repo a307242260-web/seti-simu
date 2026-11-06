@@ -1,0 +1,7 @@
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":120.08333333333333,"netGain":4.166666666666667,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"knownPostdrawTail":"passed","nativeControlledBranches":3,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"newAiSearches":0}
+SUMMARY unit passed=4 failed=0 total=4 time=1.18s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=4

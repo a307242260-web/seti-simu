@@ -1,0 +1,17 @@
+/private/tmp/seti-v240-known-postdraw-tail-20261106-v1/randomizer/game/ai/analysis-port.js:1247
+      if(plan?.goal.kind!=="income"||policy.retainedActionIds.length
+                   ^
+
+TypeError: Cannot read properties of undefined (reading 'kind')
+    at knownPostdrawTailView (/private/tmp/seti-v240-known-postdraw-tail-20261106-v1/randomizer/game/ai/analysis-port.js:1247:20)
+    at finishChild (/private/tmp/seti-v240-known-postdraw-tail-20261106-v1/randomizer/game/ai/analysis-port.js:1212:25)
+    at Object.expand (/private/tmp/seti-v240-known-postdraw-tail-20261106-v1/randomizer/game/ai/analysis-port.js:590:61)
+    at Object.<anonymous> (/private/tmp/seti-v240-known-postdraw-tail-20261106-v1/randomizer/game/ai/known-postdraw-tail.test.js:13:119)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+
+Node.js v22.22.0

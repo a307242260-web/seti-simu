@@ -1,0 +1,297 @@
+{
+  "scope": "Retained macro/resource-goal path replay only to inspect the original logical view; pure observer adds no Native mutation, AI search or acceptance sample. Full Native source equals saved paired-control menu.",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json",
+  "node387": {
+    "intent": null,
+    "resourceControl": null
+  },
+  "afterCancel": {
+    "intent": null,
+    "resourceControl": null,
+    "resourcePolicy": {
+      "policy": "seti-goal-resource-preparation-v11",
+      "isEquivalence": false,
+      "plans": [
+        {
+          "id": "data:income:4",
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-49-0",
+            "incomeBefore": 10,
+            "required": {}
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "place_data:8fd12fd3",
+          "mode": "greedy",
+          "reason": "data-placement-for-goal"
+        }
+      ],
+      "incomeTail": {
+        "policy": "seti-greedy-income-tail-v2",
+        "selected": true,
+        "realizesForecast": false,
+        "netGain": 3.1666666666666665,
+        "placements": 1,
+        "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+      },
+      "retainedActionIds": [],
+      "excludedActionIds": [
+        "move:02fa703b",
+        "move:ff83c607",
+        "move:67939f8f",
+        "quick_trade:f385e2ac",
+        "quick_trade:49c75492",
+        "quick_trade:12411a2c",
+        "quick_trade:a39c1a77",
+        "quick_trade:37140fcf",
+        "card_corner:68a82599",
+        "card_corner:4c8b60cc",
+        "card_corner:ab712e76",
+        "place_data:8fd12fd3",
+        "end_turn:b2f9b29d"
+      ]
+    },
+    "dataTailSummary": {
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "kind": "data-end-turn",
+      "firstActionId": "place_data:8fd12fd3",
+      "netGain": 4.166666666666666,
+      "requiredNativeInputs": 6,
+      "dataPlans": [
+        {
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-49-0",
+            "incomeBefore": 10,
+            "required": {}
+          },
+          "netGain": 3.1666666666666665,
+          "requiredNativeInputs": 3,
+          "incomeCardId": "card-49-0"
+        },
+        {
+          "goal": {
+            "id": "data:blue:2",
+            "kind": "blue-data",
+            "blueSlot": 2,
+            "targetComputerSlot": 3,
+            "required": {}
+          },
+          "policy": "seti-greedy-blue-resource-tail-v2",
+          "available": true,
+          "selected": true,
+          "realizesForecast": false,
+          "netGain": 1,
+          "blueSlot": 2,
+          "dataCornerId": null,
+          "dataCornerIds": [],
+          "incomeCardId": null,
+          "computerPlacements": 0,
+          "requiredNativeInputs": 2,
+          "immediateScoreGain": 0,
+          "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+        }
+      ],
+      "markedTiles": [],
+      "publicAmibaCurrencyTail": true,
+      "unrealizedPurposeDelta": 3.1666666666666665,
+      "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+      "observationAvailable": false,
+      "successorEnvelopeAvailable": false
+    },
+    "movementPolicy": {
+      "policy": "seti-goal-movement-policy-v4",
+      "selectionBasis": "explicit-objective-policy",
+      "isEquivalence": false,
+      "reason": "defer-movement",
+      "chosenGoal": null,
+      "plan": null,
+      "intent": null,
+      "selectedActionId": null,
+      "retainedActionIds": [
+        "quick_trade:f385e2ac",
+        "quick_trade:49c75492",
+        "quick_trade:12411a2c",
+        "quick_trade:a39c1a77",
+        "quick_trade:37140fcf",
+        "card_corner:4c8b60cc",
+        "card_corner:ab712e76",
+        "place_data:8fd12fd3",
+        "end_turn:b2f9b29d"
+      ],
+      "excludedActionIds": [
+        "move:02fa703b",
+        "move:ff83c607",
+        "move:67939f8f",
+        "card_corner:68a82599"
+      ],
+      "excludedDirectionCount": 3,
+      "routingNodes": 32,
+      "objectiveCount": 10,
+      "deferredGoal": {
+        "id": "rocket:5:land:mercury:planet:",
+        "kind": "land",
+        "label": "land mercury",
+        "coordinate": {
+          "x": 2,
+          "y": 1
+        },
+        "timing": "defer",
+        "planetId": "mercury",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 5
+        },
+        "endpointCost": {
+          "energy": 3
+        },
+        "reason": "no-intervening-rotation-before-next-own-turn"
+      }
+    }
+  },
+  "effectiveDifferences": [
+    {
+      "path": "/aliens/aliens/2/assignedAlienId",
+      "actual": "半人马",
+      "expected": "虫"
+    },
+    {
+      "path": "/aliens/aomomo/initialConfiguration",
+      "actual": null
+    },
+    {
+      "path": "/aliens/banrenma/initialConfiguration",
+      "actual": {
+        "cardDeck": [
+          4,
+          6,
+          7,
+          0,
+          1,
+          2,
+          8,
+          3,
+          5,
+          9
+        ]
+      }
+    },
+    {
+      "path": "/aliens/chong/initialConfiguration",
+      "actual": null,
+      "expected": {
+        "cardDeck": [
+          9,
+          0,
+          7,
+          2,
+          3,
+          8,
+          4,
+          6,
+          1,
+          5
+        ],
+        "fossilOrder": [
+          "fossil_02",
+          "fossil_05",
+          "fossil_03",
+          "fossil_06",
+          "fossil_01",
+          "fossil_07",
+          "fossil_04"
+        ]
+      }
+    },
+    {
+      "path": "/aliens/fangzhou/initialConfiguration",
+      "actual": null
+    },
+    {
+      "path": "/aliens/jiuzhe/initialConfiguration",
+      "actual": null
+    },
+    {
+      "path": "/aliens/runezu/initialConfiguration",
+      "actual": null
+    },
+    {
+      "path": "/aliens/yichangdian/initialConfiguration",
+      "actual": null
+    },
+    {
+      "path": "/meta/rngState/algorithm",
+      "actual": "seti-counterfactual-mulberry32-v2",
+      "expected": "seti-simulation-mulberry32-v1"
+    },
+    {
+      "path": "/meta/rngState/state",
+      "actual": 1973672467,
+      "expected": 3171573311
+    }
+  ],
+  "observedSteps": [
+    {
+      "expected": [
+        "industry:e887dc52"
+      ],
+      "actual": [
+        "industry:e887dc52"
+      ]
+    },
+    {
+      "expected": [
+        "choose_card:ddc9d9f0"
+      ],
+      "actual": [
+        "choose_card:ddc9d9f0"
+      ]
+    },
+    {
+      "expected": [
+        "choose_card:dfc7d13d"
+      ],
+      "actual": [
+        "choose_card:dfc7d13d"
+      ]
+    },
+    {
+      "expected": [
+        "quick_trade:f385e2ac",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:af617fe7",
+        "choose_card:836ae617",
+        "choose_card:d66e36ec",
+        "choose_target:5bb27a70"
+      ],
+      "actual": [
+        "quick_trade:f385e2ac",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:af617fe7",
+        "choose_card:836ae617",
+        "choose_card:d66e36ec",
+        "choose_target:5bb27a70"
+      ]
+    },
+    {
+      "expected": [
+        "choose_target:c4e4834a"
+      ],
+      "actual": [
+        "choose_target:c4e4834a"
+      ]
+    }
+  ],
+  "fullEnvelopeEqualsControl": false,
+  "sourceSha256": "fe98442fa09bba3bdbd94074ef677abc0036142f8e49441d3cf11ebf300dd946",
+  "rootAndRngRestored": true,
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,11 @@
+{"publicAmibaBlindIncome":true,"nativeSearchInputs":181,"nativeIncomeControls":14,"nativeIncomeInputs":42,"exactUnknownBoundaryValueAndRealization":true,"publicDeckCountConsumedOnce":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"incomePurposeScheduling":"passed","deferredOnlyUnneededCurrency":true,"postMainDevelopmentRetained":true,"realFundingRetained":true,"blindIncomeTimingRetained":true,"newAiSearches":0}
+{"knownPostdrawTail":"passed","nativeControlledBranches":3,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"newAiSearches":0}
+{"publicAmibaIncomeSwap":"passed","rows":[{"branch":"DLC31","before":123.58333333333333,"after":123.58333333333333},{"branch":"ordinary","before":118.58333333333333,"after":118.58333333333333}],"nativeIncomeControlInputs":6,"newAutonomousRuns":0,"rootAndRngRestored":true}
+{"researchSymbolComposition":"passed","nativeSourceInputs":19,"nativeReplayInputs":26,"newNativeInputs":1,"unsupportedInputsDecline":14,"nativeAndCompactParity":true,"deferredPublicityPreservesBeneficiary":true,"beforeAndAfter":123.58333333333333,"plans":[{"tile":"purple1","linear":19.5,"afterCapital":14.083333333333334,"net":9.833333333333334},{"tile":"purple3","linear":19,"afterCapital":11.5,"net":6.75},{"tile":"purple2","linear":18.5,"afterCapital":11.5,"net":6.25},{"tile":"orange3","linear":19,"afterCapital":2.5,"net":-2.25},{"tile":"orange1","linear":16,"afterCapital":4.5,"net":-3.25},{"tile":"orange2","linear":16,"afterCapital":4.5,"net":-3.25},{"tile":"orange4","linear":16,"afterCapital":4.5,"net":-3.25}],"rootAndRngRestored":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=7 failed=0 total=7 time=2.99s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=2

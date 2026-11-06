@@ -1,0 +1,14 @@
+{"analysisCurrentDataLowerBound":"passed","unfundedDetailedQuotesAvoided":3,"fundedQuoteUnchanged":true,"futureIncomeNotUsedForPreparation":true,"newNativeInputs":0}
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":120.08333333333333,"netGain":4.166666666666667,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"incomePreparationReuse":"passed","repeatedRequests":24,"repeatRecomputations":0,"separateProjectedData":true,"mutableAndShallowFrozenDecline":true,"sourceUnchanged":true}
+{"incomePurposeScheduling":"passed","preMainIncomeRequiresResourcePurpose":true,"postMainDevelopmentRetained":true,"realFundingRetained":true,"blindIncomeDeferredWithoutKnownPurpose":true,"newAiSearches":0}
+{"knownPostdrawTail":"passed","nativeControlledBranches":3,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"newAiSearches":0}
+{"publicAmibaIncomeSwap":"passed","rows":[{"branch":"DLC31","before":123.58333333333333,"after":123.58333333333333},{"branch":"ordinary","before":118.58333333333333,"after":118.58333333333333}],"nativeIncomeControlInputs":6,"newAutonomousRuns":0,"rootAndRngRestored":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=10 failed=0 total=10 time=2.89s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=8
+OWNER policy/state-value tests=2
