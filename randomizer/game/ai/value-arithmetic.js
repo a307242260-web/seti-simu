@@ -11,7 +11,15 @@
  // Integer ledger units remove evaluation-order drift; custom weights retain
  // their specified floating arithmetic and receive no default-model proof.
  const scale=2*placement.COMPUTER_DATA_SLOT_IDS.length*incomePopulation;
- function isDefault(weights){return !weights||Object.keys(weights).length===Object.keys(DEFAULT_WEIGHTS).length&&Object.keys(DEFAULT_WEIGHTS).every(k=>weights[k]===DEFAULT_WEIGHTS[k]);}
+ const defaultWeightKeys=Object.keys(DEFAULT_WEIGHTS),knownDefaultWeights=new WeakSet([DEFAULT_WEIGHTS]);
+ function isDefault(weights){
+  if(!weights||knownDefaultWeights.has(weights))return true;
+  const matches=Object.keys(weights).length===defaultWeightKeys.length&&defaultWeightKeys.every(k=>weights[k]===DEFAULT_WEIGHTS[k]);
+  // A frozen accessor can still change its value. Only immutable own data
+  // fields prove that a later call will see these same default weights.
+  if(matches&&Object.isFrozen(weights)&&defaultWeightKeys.every(k=>Object.hasOwn(Object.getOwnPropertyDescriptor(weights,k)||{},'value')))knownDefaultWeights.add(weights);
+  return matches;
+ }
  // The exact ledger is optional outside its safe integer range. Keep the
  // original finite-value arithmetic there; search proof guards already decline
  // unsafe additive shortcuts instead of refusing the decision graph.

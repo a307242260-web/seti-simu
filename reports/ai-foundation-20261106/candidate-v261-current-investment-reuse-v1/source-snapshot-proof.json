@@ -1,0 +1,26 @@
+{
+  "status": "failed-gate-not-admitted",
+  "sourceManifestSha256": "13dca6f87d8fba455c10f698b139acd2388115d84ce9912242d13b1f3ab28b25",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "a5da7b4b8188d76f177af0385e35e8db0c50ef45abc78441f9eea57f4fd04b67",
+    "randomizer/game/ai/decision-search.js": "bb866d9d694df140032659703bcc3b268365c59c7c45ab2fdb46cc51ac8de412",
+    "randomizer/game/ai/resource-demand.js": "2a6038dc05b432bb91a67c3d0d2551cd18e18f5615cf38f19c8bb06133699c8e",
+    "randomizer/game/ai/analysis-publicity-preparation.test.js": "bcc216785e398bd01070fc02f5a525819dcba30050eaedb2fa321e81324bfbcd",
+    "tools/node-test-inventory.js": "fe765359f3037d80c10435ccc60eaeb304362bf29ee674ad4189b639b3a5c55c",
+    "tools/browser-smoke-inventory.js": "210b508bb13df10b1ad3c0978525d4e5947f546fcc691e433e4e6e8dcb18aa95",
+    "randomizer/game/ai/value-arithmetic.js": "0a8d7945ff77ee6d5ef2e58c1aaf3b2a99ab90ccd6476ab312391656cd660f84",
+    "randomizer/game/ai/exact-data-tail-arithmetic.test.js": "f8b9b5d9eb0279df21a3a8136229d01335f3f15e0558d6cde7d4b54062348d9f",
+    "randomizer/game/ai/state-value.js": "9208df4594a9da715f724a1d935e64c6f5583bf9c2809ef8ef7e68ae58ccb29d",
+    "randomizer/game/ai/probe-capital.js": "657175e03159936f8031ca55a47e4d9a89dfc873292f72b4786b65321414429f",
+    "randomizer/game/ai/probe-capital-value.test.js": "3089a1fcf4bf6da341cd51978e88713b24d218d71aff22c86c9ea7beddb38e92",
+    "randomizer/game/state/state-store.js": "c7fa327bcaba68a6abef0e5d4bd613940e3cb3f96eb24a7369294fc836eb0f79",
+    "randomizer/game/state/state-store.test.js": "986252874b3a32ab0a8bf0b01846b51455d075eaef955f4ad2f59ee657d8151a"
+  },
+  "additionalUnchangedReference": {
+    "randomizer/game/ai/amiba-analysis-capital.js": "de73b576cb942e7af90293dc06609902e54bbf324f90e61a726ab3eb896ce94e"
+  },
+  "gate": "reports/ai-foundation-20261105/third-round-teacher-v1/v261-current-source-serial-gate-20261106-v1.json",
+  "nativeInputs": 175,
+  "milliseconds": 618.9456660000001,
+  "newAutonomousRuns": 0
+}

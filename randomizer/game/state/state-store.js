@@ -262,6 +262,9 @@ function stableSerialize(value) {
     const listeners = new Set();
     let committedState;
     let forkSerializedState = null, forkSerializedBytes = null;
+    const forkSerializedRoots = new Map();
+    const maxForkSerializedRoots = 64, maxForkSerializedRootBytes = 8 * 1024 * 1024;
+    let forkSerializedRootBytes = 0;
 
     for (const validator of invariantValidators) {
       if (typeof validator !== "function") throw new TypeError("invariantValidators 必须只包含函数");
@@ -478,10 +481,25 @@ function stableSerialize(value) {
 
     function serializeForkSnapshot() {
       if (!trustedIsolatedOwnership) return { ok: true, serialized: stableSerialize(committedState) };
-      // trusted committed root完整冻结；按对象身份保留最近一次canonical bytes。
-      // 同版本不同恢复根也会重算，工作副本不进入此缓存。
+      // Trusted committed roots are fully frozen Native snapshots. Retain
+      // only canonical bytes generated here for each exact root reference;
+      // mutable working copies and caller envelope text never enter the table.
       if (forkSerializedState !== committedState) {
-        forkSerializedBytes = stableSerialize(committedState);
+        if (forkSerializedRoots.has(committedState)) forkSerializedBytes = forkSerializedRoots.get(committedState);
+        else {
+          forkSerializedBytes = stableSerialize(committedState);
+          const bytes = forkSerializedBytes.length * 2;
+          if (bytes <= maxForkSerializedRootBytes) {
+            while (forkSerializedRoots.size && (forkSerializedRoots.size >= maxForkSerializedRoots
+              || forkSerializedRootBytes + bytes > maxForkSerializedRootBytes)) {
+              const oldest = forkSerializedRoots.keys().next().value;
+              forkSerializedRootBytes -= forkSerializedRoots.get(oldest).length * 2;
+              forkSerializedRoots.delete(oldest);
+            }
+            forkSerializedRoots.set(committedState, forkSerializedBytes);
+            forkSerializedRootBytes += bytes;
+          }
+        }
         forkSerializedState = committedState;
       }
       return { ok: true, serialized: forkSerializedBytes };

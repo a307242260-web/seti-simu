@@ -332,4 +332,21 @@ function committedBytes(store) {
   assert.equal(store.serializeForkSnapshot().serialized, original, "evicted special strings encode to the exact original bytes again");
 })();
 
+(function testFrozenForkCanonicalReuseAcrossRestoredRootsIsBounded() {
+  const fs=require('node:fs'),Module=require('node:module'),filename=require.resolve('./state-store'),loaded=new Module(filename,module);loaded.filename=filename;loaded.paths=module.paths;
+  let serializations=0;globalThis.__setiForkCanonicalTest=()=>{serializations++;};
+  try{
+    loaded._compile(fs.readFileSync(filename,'utf8').replace('function stableSerialize(value) {','function stableSerialize(value) {globalThis.__setiForkCanonicalTest();'),filename);
+    const store=loaded.exports.createStateStore(createState(),{trustedIsolatedOwnership:true}),a=store.getForkSnapshot(),first=store.serializeForkSnapshot().serialized;
+    const mutable=store.beginWorkingCopy().state;mutable.turn.turn++;assert(store.compareAndCommit(0,mutable).ok);const b=store.getForkSnapshot(),second=store.serializeForkSnapshot().serialized;assert.notEqual(second,first);
+    assert(store.restoreForkSnapshot(a,{trustedFrozen:true}).ok);const beforeA=serializations;assert.equal(store.serializeForkSnapshot().serialized,first);assert.equal(serializations,beforeA,'A/B/A restores reuse bytes of that exact frozen Native root');
+    const distinct=structuredClone(a);distinct.turn.turn=99;assert(store.restoreForkSnapshot(distinct).ok);const beforeDistinct=serializations;assert.notEqual(store.serializeForkSnapshot().serialized,first);assert(serializations>beforeDistinct,'same stateVersion is not a cache identity');
+    for(let i=0;i<65;i++){const candidate=structuredClone(a);candidate.turn.turn=100+i;assert(store.restoreForkSnapshot(candidate).ok);store.serializeForkSnapshot();}
+    assert(store.restoreForkSnapshot(a,{trustedFrozen:true}).ok);const evicted=serializations;assert.equal(store.serializeForkSnapshot().serialized,first);assert(serializations>evicted,'the extended table evicts at64 Native roots');
+    const large=[];
+    for(let i=0;i<2;i++){const candidate=structuredClone(a);candidate.cards.largeNote=String(i)+'x'.repeat(2300000);assert(store.restoreForkSnapshot(candidate).ok);large.push(store.getForkSnapshot());store.serializeForkSnapshot();}
+    assert(store.restoreForkSnapshot(large[0],{trustedFrozen:true}).ok);const bytesEvicted=serializations;const text=store.serializeForkSnapshot().serialized;assert(serializations>bytesEvicted,'two large roots exceeding8MiB cannot both remain in the extended table');assert.equal(JSON.parse(text).cards.largeNote,large[0].cards.largeNote);
+  }finally{delete globalThis.__setiForkCanonicalTest;}
+})();
+
 console.log("state-store tests passed");

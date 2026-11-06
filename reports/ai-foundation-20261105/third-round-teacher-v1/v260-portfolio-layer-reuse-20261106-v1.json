@@ -1,0 +1,56 @@
+{
+  "scope": "One complete existing-key hierarchy observer, every original function still computes. Every equal-key numeric value compared exactly. Not live memoization, Native pruning/equivalence, cold resampling, source admission or autonomous game.",
+  "sourceVersion": "seti-complete-decision-search-v260",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.json",
+  "firstSampleSha256": "54ddd015dc4d067dd5e503de97d4a638a6e02f25805e1c36eda96137792c237c",
+  "nativeInputs": 175,
+  "value": 135,
+  "actionId": "industry:e887dc52",
+  "rootAndRngUnchanged": true,
+  "keyMilliseconds": 137.4714980000028,
+  "capacity": [
+    {
+      "kind": "capitalWithoutIncomeSwap",
+      "requests": 930,
+      "hits": 16,
+      "misses": 914,
+      "unique": 914
+    },
+    {
+      "kind": "capitalWithoutSector",
+      "requests": 924,
+      "hits": 16,
+      "misses": 908,
+      "unique": 908
+    },
+    {
+      "kind": "purposeCapitalWithoutSymbols",
+      "requests": 924,
+      "hits": 16,
+      "misses": 908,
+      "unique": 908
+    },
+    {
+      "kind": "purposeCapitalWithoutTools",
+      "requests": 567,
+      "hits": 8,
+      "misses": 559,
+      "unique": 559
+    },
+    {
+      "kind": "incomeAllocationCapital",
+      "requests": 1306,
+      "hits": 384,
+      "misses": 922,
+      "unique": 922
+    },
+    {
+      "kind": "incomePreparationCapital",
+      "requests": 276,
+      "hits": 8,
+      "misses": 268,
+      "unique": 268
+    }
+  ],
+  "newAutonomousRuns": 0
+}

@@ -41,10 +41,10 @@
  }
  // Blue-trace metrics and one known completed trigger card can change.
  // Unknown new cards never become Type3 scoring facts.
- function secured(aliensState,facts){
+ function secured(aliensState,facts,stableB1=null){
   const actor={id:facts.player.id,color:facts.player.color,reservedCards:facts.reservedCards,techState:facts.player.techState,completedTaskCount:facts.player.completedTaskCount},context={aliens:aliensState};let value=0;
   const board=facts.board.finalScoring,mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id)||(facts.forecastFinalMark?.tileId==='b'?facts.forecastFinalMark:null),formula=board&&end.getFormulaId('b',board.tileVariants.b);
-  if(mark&&formula==='b1')value+=end.getFormulaBaseValue(formula,actor,context)*end.getSlotMultiplier(formula,mark.slotIndex);
+  if(mark&&formula==='b1')value+=stableB1===null?end.getFormulaBaseValue(formula,actor,context)*end.getSlotMultiplier(formula,mark.slotIndex):stableB1;
   const cMark=board?.tiles?.c?.marks?.find(m=>m.playerId===actor.id),cFormula=board&&end.getFormulaId('c',board.tileVariants.c);
   if(cMark)value+=end.getFormulaBaseValue(cFormula,actor,context)*end.getSlotMultiplier(cFormula,cMark.slotIndex);
   for(const card of facts.reservedCards){const rule=end.resolveCardEndGameRule(card,effects);
@@ -52,10 +52,32 @@
   }
   return value;
  }
+ function securedScope(aliensState,facts){
+  const actor={id:facts.player.id,color:facts.player.color},board=facts.board.finalScoring;
+  const mark=board?.tiles?.b?.marks?.find(m=>m.playerId===actor.id)||(facts.forecastFinalMark?.tileId==='b'?facts.forecastFinalMark:null);
+  const formula=board&&end.getFormulaId('b',board.tileVariants.b);let capped=true,stableB1=null;
+  if(mark&&formula==='b1'){
+   const cap=Math.min(end.countTraceMarkers(actor,aliensState,'yellow'),end.countTraceMarkers(actor,aliensState,'pink'));
+   // Every local candidate adds only a blue marker. Other colors and their
+   // owners remain read-only; an already capped B1 cannot grow in this quote.
+   capped=end.countTraceMarkers(actor,aliensState,'blue')>=cap;
+   if(capped)stableB1=cap*end.getSlotMultiplier(formula,mark.slotIndex);
+  }
+  let blueData=false,blueScore=false;
+  for(const card of facts.reservedCards){
+   const model=effects.getCardModel(card),consumed=card.cardEffectState?.consumedTriggerIds||[];
+   if((model.triggers||[]).some(t=>!consumed.includes(t.id)&&blueDataRule(t)))blueData=true;
+   const rule=end.resolveCardEndGameRule(card,effects);
+   if(rule&&['traceCount','amibaTraceCount'].includes(rule.kind)&&rule.traceType==='blue')blueScore=true;
+  }
+  // Without this event's data trigger no reserved card is completed/removed,
+  // so C1/C2 and the other admitted secured inputs also remain unchanged.
+  return{stableB1,blueData,fixed:capped&&!blueData&&!blueScore};
+ }
  // Native merges every matching slot/card into one choice for this event.
  // Keep the selected consumption in the typed endpoint; another blue trace
  // may consume another slot, never this same one for a second time.
- function blueDataChoice(facts,weights,wallet,context){
+ function blueDataChoice(facts,weights,wallet,context,stableB1){
   const choices=[];
   for(const card of facts.reservedCards){
    const model=effects.getCardModel(card),consumed=card.cardEffectState?.consumedTriggerIds||[];
@@ -68,7 +90,7 @@
     players.gainResources({resources:after},{availableData:trigger.effect.options.count});
     const reservedCards=facts.reservedCards.flatMap(c=>c!==card?[c]:completed?[]:[copy]);
     const nextFacts={...facts,player:after,reservedCards},gain=after.availableData-wallet.availableData;
-    const net=gain*weights.availableData+secured(context,nextFacts)-secured(context,{...facts,player:wallet});
+    const net=gain*weights.availableData+secured(context,nextFacts,stableB1)-secured(context,{...facts,player:wallet},stableB1);
     choices.push({available:true,wallet:after,reservedCards,trigger:{cardInstanceId:card.id,ruleId:trigger.id,gainedData:gain,completed},net});
    }
   }
@@ -129,7 +151,8 @@
     handSize:facts.hand.length+facts.extraUnknownCount};
   const columns=Object.entries(initial.techState.blueBoardSlots).filter(([tile,slot])=>initial.techState.ownedTiles[tile]&&!initial.techState.disabledTiles[tile]&&needed.includes(placement.getRequiredComputerSlotForBlueBonus(slot))).length;
   players.gainResources({resources:paid},{score:columns*placement.getBlueColumnScoreBonus().score});
-  const originalAliens=publicAliens(facts),beforeSecured=secured(originalAliens,facts),candidates=[];
+  const originalAliens=publicAliens(facts),scope=securedScope(originalAliens,facts);
+  const beforeSecured=scope.fixed?0:secured(originalAliens,facts,scope.stableB1),candidates=[];
   const choices=facts.board.aliens.slots.flatMap(slot=>{
    if(Number(slot.slotId)===Number(id))return amiba.TRACE_POSITIONS.filter(position=>amiba.canPlaceAmibaTrace(originalAliens,id,'blue',position).ok).map(position=>({slot,position,reward:amiba.getTraceReward(originalAliens,'blue',position)}));
    if(slot.revealed)return[];const first=!slot.traces?.blue?.firstPlaced;
@@ -159,7 +182,7 @@
    if(choice.reward.region){region=amiba.resolveRegionReward(context,choice.reward.region);if(!region.ok)throw Error('AMIBA_ANALYSIS_REGION_QUERY_FAILED');let valid=true;
     for(const r of region.results)if(!apply(r.reward)){valid=false;break;}if(!valid)continue;
    }
-   const trigger=blueDataChoice(facts,weights,wallet,context);
+   const trigger=scope.blueData?blueDataChoice(facts,weights,wallet,context,scope.stableB1):null;
    if(trigger)Object.assign(wallet,trigger.wallet);
    wallet.handSize+=unknownCards;
    const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,context.amiba[k]])),traces={revealedSlotId:id,traceSlotsByAlienSlotId:context.amiba.traceSlotsByAlienSlotId,
@@ -167,7 +190,7 @@
    const cleared={computerSlots:[],blueSlots:(facts.blueSlots||[]).map(b=>({...b,occupied:false,unlocked:false})),researchSymbols:symbols,amibaTraces:traces,
     extraUnknownCount:facts.extraUnknownCount+unknownCards,aliens:{...facts.board.aliens,slots,amiba:symbols,amibaTraces:traces},ordinaryDrawCount:ordinaryLeft,
     ...(trigger?{reservedCards:trigger.reservedCards,nextFinalMark:facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>o.tileId==='c'?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,{...wallet,reservedCards:trigger.reservedCards},{})*o.multiplier}:o)}}:{})};
-   const securedGain=secured(context,{...facts,player:wallet,reservedCards:trigger?.reservedCards||facts.reservedCards})-beforeSecured;
+   const securedGain=scope.fixed?0:secured(context,{...facts,player:wallet,reservedCards:trigger?.reservedCards||facts.reservedCards},scope.stableB1)-beforeSecured;
    const delta=w=>arithmetic.sum([w.score-initial.score,securedGain,unknownCards*weights.handSize,...Object.keys(weights).filter(k=>k!=='handSize').map(k=>(w[k]-initial[k])*weights[k])],weights);
    let best={value:delta(wallet),wallet,progress:cleared,blueSlot:null};
    for(const[tileId,slot]of Object.entries(initial.techState.blueBoardSlots)){

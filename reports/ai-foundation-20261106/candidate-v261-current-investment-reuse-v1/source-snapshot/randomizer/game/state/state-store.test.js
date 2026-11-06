@@ -1,0 +1,352 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const {
+  SCHEMA_VERSION,
+  REQUIRED_ROOT_SLICES,
+  createCommittedGameState,
+  createStateStore,
+} = require("./state-store");
+
+function createState(overrides = {}) {
+  return createCommittedGameState({
+    gameId: "game-seti-71",
+    rulesetVersion: "prototype-2026-07",
+    seed: 71,
+    rngState: { algorithm: "mulberry32", cursor: 0, state: 1234 },
+    sequences: { cardInstance: 4, rocket: 2, event: 9 },
+    match: { status: "playing", playerOrder: ["p1", "p2"] },
+    turn: { round: 2, turn: 4, actionCycle: 1, currentPlayerId: "p1" },
+    players: {
+      p1: { resources: { credits: 5, energy: 2 }, techTileIds: [] },
+      p2: { resources: { credits: 3, energy: 4 }, techTileIds: [] },
+    },
+    solarSystem: { rotation: 3 },
+    pieces: { probes: {} },
+    planets: { mars: { orbiters: [], landers: [] } },
+    data: { pool: [] },
+    cards: { deck: ["c4", "c3"], market: ["c1"], discard: [] },
+    tech: { supply: { orange: ["t1"] } },
+    aliens: { revealed: [] },
+    finalScoring: { tiles: [] },
+    ...overrides,
+  });
+}
+
+function committedBytes(store) {
+  const serialized = store.serialize();
+  assert.equal(serialized.ok, true);
+  return serialized.serialized;
+}
+
+(function testSchemaIsFrozenAndExplicit() {
+  assert.equal(SCHEMA_VERSION, "seti-committed-game-state-v1");
+  assert.deepEqual(REQUIRED_ROOT_SLICES, [
+    "meta", "match", "turn", "players", "solarSystem", "pieces", "planets",
+    "data", "cards", "tech", "aliens", "finalScoring",
+  ]);
+})();
+
+(function testSnapshotsNeverExposeMutableAuthority() {
+  const store = createStateStore(createState());
+  const first = store.getSnapshot();
+  assert.equal(Object.isFrozen(first), true);
+  assert.equal(Object.isFrozen(first.players.p1.resources), true);
+  assert.throws(() => {
+    first.players.p1.resources.credits = 99;
+  }, TypeError);
+  const second = store.getSnapshot();
+  assert.notEqual(first, second);
+  assert.equal(second.players.p1.resources.credits, 5);
+})();
+
+(function testMultiSliceCommitIsAtomicAndVersioned() {
+  const store = createStateStore(createState());
+  const working = store.beginWorkingCopy(0);
+  assert.equal(working.ok, true);
+  working.state.players.p1.resources.credits -= 3;
+  working.state.players.p1.techTileIds.push("t1");
+  working.state.tech.supply.orange = [];
+  working.state.cards.discard.push("research-reward");
+  const committed = store.compareAndCommit(working.baseVersion, working.state);
+  assert.equal(committed.ok, true);
+  assert.equal(committed.stateVersion, 1);
+  assert.equal(committed.snapshot.players.p1.resources.credits, 2);
+  assert.deepEqual(committed.snapshot.players.p1.techTileIds, ["t1"]);
+  assert.deepEqual(committed.snapshot.tech.supply.orange, []);
+  assert.deepEqual(committed.snapshot.cards.discard, ["research-reward"]);
+})();
+
+(function testVersionConflictAllowsOnlyFirstWriter() {
+  const store = createStateStore(createState());
+  const left = store.beginWorkingCopy(0);
+  const right = store.beginWorkingCopy(0);
+  left.state.turn.turn = 5;
+  right.state.turn.turn = 6;
+  assert.equal(store.compareAndCommit(0, left.state).ok, true);
+  assert.deepEqual(store.compareAndCommit(0, right.state), {
+    ok: false,
+    code: "STATE_VERSION_CONFLICT",
+    baseVersion: 0,
+    currentVersion: 1,
+  });
+  assert.equal(store.getSnapshot().turn.turn, 5);
+})();
+
+(function testAllFailClosedCasesLeaveAuthorityByteEquivalent() {
+  const invariant = (state) => state.players.p1.resources.credits >= 0
+    ? { ok: true }
+    : { ok: false, code: "NEGATIVE_CREDITS", path: "$.players.p1.resources.credits" };
+  const cases = [
+    {
+      expected: "STATE_CANDIDATE_VERSION_MISMATCH",
+      mutate(state) { state.meta.stateVersion = 99; },
+    },
+    {
+      expected: "STATE_SLICE_MISSING",
+      mutate(state) { delete state.cards; },
+    },
+    {
+      expected: "NEGATIVE_CREDITS",
+      mutate(state) { state.players.p1.resources.credits = -1; },
+    },
+    {
+      expected: "STATE_NOT_SERIALIZABLE",
+      mutate(state) { state.cards.bad = () => true; },
+    },
+    {
+      expected: "STATE_NON_PLAIN_OBJECT",
+      mutate(state) { state.cards.bad = new Map([["x", 1]]); },
+    },
+    {
+      expected: "STATE_CYCLIC_REFERENCE",
+      mutate(state) { state.cards.bad = state.cards; },
+    },
+    {
+      expected: "STATE_NON_FINITE_NUMBER",
+      mutate(state) { state.cards.bad = Number.NaN; },
+    },
+  ];
+
+  for (const testCase of cases) {
+    const store = createStateStore(createState(), { invariantValidators: [invariant] });
+    const before = committedBytes(store);
+    const working = store.beginWorkingCopy(0).state;
+    testCase.mutate(working);
+    const result = store.compareAndCommit(0, working);
+    assert.equal(result.ok, false, testCase.expected);
+    assert.equal(result.code, testCase.expected, JSON.stringify(result));
+    assert.equal(committedBytes(store), before, testCase.expected);
+    assert.equal(store.getSnapshot().meta.stateVersion, 0, testCase.expected);
+  }
+})();
+
+(function testUnknownRootAndRuntimeObjectsAreRejected() {
+  const store = createStateStore(createState());
+  const working = store.beginWorkingCopy().state;
+  working.pending = { overlay: "choose-tech" };
+  assert.equal(store.validate(working).code, "STATE_ROOT_FIELD_UNKNOWN");
+
+  delete working.pending;
+  Object.defineProperty(working.cards, "hostCallback", {
+    enumerable: true,
+    get() { return "do-not-call"; },
+  });
+  assert.equal(store.validate(working).code, "STATE_ACCESSOR_OR_HIDDEN_FIELD");
+})();
+
+(function testCanonicalSerializationAndUnknownSchemaRejection() {
+  const initial = createState();
+  const store = createStateStore(initial);
+  const serialized = store.serialize();
+  assert.equal(serialized.ok, true);
+  assert.equal(serialized.serialized, store.serialize(store.getSnapshot()).serialized);
+  const roundTrip = store.deserialize(serialized.serialized);
+  assert.equal(roundTrip.ok, true);
+  assert.deepEqual(roundTrip.state, store.getSnapshot());
+  assert.equal(store.deserialize("{broken").code, "STATE_DESERIALIZE_FAILED");
+
+  for (const schemaVersion of ["seti-committed-game-state-v0", "unknown-v0", null]) {
+    const rejected = createState();
+    rejected.meta.schemaVersion = schemaVersion;
+    const result = store.deserialize(JSON.stringify(rejected));
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "STATE_SCHEMA_VERSION_UNSUPPORTED");
+  }
+})();
+
+(function testSubscriberCannotMutateOrRollbackCommittedState() {
+  const store = createStateStore(createState());
+  const events = [];
+  const unsubscribe = store.subscribe((event) => {
+    events.push(event);
+    assert.throws(() => { event.snapshot.turn.turn = 999; }, TypeError);
+    throw new Error("host renderer failed");
+  });
+  const working = store.beginWorkingCopy().state;
+  working.turn.turn = 8;
+  const committed = store.compareAndCommit(0, working);
+  assert.equal(committed.ok, true);
+  assert.equal(store.getSnapshot().turn.turn, 8);
+  assert.equal(events.length, 1);
+  assert.deepEqual({
+    type: events[0].type,
+    previousVersion: events[0].previousVersion,
+    stateVersion: events[0].stateVersion,
+  }, { type: "committed", previousVersion: 0, stateVersion: 1 });
+  unsubscribe();
+})();
+
+(function testRestoreKeepsResidentStoreAndSnapshotVersionFact() {
+  const store = createStateStore(createState());
+  const events = [];
+  store.subscribe((event) => events.push(event));
+  const restoredState = createState();
+  restoredState.meta.stateVersion = 23;
+  restoredState.turn.turn = 7;
+  const restored = store.restore(restoredState, { source: "checkpoint" });
+  assert.equal(restored.ok, true);
+  assert.equal(restored.previousVersion, 0);
+  assert.equal(restored.stateVersion, 23);
+  assert.equal(store.getSnapshot().turn.turn, 7);
+  assert.deepEqual({
+    type: events[0].type,
+    stateVersion: events[0].stateVersion,
+    metadata: events[0].metadata,
+  }, { type: "restored", stateVersion: 23, metadata: { source: "checkpoint" } });
+
+  const before = committedBytes(store);
+  const invalid = createState();
+  invalid.meta.schemaVersion = "unknown";
+  assert.equal(store.restore(invalid).code, "STATE_SCHEMA_VERSION_UNSUPPORTED");
+  assert.equal(committedBytes(store), before);
+  assert.equal(events.length, 1);
+})();
+
+(function testTrustedForkRestoreKeepsFrozenAuthorityIsolated() {
+  const freeze = (value) => {
+    if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    for (const child of Object.values(value)) freeze(child);
+    return Object.freeze(value);
+  };
+  const store = createStateStore(createState());
+  const trusted = createState();
+  trusted.turn.turn = 4;
+  freeze(trusted);
+  assert.equal(store.restoreForkSnapshot(trusted, { trustedFrozen: true }).ok, true);
+  const working = store.beginWorkingCopy().state;
+  working.turn.turn = 9;
+  assert.equal(store.getSnapshot().turn.turn, 4,
+    "trusted frozen fork 可复用只读 committed root，但 working copy 仍必须隔离");
+  assert.equal(
+    store.serializeForkSnapshot().serialized,
+    store.serialize(store.getSnapshot()).serialized,
+    "trusted fork 序列化不能改变 canonical bytes",
+  );
+
+  const mutable = createState();
+  mutable.turn.turn = 6;
+  assert.equal(store.restoreForkSnapshot(mutable).ok, true);
+  mutable.turn.turn = 10;
+  assert.equal(store.getSnapshot().turn.turn, 6,
+    "普通 fork restore 仍必须克隆外部可写 candidate");
+})();
+
+(function testTrustedIsolatedCommitTransfersAndFreezesCandidateOwnership() {
+  const invariant = (state) => state.turn.turn >= 0
+    ? { ok: true }
+    : { ok: false, code: "NEGATIVE_TURN", path: "$.turn.turn" };
+  const store = createStateStore(createState(), {
+    invariantValidators: [invariant],
+    trustedIsolatedOwnership: true,
+  });
+  const working = store.beginWorkingCopy(0).state;
+  working.turn.turn = 11;
+  const committed = store.compareAndCommit(0, working, { source: "trusted-fork" });
+  assert.equal(committed.ok, true);
+  assert.equal(committed.snapshot, working,
+    "trusted isolated commit 应转移独占 candidate，而不是再次复制整局");
+  assert.equal(Object.isFrozen(working), true);
+  assert.equal(Object.isFrozen(working.turn), true);
+  assert.throws(() => { working.turn.turn = 12; }, TypeError);
+  assert.equal(store.getSnapshot().turn.turn, 11);
+
+  const invalid = store.beginWorkingCopy(1).state;
+  invalid.turn.turn = -1;
+  const before = committedBytes(store);
+  const rejected = store.compareAndCommit(1, invalid);
+  assert.equal(rejected.code, "NEGATIVE_TURN");
+  assert.equal(invalid.meta.stateVersion, 1,
+    "可信 candidate 校验失败后必须恢复输入版本，不能泄漏半提交状态");
+  assert.equal(committedBytes(store), before,
+    "trusted ownership 路径仍必须 fail-closed，不得提交无效 candidate");
+})();
+
+(function testTrustedSerializationTracksFullImmutableRoot() {
+  const store = createStateStore(createState(), { trustedIsolatedOwnership: true });
+  const first = store.serializeForkSnapshot().serialized;
+  const canonical = () => store.serialize(store.getSnapshot()).serialized;
+  assert.equal(first, canonical());
+  const working = store.beginWorkingCopy(0).state;
+  working.players.p1.resources.credits += 2;
+  assert.equal(store.serializeForkSnapshot().serialized, first, "工作副本不能改变缓存的已提交字节");
+  assert.equal(store.compareAndCommit(0, working).ok, true);
+  const committed = store.serializeForkSnapshot().serialized;
+  assert.notEqual(committed, first);
+  assert.equal(committed, canonical(), "成功提交后必须重新生成相同canonical格式");
+
+  const replacement = structuredClone(store.getSnapshot());
+  replacement.players.p1.resources.credits = 19;
+  assert.equal(store.restoreForkSnapshot(replacement).ok, true);
+  replacement.players.p1.resources.credits = 99;
+  const restored = store.serializeForkSnapshot().serialized;
+  assert.notEqual(restored, committed, "相同stateVersion的不同状态不能复用旧字节");
+  assert.equal(restored, canonical());
+  const invalid = store.beginWorkingCopy(1).state;
+  invalid.meta.stateVersion = 7;
+  assert.equal(store.compareAndCommit(1, invalid).code, "STATE_CANDIDATE_VERSION_MISMATCH");
+  assert.equal(store.serializeForkSnapshot().serialized, restored, "失败提交不能替换序列化对应的根");
+  assert.equal(store.restore(JSON.parse(first)).ok, true);
+  assert.equal(store.serializeForkSnapshot().serialized, first, "普通恢复也必须使旧根序列化失效");
+  assert.equal(store.serializeForkSnapshot().serialized, canonical());
+})();
+
+(function testStringCachePreservesCanonicalEscapeBytesAndEviction() {
+  function reference(value) {
+    if (value === null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return "[" + value.map(reference).join(",") + "]";
+    return "{" + Object.keys(value).sort().map(key => JSON.stringify(key) + ":" + reference(value[key])).join(",") + "}";
+  }
+  const edge = ["", "\"", "\\", "\n\t\r\b\f\u0000", "中文🛰️", "\ud800", "\udfff", "\u2028\u2029", "x".repeat(513)];
+  const state = createState({ cards: { "10": "ten", "2": "two", values: [...edge, -0, 1e-12, true, false, null], nested: Object.fromEntries(edge.map((key, i) => [key, edge[edge.length - i - 1]])) } });
+  const store = createStateStore(state, { trustedIsolatedOwnership: true });
+  const original = reference(state);
+  assert.equal(store.serializeForkSnapshot().serialized, original, "canonical bytes include lexicographic integer-looking keys and lone-surrogate escapes");
+  for (let i = 0; i < 1100; i++) {
+    const candidate = structuredClone(state);
+    candidate.cards.values = ["evict-" + i, ...edge];
+    assert.equal(store.restoreForkSnapshot(candidate).ok, true);
+    assert.equal(store.serializeForkSnapshot().serialized, reference(candidate), "string memo eviction cannot reuse another string or prior mutable state");
+  }
+  assert.equal(store.restoreForkSnapshot(state).ok, true);
+  assert.equal(store.serializeForkSnapshot().serialized, original, "evicted special strings encode to the exact original bytes again");
+})();
+
+(function testFrozenForkCanonicalReuseAcrossRestoredRootsIsBounded() {
+  const fs=require('node:fs'),Module=require('node:module'),filename=require.resolve('./state-store'),loaded=new Module(filename,module);loaded.filename=filename;loaded.paths=module.paths;
+  let serializations=0;globalThis.__setiForkCanonicalTest=()=>{serializations++;};
+  try{
+    loaded._compile(fs.readFileSync(filename,'utf8').replace('function stableSerialize(value) {','function stableSerialize(value) {globalThis.__setiForkCanonicalTest();'),filename);
+    const store=loaded.exports.createStateStore(createState(),{trustedIsolatedOwnership:true}),a=store.getForkSnapshot(),first=store.serializeForkSnapshot().serialized;
+    const mutable=store.beginWorkingCopy().state;mutable.turn.turn++;assert(store.compareAndCommit(0,mutable).ok);const b=store.getForkSnapshot(),second=store.serializeForkSnapshot().serialized;assert.notEqual(second,first);
+    assert(store.restoreForkSnapshot(a,{trustedFrozen:true}).ok);const beforeA=serializations;assert.equal(store.serializeForkSnapshot().serialized,first);assert.equal(serializations,beforeA,'A/B/A restores reuse bytes of that exact frozen Native root');
+    const distinct=structuredClone(a);distinct.turn.turn=99;assert(store.restoreForkSnapshot(distinct).ok);const beforeDistinct=serializations;assert.notEqual(store.serializeForkSnapshot().serialized,first);assert(serializations>beforeDistinct,'same stateVersion is not a cache identity');
+    for(let i=0;i<65;i++){const candidate=structuredClone(a);candidate.turn.turn=100+i;assert(store.restoreForkSnapshot(candidate).ok);store.serializeForkSnapshot();}
+    assert(store.restoreForkSnapshot(a,{trustedFrozen:true}).ok);const evicted=serializations;assert.equal(store.serializeForkSnapshot().serialized,first);assert(serializations>evicted,'the extended table evicts at64 Native roots');
+    const large=[];
+    for(let i=0;i<2;i++){const candidate=structuredClone(a);candidate.cards.largeNote=String(i)+'x'.repeat(2300000);assert(store.restoreForkSnapshot(candidate).ok);large.push(store.getForkSnapshot());store.serializeForkSnapshot();}
+    assert(store.restoreForkSnapshot(large[0],{trustedFrozen:true}).ok);const bytesEvicted=serializations;const text=store.serializeForkSnapshot().serialized;assert(serializations>bytesEvicted,'two large roots exceeding8MiB cannot both remain in the extended table');assert.equal(JSON.parse(text).cards.largeNote,large[0].cards.largeNote);
+  }finally{delete globalThis.__setiForkCanonicalTest;}
+})();
+
+console.log("state-store tests passed");

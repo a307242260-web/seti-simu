@@ -1723,4 +1723,14 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__companyIncomePrioritySmoke?.ok === true',
   obligation:'A strictly higher known company purpose precedes fixed income preparation and improves the complete Native window without card subset expansion',
   counterexample:'The greedy income tail consumes the outgoing card before the selected swap, loses its Native financing improvement or mutates root/RNG',
+ }), Object.freeze({
+  id:'production-analysis-publicity-preparation',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiDecisionSearch && window.SetiSearchAgent)',
+  actionExpression:`(async()=>{
+    const F='/reports/ai-foundation-20261105/third-round-teacher-v1/',f=await fetch(F+'v259-analysis-publicity-post-main-root-20261106-v1.json').then(r=>r.json()),seat=f.seatId,seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('analysis publicity restore');const original=JSON.stringify(c.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+    try{port.setResourcePlanning(true);port.setCardPickPlanning(true);const root=port.openRoot(),plan=port.resourceSpec(root).plans.find(p=>p.goal.kind==='analysis-publicity');if(!plan)throw Error('funding source removed after main');const native=port.expandResourcePlan(root,plan,()=>null),evaluate=window.SetiStateValue.createStateValueEvaluator(seat);if(!native.complete||native.submissions!==1||evaluate(port.valueObservation(native.node))!==137.75)throw Error('funding Native value differs');if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('funding root/RNG changed');window.__analysisPublicityPreparationSmoke={ok:true};}finally{port.close();c.dispose();}
+  })()`,
+  successExpression:'window.__analysisPublicityPreparationSmoke?.ok === true',
+  obligation:'A known post-main publicity corner funds the existing analysis/research continuation once, with Native value128.25 to137.75 and unchanged source/RNG',
+  counterexample:'The fixed preparation is omitted after main, uses hidden suppliers, repeats spending or invents a Native successor',
 })]);

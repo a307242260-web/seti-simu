@@ -1,0 +1,14 @@
+simulation Effect Session worker crash recovery tests passed
+trusted analysis fork isolation and exact reuse passed
+{"analysisPublicityPreparation":"passed","before":128.25,"after":137.75,"nativeInputs":1,"oneKnownSource":true,"noRepeat":true,"rootAndRngRestored":true}
+{"actual148FundingAfterMain":"passed","actionId":"play_card:9ef5b92a","value":139,"nativeInputs":167,"rootAndRngRestored":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":120.08333333333333,"netGain":4.166666666666667,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+StateStore Effect Session stage 6 tests passed
+state-store tests passed
+SUMMARY unit passed=6 failed=0 total=6 time=3.67s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1
+OWNER architecture/policy-host tests=1
+OWNER architecture/simulation-host tests=1
+OWNER architecture/state-store tests=1
+OWNER policy/decision-search tests=2

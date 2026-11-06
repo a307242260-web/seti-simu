@@ -1,0 +1,61 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: reuse only the initial investment already computed by the same portfolio
+
+1 !== 0
+
+    at Object.<anonymous> (/private/tmp/seti-v261-current-investment-reuse-20261106-v1/randomizer/game/ai/probe-capital-value.test.js:42:137)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+StateStore Effect Session stage 6 tests passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: A/B/A restores reuse bytes of that exact frozen Native root
+
+183 !== 122
+
+    at testFrozenForkCanonicalReuseAcrossRestoredRootsIsBounded (/private/tmp/seti-v261-current-investment-reuse-20261106-v1/randomizer/game/state/state-store.test.js:342:163)
+    at Object.<anonymous> (/private/tmp/seti-v261-current-investment-reuse-20261106-v1/randomizer/game/state/state-store.test.js:350:3)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 183,
+  expected: 122,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=1 failed=2 total=3 time=0.32s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1
+OWNER architecture/state-store tests=1
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/probe-capital-value.test.js status=1 signal=none
+FAIL randomizer/game/state/state-store.test.js status=1 signal=none

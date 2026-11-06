@@ -1,0 +1,46 @@
+{
+  "scope": "One necessary full-input graph diagnostic, no live cache or candidate altered. Preserves aliases, all own-data descriptors, order, prototype and extensibility; same graph numeric results compared exactly. NOT native state equivalence, pruning, admission, cold resampling or autonomous game.",
+  "sourceVersion": "seti-complete-decision-search-v260",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.json",
+  "firstSampleSha256": "54ddd015dc4d067dd5e503de97d4a638a6e02f25805e1c36eda96137792c237c",
+  "nativeInputs": 175,
+  "value": 135,
+  "actionId": "industry:e887dc52",
+  "rootAndRngUnchanged": true,
+  "keyMilliseconds": 661.7226410000036,
+  "capacity": [
+    {
+      "kind": "scalar",
+      "entries": 64,
+      "hits": 228,
+      "misses": 424,
+      "unsupported": 0,
+      "maxKeyUtf16Bytes": 6352410
+    },
+    {
+      "kind": "scalar",
+      "entries": 256,
+      "hits": 239,
+      "misses": 413,
+      "unsupported": 0,
+      "maxKeyUtf16Bytes": 25223780
+    },
+    {
+      "kind": "base",
+      "entries": 64,
+      "hits": 176,
+      "misses": 1847,
+      "unsupported": 0,
+      "maxKeyUtf16Bytes": 6393894
+    },
+    {
+      "kind": "base",
+      "entries": 256,
+      "hits": 184,
+      "misses": 1839,
+      "unsupported": 0,
+      "maxKeyUtf16Bytes": 25274196
+    }
+  ],
+  "newAutonomousRuns": 0
+}

@@ -1,4 +1,14 @@
 'use strict';
+const arithmetic=require('./value-arithmetic');
+{
+ const assert=require('node:assert/strict'),defaults=arithmetic.DEFAULT_WEIGHTS,copy=Object.freeze({...defaults});
+ for(const weights of [undefined,defaults,copy])assert(arithmetic.isDefault(weights));
+ const mutable={...defaults};assert(arithmetic.isDefault(mutable));mutable.credits=2;assert(!arithmetic.isDefault(mutable));mutable.credits=1;assert(arithmetic.isDefault(mutable));
+ let credits=1,reads=0;const accessor={...defaults};Object.defineProperty(accessor,'credits',{enumerable:true,get(){reads++;return credits;}});Object.freeze(accessor);
+ assert(arithmetic.isDefault(accessor));credits=2;assert(!arithmetic.isDefault(accessor),'freezing an accessor does not freeze its returned value');assert.equal(reads,2);
+ const inherited=Object.assign(Object.create({get credits(){return credits;}}),{energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5,handSize:1,unused:0});Object.freeze(inherited);credits=1;assert(arithmetic.isDefault(inherited));credits=2;assert(!arithmetic.isDefault(inherited),'inherited getters must be read on each call');
+ const custom=Object.freeze({...defaults,credits:2}),parts=[.1,.2];assert.equal(arithmetic.sum(parts,custom),parts.reduce((n,v)=>n+v,0));assert.equal(arithmetic.sum(parts,copy),arithmetic.sum(parts,defaults));
+}
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value'),{searchDecision}=require('./decision-search'),agent=require('./search-agent');
 const{createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation');
 const F='reports/ai-foundation-20261105/third-round-teacher-v1/',read=p=>JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../..',p))),f=read(F+'v239-actual-before-132-root-20261106-v1.json'),control=read(F+'v239-free-alien-card-boundary-control-20261106-v1.checkpoint.json'),reference=read(F+'v239-free-card-known-suffix-control-20261106-v1.json'),seat=f.seatId,seed=f.source.seed;

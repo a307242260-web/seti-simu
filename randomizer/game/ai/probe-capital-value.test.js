@@ -31,6 +31,17 @@ try {
   const state = JSON.parse(original.committedState), own = state.players.players.find(p => p.id === seatId);
   const investment = (hand, publicity, funding) => demand.heldAndResearchCapital(state, { ...own, hand, income: funding.income, resources: { ...own.resources, ...funding.resources, publicity } });
   assert.deepEqual(probe.fromState(state, own, values.DEFAULT_WEIGHTS, investment), forecast);
+  {
+    const facts=probe.factsFromState(state,own),knownHand=facts.hand.filter(card=>!card.hidden&&card.cardId);
+    const initial=investment(knownHand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
+    let initialCalls=0,followingCalls=0;
+    const counted=(hand,publicity,funding)=>{if(funding.resources===facts.player&&funding.income===facts.player.income)initialCalls++;else followingCalls++;return investment(hand,publicity,funding);};
+    const unseeded=probe.quote({...facts,investment:counted},values.DEFAULT_WEIGHTS);assert.equal(initialCalls,1);assert(followingCalls>0);
+    initialCalls=0;followingCalls=0;
+    const seeded=probe.quote({...facts,investment:counted,initialInvestmentCapital:initial},values.DEFAULT_WEIGHTS);
+    assert.deepEqual(seeded,unseeded,'the entire mission quote, payment and ledger retain the original current-wallet baseline');assert.equal(initialCalls,0,'reuse only the initial investment already computed by the same portfolio');assert(followingCalls>0,'different future wallets still request their own investment');
+    assert.throws(()=>probe.quote({...facts,investment:counted,initialInvestmentCapital:NaN},values.DEFAULT_WEIGHTS),/PROBE_CAPITAL_INITIAL_INVESTMENT_INVALID/);
+  }
   const beforeValue=values.evaluateStateValue(obs,seatId);
   assert(beforeValue.components.researchIncomePotential>0,'the separately native-verified funded research-income alternative remains represented');
   assert.equal(demand.planningCapital(state, own), values.sumValueParts([demand.heldAndResearchCapital(state, own),forecast.value,beforeValue.components.researchIncomePotential]));

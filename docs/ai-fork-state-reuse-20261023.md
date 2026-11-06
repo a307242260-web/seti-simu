@@ -14,11 +14,15 @@ Browser与Simulation继续共用Production内核；普通宿主的保存校验�
 首次恢复前后若字节变化，必须重新解码；不能为提高命中率忽略假设世界、RNG或规范化差异。
 诊断新增`committedDecodeCount/committedDecodeHits`，打开根时清零。
 
-仅`trustedIsolatedOwnership`下的`serializeForkSnapshot`缓存最近一份canonical序列化。
-键是完整冻结committed对象身份；成功提交、普通恢复和fork恢复换根后重新计算。
-失败提交不换根，不改变已缓存字节；工作副本修改不影响缓存。
+仅`trustedIsolatedOwnership`下的`serializeForkSnapshot`复用自己生成过的canonical序列化。
+V262（2026-11-06）保留最近一根的热命中，并扩展为最多64个完整冻结Native
+committed对象引用、UTF16字节合计8MiB的FIFO表；单根超过此上限不进入扩展表。
+成功提交或恢复至未缓存的新对象重新计算；恢复同一冻结根可复用。相同stateVersion、
+相同内容的另一对象不等于引用命中。失败提交不换根，工作副本修改不影响缓存。
 普通宿主不启用该序列化缓存，也不直接把外部envelope字符串冒充canonical输出。
-缓存保留至多一个旧根和一个字符串，不积累历史状态；端口关闭后隔离store一并释放。
+扩展表按容量和字节上限淘汰，原有最近一根热命中独立保留；端口关闭后隔离store一并释放。
+当前验证含A/B/A恢复、同版本不同根、64项/8MiB淘汰和正常保存校验，见
+[V262准入](human405-analysis-publicity-source-admission-20261106.md)。下文计时为v21历史证据。
 
 ## 证据和边界
 

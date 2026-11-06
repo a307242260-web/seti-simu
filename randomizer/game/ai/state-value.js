@@ -308,10 +308,11 @@
       board:progress.traceSlots?{...facts.board,aliens:{slots:progress.traceSlots}}:facts.board},weights)],weights);
   }
   const NO_INCOME_ALLOCATION=Object.freeze({total:0,knownSwapPlan:null});
-  function incomeAllocationCapital(facts,weights=DEFAULT_WEIGHTS) {
+  function incomeAllocationCapital(facts,weights=DEFAULT_WEIGHTS,initialInvestmentCapital) {
     if(!facts.blueSlots?.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId)))return NO_INCOME_ALLOCATION;
     const investment=dataInvestmentFor(facts,weights),funding={resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)};
-    const base=investment(facts.hand,facts.player.publicity,funding);
+    if(initialInvestmentCapital!==undefined&&!Number.isFinite(initialInvestmentCapital))throw TypeError('VALUE_INITIAL_INVESTMENT_INVALID');
+    const base=initialInvestmentCapital===undefined?investment(facts.hand,facts.player.publicity,funding):initialInvestmentCapital;
     return researchIncome.incomeOptions({facts,investment,baseCapital:base},weights);
   }
   function incomePreparationCapital(facts,weights=DEFAULT_WEIGHTS) {
@@ -324,7 +325,7 @@
     const investment=dataInvestmentFor(facts,weights),computer=readyAnalysis.prepaidCapital(facts,weights);
     const funding=researchFunding(facts,{resources:player,income:player.income,startingIncome:Number(passing)});
     const {held,paid}=jointResearchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
-    const mission=probeCapital.quote({...facts,investment,
+    const mission=probeCapital.quote({...facts,investment,initialInvestmentCapital:arithmetic.sum([held+paid,computer],weights),
       dataContinuation:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights)},weights).value;
     const finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);
     return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,finalMarkPotential,total:arithmetic.sum([held,paid,mission,computer,finalMarkPotential],weights)};
@@ -341,7 +342,11 @@
     analysisPortfolio.incomeRemovalClass=card=>supportedResearch(card)?null:'ordinary-income';
     const analysis=readyAnalysis.quote(facts,weights,analysisPortfolio,base.total);
     const income=researchIncome.quote(facts,weights,portfolio,base.total,technologyCapital);
-    const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
+    // Both callers need this same current-wallet subportfolio. Its held/paid
+    // research and prepaid computer parts were computed together above; the
+    // probe, final mark and other alternative purposes cannot seed it.
+    const current=arithmetic.sum([base.total,analysis.value,income.value],weights),dataPlan=incomeAllocationCapital(facts,weights,
+      arithmetic.sum([base.handPotential+base.researchPotential,base.computerPotential],weights)),dataPotential=arithmetic.normalize(Math.max(0,dataPlan.total-current),weights);
     return{...base,analysisPotential:arithmetic.sum([base.computerPotential,analysis.value],weights),analysisPlan:analysis,researchIncomePotential:income.value,researchIncomePlan:income,dataPotential,dataPlan,total:arithmetic.sum([current,dataPotential],weights)};
   }
   function publicIncomeSwapEligible(facts) {

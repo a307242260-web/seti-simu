@@ -860,12 +860,16 @@
       const forceIncome=incomeCandidate&&!forceBlue;
       const forceComputer=node.status==="stable"&&computerTail?.selected
         &&(!incomeCandidate||computerTail.netGain>incomeTail.netGain)&&(!forceBlue||computerTail.netGain>competingBlue.netGain);
-      const forcedKind=forceComputer?"computer-prefix":forceIncome?"income":forceBlue?"blue-data":null;
+      let forcedKind=forceComputer?"computer-prefix":forceIncome?"income":forceBlue?"blue-data":null;
+      let forcedGain=forceComputer?computerTail.netGain:forceIncome?incomeTail.netGain:forceBlue?competingBlue.netGain:0;
+      const analysisFunding=plans.find(p=>p.goal.kind==="analysis-publicity");
+      if(analysisFunding&&analysisFunding.goal.fundingNetGain>Math.max(0,stateValue.normalizeValue(forcedGain))){
+        forcedKind="analysis-publicity";forcedGain=analysisFunding.goal.fundingNetGain;
+      }
       // Use the same greedy preparation ranking for a known company swap.
       // Compare canonical ledger units: subtracting two portfolio scalars can
       // otherwise make an exact4.75 tie look like4.750000000000002.
       const competingSwap=forcedKind&&cardPick?.companySwap;
-      const forcedGain=forceComputer?computerTail.netGain:forceIncome?incomeTail.netGain:forceBlue?competingBlue.netGain:0;
       const swapGain=competingSwap?stateValue.normalizeValue(competingSwap.goal.netGain):0;
       const swapAction=swapGain>Math.max(0,stateValue.normalizeValue(forcedGain))&&node.legalActions.find(a=>a.actionId===cardPick.selectedActionId
         &&a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards");

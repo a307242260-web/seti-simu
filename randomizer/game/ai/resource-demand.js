@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v21';
+  const VERSION='seti-goal-resource-preparation-v22';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -288,6 +288,8 @@
       else{const funded=incomeFunding(state,seatId,g);if(funded&&capacity(state,seatId,funded))goals.push(funded);}
     };
     if(!p||state.match.initialSetup||p.passCompletionPending)return goals;
+    const analysisFunding=analysisPublicityFunding({state,seatId,actions});
+    if(analysisFunding)goals.push(analysisFunding);
     if(!p.mainActionCompleted){
       for(const card of p.hand){
         const cost=effects.getCardPlayCost(card);
@@ -384,6 +386,38 @@
   }
   const localWeights={score:1,credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5};
   const resourceValue=p=>Object.entries(localWeights).reduce((n,[k,w])=>n+(p.resources[k]||0)*w,0)+p.hand.length;
+  function analysisPublicityFunding({state,seatId,actions}){
+    const p=owner(state,seatId);
+    if(!p.mainActionCompleted||p.resources.availableData<6-placed(p)||observes(state,seatId,'cardCorner'))return null;
+    const sources=actions.filter(a=>{
+      if(a.family!=='card_corner'||a.payload?.kind!=='resource')return false;
+      const card=p.hand.find(c=>c.id===a.target.cardInstanceId);if(!card||card.hidden)return false;
+      const reward=cards.getDiscardActionRewardForCard(card);
+      return reward?.gain?.publicity>0&&Object.keys(reward.gain).every(k=>k==='publicity')&&!reward.dataCount;
+    });
+    if(!sources.length)return null;
+    const base=planningCapitalDetails(state,p),analysis=base.analysisPlan,endpoint=analysis?.selected?.endpoint?.resources;
+    if(!(analysis?.value>0)||!Number.isSafeInteger(endpoint?.publicity))return null;
+    const missing=techResolver.getResearchPublicityCost(p)-endpoint.publicity;
+    if(missing<=0)return null;
+    const target=p.resources.publicity+missing;
+    if(target>players.RESOURCE_LIMITS.publicity)return null;
+    const goal={id:'analysis:publicity:'+target,kind:'analysis-publicity',required:{publicity:target},
+      ...(analysis.selected.incomeCardId?{incomeCardId:analysis.selected.incomeCardId}:{})};
+    let current=state;const ids=[];
+    // One greedy known source sequence, never subsets. Future analysis gains
+    // determine the deficit; they cannot pay for these current preparations.
+    while(owner(current,seatId).resources.publicity<target){
+      const legal=sources.filter(a=>owner(current,seatId).hand.some(c=>c.id===a.target.cardInstanceId));
+      const source=preparations({state:current,seatId,goal,actions:legal}).find(c=>!c.observer);
+      if(!source)return null;
+      const action=legal.find(a=>a.actionId===source.actionId),next=project(current,seatId,action,source.discardIds);
+      if(!next||owner(next,seatId).resources.publicity<=owner(current,seatId).resources.publicity)return null;
+      ids.push(action.target.cardInstanceId);current=next;
+    }
+    const after=owner(current,seatId),netGain=stateValue.sumValueParts([resourceValue(after)-resourceValue(p),planningCapital(current,after),-base.total]);
+    return netGain>0?{...goal,publicityCornerCardIds:ids,fundingNetGain:netGain}:null;
+  }
   function positiveResourceGain(effect){
     const gain=effect?.options?.gain;
     return effect?.type==='gain_resources'&&gain&&Object.keys(gain).length&&Object.entries(gain).every(([k,v])=>k in localWeights&&Number.isFinite(v)&&v>=0)?gain:null;
@@ -559,6 +593,12 @@
         :{kind:'fallback',reason:'purpose-effect-native-choice',actionIds:actions.map(a=>a.actionId)};
     }
     const p=owner(state,seatId),d=needs(state,seatId,goal);
+    if(goal.kind==='analysis-publicity'&&status==='stable'){
+      if(!d.publicity)return{kind:'complete',reason:'analysis-publicity-funded'};
+      const id=goal.publicityCornerCardIds.find(id=>p.hand.some(c=>c.id===id));
+      const action=actions.find(a=>a.family==='card_corner'&&a.target?.cardInstanceId===id);
+      return action?{kind:'fixed',actionId:action.actionId,reason:'known-analysis-publicity-source'}:{kind:'infeasible',reason:'analysis-publicity-source-unavailable'};
+    }
     if(goal.kind==='blue-data'&&data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===goal.blueSlot))return{kind:'complete',reason:'blue-data-target-reached'};
     if(goal.kind==='computer-prefix'&&status==='stable'&&placed(p)>=goal.targetComputerSlot)return{kind:'complete',reason:'computer-prefix-target-reached'};
     if(status==='decision'){

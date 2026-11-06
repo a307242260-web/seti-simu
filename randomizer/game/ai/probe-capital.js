@@ -113,12 +113,16 @@
     if (!goals.length) return zero();
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
     const capitalValues = new Map();
-    const capital = (hand, wallet, income, traceSlots = null) => {
+    const capital = (hand, wallet, income, traceSlots = null, knownCurrentValue) => {
       const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, wallet.availableData, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
-      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}));
+      if (!capitalValues.has(key)) capitalValues.set(key, knownCurrentValue===undefined
+        ? facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}) : knownCurrentValue);
       return capitalValues.get(key);
     };
-    const initialCapital = capital(knownHand, player, player.income);
+    // Only the same source portfolio can supply this already-computed scalar.
+    // Every changed mission wallet/hand still runs the investment callback.
+    if(facts.initialInvestmentCapital!==undefined&&!Number.isFinite(facts.initialInvestmentCapital))throw TypeError('PROBE_CAPITAL_INITIAL_INVESTMENT_INVALID');
+    const initialCapital = capital(knownHand, player, player.income, null, facts.initialInvestmentCapital);
     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
     const actor = { id: seatId, color: player.color };
     const candidates = [];

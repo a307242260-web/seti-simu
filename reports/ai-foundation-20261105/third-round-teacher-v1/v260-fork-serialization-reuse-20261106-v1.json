@@ -1,0 +1,18 @@
+{
+  "scope": "One exact recursively-frozen native committed-reference serialization observer. Existing single-entry misses still serialize and bytes are compared for repeated references. Simulated FIFO64/8MiB, no live cache, cold replacement, source admission, Native state equivalence/pruning or autonomous game.",
+  "sourceVersion": "seti-complete-decision-search-v260",
+  "firstSample": "reports/ai-foundation-20261105/third-round-teacher-v1/v260-cold-actual-v256-132-20261106-v1.json",
+  "firstSampleSha256": "54ddd015dc4d067dd5e503de97d4a638a6e02f25805e1c36eda96137792c237c",
+  "nativeInputs": 175,
+  "value": 135,
+  "actionId": "industry:e887dc52",
+  "rootAndRngUnchanged": true,
+  "counts": {
+    "serializations": 118,
+    "exactReferenceRepeated": 35,
+    "computeMilliseconds": 22.913422000000082,
+    "duplicateComputeMilliseconds": 6.743503000000032,
+    "maxBytes": 4469582
+  },
+  "newAutonomousRuns": 0
+}
