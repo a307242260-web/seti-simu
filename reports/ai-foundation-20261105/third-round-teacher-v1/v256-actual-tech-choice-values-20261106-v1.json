@@ -1,0 +1,255 @@
+{
+  "record": "reports/research/85678dfe.e0046883.quick-400.json",
+  "scope": "Descriptive extraction from recorded actual complete search graphs, including collapsed fixed preparation edges; no new AI call. Values describe each inspected endpoint, not a Native equivalence proof or long-horizon optimum.",
+  "rows": [
+    {
+      "input": 127,
+      "sourceSearchInput": 125,
+      "choiceValues": [
+        {
+          "target": {
+            "choiceId": "tech:blue3:slot:3",
+            "tileId": "blue3",
+            "blueSlot": 3
+          },
+          "value": 114.5,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 19
+        },
+        {
+          "target": {
+            "choiceId": "tech:blue4:slot:3",
+            "tileId": "blue4",
+            "blueSlot": 3
+          },
+          "value": 114.5,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 20
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "value": 120.58333333333333,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 21
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "value": 112.08333333333333,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 22
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "value": 113.08333333333333,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 23
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange4",
+            "tileId": "orange4",
+            "blueSlot": null
+          },
+          "value": 112.08333333333333,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 24
+        },
+        {
+          "target": {
+            "choiceId": "tech:purple1",
+            "tileId": "purple1",
+            "blueSlot": null
+          },
+          "value": 123.58333333333333,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 25
+        },
+        {
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "value": 120,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 26
+        },
+        {
+          "target": {
+            "choiceId": "tech:purple3",
+            "tileId": "purple3",
+            "blueSlot": null
+          },
+          "value": 120.5,
+          "input": 127,
+          "sourceSearchInput": 125,
+          "node": 27
+        }
+      ]
+    },
+    {
+      "input": 151,
+      "sourceSearchInput": 148,
+      "choiceValues": [
+        {
+          "target": {
+            "choiceId": "tech:blue3:slot:3",
+            "tileId": "blue3",
+            "blueSlot": 3
+          },
+          "value": 136.5,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 17
+        },
+        {
+          "target": {
+            "choiceId": "tech:blue4:slot:3",
+            "tileId": "blue4",
+            "blueSlot": 3
+          },
+          "value": 136.5,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 18
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "value": 134.08333333333334,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 19
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "value": 130.08333333333334,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 20
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "value": 130.08333333333334,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 21
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange4",
+            "tileId": "orange4",
+            "blueSlot": null
+          },
+          "value": 130.08333333333334,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 22
+        },
+        {
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "value": 127,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 23
+        },
+        {
+          "target": {
+            "choiceId": "tech:purple3",
+            "tileId": "purple3",
+            "blueSlot": null
+          },
+          "value": 127.5,
+          "input": 151,
+          "sourceSearchInput": 148,
+          "node": 24
+        }
+      ]
+    },
+    {
+      "input": 160,
+      "sourceSearchInput": 159,
+      "choiceValues": [
+        {
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "value": 145.08333333333334,
+          "input": 160,
+          "sourceSearchInput": 159,
+          "node": 39
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "value": 140.08333333333334,
+          "input": 160,
+          "sourceSearchInput": 159,
+          "node": 40
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "value": 143.08333333333334,
+          "input": 160,
+          "sourceSearchInput": 159,
+          "node": 41
+        },
+        {
+          "target": {
+            "choiceId": "tech:orange4",
+            "tileId": "orange4",
+            "blueSlot": null
+          },
+          "value": 140.08333333333334,
+          "input": 160,
+          "sourceSearchInput": 159,
+          "node": 42
+        }
+      ]
+    }
+  ]
+}

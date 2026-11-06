@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "sourceCommit": "e0046883005d5572ff4af0dbcd5b1d2d8b2cc408",
+  "frozenRuntimeExact": true,
+  "existingSameSourceExperiments": 0,
+  "standardListLogSha256": "c3e249048a66c1e381055e622aa2bbbef6a464553d572884898bcb7196b2fba5",
+  "sourceAdmission": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-current-source-admission-20261106-v1.json"
+}
