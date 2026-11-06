@@ -1,0 +1,33 @@
+{
+  "baseCommit": "30d37abc03bd62e48e9878f3e5d31acf5ea2c6d0",
+  "filesSha256": {
+    "adhoc/control-v256-first-landing-finance-20261106-v1.js": "e5c8dc070b05a715553276eec22c93f8fcf19210e47abde82dcca06b91b6eaf2",
+    "adhoc/control-v256-purple-scan-cycle-20261106-v1.js": "7c346bad4628dc41adbcebc0fad10de3d5d323571b8e76e2155d24dcd9658e3f",
+    "adhoc/control-v256-purple-scan-cycle-20261106-v2.js": "e8052f03a11eec31ea71d2524007a352f714291d9593a8baf105c0513d5d8452",
+    "adhoc/control-v256-purple-scan-cycle-20261106-v3.js": "972863330d8cffaca7debb4d87af19944a249d65187744b80e9cdc81e950c575",
+    "adhoc/control-v256-purple-scan-cycle-20261106-v4.js": "9cc5ac67cf7e395a54f87c6ab139b61357bc497ba0c31551d9e645a3484d7262",
+    "adhoc/deliver-v256-scan-finance-learning-20261106-v1.py": "353cd3648e1f7f1ca98be7c0e933000beb732a75af9eea531b93cb8b34c30248",
+    "adhoc/human405-third-round-progress-20261106-v25.json": "75420269793eaca4730d0726d567351cba9dcf173b8368bfb9cf118174a15ccc",
+    "adhoc/summarize-v256-purple-scan-cycle-20261106-v1.js": "976d2b8daabd668805caf036fc7191d185ff1d820ed9e7b7447dcc745f631447",
+    "docs/ai-design.md": "f2b71627af764a30fe59b2a95fcb44fa985b937b237acce1a2e7cd010e1b5cd1",
+    "docs/human405-third-round-scan-finance-learning-20261106.md": "3d7ae8912cb4474374c734ce862cb82b18418408a47e74fe05c18894dbf61161",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-first-landing-finance-cli-20261106-v1.log": "c21010dc76de2875feef9a49b92fd6571418f70b63fa5538dca773f05bbdb512",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-first-landing-finance-control-20261106-v1.json": "58fde7f63153297b04a82ecbbe6886689ec7864f4814d36d2b95ec6b282dec20",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-cli-20261106-v1.log": "214abdf1f0c152507dc53995a69a3104b9863447d6a80a660c6c9a455544b1d0",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-cli-20261106-v2.log": "e22bec4e17ec7f83754599c8cea3219a4a420f7f5049a5af1b521b2fc4fc5563",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-cli-20261106-v3.log": "75a2ac3d20bd529bd97920d92da6ed9b7ca3f7c7a509aed6f36f549e26efbb67",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-cli-20261106-v4.log": "1de85a3d7c95866db127f227080afe620e2599c2001a4d516dd42e101af83a0c",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v1.json": "5e7abf5e4e606f18be35860faae3a287decab78b227d96c7150c2e6e94bb1faf",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v2.json": "29c40db433d7b9d6e03709be297f47b1d2a39790a67bca46ba3b087c2eef2014",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v3.json": "b425b2784e22274dda81d6116c22b6fa4d6040b321e06114127a30af61dfbb65",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v4.json": "fea9780fe0b414098827f55e53b98717b3f0303353906081bb582896a9713718",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-learning-20261106-v1.json": "fd6cf2d5fdd4244c98bf2ed5ab8f9d0c2f7b772a1a482f4123731dd37df58504"
+  },
+  "runtimeUnchanged": true,
+  "newAutonomousRuns": 0,
+  "newSearchCalls": 0,
+  "nativeInputs": 107,
+  "goalStatus": "active",
+  "sharedIndexSha256": "d01a449eea57aa1efd899d9490d7560eb2045de4b16d8c9627c4505a254a51bb",
+  "experimentCenterUnchanged": true
+}

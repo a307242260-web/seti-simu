@@ -1,0 +1,61 @@
+{
+  "status": "progress",
+  "previousGoalTurnClassification": "progress",
+  "runtime": "V256/V46",
+  "sourceRuntimeUnchanged": true,
+  "newAutonomousExperiments": 0,
+  "newSearchCalls": 0,
+  "newNativeInputs": 107,
+  "sameActual125PurplePair": {
+    "nativeInputs": 92,
+    "purple2MinusPurple1": {
+      "board": 2,
+      "poolData": 1,
+      "publicity": -2,
+      "modelValue": 1.5
+    },
+    "incomeBoth": "7C2E1card+1scan",
+    "roundEndClaim": false
+  },
+  "same113LandingFinance": {
+    "nativeInputs": 15,
+    "modelBoth": 102.25,
+    "ordinary": {
+      "credits": 10,
+      "energy": 1,
+      "hand": 5,
+      "currencyOnlyScans": 2
+    },
+    "knownCard": {
+      "credits": 9,
+      "energy": 3,
+      "hand": 4,
+      "currencyOnlyScans": 3
+    },
+    "nativeEquivalent": false
+  },
+  "teacherB101TaskAcceptedInR3": false,
+  "evidenceSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v1.json": "5e7abf5e4e606f18be35860faae3a287decab78b227d96c7150c2e6e94bb1faf",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v2.json": "29c40db433d7b9d6e03709be297f47b1d2a39790a67bca46ba3b087c2eef2014",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v3.json": "b425b2784e22274dda81d6116c22b6fa4d6040b321e06114127a30af61dfbb65",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v4.json": "fea9780fe0b414098827f55e53b98717b3f0303353906081bb582896a9713718",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-learning-20261106-v1.json": "fd6cf2d5fdd4244c98bf2ed5ab8f9d0c2f7b772a1a482f4123731dd37df58504",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-first-landing-finance-control-20261106-v1.json": "58fde7f63153297b04a82ecbbe6886689ec7864f4814d36d2b95ec6b282dec20"
+  },
+  "baseline": "V41",
+  "goalStatus": "active",
+  "lastActualR3": {
+    "version": "V256",
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan",
+    "milliseconds": 5528
+  },
+  "teacherR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "next": "Compare shared known-card income/analysis continuation after ordinary versus free landing. Establish a bounded shared-wallet scan purpose before changing V or tie rules. Then R3 learning, R2-end review and autonomous first3 remain."
+}

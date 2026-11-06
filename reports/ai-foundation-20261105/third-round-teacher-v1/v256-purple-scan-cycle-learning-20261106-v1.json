@@ -1,0 +1,201 @@
+{
+  "status": "passed-native-controlled-evidence",
+  "scope": "Two fixed Native same-actual125 routes and same observed preparations; not autonomous performance, teacher imitation, all necessary lines, or global purple2 optimality. Resume-chain checked; both current post-second-scan full native snapshots and model inputs read without mutation.",
+  "source": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v4.json",
+  "sourceSha256": "fea9780fe0b414098827f55e53b98717b3f0303353906081bb582896a9713718",
+  "nativeChainSha256": {
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v1.json": "5e7abf5e4e606f18be35860faae3a287decab78b227d96c7150c2e6e94bb1faf",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v2.json": "29c40db433d7b9d6e03709be297f47b1d2a39790a67bca46ba3b087c2eef2014",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v3.json": "b425b2784e22274dda81d6116c22b6fa4d6040b321e06114127a30af61dfbb65",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-purple-scan-cycle-control-20261106-v4.json": "fea9780fe0b414098827f55e53b98717b3f0303353906081bb582896a9713718"
+  },
+  "totalNewNativeInputs": 92,
+  "newAutonomousRuns": 0,
+  "newSearchCalls": 0,
+  "rootAndRngRestored": true,
+  "rows": {
+    "purple1": {
+      "score": 67,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 67
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "cardId": "dlc_25.png",
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-60-0",
+          "incomeCode": 1,
+          "price": 1,
+          "scanActionCode": 1,
+          "set": "space-agency"
+        }
+      ],
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "computer": [],
+      "poolData": 4,
+      "sectorWins": [
+        {
+          "sectorId": "sector-2-a",
+          "settlementNumber": 1
+        }
+      ],
+      "modelValue": 114,
+      "modelComponents": {
+        "realizedScore": 67,
+        "currentEndGameBonus": 22,
+        "resources": 4.5,
+        "hand": 1,
+        "income": 10.5,
+        "technologyPotential": 9,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    },
+    "purple2": {
+      "score": 69,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 2,
+        "score": 69
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        {
+          "cardId": "dlc_25.png",
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-60-0",
+          "incomeCode": 1,
+          "price": 1,
+          "scanActionCode": 1,
+          "set": "space-agency"
+        }
+      ],
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [],
+      "poolData": 5,
+      "sectorWins": [
+        {
+          "sectorId": "sector-2-a",
+          "settlementNumber": 1
+        }
+      ],
+      "modelValue": 115.5,
+      "modelComponents": {
+        "realizedScore": 69,
+        "currentEndGameBonus": 22,
+        "resources": 4,
+        "hand": 1,
+        "income": 10.5,
+        "technologyPotential": 9,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    }
+  },
+  "differencesPurple2MinusPurple1": {
+    "score": 2,
+    "poolData": 1,
+    "publicity": -2,
+    "currentModelValue": 1.5,
+    "linearValue": 1.5
+  },
+  "teacherThirdRoundTaskRows": [
+    {
+      "input": 228,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "confirm:task:card-15-0:dlc9-three-sector-wins"
+      }
+    }
+  ],
+  "teacherB101TaskAccepted": false,
+  "first113ActualCompleteRootTie": [
+    {
+      "actionId": "land:d5ee03a2",
+      "value": 102.25,
+      "realization": -10.75,
+      "preparationDebt": 0
+    },
+    {
+      "actionId": "play_card:ec548c50",
+      "value": 102.25,
+      "realization": -10.75,
+      "preparationDebt": 0
+    }
+  ],
+  "findings": [
+    "One extra data per scan cannot be multiplied by an arbitrary4: publicity, pool capacity and currency funding are actual shared costs. First scan consumed one publicity but ended with equal full data pools.",
+    "After same known credit income, full computer, DLC27 energy and analysis, both use observed public Amiba9 as a real2publicity corner; second common Earth/public scan and extra Mercury are legal. End result purple2+2score,+1data,-2publicity; not a Native equivalence.",
+    "Income is7C2E1card for both, computer reset and same held DLC25. These facts do not yet prove either branch can fund a third scan or recreate teacher income7C4E1card.",
+    "Teacher did not accept B101 distance task during this verified R3. It is a general possible purpose gap, not an evidenced explanation for teacher105 score.",
+    "Actual first113 ordinary landing and known free-land card were both complete and equalV102.25/realization-10.75. Next financial control must compare resources/hand and shared continuations before changing a tie rule."
+  ],
+  "next": "Native compare same first113 landing routes, liquidity and exact known-card opportunity; then design a scan+income+analysis shared-wallet quote only after native funded continuation proves the missing purpose. Do not add fixed purple/orange bonuses, change production budgets, or rerun V256."
+}
