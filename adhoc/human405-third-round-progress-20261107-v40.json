@@ -1,0 +1,209 @@
+{
+  "phase": "v353-native-source-handoff-and-symbol-ranking-verified-gate-not-admitted",
+  "production": "V323",
+  "baseline": "V41",
+  "first3": [
+    15,
+    48,
+    90
+  ],
+  "teacherR3": 105,
+  "fullRecord": {
+    "version": "V189",
+    "score": 120
+  },
+  "candidate": "V353",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "gates": [
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v352-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 642.7234579999999,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v353-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 616.905458,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v354-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 648.071917,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "sameFullColdGraphV351ThroughV354": true,
+  "normalizedColdGraphReference": "reports/ai-foundation-20261105/third-round-teacher-v1/v351-cold-income-before-amiba-20261107-v1.raw.json.gz",
+  "sourceHandoffs": {
+    "swap": 18,
+    "income": 7,
+    "avoidedMs": 14.198166000000015
+  },
+  "symbolLayoutComparisons": 216,
+  "relatedBrowserTestsPassed": 2,
+  "stateInputAuditPassed": 66,
+  "nativeControlInputs": 42,
+  "nativeControlEndpoints": [
+    {
+      "mode": "skip",
+      "score": 91,
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 91
+      },
+      "probes": 0,
+      "projected": 121
+    },
+    {
+      "mode": "launch",
+      "score": 91,
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 91
+      },
+      "probes": 1,
+      "projected": 121
+    }
+  ],
+  "next": "Keep V353 as fastest frozen candidate. Isolate reduction of full swap-offer portfolio work before constructing repeated typed analysis/missions, use exact distinct public state and finite budgets, preserve score/technology/income evidence and confirm all roots before any new autonomous first3.",
+  "evidence": {
+    "adhoc/deliver-v352-v354-data-handoff-and-purple2-20261107-v1.py": "07e0a3f135848506a7414e8b94a95d64ebb05942ffef12bc2c676376a39adad4",
+    "adhoc/freeze-v352-data-source-capital-handoff-20261107-v1.py": "37dca5b823675001970d3a9dfcc18aef14c539f09c4dc5e25590697425a7c633",
+    "adhoc/freeze-v353-fixed-symbol-layout-ranking-20261107-v1.py": "1100931853adc42aa6451964757e08f9d19973690f5c679d2c7603fb4f11185e",
+    "adhoc/freeze-v354-mission-no-trace-capital-key-20261107-v1.py": "ce937339d74ccb5ff02da0dd6d7705fac9d9f1ad3986365314411575c6c3db53",
+    "adhoc/gate-v352-data-source-capital-handoff-20261107-v1.js": "57180bba84631551e1b822f75ccd6a9a751640c3849230f9c611db3d94d10899",
+    "adhoc/gate-v353-fixed-symbol-layout-ranking-20261107-v1.js": "cc974d4704ad4e86964b5e6c7bae64840aaf3b73e48dd0473ca39827e4095c65",
+    "adhoc/gate-v354-mission-no-trace-capital-key-20261107-v1.js": "eab41a5cfe0627bdbcb883c1c78d64ffbd5f90c11fa73c1fcb447a5f241b4b8c",
+    "adhoc/measure-v351-lower-fact-equivalence-20261107-v1.js": "2bd9f3828110239b8bc12c2c182972015745024df1ff61ee70345b41dbe84124",
+    "adhoc/measure-v351-planning-preview-sources-20261107-v1.js": "cf41d87805a1ed3731a13bdb81da0e834e5470ff26bd4991ac1f2c5d81ab59ed",
+    "adhoc/measure-v351-scalar-shortlists-20261107-v1.js": "88bbf54d0a15fb9555bae3618d96aa8d948aa672d4a208beaf3821a44b2ef8e3",
+    "adhoc/measure-v351-upper-portfolio-origins-20261107-v1.js": "361521b20e3338beec14a384d78053caf8f09026df17214f7b345af82a7a5871",
+    "adhoc/measure-v352-funding-choice-cost-20261107-v1.js": "96c14f291a8d095503e126b7f1843f19e7c986691a0678b4b0665381e3e7eb11",
+    "adhoc/review-v323-r3-energy-and-purple2-20261107-v1.js": "bb727d9864528d9b2fe88a6d39a867b672ea77d4c921fb04cc2fa1cc941ed662",
+    "adhoc/verify-v352-data-source-handoff-20261107-v1.js": "637aec0c0ff9efc0c0f56b2f187a018a0f19c7ac3fe89badac49f1a2ae53677e",
+    "adhoc/verify-v353-symbol-layout-ranking-20261107-v1.js": "a629922081964a26ac7bb31377f47b5b72adb6fe40219c2746fdccd1e89db61c",
+    "docs/human405-v352-v354-data-handoff-and-purple2-20261107.md": "80244ba65cc72f4bf8bb71065158172ad6c00b03629558f059f21276f36fc5dc",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v352-cold-income-before-amiba-20261107-v1.json": "c3e55b54ab6fef53e0a5eb14c64d55f391001b24d1226295351cb195c520c5d6",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v352-cold-income-before-amiba-20261107-v1.raw.json.gz": "c6ac796824cfca5f4b2211816e16c3c5a00e80077970d2815389c9906452ba0a",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v353-cold-income-before-amiba-20261107-v1.json": "75629aeb4f41260d466ee79e94a174a4f416d80e717e32a6f2b4a1d46dca5525",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v353-cold-income-before-amiba-20261107-v1.raw.json.gz": "8bb6aaeab84f13325f48f3e5b7ec1cda635e55f30c10b0dd47f6242d5edfcc3b",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v354-cold-income-before-amiba-20261107-v1.json": "cb7ef25f294d48fa5f0c771df635b732533db85bc6106cdc77d955140a281b15",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v354-cold-income-before-amiba-20261107-v1.raw.json.gz": "72a66631685f26ca46271b7f8dcbdd5c16f46a190c66ce6c95bdc08d4699d331",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/related-node-20261107-v1.log": "ff0e6ae5855f15d025b6756f9567a244d76dc9502da856fc142ff71829c798c4",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/serial-cold-gate-20261107-v1.json": "ef3f809f9ae1526a2d6f0976848e075bf7c106fc1600cb02eee90992849d8928",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-manifest-20261107-v1.json": "d10241bc8c7fff3c2cc22fffe636413fa848c4437ef7f305cd339e56461aed67",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/game/ai/analysis-port.js": "9555ae7cb97685570f737f078d537e92f2bdab7ca8a97f100abeafd6ded42625",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/game/ai/card-pick-planning.js": "0f962874297904f658aad9e3b5b89021e178cab5198dcbf2f83eba1738b742a4",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/game/ai/decision-search.js": "7fb54909abb3f3278b348359a37f97c03a10f77bc25d91aff10668bf29b561a4",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/game/ai/local-decision-plans.js": "fef3bc8e9dca8e422c7fb24057cd0a666794ae01684e937ecfb6c649b8bf8d7d",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/game/ai/resource-demand.js": "9f7c9d4b66439d94c525f6642fe5fc03da0312f36b310ad6f546b8e2dd9d2f60",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-snapshot/randomizer/index.html": "b875e2add29bba5d64dcabd3501a99c8ac0177365d017a6bce52ccff7d15a14d",
+    "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/v352-income-before-amiba-cli-20261107-v1.log": "100e5bfb41ecc6bd1ea7f8ccfe784c30a67e1571e42406cda4c2e7515bdf1c9c",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/related-browser-20261107-v1.log": "d7843ae8bfefd0cf4b703d746be3036e0ede87785e386dbb533fb5eaa3d5afce",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/related-node-20261107-v1.log": "a608f92a06228ec1010f98bc1565e2c7f6c4022a36025891c7a227d62e61766a",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/serial-cold-gate-20261107-v1.json": "fdabb34b443010e9c997f236c01fbdc1fa6ac41f72dda1d09aadefdedfaa6e0a",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/source-manifest-20261107-v1.json": "f089d89ffa6b01279fcff729aaae317d0e8ded650e8fddfa5f3a649777f21452",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/source-snapshot/randomizer/game/ai/decision-search.js": "2edb1399ecbe8d98afd5d4168c4ec8446553b400d9bc8ef88be43ec2c46fc135",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/source-snapshot/randomizer/game/ai/known-symbol-capital.js": "587e65f8812083b8473a00cd6e9dbfa5247fc55e8291f70d25f09f767ddfed03",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/source-snapshot/randomizer/index.html": "791e54578f81f07baf6f511d085568c55847bbf4f70c7e463063914977d4aa77",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/state-input-audit-20261107-v1.log": "b55beeac81344843e0f3f2026657204b928d9ce6d5ed3bacea2b5dbe68aa599e",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v323-r3-energy-and-purple2-20261107-v1.raw.json.gz": "cd6491ee29762cb1236401d21047f9d1809e2a09dc413f28ea3a1f41a9c6b446",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v351-lower-fact-equivalence-20261107-v1.json": "4ed4983fb62866245ecf7ed0a753bffffff05ef622484e8507c536b3ee682bd6",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v351-planning-preview-sources-20261107-v1.json": "f13d037bbb7c981388a0ac4ec141df0b6623808212effec615942935c2d4c3bd",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v351-scalar-shortlists-20261107-v1.json": "00f8f2347c17bb0b23af340aa847f2b9fce43b4813d06f849680a25ccbd35fdf",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v351-upper-portfolio-origins-20261107-v1.json": "8718f3563182b1ea4023271c35b7084e5a734b20cc363e1ff74e70dab66a1345",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v352-data-source-handoff-20261107-v1.json": "dd5c6437ad9f0732967378032ca136163bea490b16780f6b2b35e4ae517c17c3",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v352-funding-choice-cost-20261107-v1.json": "ea25381e629db0e4f5569c3ca61de3cd643966daf115298f9385f3a251d0307c",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v352-income-before-amiba-cpu-summary-20261107-v1.json": "8f94e0aba71753c58ac6ab4d550bac165fe56dc536ecbbb88fa62ae3703d8c4e",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v353-income-before-amiba-cli-20261107-v1.log": "a25ec4d8a6f1bb604879a201beb072a88df17d323e94f1fc2d4f81cd462b45e7",
+    "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/v353-symbol-layout-ranking-20261107-v1.json": "6668729c137e4ee0c0bbc94f4a59d37cacdb497bf7f8941387046d28a2b8b249",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/serial-cold-gate-20261107-v1.json": "71936dbe6fa4f8b1d461a4cda1870f926cfca42a488c727c22c73ab85be0f278",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/source-manifest-20261107-v1.json": "4c498131562677e941ea02e25cf93a74d2684a211343a0911885693d4687f52a",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/source-snapshot/randomizer/game/ai/decision-search.js": "47f450c7d6a83022d5e051cdb18e39ee2de6bd70eab6e90079fe5bbef869b52c",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/source-snapshot/randomizer/game/ai/probe-capital.js": "98b4b4d68002aab434e8c8e6a9d97abb062dbf358d71f5277b0cc00e8a8c8fc3",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/source-snapshot/randomizer/index.html": "6325dad12d20559cba5240411dc1dd55f1ec32429ec849e64dd47f5e84581585",
+    "reports/ai-foundation-20261107/v354-mission-no-trace-capital-key-v1/v354-income-before-amiba-cli-20261107-v1.log": "de43c96d5f545b092f83500ef12af9d5d5bfd13a2a5caddd7f8992aa2aa47db1"
+  }
+}

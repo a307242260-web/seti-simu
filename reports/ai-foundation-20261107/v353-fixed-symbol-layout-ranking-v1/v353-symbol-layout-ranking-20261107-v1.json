@@ -1,0 +1,13 @@
+{
+  "sourceManifest": "reports/ai-foundation-20261107/v353-fixed-symbol-layout-ranking-v1/source-manifest-20261107-v1.json",
+  "sourceManifestSha256": "f089d89ffa6b01279fcff729aaae317d0e8ded650e8fddfa5f3a649777f21452",
+  "referenceManifest": "reports/ai-foundation-20261107/v352-data-source-capital-handoff-v1/source-manifest-20261107-v1.json",
+  "referenceManifestSha256": "d10241bc8c7fff3c2cc22fffe636413fa848c4437ef7f305cd339e56461aed67",
+  "root": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-133-20261105-v1.checkpoint.json",
+  "rootSha256": "19c787556178976016875f527b9728054e04230b60728f4aaac4f77cb704c096",
+  "layouts": 4,
+  "controls": 216,
+  "chosen": 216,
+  "eachComparedWithFrozenColdWarmAndMutable": true,
+  "newAutonomousRuns": 0
+}
