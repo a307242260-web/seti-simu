@@ -1,0 +1,888 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: same choice and value as retained V223279-input native data-tail graph
++ actual - expected
+
++ 129.08333333333334
+- 125.58333333333333
+
+    at Object.<anonymous> (/private/tmp/seti-v367-canonical-default-weights-20261107-v1/randomizer/game/ai/amiba-currency-tail.test.js:8:118)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 129.08333333333334,
+  expected: 125.58333333333333,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: full components/numeric capital outside the newly selected capped witness stay exact
++ actual - expected
+... Skipped lines
+
+  {
+    analysisPlan: {
+      candidates: [Getter/Setter] [
+        {
+          blueSlot: null,
+...
+          capitalAfter: 15.833333333333334,
++         greedyValue: 10.583333333333334,
+-         greedyValue: 14.583333333333334,
+          linear: 0.5
+        },
+        linearGain: 2.5,
+        localPlanValue: 2.5,
+        payment: {
+...
+        },
++       planNetGain: 10.75,
+-       planNetGain: 14.75,
+        position: 4,
+        preparationPlacements: 3,
+        region: {
+          message: '蓝色区域结算 2 个 symbol',
+          ok: true,
+...
+      },
++     value: 10.75
+-     value: 14.75
+    },
++   analysisPotential: 12.5,
+-   analysisPotential: 16.5,
+    analysisPublicityPlan: {
+      reason: 'publicity-preparation-not-profitable',
+      scope: 'One finite greedy pure-publicity corner sequence from current known owned IDs, protected selected analysis income when applicable, and the same lower shared portfolio. The existing funded analysis purpose or direct research deficit is quoted once, never added together. Uncontested free-analysis company with no turn card bonus; no new card, Native state, action, observation, search or pruning bound. Executing the preparation transfers this potential to the already-funded portfolio.',
+      selected: {
++       capitalAfter: 17.5,
+-       capitalAfter: 16.5,
+        cornerCardIds: [
+          'card-18-0'
+        ],
+        incomeCardId: 'card-51-0',
+        linear: -0.5,
+...
+    },
++   dataPotential: 1,
+-   dataPotential: 0,
+    finalMarkPotential: 0,
+    handPotential: 0,
++   knownPublicIncomeSwapPlan: {
++     anonymousSupplier: true,
++     continuation: {
++       blueSlot: null,
++       endpoint: {
++         aliens: {
++           amiba: {
++             revealInitialized: true,
++             revealedSlotId: 1,
++             symbolSlots: {
++               orange_1: 'symbol_4',
++               orange_2: 'symbol_2',
++               orange_3: 'symbol_1',
++               red_1: 'symbol_5',
++               red_2: 'symbol_3'
++             },
++             symbolsById: {
++               symbol_1: {
++                 sequence: 3,
++                 slotId: 'orange_3',
++                 symbolId: 'symbol_1'
++               },
++               symbol_2: {
++                 sequence: 2,
++                 slotId: 'orange_2',
++                 symbolId: 'symbol_2'
++               },
++               symbol_3: {
++                 sequence: 5,
++                 slotId: 'red_2',
++                 symbolId: 'symbol_3'
++               },
++               symbol_4: {
++                 sequence: 1,
++                 slotId: 'orange_1',
++                 symbolId: 'symbol_4'
++               },
++               symbol_5: {
++                 sequence: 4,
++                 slotId: 'red_1',
++                 symbolId: 'symbol_5'
++               }
++             }
++           },
++           amibaTraces: {
++             blindCardCount: 5,
++             displayedCardAvailable: true,
++             revealedSlotId: 1,
++             traceSlotsByAlienSlotId: {
++               '1': {
++                 blue: {
++                   '1': null,
++                   '2': null,
++                   '3': null,
++                   '4': {
++                     playerColor: 'white',
++                     playerId: 'player-white',
++                     position: 4,
++                     traceType: 'blue'
++                   }
++                 },
++                 pink: {
++                   '1': null,
++                   '2': null,
++                   '3': null,
++                   '4': null
++                 },
++                 yellow: {
++                   '1': null,
++                   '2': null,
++                   '3': null,
++                   '4': null
++                 }
++               }
++             }
++           },
++           slots: [
++             {
++               alienId: '阿米巴',
++               revealed: true,
++               slotId: 1,
++               traces: {
++                 blue: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: true,
++                   neutral: false,
++                   ownerPlayerColor: 'white'
++                 },
++                 pink: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: true,
++                   neutral: false,
++                   ownerPlayerColor: 'white'
++                 },
++                 yellow: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: true,
++                   neutral: false,
++                   ownerPlayerColor: 'white'
++                 }
++               }
++             },
++             {
++               alienId: null,
++               revealed: false,
++               slotId: 2,
++               traces: {
++                 blue: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: false,
++                   ownerPlayerColor: null
++                 },
++                 pink: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: false,
++                   ownerPlayerColor: null
++                 },
++                 yellow: {
++                   extraCount: 0,
++                   extraMarkers: [],
++                   firstPlaced: true,
++                   neutral: false,
++                   ownerPlayerColor: 'blue'
++                 }
++               }
++             }
++           ]
++         },
++         amibaTraces: {
++           blindCardCount: 5,
++           displayedCardAvailable: true,
++           revealedSlotId: 1,
++           traceSlotsByAlienSlotId: {
++             '1': {
++               blue: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': {
++                   playerColor: 'white',
++                   playerId: 'player-white',
++                   position: 4,
++                   traceType: 'blue'
++                 }
++               },
++               pink: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': null
++               },
++               yellow: {
++                 '1': null,
++                 '2': null,
++                 '3': null,
++                 '4': null
++               }
++             }
++           }
++         },
++         blueSlots: [
++           {
++             occupied: false,
++             slot: 1,
++             tileId: 'blue2',
++             unlocked: false
++           },
++           {
++             occupied: false,
++             slot: 2,
++             tileId: 'blue1',
++             unlocked: false
++           }
++         ],
++         computerSlots: [],
++         extraUnknownCount: 2,
++         ordinaryDrawCount: 121,
++         researchSymbols: {
++           revealInitialized: true,
++           revealedSlotId: 1,
++           symbolSlots: {
++             orange_1: 'symbol_4',
++             orange_2: 'symbol_2',
++             orange_3: 'symbol_1',
++             red_1: 'symbol_5',
++             red_2: 'symbol_3'
++           },
++           symbolsById: {
++             symbol_1: {
++               sequence: 3,
++               slotId: 'orange_3',
++               symbolId: 'symbol_1'
++             },
++             symbol_2: {
++               sequence: 2,
++               slotId: 'orange_2',
++               symbolId: 'symbol_2'
++             },
++             symbol_3: {
++               sequence: 5,
++               slotId: 'red_2',
++               symbolId: 'symbol_3'
++             },
++             symbol_4: {
++               sequence: 1,
++               slotId: 'orange_1',
++               symbolId: 'symbol_4'
++             },
++             symbol_5: {
++               sequence: 4,
++               slotId: 'red_1',
++               symbolId: 'symbol_5'
++             }
++           }
++         },
++         resources: {
++           additionalPublicScan: 1,
++           availableData: 0,
++           blueBonusAssets: {
++             credits: 0,
++             energy: 0,
++             ordinaryCards: 0
++           },
++           color: 'white',
++           companyBaseIncome: {
++             additionalPublicScan: 1,
++             credits: 2,
++             energy: 2,
++             handSize: 1
++           },
++           completedTaskCount: 0,
++           credits: 1,
++           dataProgress: {
++             analyzeReady: false,
++             blueBonusCount: 1,
++             blueSlots: [
++               {
++                 occupied: true,
++                 slot: 1,
++                 tileId: 'blue2',
++                 unlocked: true
++               },
++               {
++                 occupied: false,
++                 slot: 2,
++                 tileId: 'blue1',
++                 unlocked: true
++               }
++             ],
++             computerSlots: [
++               1,
++               2,
++               3
++             ],
++             discardedCount: 0
++           },
++           energy: 4,
++           finalScore: 72,
++           handCount: 5,
++           handSize: 6,
++           id: 'player-white',
++           income: {
++             additionalPublicScan: 1,
++             availableData: 0,
++             credits: 7,
++             energy: 2,
++             handSize: 1,
++             publicity: 0
++           },
++           industryAbilityId: 'deepspace_swap_cards',
++           mainActionCompleted: true,
++           passed: false,
++           playerId: 'player-white',
++           playerLabel: '白色玩家',
++           publicity: 5,
++           researchPublicityCost: 6,
++           reservedCount: 5,
++           score: 51,
++           scoreBreakdown: null,
++           scoreSources: null,
++           securedEndGameBonus: 22,
++           techState: {
++             blueBoardSlots: {
++               blue1: 2,
++               blue2: 1
++             },
++             disabledTiles: {},
++             ownedTiles: {
++               blue1: true,
++               blue2: true,
++               orange1: true,
++               purple4: true
++             }
++           }
++         },
++         traceCounts: {
++           blue: 2,
++           pink: 1,
++           yellow: 1
++         }
++       },
++       incomeCardId: 'card-49-0',
++       incomePreparation: {
++         capitalAfter: 16.833333333333332,
++         greedyValue: 11.583333333333334,
++         linear: 0.5
++       },
++       linearGain: 2.5,
++       localPlanValue: 2.5,
++       payment: {
++         creditPurchases: 0,
++         energyPurchases: 0,
++         spend: {
++           credits: 0,
++           energy: 0
++         },
++         value: 0
++       },
++       planNetGain: 11.75,
++       position: 4,
++       preparationPlacements: 3,
++       region: {
++         message: '蓝色区域结算 2 个 symbol',
++         ok: true,
++         region: 'blue',
++         results: [
++           {
++             message: '结算 symbol_4 并移动至 orange_1',
++             move: {
++               fromSlotId: 'blue_2',
++               moved: true,
++               symbolId: 'symbol_4',
++               toSlotId: 'orange_1'
++             },
++             ok: true,
++             reward: {
++               dataCount: 0,
++               drawCards: 1,
++               gain: {},
++               pickAlienCard: false,
++               pickCard: false,
++               region: null
++             },
++             slotId: 'blue_2',
++             symbolId: 'symbol_4'
++           },
++           {
++             message: '结算 symbol_1 并移动至 orange_3',
++             move: {
++               fromSlotId: 'blue_3',
++               moved: true,
++               symbolId: 'symbol_1',
++               toSlotId: 'orange_3'
++             },
++             ok: true,
++             reward: {
++               dataCount: 0,
++               drawCards: 0,
++               gain: {
++                 publicity: 1
++               },
++               pickAlienCard: false,
++               pickCard: false,
++               region: null
++             },
++             slotId: 'blue_3',
++             symbolId: 'symbol_1'
++           }
++         ]
++       },
++       securedGain: 0,
++       slotId: 1,
++       traceType: 'blue',
++       unknownCards: 2
++     },
++     incomingCardId: 'card-49-0',
++     netGain: 1,
++     outgoingCardId: null
++   },
++   probePotential: 4,
+-   knownPublicIncomeSwapPlan: null,
+-   probePotential: 0,
+    researchIncomePlan: {
+      reason: 'reserved-card-needs-native-value',
+      selected: null,
+      value: 0
+    },
+...
+    },
++   total: 17.5
+-   total: 16.5
+  }
+
+    at compare (/private/tmp/seti-v367-canonical-default-weights-20261107-v1/randomizer/game/ai/probe-replacement-witness.test.js:6:194)
+    at Object.<anonymous> (/private/tmp/seti-v367-canonical-default-weights-20261107-v1/randomizer/game/ai/probe-replacement-witness.test.js:9:282)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    handPotential: 0,
+    researchPotential: 0,
+    probePotential: 4,
+    computerPotential: 1.75,
+    finalMarkPotential: 0,
+    total: 17.5,
+    analysisPotential: 12.5,
+    analysisPlan: {
+      value: 10.75,
+      selected: {
+        slotId: 1,
+        position: 4,
+        traceType: 'blue',
+        payment: {
+          spend: { credits: 0, energy: 0 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 0
+        },
+        preparationPlacements: 3,
+        blueSlot: null,
+        planNetGain: 10.75,
+        localPlanValue: 2.5,
+        linearGain: 2.5,
+        securedGain: 0,
+        unknownCards: 2,
+        region: {
+          ok: true,
+          region: 'blue',
+          results: [ [Object], [Object] ],
+          message: '蓝色区域结算 2 个 symbol'
+        },
+        endpoint: {
+          resources: {
+            playerId: 'player-white',
+            industryAbilityId: 'deepspace_swap_cards',
+            color: 'white',
+            playerLabel: '白色玩家',
+            score: 51,
+            finalScore: 72,
+            scoreBreakdown: null,
+            scoreSources: null,
+            credits: 1,
+            energy: 4,
+            publicity: 5,
+            researchPublicityCost: 6,
+            availableData: 0,
+            additionalPublicScan: 1,
+            handCount: 5,
+            reservedCount: 5,
+            completedTaskCount: 0,
+            dataProgress: [Object],
+            techState: [Object],
+            income: [Object],
+            blueBonusAssets: [Object],
+            passed: false,
+            mainActionCompleted: true,
+            companyBaseIncome: [Object],
+            securedEndGameBonus: 22,
+            id: 'player-white',
+            handSize: 6
+          },
+          traceCounts: { blue: 2, pink: 1, yellow: 1 },
+          computerSlots: [],
+          blueSlots: [ [Object], [Object] ],
+          researchSymbols: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 5,
+            displayedCardAvailable: true
+          },
+          extraUnknownCount: 2,
+          aliens: { slots: [Array], amiba: [Object], amibaTraces: [Object] },
+          ordinaryDrawCount: 121
+        },
+        incomeCardId: 'card-51-0',
+        incomePreparation: {
+          linear: 0.5,
+          capitalAfter: 15.833333333333334,
+          greedyValue: 10.583333333333334
+        }
+      },
+      candidates: [Getter/Setter],
+      reason: 'funded-known-income-amiba-analysis',
+      scope: 'One current-data-funded computer4 income followed by the existing fixed computer5/6 and analysis plan. Greedy known currency income ranked once by linear income and shared base portfolio, then one analysis quote; same hand, wallet and data, no unknown identity or new mark funding, native successor, search or pruning bound.'
+    },
+    researchIncomePotential: 0,
+    researchIncomePlan: {
+      value: 0,
+      selected: null,
+      reason: 'reserved-card-needs-native-value'
+    },
+    dataPotential: 1,
+    dataPlan: {
+      total: 1.75,
+      baseline: 1.75,
+      knownSwapCapital: 1.75,
+      knownSwapPlan: null,
+      fixed: {
+        value: 0,
+        selected: null,
+        reason: 'reserved-card-needs-native-value'
+      },
+      classes: []
+    },
+    knownPublicIncomeSwapPlan: {
+      outgoingCardId: null,
+      incomingCardId: 'card-49-0',
+      netGain: 1,
+      continuation: {
+        slotId: 1,
+        position: 4,
+        traceType: 'blue',
+        payment: {
+          spend: { credits: 0, energy: 0 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 0
+        },
+        preparationPlacements: 3,
+        blueSlot: null,
+        planNetGain: 11.75,
+        localPlanValue: 2.5,
+        linearGain: 2.5,
+        securedGain: 0,
+        unknownCards: 2,
+        region: {
+          ok: true,
+          region: 'blue',
+          results: [ [Object], [Object] ],
+          message: '蓝色区域结算 2 个 symbol'
+        },
+        endpoint: {
+          resources: {
+            playerId: 'player-white',
+            industryAbilityId: 'deepspace_swap_cards',
+            color: 'white',
+            playerLabel: '白色玩家',
+            score: 51,
+            finalScore: 72,
+            scoreBreakdown: null,
+            scoreSources: null,
+            credits: 1,
+            energy: 4,
+            publicity: 5,
+            researchPublicityCost: 6,
+            availableData: 0,
+            additionalPublicScan: 1,
+            handCount: 5,
+            reservedCount: 5,
+            completedTaskCount: 0,
+            dataProgress: [Object],
+            techState: [Object],
+            income: [Object],
+            blueBonusAssets: [Object],
+            passed: false,
+            mainActionCompleted: true,
+            companyBaseIncome: [Object],
+            securedEndGameBonus: 22,
+            id: 'player-white',
+            handSize: 6
+          },
+          traceCounts: { blue: 2, pink: 1, yellow: 1 },
+          computerSlots: [],
+          blueSlots: [ [Object], [Object] ],
+          researchSymbols: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 5,
+            displayedCardAvailable: true
+          },
+          extraUnknownCount: 2,
+          aliens: { slots: [Array], amiba: [Object], amibaTraces: [Object] },
+          ordinaryDrawCount: 121
+        },
+        incomeCardId: 'card-49-0',
+        incomePreparation: {
+          linear: 0.5,
+          capitalAfter: 16.833333333333332,
+          greedyValue: 11.583333333333334
+        }
+      },
+      anonymousSupplier: true
+    },
+    sectorCardPlan: { value: 0, selected: null, reason: 'no-known-sector-tool' },
+    symbolCardPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'no-funded-known-symbol-window'
+    },
+    researchSymbolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-known-research-symbol-window'
+    },
+    toolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-audited-analysis-tool-window'
+    },
+    analysisPublicityPlan: {
+      value: 0,
+      selected: {
+        cornerCardIds: [ 'card-18-0' ],
+        incomeCardId: 'card-51-0',
+        targetPublicity: 5,
+        steps: [
+          { cardId: 'card-18-0', publicityGain: 1, opportunityCost: 1 }
+        ],
+        linear: -0.5,
+        capitalAfter: 17.5,
+        netGain: -0.5
+      },
+      reason: 'publicity-preparation-not-profitable',
+      scope: 'One finite greedy pure-publicity corner sequence from current known owned IDs, protected selected analysis income when applicable, and the same lower shared portfolio. The existing funded analysis purpose or direct research deficit is quoted once, never added together. Uncontested free-analysis company with no turn card bonus; no new card, Native state, action, observation, search or pruning bound. Executing the preparation transfers this potential to the already-funded portfolio.'
+    }
+  },
+  expected: {
+    handPotential: 0,
+    researchPotential: 0,
+    probePotential: 0,
+    computerPotential: 1.75,
+    finalMarkPotential: 0,
+    total: 16.5,
+    analysisPotential: 16.5,
+    analysisPlan: {
+      value: 14.75,
+      selected: {
+        slotId: 1,
+        position: 4,
+        traceType: 'blue',
+        payment: {
+          spend: { credits: 0, energy: 0 },
+          energyPurchases: 0,
+          creditPurchases: 0,
+          value: 0
+        },
+        preparationPlacements: 3,
+        blueSlot: null,
+        planNetGain: 14.75,
+        localPlanValue: 2.5,
+        linearGain: 2.5,
+        securedGain: 0,
+        unknownCards: 2,
+        region: {
+          ok: true,
+          region: 'blue',
+          results: [ [Object], [Object] ],
+          message: '蓝色区域结算 2 个 symbol'
+        },
+        endpoint: {
+          resources: {
+            playerId: 'player-white',
+            industryAbilityId: 'deepspace_swap_cards',
+            color: 'white',
+            playerLabel: '白色玩家',
+            score: 51,
+            finalScore: 72,
+            scoreBreakdown: null,
+            scoreSources: null,
+            credits: 1,
+            energy: 4,
+            publicity: 5,
+            researchPublicityCost: 6,
+            availableData: 0,
+            additionalPublicScan: 1,
+            handCount: 5,
+            reservedCount: 5,
+            completedTaskCount: 0,
+            dataProgress: [Object],
+            techState: [Object],
+            income: [Object],
+            blueBonusAssets: [Object],
+            passed: false,
+            mainActionCompleted: true,
+            companyBaseIncome: [Object],
+            securedEndGameBonus: 22,
+            id: 'player-white',
+            handSize: 6
+          },
+          traceCounts: { blue: 2, pink: 1, yellow: 1 },
+          computerSlots: [],
+          blueSlots: [ [Object], [Object] ],
+          researchSymbols: {
+            revealInitialized: true,
+            revealedSlotId: 1,
+            symbolSlots: [Object],
+            symbolsById: [Object]
+          },
+          amibaTraces: {
+            revealedSlotId: 1,
+            traceSlotsByAlienSlotId: [Object],
+            blindCardCount: 5,
+            displayedCardAvailable: true
+          },
+          extraUnknownCount: 2,
+          aliens: { slots: [Array], amiba: [Object], amibaTraces: [Object] },
+          ordinaryDrawCount: 121
+        },
+        incomeCardId: 'card-51-0',
+        incomePreparation: {
+          linear: 0.5,
+          capitalAfter: 15.833333333333334,
+          greedyValue: 14.583333333333334
+        }
+      },
+      candidates: [Getter/Setter],
+      reason: 'funded-known-income-amiba-analysis',
+      scope: 'One current-data-funded computer4 income followed by the existing fixed computer5/6 and analysis plan. Greedy known currency income ranked once by linear income and shared base portfolio, then one analysis quote; same hand, wallet and data, no unknown identity or new mark funding, native successor, search or pruning bound.'
+    },
+    researchIncomePotential: 0,
+    researchIncomePlan: {
+      value: 0,
+      selected: null,
+      reason: 'reserved-card-needs-native-value'
+    },
+    dataPotential: 0,
+    dataPlan: {
+      total: 1.75,
+      baseline: 1.75,
+      knownSwapCapital: 1.75,
+      knownSwapPlan: null,
+      fixed: {
+        value: 0,
+        selected: null,
+        reason: 'reserved-card-needs-native-value'
+      },
+      classes: []
+    },
+    knownPublicIncomeSwapPlan: null,
+    sectorCardPlan: { value: 0, selected: null, reason: 'no-known-sector-tool' },
+    symbolCardPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'no-funded-known-symbol-window'
+    },
+    researchSymbolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-known-research-symbol-window'
+    },
+    toolPlan: {
+      value: 0,
+      selected: null,
+      candidates: [],
+      reason: 'outside-audited-analysis-tool-window'
+    },
+    analysisPublicityPlan: {
+      value: 0,
+      selected: {
+        cornerCardIds: [ 'card-18-0' ],
+        incomeCardId: 'card-51-0',
+        targetPublicity: 5,
+        steps: [
+          { cardId: 'card-18-0', publicityGain: 1, opportunityCost: 1 }
+        ],
+        linear: -0.5,
+        capitalAfter: 16.5,
+        netGain: -0.5
+      },
+      reason: 'publicity-preparation-not-profitable',
+      scope: 'One finite greedy pure-publicity corner sequence from current known owned IDs, protected selected analysis income when applicable, and the same lower shared portfolio. The existing funded analysis purpose or direct research deficit is quoted once, never added together. Uncontested free-analysis company with no turn card bonus; no new card, Native state, action, observation, search or pruning bound. Executing the preparation transfers this potential to the already-funded portfolio.'
+    }
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=1 failed=2 total=3 time=1.73s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/amiba-currency-tail.test.js status=1 signal=none
+FAIL randomizer/game/ai/probe-replacement-witness.test.js status=1 signal=none

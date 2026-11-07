@@ -1,0 +1,14 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),Module=require('node:module'),assert=require('node:assert/strict');
+const name=path.resolve('randomizer/game/ai/amiba-currency-tail.test.js');let src=fs.readFileSync(name,'utf8');
+const a="assert.equal(r.value,125.58333333333333,'same choice and value as retained V223279-input native data-tail graph');";
+assert.equal(src.split(a).length,2);src=src.replace(a,'globalThis.__canonicalResult={value:r.value,actionId:r.actionId,inputs:r.diagnostics.nativeExecutions};');
+const finish=" assert.deepEqual(c.lifecycle.save().envelope,original);console.log";
+assert.equal(src.split(finish).length,2);src=src.replace(finish,` const nativePort={...p,turnTailSummary(node,kind){const q=p.turnTailSummary(node,kind);return q?.publicAmibaCurrencyTail?null:q;}};
+ p.close();const native=search.searchDecision({port:nativePort,root:p.openRoot(),evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget:agent.BUDGET});
+ assert(native.complete&&!native.unresolved.length);assert.equal(native.actionId,r.actionId);assert.equal(native.value,r.value);
+ Object.assign(globalThis.__canonicalResult,{nativeReferenceValue:native.value,nativeReferenceInputs:native.diagnostics.nativeExecutions,controls,tailControlNativeInputs:inputs,rootAndRngUnchanged:true});
+`+finish);
+const m=new Module(name,module);m.filename=name;m.paths=module.paths;m._compile(src,name);assert(globalThis.__canonicalResult?.rootAndRngUnchanged);
+fs.writeFileSync(process.argv[2],JSON.stringify(globalThis.__canonicalResult,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify(globalThis.__canonicalResult));

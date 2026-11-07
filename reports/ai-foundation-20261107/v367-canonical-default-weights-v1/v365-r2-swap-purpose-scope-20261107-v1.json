@@ -1,0 +1,41 @@
+{
+  "scope": "Functional parity on three earlier Native roots; no cold timings or source admission.",
+  "manifestPath": "reports/ai-foundation-20261107/v365-r3-swap-purpose-scope-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "9fb66ce966d1bb047febab37c4c0f737e461fece42157ce35e32f587ea301dce",
+  "rows": [
+    {
+      "label": "corpus-teacher-072",
+      "prior": "reports/ai-foundation-20261105/third-round-teacher-v1/v323-cold-corpus-teacher-072-20261107-v1.json",
+      "priorSha256": "1299b9f218bb86182b7896aafe2e5fead234b45417ab2c55f6eee1015a20be1c",
+      "bad": "reports/ai-foundation-20261105/third-round-teacher-v1/v364-cold-corpus-teacher-072-20261107-v1.json",
+      "badSha256": "80341413e13453d285a70df05d83a02e57d62f1d60683f411c54650ecc3e27b8",
+      "action": "scan:2d21a323",
+      "value": 94.08333333333333,
+      "inputs": 57,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "corpus-actual-v187-073",
+      "prior": "reports/ai-foundation-20261105/third-round-teacher-v1/v323-cold-corpus-actual-v187-073-20261107-v1.json",
+      "priorSha256": "9287bc4c91962e138ec5161840c677c0e05862a823f1745b65061a70db6d2f19",
+      "bad": "reports/ai-foundation-20261105/third-round-teacher-v1/v364-cold-corpus-actual-v187-073-20261107-v1.json",
+      "badSha256": "bd381ed707ed01fc14523f78f05a096c9ee23d5897a57aee8300add306ccbd98",
+      "action": "choose_card:845fb9b0",
+      "value": 84.83333333333333,
+      "inputs": 28,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "corpus-actual-v187-074",
+      "prior": "reports/ai-foundation-20261105/third-round-teacher-v1/v323-cold-corpus-actual-v187-074-20261107-v1.json",
+      "priorSha256": "88a644205f879181d1ac6887ca782b484e3e2064b327b83888ce12b4e4278ffe",
+      "bad": "reports/ai-foundation-20261105/third-round-teacher-v1/v364-cold-corpus-actual-v187-074-20261107-v1.json",
+      "badSha256": "2fedacceed4b35e266113dbdcd95f2cfd85247966a119bfa8363be95e3f23fda",
+      "action": "choose_card:ddab6871",
+      "value": 84.83333333333333,
+      "inputs": 27,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0
+}

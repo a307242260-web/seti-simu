@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),Module=require('node:module');
+const file=path.resolve('tools/audit_v_state_inputs.js'),source=fs.readFileSync(file,'utf8');
+const first=source.indexOf('// Revealed Amiba positions and draw quantities are public inputs.'),last=source.indexOf('//',source.indexOf('finally{port?.close();kernel?.composition.dispose();}',first)+51);
+assert(first>=0&&last>first);
+let block=source.slice(first,last);
+const before="assert.equal(independentValue.evaluateStateValue(masked,seat).total,116.5);";
+assert(block.includes(before));
+block=block.replace(before,`const fv=independentValue.evaluateStateValue(masked,seat);assert.deepEqual(independentValue.evaluateStateValue(outcomeModel.createDecisionObservation(masked,{seatId:seat}),seat),fv);console.log(JSON.stringify({phase:'masked',expectedOld:116.5,value:fv,analysis:independentValue.purposeCapital(f).analysisPlan.selected?.incomeCardId}));`);
+const end="assert.equal(independentValue.evaluateStateValue(endpoint,seat).total,independentValue.evaluateStateValue(masked,seat).total,'the actually selected income supplier retains its same-wallet publicity purpose after analysis');";
+assert(block.includes(end));
+block=block.replace(end,`const ev=independentValue.evaluateStateValue(endpoint,seat);assert.deepEqual(independentValue.evaluateStateValue(outcomeModel.createDecisionObservation(endpoint,{seatId:seat}),seat),ev);console.log(JSON.stringify({phase:'endpoint',value:ev,delta:ev.total-fv.total}));`);
+const imports=`const independentValue=require('../randomizer/game/ai/state-value'),outcomeModel=require('../randomizer/game/ai/outcome-model');let allPass=true;\n`;
+const moduleUnderTest=new Module(file,module);moduleUnderTest.filename=file;moduleUnderTest.paths=module.paths;moduleUnderTest._compile(imports+block+'\nif(!allPass)process.exitCode=1;',file);

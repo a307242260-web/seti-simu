@@ -1,0 +1,8 @@
+PASS production-browser-full-parity-search http://127.0.0.1:52086/randomizer/index.html?agent=search
+PASS production-search-agent-entry http://127.0.0.1:52086/randomizer/index.html?agent=search
+PASS production-search-hotpath http://127.0.0.1:52086/randomizer/index.html
+PASS production-known-symbol-capital http://127.0.0.1:52086/randomizer/index.html
+Error: production-analysis-lazy-explanations 操作异常：Error: lazy snapshot/JSON/clone differs from V311
+    at <anonymous>:6:131
+    at runInteractiveSmoke (/private/tmp/seti-v364-r4-only-score-corner-20261107-v1/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-v364-r4-only-score-corner-20261107-v1/tools/run_browser_smokes.js:294:11)

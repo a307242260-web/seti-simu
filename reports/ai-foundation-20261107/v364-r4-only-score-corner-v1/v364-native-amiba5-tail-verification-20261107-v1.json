@@ -1,0 +1,90 @@
+{
+  "graph": "reports/ai-foundation-20261105/third-round-teacher-v1/v364-cold-actual-v298-r4-venus-late-orbit-20261107-v1.raw.json.gz",
+  "graphSha256": "d9616c014ec16099a69b64b5657cc719cb349343107cbed3fb8c55499e00cacf",
+  "nativeControls": "/private/tmp/seti-v358-r4-amiba5-blue-tail-20261107-v1.json",
+  "nativeControlsSha256": "439619db82d270454624c170f6b829e67b2a057dbd9734ec79a1ffd23a4c30fd",
+  "nativeInputs": 200,
+  "currentColdInputs": 245,
+  "selectedValue": 154.5,
+  "proofsCompared": 8,
+  "sourceValueEndpointValueNativeLengthAndOrder": [
+    [
+      144,
+      148,
+      10,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ]
+    ],
+    [
+      144,
+      148,
+      10,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ]
+    ],
+    [
+      145,
+      149,
+      10,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ]
+    ],
+    [
+      145,
+      149,
+      10,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ]
+    ],
+    [
+      148.0,
+      152.5,
+      12,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ]
+    ],
+    [
+      149.0,
+      153.5,
+      12,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ]
+    ],
+    [
+      149.0,
+      153.5,
+      12,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ]
+    ],
+    [
+      150.0,
+      154.5,
+      12,
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ]
+    ]
+  ],
+  "rootAndRngUnchanged": true,
+  "newAutonomousRuns": 0
+}
