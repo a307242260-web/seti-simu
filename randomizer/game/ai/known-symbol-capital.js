@@ -49,7 +49,24 @@
   const slot=selectedSlot({amiba:{...symbols,traceSlotsByAlienSlotId:{},cardDeck:[]}},region,wallet,apply);
   if(ranked.size>=128)ranked.delete(ranked.keys().next().value);ranked.set(key,slot);return slot;
  }
- function quote(facts,weights,portfolio,currentCapital){
+ // The chosen public symbol moves independently of the paid wallet.
+ // Share its immutable maps only with the internal read-only portfolio.
+ const symbolMovements=new WeakMap();
+ function fixedMovement(symbols,slotId){
+  const {symbolSlots,symbolsById}=symbols;
+  let byEntries=symbolMovements.get(symbolSlots);
+  if(!byEntries){byEntries=new WeakMap();symbolMovements.set(symbolSlots,byEntries);}
+  let bySlot=byEntries.get(symbolsById);
+  if(!bySlot){bySlot=new Map();byEntries.set(symbolsById,bySlot);}
+  if(bySlot.has(slotId))return bySlot.get(slotId);
+  const alien={amiba:amiba.copyPublicSymbolState(symbols)},resolved=amiba.resolveSymbolAtSlot(alien,slotId,readOnlyRewards);
+  if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+  const slots=Object.freeze(alien.amiba.symbolSlots),entries=alien.amiba.symbolsById;
+  for(const entry of Object.values(entries))Object.freeze(entry);
+  const result={resolved,slots,entries:Object.freeze(entries)};
+  bySlot.set(slotId,result);return result;
+ }
+ function quote(facts,weights,portfolio,currentCapital,readOnlyPortfolio=false){
   const eligible=facts.hand.filter(supported);
   if(!eligible.length||facts.terminal||facts.passing||facts.round>=4)return zero('no-funded-known-symbol-window');
   if(facts.companyState?.abilityId!=='deepspace_swap_cards')return zero('symbol-card-company-not-audited');
@@ -77,12 +94,19 @@
    players.gainResources({resources:wallet},{availableData:body.dataCount});
    let slotId=fixedSelection(facts.researchSymbols,body.region,wallet,apply,weights);
    if(slotId===null)continue;
-   const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
-   if(slotId===undefined)slotId=selectedSlot(alien,body.region,wallet,apply);
-   if(slotId===null)continue;
-   const resolved=amiba.resolveSymbolAtSlot(alien,slotId,readOnlyRewards);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+   const fixed=readOnlyPortfolio&&slotId!==undefined?fixedMovement(facts.researchSymbols,slotId):null;
+   let resolved,symbols;
+   if(fixed){
+    resolved=fixed.resolved;
+    symbols={...facts.researchSymbols,symbolSlots:fixed.slots,symbolsById:fixed.entries};
+   }else{
+    const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
+    if(slotId===undefined)slotId=selectedSlot(alien,body.region,wallet,apply);
+    if(slotId===null)continue;
+    resolved=amiba.resolveSymbolAtSlot(alien,slotId,readOnlyRewards);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+    symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,alien.amiba[k]]));
+   }
    apply(wallet,resolved.reward);const blindCount=resolved.reward.drawCards||0;wallet.handSize+=blindCount;
-   const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,alien.amiba[k]]));
    const reserved=structuredClone(card);effects.ensureCardEffectState(reserved);
    const after={...facts,player:wallet,hand:facts.hand.filter(c=>c.id!==card.id),extraUnknownCount:facts.extraUnknownCount+blindCount,
     reservedCards:[...facts.reservedCards,reserved],researchSymbols:symbols,
@@ -91,8 +115,13 @@
    const linear=arithmetic.sum([wallet.score-facts.player.score,...Object.entries(weights).map(([k,w])=>(k==='handSize'?blindCount-1:wallet[k]-facts.player[k])*w)],weights);
    const afterCapital=portfolio(after),netGain=arithmetic.sum([linear,afterCapital,-currentCapital],weights);
    if(!Number.isFinite(netGain))throw Error('KNOWN_SYMBOL_CARD_VALUE_INVALID');
-   candidates.push({cardId:card.id,payment,slotId,reward:resolved.reward,move:resolved.move,
-    linear,afterCapital,netGain,wallet,symbols});
+   const candidate={cardId:card.id,payment,slotId,reward:resolved.reward,move:fixed&&resolved.move?{...resolved.move}:resolved.move,
+    linear,afterCapital,netGain,wallet};
+   if(fixed){
+    let detached;
+    Object.defineProperty(candidate,'symbols',{enumerable:true,get:()=>detached??=amiba.copyPublicSymbolState(symbols)});
+   }else candidate.symbols=symbols;
+   candidates.push(candidate);
   }
   candidates.sort((a,b)=>b.netGain-a.netGain||a.cardId.localeCompare(b.cardId));
   return{value:Math.max(0,candidates[0]?.netGain||0),selected:candidates[0]||null,candidates,

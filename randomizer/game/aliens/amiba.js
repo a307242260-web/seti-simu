@@ -663,10 +663,21 @@
     };
   }
 
+  // Compatibility copies expose position 1 to the original removal menu.
+  // They did not earn another physical trace or a placement reward.
+  function isMigratedDiscoveryAlias(alienState, alienSlotId, entry) {
+    if (entry?.position !== 1 || entry.rewardApplied !== false
+      || !alienState?.amiba?.migratedTracesSlots?.[String(alienSlotId)]) return false;
+    const first = alienState.aliens?.[String(alienSlotId)]?.traces?.[entry.traceType];
+    return Boolean(first?.firstPlaced && !first.neutral
+      && ((first.ownerPlayerId && first.ownerPlayerId === entry.playerId)
+        || (first.ownerPlayerColor && first.ownerPlayerColor === entry.playerColor)));
+  }
+
   function countTraceMarkers(alienState, player, traceType = null, alienSlotId = alienState?.amiba?.revealedSlotId) {
     const playerKeys = getPlayerKeys(player);
     const faceCount = listTraceEntries(alienState, alienSlotId, traceType)
-      .filter((entry) => markerBelongsToPlayer(entry, playerKeys))
+      .filter((entry) => !isMigratedDiscoveryAlias(alienState, alienSlotId, entry) && markerBelongsToPlayer(entry, playerKeys))
       .length;
     return countStateTraceMarkers(alienState, player, traceType, alienSlotId) + faceCount;
   }
@@ -789,6 +800,7 @@
     getFinalTraceTypeForCard,
     isTheoryTaskReady,
     getTheoryTaskReward,
+    isMigratedDiscoveryAlias,
     countTraceMarkers,
     countAllPanelTraceMarkers,
     listSymbols,

@@ -677,7 +677,7 @@
   }
 
   function purposeCapitalWithoutTools(facts, weights = DEFAULT_WEIGHTS) {
-    const base=purposeCapitalWithoutSymbols(facts,weights),symbol=symbolCard.quote(facts,weights,next=>purposeCapitalWithoutSymbols(next,weights).total,base.total);
+    const base=purposeCapitalWithoutSymbols(facts,weights),symbol=symbolCard.quote(facts,weights,next=>purposeCapitalWithoutSymbols(next,weights).total,base.total,true);
     return{...base,handPotential:arithmetic.sum([base.handPotential,symbol.value],weights),symbolCardPlan:symbol,total:arithmetic.sum([base.total,symbol.value],weights)};
   }
 

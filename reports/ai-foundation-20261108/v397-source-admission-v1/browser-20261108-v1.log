@@ -1,0 +1,7 @@
+PASS production-search-agent-parity http://127.0.0.1:57962/randomizer/index.html?agent=search
+PASS production-public-amiba-income-swap http://127.0.0.1:57962/randomizer/index.html
+PASS production-research-symbol-composition http://127.0.0.1:57962/randomizer/index.html
+PASS production-company-fixed-intent http://127.0.0.1:57962/randomizer/index.html
+PASS production-deferred-publicity-capital http://127.0.0.1:57962/randomizer/index.html
+PASS production-income-choice-consistency http://127.0.0.1:57962/randomizer/index.html
+SUMMARY browserSmoke passed=6 failed=0 total=6

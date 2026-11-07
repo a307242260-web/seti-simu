@@ -320,7 +320,8 @@
       if (amibaModule && amibaSlotId != null && Number(slotId) === Number(amibaSlotId)) {
         count += stateTraceCount;
         const entries = amibaModule.listTraceEntries(aliensState, amibaSlotId, traceType);
-        count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
+        count += entries.filter((entry) => !amibaModule.isMigratedDiscoveryAlias(aliensState, amibaSlotId, entry)
+          && markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (aomomoModule && aomomoSlotId != null && Number(slotId) === Number(aomomoSlotId)) {

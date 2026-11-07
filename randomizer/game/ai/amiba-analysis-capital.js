@@ -148,6 +148,24 @@
    reason:net>0?'funded-known-income-amiba-analysis':'income-amiba-analysis-not-profitable',
    scope:'One current-data-funded computer4 income followed by the existing fixed computer5/6 and analysis plan. Greedy known currency income ranked once by linear income and shared base portfolio, then one analysis quote; same hand, wallet and data, no unknown identity or new mark funding, native successor, search or pruning bound.'};
  }
+ const fixedRegionPlans=new WeakMap(),immutableRegionLayouts=new WeakMap();
+ function immutableRegionDictionary(value,entries=false){
+  if(!value||Object.getPrototypeOf(value)!==Object.prototype||!Object.isFrozen(value))return false;
+  const flag=entries?2:1,verified=immutableRegionLayouts.get(value)||0;if(verified&flag)return true;
+  for(const key of Reflect.ownKeys(value)){
+   const d=Object.getOwnPropertyDescriptor(value,key),v=d.value;
+   if(typeof key!=='string'||!d.enumerable||!Object.hasOwn(d,'value')
+    ||!(entries?immutableRegionDictionary(v):v===null||['number','string','boolean','undefined'].includes(typeof v)))return false;
+  }
+  immutableRegionLayouts.set(value,verified|flag);return true;
+ }
+ function regionPlansFor(symbols,weights){
+  const {symbolSlots,symbolsById}=symbols;
+  if(weights!==arithmetic.DEFAULT_WEIGHTS||!immutableRegionDictionary(symbolSlots)||!immutableRegionDictionary(symbolsById,true))return new Map();
+  let entries=fixedRegionPlans.get(symbolSlots);if(!entries){entries=new WeakMap();fixedRegionPlans.set(symbolSlots,entries);}
+  let plans=entries.get(symbolsById);if(!plans){plans=new Map();entries.set(symbolsById,plans);}
+  return plans;
+ }
  function quote(facts,weights,portfolio,baseValue){
   if(!facts.amibaTraces||!facts.researchSymbols?.revealInitialized)return zero('missing-public-amiba-analysis');
   if(facts.pendingNativeEffects||!Array.isArray(facts.pendingCardTriggers)||facts.pendingCardTriggers.length)return zero('pending-amiba-analysis-effects');
@@ -230,7 +248,7 @@
   // that Native prefix once per region, then apply its rewards to each wallet.
   // Only privately copied symbol maps/entries are shared read-only; each
   // candidate still owns its traces, draw counts, wallet and result wrappers.
-  const regionalPlans=new Map();
+  const regionalPlans=regionPlansFor(facts.researchSymbols,weights);
   function regionalPlan(region){
    if(regionalPlans.has(region))return regionalPlans.get(region);
    const alien={amiba:amiba.copyPublicSymbolState(originalAliens.amiba)},result=amiba.resolveRegionReward(alien,region,readOnlyRewards);

@@ -893,6 +893,24 @@
     });
   }
 
+  function listPickCardChoices(root) {
+    return (getWorkingSlice(root, "cards").publicCards || []).flatMap((card, index) => {
+      if (!card) return [];
+      const entry = cards.getCatalogEntryForCard(card);
+      return [{
+        ...makeChoice(
+          "choose_card",
+          `pick:${card.id}`,
+          { cardInstanceId: card.id, publicSlotIndex: index },
+          {},
+          cards.getCardLabel(card),
+        ),
+        // 科技精选牌直接携带公共牌卡面，decision-ui 显示牌面而非编号
+        presentation: cards.getCardPickPresentation(card),
+      }];
+    });
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -1048,24 +1066,6 @@
         ));
       }
       return choices;
-    }
-
-    function listPickCardChoices(root) {
-      return (getWorkingSlice(root, "cards").publicCards || []).flatMap((card, index) => {
-        if (!card) return [];
-        const entry = cards.getCatalogEntryForCard(card);
-        return [{
-          ...makeChoice(
-            "choose_card",
-            `pick:${card.id}`,
-            { cardInstanceId: card.id, publicSlotIndex: index },
-            {},
-            cards.getCardLabel(card),
-          ),
-          // 科技精选牌直接携带公共牌卡面，decision-ui 显示牌面而非编号
-          presentation: cards.getCardPickPresentation(card),
-        }];
-      });
     }
 
     runtime.registerExecutor(EFFECT_TYPES.EXECUTE, (state, effect, workingContext) => {
@@ -1972,6 +1972,7 @@
     settleAfterScan,
     scanFinalizeEffect,
     listIncomeChoices,
+    listPickCardChoices,
     listResearchChoices,
     executeResearchChoice,
     getResearchDataCount,

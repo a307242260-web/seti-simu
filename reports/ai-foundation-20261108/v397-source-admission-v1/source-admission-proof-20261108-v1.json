@@ -1,0 +1,59 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V397",
+  "baseCommit": "7e84d26b61a5fe45a5b0eb44a846e54df1c2b5e7",
+  "snapshotTree": "7287a1838c09ca096986d29178660a8a060dd394",
+  "runtimeSubtrees": {
+    "randomizer": "a82e8e6df9340720a19abfbcf84fb55e151217b6",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373"
+  },
+  "manifest": "reports/ai-foundation-20261108/v397-source-admission-v1/frozen-source-manifest-20261108-v1.json",
+  "manifestSha256": "67a3951f6fa2b0de8049b09760fe8d0941273678bf2d5d65fa799ef2b4bd2038",
+  "sourceFiles": {
+    "randomizer/game/ai/amiba-analysis-capital.js": "f1cce3e43f0fdca0f4d29c09de7995495ee8ef575ec60a8e03bf836993da2d24",
+    "randomizer/game/ai/analysis-port.js": "b6b35ffcc01ab4c93a8ac668f503086ac171b54b23ec045feba2c6988e0f3bb0",
+    "randomizer/game/ai/decision-search.js": "c9cc2f5a6fd9c6a8464580d39e1b8dc4ca41b4a12a4d8c23f80e4d55b6ddc24b",
+    "randomizer/game/ai/known-symbol-capital.js": "8c21d7180a86705cf70c53879a996af64f7b98d8cf877b3cc120d8e76b3b0ef4",
+    "randomizer/game/ai/local-decision-plans.js": "fe4dfe374d85a48bc115236de1e698b746b43222edaa76d7dfc3602467544b32",
+    "randomizer/game/ai/resource-demand.js": "4dbe881506b7e001e61a2de01810c4f32bcb691d91b45985267fb47745556b2f",
+    "randomizer/game/ai/state-value.js": "f3fb63d9554474b73bea61f97a6258f4a06880fd987385e389c8ba419a4ed21b",
+    "randomizer/game/aliens/amiba.js": "4ff6ca2673926f3cfe3dc5943e5d02562fd3b9e2eca109e434855de67b7f0550",
+    "randomizer/game/effects/residual-domain-session.js": "3653b64c12bdf07b3145f43e01a02c3b0dd4bad039cad586dd50efee4689887a",
+    "randomizer/game/effects/science-session.js": "f073537a2583e8e4db05f13a189f0eca22d377c2bc732284f1448bf0b5075be8",
+    "randomizer/game/end-game-scoring.js": "34f6d86465157d16aa354d27d2535594bd64d5acc2212d39728b191c689219a5"
+  },
+  "verificationFiles": {
+    "randomizer/game/ai/amiba-analysis-capital.test.js": "089778f10bd027d753fe1520bb171e86deba74000f3219e67569bc1b247fdd82",
+    "randomizer/game/ai/amiba-currency-tail.test.js": "1a839ef3c6e7694bd57fe3d094989f67a75d9e2d0425e6d82227687a4dd06fe5",
+    "tools/audit_v_state_inputs.js": "f9ff41b3b99300ba9425dafb05cd66391593a6ab9ba635e18a6f68e2d7102fd0"
+  },
+  "evidenceSha256": {
+    "frozen-source-manifest-20261108-v1.json": "67a3951f6fa2b0de8049b09760fe8d0941273678bf2d5d65fa799ef2b4bd2038",
+    "cold-admission-evidence-20261108-v1.tar.gz": "f90f0e70ba89fc1a14aae59efd9c1c7d0edde3a11d39576e461e1657fbcdaba7",
+    "serial-cold-gate-20261108-v1.json": "6ca6e9837e60b609fea1fbc9f87200335b900ce56936b70b0666f936ed5394cb",
+    "first-two-full-graphs-20261108-v1.json": "cacfea8ad413b6b7444aeb3e304cf101f7179c1211344c5b5bd3117c2a28fd84",
+    "full-node-20261108-v1.log": "b436fff851042cb6fe7e7e8f2c8a80228d4ca8a2a0575a3c1f5642c1d0897a94",
+    "browser-20261108-v1.log": "03e15140df68849cbc15fb52af618c00a161d5ddaab6cdbfcb4478db8c1cb93c",
+    "browser-r4-tie-20261108-v1.log": "e34c8e44720838aa121d56193a92c5e55fcb0ac299892e5fc702ac740ff180db",
+    "input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "swap-ledger-native-controls-20261108-v1.checkpoint.json": "9b670d829680f5fea19052f7d4a08ef5c0ff580430cb977acf39a4a0e3bd00c5",
+    "current-swap-purpose-native-20261108-v1.checkpoint.json": "9b714728d26545be722c4b4ceb230621ce4915751e16bf0c6476be4d2e6c3c23",
+    "r4-native-tie-20261108-v1.checkpoint.json": "d23f51692318872e139d219cce5e2dfda52fe17e5b6ffd80215f4177ccf2f4a8",
+    "amiba-currency-native-20261108-v1.log": "c2eb8c34247df0ae766dec6259713973feed8f280233c67f2cd0dc4bbe3e1789"
+  },
+  "completeNamedColdCases": 1285,
+  "uniqueNativeRoots": 844,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 570.7848329999999,
+  "firstTwoFullGraphsUnchanged": 304,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRelevantPassed": 6,
+  "browserNativeTieParity": true,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

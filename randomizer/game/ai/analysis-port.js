@@ -25,10 +25,11 @@
     common ? require("./local-decision-plans") : root.SetiLocalDecisionPlans,
     common ? require("./state-value") : root.SetiStateValue,
     common ? require("./funded-movement-tail") : root.SetiFundedMovementTail,
-    common ? require("../end-game-scoring") : root.SetiEndGameScoring);
+    common ? require("../end-game-scoring") : root.SetiEndGameScoring,
+    common ? require("../aliens/jiuzhe") : root.SetiAlienJiuzhe);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring, jiuzhe) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -795,8 +796,55 @@
       return result;
     }
 
+    function quietScoredIncomeState(state,stored){
+      const p=state.players.players.find(p=>p.id===seatId),t=state.turn;
+      return t.roundNumber===3&&t.currentPlayerId===seatId&&p.mainActionCompleted&&!p.passCompletionPending
+        &&industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId==="deepspace_swap_cards"
+        &&!p.industryBorrowedTechTileId&&data.listComputerPlacedTokens(p).length===3&&!stored.intent&&!hasOwnVisitSource(state)
+        &&t.activePlayerIds.includes(seatId)&&!t.passedPlayerIds.includes(seatId)
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))&&!t.cardTurnEventBonuses?.length
+        &&state.aliens.amiba?.revealInitialized===true
+        &&Object.values(state.aliens.aliens).every(s=>(!s.revealed||s.alienId==="阿米巴")&&!alienState.isAlienReadyToReveal(s))
+        &&[...p.hand,...p.reservedCards].every(c=>knownCards(stored.envelope).has(c.id))
+        &&hasPostMainInertReservations(state,false,true,true)&&quietTailHasNoAcquisition(state);
+    }
+
+    function computerResearchPayment(node,stored,state,goal) {
+      const turn=state.turn;
+      if(node.status!=="stable"||goal.kind!=="research_tech"||goal.publicityCornerCardId||goal.continuationCardId
+        ||turn.roundNumber!==3||turn.currentPlayerId!==seatId||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||turn.cardTurnEventBonuses?.length||scienceSession.getResearchDataCount(goal.tileId)!==2)return null;
+      const p=state.players.players.find(q=>q.id===seatId),needed=resourceDemand.needs(state,seatId,goal);
+      if(needed.publicity!==1||needed.credits||needed.energy||needed.data||p.mainActionCompleted||p.passCompletionPending
+        ||p.resources.availableData<2||p.resources.availableData!==p.dataState.poolTokens.length
+        ||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"
+        ||hasOwnVisitSource(state)||Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal))return null;
+      const occupied=data.listComputerPlacedTokens(p);
+      if(occupied.length>=2||occupied.some((slot,i)=>slot.placementSlot!==i+1)
+        ||occupied.length+p.resources.availableData!==3||data.getComputerSlotBonus(2)?.publicity!==1)return null;
+      const known=knownCards(stored.envelope);
+      if([...p.hand,...p.reservedCards].some(c=>!known.has(c.id))
+        ||p.reservedCards.some(c=>{const m=cardEffects.getCardModel(c);return !m||m.temporaryTasks?.length
+          ||m.triggers?.some(t=>(t.event.types||[t.event.type]).some(type=>["placeData","cardCorner","researchTech"].includes(type)));}))return null;
+      const hasExtraCard=p.hand.some(c=>{
+        const reward=cards.getDiscardActionRewardForCard(c);
+        return reward?.gain?.publicity===1&&Object.keys(reward.gain).length===1&&!reward.dataCount
+          &&node.legalActions.some(a=>a.family==="card_corner"&&a.target.cardInstanceId===c.id&&a.payload.multiplier===1);
+      });
+      const income=p.hand.some(c=>{const gain=cards.getIncomeGainForCard(c);return gain&&Object.keys(gain).length===1&&(gain.credits===1||gain.energy===1);});
+      const place=node.legalActions.find(a=>a.family==="place_data");
+      return hasExtraCard&&income&&place?{kind:"fixed",actionId:place.actionId,placing:true,reason:"fund-research-with-held-computer-data",demand:needed}:null;
+    }
+
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
+      if(goal.kind==="scored-data-funding"){
+        const p=state.players.players.find(p=>p.id===seatId),card=p.hand.find(c=>c.id===goal.cardId);
+        if(!card&&node.status==="stable"&&p.resources.availableData===1)return{kind:"complete",reason:"income-and-blue-now-share-paid-data"};
+        const a=card&&node.legalActions.find(a=>a.actionId===goal.actionId&&a.target.cardInstanceId===card.id);
+        return a&&node.status==="stable"&&p.resources.availableData===0?{kind:"fixed",actionId:a.actionId,reason:"single-known-scored-data-corner"}
+          :{kind:"infeasible",reason:"scored-data-funding-native-state-mismatch"};
+      }
       const local=localDecisionSpec(node);if(["fixed-final-mark","fixed-paid-repeat","fixed-positive-optional","fixed-pass-discard","fixed-reorganization"].includes(local?.kind))return{kind:"fixed",actionId:local.selectedActionId,reason:local.kind};
       if(goal.kind==="effect-purpose"&&operation.targetStarted){
         if(node.status==="stable")return{kind:"complete",reason:"purpose-effect-completed"};
@@ -819,7 +867,35 @@
         }
         return localPlans.scanStep({state,seatId,goal,actions:node.legalActions,status:node.status,session,operation});
       }
-      return resourceDemand.step({state,seatId,goal,actions:node.legalActions,status:node.status,session,operation});
+      return computerResearchPayment(node,stored,state,goal)
+        ||resourceDemand.step({state,seatId,goal,actions:node.legalActions,status:node.status,session,operation});
+    }
+
+    // The two task-count consumers are the C tile and Jiuzhe's printed
+    // score condition. Reveal itself reads traces and score, not tasks.
+    // Keep the reveal Native and price no potential species/card identity.
+    const taskCountScoreThreshold=Math.min(...jiuzhe.CARD_DEFINITIONS
+      .filter(card=>card.condition?.type==="completedTasks").map(card=>card.condition.count));
+    function cappedSectorTaskToKeep(state,owner,node) {
+      const turn=state.turn;
+      if(node.status!=="stable"||turn.roundNumber!==3||turn.currentPlayerId!==seatId
+        ||!owner.mainActionCompleted||owner.passCompletionPending||owner.resources.publicity!==players.RESOURCE_LIMITS.publicity
+        ||industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
+        ||node.legalActions.some(goalMovement.isDirection)
+        ||!node.legalActions.some(a=>a.family==="end_turn")
+        ||Object.values(state.aliens.aliens).some(s=>s.revealed&&s.alienId!=="阿米巴"))return null;
+      if(Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
+        &&(!Number.isSafeInteger(owner.completedTaskCount)||owner.completedTaskCount<0
+          ||!Number.isSafeInteger(taskCountScoreThreshold)||owner.completedTaskCount+1>=taskCountScoreThreshold))return null;
+      const ready=node.legalActions.filter(a=>a.family==="complete_task");
+      if(ready.length!==1||!knownRootCardIds.has(ready[0].target.cardInstanceId))return null;
+      const marks=Object.entries(state.finalScoring.tiles).flatMap(([tileId,tile])=>tile.marks
+        .filter(mark=>mark.playerId===seatId).map(mark=>({tileId,threshold:mark.threshold})));
+      if(marks.some(mark=>mark.tileId==="c")||state.finalScoring.thresholds.some(n=>!marks.some(m=>m.threshold===n)))return null;
+      const next={...state,players:{...state.players,players:state.players.players.map(p=>p===owner?{...p,mainActionCompleted:false}:p)}};
+      const hold=localPlans.deferredSectorPublicityQuote({state:next,seatId,knownCards:knownRootCardIds});
+      return hold?.cardId===ready[0].target.cardInstanceId&&hold.taskId===ready[0].target.ruleId
+        ?{...hold,actionId:ready[0].actionId,reason:"reserve-capped-task-for-known-publicity-payment"}:null;
     }
 
     function resourceSpec(node) {
@@ -840,6 +916,23 @@
         resourceSpecs.set(node,result);return result;
       }
       if(node.status==="stable"){
+        const p=state.players.players.find(p=>p.id===seatId),t=state.turn;
+        const ready=node.legalActions.filter(a=>a.family==="complete_task");
+        // A persistent, public publicity reward that fits now is fixed
+        // preparation. An over-cap reward still uses the native defer policy.
+        if(p.mainActionCompleted&&t.roundNumber===3&&t.activePlayerIds?.includes(seatId)
+          &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+          &&!stored.intent&&!hasOwnVisitSource(state)&&!t.cardTurnEventBonuses?.length&&ready.length===1){
+          const task=ready[0],card=p.reservedCards.find(c=>c.id===task.target.cardInstanceId);
+          const model=card&&knownCards(stored.envelope).has(card.id)&&localPlans.sectorPublicityReward(card);
+          if(model&&model.task.id===task.target.ruleId&&model.model.cardType===2&&!model.model.endGameScoring
+            &&p.resources.publicity+model.gain.publicity<=players.RESOURCE_LIMITS.publicity){
+            const spec=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:[],
+              retainedActionIds:[task.actionId],excludedActionIds:node.legalActions.filter(a=>a!==task).map(a=>a.actionId),
+              fixedPublicityTask:{cardId:card.id,gain:model.gain.publicity}});
+            resourceSpecs.set(node,spec);return spec;
+          }
+        }
         goals=resourceCatalog(state,node.legalActions);
         if(node.legalActions.some(a=>a.family==="place_data"||a.family==="card_corner"&&a.payload?.kind==="resource")){
           const supply=blueLandingGoalFor(state);if(supply)goals=[...goals,supply];
@@ -875,6 +968,28 @@
       if(state.players.players.find(p=>p.id===seatId).mainActionCompleted){
         const goal=goals.find(g=>g.kind==="income");
         if(goal){incomeTail=localPlans.incomeCompletion({state:node.status==="decision"&&session?.baseState?passPlanningState(planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)),session):state,seatId,goal});
+          if(node.status==="stable"&&incomeTail.reason==="income-tail-needs-additional-funding"){
+            const p=state.players.players.find(v=>v.id===seatId),turn=state.turn;
+            // Complete a fresh, already-performed analysis with one known data
+            // payment; later income effects still materialize through Native.
+            if(turn.roundNumber===3&&data.listComputerPlacedTokens(p).length===0
+              &&p.resources.availableData===3&&p.resources.credits===0&&p.resources.energy===0&&!stored.intent
+              &&industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId==="deepspace_swap_cards"
+              &&turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id))
+              &&p.hand.every(c=>knownCards(stored.envelope).has(c.id))&&!node.legalActions.some(a=>a.family==="complete_task")
+              &&hasPostMainInertReservations(state,hasOwnVisitSource(state),true,true)){
+              const payment=resourceDemand.singleDataIncomeFunding({state,seatId,goal,actions:node.legalActions});
+              if(payment&&localPlans.quietEndCompletion({state:payment.state,seatId}).markedTiles?.length===0){
+                const paid=localPlans.incomeCompletion({state:payment.state,seatId,goal});
+                if(Number.isFinite(paid.netGain)){
+                  const prepared=payment.state.players.players.find(v=>v.id===seatId);
+                  const netGain=stateValue.sumValueParts([paid.netGain,payment.resourceDelta,
+                    resourceDemand.planningCapital(payment.state,prepared),-resourceDemand.planningCapital(state,p)]);
+                  if(netGain>0)incomeTail={...paid,netGain,selected:true,cornerFunding:{cardId:payment.cardId,actionId:payment.actionId}};
+                }
+              }
+            }
+          }
           goals=goals.filter(g=>g.kind!=="income"||incomeTail.selected);
         }
       }
@@ -910,7 +1025,7 @@
       for(const goal of goals){
         const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
         if(node.status==="decision"&&source?.family==="place_data"&&session?.baseState){
-          const first=resourceDemand.step({state:planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)),seatId,goal,actions:[source],status:"stable"});
+          const first=resourceDemand.step({state:planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)),seatId,goal:goal.kind==="scan-flow"?{...goal,kind:"scan"}:goal,actions:[source],status:"stable"});
           if(first.resourceBlueSlot)Object.assign(op,{resourceBlueSlot:first.resourceBlueSlot,finalResourceBlue:first.finalResourceBlue});
         }
         const step=resourceStep(node,goal,op);
@@ -927,9 +1042,48 @@
         }
       }
       const owner=state.players.players.find(p=>p.id===seatId);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
-      const incomeCandidate=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
+      let sharedDataFunding=null;
+      if(node.status==="stable"&&plans.length===1&&plans[0].goal.kind==="blue-data"
+        &&incomeTail?.reason==="income-tail-needs-additional-funding"&&owner.resources.availableData===0){
+        const blue=plans[0],action=node.legalActions.find(a=>a.actionId===blue.firstActionId);
+        if(action?.family==="card_corner"&&action.payload?.kind==="resource"&&(action.payload.multiplier??1)===1&&quietScoredIncomeState(state,stored)){
+          const prepared=localPlans.previewScoredAmibaDataCorner({state,seatId,cardId:action.target.cardInstanceId});
+          const future=prepared&&quietScoredIncomeState(prepared,stored)&&localPlans.quietEndCompletion({state:prepared,seatId}).markedTiles?.length===0;
+          const targets=future&&resourceDemand.catalog({state:prepared,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(prepared.players.players.find(p=>p.id===seatId))}});
+          const income=targets?.find?.(g=>g.kind==="income"),blueStill=targets?.find?.(g=>g.id===blue.goal.id);
+          if(income&&blueStill&&targets.length===2){
+            const a=localPlans.incomeCompletion({state:prepared,seatId,goal:income}),b=localPlans.blueCompletion({state:prepared,seatId,goal:blueStill});
+            if(a.selected&&b.available&&(!b.selected||a.netGain>=b.netGain)){
+              sharedDataFunding={cardId:action.target.cardInstanceId,incomeCardId:income.incomeCardId,income:a.netGain,blue:b.netGain};
+              const goal={id:"data:shared-scored-corner",kind:"scored-data-funding",cardId:action.target.cardInstanceId,actionId:action.actionId,required:{}};
+              plans[0]={id:goal.id,goal,operation:{},firstActionId:action.actionId,mode:"greedy",reason:"pay-known-data-then-resolve-fixed-income"};
+            }
+          }
+        }
+      }
+      const deferredCappedTask=cappedSectorTaskToKeep(state,owner,node);
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.actionId===deferredCappedTask?.actionId||a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const company=industryCatalog.getPlayerIndustryDefinition(owner),bluePlan=plans.find(p=>p.goal.kind==="blue-data");
+      let recoveredDataOrder=null;
+      // A cold snapshot can be taken between the shared place-data action
+      // and its slot menu. Recover the same ordered income/blue plan from
+      // the original wallet rather than rank the two partially run paths.
+      if(node.status==="decision"&&source?.family==="place_data"&&session?.queue.length===1
+        &&(session.queue[0].type===scienceSession.EFFECT_TYPES.PLACE_DATA
+          &&node.legalActions.every(a=>a.family==="choose_target"&&["computer","blueBonus"].includes(a.target?.target))
+          ||session.queue[0].type===scienceSession.EFFECT_TYPES.INCOME
+          &&session.journal.events.some(e=>e.type==="placeData"&&e.playerId===seatId&&e.placementKind==="computer"&&e.placementSlot===4)
+          &&node.legalActions.every(a=>a.family==="choose_card"&&a.target?.choiceId?.startsWith("income:")))
+        &&incomeTail?.selected&&bluePlan&&plans.length===2&&plans.some(p=>p.goal.kind==="income")){
+        const base=planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope));
+        const p=base.players.players.find(p=>p.id===seatId);
+        if(p.resources.availableData===1&&quietScoredIncomeState(base,stored)){
+          const alternative=localPlans.blueCompletion({state:base,seatId,goal:bluePlan.goal});
+          if(alternative.available&&!alternative.dataCornerId&&!alternative.incomeCardId)
+            recoveredDataOrder={blue:alternative,income:incomeTail.netGain};
+        }
+      }
+      const incomeCandidate=(node.status==="stable"||recoveredDataOrder)&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
       const blueTail=node.status==="stable"&&owner.mainActionCompleted&&bluePlan
         &&["deepspace_swap_cards","turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
         &&!owner.industryBorrowedTechTileId&&!state.turn.cardTurnEventBonuses?.length
@@ -938,7 +1092,7 @@
       // Fixed preparation order follows the shared purpose value. Income
       // cannot take unconditional precedence when a blue reward funds a more
       // valuable held-card or mission purpose; a cold pending slot must see the same opportunity.
-      const competingBlue=blueTail||blueTails.find(t=>t.goalId===bluePlan?.goal.id);
+      const competingBlue=recoveredDataOrder?.blue||blueTail||blueTails.find(t=>t.goalId===bluePlan?.goal.id);
       const forceBlue=competingBlue?.available&&competingBlue.selected
         &&(!incomeCandidate||competingBlue.netGain>incomeTail.netGain);
       const forceIncome=incomeCandidate&&!forceBlue;
@@ -962,8 +1116,11 @@
       const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
         plans:swapAction?supplyPlans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"):plans,
+        ...(deferredCappedTask?{deferredCappedTask}:{}),
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
+        ...(sharedDataFunding?{sharedDataFunding}:{}),
+        ...(recoveredDataOrder?{recoveredDataOrder:{income:recoveredDataOrder.income,blue:recoveredDataOrder.blue.netGain,selected:forcedKind}}:{}),
         retainedActionIds:forcedKind?(swapAction?[swapAction.actionId]:[]):node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind?node.legalActions.filter(a=>a!==swapAction).map(a=>a.actionId):excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
@@ -1756,7 +1913,21 @@
       }));
     }
 
+    const inertReservationsByState=new WeakMap();
+    function inertReservationAnswers(state){
+      if(!Object.isFrozen(state)||!resourceDemand.immutableCapitalInput(state))return null;
+      let answers=inertReservationsByState.get(state);
+      if(!answers){answers=[];inertReservationsByState.set(state,answers);}
+      return answers;
+    }
     function hasTradeInertReservations(state, allowAmiba = false) {
+      const answers=inertReservationAnswers(state),key=Number(allowAmiba);
+      if(answers?.[key]!==undefined)return answers[key];
+      const answer=checkTradeInertReservations(state,allowAmiba);
+      if(answers)answers[key]=answer;
+      return answer;
+    }
+    function checkTradeInertReservations(state, allowAmiba) {
       // 交易不推进回合或执行complete_task；任务可就绪，但不能在本队列中兑付。
       // 化石运输会在任意effect后补visitPlanet，不能只检查显式交易事件。
       if (Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length) return false;
@@ -1789,7 +1960,15 @@
       }));
     }
 
-    function hasPostMainInertReservations(state, hasOwnRockets, allowAmiba = false, plainEnd = false) {
+    function hasPostMainInertReservations(state, hasOwnRockets, allowAmiba = false, plainEnd = false, deferredTask = null) {
+      const answers=deferredTask?null:inertReservationAnswers(state);
+      const key=2+Number(hasOwnRockets)+2*Number(allowAmiba)+4*Number(plainEnd);
+      if(answers?.[key]!==undefined)return answers[key];
+      const answer=checkPostMainInertReservations(state,hasOwnRockets,allowAmiba,plainEnd,deferredTask);
+      if(answers)answers[key]=answer;
+      return answer;
+    }
+    function checkPostMainInertReservations(state, hasOwnRockets, allowAmiba, plainEnd, deferredTask) {
       if (!hasTradeInertReservations(state,allowAmiba)) return false;
       const owner = state.players.players.find(player => player.id === seatId);
       const reserved = owner.reservedCards.map(card => {
@@ -1819,7 +1998,8 @@
             || Object.keys(condition).some(key => key !== "type" && !fields.includes(key))
             || !Number.isSafeInteger(amount) || amount < 1
             || condition.type === "traceCount" && !["blue", "pink", "yellow"].includes(condition.traceType)) return false;
-          return card.cardEffectState.completedTaskIds.includes(task.id)
+          return deferredTask?.cardId===card.id&&deferredTask.taskId===task.id
+            || card.cardEffectState.completedTaskIds.includes(task.id)
             || !cardEffects.taskConditionMet(task, owner, { data: state.data, aliens: state.aliens, planets:state.planets,
               ...(condition.type==="probeDistanceFromEarth"?{probeLocationDetails:rockets.buildProbeLocationData({...state,state}).details}:{}) });
         });
@@ -2235,15 +2415,416 @@
       return Boolean(at&&Number.isInteger(at.x)&&Number.isInteger(at.y)&&at.x===intent.goal.coordinate?.x&&at.y===intent.goal.coordinate?.y);
     }
 
+    // Include each acquisition that can become legal after the quoted wallet
+    // or hand changes. A newly admitted purpose still needs a Native path.
+    function quietTailHasNoAcquisition(current,knownSourceCapital) {
+      const player=current.players.players.find(x=>x.id===seatId);
+      const actions=["publicity-for-card","cards-for-pick-card","credits-for-card","energy-for-card"].map(id=>quickTrades.getTradeAction(id))
+        .filter(t=>players.canAfford(player,t.cost)).map(t=>({family:"quick_trade",actionId:t.id,target:{tradeId:t.id},payload:{cost:t.cost}}));
+      if(player.industryRoundMarkRound!==current.turn.roundNumber)actions.push({family:"industry",actionId:"deepspace_swap_cards",target:{abilityId:"deepspace_swap_cards"}});
+      return !cardPickPlanner.plan({state:current,seatId,status:"stable",actions,knownSourceCapital})?.goal;
+    }
+
+    // A known card pick may finish with one previously held data remaining.
+    // Reuse the existing compound currency/income proof for that exact stock.
+    // The public refill is always anonymous and cannot create a new purpose.
+    function quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask,firstFamily="place_data",paidDrawCount=null}) {
+      const hasProbe=hasOwnVisitSource(state);
+      const noMovementAllowance=p=>p.resources.energy===0&&p.hand.every(c=>!c.hidden&&!cards.getDiscardActionMoveRewardForCard(c)?.movementPoints);
+      const singleIncomeWindow=owner.resources.availableData===2&&data.listComputerPlacedTokens(owner).length===3
+        &&(!hasProbe||owner.resources.credits===0&&owner.resources.energy===0);
+      if(hasProbe&&(!movementPlanning||!noMovementAllowance(owner)||deferredTask&&!deferredTask.requiresIncome))return null;
+      const stationary=current=>{
+        const p=current.players.players.find(q=>q.id===seatId);
+        if(noMovementAllowance(p))return true;
+        if(!singleIncomeWindow&&paidDrawCount==null)return false;
+        const objective=goalMovement.plan({state:current,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+          compareTiming:timingForOneGoalQuery(current),endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(current,seatId)?.candidates||[]});
+        goalMovementGeometryNodes+=objective?.routingNodes||0;
+        return !objective?.intent?.path.length;
+      };
+      if(stored.intent||stored.resourceControl||state.turn.roundNumber!==3||transition.nextPlayerId!==seatId
+        ||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
+        ||rootPublicLandingOffer
+        ||![1,2].includes(owner.resources.availableData)||plan.goal.id!=="data:blue:2"||plan.goal.blueSlot!==2
+        ||!data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(2))
+        ||!state.cards.publicCards.some(Boolean)||state.cards.publicCards.some(c=>c&&!knownCards(stored.envelope).has(c.id))
+        ||!node.legalActions.some(a=>a.family===firstFamily&&a.actionId===plan.firstActionId))return null;
+      const p={...owner,resources:{...owner.resources},dataState:structuredClone(owner.dataState),hand:[...owner.hand]};
+      const placed=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:2});
+      if(!placed.ok||placed.slotBonuses.length!==1||placed.slotBonuses[0].type!=="choose_card")return null;
+      const working={...state,players:{...state.players,players:state.players.players.map(x=>x===owner?p:x)}};
+      const actions=scienceSession.formalizeChoices(working,seatId,scienceSession.listPickCardChoices(working));
+      const menu=cardPickPlanner.plan({state:working,seatId,status:"decision",actions});
+      const choice=actions.find(a=>a.actionId===menu?.selectedActionId),index=choice?.target.publicSlotIndex;
+      if(!Number.isInteger(index)||menu.selection.blind)return null;
+      const card=state.cards.publicCards[index],drawCount=state.cards.drawPileCardIds.length;
+      if(!drawCount||(paidDrawCount==null?cards.getAvailablePool({...state.cards},state.players).length!==drawCount
+        :drawCount!==paidDrawCount||state.cards.drawPileCardIds.some(Boolean)))return null;
+      p.hand.push({...card,blueBonusOwnerId:seatId});p.resources.handSize=p.hand.length;
+      // A retained known data supplier is safe only when the normal
+      // completion query below confirms it opens no additional plan.
+      if(p.hand.some(c=>c.hidden)||cards.getDiscardActionRewardForCard(card)?.dataCount>0
+        ||hasProbe&&!singleIncomeWindow&&!stationary(working))return null;
+      const debt=(s,v)=>{const tool=resourceDemand.movementToolPlan(s,v);return tool.value>0?tool.selected.preparationDebt:0;};
+      const retainedDataCorner=p.hand.some(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0);
+      const preview={...working,cards:{...state.cards,publicCards:state.cards.publicCards.map((c,i)=>i===index?null:c),
+        unknownPublicSlotIndices:[...(state.cards.unknownPublicSlotIndices||[]),index],drawPileCardIds:new Array(drawCount-1).fill(null)}};
+      if(deferredTask){
+        // The adjacent research/scan quote can only keep original root-hand
+        // identities. A known public pick of one of them needs native closure.
+        if(rootObservation.selfState.hand.some(c=>c.id===card.id))return null;
+        const suffix=current=>localPlans.dataTailCompletion({state:current,seatId,trackPurposeDelta:true,canContinue:quietTailHasNoAcquisition,
+          canLeaveProbeStationary:hasProbe?stationary:null});
+        const keepTail=suffix(preview),incomePlan=singleIncomeWindow&&keepTail.plans?.length===1&&keepTail.plans[0];
+        let paid=preview,paidOwner=p;
+        if(!keepTail.available||keepTail.primaryOnly||keepTail.markedTiles.length)return null;
+        if(incomePlan?.goal?.kind==="income"&&incomePlan.requiredNativeInputs===3){
+          const funding=resourceDemand.previewIncomeTail({state:preview,seatId,goal:incomePlan.goal});
+          const source=p.hand.find(c=>c.id===incomePlan.incomeCardId);
+          if(!funding.available||!source||funding.player.resources.availableData!==0)return null;
+          paidOwner=funding.player;
+          paid={...preview,players:{...preview.players,players:preview.players.players.map(v=>v===p?paidOwner:v)},
+            cards:{...preview.cards,removedFromGameCardIds:[...preview.cards.removedFromGameCardIds,source.cardId]}};
+        }else if(deferredTask.requiresIncome||keepTail.plans.length||keepTail.netGain!==0)return null;
+        const claim=localPlans.previewCappedSectorClaim({state:paid,seatId,task:deferredTask,allowPublicityGain:deferredTask.requiresIncome});
+        if(!claim)return null;
+        // The fixed income is completed before the task becomes the remaining
+        // choice. No additional purpose may start after the claim.
+        const claimTail=suffix(claim);
+        if(!claimTail.available||claimTail.primaryOnly||claimTail.plans.length||claimTail.markedTiles.length||claimTail.netGain!==0)return null;
+        const next={...paid,players:{...paid.players,players:paid.players.players.map(v=>v===paidOwner?{...paidOwner,mainActionCompleted:false}:v)}};
+        const hold=localPlans.deferredSectorPublicityQuote({state:next,seatId,knownCards:knownRootCardIds});
+        if((hold||!deferredTask.requiresIncome)&&(hold?.cardId!==deferredTask.cardId||hold.taskId!==deferredTask.taskId
+          ||deferredTask.value!==undefined&&hold.value!==deferredTask.value))return null;
+        const settled=claim.players.players.find(v=>v.id===seatId);
+        if(hasProbe&&[debt(preview,p),debt(paid,paidOwner),debt(claim,settled)].some(d=>d!==debt(state,owner)))return null;
+        const value=(s,v)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+          aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+          getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
+        const before=resourceDemand.planningCapital(state,owner),afterBlue=resourceDemand.planningCapital(preview,p),
+          afterKeep=paid===preview?afterBlue:resourceDemand.planningCapital(paid,paidOwner),afterClaim=resourceDemand.planningCapital(claim,settled);
+        const keepCapital=stateValue.sumValueParts([afterKeep,-before]),claimCapital=stateValue.sumValueParts([afterClaim,-before]);
+        const resources=stateValue.DEFAULT_WEIGHTS.handSize-stateValue.DEFAULT_WEIGHTS.availableData;
+        const keep=stateValue.sumValueParts([resources,afterBlue,-before,keepTail.netGain]);
+        const publicity=(settled.resources.publicity-paidOwner.resources.publicity)*stateValue.DEFAULT_WEIGHTS.publicity;
+        const taken=stateValue.sumValueParts([keep,afterClaim,-afterKeep,value(claim,settled),-value(paid,paidOwner),publicity]);
+        // The deferred publicity belongs to the same root-scoped valuation
+        // used for a materialized end/skip leaf. Nothing was awarded at cap.
+        const deferredValue=hold&&deferredSectorPublicityEnabled()?hold.value:0;
+        const keepRanking=stateValue.sumValueParts([keep,deferredValue]);
+        const takeNow=taken>keepRanking||taken===keepRanking&&claimCapital<=keepCapital;
+        const requiredNativeInputs=3+keepTail.requiredNativeInputs+1;
+        const bluePublicPick={cardId:card.id,cardActionId:choice.actionId,publicSlotIndex:index,
+          ordinaryDrawCountBefore:drawCount,ordinaryDrawCountAfter:drawCount-1,
+          ...(paid!==preview?{singleCurrencyIncome:true,continuingDataPlans:keepTail.plans}:{}),
+          taskChoice:{id:deferredTask.cardId,ruleId:deferredTask.taskId,selected:takeNow?"claim":"defer",
+            claim:{netGain:taken,unrealizedPurposeDelta:claimCapital,requiredNativeInputs},
+            defer:{netGain:keep,unrealizedPurposeDelta:keepCapital,forecast:deferredValue,requiredNativeInputs}}};
+        return {firstActionId:plan.firstActionId,netGain:takeNow?taken:keep,requiredNativeInputs,markedTiles:[],
+          unrealizedPurposeDelta:takeNow?claimCapital:keepCapital,bluePublicPick,...(!takeNow&&hold?{deferredPublicity:hold}:{})};
+      }
+      const before=resourceDemand.planningCapital(state,owner),after=resourceDemand.planningCapital(preview,p);
+      const capital=stateValue.sumValueParts([after,-before]);
+      let completion;
+      if(p.resources.availableData===0&&!retainedDataCorner){
+        if(!quietTailHasNoAcquisition(preview,after))return null;
+        completion=localPlans.quietEndCompletion({state:preview,seatId});
+      }else{
+        completion=localPlans.dataTailCompletion({state:preview,seatId,trackPurposeDelta:true,canContinue:quietTailHasNoAcquisition,
+          canLeaveProbeStationary:current=>hasProbe&&stationary(current)});
+      }
+      const nextPlan=completion.plans?.length===1&&completion.plans[0];
+      const singleIncome=Boolean(singleIncomeWindow&&nextPlan?.goal?.kind==="income"&&nextPlan.requiredNativeInputs===3);
+      if(!completion.available||completion.primaryOnly||completion.markedTiles.length||retainedDataCorner&&completion.plans?.length&&!singleIncome)return null;
+      if(hasProbe){
+        if(completion.plans?.length&&!singleIncome||!completion.plans?.length&&!stationary(preview))return null;
+        const beforeDebt=debt(state,owner);
+        if(beforeDebt!==debt(preview,p))return null;
+        if(singleIncome){
+          const tail=resourceDemand.previewIncomeTail({state:preview,seatId,goal:nextPlan.goal});
+          if(!tail.available||tail.player.resources.availableData!==0||beforeDebt!==debt(preview,tail.player))return null;
+        }
+      }
+      return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([stateValue.DEFAULT_WEIGHTS.handSize,
+        -stateValue.DEFAULT_WEIGHTS.availableData,capital,completion.netGain]),requiredNativeInputs:3+completion.requiredNativeInputs,markedTiles:[],
+        unrealizedPurposeDelta:stateValue.sumValueParts([capital,completion.purposeDelta]),bluePublicPick:{cardId:card.id,cardActionId:choice.actionId,publicSlotIndex:index,
+          ordinaryDrawCountBefore:drawCount,ordinaryDrawCountAfter:drawCount-1,...(hasProbe?{stationaryProbe:true}:{}),...(singleIncome?{singleCurrencyIncome:true}:{}),
+          ...(completion.plans?.length?{continuingDataPlans:completion.plans}:{})}};
+    }
+
+    function quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition}){
+      if(owner.resources.availableData!==0||hasOwnVisitSource(state)
+        ||owner.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0).length!==1)return null;
+      const action=node.legalActions.find(a=>a.actionId===plan.firstActionId&&a.family==="card_corner"&&a.payload?.kind==="resource"
+        &&(a.payload.multiplier??1)===1);
+      if(!action)return null;
+      const prepared=localPlans.previewScoredAmibaDataCorner({state,seatId,cardId:action.target.cardInstanceId});
+      if(!prepared||!quietTailHasNoAcquisition(prepared))return null;
+      const p=prepared.players.players.find(v=>v.id===seatId);
+      if(p.resources.availableData!==1||localPlans.quietEndCompletion({state:prepared,seatId}).markedTiles?.length!==0)return null;
+      const pick=quietBluePublicPick({state:prepared,owner:p,node,stored,plan,transition,firstFamily:"card_corner"});
+      if(!pick||pick.bluePublicPick.continuingDataPlans)return null;
+      const value=(s,v)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
+      const delta=stateValue.sumValueParts([resourceDemand.planningCapital(prepared,p),-resourceDemand.planningCapital(state,owner)]);
+      return {...pick,netGain:stateValue.sumValueParts([pick.netGain,delta,value(prepared,p),-value(state,owner),
+        stateValue.DEFAULT_WEIGHTS.availableData,-stateValue.DEFAULT_WEIGHTS.handSize]),requiredNativeInputs:1+pick.requiredNativeInputs,
+        unrealizedPurposeDelta:stateValue.sumValueParts([pick.unrealizedPurposeDelta,delta]),
+        bluePublicPick:{...pick.bluePublicPick,scoredFundingCornerId:action.target.cardInstanceId}};
+    }
+
+    // The exact scored corner is already the fixed funding input for this
+    // blue slot. There is no public draw or other purpose after its currency.
+    function quietScoredCornerThenBlueCurrency({state,owner,node,stored,plan,transition}){
+      const hasProbe=hasOwnVisitSource(state);
+      if(stored.intent||stored.resourceControl||hasProbe&&!movementPlanning||rootPublicLandingOffer
+        ||state.turn.roundNumber!==3||transition.nextPlayerId!==seatId
+        ||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
+        ||plan.goal.id!=="data:blue:1"||owner.resources.availableData!==0
+        ||owner.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0).length!==1)return null;
+      const action=node.legalActions.find(a=>a.actionId===plan.firstActionId&&a.family==="card_corner"
+        &&a.payload?.kind==="resource"&&(a.payload.multiplier??1)===1);
+      const funded=action&&localPlans.previewScoredAmibaDataCorner({state,seatId,cardId:action.target.cardInstanceId});
+      if(!funded||!quietTailHasNoAcquisition(funded))return null;
+      const debt=(current,p)=>{const tool=resourceDemand.movementToolPlan(current,p);return tool.value>0?tool.selected.preparationDebt:0;};
+      const beforeDebt=hasProbe?debt(state,owner):0;
+      const stationary=current=>{
+        if(!hasProbe)return true;
+        if(debt(current,current.players.players.find(v=>v.id===seatId))!==beforeDebt)return false;
+        const objective=goalMovement.plan({state:current,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+          compareTiming:timingForOneGoalQuery(current),endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(current,seatId)?.candidates||[]});
+        goalMovementGeometryNodes+=objective?.routingNodes||0;
+        return !objective?.intent?.path.length;
+      };
+      if(!stationary(state)||!stationary(funded))return null;
+      const p=funded.players.players.find(v=>v.id===seatId),blue=localPlans.previewBlueCompletion({state:funded,seatId,goal:plan.goal});
+      if(!blue.available||blue.computerPlacements||blue.dataCornerId||blue.incomeCardId||blue.player.resources.availableData!==0)return null;
+      const after={...funded,players:{...funded.players,players:funded.players.players.map(v=>v===p?blue.player:v)}};
+      const end=localPlans.dataTailCompletion({state:after,seatId,trackPurposeDelta:true,canContinue:quietTailHasNoAcquisition,canLeaveProbeStationary:stationary});
+      if(!end.available||end.primaryOnly||end.plans?.length||end.markedTiles.length||end.netGain!==0)return null;
+      const total=(s,v)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
+      const beforeCapital=resourceDemand.planningCapital(state,owner);
+      const cornerCapital=resourceDemand.planningCapital(funded,p);
+      const purposeDelta=stateValue.sumValueParts([resourceDemand.planningCapital(after,blue.player),-beforeCapital]);
+      return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([blue.netGain,total(funded,p),-total(state,owner),
+        stateValue.DEFAULT_WEIGHTS.availableData,-stateValue.DEFAULT_WEIGHTS.handSize,cornerCapital,-beforeCapital]),
+        requiredNativeInputs:1+blue.requiredNativeInputs+end.requiredNativeInputs,markedTiles:[],
+        unrealizedPurposeDelta:purposeDelta,scoredCornerBlueCurrency:{cardId:action.target.cardInstanceId,blueSlot:1}};
+    }
+
+    function quietCappedTaskBlueCurrency({state,owner,node,stored,plan,transition,deferredTask}) {
+      if(stored.intent||stored.resourceControl||hasOwnVisitSource(state)||plan.goal.id!=="data:blue:1"
+        ||!deferredTask||transition.nextPlayerId!==seatId||owner.resources.availableData<1)return null;
+      const blue=localPlans.previewBlueCompletion({state,seatId,goal:plan.goal});
+      if(!blue.available||blue.computerPlacements!==0||blue.dataCornerId||blue.incomeCardId
+        ||blue.player.resources.publicity!==owner.resources.publicity)return null;
+      const p=blue.player,charged={...state,players:{...state.players,players:state.players.players.map(v=>v===owner?p:v)}};
+      if(!quietTailHasNoAcquisition(charged,blue.capital.afterCapital))return null;
+      const end=localPlans.quietEndCompletion({state:charged,seatId});
+      if(!end.available||end.netGain!==0||end.markedTiles.length)return null;
+      const next=resourceDemand.catalog({state:charged,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(p)}});
+      let pick=null;
+      if(next.length===1&&next[0].id==="data:blue:2"){
+        pick=quietBluePublicPick({state:charged,owner:p,node,stored,plan:{goal:next[0],firstActionId:plan.firstActionId},transition,deferredTask});
+        if(!pick?.deferredPublicity||pick.bluePublicPick.taskChoice?.selected!=="defer"
+          ||pick.deferredPublicity.value!==deferredTask.value)return null;
+      }else if(next.length)return null;
+      const take=pick&&(pick.netGain>0||pick.netGain===0&&pick.unrealizedPurposeDelta<0);
+      return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([blue.netGain,take?pick.netGain:0]),
+        requiredNativeInputs:blue.requiredNativeInputs+(take?pick.requiredNativeInputs:2),markedTiles:[],
+        unrealizedPurposeDelta:stateValue.sumValueParts([blue.capital.afterCapital,-blue.capital.beforeCapital,take?pick.unrealizedPurposeDelta:0]),
+        deferredPublicity:deferredTask,cappedTaskBlueCurrency:{blueInputs:blue.requiredNativeInputs,
+          selected:take?"public-pick":"end",pick:pick?.bluePublicPick||null}};
+    }
+
+    function quietFixedIncomeTail({state,owner,node,stored,plan,policy,transition}) {
+      if(stored.intent||stored.resourceControl||hasOwnVisitSource(state)||rootPublicLandingOffer
+        ||state.turn.roundNumber!==3||transition.nextPlayerId!==seatId
+        ||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
+        ||plan.goal.kind!=="income"||!policy.incomeTail?.selected)return null;
+      const card=owner.hand.find(c=>c.id===plan.goal.incomeCardId),gain=card&&cards.getIncomeGainForCard(card);
+      if(!gain||Object.keys(gain).length!==1||!["credits","energy"].some(k=>gain[k]===1))return null;
+      const income=resourceDemand.previewIncomeTail({state,seatId,goal:plan.goal});
+      if(!income.available||income.placements<1||income.placements>4||income.player.resources.availableData>2)return null;
+      const p=income.player,projected={...state,players:{...state.players,players:state.players.players.map(q=>q===owner?p:q)},
+        cards:{...state.cards,removedFromGameCardIds:[...state.cards.removedFromGameCardIds,card.cardId]}};
+      const end=localPlans.quietEndCompletion({state:projected,seatId});
+      if(!end.available||end.markedTiles.length||end.netGain!==0)return null;
+      if(!quietTailHasNoAcquisition(projected))return null;
+      const goals=resourceDemand.catalog({state:projected,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(p)}});
+      if(p.resources.availableData===0&&!goals.length){
+        const inputs=2*income.placements+1;
+        return {firstActionId:plan.firstActionId,netGain:policy.incomeTail.netGain,requiredNativeInputs:inputs+1,markedTiles:[],
+          unrealizedPurposeDelta:stateValue.sumValueParts([resourceDemand.planningCapital(projected,p),-resourceDemand.planningCapital(state,owner)]),
+          incomeThenQuietEnd:{incomeCardId:card.id,placements:income.placements,requiredIncomeInputs:inputs,gain}};
+      }
+      if(p.resources.availableData===1&&goals.length===1&&goals[0].id==="data:blue:1"){
+        const blue=localPlans.previewBlueCompletion({state:projected,seatId,goal:goals[0]});
+        if(!blue.available||!blue.selected||blue.computerPlacements!==0||blue.dataCornerId||blue.incomeCardId)return null;
+        const q=blue.player,charged={...projected,players:{...projected.players,players:projected.players.players.map(v=>v===p?q:v)}};
+        if(q.resources.availableData!==0||!quietTailHasNoAcquisition(charged))return null;
+        const end=localPlans.quietEndCompletion({state:charged,seatId});
+        if(!end.available||end.netGain!==0||end.markedTiles.length)return null;
+        const next=resourceDemand.catalog({state:charged,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(q)}});
+        let pick=null;
+        if(next.length===1&&next[0].id==="data:blue:2"){
+          const candidates=resourceDemand.preparations({state:charged,seatId,goal:next[0],actions:node.legalActions});
+          const first=candidates[0];
+          if(!first||first.observer)return null;
+          pick=quietScoredCornerThenBluePick({state:charged,owner:q,node,stored,plan:{goal:next[0],firstActionId:first.actionId},transition});
+          if(!pick)return null;
+        }else if(next.length)return null;
+        const take=pick&&(pick.netGain>0||pick.netGain===0&&pick.unrealizedPurposeDelta<0);
+        const capital=stateValue.sumValueParts([resourceDemand.planningCapital(charged,q),-resourceDemand.planningCapital(state,owner)]);
+        const incomeInputs=2*income.placements+1;
+        return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([policy.incomeTail.netGain,blue.netGain,take?pick.netGain:0]),
+          requiredNativeInputs:incomeInputs+blue.requiredNativeInputs+(take?pick.requiredNativeInputs:1),markedTiles:[],
+          unrealizedPurposeDelta:stateValue.sumValueParts([capital,take?pick.unrealizedPurposeDelta:0]),
+          incomeThenBlueCurrency:{incomeCardId:card.id,incomeInputs,blueSlot:1,blueInputs:blue.requiredNativeInputs,
+            selected:take?"public-pick":"end",pick:pick?.bluePublicPick||null}};
+      }
+      if(income.placements!==1||![1,2].includes(p.resources.availableData)||goals.length!==1||goals[0].id!=="data:blue:2")return null;
+      const pick=quietBluePublicPick({state:projected,owner:p,node,stored,plan:{goal:goals[0],firstActionId:plan.firstActionId},transition});
+      if(!pick||pick.bluePublicPick.continuingDataPlans||rootObservation.selfState.hand.some(c=>c.id===pick.bluePublicPick.cardId))return null;
+      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(projected,p),-resourceDemand.planningCapital(state,owner)]);
+      const take=pick.netGain>0||pick.netGain===0&&pick.unrealizedPurposeDelta<0;
+      return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([policy.incomeTail.netGain,take?pick.netGain:0]),
+        requiredNativeInputs:3+(take?pick.requiredNativeInputs:1),markedTiles:[],
+        unrealizedPurposeDelta:stateValue.sumValueParts([capital,take?pick.unrealizedPurposeDelta:0]),
+        incomeThenKnownBlue:{incomeCardId:card.id,gain,requiredIncomeInputs:3,take,
+          alternatives:{end:{netGain:0,requiredNativeInputs:1},blue:{netGain:pick.netGain,
+            unrealizedPurposeDelta:pick.unrealizedPurposeDelta,requiredNativeInputs:pick.requiredNativeInputs,
+            card:pick.bluePublicPick}}}};
+    }
+
+    function paidIncomeWithReadyTask({node,stored,bought,q,transition,deferredTask,drawCount}){
+      const blueGoal={id:"data:blue:2",kind:"blue-data",blueSlot:2,targetComputerSlot:3,required:{}};
+      const start=node.legalActions.find(a=>a.family==="place_data");
+      if(!start||!data.listBluePlacementRequirements(q).some(x=>x.blueSlot===2))return null;
+      const plans={goal:blueGoal,firstActionId:start.actionId};
+      const claim=localPlans.previewCappedSectorClaim({state:bought,seatId,task:deferredTask,allowPublicityGain:true});
+      if(!claim)return null;
+      const settled=claim.players.players.find(v=>v.id===seatId);
+      const paidCapital=resourceDemand.planningCapital(bought,q),settledCapital=resourceDemand.planningCapital(claim,settled);
+      if(!quietTailHasNoAcquisition(claim,settledCapital))return null;
+      const end=localPlans.quietEndCompletion({state:claim,seatId});
+      if(!end.available||end.netGain!==0||end.markedTiles.length)return null;
+      const blueAfterClaim=quietBluePublicPick({state:claim,owner:settled,node,stored,plan:plans,transition,paidDrawCount:drawCount-1});
+      const blueBeforeClaim=quietBluePublicPick({state:bought,owner:q,node,stored,plan:plans,transition,paidDrawCount:drawCount-1,
+        deferredTask:{cardId:deferredTask.cardId,taskId:deferredTask.taskId,requiresIncome:true}});
+      if(!blueAfterClaim?.bluePublicPick.singleCurrencyIncome||!blueBeforeClaim?.bluePublicPick.singleCurrencyIncome
+        ||blueBeforeClaim.bluePublicPick.taskChoice?.selected!=="claim"||blueBeforeClaim.deferredPublicity)return null;
+      const value=(s,v)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
+      const delta=stateValue.sumValueParts([settledCapital,-paidCapital]);
+      const task=stateValue.sumValueParts([delta,value(claim,settled),-value(bought,q),
+        (settled.resources.publicity-q.resources.publicity)*stateValue.DEFAULT_WEIGHTS.publicity]);
+      const rows=[
+        {id:"end-skip",netGain:0,unrealizedPurposeDelta:0,requiredNativeInputs:2},
+        {id:"claim-end",netGain:task,unrealizedPurposeDelta:delta,requiredNativeInputs:2},
+        {id:"claim-blue",netGain:stateValue.sumValueParts([task,blueAfterClaim.netGain]),
+          unrealizedPurposeDelta:stateValue.sumValueParts([delta,blueAfterClaim.unrealizedPurposeDelta]),
+          requiredNativeInputs:1+blueAfterClaim.requiredNativeInputs,blue:blueAfterClaim.bluePublicPick},
+        {id:"blue-claim",netGain:blueBeforeClaim.netGain,unrealizedPurposeDelta:blueBeforeClaim.unrealizedPurposeDelta,
+          requiredNativeInputs:blueBeforeClaim.requiredNativeInputs,blue:blueBeforeClaim.bluePublicPick},
+      ];
+      rows.sort((a,b)=>b.netGain-a.netGain||a.unrealizedPurposeDelta-b.unrealizedPurposeDelta||a.requiredNativeInputs-b.requiredNativeInputs
+        ||(a.id==="claim-blue"?-1:b.id==="claim-blue"?1:a.id.localeCompare(b.id)));
+      return {...rows[0],task:{cardId:deferredTask.cardId,ruleId:deferredTask.taskId},alternatives:rows};
+    }
+
+    function quietPaidIncomeTail(node,stored,state){
+      const p=state.players.players.find(q=>q.id===seatId),t=state.turn,market=cardPickSpec(node);
+      const deferredTask=p.resources.availableData===2?cappedSectorTaskToKeep(state,p,node):null;
+      if(!p.mainActionCompleted||p.passCompletionPending||p.hand.length||p.resources.availableData!==(deferredTask?2:1)
+        ||p.resources.availableData!==p.dataState.poolTokens.length||stored.intent||stored.resourceControl
+        ||rootPublicLandingOffer||t.roundNumber!==3||t.currentPlayerId!==seatId||t.cardTurnEventBonuses?.length
+        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"
+        ||Object.values(state.aliens.aliens).some(s=>s.revealed&&s.alienId!=="阿米巴"||alienState.isAlienReadyToReveal(s))
+        ||!node.legalActions.some(a=>a.family==="end_turn")||node.legalActions.some(a=>a.family==="complete_task"&&!deferredTask||goalMovement.isDirection(a))
+        ||!hasPostMainInertReservations(state,false,true,true,deferredTask)
+        ||market?.goal?.id!=="income:computer:4"||market.selection?.blind||market.discardIds?.length)return null;
+      const action=node.legalActions.find(a=>a.actionId===market.selectedActionId&&a.family==="quick_trade"&&a.target.tradeId==="publicity-for-card");
+      if(!action)return null;
+      const card=state.cards.publicCards.find(c=>c?.id===market.selection.cardId),known=knownCards(stored.envelope);
+      if(!card||!known.has(card.id)||p.reservedCards.some(c=>!known.has(c.id))
+        ||cards.getDiscardActionRewardForCard(card)?.dataCount||cards.getDiscardActionMoveRewardForCard(card)?.movementPoints)return null;
+      const income=cards.getIncomeGainForCard(card);
+      if(!income||Object.keys(income).length!==1||![income.credits,income.energy].includes(1))return null;
+      const slots=data.listComputerPlacedTokens(p);
+      if(slots.length!==3||slots.some((x,i)=>x.placementSlot!==i+1))return null;
+      const drawCount=state.cards.drawPileCardIds.length,index=state.cards.publicCards.indexOf(card);
+      if(!drawCount||cards.getAvailablePool({...state.cards},state.players).length!==drawCount)return null;
+      const q={...p,resources:{...p.resources},hand:[card]};
+      if(!players.spendResources(q,quickTrades.getTradeAction("publicity-for-card").cost).ok)return null;
+      q.resources.handSize=1;
+      const bought={...state,players:{...state.players,players:state.players.players.map(v=>v===p?q:v)},
+        cards:{...state.cards,publicCards:state.cards.publicCards.map((c,i)=>i===index?null:c),
+          unknownPublicSlotIndices:[...(state.cards.unknownPublicSlotIndices||[]),index],drawPileCardIds:new Array(drawCount-1).fill(null)}};
+      const transition=previewTurn(state);
+      if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||transition.nextPlayerId!==seatId)return null;
+      const after=resourceDemand.planningCapital(bought,q),before=resourceDemand.planningCapital(state,p);
+      if(!quietTailHasNoAcquisition(bought,after))return null;
+      const end=localPlans.quietEndCompletion({state:bought,seatId});
+      if(!end.available||end.netGain!==0||end.markedTiles.length)return null;
+      const incomeGoal={id:"data:income:4",kind:"income",incomeCardId:card.id,targetComputerSlot:4,required:{}};
+      const incomeTail=localPlans.incomeCompletion({state:bought,seatId,goal:incomeGoal});
+      if(!incomeTail.available&&incomeTail.reason||incomeTail.selected)return null;
+      const purchaseValue=stateValue.sumValueParts([stateValue.DEFAULT_WEIGHTS.handSize,
+        (q.resources.publicity-p.resources.publicity)*stateValue.DEFAULT_WEIGHTS.publicity]);
+      const purchaseCapital=stateValue.sumValueParts([after,-before]);
+      if(deferredTask){
+        if(deferredTask.gain!==p.resources.publicity-q.resources.publicity)return null;
+        const follow=paidIncomeWithReadyTask({node,stored,bought,q,transition,deferredTask,drawCount});
+        if(!follow)return null;
+        return {firstActionId:action.actionId,netGain:stateValue.sumValueParts([purchaseValue,purchaseCapital,follow.netGain]),
+          requiredNativeInputs:2+follow.requiredNativeInputs,markedTiles:[],
+          unrealizedPurposeDelta:stateValue.sumValueParts([purchaseCapital,follow.unrealizedPurposeDelta]),
+          paidPublicIncome:{cardId:card.id,index,selected:follow.id,incomeNet:incomeTail.netGain,
+            endDelta:purchaseValue+purchaseCapital,follow}};
+      }
+      const goals=resourceDemand.catalog({state:bought,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(q)}})
+        .filter(g=>g.kind!=="income"||g.incomeCardId!==card.id);
+      let blue=null;
+      if(goals.length===1&&goals[0].id==="data:blue:2"){
+        const start=node.legalActions.find(a=>a.family==="place_data");
+        if(!start)return null;
+        blue=quietBluePublicPick({state:bought,owner:q,node,stored,plan:{goal:goals[0],firstActionId:start.actionId},
+          transition,paidDrawCount:drawCount-1});
+        if(!blue||blue.bluePublicPick?.continuingDataPlans)return null;
+      }else if(goals.length)return null;
+      const delta=stateValue.sumValueParts([after,-before]);
+      const take=blue&&(blue.netGain>0||blue.netGain===0&&blue.unrealizedPurposeDelta<0);
+      const resource=stateValue.sumValueParts([stateValue.DEFAULT_WEIGHTS.handSize,
+        (q.resources.publicity-p.resources.publicity)*stateValue.DEFAULT_WEIGHTS.publicity]);
+      return {firstActionId:action.actionId,netGain:stateValue.sumValueParts([resource,delta,take?blue.netGain:0]),
+        requiredNativeInputs:2+(take?blue.requiredNativeInputs:1),markedTiles:[],
+        unrealizedPurposeDelta:stateValue.sumValueParts([delta,take?blue.unrealizedPurposeDelta:0]),
+        paidPublicIncome:{cardId:card.id,index,selected:take?"blue":"end",blue:blue?.bluePublicPick||null,
+          endDelta:resource+delta,incomeNet:incomeTail.netGain}};
+    }
+
     function turnTailSummary(node,kind="end-turn") {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
-      if(!["end-turn","blue-end-turn","data-end-turn"].includes(kind))throw new Error("ANALYSIS_TURN_TAIL_KIND_INVALID");
+      if(!["end-turn","blue-end-turn","data-end-turn","paid-income-end-turn"].includes(kind))throw new Error("ANALYSIS_TURN_TAIL_KIND_INVALID");
       // A compound live-probe proof is conditional on this policy, including
       // cached proofs when a caller changes the planning mode on the same port.
       if(kind!=="end-turn"&&!movementPlanning&&hasUnprovedProbeCapital(readPlanningState(stored)))return null;
       let variants=turnTailSpecs.get(node);if(variants?.has(kind))return variants.get(kind);
       const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
+      if(kind==="paid-income-end-turn"){
+        const proof=quietPaidIncomeTail(node,stored,state);
+        const answer=proof&&freeze({proof:"seti-known-paid-income-and-blue-tail-v1",kind,...proof,
+          scope:"exact-known-paid-public-card-and-quiet-tail-value",observationAvailable:false,successorEnvelopeAvailable:false});
+        if(!variants){variants=new Map();turnTailSpecs.set(node,variants);}variants.set(kind,answer);return answer;
+      }
       const companyPolicy=kind!=="end-turn"?cardPickSpec(node):null;
       if(kind!=="end-turn"&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"&&(!companyPolicy||companyPolicy.retainedActionIds.includes(a.actionId))))return null;
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
@@ -2280,10 +2861,46 @@
         &&stored.informationBarrier?.code==='hidden_alien_card'
         &&company?.activeAbilityId==='deepspace_swap_cards'&&!hasOwnVisitSource(state)
         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id));
+      const quietR3Computer=state.turn.roundNumber===3&&knownAmibaTail&&company?.activeAbilityId==="deepspace_swap_cards"
+        &&!hasOwnVisitSource(state)&&!rootPublicLandingOffer&&owner.hand.every(c=>knownCards(stored.envelope).has(c.id))
+        &&owner.reservedCards.every(c=>knownCards(stored.envelope).has(c.id))
+        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id));
+      let deferredTask=publicAmibaCurrencyTail&&(kind==="data-end-turn"&&computerPolicy.plans[0].goal.kind==="income"
+        ||kind==="blue-end-turn"&&computerPolicy.plans[0].goal.id==="data:blue:1")?computerPolicy.deferredCappedTask??null:null;
+      const taskBlue=kind==="blue-end-turn"&&publicAmibaCurrencyTail
+        &&computerPolicy.plans[0].goal.id==="data:blue:2"&&owner.resources.publicity===players.RESOURCE_LIMITS.publicity;
+      const taskBlueIncome=kind==="blue-end-turn"&&publicAmibaCurrencyTail&&computerPolicy.plans[0].goal.id==="data:blue:2"
+        &&owner.resources.availableData===2&&data.listComputerPlacedTokens(owner).length===3;
+      const ready=kind==="end-turn"||taskBlue||taskBlueIncome?node.legalActions.filter(a=>a.family==="complete_task"):[];
+      if((publicAmibaPlainEnd||taskBlue)&&ready.length===1&&state.turn.roundNumber===3&&!hasOwnVisitSource(state)){
+        // The audited end/skip sequence changes no wallet or assets. Use the
+        // same post-advance reserve quote on the same solo seat's public facts.
+        const next={...state,players:{...state.players,players:state.players.players.map(p=>p===owner?{...p,mainActionCompleted:false}:p)}};
+        const candidate=localPlans.deferredSectorPublicityQuote({state:next,seatId,knownCards:knownRootCardIds});
+        if(candidate?.cardId===ready[0].target.cardInstanceId&&candidate.taskId===ready[0].target.ruleId)deferredTask=candidate;
+      }
+      if(!deferredTask&&taskBlueIncome&&ready.length===1&&state.turn.roundNumber===3){
+        const {cardInstanceId:cardId,ruleId:taskId}=ready[0].target,card=owner.reservedCards.find(c=>c.id===cardId);
+        const known=card&&localPlans.sectorPublicityReward(card);
+        if(known?.task.id===taskId&&known.model.cardType===2&&!known.model.endGameScoring)
+          deferredTask={cardId,taskId,requiresIncome:true};
+      }
+      const bonuses=state.turn.cardTurnEventBonuses||[];
+      // A completed free route has no pending visit. The production turn-end
+      // handler only clears these score bonuses; ordinary data cannot fire them.
+      const inertVisitBonus=bonuses.length>0&&state.turn.roundNumber===4
+        &&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
+        &&stored.intent?.free===true&&stored.intent.path?.length===0
+        &&stored.intent.startedTurn===state.turn.turnNumber&&stored.intent.startedRound===4
+        &&goalMovementSpec(node)?.reason==="objective-reached"
+        &&bonuses.every(b=>(b.ownerId||b.playerId)===seatId&&b.eventType==="visitPlanet"&&b.duration==="turn"
+          &&!b.publicityToMoveFollowup&&Array.isArray(b.rewards)&&b.rewards.length===1
+          &&b.rewards[0].type==="gain_resources"&&Object.keys(b.rewards[0].options?.gain||{}).length===1
+          &&Number.isSafeInteger(b.rewards[0].options?.gain.score));
       let spec=null;
       if(owner.mainActionCompleted&&!owner.passCompletionPending&&end&&state.turn.currentPlayerId===seatId
         &&quietCompany&&state.turn.activePlayerCount===4
-        &&!owner.industryBorrowedTechTileId&&!state.turn.cardTurnEventBonuses?.length
+        &&!owner.industryBorrowedTechTileId&&(!bonuses.length||inertVisitBonus)
         &&!state.match.initialSetup&&!state.turn.gameEnded&&!state.turn.passedPlayerIds.includes(seatId)
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
         &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail)&&slot.alienId==="阿米巴")&&!alienState.isAlienReadyToReveal(slot))
@@ -2292,30 +2909,69 @@
         // visit-capable guard until their complete event set is proved.
         // Plain end never moves; compound previews below separately certify
         // that no movement policy starts at any intermediate goal boundary.
-        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix)&&!node.legalActions.some(a=>a.family==="complete_task")){
+        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer,deferredTask)
+        &&(deferredTask||!node.legalActions.some(a=>a.family==="complete_task"))){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
             const completion=localPlans.quietEndCompletion({state,seatId});
-            if(completion.available)spec={firstActionId:end.actionId,netGain:completion.netGain,requiredNativeInputs:completion.requiredNativeInputs,markedTiles:completion.markedTiles,
-              ...(publicAmibaPlainEnd?{publicAmibaPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:{} )};
+            if(completion.available&&(!deferredTask||completion.markedTiles.length===0&&completion.netGain===0&&transition.nextPlayerId===seatId))
+              spec={firstActionId:end.actionId,netGain:completion.netGain,requiredNativeInputs:completion.requiredNativeInputs+Number(Boolean(deferredTask)),markedTiles:completion.markedTiles,
+                ...(deferredTask?{deferredPublicity:deferredTask}:{}),
+                ...(publicAmibaPlainEnd?{publicAmibaPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:{} )};
           }
           else{
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail
-              ||publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&localPlans.blueCompletion({state,seatId,goal:plan.goal});
+              ||(publicAmibaCurrencyTail||inertVisitBonus)&&plan?.goal.kind==="blue-data"&&localPlans.blueCompletion({state,seatId,goal:plan.goal});
+            if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.id==="data:blue:1")
+              spec=deferredTask?quietCappedTaskBlueCurrency({state,owner,node,stored,plan,transition,deferredTask})
+                :quietScoredCornerThenBlueCurrency({state,owner,node,stored,plan,transition});
+            if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&plan.goal.blueSlot===2)
+              spec=owner.resources.availableData===0&&!deferredTask?quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition}):
+                quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask});
+            if(kind==="data-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="income"){
+              const income=quietFixedIncomeTail({state,owner,node,stored,plan,policy,transition});
+              if(income)spec=deferredTask?{...income,requiredNativeInputs:income.requiredNativeInputs+1,deferredPublicity:deferredTask}:income;
+            }
+            if(kind==="data-end-turn"&&quietR3Computer&&!deferredTask&&transition.nextPlayerId===seatId
+              &&plan?.goal.targetComputerSlot===3&&policy.fixedComputerTail?.selected
+              &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data")){
+              const tail=localPlans.computerThenScoredCurrency({state,seatId,goal:plan.goal,noAcquisition:quietTailHasNoAcquisition});
+              if(tail)spec={firstActionId:plan.firstActionId,...tail};
+            }
+            // A new direct-END quote must not shadow an existing compound
+            // proof that a multi-turn purpose may still use.
+            const directEnd=spec?.incomeThenQuietEnd||spec?.computerThenQuietEnd?spec:null;
+            if(directEnd)spec=null;
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
             const fixedDataOrdering=stationaryAmibaPrefix||state.turn.roundNumber===4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
               &&hasPostMainInertReservations(state,hasOwnVisitSource(state));
-            if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&(tail.selected||publicAmibaCurrencyTail||fixedDataOrdering))||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
-              let stationary,reachedIntent,noMovementPayment;
+            if(!spec&&!deferredTask&&plan&&((plan.goal.kind==="blue-data"&&tail?.available&&(tail.selected||publicAmibaCurrencyTail||fixedDataOrdering))||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
+              let stationary,reachedIntent,noMovementPayment,checkedNewAcquisition=false;
+              const exactFixedBlueTie=fixedDataOrdering&&state.turn.roundNumber===4&&plan.goal.kind==="income"
+                &&!stored.intent&&!stored.resourceControl
+                &&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId);
+              // The evaluator's sole preparation debt is the known movement
+              // tool quote, which cannot exist in round four. The movement
+              // policy below still verifies no route starts at any boundary.
               const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
               const sourceMoveCards=moveCards(owner);
-              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail||stationaryAmibaPrefix,fixedDataOrdering,stationaryFinalData:stationaryAmibaPrefix,
+              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail||stationaryAmibaPrefix||inertVisitBonus||exactFixedBlueTie,
+                fixedDataOrdering,stationaryFinalData:stationaryAmibaPrefix,exactFixedBlueTie,
                 initialIncomeGoal:plan.goal.kind==="income"?plan.goal:null,initialIncomeTail:policy.incomeTail,
                 firstBlueGoal:(publicAmibaCurrencyTail||fixedDataOrdering)&&plan.goal.kind==="blue-data"?plan.goal:null,
                 canContinue:publicAmibaCurrencyTail||stationaryAmibaPrefix||fixedDataOrdering?(preview,knownSourceCapital)=>{
                   const p=preview.players.players.find(p=>p.id===seatId),cost=quickTrades.getTradeAction('publicity-for-card').cost.publicity;
                   // A newly affordable acquisition is outside this fixed tail.
+                  if(exactFixedBlueTie){
+                    if(owner.resources.publicity<cost&&p.resources.publicity>=cost){
+                      checkedNewAcquisition=true;
+                      const actions=["publicity-for-card","cards-for-pick-card","credits-for-card","energy-for-card"]
+                        .map(quickTrades.getTradeAction).filter(t=>players.canAfford(p,t.cost))
+                        .map(t=>({family:"quick_trade",actionId:t.id,target:{tradeId:t.id},payload:{cost:t.cost}}));
+                      return !cardPickPlanner.plan({state:preview,seatId,status:"stable",actions})?.goal;
+                    }
+                  }
                   if(owner.resources.publicity<cost&&p.resources.publicity>=cost)return false;
                   return !cardPickPlanner.plan({state:preview,seatId,status:"stable",actions:node.legalActions,knownSourceCapital})?.goal;
                 }:null,
@@ -2380,19 +3036,20 @@
                   return stationary&&p.resources.energy<=owner.resources.energy
                     &&p.resources.publicity>=owner.resources.publicity&&moveCards(p)<=sourceMoveCards;
                 }});
-              if(compound.available&&compound.plans[0]?.goal.id===plan.goal.id
+              if(compound.available&&(!checkedNewAcquisition||!compound.primaryOnly)&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
                 spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,...(compound.primaryOnly?{primaryOnly:true}:{}),
-                  ...(publicAmibaCurrencyTail||stationaryAmibaPrefix?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:{})};
-              else if(!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
+                  ...(publicAmibaCurrencyTail||stationaryAmibaPrefix?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:inertVisitBonus||exactFixedBlueTie?{inertVisitBonus,exactFixedBlueTie,unrealizedPurposeDelta:compound.purposeDelta}:{})};
+              else if(!deferredTask&&!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
                 spec={firstActionId:plan.firstActionId,netGain:tail.netGain,requiredNativeInputs:tail.requiredNativeInputs+1,
                   blueSlot:plan.goal.blueSlot,computerPlacements:tail.computerPlacements,incomeCardId:tail.incomeCardId};
             }
+            if(directEnd&&(!spec||spec.primaryOnly))spec=directEnd;
           }
         }
       }
-      spec=spec&&freeze({proof:"seti-audited-company-quiet-turn-tail-value-v2",kind,...spec,
+      spec=spec&&freeze({proof:spec.cappedTaskBlueCurrency?"seti-fixed-blue-currency-and-deferred-task-v1":spec.computerThenQuietEnd?"seti-funded-computer-quiet-end-v1":spec.incomeThenQuietEnd?"seti-fixed-currency-income-quiet-end-v1":spec.computerThenScoredBlue?"seti-computer-prefix-and-scored-blue-v1":spec.incomeThenKnownBlue?"seti-fixed-income-then-public-blue-v1":spec.incomeThenBlueCurrency?"seti-fixed-income-then-blue-currency-v1":spec.bluePublicPick?.taskChoice?"seti-capped-task-and-public-blue-pick-v1":spec.bluePublicPick?"seti-quiet-public-blue-pick-value-v1":"seti-audited-company-quiet-turn-tail-value-v2",kind,...spec,
         scope:kind==="end-turn"?"exact-native-end-turn-and-greedy-final-marks-value":"exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
         observationAvailable:false,successorEnvelopeAvailable:false});
       if(!variants){variants=new Map();turnTailSpecs.set(node,variants);}variants.set(kind,spec);return spec;
@@ -3316,8 +3973,9 @@
     }
 
     function deferredSectorPublicityQuote(node) {
-      if(!resourcePlanning||rootObservation?.publicState.roundNumber!==3
-        ||!["turn-boundary","information-barrier"].includes(node.status))return null;
+      if(!resourcePlanning||rootObservation?.publicState.roundNumber!==3)return null;
+      if(node.status==="turn-tail-value")return node.planSummary.deferredPublicity||null;
+      if(!["turn-boundary","information-barrier"].includes(node.status))return null;
       const stored=nodes.get(node);
       if(!stored?.envelope||stored.envelope.session)return null;
       const state=readIdentityState(stored.envelope),turn=state.turn;
@@ -3348,6 +4006,121 @@
       if(turn.roundNumber!==3||turn.currentPlayerId!==seatId)return null;
       if(node.status!=='turn-tail-value'&&JSON.stringify([turn.roundNumber,turn.turnNumber,turn.actionCycleNumber])===rootTurnKey)return null;
       return localPlans.quoteResearchDataPurpose({state,seatId,purpose});
+    }
+
+    function amibaRegionPurpose() {
+      const stored=nodes.get(openedRoot);
+      if(!openedRoot?.legalActions.some(a=>a.family==="play_card")||!stored)return null;
+      const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
+      if(industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards")return null;
+      return localPlans.amibaRegionFollowup({state,seatId,knownCards:knownCards(stored.envelope)});
+    }
+
+    function amibaRegionNeedsNativeTail(node,purpose) {
+      const stored=nodes.get(node);if(!stored?.envelope)return false;
+      const owner=readPlanningState(stored).players.players.find(p=>p.id===seatId);
+      return owner.reservedCards.some(c=>c.id===purpose.source)&&owner.hand.some(c=>c.id===purpose.card);
+    }
+
+    function quoteAmibaRegionPurpose(node,purpose) {
+      let stored=nodes.get(node);
+      if(node.status==="turn-tail-value"){
+        if(node.planSummary.kind!=="end-turn"||node.planSummary.netGain!==0
+          ||node.planSummary.markedTiles.length||node.planSummary.deferredPublicity)return null;
+        stored=nodes.get(stored.turnTailBase);
+      }else if(node.status!=="turn-boundary")return null;
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readPlanningState(stored),turn=state.turn;
+      if(turn.roundNumber!==3||turn.currentPlayerId!==seatId
+        ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||hasOwnVisitSource(state))return null;
+      if(node.status==="turn-tail-value"){
+        const t=previewTurn(state);if(!t.turnAdvanced||t.roundAdvanced||t.gameEnded||t.nextPlayerId!==seatId)return null;
+      }
+      return localPlans.quoteAmibaRegionFollowup({state,seatId,purpose,continueKnownSwap:(q,owner,capital)=>{
+        if(owner.industryRoundMarkRound===q.turn.roundNumber||owner.hand.length<1
+          ||[...owner.hand,...owner.reservedCards,...q.cards.publicCards.filter(Boolean)].some(c=>!knownCards(stored.envelope).has(c.id)))return null;
+        const action={family:"industry",actionId:"known-region-deepspace-swap",target:{abilityId:"deepspace_swap_cards"}};
+        const policy=cardPickPlanner.plan({state:q,seatId,status:"stable",actions:[action],knownSourceCapital:capital})?.companySwap;
+        if(!policy||policy.goal.kind!=="known-portfolio-swap"||policy.discardIds.length!==1||policy.selection.blind)return null;
+        const incoming=q.cards.publicCards.find(c=>c?.id===policy.selection.cardId);
+        const gain=incoming&&cards.getIncomeGainForCard(incoming);
+        if(!gain||Object.keys(gain).length!==1||!["credits","energy"].some(k=>gain[k]===1))return null;
+        return {value:policy.goal.netGain,incoming:incoming.id,outgoing:policy.discardIds[0]};
+      }});
+    }
+
+    function deferredComputerIncomeSource() {
+      const stored=nodes.get(openedRoot);
+      if(openedRoot?.status!=="stable"||!openedRoot.legalActions.some(a=>a.family==="end_turn"))return null;
+      const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
+      if(!owner.mainActionCompleted||industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards")return null;
+      const purpose=localPlans.deferredComputerIncomeSource({state,seatId,knownCards:knownCards(stored.envelope)});
+      return purpose&&hasPostMainInertReservations(state,false,true,true)?purpose:null;
+    }
+
+    function quoteDeferredComputerIncome(node,source) {
+      let stored=nodes.get(node);
+      if(node.status==="turn-tail-value"){
+        if(node.planSummary.kind!=="end-turn"||node.planSummary.netGain!==0||node.planSummary.markedTiles.length
+          ||node.planSummary.deferredPublicity)return null;
+        stored=nodes.get(stored.turnTailBase);
+      }else if(node.status!=="turn-boundary")return null;
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readPlanningState(stored);
+      if(node.status==="turn-tail-value"){
+        const t=previewTurn(state);
+        if(!t.turnAdvanced||t.roundAdvanced||t.gameEnded||t.nextPlayerId!==seatId)return null;
+      }
+      if(state.tech.stacks[source.tileId]?.bonusIndex!==knownRootTechIndices.get(source.tileId)
+        ||!hasPostMainInertReservations(state,false,true,true))return null;
+      return localPlans.quoteDeferredComputerIncome({state,seatId,knownCards:knownCards(stored.envelope),source});
+    }
+
+    function researchScanPurpose() {
+      const stored=nodes.get(openedRoot),session=stored?.envelope.session?.session;
+      if(session?.journal?.actions?.[0]?.action?.family==='research_tech'&&session.baseState){
+        return localPlans.researchScanPurpose({state:planningState(session.baseState,stored.informationBarrier,knownRootCardIds),seatId,knownCards:knownRootCardIds});
+      }
+      if(!openedRoot?.legalActions.some(a=>a.family==='research_tech'))return null;
+      return localPlans.researchScanPurpose({state:readPlanningState(stored),seatId,knownCards:knownRootCardIds});
+    }
+
+    function quoteResearchScanPurpose(node,purpose) {
+      let stored=nodes.get(node);
+      if(node.status==='turn-tail-value'){
+        if(node.planSummary.kind!=='end-turn'||node.planSummary.netGain!==0||node.planSummary.markedTiles.length)return null;
+        stored=nodes.get(stored.turnTailBase);
+      }else if(!['turn-boundary','information-barrier'].includes(node.status))return null;
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readPlanningState(stored),turn=state.turn;
+      if(turn.roundNumber!==3||turn.currentPlayerId!==seatId||turn.passedPlayerIds.includes(seatId))return null;
+      if(node.status!=='turn-tail-value'&&JSON.stringify([turn.roundNumber,turn.turnNumber,turn.actionCycleNumber])===rootTurnKey)return null;
+      return localPlans.quoteResearchScanPurpose({state,seatId,purpose});
+    }
+
+    function retainedPublicDataCard(node) {
+      let stored=nodes.get(node);
+      if(!resourcePlanning||rootObservation.publicState.roundNumber!==3||!stored)return null;
+      if(node.status==='turn-tail-value'){
+        if(node.planSummary.kind!=='end-turn'||node.planSummary.netGain!==0||node.planSummary.markedTiles.length)return null;
+        stored=nodes.get(stored.turnTailBase);
+      }else if(!['turn-boundary','information-barrier'].includes(node.status))return null;
+      const inherited=envelopeKnowledge.get(stored?.envelope);
+      if(!inherited||stored.envelope.session)return null;
+      const state=readPlanningState(stored),t=state.turn,p=state.players.players.find(p=>p.id===seatId);
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.passedPlayerIds.includes(seatId)
+        ||!t.activePlayerIds?.includes(seatId)||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||p.passCompletionPending||hasOwnVisitSource(state)||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze'))return null;
+      const occupied=data.listComputerPlacedTokens(p).map(token=>token.placementSlot);
+      if(occupied.length<4||occupied.length>5||occupied.some((slot,i)=>slot!==i+1)
+        ||p.resources.availableData<6-occupied.length)return null;
+      const card=p.hand.find(c=>{
+        if(!inherited.ids.has(c.id)||knownRootCardIds.has(c.id))return false;
+        const reward=cards.getDiscardActionRewardForCard(c);
+        return reward?.dataCount===1&&reward.gain?.score===1&&Object.keys(reward.gain).length===1;
+      });
+      return card?{cardId:card.id,computerPlacements:6-occupied.length,dataAvailable:p.resources.availableData}:null;
     }
 
     function valueObservation(node) {
@@ -3390,7 +4163,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

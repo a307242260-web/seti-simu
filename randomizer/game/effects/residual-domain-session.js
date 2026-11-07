@@ -2354,6 +2354,7 @@
     EFFECT_TYPES,
     SPECIES_IDS,
     queryCardSettlement: findCardSettlement,
+    settleReadyTaskDirect,
     listFinalMarkChoices,
     describeEventBonusProgress,
     getCompanyMovementAllowance,
