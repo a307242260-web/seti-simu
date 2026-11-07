@@ -1,0 +1,35 @@
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -818,20 +818,23 @@
+    return knownCards.has(card.id)&&reward?.dataCount===1&&!Object.keys(reward.gain).length&&!cards.getDiscardActionMoveRewardForCard(card);
+   });
+   const symbols=aliens.amiba.listSymbolsInRegion(state.aliens,region);
+-  if(choices.length!==1||symbols.length!==1)return null;
++  if(!choices.length||symbols.length!==1)return null;
+   const {reward}=symbols[0],gain=reward?.gain;
+   if(!gain||Object.keys(gain).join(',')!=='score'||!(gain.score>0)||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard
+     ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=p.resources.score+gain.score))return null;
+   if(p.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(t=>(t.event.types||[t.event.type])
+     .some(type=>['drawCard','drawCards','amiba_symbol_resolved'].includes(type)))))return null;
+-  const {card,action}=choices[0],copy=dataPreviewPlayer(p),preview={...state,meta:structuredClone(state.meta),aliens:structuredClone(state.aliens),
+-   cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===card?null:c)},
+-   players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+-  copy.hand.push(card);copy.resources.handSize=copy.hand.length;
+-  players.gainResources(copy,gain);
+-  if(!aliens.amiba.resolveSymbolAtSlot(preview.aliens,symbols[0].slotId).ok)return null;
+-  const quote=quoteLateAnalysisIncome({state:preview,seatId,knownCards,knownAlienDisplay,minimumHand:3});
+-  return quote?.corners.includes(card.id)?{action,cardId:card.id,quote}:null;
++  const ranked=choices.flatMap(({card,action})=>{
++   const copy=dataPreviewPlayer(p),preview={...state,meta:structuredClone(state.meta),aliens:structuredClone(state.aliens),
++    cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===card?null:c)},
++    players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
++   copy.hand.push(card);copy.resources.handSize=copy.hand.length;
++   players.gainResources(copy,gain);
++   if(!aliens.amiba.resolveSymbolAtSlot(preview.aliens,symbols[0].slotId).ok)return [];
++   const quote=quoteLateAnalysisIncome({state:preview,seatId,knownCards,knownAlienDisplay,minimumHand:3});
++   return quote?.corners.includes(card.id)?[{action,cardId:card.id,quote}]:[];
++  });
++  return ranked.sort((a,b)=>b.quote.value-a.quote.value||a.cardId.localeCompare(b.cardId))[0]||null;
+  }
+  function lateIncomePayment({state,seatId,knownCards,knownAlienDisplay,goals,trade}){
+   const p=owner(state,seatId);
