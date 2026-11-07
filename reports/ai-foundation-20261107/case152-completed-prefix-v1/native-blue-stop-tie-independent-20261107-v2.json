@@ -1,0 +1,202 @@
+{
+  "status": "passed",
+  "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/native-blue-stop-tie-comparison-20261107-v2.json",
+  "reportSha256": "1453552356259cee82e084c083f8336294e500ce22cc491fbb9049ba6df1b7dc",
+  "checkpoint": "reports/ai-foundation-20261107/case152-completed-prefix-v1/native-blue-stop-tie-comparison-20261107-v2.checkpoint.json",
+  "checkpointSha256": "230294cc2186e40249abe389610ba97de1aaa60edc48e546dffdaf9012ed6bca",
+  "independentNativeInputs": 84,
+  "rows": [
+    {
+      "tie": 0,
+      "kind": "prefix",
+      "inputs": 7,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 0,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 0,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 1,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 1,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 1,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 2,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 2,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 2,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 3,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 3,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 3,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 4,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 4,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 4,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 5,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 5,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 5,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 6,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 6,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 6,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 7,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 7,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 7,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 8,
+      "kind": "prefix",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 8,
+      "kind": "stop",
+      "inputs": 1,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "tie": 8,
+      "kind": "continue",
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "allStateSessionRngExact": true
+}

@@ -1,0 +1,1319 @@
+{
+  "scope": "Both named Native exits at nine traced same-primary ties. No claim of state equivalence, new cold sample or autonomous result.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "checkpoint": "reports/ai-foundation-20261107/case152-completed-prefix-v1/native-blue-stop-tie-comparison-20261107-v2.checkpoint.json",
+  "checkpointSha256": "230294cc2186e40249abe389610ba97de1aaa60edc48e546dffdaf9012ed6bca",
+  "rows": [
+    {
+      "index": 0,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6",
+        "data:blue:1"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "stopValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "continueValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 23
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 2,
+        "score": 23
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-26",
+          "index": 8,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 1,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:1"
+      ],
+      "goalId": "data:blue:1",
+      "sourceValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "stopValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "continueValue": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 5,
+        "publicity": 0,
+        "score": 23
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 23
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 2,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "hidden_card_reveal",
+      "continueBoundary": "hidden_card_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 5,
+        "publicity": 8,
+        "score": 21
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 8,
+        "score": 21
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 3,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "hidden_card_reveal",
+      "continueBoundary": "hidden_card_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 5,
+        "publicity": 6,
+        "score": 23
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 23
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 4,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 7,
+        "score": 23
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 7,
+        "score": 23
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 5,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 9,
+        "score": 21
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 9,
+        "score": 21
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 6,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 9,
+        "score": 21
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 9,
+        "score": 21
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 7,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:3"
+      ],
+      "goalId": "data:blue:3",
+      "sourceValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState",
+        "blueBonusResources"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 9,
+        "score": 21
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 9,
+        "score": 21
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    },
+    {
+      "index": 8,
+      "fromMovement": false,
+      "prefixGoals": [
+        "data:computer-prefix:6"
+      ],
+      "continueGoals": [
+        "data:blue:1"
+      ],
+      "goalId": "data:blue:1",
+      "sourceValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "continueValue": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "stopStatus": "information-barrier",
+      "continueStatus": "information-barrier",
+      "stopBoundary": "tech_bonus_reveal",
+      "continueBoundary": "tech_bonus_reveal",
+      "stopInputs": 1,
+      "continueInputs": 4,
+      "preference": "stop",
+      "firstDifference": 3,
+      "assetDifferences": [
+        "resources",
+        "hand",
+        "dataState"
+      ],
+      "stopResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 23
+      },
+      "continueResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 8,
+        "score": 23
+      },
+      "stopPlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        }
+      ],
+      "continuePlaced": [
+        {
+          "id": "data-token-8",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-9",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-10",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-11",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-17",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-18",
+          "index": 6,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-25",
+          "index": 7,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "sameRuleRng": true,
+      "previewNonLedgerDifferences": []
+    }
+  ],
+  "controlNativeExecutions": 76,
+  "rootAndRngRestored": true,
+  "newAutonomousRuns": 0
+}

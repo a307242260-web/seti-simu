@@ -1,0 +1,58 @@
+{
+  "sourceAdmitted": false,
+  "baselineUnchanged": "V41",
+  "newAutonomousRuns": 0,
+  "reportRows": [
+    {
+      "report": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-primary-bound-proofs-20261107-v1.json",
+      "diagnosticMilliseconds": 823.43175,
+      "nativeInputs": 256,
+      "materializedProofRows": 65,
+      "entireRowsMatchIndependentReference": true
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-target-distance-proofs-20261107-v2.json",
+      "diagnosticMilliseconds": 765.426458,
+      "nativeInputs": 256,
+      "materializedProofRows": 65,
+      "entireRowsMatchIndependentReference": true
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-shallow-distance-proofs-20261107-v3.json",
+      "diagnosticMilliseconds": 753.105542,
+      "nativeInputs": 256,
+      "materializedProofRows": 65,
+      "entireRowsMatchIndependentReference": true
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-geometry-only-proofs-20261107-v4.json",
+      "diagnosticMilliseconds": 747.7539999999999,
+      "nativeInputs": 256,
+      "materializedProofRows": 65,
+      "entireRowsMatchIndependentReference": true
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-card-history-key-proofs-20261107-v5.json",
+      "diagnosticMilliseconds": 731.9674160000001,
+      "nativeInputs": 256,
+      "materializedProofRows": 65,
+      "entireRowsMatchIndependentReference": true,
+      "movementTimingMisses": 172
+    }
+  ],
+  "timingKeyMergedPairFieldDifferences": {
+    "industryPlayedCardThisRound": 72,
+    "industryLastPlayedCardThisRound": 72,
+    "industryPlayedCardRound": 72,
+    "industryPlayedCardTurn": 72,
+    "blueBonusResources": 7
+  },
+  "timingKeyChangesInstalled": false,
+  "completeIndependentReference": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-independent-native-verification-20261107-v5.json",
+  "stopContinueIndependent": "reports/ai-foundation-20261107/case152-completed-prefix-v1/native-blue-stop-tie-independent-20261107-v2.json",
+  "knownLimitations": [
+    "Only current tested R4 domain. Need whole source gate. No new official cold run.",
+    "Paid distance-only terminal/malformed API behavior needs explicit rejection parity before adoption."
+  ],
+  "inMemoryKeyParity": "reports/ai-foundation-20261107/case152-primary-bound-v1/card-history-key-native-parity-20261107-v4.json"
+}

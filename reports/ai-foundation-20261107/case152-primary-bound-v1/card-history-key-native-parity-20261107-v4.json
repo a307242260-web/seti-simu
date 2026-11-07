@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "scope": "Full Native timing fields on all observed misses; paired diagnostic timings only, no search or cold gate. No production changes.",
+  "cases": 237,
+  "boundaryCases": 8,
+  "uniqueCompactKeys": 172,
+  "skippedDuplicateMisses": 65,
+  "outsideScopeExactKey": true,
+  "cardHistoryMutationSameNativeTiming": true,
+  "zeroDistance": 0,
+  "unreachable": 0,
+  "alternatives": 1234,
+  "oldMilliseconds": 171.4957510000003,
+  "newMilliseconds": 107.5124940000002,
+  "prototype": "reports/ai-foundation-20261107/case152-primary-bound-v1/production-kernel-card-history-key-prototype-20261107-v4.js",
+  "prototypeSha256": "eb89622dccfa44db1da186b4e641f3ebb9993b2374cfd97e00d2d7273643e831",
+  "checkpoint": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "checkpointSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "newAutonomousRuns": 0,
+  "sourceUntouched": true
+}

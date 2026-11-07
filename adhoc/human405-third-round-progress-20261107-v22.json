@@ -1,0 +1,43 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: delivered 291/900 conservative Native tie fallback and 777 witness inputs, 05a8bae4d.",
+  "thisGoalTurnClassification": "progress: nine Native stop/continue pairs exact primary/secondary, differing assets, 1vs4 distance; independent84 inputs. 8 strict losing-data bounds regain256 Native with exact winning rank. Target-only Native distance, shallow preview, narrow R4 card-history key yield731.967416 diagnostic;237+8 exact timing cases,172 cache misses. No source admission or game.",
+  "production": "V278/V48",
+  "candidate": "V314/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "sourceHashesUnchanged": 179,
+  "nativeTieAudit": {
+    "pairs": 9,
+    "controlSubmissions": 76,
+    "independentInputs": 84,
+    "stopWinsOnDistance": 9,
+    "assetEquivalent": false
+  },
+  "prototype": {
+    "nativeInputs": 256,
+    "diagnosticMilliseconds": 731.9674160000001,
+    "installed": false,
+    "officialColdGateRun": false,
+    "selected": "place_data:50a9ac16",
+    "value": 49,
+    "preparationDebt": 0,
+    "realization": -7,
+    "distance": 26,
+    "strictDataBounds": 8,
+    "fullNativeWitnessRowsReused": 65,
+    "nativeWitnessInputs": 785,
+    "timingCases": 237,
+    "boundaryCases": 8,
+    "timingMisses": 172
+  },
+  "document": "docs/human405-case152-primary-bound-20261107.md",
+  "nextContract": "adhoc/case152-after-primary-bound-next-20261107-v1.md",
+  "next": "Profile Native expansion and state/session copies, then justified new source cold <=256/600 and full gates. Preserve complete teacher R3 alignment, actual first2 assets, original23 first3 and R2 review.",
+  "newAutonomousRuns": 0,
+  "newScore": false,
+  "baseline": "V41",
+  "autonomousFirst3Run": false,
+  "developmentAligned": false
+}

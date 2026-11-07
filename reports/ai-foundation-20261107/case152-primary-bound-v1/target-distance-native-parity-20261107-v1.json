@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "scope": "Full Native timing fields on all observed misses; paired diagnostic timings only, no search or cold gate. No production changes.",
+  "cases": 237,
+  "zeroDistance": 0,
+  "unreachable": 0,
+  "alternatives": 1234,
+  "oldMilliseconds": 160.00938099999973,
+  "newMilliseconds": 113.02344899999942,
+  "prototype": "reports/ai-foundation-20261107/case152-primary-bound-v1/production-kernel-target-distance-prototype-20261107-v1.js",
+  "prototypeSha256": "ddb2a4c30fb6ff998521db91754cdd3c592a461d1ca0cbb094a0f9edbb433644",
+  "checkpoint": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "checkpointSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "newAutonomousRuns": 0,
+  "sourceUntouched": true
+}

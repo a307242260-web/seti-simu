@@ -1,0 +1,148 @@
+{
+  "status": "passed",
+  "scope": "Controlled Native timing API parity, not a game or fresh gate. Inputs deep-frozen.",
+  "prototype": "reports/ai-foundation-20261107/case152-primary-bound-v1/production-kernel-shallow-distance-prototype-20261107-v2.js",
+  "prototypeSha256": "7fc24e1d5477f600dced7003b7b4f957e4469b84ecf69ad87dfcc528a8c5e192",
+  "sourceTrace": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "sourceTraceSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "checkpoint": "reports/ai-foundation-20261107/case152-primary-bound-v1/distance-boundary-controls-20261107-v3.checkpoint.json",
+  "checkpointSha256": "f77b505ebf14174907d7d0fcbd66d7eca9c61abca49892357914181a883c877c",
+  "rows": [
+    {
+      "name": "missing-native-target",
+      "result": {
+        "value": {
+          "comparable": false,
+          "reason": "target-unreachable-after-rotation",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "borrowed-movement-tech",
+      "result": {
+        "value": {
+          "comparable": false,
+          "reason": "temporary-or-company-movement-context",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "temporary-move-effect",
+      "result": {
+        "value": {
+          "comparable": false,
+          "reason": "temporary-or-company-movement-context",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "company-free-movement",
+      "result": {
+        "value": {
+          "comparable": false,
+          "reason": "temporary-or-company-movement-context",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "paid-wallet-changed",
+      "result": {
+        "value": {
+          "comparable": true,
+          "assumption": "one-known-solar-rotation-before-the-future-goal",
+          "rotationCount": 1,
+          "waitPaidPoints": 3,
+          "bestPrefixLength": 2,
+          "bestTotalPaidPoints": 1,
+          "classification": "advance-before-rotation",
+          "alternatives": [
+            {
+              "prefixLength": 0,
+              "totalPaidPoints": 3,
+              "remainingPaidPoints": 3
+            },
+            {
+              "prefixLength": 1,
+              "prefixMovementPoints": 1,
+              "totalPaidPoints": 2,
+              "remainingPaidPoints": 2
+            },
+            {
+              "prefixLength": 2,
+              "prefixMovementPoints": 3,
+              "totalPaidPoints": 1,
+              "remainingPaidPoints": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "free-prefix-credit",
+      "result": {
+        "value": {
+          "comparable": true,
+          "assumption": "one-known-solar-rotation-before-the-future-goal",
+          "rotationCount": 1,
+          "waitPaidPoints": 3,
+          "bestPrefixLength": 1,
+          "bestTotalPaidPoints": 2,
+          "classification": "advance-before-rotation",
+          "alternatives": [
+            {
+              "prefixLength": 0,
+              "totalPaidPoints": 3,
+              "remainingPaidPoints": 3
+            },
+            {
+              "prefixLength": 1,
+              "prefixMovementPoints": 1,
+              "totalPaidPoints": 2,
+              "remainingPaidPoints": 2
+            },
+            {
+              "prefixLength": 2,
+              "prefixMovementPoints": 3,
+              "totalPaidPoints": 2,
+              "remainingPaidPoints": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "stale-move-cost",
+      "result": {
+        "errorName": "Error",
+        "message": "PROBE_PLAN_MOVE_COST_INVALID"
+      }
+    },
+    {
+      "name": "zero-paid-distance",
+      "result": {
+        "value": {
+          "comparable": true,
+          "assumption": "one-known-solar-rotation-before-the-future-goal",
+          "rotationCount": 1,
+          "waitPaidPoints": 0,
+          "bestPrefixLength": 0,
+          "bestTotalPaidPoints": 0,
+          "classification": "defer",
+          "alternatives": [
+            {
+              "prefixLength": 0,
+              "totalPaidPoints": 0,
+              "remainingPaidPoints": 0
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "sourceAndRngUntouched": true,
+  "newAutonomousRuns": 0
+}
