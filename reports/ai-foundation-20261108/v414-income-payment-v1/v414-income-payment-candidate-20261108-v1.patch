@@ -1,0 +1,179 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -819,6 +819,21 @@
+       return result;
+     }
+ 
++    function lateIncomePayment(state,stored,actions,goals){
++      if(state.turn.roundNumber!==3)return null;
++      const trade=actions.find(a=>a.family==='quick_trade'&&a.target?.tradeId==='cards-for-credit');
++      if(!trade)return null;
++      const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
++      if(p.mainActionCompleted||p.resources.energy!==0||p.resources.credits!==0||p.resources.availableData!==1||p.hand.length!==5
++        ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
++        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
++        ||!hasOwnVisitSource(state)||!hasPostMainInertReservations(state,true,true,true))return null;
++      const next=previewTurn(state);
++      if(!next.turnAdvanced||next.roundAdvanced||next.gameEnded||next.nextPlayerId!==seatId)return null;
++      const knownAlienDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex??null;
++      return localPlans.lateIncomePayment({state,seatId,knownCards:knownCards(stored.envelope),knownAlienDisplay,goals,trade});
++    }
++
+     function quietScoredIncomeState(state,stored){
+       const p=state.players.players.find(p=>p.id===seatId),t=state.turn;
+       return t.roundNumber===3&&t.currentPlayerId===seatId&&p.mainActionCompleted&&!p.passCompletionPending
+@@ -929,7 +944,7 @@
+       const cardPick=cardPickSpec(node);
+       if(cardPick?.fixed){resourceSpecs.set(node,null);return null;}
+       const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
+-      let goals=[],source=null,operation={},incomeTail=null,blueTails=[],computerTail=null;
++      let goals=[],source=null,operation={},incomeTail=null,blueTails=[],computerTail=null,protectedIncome=null;
+       if(stored.resourceControl){
+         const control=stored.resourceControl,step=resourceStep(node,control.goal,control.operation);
+         const ids=step.kind==="fallback"?step.actionIds:step.actionId?[step.actionId]:[];
+@@ -957,6 +972,8 @@
+           }
+         }
+         goals=resourceCatalog(state,node.legalActions);
++        protectedIncome=lateIncomePayment(state,stored,node.legalActions,goals);
++        if(protectedIncome)goals=goals.map(g=>g.id===protectedIncome.goal.id?protectedIncome.goal:g);
+         if(node.legalActions.some(a=>a.family==="place_data"||a.family==="card_corner"&&a.payload?.kind==="resource")){
+           const supply=blueLandingGoalFor(state);if(supply)goals=[...goals,supply];
+         }
+@@ -969,9 +986,12 @@
+       }else{
+         source=session?.journal?.actions?.[0]?.action;
+         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
+-          goals=resourceCatalog(planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)),[source])
+-            .filter(goal=>{
+-              const first=resourceDemand.step({state:planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)),seatId,goal,actions:[source],status:"stable"});
++          const base=planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope));
++          goals=resourceCatalog(base,[source]);
++          protectedIncome=lateIncomePayment(base,stored,[source],goals);
++          if(protectedIncome)goals=goals.map(g=>g.id===protectedIncome.goal.id?protectedIncome.goal:g);
++          goals=goals.filter(goal=>{
++              const first=resourceDemand.step({state:base,seatId,goal,actions:[source],status:"stable"});
+               return first.actionId===source.actionId||first.kind==="fallback"&&first.actionIds.includes(source.actionId);
+             });
+           operation={placing:source.family==="place_data",finalPlacement:false};
+@@ -1146,7 +1166,7 @@
+       const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
+       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+         plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation):plans,
+-        ...(deferredCappedTask?{deferredCappedTask}:{}),
++        ...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
+         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
+         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
+         ...(sharedDataFunding?{sharedDataFunding}:{}),
+@@ -4225,6 +4245,31 @@
+     function analysisFundingSource(){
+       const root=nodes.get(openedRoot),session=root?.envelope.session?.session;
+       const visible=openedRoot?.observation.publicState.players.find(p=>p.playerId===seatId);
++      if(visible?.energy===0&&visible.availableData===1&&visible.dataProgress?.computerSlots.length===6
++        &&visible.handCount>=2&&visible.handCount<=5&&visible.credits<=1){
++        const source=session?.journal?.actions?.[0]?.action;
++        const payable=source?.family==='quick_trade'&&source.target?.tradeId==='cards-for-credit';
++        const play=source?.family==='play_card'||openedRoot.legalActions.some(a=>a.family==='play_card');
++        const trade=openedRoot.legalActions.some(a=>a.family==='quick_trade'&&a.target?.tradeId==='cards-for-credit');
++        if(payable||play||trade){
++          const late=session?.baseState||readPlanningState(root),p=late.players.players.find(q=>q.id===seatId),t=late.turn;
++          if(!p.mainActionCompleted&&t.roundNumber===3&&hasOwnVisitSource(late)
++            &&industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
++            &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))
++            return {lateElectricity:true,turn:t.turnNumber,minimumHand:3};
++        }
++      }
++      if(visible?.credits===0&&visible.energy===0&&visible.availableData===3&&visible.handCount===4
++        &&visible.dataProgress?.computerSlots.length===4
++        &&(session?.journal?.actions?.[0]?.action?.family==='research_tech'||openedRoot.legalActions.some(a=>a.family==='research_tech'))){
++        const state=session?.baseState||readPlanningState(root),p=state.players.players.find(q=>q.id===seatId),t=state.turn;
++        const launch=state.tech.stacks.orange1;
++        if(t.roundNumber===3&&!p.mainActionCompleted&&!p.techState.ownedTiles.orange1&&launch?.remaining>0
++          &&launch.bonusIndex===knownRootTechIndices.get('orange1')&&launch.bonusId==='bonus_1c'
++          &&!hasOwnVisitSource(state)&&industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
++          &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))
++          return {lateElectricity:true,turn:t.turnNumber};
++      }
+       if(!visible||visible.credits!==0)return null;
+       if(visible.energy===0&&visible.handCount>=4&&visible.handCount<=5&&visible.availableData>=1&&visible.availableData<=3
+         &&(session?.journal?.actions?.[0]?.action?.family==='place_data'||openedRoot.legalActions.some(a=>a.family==='end_turn'))){
+@@ -4279,7 +4324,7 @@
+           if(!hasPostMainInertReservations(state,true,true,true)||!t.turnAdvanced||t.roundAdvanced||t.gameEnded||t.nextPlayerId!==seatId)return null;
+         }
+         const knownAlienDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex??null;
+-        const quote=localPlans.quoteLateAnalysisIncome({state,seatId,knownCards:known,knownAlienDisplay});
++        const quote=localPlans.quoteLateAnalysisIncome({state,seatId,knownCards:known,knownAlienDisplay,minimumHand:purpose.minimumHand});
+         analysisFundingQuotes.set(node,quote);
+         return quote;
+       }
+diff --git a/randomizer/game/ai/local-decision-plans.js b/randomizer/game/ai/local-decision-plans.js
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -748,6 +748,47 @@
+   const quote=quoteLateAnalysisIncome({state:preview,seatId,knownCards,knownAlienDisplay,minimumHand:3});
+   return quote?.corners.includes(card.id)?{action,cardId:card.id,quote}:null;
+  }
++ function lateIncomePayment({state,seatId,knownCards,knownAlienDisplay,goals,trade}){
++  const p=owner(state,seatId);
++  if(p.mainActionCompleted||p.passCompletionPending||p.resources.credits!==0||p.resources.energy!==0||p.resources.availableData!==1
++    ||p.hand.length!==5||data.listComputerPlacedTokens(p).length!==6
++    ||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
++    ||trade?.payload?.cost?.handSize!==2||Object.keys(trade.payload.cost).length!==1
++    ||trade.payload.gain?.credits!==1||Object.keys(trade.payload.gain).length!==1)return null;
++  const plays=goals.flatMap(goal=>{
++   if(goal.kind!=='play_card'||goal.required.credits!==1||Object.keys(goal.required).length!==1)return [];
++   const card=p.hand.find(c=>c.id===goal.cardId);
++   if(!card||card.set!=='alien:阿米巴'||effects.getCardModel(card)?.cardType!==3)return [];
++   const play=effects.buildPlayEffects(card),cost=effects.getCardPlayCost(card);
++   return cost.credits===1&&Object.keys(cost).length===1&&play.length===2&&play[0].type==='pick_card'&&play[0].options?.count===1
++    &&play[1].type===aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD&&play[1].options?.region
++     ?[{goal,card,region:play[1].options.region}]:[];
++  });
++  if(plays.length!==1)return null;
++  const {goal,card,region}=plays[0];
++  const income=p.hand.filter(c=>{
++   const gain=cards.getIncomeGainForCard(c),corner=cards.getDiscardActionRewardForCard(c);
++   return c!==card&&gain?.energy===1&&Object.keys(gain).length===1&&!(corner?.dataCount>0);
++  }).sort((a,b)=>(cards.getDiscardActionRewardForCard(a)?.gain?.publicity||0)-(cards.getDiscardActionRewardForCard(b)?.gain?.publicity||0)
++    ||a.id.localeCompare(b.id))[0];
++  if(!income)return null;
++  // Slot 2 supplies one publicity. Preserve a different held corner
++  // only when it uniquely pays the otherwise unfunded following research.
++  const researchGap=tech.getResearchPublicityCost(p)-p.resources.publicity-(data.getComputerSlotBonus(2)?.publicity||0);
++  const research=researchGap>0&&tech.listTakeableTiles(state.tech,p.techState).length
++   ?p.hand.filter(c=>c!==card&&c!==income&&cards.getDiscardActionRewardForCard(c)?.gain?.publicity===researchGap):[];
++  const goalWithSupplier={...goal,continuationCardId:income.id,...(research.length===1?{retainedResearchCardId:research[0].id}:{})};
++  if(!demand.paymentCards(state,seatId,goal,2)?.includes(income.id))return null;
++  const discard=demand.paymentCards(state,seatId,goalWithSupplier,2);
++  if(!discard||!demand.capacity(state,seatId,goalWithSupplier))return null;
++  const copy=dataPreviewPlayer(p),preview={...state,players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
++  copy.hand=copy.hand.filter(c=>c!==card&&!discard.includes(c.id));copy.resources.handSize=copy.hand.length;
++  copy.reservedCards=[...copy.reservedCards,card];copy.mainActionCompleted=true;
++  const offers=state.cards.publicCards.filter(Boolean).map(card=>({card}));
++  const proof=quoteLatePublicDataPick({state:preview,seatId,knownCards,knownAlienDisplay,region,offers});
++  if(proof?.quote?.incomeCardId!==income.id)return null;
++  return {goal:goalWithSupplier,proof:{discard,incomeCardId:income.id,pickCardId:proof.cardId,retainedResearchCardId:goalWithSupplier.retainedResearchCardId??null,forecast:proof.quote}};
++ }
+  function deferredPublicityTask({state,seatId,actions,session,payload}){
+   const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
+   if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
+@@ -1225,5 +1266,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ });
+diff --git a/randomizer/game/ai/resource-demand.js b/randomizer/game/ai/resource-demand.js
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -35,7 +35,7 @@
+       publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
+     return d;
+   }
+-  const protectedCard=(c,g)=>!c.id||c.id===g.cardId||c.id===g.incomeCardId||c.id===g.continuationCardId;
++  const protectedCard=(c,g)=>!c.id||c.id===g.cardId||c.id===g.incomeCardId||c.id===g.continuationCardId||c.id===g.retainedResearchCardId;
+   const targetSlot=(p,g)=>g.publicityData&&p.resources.publicity>=(g.required.publicity||0)?0:g.targetComputerSlot||0;
+   const deficit=d=>Object.values(d).reduce((n,v)=>n+v,0);
+   function capacity(state,seatId,goal,allowBlue=true){
