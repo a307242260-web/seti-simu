@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "label": "r3-blue1-before-dlc19",
+      "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json"
+    },
+    {
+      "label": "r3-blue1-dlc19-held",
+      "fixture": "reports/ai-foundation-20261107/v368-sector-task-swap-v1/v367-r3-blue1-dlc19-held-root-20261107-v1.json"
+    },
+    {
+      "label": "r3-blue1-dlc19-task-funded",
+      "fixture": "reports/ai-foundation-20261107/v368-sector-task-swap-v1/v367-r3-blue1-dlc19-task-funded-root-20261107-v1.json"
+    }
+  ]
+}

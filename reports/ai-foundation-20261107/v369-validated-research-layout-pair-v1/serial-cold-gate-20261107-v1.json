@@ -1,0 +1,53 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/v369-validated-research-layout-pair-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "0e0e663fc58f70b0efb6abf33f2b18aec2268ea0fbb30f68a2d7060b392ca7ec",
+  "cases": 1268,
+  "rows": [
+    {
+      "label": "r3-blue1-before-dlc19",
+      "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+      "identity": "963883ac51943666c6d680fba2a9a67f90ba2c0b3469d84d41eb85c7e9e39bd7",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v369-cold-r3-blue1-before-dlc19-20261107-v1.json",
+      "nativeInputs": 57,
+      "milliseconds": 128.600666,
+      "value": 159.5,
+      "actionId": "industry:e887dc52",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v369-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 613.882375,
+      "value": 127.5,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 2,
+  "maxNativeInputs": 106,
+  "maxMilliseconds": 613.882375,
+  "failure": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v369-cold-income-before-amiba-20261107-v1.json",
+    "nativeInputs": 106,
+    "milliseconds": 613.882375,
+    "value": 127.5,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

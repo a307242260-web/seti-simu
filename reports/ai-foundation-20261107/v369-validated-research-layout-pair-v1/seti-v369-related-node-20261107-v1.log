@@ -1,0 +1,13 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"companyFixedIntent":"passed","reusedNativeControlInputs":3,"runs":[{"stage":0,"submissions":3,"reuses":2,"recoveries":0},{"stage":1,"submissions":2,"reuses":1,"recoveries":1},{"stage":2,"submissions":1,"reuses":0,"recoveries":1}],"changedContextGuards":8,"warmColdCompleteNativeState":true,"ruleRngPreserved":true,"siblingIntentIsolation":true,"rootRestored":true,"newAiQueries":0,"newAutonomousRuns":0}
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+{"researchComparisonLoop":"passed","jointCases":4093,"capitalCases":432,"fullPortfolios":1536,"referencePurposeGainCalls":108308,"candidatePurposeGainCalls":93860,"fullComponentsAndPlansExact":true,"mutableInputsAndCustomWeightsPreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":10,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+SUMMARY unit passed=5 failed=0 total=5 time=8.71s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=1
