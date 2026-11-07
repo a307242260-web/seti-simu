@@ -1,0 +1,833 @@
+{
+  "scope": "Actual standard runs with identical Native opening, early asset parity separated from change to scoring rules and estimated terminal points.",
+  "priorProof": "reports/ai-foundation-20261108/v397-source-admission-v1/v397-first3-native-development-20261108-v1.json",
+  "priorProofSha256": "d33cd85eaa72726f18594e3f1e63719cf80a9f42ea8a3bc148ac26a5cd4a9d4d",
+  "currentProof": "reports/ai-foundation-20261108/v398-scan-timing-v1/v398-first3-native-development-20261108-v1.json",
+  "currentProofSha256": "0ad27e80b694f0d848fc462cb122a15f8ae1a3b030a233f36ccf4ad9124feac6",
+  "equalInitialActions": 178,
+  "earlyAssetParity": true,
+  "comparisons": [
+    {
+      "round": 1,
+      "changedFields": [],
+      "teacherChangedFields": [],
+      "oldScore": 15,
+      "newScore": 15,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      }
+    },
+    {
+      "round": 2,
+      "changedFields": [],
+      "teacherChangedFields": [],
+      "oldScore": 48,
+      "newScore": 48,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      }
+    },
+    {
+      "round": 3,
+      "changedFields": [
+        "technology",
+        "hand",
+        "reserved",
+        "probes",
+        "sectorWins",
+        "scanProgress",
+        "alienPreinvestments",
+        "traceCounts",
+        "projectedFinalScore"
+      ],
+      "teacherChangedFields": [],
+      "oldScore": 101,
+      "newScore": 101,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      }
+    }
+  ],
+  "oldFromFirstDifference": [
+    {
+      "input": 179,
+      "actor": "player-white",
+      "family": "research_tech",
+      "target": {
+        "kind": "research-tech"
+      },
+      "summary": "研究科技"
+    },
+    {
+      "input": 180,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "tech:blue1:slot:3",
+        "tileId": "blue1",
+        "blueSlot": 3
+      },
+      "summary": "研究 blue1（蓝槽 3）"
+    },
+    {
+      "input": 181,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 182,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-0-1"
+      },
+      "summary": "amiba_0.webp"
+    },
+    {
+      "input": 183,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "symbol:blue_1",
+        "slotId": "blue_1",
+        "region": "blue",
+        "symbolId": "symbol_3"
+      },
+      "summary": "blue_1（4分）"
+    },
+    {
+      "input": 184,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 185,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 5"
+    },
+    {
+      "input": 186,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 187,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "summary": "blue1 下方"
+    },
+    {
+      "input": 188,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 189,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-3-3"
+      },
+      "summary": "amiba_3.webp"
+    },
+    {
+      "input": 190,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:pink:1",
+        "traceType": "pink",
+        "position": 1,
+        "region": "red"
+      },
+      "summary": "粉色痕迹 1号位"
+    },
+    {
+      "input": 191,
+      "actor": "player-white",
+      "family": "industry",
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "summary": "深空探测 1x 行动"
+    },
+    {
+      "input": 192,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "hand:alien-amiba-1-2",
+        "cardInstanceId": "alien-amiba-1-2"
+      },
+      "summary": "amiba_1.webp"
+    },
+    {
+      "input": 193,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "public:0:card-60-0",
+        "slotIndex": 0,
+        "cardInstanceId": "card-60-0"
+      },
+      "summary": "dlc_25.png"
+    },
+    {
+      "input": 194,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 195,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 196,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 6"
+    },
+    {
+      "input": 197,
+      "actor": "player-white",
+      "family": "analyze",
+      "target": {
+        "kind": "computer",
+        "requiredSlot": 6
+      },
+      "summary": "分析"
+    },
+    {
+      "input": 198,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:1:blue:amiba:4",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "blue",
+        "speciesId": "amiba",
+        "position": 4
+      },
+      "summary": "外星人 1 蓝4号位（1分+外星人牌）"
+    },
+    {
+      "input": 199,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:display:7",
+        "source": "display",
+        "cardIndex": 7
+      },
+      "summary": "获得展示的基因组表征"
+    },
+    {
+      "input": 200,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 201,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-7-10"
+      },
+      "summary": "amiba_7.webp"
+    },
+    {
+      "input": 202,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "choiceId": "public:0",
+        "source": "public",
+        "slotIndex": 0
+      },
+      "summary": "amiba_1.webp"
+    },
+    {
+      "input": 203,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "symbol:blue_2",
+        "slotId": "blue_2",
+        "region": "blue",
+        "symbolId": "symbol_5"
+      },
+      "summary": "blue_2（2分）"
+    },
+    {
+      "input": 204,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 205,
+      "actor": "player-white",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "alien-amiba-9-5"
+      },
+      "summary": "amiba_9.webp：弃牌角标"
+    },
+    {
+      "input": 206,
+      "actor": "player-white",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-60-0"
+      },
+      "summary": "dlc_25.png：弃牌角标"
+    },
+    {
+      "input": 207,
+      "actor": "player-white",
+      "family": "research_tech",
+      "target": {
+        "kind": "research-tech"
+      },
+      "summary": "研究科技"
+    },
+    {
+      "input": 208,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "tech:orange3",
+        "tileId": "orange3",
+        "blueSlot": null
+      },
+      "summary": "研究 orange3"
+    },
+    {
+      "input": 209,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 210,
+      "actor": "player-white",
+      "family": "pass",
+      "target": {
+        "kind": "pass"
+      },
+      "summary": "PASS"
+    },
+    {
+      "input": 211,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-30-pass-3-1",
+        "cardId": "b_111.webp"
+      },
+      "summary": "b_111.webp"
+    }
+  ],
+  "newFromFirstDifference": [
+    {
+      "input": 179,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-3-3"
+      },
+      "summary": "amiba_3.webp"
+    },
+    {
+      "input": 180,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:blue:1",
+        "traceType": "blue",
+        "position": 1,
+        "region": "blue"
+      },
+      "summary": "蓝色痕迹 1号位"
+    },
+    {
+      "input": 181,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 182,
+      "actor": "player-white",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "input": 183,
+      "actor": "player-white",
+      "family": "choose_payment",
+      "target": {
+        "kind": "discard-hand-card",
+        "cardInstanceId": "alien-amiba-1-2",
+        "select": true
+      },
+      "summary": "amiba_1.webp"
+    },
+    {
+      "input": 184,
+      "actor": "player-white",
+      "family": "choose_payment",
+      "target": {
+        "kind": "discard-hand-card",
+        "cardInstanceId": "alien-amiba-0-1",
+        "select": true
+      },
+      "summary": "amiba_0.webp"
+    },
+    {
+      "input": 185,
+      "actor": "player-white",
+      "family": "choose_payment",
+      "target": {
+        "kind": "confirm",
+        "confirm": true
+      },
+      "summary": "确认弃牌（2/2）"
+    },
+    {
+      "input": 186,
+      "actor": "player-white",
+      "family": "scan",
+      "target": {
+        "kind": "standard-scan"
+      },
+      "summary": "扫描"
+    },
+    {
+      "input": 187,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "nebula:sector-3-a",
+        "nebulaId": "sector-3-a",
+        "sectorX": 7
+      },
+      "summary": "扫描 开普勒22"
+    },
+    {
+      "input": 188,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "choiceId": "public:card-61-0:sector-3-a",
+        "cardInstanceId": "card-61-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-3-a"
+      },
+      "summary": "dlc_24.png → 开普勒22"
+    },
+    {
+      "input": 189,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:1:pink:amiba:2",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink",
+        "speciesId": "amiba",
+        "position": 2
+      },
+      "summary": "外星人 1 粉2号位（1分）"
+    },
+    {
+      "input": 190,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 191,
+      "actor": "player-white",
+      "family": "accept_optional_effect",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "skip:task:card-15-0:dlc9-three-sector-wins"
+      },
+      "summary": "跳过 dlc_9.png"
+    },
+    {
+      "input": 192,
+      "actor": "player-white",
+      "family": "research_tech",
+      "target": {
+        "kind": "research-tech"
+      },
+      "summary": "研究科技"
+    },
+    {
+      "input": 193,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "tech:purple1",
+        "tileId": "purple1",
+        "blueSlot": null
+      },
+      "summary": "研究 purple1"
+    },
+    {
+      "input": 194,
+      "actor": "player-white",
+      "family": "complete_task",
+      "target": {
+        "cardInstanceId": "card-15-0",
+        "ruleId": "dlc9-three-sector-wins"
+      },
+      "summary": "完成 dlc_9.png"
+    },
+    {
+      "input": 195,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 196,
+      "actor": "player-white",
+      "family": "research_tech",
+      "target": {
+        "kind": "research-tech"
+      },
+      "summary": "研究科技"
+    },
+    {
+      "input": 197,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "tech:blue4:slot:3",
+        "tileId": "blue4",
+        "blueSlot": 3
+      },
+      "summary": "研究 blue4（蓝槽 3）"
+    },
+    {
+      "input": 198,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 199,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 5"
+    },
+    {
+      "input": 200,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 201,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "summary": "blue4 下方"
+    },
+    {
+      "input": 202,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 203,
+      "actor": "player-white",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "alien-amiba-9-5"
+      },
+      "summary": "amiba_9.webp：弃牌角标"
+    },
+    {
+      "input": 204,
+      "actor": "player-white",
+      "family": "research_tech",
+      "target": {
+        "kind": "research-tech"
+      },
+      "summary": "研究科技"
+    },
+    {
+      "input": 205,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "tech:blue1:slot:4",
+        "tileId": "blue1",
+        "blueSlot": 4
+      },
+      "summary": "研究 blue1（蓝槽 4）"
+    },
+    {
+      "input": 206,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 207,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 6"
+    },
+    {
+      "input": 208,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 209,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:4",
+        "target": "blueBonus",
+        "blueSlot": 4
+      },
+      "summary": "blue1 下方"
+    },
+    {
+      "input": 210,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 211,
+      "actor": "player-white",
+      "family": "launch",
+      "target": null,
+      "summary": "发射"
+    },
+    {
+      "input": 212,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 213,
+      "actor": "player-white",
+      "family": "analyze",
+      "target": {
+        "kind": "computer",
+        "requiredSlot": 6
+      },
+      "summary": "分析"
+    },
+    {
+      "input": 214,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:1:blue:amiba:4",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "blue",
+        "speciesId": "amiba",
+        "position": 4
+      },
+      "summary": "外星人 1 蓝4号位（1分+外星人牌）"
+    },
+    {
+      "input": 215,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:display:7",
+        "source": "display",
+        "cardIndex": 7
+      },
+      "summary": "获得展示的基因组表征"
+    },
+    {
+      "input": 216,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 217,
+      "actor": "player-white",
+      "family": "pass",
+      "target": {
+        "kind": "pass"
+      },
+      "summary": "PASS"
+    },
+    {
+      "input": 218,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-30-pass-3-1",
+        "cardId": "b_111.webp"
+      },
+      "summary": "b_111.webp"
+    }
+  ],
+  "newAutonomousRuns": 0
+}
