@@ -1,0 +1,19 @@
+{
+  "scope": "V307 exact central region-result/moved-symbol repetition count inside analysis quote; no memo implemented, every central Native call still executes. Wallet/draw/trace/scoring/greedy candidate continuation never shared. Instrumented cost only, not acceptance timing. Full roots exact.",
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "stats": {
+    "quoteCalls": 1971,
+    "regionalCalls": 7292,
+    "withinQuoteRepeatedRegions": 5469,
+    "allRepeatedRegions": 7284,
+    "uniqueRegionalInputs": 8,
+    "instrumentedRegionalMilliseconds": 13.375413999999438,
+    "instrumentedWithinQuoteRepeatedMilliseconds": 9.340862000000897
+  },
+  "allRepeatedFormalResultsAndMovedSymbolsExact": true,
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,17 @@
+/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:306
+      if(Object.entries(requirements.scanCost).some(([k,v])=>p.resources[k]<v))add({id:'scan:standard',kind:'scan',required:requirements.scanCost});
+                ^
+
+TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Object.catalog (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:306:17)
+    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:23)
+    at compare (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/fixed-tail-capital-carry.test.js:11:103)
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/fixed-tail-capital-carry.test.js:14:106)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+
+Node.js v22.22.0

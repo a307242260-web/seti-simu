@@ -1,0 +1,17 @@
+{
+  "scope": "V307 complete facts/weights/base typed-input repetition for funded computer4+ local Amiba candidate construction only. v8 hash diagnostic may miss alias encodings; every reported repeat rechecked with full deep equality of snapshotted inputs and every local candidate field excluding callback-derived planNetGain. Portfolio callback still always executes, identity-sensitive income-prefix excluded, no memo implemented. Instrumented local elapsed excludes portfolio calls, not acceptance timing.",
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "stats": {
+    "quoteCalls": 1971,
+    "eligibleLocalQuotes": 926,
+    "completeInputRepeats": 129,
+    "uniqueEligibleInputs": 797,
+    "instrumentedLocalMilliseconds": 43.33412599999906,
+    "instrumentedRepeatedLocalMilliseconds": 6.317713999999796
+  },
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

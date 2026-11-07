@@ -1,0 +1,16 @@
+{
+  "scope": "One in-memory prototype of default-weight scalar technology-color delta reuse in existing complete-signature64 FIFO. No runtime file changes, no Native state/identity caching, no acceptance timing/cold resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "stats": {
+    "gainCalls": 32084,
+    "gainMemoHits": 27352,
+    "totalCalls": 62315
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

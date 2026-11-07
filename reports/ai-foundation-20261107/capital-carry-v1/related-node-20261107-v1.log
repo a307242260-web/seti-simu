@@ -1,0 +1,15 @@
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":97,"nativeTailControls":21,"nativeTailInputs":86,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaPlainEnd":true,"nativeEndControls":2,"earnedBRealizationDelta":-8,"actualPendingEffectsDecline":true,"noInventedObservation":true,"rootAndRngRestored":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"fixedTailCapitalCarry":"passed","frames":17,"cases":547,"available":159,"selectedPlans":66,"marked":14,"incomeSources":12,"mutations":51,"referencePlanningCapitalCalls":646,"candidatePlanningCapitalCalls":378,"allPublicFieldsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"localPreviewCopy":"passed","NativePrefixCases":9,"mutableAndFrozenCases":114,"referenceWholePlayerClones":42,"candidateWholePlayerClones":0,"fullPlanResultsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"productionPostMainPlan":"passed","actualInputs":12,"reusedPrefixes":10,"freshNativeAtEveryPrefix":true,"changedDependenciesRejected":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"r4CompanyTail":"passed","fullRootActionsGoalsValuesCompletionsExact":true,"baselineNativeInputs":263,"actualNativeInputs":245,"provedTailCount":13,"materializedNativeInputs":67,"independentNativeInputsReused":67,"noNewCardOrNativeObservationFromProof":true,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"winningDataPreparationNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":8}
+SUMMARY unit passed=11 failed=0 total=11 time=5.35s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=10
+OWNER policy/state-value tests=1

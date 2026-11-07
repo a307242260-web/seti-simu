@@ -1,0 +1,47 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V305 strict single-research score ceiling proved9072bounds/1824plans/7fallbacks,10Node7Chrome65audit+old1; first668.866417 fails. V306 sameNative explicit immutable reward query saves54994 temporary quotes, independent full module graphs1824 exact,15Node8Chrome65audit+old1; first672.901375 fails. CurrentCPU and exact high-level pairs locate61 stable mutable re-computations~25.88ms. No autonomous score.",
+  "thisGoalTurnClassification": "progress: V307 private fixed-tail capital endpoints,54fullfact/547public-result exact and meaningful oldsource failure;11Node5Chrome65audit+old1; first162/649.217583failed. Four complete-root-preserving current diagnostics reject lowyield region/localfullkey memo and locate lowerportfolio callbacks for next investigation. No autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V307/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "sourceHashesUnchangedAfterFreeze": 140,
+  "V307": {
+    "NativeInputs": 162,
+    "milliseconds": 649.217583,
+    "complete": true,
+    "relatedNodePassed": 11,
+    "fullNodeRegressionRun": false,
+    "BrowserPassed": 5,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "fullFactCases": 54,
+    "publicResultCases": 547,
+    "referencePublicCapitalCalls": 646,
+    "candidatePublicCapitalCalls": 378,
+    "realTailNativeMaterializations": 67
+  },
+  "coldGate": {
+    "cases": 1258,
+    "measured": 1,
+    "failure": "actual-v256-132",
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "diagnostics": {
+    "directory": "reports/ai-foundation-20261107/post-capital-carry-runtime-v1/",
+    "queries": 4,
+    "analysisQuoteCalls": 1971,
+    "sameQuoteRepeatedRegionCalls": 5469,
+    "regionMemoImplemented": false,
+    "completeLocalInputRepeats": 129,
+    "completeLocalInputMemoImplemented": false,
+    "cpuSamples": 2386,
+    "cloneCalls": 11042
+  },
+  "newAutonomousRuns": 0,
+  "document": "docs/human405-fixed-tail-capital-carry-20261107.md",
+  "next": "Inspect Amiba incomePreparation/future-source lower-portfolio callback recomputation by exact complete input and identity-sensitive callback obligations, before new reuse design; region-only9.34ms/local-key6.32ms insufficient so no blind cache. Need new-source256/600, full1258/Node/Browser/audit admission, actualfirst2 assets, original23 autonomousfirst3 andR2end review. Teacher105 complete development not aligned; V41 unchanged."
+}

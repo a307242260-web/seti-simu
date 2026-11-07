@@ -1,0 +1,1388 @@
+{
+  "scope": "V307 structuredClone exact caller diagnostic after failed first cold sample; count/clone duration plus JSON size only, instrumented overhead not acceptance timing. No copy removed, every current serialized root/value/action/completion and Native/RNG exact.",
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "rows": [
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.restoreCheckpoint (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:913:36)\n    at Object.restore (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:901:23)",
+      "calls": 140,
+      "milliseconds": 27.483882000000364,
+      "serializedCodeUnits": 5024058
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at Object.beginWorkingCopy (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:359:16)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:506:19)",
+      "calls": 22,
+      "milliseconds": 4.009039000000001,
+      "serializedCodeUnits": 757642
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:184:17)\n    at Object.projectCounterfactualState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:4:829)",
+      "calls": 73,
+      "milliseconds": 2.5052499999999753,
+      "serializedCodeUnits": 550183
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at publish (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:442:33)\n    at finishIfTerminal (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:670:7)",
+      "calls": 74,
+      "milliseconds": 2.171162000000038,
+      "serializedCodeUnits": 469658
+    },
+    {
+      "stack": "    at previewIncomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:106:121)\n    at Object.incomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:113:61)\n    at Object.resourceSpec (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:837:40)",
+      "calls": 58,
+      "milliseconds": 2.1276699999995685,
+      "serializedCodeUnits": 437878
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at finishIfTerminal (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:664:18)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:680:14)",
+      "calls": 74,
+      "milliseconds": 2.0772530000004394,
+      "serializedCodeUnits": 448840
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:128)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:851:35",
+      "calls": 59,
+      "milliseconds": 1.9814140000001998,
+      "serializedCodeUnits": 445365
+    },
+    {
+      "stack": "    at previewIncomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:106:86)\n    at Object.incomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:113:61)\n    at Object.resourceSpec (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:837:40)",
+      "calls": 58,
+      "milliseconds": 1.9009999999994989,
+      "serializedCodeUnits": 234750
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:683:18)\n    at Object.submitDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:785:14)",
+      "calls": 75,
+      "milliseconds": 1.708244999999863,
+      "serializedCodeUnits": 329305
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:128)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:274:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 48,
+      "milliseconds": 1.6595839999998816,
+      "serializedCodeUnits": 363008
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:93)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:851:35",
+      "calls": 59,
+      "milliseconds": 1.6111700000004134,
+      "serializedCodeUnits": 238779
+    },
+    {
+      "stack": "    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/known-symbol-capital.js:56:19)\n    at purposeCapitalWithoutTools (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:490:78)\n    at purposeCapitalWithoutPublicityPreparation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:495:17)",
+      "calls": 773,
+      "milliseconds": 1.5741389999982687,
+      "serializedCodeUnits": 159249
+    },
+    {
+      "stack": "    at Object.pureOptional (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:70:18)\n    at localDecisionSpec (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:738:331)\n    at resourceStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:773:19)",
+      "calls": 8,
+      "milliseconds": 1.40545800000001,
+      "serializedCodeUnits": 277896
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at commit (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:419:22)\n    at advance (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:703:46)",
+      "calls": 43,
+      "milliseconds": 1.3745390000002828,
+      "serializedCodeUnits": 284443
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:93)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:274:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 48,
+      "milliseconds": 1.3732520000000932,
+      "serializedCodeUnits": 194460
+    },
+    {
+      "stack": "    at Object.pureOptional (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:70:18)\n    at Object.localDecisionSpec (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:738:331)\n    at add (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:245:99)",
+      "calls": 8,
+      "milliseconds": 1.3631240000001412,
+      "serializedCodeUnits": 277896
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:159:25\n    at Array.map (<anonymous>)",
+      "calls": 292,
+      "milliseconds": 1.3534649999995878,
+      "serializedCodeUnits": 127896
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at getDecisionSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:287:26)\n    at Object.resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:732:24)",
+      "calls": 140,
+      "milliseconds": 1.0588320000004217,
+      "serializedCodeUnits": 232567
+    },
+    {
+      "stack": "    at previewIncomeTail (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:571:151)\n    at incomeTailCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:235:19)\n    at computerIncomeValue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:221:17)",
+      "calls": 161,
+      "milliseconds": 0.9516260000007151,
+      "serializedCodeUnits": 89163
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:256:51\n    at Array.map (<anonymous>)",
+      "calls": 724,
+      "milliseconds": 0.8114020000004984,
+      "serializedCodeUnits": 86640
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:93:11\n    at Array.map (<anonymous>)",
+      "calls": 503,
+      "milliseconds": 0.8099909999998829,
+      "serializedCodeUnits": 100072
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at commit (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:419:22)\n    at Object.resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:784:46)",
+      "calls": 31,
+      "milliseconds": 0.782543000000345,
+      "serializedCodeUnits": 164397
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at executeRegisteredAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:422:12)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:31:22",
+      "calls": 4,
+      "milliseconds": 0.773333000000008,
+      "serializedCodeUnits": 137684
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:314:33)\n    at Object.inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:630:21)",
+      "calls": 228,
+      "milliseconds": 0.7517090000007158,
+      "serializedCodeUnits": 112193
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/goal-movement.js:79:85\n    at Array.map (<anonymous>)\n    at Object.plan (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/goal-movement.js:79:66)",
+      "calls": 350,
+      "milliseconds": 0.749421000000666,
+      "serializedCodeUnits": 95718
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at getDecisionSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:287:26)\n    at advance (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:672:26)",
+      "calls": 88,
+      "milliseconds": 0.686247000000094,
+      "serializedCodeUnits": 143101
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at getDecisionSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:287:26)\n    at Object.inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:295:11)",
+      "calls": 88,
+      "milliseconds": 0.6645829999999648,
+      "serializedCodeUnits": 143101
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:183:20)\n    at Object.projectCounterfactualState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:4:829)",
+      "calls": 73,
+      "milliseconds": 0.6378339999996427,
+      "serializedCodeUnits": 60590
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at loadCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:304:19)\n    at Object.createStateStore (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:327:21)",
+      "calls": 2,
+      "milliseconds": 0.6209580000000017,
+      "serializedCodeUnits": 46724
+    },
+    {
+      "stack": "    at buildProbeCandidateStructures (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:779:21)\n    at buildProbeRouteRequirements (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:630:21)\n    at Object.getProbeRouteRequirements (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1888:12)",
+      "calls": 140,
+      "milliseconds": 0.5967499999989627,
+      "serializedCodeUnits": 63960
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at Object.getSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:336:25)\n    at readStoreSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:390:17)",
+      "calls": 3,
+      "milliseconds": 0.5345409999999902,
+      "serializedCodeUnits": 103041
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at Object.validate (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:284:54)\n    at Object.save (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:835:34)",
+      "calls": 3,
+      "milliseconds": 0.5136669999999981,
+      "serializedCodeUnits": 103041
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at validate (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:284:54)\n    at Object.serialize (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:477:26)",
+      "calls": 3,
+      "milliseconds": 0.48279100000000597,
+      "serializedCodeUnits": 103041
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.submitDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:784:63)\n    at executeCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1180:26)",
+      "calls": 140,
+      "milliseconds": 0.4640889999998876,
+      "serializedCodeUnits": 69804
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizePublicPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:119:16)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:172:30",
+      "calls": 292,
+      "milliseconds": 0.43904299999928753,
+      "serializedCodeUnits": 22114
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1709:22\n    at Array.map (<anonymous>)\n    at hasPostMainInertReservations (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1708:44)",
+      "calls": 194,
+      "milliseconds": 0.4082510000002344,
+      "serializedCodeUnits": 53034
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeResultArray (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:40:12)\n    at applyResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:602:18)",
+      "calls": 257,
+      "milliseconds": 0.3982859999996151,
+      "serializedCodeUnits": 25593
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:169:13\n    at Array.map (<anonymous>)",
+      "calls": 146,
+      "milliseconds": 0.3865029999997631,
+      "serializedCodeUnits": 43381
+    },
+    {
+      "stack": "    at Object.previewIncomeTail (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:571:151)\n    at previewIncomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:105:24)\n    at Object.incomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:113:61)",
+      "calls": 58,
+      "milliseconds": 0.3731240000001321,
+      "serializedCodeUnits": 31806
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:181:18)\n    at Object.projectCounterfactualState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:4:829)",
+      "calls": 73,
+      "milliseconds": 0.37274700000016026,
+      "serializedCodeUnits": 40321
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at appendReplayStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:198:12)\n    at Object.resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:778:7)",
+      "calls": 140,
+      "milliseconds": 0.3680829999995012,
+      "serializedCodeUnits": 69804
+    },
+    {
+      "stack": "    at project (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:491:31)\n    at preparations (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:502:42)\n    at Object.step (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:664:24)",
+      "calls": 124,
+      "milliseconds": 0.3567919999998992,
+      "serializedCodeUnits": 50880
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizePublicPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:120:13)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:172:30",
+      "calls": 292,
+      "milliseconds": 0.3428660000005266,
+      "serializedCodeUnits": 27448
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:762:11)\n    at Object.submitDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:784:32)",
+      "calls": 140,
+      "milliseconds": 0.3390839999999571,
+      "serializedCodeUnits": 56108
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:776:17)\n    at Object.submitDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:784:32)",
+      "calls": 140,
+      "milliseconds": 0.3307970000005014,
+      "serializedCodeUnits": 56108
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:175:30\n    at Array.map (<anonymous>)",
+      "calls": 292,
+      "milliseconds": 0.3266309999989261,
+      "serializedCodeUnits": 14965
+    },
+    {
+      "stack": "    at dataPreviewPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:116:119)\n    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:118:36)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)",
+      "calls": 61,
+      "milliseconds": 0.32420700000000124,
+      "serializedCodeUnits": 33183
+    },
+    {
+      "stack": "    at previewIncomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:106:162)\n    at Object.incomeCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:113:61)\n    at Object.resourceSpec (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:837:40)",
+      "calls": 58,
+      "milliseconds": 0.3221639999997592,
+      "serializedCodeUnits": 25404
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:65:16)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:86:9",
+      "calls": 196,
+      "milliseconds": 0.30399899999960667,
+      "serializedCodeUnits": 21024
+    },
+    {
+      "stack": "    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:225:26)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:32)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:382:19)",
+      "calls": 48,
+      "milliseconds": 0.2954979999998386,
+      "serializedCodeUnits": 34023
+    },
+    {
+      "stack": "    at Object.previewIncomeTail (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:571:151)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:262:26)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 48,
+      "milliseconds": 0.28421099999991384,
+      "serializedCodeUnits": 27216
+    },
+    {
+      "stack": "    at dataPreviewPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:116:119)\n    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:118:36)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:274:18)",
+      "calls": 48,
+      "milliseconds": 0.28391499999986536,
+      "serializedCodeUnits": 28704
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:169)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:851:35",
+      "calls": 59,
+      "milliseconds": 0.28349900000000616,
+      "serializedCodeUnits": 25842
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeFinalScoringState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:193:12)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:186:25)",
+      "calls": 73,
+      "milliseconds": 0.2804239999996412,
+      "serializedCodeUnits": 26499
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at loadCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:312:27)\n    at Object.createStateStore (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:327:21)",
+      "calls": 2,
+      "milliseconds": 0.26737399999998956,
+      "serializedCodeUnits": 46724
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at projectionInner (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:622:59)\n    at Object.projection (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:604:14)",
+      "calls": 2,
+      "milliseconds": 0.25391600000006065,
+      "serializedCodeUnits": 42106
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:169)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:274:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 48,
+      "milliseconds": 0.22954400000020314,
+      "serializedCodeUnits": 21024
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:73)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:294:13)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 49,
+      "milliseconds": 0.22229300000014973,
+      "serializedCodeUnits": 21462
+    },
+    {
+      "stack": "    at previewTurn (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:519:70)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2191:26)\n    at Object.searchDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:542:123)",
+      "calls": 58,
+      "milliseconds": 0.21529799999990473,
+      "serializedCodeUnits": 28246
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeCard (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:65:27)\n    at Array.map (<anonymous>)",
+      "calls": 247,
+      "milliseconds": 0.2082550000001362,
+      "serializedCodeUnits": 2290
+    },
+    {
+      "stack": "    at Object.getPublicSymbolState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/aliens/amiba.js:555:167)\n    at sanitizeAlienPublicState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:171:23)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:192:17)",
+      "calls": 73,
+      "milliseconds": 0.2073319999999228,
+      "serializedCodeUnits": 24354
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.enumerateActions (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:793:62)\n    at legalActions (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:134:31)",
+      "calls": 1,
+      "milliseconds": 0.18012499999998965,
+      "serializedCodeUnits": 34347
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:185:24)\n    at Object.projectCounterfactualState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:4:829)",
+      "calls": 73,
+      "milliseconds": 0.17550000000044008,
+      "serializedCodeUnits": 12045
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at committedProjection (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:590:62)\n    at projectionInner (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:608:34)",
+      "calls": 1,
+      "milliseconds": 0.17520899999999529,
+      "serializedCodeUnits": 34347
+    },
+    {
+      "stack": "    at Object.settleRocketsAfterSolarRotation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/abilities/rocket.js:621:83)\n    at context.rotateSolarOrbit (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:161:31)\n    at rotateForResearch (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:333:34)",
+      "calls": 16,
+      "milliseconds": 0.17400100000014618,
+      "serializedCodeUnits": 35392
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at loadCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:304:19)\n    at Object.deserialize (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:324:14)",
+      "calls": 1,
+      "milliseconds": 0.17279200000000117,
+      "serializedCodeUnits": 34435
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:73)\n    at dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:294:13)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:283:17)",
+      "calls": 34,
+      "milliseconds": 0.1721669999999449,
+      "serializedCodeUnits": 14892
+    },
+    {
+      "stack": "    at Object.getPublicTraceState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/aliens/amiba.js:562:83)\n    at sanitizeAlienPublicState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:171:64)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:192:17)",
+      "calls": 73,
+      "milliseconds": 0.17137600000081932,
+      "serializedCodeUnits": 10962
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:37:12)\n    at loadCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:312:27)\n    at Object.deserialize (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/state-store.js:324:14)",
+      "calls": 1,
+      "milliseconds": 0.1640000000000157,
+      "serializedCodeUnits": 34435
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:66:15)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:86:9",
+      "calls": 174,
+      "milliseconds": 0.1624979999993741,
+      "serializedCodeUnits": 11615
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at installStore (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:575:46)\n    at Object.restore (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:920:9)",
+      "calls": 1,
+      "milliseconds": 0.16158300000000736,
+      "serializedCodeUnits": 34435
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:73)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:283:101)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 34,
+      "milliseconds": 0.1594550000000936,
+      "serializedCodeUnits": 14892
+    },
+    {
+      "stack": "    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:389:37)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1872:24)",
+      "calls": 8,
+      "milliseconds": 0.15708500000005188,
+      "serializedCodeUnits": 29824
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeResultArray (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:40:12)\n    at applyResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:604:19)",
+      "calls": 111,
+      "milliseconds": 0.15408100000004765,
+      "serializedCodeUnits": 11616
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:124:60)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:851:35",
+      "calls": 59,
+      "milliseconds": 0.14983099999977867,
+      "serializedCodeUnits": 23836
+    },
+    {
+      "stack": "    at project (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:491:31)\n    at preparations (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:502:42)\n    at analysisPublicityFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:419:20)",
+      "calls": 51,
+      "milliseconds": 0.1480809999997632,
+      "serializedCodeUnits": 20604
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeCard (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:66:25)\n    at Array.map (<anonymous>)",
+      "calls": 247,
+      "milliseconds": 0.14104300000126102,
+      "serializedCodeUnits": 494
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:124:60)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:274:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 48,
+      "milliseconds": 0.12787500000041518,
+      "serializedCodeUnits": 19392
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:32)\n    at dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:294:13)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:283:17)",
+      "calls": 34,
+      "milliseconds": 0.11737800000003062,
+      "serializedCodeUnits": 13736
+    },
+    {
+      "stack": "    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:225:26)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:32)\n    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:370:16)",
+      "calls": 18,
+      "milliseconds": 0.11270700000045508,
+      "serializedCodeUnits": 12672
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:32)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:294:13)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 49,
+      "milliseconds": 0.11141800000029889,
+      "serializedCodeUnits": 19796
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at committedProjection (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:591:9)\n    at projectionInner (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:608:34)",
+      "calls": 70,
+      "milliseconds": 0.11049900000011803,
+      "serializedCodeUnits": 4183
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:683:18)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:721:22)",
+      "calls": 10,
+      "milliseconds": 0.10691599999992718,
+      "serializedCodeUnits": 15360
+    },
+    {
+      "stack": "    at Object.getPublicSymbolState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/aliens/amiba.js:555:93)\n    at sanitizeAlienPublicState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:171:23)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:192:17)",
+      "calls": 73,
+      "milliseconds": 0.10387400000000468,
+      "serializedCodeUnits": 7564
+    },
+    {
+      "stack": "    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:390:29)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1872:24)",
+      "calls": 8,
+      "milliseconds": 0.1010419999999499,
+      "serializedCodeUnits": 21152
+    },
+    {
+      "stack": "    at takeSelectedTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:288:25)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:433:24)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.09766700000017181,
+      "serializedCodeUnits": 21152
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at finishIfTerminal (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:658:12)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:680:14)",
+      "calls": 74,
+      "milliseconds": 0.09691800000030071,
+      "serializedCodeUnits": 3860
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:882:29\n    at Array.flatMap (<anonymous>)\n    at probeEndpointOwnMarkers (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:880:28)",
+      "calls": 99,
+      "milliseconds": 0.09171099999966259,
+      "serializedCodeUnits": 4257
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at findCardSettlement (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:921:18)\n    at cardDecisionChoices (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:961:28)",
+      "calls": 48,
+      "milliseconds": 0.08750000000014779,
+      "serializedCodeUnits": 8256
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at resolveScanStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1178:22)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1353:16)",
+      "calls": 46,
+      "milliseconds": 0.08550000000039404,
+      "serializedCodeUnits": 4094
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at finishIfTerminal (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:665:30)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:680:14)",
+      "calls": 60,
+      "milliseconds": 0.08454199999968637,
+      "serializedCodeUnits": 6301
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeSelfPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:153:29)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:138:19)",
+      "calls": 73,
+      "milliseconds": 0.08041299999986506,
+      "serializedCodeUnits": 2993
+    },
+    {
+      "stack": "    at quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:32)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:283:101)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 34,
+      "milliseconds": 0.07946399999951836,
+      "serializedCodeUnits": 13736
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at makeChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:1216:18)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:1987:11",
+      "calls": 124,
+      "milliseconds": 0.07595899999952849,
+      "serializedCodeUnits": 248
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:200:34)\n    at Object.projectState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1689:62)\n    at committedProjection (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:587:33)",
+      "calls": 70,
+      "milliseconds": 0.07045800000001634,
+      "serializedCodeUnits": 4183
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.createRuleComposition (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:373:7)\n    at Object.createProductionComposition (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-composition.js:991:52)",
+      "calls": 1,
+      "milliseconds": 0.06979100000000926,
+      "serializedCodeUnits": 12289
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:797:56\n    at Object.runWithWorkingState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1653:16)",
+      "calls": 77,
+      "milliseconds": 0.06917000000049711,
+      "serializedCodeUnits": 154
+    },
+    {
+      "stack": "    at buildProbeCandidateStructures (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:779:21)\n    at buildProbeRouteRequirements (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:630:21)\n    at projectedRequirements (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1501:36)",
+      "calls": 14,
+      "milliseconds": 0.06883300000001213,
+      "serializedCodeUnits": 6396
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeFinalScoringState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:196:19)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:186:25)",
+      "calls": 73,
+      "milliseconds": 0.0642099999996617,
+      "serializedCodeUnits": 1825
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeResultArray (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:40:12)\n    at applyResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:603:15)",
+      "calls": 68,
+      "milliseconds": 0.06408000000010361,
+      "serializedCodeUnits": 1272
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1578:255\n    at Array.map (<anonymous>)\n    at Object.rememberPlan (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1564:41)",
+      "calls": 11,
+      "milliseconds": 0.06274899999993977,
+      "serializedCodeUnits": 15915
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:334:30)\n    at Object.inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:630:21)",
+      "calls": 54,
+      "milliseconds": 0.06229400000034957,
+      "serializedCodeUnits": 5797
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:691:9)\n    at executeCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1186:28)",
+      "calls": 14,
+      "milliseconds": 0.05804400000008059,
+      "serializedCodeUnits": 3720
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at appendReplayStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:198:12)\n    at dispatchAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:577:7)",
+      "calls": 22,
+      "milliseconds": 0.05774899999997274,
+      "serializedCodeUnits": 7645
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at findCardSettlement (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:924:16)\n    at cardDecisionChoices (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:961:28)",
+      "calls": 48,
+      "milliseconds": 0.05354099999999562,
+      "serializedCodeUnits": 5040
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at dispatchAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:551:11)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:538:14)",
+      "calls": 22,
+      "milliseconds": 0.05087500000016121,
+      "serializedCodeUnits": 6114
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:568:9)\n    at dispatchAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:549:20)",
+      "calls": 22,
+      "milliseconds": 0.04575099999976828,
+      "serializedCodeUnits": 6114
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at normalizeGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:81:15)\n    at dispatchAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:562:17)",
+      "calls": 22,
+      "milliseconds": 0.04574800000017376,
+      "serializedCodeUnits": 6114
+    },
+    {
+      "stack": "    at Object.quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:73)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2194:41)\n    at Object.searchDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:542:123)",
+      "calls": 9,
+      "milliseconds": 0.04374999999993179,
+      "serializedCodeUnits": 3942
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:40:34)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:203:31)\n    at Object.projectCounterfactualState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:4:829)",
+      "calls": 73,
+      "milliseconds": 0.0434169999999483,
+      "serializedCodeUnits": 146
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at dispatchAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:571:17)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:538:14)",
+      "calls": 22,
+      "milliseconds": 0.04328899999973146,
+      "serializedCodeUnits": 6114
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeSelfPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:155:24)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:138:19)",
+      "calls": 73,
+      "milliseconds": 0.04321100000039735,
+      "serializedCodeUnits": 146
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeSelfPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:156:16)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:138:19)",
+      "calls": 73,
+      "milliseconds": 0.04183400000006543,
+      "serializedCodeUnits": 146
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeFinalScoringState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:194:12)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:186:25)",
+      "calls": 73,
+      "milliseconds": 0.04091699999962373,
+      "serializedCodeUnits": 146
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:522:11)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:690:34)",
+      "calls": 14,
+      "milliseconds": 0.039752999999933536,
+      "serializedCodeUnits": 3720
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:42:34)\n    at sanitizeSelfPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/simulation-contract.js:157:23)\n    at buildRuleObservation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/app/rule-observation.js:138:19)",
+      "calls": 73,
+      "milliseconds": 0.03966599999995424,
+      "serializedCodeUnits": 146
+    },
+    {
+      "stack": "    at Object.settleRocketsAfterSolarRotation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/abilities/rocket.js:620:72)\n    at context.rotateSolarOrbit (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:161:31)\n    at rotateForResearch (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:333:34)",
+      "calls": 16,
+      "milliseconds": 0.034166999999968084,
+      "serializedCodeUnits": 3728
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at resolveScanStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1219:31)",
+      "calls": 24,
+      "milliseconds": 0.03387699999981919,
+      "serializedCodeUnits": 1728
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:128)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at knownPostdrawDataView (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1333:52)",
+      "calls": 1,
+      "milliseconds": 0.03237500000000182,
+      "serializedCodeUnits": 7487
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:128)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 1,
+      "milliseconds": 0.032042000000046755,
+      "serializedCodeUnits": 7487
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.enumerateActions (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:804:22)\n    at legalActions (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:134:31)",
+      "calls": 1,
+      "milliseconds": 0.03200000000001069,
+      "serializedCodeUnits": 4439
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:128)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2200:84)",
+      "calls": 1,
+      "milliseconds": 0.031833000000005995,
+      "serializedCodeUnits": 7487
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at resolveScanStep (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1220:27)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1353:16)",
+      "calls": 24,
+      "milliseconds": 0.029708000000084667,
+      "serializedCodeUnits": 1440
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at Object.findCardSettlement [as queryCardSettlement] (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:921:18)\n    at Object.pureOptional (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:70:61)",
+      "calls": 16,
+      "milliseconds": 0.029123999999853822,
+      "serializedCodeUnits": 2752
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at executeRegisteredAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:436:28)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:31:22",
+      "calls": 4,
+      "milliseconds": 0.028751000000113436,
+      "serializedCodeUnits": 3720
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:691:9)\n    at Object.submitQuickAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:764:34)",
+      "calls": 8,
+      "milliseconds": 0.027542000000096323,
+      "serializedCodeUnits": 2394
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at projectState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:470:13)\n    at Object.observe (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:353:16)",
+      "calls": 2,
+      "milliseconds": 0.027082999999947788,
+      "serializedCodeUnits": 4297
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:93)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2200:84)",
+      "calls": 1,
+      "milliseconds": 0.026791000000002896,
+      "serializedCodeUnits": 4029
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at createSpawnedCardEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:539:34)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:674:15",
+      "calls": 6,
+      "milliseconds": 0.026583999999985508,
+      "serializedCodeUnits": 1318
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1515:51\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 2,
+      "milliseconds": 0.02654100000006565,
+      "serializedCodeUnits": 3528
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:93)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at knownPostdrawDataView (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1333:52)",
+      "calls": 1,
+      "milliseconds": 0.026250000000004547,
+      "serializedCodeUnits": 4029
+    },
+    {
+      "stack": "    at project (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:491:31)\n    at analysisPublicityFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:421:69)\n    at Object.catalog (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:296:27)",
+      "calls": 10,
+      "milliseconds": 0.02504299999975501,
+      "serializedCodeUnits": 4040
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:93)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 1,
+      "milliseconds": 0.024790999999936503,
+      "serializedCodeUnits": 4029
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:522:11)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:690:34)",
+      "calls": 8,
+      "milliseconds": 0.023667000000017424,
+      "serializedCodeUnits": 2394
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at advanceSession (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:683:18)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:721:22)",
+      "calls": 3,
+      "milliseconds": 0.02245900000005463,
+      "serializedCodeUnits": 3487
+    },
+    {
+      "stack": "    at Object.quietEndCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:195:32)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2194:41)\n    at Object.searchDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:542:123)",
+      "calls": 9,
+      "milliseconds": 0.022083999999892967,
+      "serializedCodeUnits": 3636
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1461:19)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 12,
+      "milliseconds": 0.021664999999984502,
+      "serializedCodeUnits": 912
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at publish (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:442:33)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:720:7)",
+      "calls": 14,
+      "milliseconds": 0.021457999999967114,
+      "serializedCodeUnits": 902
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at decision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:383:18)\n    at Object.augmentEffectResult [as transformEffectResult] (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1443:29)",
+      "calls": 8,
+      "milliseconds": 0.020498999999915668,
+      "serializedCodeUnits": 1872
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at Object.findCardSettlement [as queryCardSettlement] (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:924:16)\n    at Object.pureOptional (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:70:61)",
+      "calls": 16,
+      "milliseconds": 0.019001000000059776,
+      "serializedCodeUnits": 1680
+    },
+    {
+      "stack": "    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:391:42)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1872:24)",
+      "calls": 8,
+      "milliseconds": 0.01691699999997809,
+      "serializedCodeUnits": 1320
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:2872:30)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 6,
+      "milliseconds": 0.016874999999828333,
+      "serializedCodeUnits": 1830
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1277:47)",
+      "calls": 12,
+      "milliseconds": 0.01670900000004849,
+      "serializedCodeUnits": 864
+    },
+    {
+      "stack": "    at Object.rememberPlan (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1581:77)\n    at Object.searchDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/decision-search.js:914:41)\n    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/adhoc/profile-v307-clone-callers-20261107-v1.js:5:484)",
+      "calls": 1,
+      "milliseconds": 0.016541999999958534,
+      "serializedCodeUnits": 882
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1280:26)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 12,
+      "milliseconds": 0.015293999999897778,
+      "serializedCodeUnits": 720
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:539:12)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:690:34)",
+      "calls": 14,
+      "milliseconds": 0.015123999999758553,
+      "serializedCodeUnits": 364
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.observe (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:346:11)\n    at projectionInner (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:614:20)",
+      "calls": 2,
+      "milliseconds": 0.014875000000017735,
+      "serializedCodeUnits": 2329
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:2868:17)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 6,
+      "milliseconds": 0.014792000000113603,
+      "serializedCodeUnits": 1830
+    },
+    {
+      "stack": "    at Object.consumeFromSupplySlot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/board-state.js:158:14)\n    at takeSelectedTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:290:40)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:433:24)",
+      "calls": 8,
+      "milliseconds": 0.014416000000096574,
+      "serializedCodeUnits": 1736
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1908:19)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 8,
+      "milliseconds": 0.014209000000050764,
+      "serializedCodeUnits": 856
+    },
+    {
+      "stack": "    at takeSelectedTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:325:19)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:433:24)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.014124000000094838,
+      "serializedCodeUnits": 1160
+    },
+    {
+      "stack": "    at selectTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:234:19)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:418:26)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.013749000000018441,
+      "serializedCodeUnits": 1040
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at findCardSettlement (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:921:18)\n    at settleCardDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1617:20)",
+      "calls": 8,
+      "milliseconds": 0.013583000000039647,
+      "serializedCodeUnits": 1376
+    },
+    {
+      "stack": "    at Object.getFixedWorldConfig (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/fixed-world-config.js:259:37)\n    at Object.createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:16:36)\n    at buildInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:220:37)",
+      "calls": 1,
+      "milliseconds": 0.013333000000002926,
+      "serializedCodeUnits": 3150
+    },
+    {
+      "stack": "    at selectTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:228:15)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:418:26)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.013041000000043823,
+      "serializedCodeUnits": 446
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:429:54\n    at Object.runWithWorkingState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1653:16)",
+      "calls": 4,
+      "milliseconds": 0.012707999999975073,
+      "serializedCodeUnits": 1252
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:13:36)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:93:30)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 4,
+      "milliseconds": 0.0125420000000247,
+      "serializedCodeUnits": 1252
+    },
+    {
+      "stack": "    at buildTakeResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:170:19)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:454:12)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.012417999999854601,
+      "serializedCodeUnits": 1160
+    },
+    {
+      "stack": "    at Object.getFixedWorldConfig (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/fixed-world-config.js:259:37)\n    at Object.randomizeAlienAssignments (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/aliens/randomizer.js:122:30)\n    at Object.createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:28:45)",
+      "calls": 1,
+      "milliseconds": 0.012374999999991587,
+      "serializedCodeUnits": 3150
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at applyFormalCardEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1139:38)\n    at settleTaskCardConsumption (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1564:21)",
+      "calls": 8,
+      "milliseconds": 0.012373000000025058,
+      "serializedCodeUnits": 1360
+    },
+    {
+      "stack": "    at takeSelectedTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:289:24)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:433:24)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.012209000000098058,
+      "serializedCodeUnits": 1040
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at publish (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:442:33)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:720:7)",
+      "calls": 8,
+      "milliseconds": 0.01195999999984565,
+      "serializedCodeUnits": 545
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:713:39)\n    at executeCurrent (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1186:28)",
+      "calls": 14,
+      "milliseconds": 0.011540000000138662,
+      "serializedCodeUnits": 28
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at Object.augmentEffectResult [as transformEffectResult] (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1450:18)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:500:27",
+      "calls": 8,
+      "milliseconds": 0.010166999999853488,
+      "serializedCodeUnits": 840
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:492:37)\n    at advance (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:689:27)",
+      "calls": 4,
+      "milliseconds": 0.00983299999992937,
+      "serializedCodeUnits": 1616
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanStepEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:931:31)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:954:20",
+      "calls": 4,
+      "milliseconds": 0.009624000000030719,
+      "serializedCodeUnits": 464
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at getDecisionSnapshot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:287:26)\n    at inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:295:11)",
+      "calls": 2,
+      "milliseconds": 0.009583999999932757,
+      "serializedCodeUnits": 2002
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1924:17)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 5,
+      "milliseconds": 0.008665999999948326,
+      "serializedCodeUnits": 1222
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1929:21)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 5,
+      "milliseconds": 0.008542000000034022,
+      "serializedCodeUnits": 1222
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:13:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:40:17\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 4,
+      "milliseconds": 0.008291999999926247,
+      "serializedCodeUnits": 592
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at findCardSettlement (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:924:16)\n    at settleCardDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:1617:20)",
+      "calls": 8,
+      "milliseconds": 0.008248999999977968,
+      "serializedCodeUnits": 840
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at Object.dispatchStandardAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:539:12)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:690:34)",
+      "calls": 8,
+      "milliseconds": 0.008207999999797266,
+      "serializedCodeUnits": 208
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at context.rotateSolarOrbit (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:159:22)\n    at rotateForResearch (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:333:34)",
+      "calls": 8,
+      "milliseconds": 0.008165000000019518,
+      "serializedCodeUnits": 720
+    },
+    {
+      "stack": "    at takeSelectedTechTile (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:319:15)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:433:24)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.007836000000054355,
+      "serializedCodeUnits": 446
+    },
+    {
+      "stack": "    at buildTakeResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:164:15)\n    at Object.executeTakeTech (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/tech/resolver.js:454:12)\n    at executeResearchChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:443:30)",
+      "calls": 8,
+      "milliseconds": 0.007665000000088185,
+      "serializedCodeUnits": 446
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1308:28)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 4,
+      "milliseconds": 0.007416999999946938,
+      "serializedCodeUnits": 464
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1301:45)",
+      "calls": 4,
+      "milliseconds": 0.0074160000000915716,
+      "serializedCodeUnits": 512
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1857:13)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 2,
+      "milliseconds": 0.007290999999952419,
+      "serializedCodeUnits": 582
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:695:17\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 6,
+      "milliseconds": 0.0068749999998658495,
+      "serializedCodeUnits": 78
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:983:17)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 4,
+      "milliseconds": 0.00637400000007915,
+      "serializedCodeUnits": 922
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at execute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1854:28)",
+      "calls": 2,
+      "milliseconds": 0.006167000000090184,
+      "serializedCodeUnits": 582
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at createSpawnedCardEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:503:20)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:674:15",
+      "calls": 2,
+      "milliseconds": 0.006166000000007443,
+      "serializedCodeUnits": 102
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:984:93)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 4,
+      "milliseconds": 0.006000000000113914,
+      "serializedCodeUnits": 922
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at Object.createEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:2341:32)\n    at createProductionEffectGroup (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:566:33)",
+      "calls": 3,
+      "milliseconds": 0.00599899999997433,
+      "serializedCodeUnits": 888
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:13:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:41:18\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 4,
+      "milliseconds": 0.005958000000049424,
+      "serializedCodeUnits": 592
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at createSpawnedCardEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:507:27)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:674:15",
+      "calls": 2,
+      "milliseconds": 0.005874999999917918,
+      "serializedCodeUnits": 356
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanStepEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:931:31)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:975:18",
+      "calls": 4,
+      "milliseconds": 0.005792000000013786,
+      "serializedCodeUnits": 240
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:13:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/standard-action-session.js:42:14\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 4,
+      "milliseconds": 0.005750000000034561,
+      "serializedCodeUnits": 212
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:12:12)\n    at Object.createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:45:11)\n    at buildInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:220:37)",
+      "calls": 2,
+      "milliseconds": 0.005707999999984281,
+      "serializedCodeUnits": 239
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at genericExecute (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:1759:24)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 2,
+      "milliseconds": 0.0055409999999369575,
+      "serializedCodeUnits": 446
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at submitAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:713:39)\n    at Object.submitQuickAction (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:764:34)",
+      "calls": 8,
+      "milliseconds": 0.00550199999997858,
+      "serializedCodeUnits": 16
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:200:34)\n    at Object.prepareCounterfactualEnvelope (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1573:24)\n    at Object.prepareRoot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:3558:21)",
+      "calls": 1,
+      "milliseconds": 0.0052080000000103155,
+      "serializedCodeUnits": 39011
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:169)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at knownPostdrawDataView (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1333:52)",
+      "calls": 1,
+      "milliseconds": 0.004708000000050561,
+      "serializedCodeUnits": 438
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:314:33)\n    at Object.observe (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:343:26)",
+      "calls": 2,
+      "milliseconds": 0.00466599999998607,
+      "serializedCodeUnits": 783
+    },
+    {
+      "stack": "    at previewIncomeTail (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:571:151)\n    at Object.blindIncomeBoundaryCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:248:19)\n    at Object.incomePlanSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2330:63)",
+      "calls": 1,
+      "milliseconds": 0.00458400000002257,
+      "serializedCodeUnits": 459
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at applyResult (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:621:57)\n    at advance (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:701:23)",
+      "calls": 4,
+      "milliseconds": 0.004376000000121394,
+      "serializedCodeUnits": 212
+    },
+    {
+      "stack": "    at dataPreviewPlayer (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:116:119)\n    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:118:36)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:18)",
+      "calls": 1,
+      "milliseconds": 0.00437499999998181,
+      "serializedCodeUnits": 459
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:169)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 1,
+      "milliseconds": 0.004332999999974163,
+      "serializedCodeUnits": 438
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:156:169)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2200:84)",
+      "calls": 1,
+      "milliseconds": 0.004290999999966516,
+      "serializedCodeUnits": 438
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at projectionInner (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:614:43)\n    at Object.projection (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:604:14)",
+      "calls": 2,
+      "milliseconds": 0.0041250000000161435,
+      "serializedCodeUnits": 120
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:584:17\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 2,
+      "milliseconds": 0.004042000000055168,
+      "serializedCodeUnits": 152
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at Object.createRuleComposition (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:373:32)\n    at Object.createProductionComposition (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-composition.js:991:52)",
+      "calls": 1,
+      "milliseconds": 0.003416999999998893,
+      "serializedCodeUnits": 166
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at decision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:383:18)\n    at companyQueue (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:418:17)",
+      "calls": 2,
+      "milliseconds": 0.0034169999999846823,
+      "serializedCodeUnits": 148
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at createSpawnedCardEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:539:34)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:803:13",
+      "calls": 2,
+      "milliseconds": 0.003376000000002932,
+      "serializedCodeUnits": 219
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:107:52)\n    at decision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:383:18)\n    at applyCompanyChoice (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/residual-domain-session.js:582:27)",
+      "calls": 2,
+      "milliseconds": 0.0029169999999396623,
+      "serializedCodeUnits": 218
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:997:18",
+      "calls": 2,
+      "milliseconds": 0.0028329999999812117,
+      "serializedCodeUnits": 36
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:444:7)",
+      "calls": 2,
+      "milliseconds": 0.002707999999955746,
+      "serializedCodeUnits": 94
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:379:18)",
+      "calls": 2,
+      "milliseconds": 0.002667000000059261,
+      "serializedCodeUnits": 64
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:200:34)\n    at Object.projectState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1689:62)\n    at projectState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:467:19)",
+      "calls": 2,
+      "milliseconds": 0.0026250000000800355,
+      "serializedCodeUnits": 120
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:20:36)\n    at inspect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:334:30)\n    at Object.observe (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:343:26)",
+      "calls": 2,
+      "milliseconds": 0.002375000000000682,
+      "serializedCodeUnits": 227
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:124:60)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at knownPostdrawDataView (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:1333:52)",
+      "calls": 1,
+      "milliseconds": 0.002292000000011285,
+      "serializedCodeUnits": 404
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1509:66",
+      "calls": 2,
+      "milliseconds": 0.002292000000011285,
+      "serializedCodeUnits": 40
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:24:36)\n    at projectState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:469:13)\n    at Object.observe (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/session-runtime.js:353:16)",
+      "calls": 2,
+      "milliseconds": 0.002125000000091859,
+      "serializedCodeUnits": 120
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at listPlanetChoices (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:1472:12)\n    at listGenericChoices (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:2041:16)",
+      "calls": 1,
+      "milliseconds": 0.001999999999981128,
+      "serializedCodeUnits": 252
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:124:60)\n    at Object.dataTailCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:230:18)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2206:41)",
+      "calls": 1,
+      "milliseconds": 0.0019589999999425345,
+      "serializedCodeUnits": 404
+    },
+    {
+      "stack": "    at previewBlueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:124:60)\n    at Object.blueCompletion (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/local-decision-plans.js:166:66)\n    at Object.turnTailSummary (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-port.js:2200:84)",
+      "calls": 1,
+      "milliseconds": 0.001958000000058746,
+      "serializedCodeUnits": 404
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:200:34)\n    at Object.prepareCounterfactualEnvelope (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1590:52)\n    at Object.prepareRoot (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:3558:21)",
+      "calls": 1,
+      "milliseconds": 0.0019580000000019027,
+      "serializedCodeUnits": 34
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:445:7)",
+      "calls": 2,
+      "milliseconds": 0.0019169999999633092,
+      "serializedCodeUnits": 94
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1097:28",
+      "calls": 1,
+      "milliseconds": 0.0017500000000154614,
+      "serializedCodeUnits": 265
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1100:23\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 1,
+      "milliseconds": 0.0017090000000052896,
+      "serializedCodeUnits": 254
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:446:7)",
+      "calls": 2,
+      "milliseconds": 0.0017080000000646578,
+      "serializedCodeUnits": 94
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:447:7)",
+      "calls": 2,
+      "milliseconds": 0.0016659999999149022,
+      "serializedCodeUnits": 94
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:67:52)\n    at domainHandoff (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:370:17)\n    at buildPassEffects (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/probe-turn-session.js:448:7)",
+      "calls": 2,
+      "milliseconds": 0.0016249999999331521,
+      "serializedCodeUnits": 94
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:200:34)\n    at buildInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:229:15)\n    at createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:1635:21)",
+      "calls": 1,
+      "milliseconds": 0.0015420000000005984,
+      "serializedCodeUnits": 82
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:12:12)\n    at Object.createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:58:19)\n    at buildInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:220:37)",
+      "calls": 1,
+      "milliseconds": 0.0014579999999995152,
+      "serializedCodeUnits": 82
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:12:12)\n    at Object.createInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/state/initial-game-state.js:59:20)\n    at buildInitialState (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/production-kernel.js:220:37)",
+      "calls": 1,
+      "milliseconds": 0.0014170000000035543,
+      "serializedCodeUnits": 103
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1884:31)",
+      "calls": 2,
+      "milliseconds": 0.0014170000000035543,
+      "serializedCodeUnits": 4
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:205:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/cards/play-domain.js:713:22\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/rule-composition.js:481:19",
+      "calls": 1,
+      "milliseconds": 0.0007089999999152496,
+      "serializedCodeUnits": 15
+    },
+    {
+      "stack": "    at clone (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:108:36)\n    at scanDecisionEffect (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:920:75)\n    at resolveDecision (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/effects/science-session.js:1561:33)",
+      "calls": 1,
+      "milliseconds": 0.0007079999999177744,
+      "serializedCodeUnits": 2
+    }
+  ],
+  "calls": 11042,
+  "instrumentedCloneMilliseconds": 84.73839699999961,
+  "nativeInputs": 162,
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}
