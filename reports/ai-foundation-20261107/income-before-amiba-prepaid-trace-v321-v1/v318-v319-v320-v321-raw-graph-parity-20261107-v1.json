@@ -1,0 +1,1492 @@
+{
+  "scope": "Cross-source V318/V319/V320 to V321 first-sample raw graph parity. Duplicated roots compared once. No additional search queries.",
+  "gate": "reports/ai-foundation-20261107/income-before-amiba-prepaid-trace-v321-v1/serial-cold-gate-20261107-v1.json",
+  "gateSha256": "14d8b46a70c2b0174aefaeffb443cf379b4eaebd014190bff73dc610c44fb115",
+  "status": "failed-gate",
+  "tested": 188,
+  "unique": 151,
+  "compared": [
+    {
+      "label": "income-before-amiba",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v320-cold-income-before-amiba-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-income-before-amiba-20261107-v1.json",
+      "inputs": 98,
+      "previousMs": 605.6788750000001,
+      "currentMs": 597.485792,
+      "fullGraphUnchanged": true,
+      "lines": 87
+    },
+    {
+      "label": "actual-v256-125",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-125-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-125-20261107-v1.json",
+      "inputs": 127,
+      "previousMs": 595.691791,
+      "currentMs": 580.0991670000001,
+      "fullGraphUnchanged": true,
+      "lines": 136
+    },
+    {
+      "label": "corpus-case-152",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corpus-case-152-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-corpus-case-152-20261107-v1.json",
+      "inputs": 256,
+      "previousMs": 587.0137080000001,
+      "currentMs": 591.310958,
+      "fullGraphUnchanged": true,
+      "lines": 181
+    },
+    {
+      "label": "actual-v256-132",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-132-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-132-20261107-v1.json",
+      "inputs": 162,
+      "previousMs": 538.500041,
+      "currentMs": 519.536375,
+      "fullGraphUnchanged": true,
+      "lines": 153
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v300-r4-proof-income0-e4-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v300-r4-proof-income0-e4-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 34.15662499999999,
+      "currentMs": 34.961292,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v300-r4-proof-income1-e4-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v300-r4-proof-income1-e4-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 33.756833,
+      "currentMs": 34.689916,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v298-r4-venus-late-orbit",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+      "inputs": 245,
+      "previousMs": 411.568625,
+      "currentMs": 397.00883400000004,
+      "fullGraphUnchanged": true,
+      "lines": 141
+    },
+    {
+      "label": "actual-v298-r4-venus-early-orbit",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v298-r4-venus-early-orbit-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v298-r4-venus-early-orbit-20261107-v1.json",
+      "inputs": 136,
+      "previousMs": 287.573791,
+      "currentMs": 286.073,
+      "fullGraphUnchanged": true,
+      "lines": 74
+    },
+    {
+      "label": "actual-v298-r4-early-first-white",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v298-r4-early-first-white-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v298-r4-early-first-white-20261107-v1.json",
+      "inputs": 187,
+      "previousMs": 313.447875,
+      "currentMs": 315.506417,
+      "fullGraphUnchanged": true,
+      "lines": 88
+    },
+    {
+      "label": "actual-v298-r4-late-first-white",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v298-r4-late-first-white-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v298-r4-late-first-white-20261107-v1.json",
+      "inputs": 113,
+      "previousMs": 205.85733299999998,
+      "currentMs": 207.84404200000003,
+      "fullGraphUnchanged": true,
+      "lines": 61
+    },
+    {
+      "label": "actual-v292-scan-launch-177",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v292-scan-launch-177-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v292-scan-launch-177-20261107-v1.json",
+      "inputs": 12,
+      "previousMs": 61.75816599999999,
+      "currentMs": 64.90975,
+      "fullGraphUnchanged": true,
+      "lines": 7
+    },
+    {
+      "label": "corpus-teacher-039",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corpus-teacher-039-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-corpus-teacher-039-20261107-v1.json",
+      "inputs": 256,
+      "previousMs": 370.492292,
+      "currentMs": 379.951667,
+      "fullGraphUnchanged": true,
+      "lines": 156
+    },
+    {
+      "label": "actual-v278-142",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v278-142-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v278-142-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 38.909707999999995,
+      "currentMs": 40.272082999999995,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v277-156",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v277-156-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v277-156-20261107-v1.json",
+      "inputs": 13,
+      "previousMs": 75.4795,
+      "currentMs": 76.228458,
+      "fullGraphUnchanged": true,
+      "lines": 14
+    },
+    {
+      "label": "teacher167-known-amiba7",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-teacher167-known-amiba7-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-teacher167-known-amiba7-20261107-v1.json",
+      "inputs": 139,
+      "previousMs": 215.09083300000003,
+      "currentMs": 216.14545899999996,
+      "fullGraphUnchanged": true,
+      "lines": 47
+    },
+    {
+      "label": "case-105",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-case-105-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-case-105-20261107-v1.json",
+      "inputs": 207,
+      "previousMs": 416.02425,
+      "currentMs": 426.25925,
+      "fullGraphUnchanged": true,
+      "lines": 107
+    },
+    {
+      "label": "deferred-analysis-next-main",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-deferred-analysis-next-main-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-deferred-analysis-next-main-20261107-v1.json",
+      "inputs": 27,
+      "previousMs": 73.0315,
+      "currentMs": 73.953167,
+      "fullGraphUnchanged": true,
+      "lines": 24
+    },
+    {
+      "label": "deferred-analysis-data-menu",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-deferred-analysis-data-menu-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-deferred-analysis-data-menu-20261107-v1.json",
+      "inputs": 25,
+      "previousMs": 72.933417,
+      "currentMs": 75.188875,
+      "fullGraphUnchanged": true,
+      "lines": 23
+    },
+    {
+      "label": "actual-v264-187",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v264-187-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v264-187-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 23.166125000000008,
+      "currentMs": 24.804333,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v264-185",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v264-185-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v264-185-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 24.611582999999996,
+      "currentMs": 26.845708999999985,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v264-188",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v264-188-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v264-188-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 29.221625000000003,
+      "currentMs": 31.95049999999999,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v263-176",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v263-176-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v263-176-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 34.92624999999998,
+      "currentMs": 36.74762500000001,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "funded-analysis-before-research",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-funded-analysis-before-research-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-funded-analysis-before-research-20261107-v1.json",
+      "inputs": 95,
+      "previousMs": 199.13995800000004,
+      "currentMs": 205.89262499999998,
+      "fullGraphUnchanged": true,
+      "lines": 119
+    },
+    {
+      "label": "actual-v262-146",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v262-146-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v262-146-20261107-v1.json",
+      "inputs": 72,
+      "previousMs": 164.71129200000001,
+      "currentMs": 172.513708,
+      "fullGraphUnchanged": true,
+      "lines": 66
+    },
+    {
+      "label": "actual-v256-148",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-148-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-148-20261107-v1.json",
+      "inputs": 126,
+      "previousMs": 340.508583,
+      "currentMs": 339.310875,
+      "fullGraphUnchanged": true,
+      "lines": 129
+    },
+    {
+      "label": "analysis-publicity-post-main",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-analysis-publicity-post-main-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-analysis-publicity-post-main-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.048209,
+      "currentMs": 25.961833,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v203-123",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v203-123-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v203-123-20261107-v1.json",
+      "inputs": 68,
+      "previousMs": 536.81275,
+      "currentMs": 508.56820799999997,
+      "fullGraphUnchanged": true,
+      "lines": 68
+    },
+    {
+      "label": "corner-safety-purple2-3",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corner-safety-purple2-3-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-corner-safety-purple2-3-20261107-v1.json",
+      "inputs": 110,
+      "previousMs": 423.95858300000003,
+      "currentMs": 475.93895799999996,
+      "fullGraphUnchanged": true,
+      "lines": 126
+    },
+    {
+      "label": "energy-income-post-main",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-energy-income-post-main-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-energy-income-post-main-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 40.864458,
+      "currentMs": 46.95791699999998,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "energy-income-before-preparation",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-energy-income-before-preparation-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-energy-income-before-preparation-20261107-v1.json",
+      "inputs": 12,
+      "previousMs": 66.75879099999999,
+      "currentMs": 72.522333,
+      "fullGraphUnchanged": true,
+      "lines": 9
+    },
+    {
+      "label": "corpus-actual-v187-039",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corpus-actual-v187-039-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-corpus-actual-v187-039-20261107-v1.json",
+      "inputs": 256,
+      "previousMs": 383.613458,
+      "currentMs": 383.948,
+      "fullGraphUnchanged": true,
+      "lines": 156
+    },
+    {
+      "label": "actual-v256-113",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-113-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-113-20261107-v1.json",
+      "inputs": 69,
+      "previousMs": 235.96500000000003,
+      "currentMs": 239.48408400000002,
+      "fullGraphUnchanged": true,
+      "lines": 48
+    },
+    {
+      "label": "actual-v256-114",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-114-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-114-20261107-v1.json",
+      "inputs": 7,
+      "previousMs": 48.46145899999999,
+      "currentMs": 49.600832999999994,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v256-115",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-115-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-115-20261107-v1.json",
+      "inputs": 5,
+      "previousMs": 35.655041999999995,
+      "currentMs": 35.87804199999999,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-116",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-116-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-116-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 38.22016700000002,
+      "currentMs": 36.823791,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-117",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-117-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-117-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 32.45774999999999,
+      "currentMs": 33.204333000000005,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-118",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-118-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-118-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 32.12062499999999,
+      "currentMs": 32.965749999999986,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-119",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-119-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-119-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 24.653749999999988,
+      "currentMs": 25.04279199999999,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-124",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-124-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-124-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 38.326417000000006,
+      "currentMs": 41.623082999999994,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-127",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-127-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-127-20261107-v1.json",
+      "inputs": 46,
+      "previousMs": 203.4565,
+      "currentMs": 223.03833299999997,
+      "fullGraphUnchanged": true,
+      "lines": 65
+    },
+    {
+      "label": "actual-v256-128",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-128-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-128-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 53.92033399999998,
+      "currentMs": 55.768292,
+      "fullGraphUnchanged": true,
+      "lines": 8
+    },
+    {
+      "label": "actual-v256-129",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-129-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-129-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 46.643,
+      "currentMs": 47.76104099999999,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-130",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-130-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-130-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 29.447290999999993,
+      "currentMs": 29.865666999999988,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-131",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-131-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-131-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 28.423625000000015,
+      "currentMs": 29.428541999999993,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-133",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-133-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-133-20261107-v1.json",
+      "inputs": 85,
+      "previousMs": 325.886166,
+      "currentMs": 317.494833,
+      "fullGraphUnchanged": true,
+      "lines": 84
+    },
+    {
+      "label": "actual-v256-134",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-134-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-134-20261107-v1.json",
+      "inputs": 84,
+      "previousMs": 326.902125,
+      "currentMs": 318.852292,
+      "fullGraphUnchanged": true,
+      "lines": 84
+    },
+    {
+      "label": "actual-v256-135",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-135-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-135-20261107-v1.json",
+      "inputs": 83,
+      "previousMs": 336.372916,
+      "currentMs": 310.71333400000003,
+      "fullGraphUnchanged": true,
+      "lines": 83
+    },
+    {
+      "label": "actual-v256-136",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-136-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-136-20261107-v1.json",
+      "inputs": 82,
+      "previousMs": 317.049958,
+      "currentMs": 306.739334,
+      "fullGraphUnchanged": true,
+      "lines": 83
+    },
+    {
+      "label": "actual-v256-137",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-137-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-137-20261107-v1.json",
+      "inputs": 21,
+      "previousMs": 127.657542,
+      "currentMs": 130.83941700000003,
+      "fullGraphUnchanged": true,
+      "lines": 22
+    },
+    {
+      "label": "actual-v256-138",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-138-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-138-20261107-v1.json",
+      "inputs": 16,
+      "previousMs": 125.27383300000001,
+      "currentMs": 128.929042,
+      "fullGraphUnchanged": true,
+      "lines": 20
+    },
+    {
+      "label": "actual-v256-139",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-139-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-139-20261107-v1.json",
+      "inputs": 12,
+      "previousMs": 121.62512500000001,
+      "currentMs": 124.471,
+      "fullGraphUnchanged": true,
+      "lines": 20
+    },
+    {
+      "label": "actual-v256-140",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-140-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-140-20261107-v1.json",
+      "inputs": 8,
+      "previousMs": 110.69670799999999,
+      "currentMs": 113.303166,
+      "fullGraphUnchanged": true,
+      "lines": 13
+    },
+    {
+      "label": "actual-v256-141",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-141-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-141-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 55.56929200000002,
+      "currentMs": 57.44250000000001,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-143",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-143-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-143-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 69.23083299999999,
+      "currentMs": 71.273,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-144",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-144-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-144-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 64.25712500000002,
+      "currentMs": 66.25508399999998,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-145",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-145-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-145-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 30.836541999999994,
+      "currentMs": 31.983334,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-146",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-146-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-146-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 36.96525,
+      "currentMs": 37.998208000000005,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-147",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-147-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-147-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 28.893124999999998,
+      "currentMs": 29.956625000000017,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-149",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-149-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-149-20261107-v1.json",
+      "inputs": 122,
+      "previousMs": 280.781833,
+      "currentMs": 284.03,
+      "fullGraphUnchanged": true,
+      "lines": 125
+    },
+    {
+      "label": "actual-v256-150",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-150-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-150-20261107-v1.json",
+      "inputs": 118,
+      "previousMs": 220.80816699999997,
+      "currentMs": 227.06158300000004,
+      "fullGraphUnchanged": true,
+      "lines": 120
+    },
+    {
+      "label": "actual-v256-151",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-151-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-151-20261107-v1.json",
+      "inputs": 54,
+      "previousMs": 141.662666,
+      "currentMs": 153.710791,
+      "fullGraphUnchanged": true,
+      "lines": 57
+    },
+    {
+      "label": "actual-v256-152",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-152-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-152-20261107-v1.json",
+      "inputs": 8,
+      "previousMs": 54.306083,
+      "currentMs": 56.27654199999999,
+      "fullGraphUnchanged": true,
+      "lines": 9
+    },
+    {
+      "label": "actual-v256-153",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-153-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-153-20261107-v1.json",
+      "inputs": 6,
+      "previousMs": 48.204207999999994,
+      "currentMs": 49.657,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v256-154",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-154-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-154-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.96845900000001,
+      "currentMs": 26.449665999999993,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-155",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-155-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-155-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 37.326999999999984,
+      "currentMs": 38.45700000000001,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-156",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-156-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-156-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.59700000000001,
+      "currentMs": 26.258541000000008,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-157",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-157-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-157-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 28.452207999999985,
+      "currentMs": 29.643374999999992,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-158",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-158-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-158-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 20.870209000000003,
+      "currentMs": 21.821208,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-159",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-159-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-159-20261107-v1.json",
+      "inputs": 63,
+      "previousMs": 138.18595800000003,
+      "currentMs": 142.897875,
+      "fullGraphUnchanged": true,
+      "lines": 68
+    },
+    {
+      "label": "actual-v256-160",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-160-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-160-20261107-v1.json",
+      "inputs": 21,
+      "previousMs": 87.18962499999999,
+      "currentMs": 89.69750000000002,
+      "fullGraphUnchanged": true,
+      "lines": 29
+    },
+    {
+      "label": "actual-v256-161",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-161-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-161-20261107-v1.json",
+      "inputs": 5,
+      "previousMs": 52.804874999999996,
+      "currentMs": 56.13108299999999,
+      "fullGraphUnchanged": true,
+      "lines": 8
+    },
+    {
+      "label": "actual-v256-162",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-162-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-162-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 55.16104199999998,
+      "currentMs": 53.92175,
+      "fullGraphUnchanged": true,
+      "lines": 7
+    },
+    {
+      "label": "actual-v256-163",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-163-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-163-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 45.760915999999995,
+      "currentMs": 45.63716599999999,
+      "fullGraphUnchanged": true,
+      "lines": 4
+    },
+    {
+      "label": "actual-v256-164",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-164-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-164-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 25.427999999999983,
+      "currentMs": 26.123499999999993,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-165",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-165-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-165-20261107-v1.json",
+      "inputs": 57,
+      "previousMs": 152.92345800000004,
+      "currentMs": 132.72758399999998,
+      "fullGraphUnchanged": true,
+      "lines": 38
+    },
+    {
+      "label": "actual-v256-166",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-166-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-166-20261107-v1.json",
+      "inputs": 14,
+      "previousMs": 71.74129200000002,
+      "currentMs": 69.202208,
+      "fullGraphUnchanged": true,
+      "lines": 14
+    },
+    {
+      "label": "actual-v256-167",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-167-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-167-20261107-v1.json",
+      "inputs": 55,
+      "previousMs": 129.397417,
+      "currentMs": 131.655708,
+      "fullGraphUnchanged": true,
+      "lines": 38
+    },
+    {
+      "label": "actual-v256-168",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-168-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-168-20261107-v1.json",
+      "inputs": 12,
+      "previousMs": 77.298542,
+      "currentMs": 74.421916,
+      "fullGraphUnchanged": true,
+      "lines": 13
+    },
+    {
+      "label": "actual-v256-169",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-169-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-169-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 30.988083000000003,
+      "currentMs": 28.46199999999999,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-170",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-170-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-170-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 45.731915999999984,
+      "currentMs": 42.82341699999999,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-171",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-171-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-171-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 30.284415999999993,
+      "currentMs": 28.508083000000013,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-172",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-172-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-172-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 41.908541,
+      "currentMs": 38.53774999999999,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v256-173",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-173-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-173-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 26.462084000000004,
+      "currentMs": 24.74558300000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-174",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-174-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-174-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 31.007041,
+      "currentMs": 29.91466700000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-175",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-175-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-175-20261107-v1.json",
+      "inputs": 72,
+      "previousMs": 136.543541,
+      "currentMs": 134.450916,
+      "fullGraphUnchanged": true,
+      "lines": 31
+    },
+    {
+      "label": "actual-v256-176",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-176-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-176-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 25.852249999999998,
+      "currentMs": 26.666583000000003,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-177",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-177-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-177-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 41.826708999999994,
+      "currentMs": 42.58275000000002,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v256-178",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-178-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-178-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.964416000000014,
+      "currentMs": 25.976416,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-179",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-179-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-179-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 36.058458,
+      "currentMs": 36.395375,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-180",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-180-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-180-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 26.54741699999998,
+      "currentMs": 27.576457999999988,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-181",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-181-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-181-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 33.352084000000005,
+      "currentMs": 36.06604100000001,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-182",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-182-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-182-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 22.765624999999986,
+      "currentMs": 24.125291999999988,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-183",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-183-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-183-20261107-v1.json",
+      "inputs": 45,
+      "previousMs": 108.30129200000002,
+      "currentMs": 110.582417,
+      "fullGraphUnchanged": true,
+      "lines": 28
+    },
+    {
+      "label": "actual-v256-184",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-184-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-184-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 22.62962499999999,
+      "currentMs": 23.271541999999997,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-185",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-185-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-185-20261107-v1.json",
+      "inputs": 93,
+      "previousMs": 159.04545800000002,
+      "currentMs": 170.061083,
+      "fullGraphUnchanged": true,
+      "lines": 55
+    },
+    {
+      "label": "actual-v256-186",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-186-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-186-20261107-v1.json",
+      "inputs": 26,
+      "previousMs": 86.59270800000002,
+      "currentMs": 88.38804099999999,
+      "fullGraphUnchanged": true,
+      "lines": 20
+    },
+    {
+      "label": "actual-v256-187",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-187-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-187-20261107-v1.json",
+      "inputs": 4,
+      "previousMs": 35.64012500000001,
+      "currentMs": 37.062708,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-188",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-188-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-188-20261107-v1.json",
+      "inputs": 38,
+      "previousMs": 99.675625,
+      "currentMs": 99.44837499999998,
+      "fullGraphUnchanged": true,
+      "lines": 27
+    },
+    {
+      "label": "actual-v256-189",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-189-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-189-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 33.57599999999999,
+      "currentMs": 31.982583000000005,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v256-190",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-190-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-190-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 27.908416999999986,
+      "currentMs": 28.328374999999994,
+      "fullGraphUnchanged": true,
+      "lines": 4
+    },
+    {
+      "label": "actual-v256-191",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-191-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-191-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 17.74825,
+      "currentMs": 18.118959000000004,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-192",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-192-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-192-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 21.655958,
+      "currentMs": 21.993291999999997,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v256-193",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-193-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v256-193-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 30.638291999999993,
+      "currentMs": 31.20083299999999,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "energy-income-after-energy-play",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-energy-income-after-energy-play-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-energy-income-after-energy-play-20261107-v1.json",
+      "inputs": 75,
+      "previousMs": 166.27274999999997,
+      "currentMs": 167.91554100000002,
+      "fullGraphUnchanged": true,
+      "lines": 51
+    },
+    {
+      "label": "actual-v253-145",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-145-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-145-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 27.39824999999999,
+      "currentMs": 27.784457999999987,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-146",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-146-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-146-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 31.291540999999995,
+      "currentMs": 32.41975000000001,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v253-147",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-147-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-147-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 23.571583000000004,
+      "currentMs": 24.51079100000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-148",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-148-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-148-20261107-v1.json",
+      "inputs": 66,
+      "previousMs": 181.079208,
+      "currentMs": 182.169916,
+      "fullGraphUnchanged": true,
+      "lines": 70
+    },
+    {
+      "label": "actual-v253-149",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-149-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-149-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 35.990750000000006,
+      "currentMs": 36.93604099999999,
+      "fullGraphUnchanged": true,
+      "lines": 5
+    },
+    {
+      "label": "actual-v253-150",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-150-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-150-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 21.388417000000004,
+      "currentMs": 22.934833999999995,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-151",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-151-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-151-20261107-v1.json",
+      "inputs": 90,
+      "previousMs": 171.722334,
+      "currentMs": 178.223417,
+      "fullGraphUnchanged": true,
+      "lines": 68
+    },
+    {
+      "label": "actual-v253-152",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-152-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-152-20261107-v1.json",
+      "inputs": 39,
+      "previousMs": 91.02954199999999,
+      "currentMs": 94.285542,
+      "fullGraphUnchanged": true,
+      "lines": 15
+    },
+    {
+      "label": "actual-v253-153",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-153-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-153-20261107-v1.json",
+      "inputs": 88,
+      "previousMs": 167.34050000000002,
+      "currentMs": 172.89770800000002,
+      "fullGraphUnchanged": true,
+      "lines": 68
+    },
+    {
+      "label": "actual-v253-154",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-154-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-154-20261107-v1.json",
+      "inputs": 37,
+      "previousMs": 88.36375000000001,
+      "currentMs": 89.58720900000002,
+      "fullGraphUnchanged": true,
+      "lines": 15
+    },
+    {
+      "label": "actual-v253-155",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-155-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-155-20261107-v1.json",
+      "inputs": 86,
+      "previousMs": 168.801291,
+      "currentMs": 178.59924999999998,
+      "fullGraphUnchanged": true,
+      "lines": 68
+    },
+    {
+      "label": "actual-v253-156",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-156-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-156-20261107-v1.json",
+      "inputs": 35,
+      "previousMs": 93.48979200000001,
+      "currentMs": 98.41725000000001,
+      "fullGraphUnchanged": true,
+      "lines": 14
+    },
+    {
+      "label": "actual-v253-157",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-157-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-157-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.638124999999988,
+      "currentMs": 25.00799999999998,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-158",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-158-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-158-20261107-v1.json",
+      "inputs": 9,
+      "previousMs": 52.42120900000002,
+      "currentMs": 53.52820799999999,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v253-159",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-159-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-159-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.414917000000017,
+      "currentMs": 24.989917000000005,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-160",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-160-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-160-20261107-v1.json",
+      "inputs": 7,
+      "previousMs": 50.004541,
+      "currentMs": 50.618125000000006,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v253-161",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-161-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-161-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 24.248583999999994,
+      "currentMs": 24.96104100000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-162",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-162-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-162-20261107-v1.json",
+      "inputs": 5,
+      "previousMs": 47.20025000000001,
+      "currentMs": 51.02983400000001,
+      "fullGraphUnchanged": true,
+      "lines": 6
+    },
+    {
+      "label": "actual-v253-163",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-163-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-163-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 22.739083000000008,
+      "currentMs": 23.42812500000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-164",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-164-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-164-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 39.446792,
+      "currentMs": 41.06833399999999,
+      "fullGraphUnchanged": true,
+      "lines": 4
+    },
+    {
+      "label": "actual-v253-165",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-165-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-165-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 33.90370899999999,
+      "currentMs": 34.828917000000004,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-166",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-166-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-166-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 21.241,
+      "currentMs": 21.61995800000001,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-167",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-167-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-167-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 26.608999999999995,
+      "currentMs": 26.793458000000015,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-168",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-168-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-168-20261107-v1.json",
+      "inputs": 59,
+      "previousMs": 155.20216599999998,
+      "currentMs": 150.447458,
+      "fullGraphUnchanged": true,
+      "lines": 53
+    },
+    {
+      "label": "actual-v253-169",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-169-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-169-20261107-v1.json",
+      "inputs": 29,
+      "previousMs": 106.00483299999999,
+      "currentMs": 101.842625,
+      "fullGraphUnchanged": true,
+      "lines": 26
+    },
+    {
+      "label": "actual-v253-170",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-170-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-170-20261107-v1.json",
+      "inputs": 25,
+      "previousMs": 96.66270899999999,
+      "currentMs": 92.73287499999999,
+      "fullGraphUnchanged": true,
+      "lines": 21
+    },
+    {
+      "label": "actual-v253-171",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-171-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-171-20261107-v1.json",
+      "inputs": 27,
+      "previousMs": 96.19733300000001,
+      "currentMs": 95.86441599999999,
+      "fullGraphUnchanged": true,
+      "lines": 26
+    },
+    {
+      "label": "actual-v253-172",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-172-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-172-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 23.22658399999999,
+      "currentMs": 24.125875000000008,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-173",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-173-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-173-20261107-v1.json",
+      "inputs": 22,
+      "previousMs": 82.56875000000001,
+      "currentMs": 83.973708,
+      "fullGraphUnchanged": true,
+      "lines": 15
+    },
+    {
+      "label": "actual-v253-174",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-174-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-174-20261107-v1.json",
+      "inputs": 13,
+      "previousMs": 74.718,
+      "currentMs": 75.35650000000001,
+      "fullGraphUnchanged": true,
+      "lines": 11
+    },
+    {
+      "label": "actual-v253-175",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-175-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-175-20261107-v1.json",
+      "inputs": 8,
+      "previousMs": 71.28362500000001,
+      "currentMs": 72.46066700000002,
+      "fullGraphUnchanged": true,
+      "lines": 9
+    },
+    {
+      "label": "actual-v253-176",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-176-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-176-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 42.174250000000015,
+      "currentMs": 43.801208,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v253-177",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-177-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-177-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 26.607708000000002,
+      "currentMs": 27.254875,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-178",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-178-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-178-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 29.230249999999998,
+      "currentMs": 29.482625,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "actual-v253-179",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-179-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-179-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 20.898083999999997,
+      "currentMs": 21.573375000000013,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-180",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-180-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-180-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 29.597250000000017,
+      "currentMs": 29.652125000000012,
+      "fullGraphUnchanged": true,
+      "lines": 4
+    },
+    {
+      "label": "actual-v253-181",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-181-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-181-20261107-v1.json",
+      "inputs": 0,
+      "previousMs": 21.07070800000001,
+      "currentMs": 21.878207999999987,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-182",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-182-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-182-20261107-v1.json",
+      "inputs": 1,
+      "previousMs": 23.002041000000006,
+      "currentMs": 23.098084,
+      "fullGraphUnchanged": true,
+      "lines": 2
+    },
+    {
+      "label": "actual-v253-183",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v253-183-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-actual-v253-183-20261107-v1.json",
+      "inputs": 2,
+      "previousMs": 34.614417,
+      "currentMs": 35.527000000000015,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "known-blue-data-analysis",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-known-blue-data-analysis-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-known-blue-data-analysis-20261107-v1.json",
+      "inputs": 108,
+      "previousMs": 222.330916,
+      "currentMs": 224.02891700000004,
+      "fullGraphUnchanged": true,
+      "lines": 65
+    },
+    {
+      "label": "paired-paired-scan-setup-dlc31-15",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-paired-paired-scan-setup-dlc31-15-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-paired-paired-scan-setup-dlc31-15-20261107-v1.json",
+      "inputs": 186,
+      "previousMs": 330.815833,
+      "currentMs": 351.49474999999995,
+      "fullGraphUnchanged": true,
+      "lines": 136
+    },
+    {
+      "label": "paired-purple2-known-analysis-single-3",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-paired-purple2-known-analysis-single-3-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-paired-purple2-known-analysis-single-3-20261107-v1.json",
+      "inputs": 97,
+      "previousMs": 269.29229200000003,
+      "currentMs": 267.16366700000003,
+      "fullGraphUnchanged": true,
+      "lines": 73
+    },
+    {
+      "label": "public-income-before-swap",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-public-income-before-swap-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-public-income-before-swap-20261107-v1.json",
+      "inputs": 3,
+      "previousMs": 43.258583,
+      "currentMs": 43.693667000000005,
+      "fullGraphUnchanged": true,
+      "lines": 3
+    },
+    {
+      "label": "scan-launch-gap",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-scan-launch-gap-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-scan-launch-gap-20261107-v1.json",
+      "inputs": 60,
+      "previousMs": 197.97558300000003,
+      "currentMs": 192.909125,
+      "fullGraphUnchanged": true,
+      "lines": 37
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

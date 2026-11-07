@@ -270,12 +270,36 @@
     };
   }
 
-  function getSymbolReward(symbolId) {
+  // Pure quote callers may share the finite normalized rule vectors. Normal
+  // execution keeps detached rewards; only the explicit option borrows them.
+  const freezeReward = (reward) => {
+    const normalized = cloneReward(reward);
+    Object.freeze(normalized.gain);
+    return Object.freeze(normalized);
+  };
+  const readOnlySymbolRewards = Object.freeze(Object.fromEntries(
+    Object.entries(SYMBOL_REWARDS).map(([id, reward]) => [id, freezeReward(reward)]),
+  ));
+  const readOnlyTraceRewards = Object.freeze(Object.fromEntries(
+    Object.entries(TRACE_REWARDS).map(([type, rewards]) => [type, Object.freeze(Object.fromEntries(
+      Object.entries(rewards).map(([position, reward]) => [position, freezeReward(reward)]),
+    ))]),
+  ));
+
+  function getSymbolReward(symbolId, options = null) {
+    if (options?.readOnlyRewards === true && Object.hasOwn(readOnlySymbolRewards, symbolId)) {
+      return readOnlySymbolRewards[symbolId];
+    }
     return cloneReward(SYMBOL_REWARDS[symbolId]);
   }
 
-  function getTraceReward(_alienState, traceType, position) {
-    return cloneReward(TRACE_REWARDS[traceType]?.[normalizePosition(position)]);
+  function getTraceReward(_alienState, traceType, position, options = null) {
+    const normalizedPosition = normalizePosition(position);
+    if (options?.readOnlyRewards === true && Object.hasOwn(readOnlyTraceRewards, traceType)
+      && Object.hasOwn(readOnlyTraceRewards[traceType], normalizedPosition)) {
+      return readOnlyTraceRewards[traceType][normalizedPosition];
+    }
+    return cloneReward(TRACE_REWARDS[traceType]?.[normalizedPosition]);
   }
 
   function placeAmibaTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
@@ -553,14 +577,14 @@
     return Object.values(amiba.symbolsById || {}).sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
   }
 
-  function listSymbolsInRegion(alienState, region) {
+  function listSymbolsInRegion(alienState, region, options = null) {
     const slots = REGION_SYMBOL_SLOTS[region] || [];
     return slots
       .map((slotId) => getSymbolEntry(alienState, slotId))
       .filter(Boolean)
       .map((entry) => ({
         ...entry,
-        reward: getSymbolReward(entry.symbolId),
+        reward: getSymbolReward(entry.symbolId, options),
         region,
       }));
   }
@@ -607,10 +631,10 @@
     return { symbolId, fromSlotId: slotId, toSlotId: nextSlotId, moved: true };
   }
 
-  function resolveSymbolAtSlot(alienState, slotId) {
+  function resolveSymbolAtSlot(alienState, slotId, options = null) {
     const entry = getSymbolEntry(alienState, slotId);
     if (!entry) return { ok: false, message: "该位置没有可结算的阿米巴 symbol" };
-    const reward = getSymbolReward(entry.symbolId);
+    const reward = getSymbolReward(entry.symbolId, options);
     const move = moveSymbolFromSlot(alienState, slotId);
     return {
       ok: true,
@@ -622,13 +646,13 @@
     };
   }
 
-  function resolveRegionReward(alienState, region) {
+  function resolveRegionReward(alienState, region, options = null) {
     const slots = REGION_SYMBOL_SLOTS[region] || [];
     const orderedSlots = getSymbolResolutionOrder(slots)
       .filter((slotId) => Boolean(getSymbolEntry(alienState, slotId)));
     const results = [];
     for (const slotId of orderedSlots) {
-      const result = resolveSymbolAtSlot(alienState, slotId);
+      const result = resolveSymbolAtSlot(alienState, slotId, options);
       if (result.ok) results.push(result);
     }
     return {

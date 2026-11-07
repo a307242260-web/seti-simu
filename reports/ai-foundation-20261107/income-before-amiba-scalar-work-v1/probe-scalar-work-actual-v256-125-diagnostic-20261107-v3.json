@@ -1,0 +1,47 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V319 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "actual-v256-125",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-125-20261107-v1.json",
+  "reference": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+  "referenceSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-125-root-20261106-v1.json",
+  "fixtureSha256": "6d3a69e4a96e097966a11d7a1cbd1d92f009ab2cfaa94e24db4372d50d72991b",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-probe-v319-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6c56ce1d9ad240e6677eedd241d01993a84eb3a9a1637919818334e2c9a15949",
+  "prototype": "reports/ai-foundation-20261107/income-before-amiba-scalar-work-v1/probe-scalar-work-prototype-20261107-v3.js",
+  "prototypeSha256": "91ea427baf335b64a9eabb91baad1ffe23e0bd991e9b99599febbd4a65f345f9",
+  "valuePrototype": "reports/ai-foundation-20261107/income-before-amiba-scalar-work-v1/state-value-mission-data-window-prototype-20261107-v3.js",
+  "valuePrototypeSha256": "0ee7c50aeb304a5072b4238684c8c1769801d02d019275534a2b48abf44a3a54",
+  "ms": 575.290375,
+  "nativeInputs": 127,
+  "rank": [
+    "card_corner:295d3b4f",
+    123.58333333333333,
+    -14.083333333333334,
+    0,
+    7
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "queries": 2647,
+    "refs": 2609,
+    "serialized": 38,
+    "fallbacks": 0,
+    "geometryMisses": 3,
+    "fundedDirectories": 30,
+    "fundedDirectoryHits": 2282,
+    "fundedDirectoryPayments": 420,
+    "emptyFundedScalar": 1955
+  },
+  "researchWork": {
+    "hits": 211506,
+    "misses": 3710,
+    "contexts": 354,
+    "factories": 1660,
+    "symbolPartBuilds": 460,
+    "symbolPartHits": 9214,
+    "symbolKeyFallbacks": 7120,
+    "entries": 256
+  },
+  "newAutonomousRuns": 0
+}

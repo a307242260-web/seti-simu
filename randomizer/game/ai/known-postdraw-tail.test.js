@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value');
 const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation');
 const F='reports/ai-foundation-20261105/third-round-teacher-v1/',read=p=>JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../..',p))),f=read(F+'v239-actual-before-132-root-20261106-v1.json'),controls=read(F+'v239-free-alien-card-boundary-control-20261106-v1.checkpoint.json'),reference=read(F+'v239-free-card-known-suffix-control-20261106-v1.json'),seat=f.seatId,seed=f.source.seed;
-const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope;let checked=0;
+const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const replay=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});replay.newGame({seed});const nativePort=replay.composition,c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope;let checked=0;
 function open(){const p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});p.setMovementPlanning(true);p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});return p;}
 // Public display acquisitions are covered by public-alien-offer.test.js.
 // This tail proof specifically excludes new known purposes and tests only opaque rewards.
@@ -45,7 +45,9 @@ try{for(const name of ['cancel','blind']){const p=open();try{let node=p.openRoot
    for(let i=0;i<4;i++){
     assert.equal(done.prefixes[i].action.actionId,native.prefixes[i+4].action.actionId);
     assert.deepEqual(done.prefixes[i].action.target,native.prefixes[i+4].action.target);
-    assert.deepEqual(values.evaluateStateValue(q.valueObservation(i<3?done.prefixes[i+1].node:done.node),seat),values.evaluateStateValue(require('../rule-composition').sanitizeHiddenInformationObservation(knownRoot.observation,buildRuleObservation(JSON.parse(native.prefixes[i+4].envelope.committedState),seed,seat),{code:'hidden_card_draw'}),seat));
+    assert(nativePort.lifecycle.restore(native.prefixes[i+4].envelope).ok);
+    const formal=nativePort.projection({role:'player',playerId:seat}).state;
+    assert.deepEqual(values.evaluateStateValue(q.valueObservation(i<3?done.prefixes[i+1].node:done.node),seat),values.evaluateStateValue(require('../rule-composition').sanitizeHiddenInformationObservation(knownRoot.observation,formal,{code:'hidden_card_draw'}),seat));
    }
    const value=values.evaluateStateValue(q.valueObservation(done.node),seat);assert.equal(value.total,native.branches.blue.maskedValue.total);
    maskedDataWorlds.push({policy,value,legalActions:node.legalActions,steps:done.prefixes.map(x=>x.action.actionId)});
@@ -57,4 +59,4 @@ try{for(const name of ['cancel','blind']){const p=open();try{let node=p.openRoot
  try{noMovement.setMovementPlanning(false);let node=noMovement.openRoot();for(const id of ['play_card:5d3aef4d','choose_card:3fd1e1f1','choose_target:4ca50ef1'])node=noMovement.expand(node,id);assert.equal(node.status,'information-barrier','without movement timing policy the Native continuation is unproved');}finally{noMovement.close();}
  assert(c.lifecycle.restore(original).ok);
  console.log(JSON.stringify({knownPostdrawTail:'passed',nativeControlledBranches:checked,referenceNativeInputs:18,anonymousCardUsed:false,freeCardValue:125.25,cancelValue:124.25,hiddenDeckWorldsIndependent:6,closedUnprovedBoundary:true,rootAndRngUnchanged:true,fixedPostdrawDataNativeInputs:4,ordinaryDeckWorldsIndependent:6,newAiSearches:0}));
-}finally{c.dispose();}
+}finally{nativePort.dispose();c.dispose();}

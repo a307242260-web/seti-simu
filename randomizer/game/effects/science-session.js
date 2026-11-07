@@ -788,12 +788,9 @@
   }
 
   function getNebulaSectorX(root, nebulaId) {
-    const locations = solar.createSolarSnapshot(
-      getWorkingSlice(root, "solarSystem"),
-    ).nebulaLocations || {};
-    const location = Array.isArray(locations)
-      ? locations.find((entry) => entry.id === nebulaId)
-      : locations[nebulaId] || null;
+    const solarState = solar.normalizeSolarInput(getWorkingSlice(root, "solarSystem"));
+    const location = solar.getNebulaLocations(solarState.sectorBySlot)
+      .find((entry) => entry.id === nebulaId);
     return location?.x == null ? null : solar.mod8(Number(location.x));
   }
 
@@ -833,7 +830,7 @@
         ? root.match?.cardPlayContext?.lastLanding?.planetId
         : opts.planetId;
       const planet = planetId
-        ? solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem")).planetLocations
+        ? solar.collectPlanetLocations(solar.normalizeSolarInput(getWorkingSlice(root, "solarSystem")))
           .find((candidate) => candidate.planetId === planetId)
         : null;
       if (planet?.x != null) {

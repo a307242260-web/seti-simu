@@ -255,3 +255,9 @@ Residual导出 `queryCardSettlement(root, ownerId, payload)`，复用原生结�
 ### 只读观察与移动预览（2026-10-29）
 
 原生非cheap投影已经隔离并深冻结。分析端口复用这些只读字段，信息遮蔽的新包装继续冻结，不再次克隆整份观察。正式Session恢复与working copy不变。移动公转预览只复制太阳系、棋子和玩家资源，计算缓存仅复用时机结果；完整状态/Session身份不受影响，见[契约及失效验证](ai-search-hotpath-20261029.md)。
+
+### 固定奖励向量的只读返回（2026-11-07）
+
+Amiba的`getSymbolReward`、`getTraceReward`、`listSymbolsInRegion`、`resolveSymbolAtSlot`及`resolveRegionReward`可显式传`{readOnlyRewards:true}`。该选项只共享已按原逻辑规范化、gain与外壳均冻结的5种symbol/12种trace固定规则奖励；未传时仍返回独立可变副本，未知规则保留原处理。选择/移动/解析顺序和奖励数值不变。`resolve*`仍会移动传入棋盘的symbol；它不是只读棋盘接口，纯估值必须传私有账本。
+
+研究触发、已知符号牌、研究后符号组合及阿米巴分析的纯报价只读奖励并写自有钱包，使用此选项减少临时对象。奖励引用不代表原生后继、资源或跨状态等价；正式Session、保存/replay/RNG及预算保持。测试须同时覆盖默认副本隔离、共享奖励写拒绝、中央单符号/区域移动和独立旧/新估值模块图逐值一致。

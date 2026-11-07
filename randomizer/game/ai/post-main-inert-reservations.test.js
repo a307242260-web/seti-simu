@@ -73,7 +73,14 @@ for (const [label, state] of [["cash-data-income", income], ["cash-move", moving
   ["unreachable-launch-orbit-land", inactive], ["no-probe-visits", noProbe]]) {
   const raw = run(state, false), pruned = run(state, true), cached = run(state, true, 256);
   for (const out of [pruned, cached]) { assert.equal(out.actionId, raw.actionId); assert.equal(out.value, raw.value);
-    assert.equal(out.lines[0].distance, raw.lines[0].distance); assert(out.diagnostics.transitions < raw.diagnostics.transitions); }
+    assert.equal(out.lines[0].distance, raw.lines[0].distance);
+    const hasLiveProbe = state.pieces.rockets.some(r=>r.playerId===seatId && r.surface==="solar-board"
+      && (r.kind||"standard")==="standard" && r.fossilId==null);
+    if (state.turn.roundNumber===4 && !hasLiveProbe) assert(out.diagnostics.transitions < raw.diagnostics.transitions);
+    else {
+      assert.equal(out.diagnostics.transitions, raw.diagnostics.transitions);
+      assert.equal(out.diagnostics.postMainProofNodes,0,"a final-round deployed probe can change the continuation quote");
+    } }
   rows.push({ label, raw: raw.diagnostics.transitions, pruned: pruned.diagnostics.transitions, value: pruned.value });
 }
 function reject(state) { const { port, root } = open(state); assert.equal(port.postMainPlanSpec(root), null); port.close(); }
@@ -92,8 +99,20 @@ const scoring = structuredClone(moving), entry = cards.CARD_CATALOG.find(c => sc
   && effects.getCardModel(c.card_id)?.endGameScoring?.kind === "probeLocation");
 assert(entry); scoring.cards.drawPileCardIds = scoring.cards.drawPileCardIds.filter(id => id !== entry.card_id);
 scoring.players.players.find(p => p.id === seatId).reservedCards.push(cards.createCommittedCardInstance(scoring, entry)); reject(scoring);
-const actualResult = run(actual, true);
-rows.push({ label: "actual152-after-dlc39", pruned: actualResult.diagnostics.transitions, value: actualResult.value,
-  actionId: actualResult.actionId, distance: actualResult.lines[0].distance, scope: "Actual formal continuation; no unpruned complete-graph comparison claimed." });
+const actualPort = open(actual);
+try {
+  // This real position has a live probe. Current Production completes with
+  // fixed resource goals; the older no-probe pruning theorem must not run.
+  const agent = require("./search-agent"), result = searchDecision({
+    ...agent.OPTIONS, port: actualPort.port, root: actualPort.root, evaluate,
+    modelKey: evaluate.modelKey, budget: agent.BUDGET,
+  });
+  assert(result.complete, result.stopReason);
+  assert.equal(result.diagnostics.postMainProofNodes, 0);
+  assert(result.diagnostics.nativeExecutions <= 256);
+  assert.deepEqual(comp.lifecycle.save().envelope, actualPort.before);
+  rows.push({ label: "actual152-after-dlc39", nativeInputs: result.diagnostics.nativeExecutions, value: result.value,
+    actionId: result.actionId, distance: result.lines[0].distance, scope: "Current production fixed goals; legacy live-probe pruning refused." });
+} finally { actualPort.port.close(); }
 comp.dispose();
 console.log(JSON.stringify({ postMainInertReservations: "passed", rows }));

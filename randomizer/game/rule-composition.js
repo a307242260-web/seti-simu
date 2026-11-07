@@ -459,6 +459,7 @@
     function createRuntime() {
       const next = effectRuntimeApi.createRuntime({
         stateStore: store,
+        cloneTrustedCheckpoint: options.allowTrustedForkLifecycle === true ? stateStoreApi.copyForkData : null,
         trustedIsolatedOwnership: options.allowTrustedForkLifecycle === true,
         validateState: options.allowTrustedForkLifecycle === true
           ? () => ({ ok: true })

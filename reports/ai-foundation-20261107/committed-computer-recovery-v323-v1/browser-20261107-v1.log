@@ -1,0 +1,8 @@
+PASS production-start-button http://127.0.0.1:55958/randomizer/index.html
+PASS production-scan-purpose-plan http://127.0.0.1:55958/randomizer/index.html
+PASS production-winning-income-recovery http://127.0.0.1:55958/randomizer/index.html
+PASS production-public-amiba-income-swap http://127.0.0.1:55958/randomizer/index.html
+PASS production-public-alien-offer http://127.0.0.1:55958/randomizer/index.html
+PASS production-known-postdraw-tail http://127.0.0.1:55958/randomizer/index.html
+PASS production-scan-analysis-income http://127.0.0.1:55958/randomizer/index.html
+SUMMARY browserSmoke passed=7 failed=0 total=7

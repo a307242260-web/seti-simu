@@ -114,8 +114,10 @@
     return normalized.map((entry) => entry.effect);
   }
 
+  let checkpointCopies = 0, choiceIdRejects = 0, serializedCandidates = 0;
   function createRuntime(options = {}) {
     const cloneState = options.cloneState || clone;
+    const cloneTrustedCheckpoint = options.cloneTrustedCheckpoint || clone;
     const getStateVersion = options.getStateVersion
       || ((state) => state?.meta?.stateVersion ?? state?.version ?? null);
     const validateState = options.validateState || (() => ({ ok: true }));
@@ -749,7 +751,20 @@
         });
       }
       const serializedChoice = stableSerialize(submission.choice);
-      const legalChoice = snapshot.choices.find((choice) => stableSerialize(choice) === serializedChoice);
+      const actionId = trustedIsolatedOwnership ? submission.choice?.actionId : undefined;
+      const plainActionId = typeof actionId === "string" && !Array.isArray(submission.choice)
+        && Object.prototype.propertyIsEnumerable.call(submission.choice, "actionId");
+      const legalChoice = snapshot.choices.find(choice => {
+        // Different own serialized action IDs cannot match. An ID match is
+        // never sufficient: still compare the complete authoritative choice.
+        if (plainActionId && typeof choice?.actionId === "string" && choice.actionId !== actionId
+          && !Array.isArray(choice) && Object.prototype.propertyIsEnumerable.call(choice, "actionId")) {
+          choiceIdRejects++;
+          return false;
+        }
+        serializedCandidates++;
+        return stableSerialize(choice) === serializedChoice;
+      });
       if (!legalChoice) {
         return fail("EFFECT_DECISION_NOT_LEGAL", "提交项不在最新 legal choices 中", { decision: snapshot });
       }
@@ -910,7 +925,8 @@
         &&Object.values(source.journal).every(entries=>Array.isArray(entries)&&Object.isFrozen(entries)
           &&entries.every(entry=>entry===null||typeof entry!=="object"||Object.isFrozen(entry)));
       const shareWorking=shareBase&&options.readOnly===true&&Object.isFrozen(source.workingState);
-      const restored=shareBase?{...clone({...source,baseState:null,committedState:null,...(shareJournal?{journal:null}:{}),...(shareWorking?{workingState:null}:{})}),baseState:source.baseState,committedState:source.committedState,
+      if (shareBase && cloneTrustedCheckpoint !== clone) checkpointCopies++;
+      const restored=shareBase?{...cloneTrustedCheckpoint({...source,baseState:null,committedState:null,...(shareJournal?{journal:null}:{}),...(shareWorking?{workingState:null}:{})}),baseState:source.baseState,committedState:source.committedState,
         ...(shareJournal?{journal:Object.fromEntries(Object.entries(source.journal).map(([key,entries])=>[key,entries.slice()]))}:{}),...(shareWorking?{workingState:source.workingState}:{})}:clone(source);
       if (!restored || restored.schemaVersion !== SCHEMA_VERSION) {
         return fail("EFFECT_CHECKPOINT_SESSION_INVALID", "checkpoint 缺少合法 session");
@@ -976,6 +992,8 @@
   return Object.freeze({
     SCHEMA_VERSION,
     CHECKPOINT_SCHEMA_VERSION,
+    diagnosticTrustedCheckpointCopies: () => checkpointCopies,
+    diagnosticDecisionChoicePrefilter: () => ({choiceIdRejects,serializedCandidates}),
     SPAWN_PRIORITY,
     createRuntime,
   });

@@ -1,0 +1,37 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V322 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "actual-v256-125",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v322-cold-actual-v256-125-20261107-v1.json",
+  "reference": "reports/ai-foundation-20261107/teacher-r3-after-amiba-scan-coordinate-v322-v1/source-manifest-20261107-v1.json",
+  "referenceSha256": "5c7538bbb58dcb972499f6f5986418cfc47b289e24c200f3177700ec78a789d4",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-125-root-20261106-v1.json",
+  "fixtureSha256": "6d3a69e4a96e097966a11d7a1cbd1d92f009ab2cfaa94e24db4372d50d72991b",
+  "manifest": "reports/ai-foundation-20261107/teacher-r3-after-amiba-scan-coordinate-v322-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "5c7538bbb58dcb972499f6f5986418cfc47b289e24c200f3177700ec78a789d4",
+  "prototype": "reports/ai-foundation-20261107/v322-winning-continuation-v1/analysis-port-retain-committed-computer-proof-20261107-v1.js",
+  "prototypeSha256": "e782948efa01469d0b427fdf949f2e2efce61db45244ea78d3ea55871083404b",
+  "ms": 571.999708,
+  "nativeInputs": 127,
+  "rank": [
+    "card_corner:295d3b4f",
+    123.58333333333333,
+    -14.083333333333334,
+    0,
+    7
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "changedFields": [],
+  "priorNativeInputs": 127,
+  "rootAndRngUnchanged": true,
+  "researchWork": {
+    "hits": 211506,
+    "misses": 3710,
+    "contexts": 354,
+    "factories": 1660,
+    "symbolPartBuilds": 460,
+    "symbolPartHits": 9214,
+    "symbolKeyFallbacks": 7120,
+    "entries": 256
+  },
+  "newAutonomousRuns": 0
+}

@@ -3,8 +3,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),values=require('./state-value'),{searchDecision}=require('./decision-search'),agent=require('./search-agent');
 const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json'))),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition,evaluate=values.createStateValueEvaluator(f.seatId),budget={transitions:256,nodes:1024,frontier:256,milliseconds:5000};
 try{
+ // The unguarded currency/final-mark proof here is scoped to no live probe.
  for(const score of [23,25]){
-  const envelope=structuredClone(f.compositionEnvelope),s=JSON.parse(envelope.committedState),owner=s.players.players.find(p=>p.id===f.seatId);owner.mainActionCompleted=true;owner.resources.score=score;envelope.committedState=JSON.stringify(s);assert(c.lifecycle.restore(envelope).ok);
+  const envelope=structuredClone(f.compositionEnvelope),s=JSON.parse(envelope.committedState),owner=s.players.players.find(p=>p.id===f.seatId);owner.mainActionCompleted=true;owner.resources.score=score;s.pieces.rockets=s.pieces.rockets.filter(r=>r.playerId!==f.seatId);envelope.committedState=JSON.stringify(s);assert(c.lifecycle.restore(envelope).ok);
   const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});
   try{
    const root=p.openRoot(),spec=p.turnTailSummary(root,'blue-end-turn');assert(spec);assert(spec.dataPlans.length);assert.equal(spec.markedTiles.length,1);assert(spec.requiredNativeInputs>10);

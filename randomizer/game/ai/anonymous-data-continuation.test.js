@@ -26,7 +26,7 @@ try{
    assert.equal(policy.plans.length,1);assert.equal(policy.plans[0].goal.kind,'blue-data');
    for(let i=2;i<control.sequence.length-1;i++){
     const action=node.legalActions.find(a=>a.actionId===control.sequence[i]);assert(action);assert(['place_data','choose_target','end_turn'].includes(action.family));steps.push(action);
-    node=p.expand(node,action.actionId);assert.deepEqual(values.evaluateStateValue(p.valueObservation(node),seat),control.prefixes[i].maskedValue,'same Native input and masked portfolio at every prefix');
+    node=p.expand(node,action.actionId);assert.deepEqual(values.evaluateStateValue(p.valueObservation(node),seat),{...control.prefixes[i].maskedValue,modelVersion:values.MODEL_VERSION},'same Native input and masked portfolio at every prefix');
    }
    assert.equal(node.status,'information-barrier');assert.equal(values.evaluateStateValue(p.valueObservation(node),seat).total,140);
    assert.equal(control.prefixes.at(-2).maskedValue.total,control.prefixes.at(-1).maskedValue.total,'the independently replayed native end leaves this value unchanged');

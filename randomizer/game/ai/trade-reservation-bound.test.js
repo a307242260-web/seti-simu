@@ -40,13 +40,21 @@ function check(f,label){
   s.cards.discardPile.push(...owner.hand.splice(1));Object.assign(owner.resources,{credits:2,energy:1,publicity:0,availableData:0,handSize:1});
   owner.dataState={poolTokens:[],placedTokens:[],discardedCount:0};owner.mainActionCompleted=true;
   owner.industryRoundMarkRound=s.turn.roundNumber;owner.industryRoundMarkTurn=s.turn.turnNumber;
-  assert(comp.lifecycle.restore({...f.compositionEnvelope,committedState:JSON.stringify(s)}).ok);const smallBefore=comp.lifecycle.save().envelope;
-  function run(enabled,cache=0){const port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:cache});try{
-   const out=searchDecision({port,root:port.openRoot(),evaluate:evaluators[0],budget,resourceDominance:true,cardTradePruning:enabled,cardChoiceEquivalence:enabled});assert(out.complete,out.stopReason);return out;
-  }finally{port.close();}}
-  const raw=run(false),pruned=run(true),cached=run(true,256);
-  for(const x of [pruned,cached]){assert.equal(x.actionId,raw.actionId);assert.equal(x.value,raw.value);assert.equal(x.lines[0].distance,raw.lines[0].distance);if(s.turn.roundNumber===4)assert(x.diagnostics.cardTradePrunes>0);else assert.equal(x.diagnostics.cardTradePrunes,0,"held-card value invalidates the old quantity-only bound");}
-  assert.deepEqual(comp.lifecycle.save().envelope,smallBefore);completeWindows.push({label,raw:raw.diagnostics.transitions,pruned:pruned.diagnostics.transitions,value:raw.value,prunes:pruned.diagnostics.cardTradePrunes});
+  const withProbe=s.pieces.rockets.some(r=>r.playerId===owner.id&&r.surface==="solar-board"&&(r.kind||"standard")==="standard"&&r.fossilId==null);
+  for(const noProbe of (s.turn.roundNumber===4&&withProbe?[false,true]:[false])){
+   const state=noProbe?{...s,pieces:{...s.pieces,rockets:s.pieces.rockets.filter(r=>r.playerId!==owner.id||r.surface!=="solar-board")}}:s;
+   assert(comp.lifecycle.restore({...f.compositionEnvelope,committedState:JSON.stringify(state)}).ok);const smallBefore=comp.lifecycle.save().envelope;
+   function run(enabled,cache=0){const port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:cache});try{
+    const out=searchDecision({port,root:port.openRoot(),evaluate:evaluators[0],budget,resourceDominance:true,cardTradePruning:enabled,cardChoiceEquivalence:enabled});assert(out.complete,out.stopReason);return out;
+   }finally{port.close();}}
+   const raw=run(false),pruned=run(true),cached=run(true,256);
+   for(const x of [pruned,cached]){
+    assert.equal(x.actionId,raw.actionId);assert.equal(x.value,raw.value);assert.equal(x.lines[0].distance,raw.lines[0].distance);
+    if(state.turn.roundNumber===4&&(noProbe||!withProbe))assert(x.diagnostics.cardTradePrunes>0);
+    else assert.equal(x.diagnostics.cardTradePrunes,0,"future card or live probe capital invalidates the old quantity-only bound");
+   }
+   assert.deepEqual(comp.lifecycle.save().envelope,smallBefore);completeWindows.push({label,noProbe,raw:raw.diagnostics.transitions,pruned:pruned.diagnostics.transitions,value:raw.value,prunes:pruned.diagnostics.cardTradePrunes});
+  }
  }
  comp.dispose();
 }

@@ -441,7 +441,7 @@ function probeRouteTopologyKey(workingState, player, sources, context) {
   return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}:${JSON.stringify(context.probeMovement)}:${JSON.stringify(sources)}`;
 }
 
-function buildTopologyBody(workingState, player, context, sources) {
+function buildTopologyBody(workingState, player, context, sources, scalarOrdinary = false) {
   const reachableBySource = new Map();
   const movement = context.probeMovement;
   const contents = new Map();
@@ -461,7 +461,12 @@ function buildTopologyBody(workingState, player, context, sources) {
   };
   const compare = (left, right) => left.paidPoints - right.paidPoints
     || left.path.length - right.path.length || right.publicityStops - left.publicityStops;
-  const routeKey = (route) => JSON.stringify([
+  // The scalar ordinary query returns only paid points. For a fixed source,
+  // the Native neighbor, future cost and endpoint menu depend on the current
+  // coordinate, not on how we reached it. Keep the same lexicographic
+  // paid-points/length/publicity order and keep all full-menu identities intact.
+  const coordinateKey = coordinate => `${coordinate.x},${coordinate.y}`;
+  const routeKey = scalarOrdinary ? route => coordinateKey(route.coordinate) : (route) => JSON.stringify([
     route.coordinate.x, route.coordinate.y, route.cardRemaining, route.companyAvailable,
     route.companyPending, route.firstStep,
   ]);
@@ -480,6 +485,7 @@ function buildTopologyBody(workingState, player, context, sources) {
       companyPending: !source.launchRequired && movement.phase === "company",
       firstStep: null,
     };
+    const canMove = rockets.createStaticCoordinateMoveQuery(workingState.pieces, source.rocketId);
     const queue = [initialRoute];
     const bestRouteByState = new Map([[routeKey(initialRoute), initialRoute]]);
     const append = (route, previous, firstStep) => {
@@ -494,6 +500,7 @@ function buildTopologyBody(workingState, player, context, sources) {
       queue.sort(compare);
       const route = queue.shift();
       if (bestRouteByState.get(routeKey(route)) !== route) continue;
+      __scalarTopology.expanded[scalarOrdinary ? "scalar" : "full"]++;
       // 结束阶段不移动也不执行奖励，只消耗当前不能带出该阶段的额度；无零费用循环。
       if (route.cardRemaining > 0) {
         append({ ...route, cardRemaining: 0 }, route, { family: "choose_target", skip: true });
@@ -504,13 +511,7 @@ function buildTopologyBody(workingState, player, context, sources) {
       }
       const points = pointsAt(route.coordinate);
       for (const direction of rocketAbility.MOVE_DIRECTIONS) {
-        const move = rockets.canMoveFromCoordinate(
-          workingState.pieces,
-          route.coordinate,
-          direction.deltaX,
-          direction.deltaY,
-          source.rocketId,
-        );
+        const move = canMove(route.coordinate, direction.deltaX, direction.deltaY);
         if (!move.ok) continue;
         const destination = contentAt(move.to);
         const candidateRoute = {
@@ -547,7 +548,7 @@ function buildTopologyBody(workingState, player, context, sources) {
       const visible = contentAt(route.coordinate);
       if (visible?.kind !== solar.layout.CONTENT_KIND.PLANET || visible.planetId === "earth") continue;
       const planet = solar.layout.PLANETS[visible.planetId] || {};
-      const key = JSON.stringify([route.coordinate.x, route.coordinate.y, route.firstStep]);
+      const key = scalarOrdinary ? coordinateKey(route.coordinate) : JSON.stringify([route.coordinate.x, route.coordinate.y, route.firstStep]);
       const previous = reachableByFirst.get(key);
       if (previous && compare(previous, route) <= 0) continue;
       reachableByFirst.set(key, { ...route, planetId: visible.planetId,
@@ -559,13 +560,15 @@ function buildTopologyBody(workingState, player, context, sources) {
   return { sources, reachableBySource, movement };
 }
 
-function probeRouteTopology(workingState, player, context, sources) {
-  const key = probeRouteTopologyKey(workingState, player, sources, context);
+function probeRouteTopology(workingState, player, context, sources, scalarOrdinary = false) {
+  // A scalar topology cannot supply first-action identities to full queries.
+  const key = (scalarOrdinary ? "scalar-ordinary:" : "full:") + probeRouteTopologyKey(workingState, player, sources, context);
   const cached = PROBE_ROUTE_TOPOLOGY_CACHE.get(key);
   if (cached) {
     return cached;
   }
-  const topology = Object.freeze(buildTopologyBody(workingState, player, context, sources));
+  __scalarTopology.misses[scalarOrdinary ? "scalar" : "full"]++;
+  const topology = Object.freeze(buildTopologyBody(workingState, player, context, sources, scalarOrdinary));
   if (PROBE_ROUTE_TOPOLOGY_CACHE.size >= PROBE_ROUTE_TOPOLOGY_CACHE_MAX) {
     PROBE_ROUTE_TOPOLOGY_CACHE.clear();
   }
@@ -573,7 +576,7 @@ function probeRouteTopology(workingState, player, context, sources) {
   return topology;
 }
 
-function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null, includeMoveTiming = true, requestedRequirementId = null) {
+function prepareProbeRoutes(workingState, requestedPlayerId, session) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
@@ -618,6 +621,23 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
     });
   }
 
+  return { player, context, sources };
+}
+
+function preparePaidProbeDistance(workingState, requestedPlayerId) {
+  const input = prepareProbeRoutes(workingState, requestedPlayerId, null);
+  if (!input) return null;
+  const { player, context, sources } = input, m = context.probeMovement;
+  const scalarOrdinary = m.phase==="ordinary" && m.cardRemaining===0 && m.scanRemaining===0 && m.companyRemaining===0;
+  const topology = probeRouteTopology(workingState, player, context, sources, scalarOrdinary);
+  __rotationReuse.preparedDistanceContexts++;
+  return requirementId => buildProbeCandidateStructures(workingState, player, context, topology, sources, requirementId, true);
+}
+
+function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null, includeMoveTiming = true, requestedRequirementId = null) {
+  const input = prepareProbeRoutes(workingState, requestedPlayerId, session);
+  if (!input) return null;
+  const { player, context, sources } = input;
   const fullKey = probeStructureKey(workingState, player, context, sources);
   const structureKey = requestedRequirementId==null?fullKey:JSON.stringify([fullKey,requestedRequirementId]);
   const fullStructure=requestedRequirementId==null?null:PROBE_STRUCTURE_CACHE.get(fullKey);
@@ -649,7 +669,8 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
 // Movement previews mutate only rotation, rocket positions and arrival resources.
 // Preserve every other validated native slice as a read-only reference.
 function cloneMovementPreview(state) {
-  return { ...state, solarSystem: clone(state.solarSystem), pieces: clone(state.pieces),
+  return { ...state, solarSystem: { ...state.solarSystem },
+    pieces: { ...state.pieces, rockets: state.pieces.rockets.map(rocket => ({ ...rocket })) },
     players: { ...state.players, players: state.players.players.map(player => ({
       ...player, resources: { ...player.resources },
     })) },
@@ -735,8 +756,9 @@ function probeStructureKey(workingState, player, context, sources) {
     return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(probeMovementTechFacts(player.techState))}|L${landDiscount},${satelliteAccess}|A${JSON.stringify(workingState.aliens)}`;
 }
 
-function buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId = null) {
+function buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId = null, paidDistanceOnly = false) {
   const candidates = [];
+  let shortest=null;
   // Within this directory only, alternative routes share the same immutable
   // native endpoint rewards; costs and state-dependent values remain separate.
   const rewardEffects = new Map();
@@ -776,8 +798,8 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
                 choice.planetId,
                 choice.rewardMarkerSequence ?? choice.markerSequence,
               );
-          effects = structuredClone(effects);
-          const pending = [effects];
+          if(!paidDistanceOnly)effects = structuredClone(effects);
+          const pending = paidDistanceOnly?[]:[effects];
           while (pending.length) {
             const value = pending.pop();
             if (!value || typeof value !== "object" || Object.isFrozen(value)) continue;
@@ -799,6 +821,12 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
           credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
           energy: reach.paidPoints + Number(endpointCost.energy || 0),
         };
+        if(paidDistanceOnly){
+          const energy=totalCost.energy,steps=reach.path.length,publicity=reach.publicityStops;
+          if(!shortest||energy<shortest.energy||energy===shortest.energy&&(steps<shortest.steps||steps===shortest.steps&&publicity>shortest.publicity))
+            shortest={energy,steps,publicity,points:reach.paidPoints};
+          continue;
+        }
         const publicityValue = reach.publicityStops * PROBE_VALUE_POINTS.publicity;
         const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
         const firstMove = reach.path[0] || null;
@@ -865,7 +893,7 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
       }
     }
   }
-  return candidates;
+  return paidDistanceOnly?shortest?.points??null:candidates;
 }
 
 function probeEndpointOwnMarkers(state, player, planetId) {
@@ -888,22 +916,11 @@ function probeEndpointOwnMarkers(state, player, planetId) {
 function finalizeProbeRequirements(player, structureCandidates, movementContext) {
   // 每节点便宜部分：从缓存结构补 resourceGap（资源差）+ 最短路径去重 + 排序。
   // 与未缓存路径的候选字段/排序完全一致（gap 由 required 与当前资源重算）。
-  const candidates = structureCandidates.map((candidate) => ({
-    ...candidate,
-    gap: {
-      credits: Math.max(
-        0,
-        Number(candidate.required?.credits || 0) - Number(player.resources?.credits || 0),
-      ),
-      energy: Math.max(
-        0,
-        Number(candidate.required?.energy || 0) - Number(player.resources?.energy || 0),
-      ),
-      movementSteps: candidate.required?.movementSteps ?? 0,
-    },
-  }));
+  // Choosing and merging the shortest routes uses no wallet field. Fill
+  // identical resource gaps only on the final representative of each ID.
+  __routeGap.skippedGapObjects += structureCandidates.length;
   const shortestByRequirement = new Map();
-  for (const candidate of candidates) {
+  for (const candidate of structureCandidates) {
     const current = shortestByRequirement.get(candidate.requirementId);
     const cost = current ? candidate.required.energy - current.required.energy
       || candidate.required.movementSteps - current.required.movementSteps : -1;
@@ -916,7 +933,22 @@ function finalizeProbeRequirements(player, structureCandidates, movementContext)
         movementNextSteps: [...steps.values()] });
     }
   }
-  const ranked = [...shortestByRequirement.values()].sort((left, right) => (
+  __routeGap.winnerGapObjects += shortestByRequirement.size;
+  __routeGap.skippedGapObjects -= shortestByRequirement.size;
+  const ranked = [...shortestByRequirement.values()].map((candidate) => ({
+    ...candidate,
+    gap: {
+      credits: Math.max(
+        0,
+        Number(candidate.required?.credits || 0) - Number(player.resources?.credits || 0),
+      ),
+      energy: Math.max(
+        0,
+        Number(candidate.required?.energy || 0) - Number(player.resources?.energy || 0),
+      ),
+      movementSteps: candidate.required?.movementSteps ?? 0,
+    },
+  })).sort((left, right) => (
     Number(right.gap.credits === 0 && right.gap.energy === 0)
       - Number(left.gap.credits === 0 && left.gap.energy === 0)
     || right.targetBenefit.grossEquivalentValue - left.targetBenefit.grossEquivalentValue
@@ -1611,6 +1643,7 @@ function createProductionHostComposition(options = {}) {
       return { ok: true };
     },
     stateStoreApi: {
+      copyForkData: stateStoreApi.copyForkData,
       createStateStore(initialState, storeOptions) {
         return highCouplingStateApi.createHighCouplingStateStore(initialState, {
           ...storeOptions,
@@ -1820,30 +1853,73 @@ function createBrowserProductionKernel(options = {}) {
 
 // The returned timing describes geometry/target reachability, not affordability or reward value.
 // Economic/card facts are re-read by the goal policy; they cannot change this calculation.
-function plannedMovementTimingKey(state, seatId, requirementId, path, freePoints = 0) {
+function plannedMovementTimingKeyPrefix(state, seatId) {
   const geometryPlayers = state.players.players.map(({ resources, income, hand, reservedCards, dataState, scoreSources, ...geometry }) => {
+    // These four records only serve played-card company actions. The audited
+    // R4 paid timing path uses neither of those companies nor its card history.
+    if(state.turn.roundNumber===4&&geometry.id===seatId&&["helios_remove_tech_income","turing_borrow_tech"]
+      .includes(industryCatalog.getPlayerIndustryDefinition(geometry)?.activeAbilityId)){
+      const {industryPlayedCardThisRound,industryLastPlayedCardThisRound,industryPlayedCardRound,industryPlayedCardTurn,...facts}=geometry;
+      return{...facts,techState:probeMovementTechFacts(facts.techState)};
+    }
     return{...geometry,techState:probeMovementTechFacts(geometry.techState)};
   });
   return JSON.stringify([state.meta?.gameId, seatId, state.solarSystem, state.pieces, state.planets,
-    state.aliens, geometryPlayers, state.turn, requirementId, path, freePoints]);
+    state.aliens, geometryPlayers, state.turn]).slice(0, -1);
+}
+
+function plannedMovementTimingKey(state, seatId, requirementId, path, freePoints = 0) {
+  return appendMovementTimingKey(plannedMovementTimingKeyPrefix(state, seatId), requirementId, path, freePoints);
+}
+
+function appendMovementTimingKey(prefix, requirementId, path, freePoints = 0) {
+  // Same Native plain-data JSON array bytes; only serialize the target and
+  // path separately within one synchronous, read-only goal query.
+  return prefix + "," + JSON.stringify([requirementId, path, freePoints]).slice(1);
 }
 
 // Compare prefixes of one already selected route; this is deterministic geometry, not direction-tree search.
-function comparePlannedMovementTiming(state, seatId, requirementId, path, freePoints = 0) {
+function createPlannedMovementTimingQuery(state, seatId) {
+  // This query is used only during one synchronous goal plan. It owns the
+  // rotated preview copies and never caches a Native transition or legal menu.
+  const rotatedByPrefix = new Map();
+  return (id, path, freePoints) => comparePlannedMovementTiming(state, seatId, id, path, freePoints, rotatedByPrefix);
+}
+
+function comparePlannedMovementTiming(state, seatId, requirementId, path, freePoints = 0, rotatedByPrefix = null) {
   const owner = state.players.players.find(p => p.id === seatId);
   if (!Number.isSafeInteger(freePoints) || freePoints < 0) throw new Error("PROBE_PLAN_FREE_POINTS_INVALID");
   if (owner.industryBorrowedTechTileId || state.turn.cardTurnEventBonuses?.some(b => b.movementModifiers)
     || industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId === "huanyu_free_moves") {
     return { comparable: false, reason: "temporary-or-company-movement-context", rotationCount: 1 };
   }
-  const afterRotation = snapshot => {
-    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId, {captureSnapshots:false});
-    if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
-    return buildProbeRouteRequirements(snapshot, seatId, null, false, requirementId).candidates.find(c => c.requirementId === requirementId);
+  const afterRotation = (before, prefix) => {
+    let entry = prefix === null ? null : rotatedByPrefix?.get(prefix);
+    if (!entry) {
+      const snapshot = cloneMovementPreview(before);
+      const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId, {captureSnapshots:false});
+      if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
+      __rotationReuse.nativeRotations++;
+      entry = { snapshot, distance: null };
+      if (prefix !== null && rotatedByPrefix && rotatedByPrefix.size < 64) rotatedByPrefix.set(prefix, entry);
+    } else __rotationReuse.rotationReuses++;
+    const { snapshot } = entry;
+    // Retain the established Native failure or no-match behavior for inputs
+    // outside the scalar contract, including a missing goal or ended game.
+    if (snapshot.turn.gameEnded || typeof requirementId !== "string") {
+      const candidate = buildProbeRouteRequirements(snapshot, seatId, null, false, requirementId)
+        .candidates.find(c => c.requirementId === requirementId);
+      return candidate ? candidate.required.paidMovementPoints : null;
+    }
+    // The common Native source/context/topology are read-only within this
+    // rotated preview. Build the requested endpoint and reward independently.
+    entry.distance ||= preparePaidProbeDistance(snapshot, seatId);
+    return entry.distance(requirementId);
   };
-  const delayed = afterRotation(cloneMovementPreview(state));
-  if (!delayed) return { comparable: false, reason: "target-unreachable-after-rotation", rotationCount: 1 };
-  const waitPoints = delayed.required.paidMovementPoints;
+  let prefix = "";
+  const delayed = afterRotation(state, prefix);
+  if (delayed===null) return { comparable: false, reason: "target-unreachable-after-rotation", rotationCount: 1 };
+  const waitPoints = delayed;
   let prefixPoints = 0, best = { prefixLength: 0, totalPaidPoints: waitPoints }, current = cloneMovementPreview(state);
   const alternatives = [{ ...best, remainingPaidPoints: waitPoints }];
   for (let index = 0; index < path.length; index += 1) {
@@ -1854,11 +1930,15 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
     const moved = rockets.moveRocket(current.pieces, step.rocketId, step.deltaX, step.deltaY);
     if (!moved.ok) throw new Error(`PROBE_PLAN_PREFIX_INVALID: ${moved.message}`);
     prefixPoints += points;
-    const future = afterRotation(cloneMovementPreview(current));
-    if (!future) continue;
-    const totalPaidPoints = Math.max(0, prefixPoints-freePoints)+future.required.paidMovementPoints;
+    if (rotatedByPrefix && prefix !== null) {
+      prefix = [step.rocketId, step.deltaX, step.deltaY].every(Number.isSafeInteger)
+        ? prefix + JSON.stringify([step.rocketId, step.deltaX, step.deltaY]) : null;
+    }
+    const future = afterRotation(current, prefix);
+    if (future===null) continue;
+    const totalPaidPoints = Math.max(0, prefixPoints-freePoints)+future;
     alternatives.push({ prefixLength: index+1, prefixMovementPoints: prefixPoints,
-      totalPaidPoints, remainingPaidPoints: future.required.paidMovementPoints });
+      totalPaidPoints, remainingPaidPoints: future });
     if (totalPaidPoints < best.totalPaidPoints) best = alternatives[alternatives.length-1];
   }
   return { comparable: true, assumption: "one-known-solar-rotation-before-the-future-goal", rotationCount: 1,
@@ -1880,10 +1960,19 @@ function getResourceGoalRequirements(state, seatId) {
     analyzeCost:industryPassives.canAnalyzeWithoutEnergy(owner)?{}:{energy:data.ANALYZE_ENERGY_COST}};
 }
 
+const __scalarTopology = { misses: { scalar: 0, full: 0 }, expanded: { scalar: 0, full: 0 } };
+const __rotationReuse = { nativeRotations: 0, rotationReuses: 0, preparedDistanceContexts: 0 };
+const __routeGap={skippedGapObjects:0,winnerGapObjects:0};
 const productionKernelApi = Object.freeze({
+  diagnosticRouteGap:()=>({...__routeGap}),
+  createPlannedMovementTimingQuery,
+  diagnosticRotationReuse: () => ({...__rotationReuse}),
+  diagnosticScalarTopology: () => structuredClone(__scalarTopology),
   getResourceGoalRequirements,
   comparePlannedMovementTiming,
   plannedMovementTimingKey,
+  plannedMovementTimingKeyPrefix,
+  appendMovementTimingKey,
   getProbeRouteRequirements(state, seatId, currentEffect = null) {
     return buildProbeRouteRequirements(state, seatId, currentEffect ? { currentEffect } : null, false);
   },

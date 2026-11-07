@@ -52,6 +52,8 @@
     "type2ReservedTasks",
   ]);
 
+  const FORBIDDEN_SLICE_KEYS = new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]);
+
   function isPlainObject(value) {
     if (value == null || typeof value !== "object") return false;
     const prototype = Object.getPrototypeOf(value);
@@ -112,12 +114,13 @@
 
   function scanForbidden(value, path, forbidden, errors) {
     if (!value || typeof value !== "object") return;
-    for (const [key, child] of Object.entries(value)) {
-      const childPath = `${path}.${key}`;
+    for (const key of Object.keys(value)) {
+      const child = value[key];
       if (forbidden.has(key)) {
+        const childPath = `${path}.${key}`;
         errors.push(error(childPath, "STATE_HOST_FIELD_FORBIDDEN", `${childPath} 不属于 committed state`));
-      } else {
-        scanForbidden(child, childPath, forbidden, errors);
+      } else if (child && typeof child === "object") {
+        scanForbidden(child, `${path}.${key}`, forbidden, errors);
       }
     }
   }
@@ -352,10 +355,10 @@
 
   function validateHighCouplingInvariants(state) {
     const errors = [];
-    scanForbidden(state?.players, "$.players", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.pieces, "$.pieces", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.cards, "$.cards", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.tech, "$.tech", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
+    scanForbidden(state?.players, "$.players", FORBIDDEN_SLICE_KEYS, errors);
+    scanForbidden(state?.pieces, "$.pieces", FORBIDDEN_SLICE_KEYS, errors);
+    scanForbidden(state?.cards, "$.cards", FORBIDDEN_SLICE_KEYS, errors);
+    scanForbidden(state?.tech, "$.tech", FORBIDDEN_SLICE_KEYS, errors);
     const playerIds = validatePlayers(state, errors);
     validatePieces(state, playerIds, errors);
     validateCards(state, errors);

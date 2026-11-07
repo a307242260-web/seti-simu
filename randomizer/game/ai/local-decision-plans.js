@@ -7,7 +7,7 @@
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v9';
+ const VERSION='seti-local-mark-and-scan-purpose-v10';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -24,7 +24,7 @@
  function finalMark({state,seatId,actions}){
   if(!actions.length||!actions.every(a=>a.family==='choose_target'&&a.target?.choiceId?.startsWith('final:')))return null;
   const p=owner(state,seatId),projected=readyIncomePlayer(p),board=structuredClone(state.finalScoring);
-  const context={...state,aliens:structuredClone(state.aliens),data:structuredClone(state.data)},helpers={getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const context={...state,aliens:structuredClone(state.aliens)},helpers={getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   const total=(player,finalBoard)=>endScoring.computePlayerFinalScore({...context,players:state.players.players,currentPlayer:player,finalScoring:finalBoard,cardEffects:effects,getCardTypeCode:helpers.getCardTypeCode},player).totalScore;
   const currentBefore=total(p,structuredClone(board)),forecastBefore=total(projected,structuredClone(board));
   const scores=actions.map(a=>{
@@ -83,7 +83,7 @@
   const done=actions.find(a=>a.family==='choose_card'&&a.target?.done);
   if(!done||actions.some(a=>a.family!=='choose_card'||!a.target?.done&&!a.target?.cardInstanceId))throw new Error('REORGANIZATION_CHOICES_INVALID');
   const p=owner(state,seatId),weights=stateValue.DEFAULT_WEIGHTS;
-  const context={...state,aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const context={...state,aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   // Compare finishing now with discarding one more card. Previously selected
   // rewards are pending until done, and must consume capacity in both previews.
   function value(card=null){
@@ -101,17 +101,21 @@
   const positive=gains[0]?.netGain>0?gains[0]:null,chosen=positive?actions.find(a=>a.actionId===positive.actionId):done;
   return fixedChoice(actions,chosen,'fixed-reorganization',{reason:'greedy-positive-reorganization',netGain:positive?.netGain||0,gains,assumption:'current default value; capped known income-corner rewards and current native final scoring; unknown draws counted only; ties kept; no subset exploration'});
  }
- function incomeCompletion({state,seatId,goal}){
+ function previewIncomeCompletion({state,seatId,goal}){
   const preview=demand.previewIncomeTail({state,seatId,goal});if(!preview.available)return{...preview,selected:false};
-  const p=owner(state,seatId),context={...state,players:state.players.players,aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const p=owner(state,seatId),context={...state,players:state.players.players,aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   const delta=endScoring.computePlayerFinalScore(context,preview.player).totalScore-endScoring.computePlayerFinalScore(context,p).totalScore;
   const capital=demand.incomeTailCapital({state,seatId,goal});
   const net=stateValue.sumValueParts([preview.netGain,delta,-preview.immediateScoreGain,capital.afterCapital,-capital.beforeCapital]);
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.incomeCardId===goal.incomeCardId;
-  return{policy:'seti-greedy-income-tail-v2',selected:net>0||realizesForecast,realizesForecast,netGain:net,placements:preview.placements,assumption:preview.assumption};
+  return{policy:'seti-greedy-income-tail-v2',selected:net>0||realizesForecast,realizesForecast,netGain:net,placements:preview.placements,assumption:preview.assumption,capital};
  }
- function previewBlueCompletion({state,seatId,goal}){
-  const p=owner(state,seatId),copy=structuredClone(p);const dataCornerIds=[];let incomeCardId=null;
+ function incomeCompletion(input){const {capital,...result}=previewIncomeCompletion(input);return result;}
+ // Data plans write only these player fields. Existing card/technology
+ // entities remain read-only, just as in resourceDemand.previewIncomeTail.
+ function dataPreviewPlayer(p){return{...p,resources:{...p.resources},income:{...p.income},hand:[...p.hand],dataState:structuredClone(p.dataState)};}
+ function previewBlueCompletion({state,seatId,goal},beforeCapital=null){
+  const p=owner(state,seatId),copy=dataPreviewPlayer(p);const dataCornerIds=[];let incomeCardId=null;
   const required=data.getRequiredComputerSlotForBlueBonus(goal.blueSlot),occupied=new Set(data.listComputerPlacedTokens(p).map(t=>t.placementSlot));
   const computerPlacements=occupied.has(required)?0:Object.keys(data.COMPUTER_DATA_SLOTS).map(Number).filter(n=>n<=required&&!occupied.has(n)).length;
 
@@ -121,7 +125,7 @@
   while(remaining>0||copy.resources.availableData<1){
    if(copy.resources.availableData<remaining+1&&copy.resources.availableData<players.RESOURCE_LIMITS.availableData){
     const current={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
-    const candidate=demand.dataCornerCards({state:current,seatId,goal})[0]?.card;
+    const candidate=demand.dataCornerCards({state:current,seatId,goal,selectionOnly:true})[0]?.card;
     if(!candidate)return{available:false,reason:'blue-tail-needs-preparation'};
     dataCornerIds.push(candidate.id);copy.hand=copy.hand.filter(c=>c.id!==candidate.id);copy.resources.handSize=copy.hand.length;
     if(!data.gainData(copy,{root:previewRoot}).ok)return{available:false,reason:'blue-tail-data-unavailable'};
@@ -149,22 +153,23 @@
   const bonuses=placed.slotBonuses||[];
   if(bonuses.some(b=>!['credits','energy','publicity'].includes(b.type)||Object.keys(b).some(k=>k!=='type'&&k!==b.type)))return{available:false,reason:'blue-tail-needs-native-choice'};
   for(const b of bonuses)players.gainResources(copy,{[b.type]:b[b.type]});
-  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   const score=endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
   const resource=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+((copy.resources[k]||0)-(p.resources[k]||0))*w,0);
-  const option=demand.planningCapital(state,copy)-demand.planningCapital(state,p);
+  const capital={afterCapital:demand.planningCapital(state,copy),beforeCapital:beforeCapital??demand.planningCapital(state,p)};
+  const option=capital.afterCapital-capital.beforeCapital;
   const income=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+((copy.income[k]||0)-(p.income[k]||0))*w,0)*(4-state.turn.roundNumber);
   const net=stateValue.sumValueParts([score,resource,option,income]);if(!Number.isFinite(net))throw new Error('BLUE_TAIL_VALUE_INVALID');
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.blueSlot===goal.blueSlot;
-  return{policy:'seti-greedy-blue-resource-tail-v2',available:true,selected:net>0||realizesForecast,realizesForecast,netGain:net,blueSlot:goal.blueSlot,dataCornerId:dataCornerIds[0]||null,dataCornerIds,incomeCardId,computerPlacements,requiredNativeInputs:2*(computerPlacements+1)+dataCornerIds.length+(incomeCardId?1:0),immediateScoreGain:copy.resources.score-p.resources.score,player:copy,assumption:'known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity'};
+  return{policy:'seti-greedy-blue-resource-tail-v2',available:true,selected:net>0||realizesForecast,realizesForecast,netGain:net,blueSlot:goal.blueSlot,dataCornerId:dataCornerIds[0]||null,dataCornerIds,incomeCardId,computerPlacements,requiredNativeInputs:2*(computerPlacements+1)+dataCornerIds.length+(incomeCardId?1:0),immediateScoreGain:copy.resources.score-p.resources.score,player:copy,capital,assumption:'known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity'};
  }
- function blueCompletion(input){const {player,...result}=previewBlueCompletion(input);return result;}
- function previewComputerCompletion({state,seatId,goal}){
+ function blueCompletion(input){const {player,capital,...result}=previewBlueCompletion(input);return result;}
+ function previewComputerCompletion({state,seatId,goal},beforeCapital=null){
   const p=owner(state,seatId),placements=goal.targetComputerSlot-data.listComputerPlacedTokens(p).length;
   const unavailable=reason=>({available:false,selected:false,reason});
   if(!p.mainActionCompleted||placements<=0||!demand.capacity(state,seatId,goal))return unavailable('computer-prefix-not-funded');
   if(state.turn.cardTurnEventBonuses?.length||p.reservedCards.some(c=>!effects.getCardModel(c)))return unavailable('computer-prefix-needs-native-events');
-  const copy=structuredClone(p);
+  const copy=dataPreviewPlayer(p);
   for(let i=0;i<placements;i++){
    const placed=data.placeDataToComputer(copy);if(!placed.ok)return unavailable('computer-prefix-slot-unavailable');
    if(effects.collectMatchingTriggers(copy,{type:'placeData',playerId:seatId,placementKind:'computer',placementSlot:placed.placementSlot}).length)
@@ -174,15 +179,16 @@
     players.gainResources(copy,{[bonus.type]:bonus[bonus.type]});
    }
   }
-  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   const score=endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
   const resources=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(copy.resources[k]-p.resources[k])*w,0);
-  const net=stateValue.sumValueParts([score,resources,demand.planningCapital(state,copy),-demand.planningCapital(state,p)]);
+  const capital={afterCapital:demand.planningCapital(state,copy),beforeCapital:beforeCapital??demand.planningCapital(state,p)};
+  const net=stateValue.sumValueParts([score,resources,capital.afterCapital,-capital.beforeCapital]);
   if(!Number.isFinite(net))throw new Error('COMPUTER_PREFIX_VALUE_INVALID');
   return{policy:'seti-greedy-funded-computer-prefix-v1',available:true,selected:net>0,netGain:net,placements,requiredNativeInputs:placements*2,targetComputerSlot:goal.targetComputerSlot,
-   immediateScoreGain:copy.resources.score-p.resources.score,player:copy,assumption:'held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity'};
+   immediateScoreGain:copy.resources.score-p.resources.score,player:copy,capital,assumption:'held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity'};
  }
- function computerCompletion(input){const {player,...result}=previewComputerCompletion(input);return result;}
+ function computerCompletion(input){const {player,capital,...result}=previewComputerCompletion(input);return result;}
  function quietEndCompletion({state,seatId}){
   const p=owner(state,seatId),minimum=Math.min(...state.finalScoring.thresholds);
   if(Number.isSafeInteger(minimum)&&minimum>p.resources.score)return{available:true,netGain:0,purposeDelta:0,requiredNativeInputs:1,markedTiles:[]};
@@ -200,21 +206,29 @@
   const purposeDelta=markedTiles.length?stateValue.sumValueParts([demand.planningCapital(preview,p),-demand.planningCapital(state,p)]):0;
   return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),purposeDelta,requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
- function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null}){
+ function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null,fixedDataOrdering=false}){
   // With no owned probe, the shared previews cover held/paid investment and
   // future currency income exactly. No new card identity or owned technology
-  // is introduced. Live early-round travel still needs native continuation.
+  // is introduced. Live-probe travel at every round still needs its movement audit.
   // Every iteration fills computer4 or consumes a distinct blue bonus slot.
   const initialOwner=owner(state,seatId);
-  const liveProbe=state.turn.roundNumber!==4&&state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===initialOwner.color));
+  const liveProbe=state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===initialOwner.color));
   if(liveProbe&&!firstBlueGoal&&(!canLeaveProbeStationary||!canLeaveProbeStationary(state)))return{available:false,reason:'blue-tail-live-probe-needs-native-continuation'};
   let current=state;const plans=[];let netGain=0,requiredNativeInputs=1,immediateScoreGain=0;
+  let sourceCapital=null,currentCapital=null,primaryOnly=false;
+  // Private scalars from the selected typed preview only. Installing that same
+  // player leaves all value facts unchanged; the audited callbacks are pure.
+  // No value survives this call or attaches to a mutable state/player object.
+  function retainCapital(capital){
+   if(!plans.length)sourceCapital=capital?.beforeCapital??null;
+   currentCapital=capital?.afterCapital??null;
+  }
   // This branch already selected one native blue goal. Its exact outcome is
   // still quotable when locally unprofitable; do not replace it with ending now.
   if(firstBlueGoal){
    if(firstBlueGoal.kind!=='blue-data')throw new Error('BLUE_TAIL_FIRST_GOAL_INVALID');
    const preview=previewBlueCompletion({state:current,seatId,goal:firstBlueGoal});if(!preview.available)return preview;
-   const {player,...summary}=preview;
+   const {player,capital,...summary}=preview;retainCapital(capital);
    plans.push({goal:firstBlueGoal,...summary});netGain=stateValue.sumValueParts([netGain,preview.netGain]);requiredNativeInputs+=preview.requiredNativeInputs;immediateScoreGain+=preview.immediateScoreGain;
    current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
   }
@@ -222,40 +236,64 @@
    if(canContinue&&!canContinue(current))return{available:false,reason:'data-tail-new-purpose-needs-native-continuation'};
    // The caller's audited pure query must reject every intermediate plan
    // boundary that could begin a new movement objective after receiving funds.
-   if(liveProbe&&!canLeaveProbeStationary(current))return{available:false,reason:'data-tail-movement-needs-native-continuation'};
+   if(liveProbe&&(!canLeaveProbeStationary||!canLeaveProbeStationary(current)))return{available:false,reason:'data-tail-movement-needs-native-continuation'};
    const p=owner(current,seatId),requirements={bluePlacements:data.listBluePlacementRequirements(p)};
    const goals=demand.catalog({state:current,seatId,requirements});
-   const prefixes=goals.filter(g=>g.kind==='computer-prefix').map(goal=>({goal,preview:previewComputerCompletion({state:current,seatId,goal})}))
+   const prefixes=goals.filter(g=>g.kind==='computer-prefix').map(goal=>({goal,preview:previewComputerCompletion({state:current,seatId,goal},currentCapital)}))
      .filter(p=>p.preview.available&&p.preview.selected).sort((a,b)=>b.preview.netGain-a.preview.netGain||a.preview.requiredNativeInputs-b.preview.requiredNativeInputs||a.goal.targetComputerSlot-b.goal.targetComputerSlot);
    // The caller has a separately audited conditional blue ordering. A new
    // partial column competing with it needs native continuation, at every
    // intermediate boundary, rather than a scalar proof for another policy.
-   if(prefixes.length&&goals.some(g=>g.kind==='blue-data'))return{available:false,reason:'computer-prefix-blue-order-needs-native-policy'};
+   let orderedBlue=null;
+   if(prefixes.length&&goals.some(g=>g.kind==='blue-data')){
+    if(!fixedDataOrdering)return{available:false,reason:'computer-prefix-blue-order-needs-native-policy'};
+    orderedBlue=previewBlueCompletion({state:current,seatId,goal:goals.find(g=>g.kind==='blue-data')},currentCapital);
+    if(!orderedBlue.available)return orderedBlue;
+   }
    const income=goals.find(g=>g.kind==='income');
    // The native source policy already priced this exact first income goal.
    // Reuse only at the unchanged source; every intermediate wallet requotes.
    const sameIncome=current===state&&income&&income.id===initialIncomeGoal?.id&&income.incomeCardId===initialIncomeGoal.incomeCardId;
-   const incomeTail=income&&(sameIncome&&initialIncomeTail||incomeCompletion({state:current,seatId,goal:income}));
-   if(prefixes.length&&(!incomeTail?.selected||prefixes[0].preview.netGain>incomeTail.netGain)){
-    const {goal,preview}=prefixes[0],{player,...summary}=preview;
+   const reusedIncome=sameIncome&&initialIncomeTail;
+   const incomeTail=income&&(reusedIncome||previewIncomeCompletion({state:current,seatId,goal:income}));
+   const forceOrderedBlue=orderedBlue?.selected&&(!incomeTail?.selected||orderedBlue.netGain>incomeTail.netGain);
+   if(prefixes.length&&(!incomeTail?.selected||prefixes[0].preview.netGain>incomeTail.netGain)
+     &&(!forceOrderedBlue||prefixes[0].preview.netGain>orderedBlue.netGain)){
+    const {goal,preview}=prefixes[0],{player,capital,...summary}=preview;retainCapital(capital);
     plans.push({goal,...summary});netGain=stateValue.sumValueParts([netGain,preview.netGain]);requiredNativeInputs+=preview.requiredNativeInputs;immediateScoreGain+=preview.immediateScoreGain;
     current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};continue;
    }
-   if(incomeTail?.selected){
+   if(incomeTail?.selected&&!forceOrderedBlue){
     const card=p.hand.find(c=>c.id===income.incomeCardId),gain=cards.getIncomeGainForCard(card);
     if(!gain||Object.keys(gain).some(k=>!['credits','energy'].includes(k)))return{available:false,reason:'data-tail-income-needs-native-boundary'};
     const preview=demand.previewIncomeTail({state:current,seatId,goal:income});if(!preview.available)return preview;
     preview.player.resources.handSize=preview.player.hand.length;
+    // The public initial policy has no trusted private capital packet. Its
+    // existing quote is keyed by the complete immutable source, or recomputed
+    // for a mutable source; arbitrary extra caller fields are never evidence.
+    retainCapital(reusedIncome?(trackPurposeDelta?demand.incomeTailCapital({state:current,seatId,goal:income}):null):incomeTail.capital);
     const inputs=preview.placements*2+1;
     plans.push({goal:income,netGain:incomeTail.netGain,requiredNativeInputs:inputs,incomeCardId:card.id});
     netGain=stateValue.sumValueParts([netGain,incomeTail.netGain]);requiredNativeInputs+=inputs;immediateScoreGain+=preview.immediateScoreGain;
     current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?preview.player:v)}};continue;
    }
    const goal=goals.find(g=>g.kind==='blue-data');if(!goal)break;
-   const preview=previewBlueCompletion({state:current,seatId,goal});
+   const preview=orderedBlue||previewBlueCompletion({state:current,seatId,goal},currentCapital);
    if(!preview.available)return preview;
    if(!preview.selected){
-    if(requirements.bluePlacements.length>1)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
+    if(requirements.bluePlacements.length>1){
+     if(!fixedDataOrdering||trackPurposeDelta)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
+     // There is one fixed blue order. Compare stopping now to the suffix
+     // beginning with that exact next slot; each recursion consumes one slot.
+     const rest=dataTailCompletion({state:current,seatId,canLeaveProbeStationary,canContinue,firstBlueGoal:goal,fixedDataOrdering});
+     const endNow=quietEndCompletion({state:current,seatId});
+     if(!rest.available||!endNow.available)return{available:false,reason:'fixed-blue-prefix-needs-native-continuation'};
+     if(rest.netGain>endNow.netGain)return{...rest,plans:[...plans,...rest.plans],
+       netGain:stateValue.sumValueParts([netGain,rest.netGain]),requiredNativeInputs:requiredNativeInputs+rest.requiredNativeInputs-1,
+       immediateScoreGain:immediateScoreGain+rest.immediateScoreGain};
+     primaryOnly=rest.netGain===endNow.netGain;
+     break;
+    }
     if(canContinue){
      const after={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?preview.player:v)}};
      // A negative immediate quote may enable another purpose or realize a
@@ -267,14 +305,14 @@
     }
     break;
    }
-   const {player,...summary}=preview;
+   const {player,capital,...summary}=preview;retainCapital(capital);
    if(data.listBlueBonusPlacedTokens(player).length!==data.listBlueBonusPlacedTokens(p).length+1)throw new Error('BLUE_TAIL_SLOT_NOT_CONSUMED');
    plans.push({goal,...summary});netGain=stateValue.sumValueParts([netGain,preview.netGain]);requiredNativeInputs+=preview.requiredNativeInputs;immediateScoreGain+=preview.immediateScoreGain;
    current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
   }
   const end=quietEndCompletion({state:current,seatId});if(!end.available)return end;
-  return{available:true,plans,netGain:stateValue.sumValueParts([netGain,end.netGain]),requiredNativeInputs:requiredNativeInputs+end.requiredNativeInputs-1,immediateScoreGain,markedTiles:end.markedTiles,
-   ...(trackPurposeDelta?{purposeDelta:stateValue.sumValueParts([demand.planningCapital(current,owner(current,seatId)),-demand.planningCapital(state,initialOwner),end.purposeDelta])}:{})};
+  return{available:true,plans,...(primaryOnly?{primaryOnly:true}:{}),netGain:stateValue.sumValueParts([netGain,end.netGain]),requiredNativeInputs:requiredNativeInputs+end.requiredNativeInputs-1,immediateScoreGain,markedTiles:end.markedTiles,
+   ...(trackPurposeDelta?{purposeDelta:!plans.length?end.purposeDelta:stateValue.sumValueParts([currentCapital??demand.planningCapital(current,owner(current,seatId)),-(sourceCapital??demand.planningCapital(state,initialOwner)),end.purposeDelta])}:{})};
  }
  function scanDecision(actions){return actions.some(a=>a.target?.nebulaId)&&actions.every(a=>a.target?.nebulaId||a.target?.skip||a.target?.done);}
  function sources(state,seatId,actions,session){

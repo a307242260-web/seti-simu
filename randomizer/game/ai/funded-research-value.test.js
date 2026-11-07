@@ -232,7 +232,7 @@ for (const kind of ['income', 'blue-data']) {
     const actual = p.expandResourcePlan(root, { id: goal.id, goal, operation: {}, firstActionId: first.actionId }, () => null);
     assert(actual.complete);
     const start = values.evaluateStateValue(root.observation, seatId), end = values.evaluateStateValue(actual.node.observation, seatId);
-    assert.equal(start.components.researchPotential, 0); assert(end.components.researchPotential > 0);
+    assert.equal(start.components.researchPotential, 2.5,'the already owned pure-publicity supplier funds a real current research purpose before the data plan'); assert(end.components.researchPotential > 0);
     assert.equal(end.total - start.total, preview.netGain);
     if(kind==='income'){const policy=p.resourceSpec(root),proof=p.incomePlanSummary(root);if(policy.plans.length===1&&policy.plans[0].goal.kind==='income'&&preview.selected){assert(proof);assert.equal(proof.netGain,preview.netGain);}else assert.equal(proof,null,'a competing blue plan cannot be hidden by an income-only proof');}
     assert.deepEqual(composition.lifecycle.save().envelope, before);

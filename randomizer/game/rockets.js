@@ -393,7 +393,20 @@
     return { ...canMoveFromCoordinate(piecesState, current, deltaX, deltaY, rocket.id), rocket };
   }
 
+  const __occupancy = { maps: 0, checks: 0 };
+  function createStaticCoordinateMoveQuery(piecesState, movingRocketId = null) {
+    // Caller owns one synchronous static geometry traversal. This map has
+    // no mutable board references, and is never retained past that traversal.
+    const occupancy = getSectorOccupancy(piecesState, movingRocketId);
+    __occupancy.maps++;
+    return (coordinate, dx, dy) => coordinateMoveWithOccupancy(piecesState, coordinate, dx, dy, movingRocketId, occupancy);
+  }
+
   function canMoveFromCoordinate(piecesState, current, deltaX, deltaY, movingRocketId = null) {
+    return coordinateMoveWithOccupancy(piecesState, current, deltaX, deltaY, movingRocketId, null);
+  }
+
+  function coordinateMoveWithOccupancy(piecesState, current, deltaX, deltaY, movingRocketId, staticOccupancy) {
     if (!current) return { ok: false, message: "缺少移动起点" };
     const sectorX = solar.mod8(current.x + Number(deltaX || 0));
     const sectorY = clamp(current.y + Number(deltaY || 0), SECTOR_RING_MIN, SECTOR_RING_MAX);
@@ -402,7 +415,13 @@
       return { ok: false, message: "已在边界，无法继续移动" };
     }
 
-    if (findAvailableSlotIndex(piecesState, sectorX, sectorY, movingRocketId) === null) {
+    let hasRoom;
+    if (staticOccupancy) {
+      const occupied = staticOccupancy.get(sectorKey(sectorX, sectorY));
+      hasRoom = !occupied || solar.LAUNCH_SLOT_PRIORITY.some(slot => !occupied.has(slot));
+      __occupancy.checks++;
+    } else hasRoom = findAvailableSlotIndex(piecesState, sectorX, sectorY, movingRocketId) !== null;
+    if (!hasRoom) {
       return { ok: false, message: `扇区[${sectorX},${sectorY}]已满，无法移动` };
     }
 
@@ -530,6 +549,8 @@
     createMovableTokenAtSector,
     canMoveRocket,
     canMoveFromCoordinate,
+    createStaticCoordinateMoveQuery,
+    diagnosticStaticOccupancy:()=>({...__occupancy}),
     moveRocket,
     moveActiveRocket,
     serializeSectorOccupancy,

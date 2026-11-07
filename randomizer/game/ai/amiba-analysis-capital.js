@@ -6,7 +6,8 @@
   common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,common?require('../cards/deck'):root.SetiCards,common?require('./income-card-order'):root.SetiIncomeCardOrder);
  if(common)module.exports=api;else root.SetiAmibaAnalysisCapital=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(amiba,aliens,players,placement,effects,end,probe,arithmetic,cards,incomeOrder){
- 'use strict';const zero=reason=>({value:0,selected:null,reason});
+ 'use strict';
+ const readOnlyRewards=Object.freeze({readOnlyRewards:true});const zero=reason=>({value:0,selected:null,reason});
  const inertScores=new Set(['sectorWinsByColor','techCount','distinctSignalSectors','planetOrbitOrLand','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost']);
  const traceCount=(facts,context,type)=>facts.traceCounts?.[type]??end.countTraceMarkers({id:facts.player.id,color:facts.player.color},context,type);
  const blueDataRule=t=>t.event?.type==='alienTrace'&&t.event.traceType==='blue'
@@ -30,15 +31,21 @@
   });
  }
  function publicAliens(facts){
-  return {aliens:Object.fromEntries(facts.board.aliens.slots.map(s=>[String(s.slotId),s])),
+  return {aliens:Object.fromEntries(facts.board.aliens.slots.map(s=>[String(s.slotId),{...s}])),
    amiba:{...facts.researchSymbols,...facts.amibaTraces,traceSlotsByAlienSlotId:{...facts.amibaTraces.traceSlotsByAlienSlotId},revealInitialized:true,cardDeck:[]}};
  }
- function analysisAliens(source){
-  // Only blue occupancy/counts and symbol slot locations are written below.
-  // Other trace colors and marker entries are read-only scoring inputs.
-  return{aliens:Object.fromEntries(Object.entries(source.aliens).map(([id,slot])=>[id,{...slot,traces:{...slot.traces,blue:{...slot.traces.blue}}}])),
-   amiba:{...amiba.copyPublicSymbolState(source.amiba),
-    traceSlotsByAlienSlotId:Object.fromEntries(Object.entries(source.amiba.traceSlotsByAlienSlotId).map(([id,grid])=>[id,{...grid,blue:{...grid.blue}}]))}};
+ function analysisAliens(source,choice){
+  // Copy the only trace path this candidate writes. All other trace colors,
+  // species and face grids remain read-only inputs to the pure portfolio.
+  const context={aliens:source.aliens,amiba:{...source.amiba}},id=String(choice.slot.slotId);
+  if(choice.position){
+   const grid=source.amiba.traceSlotsByAlienSlotId[id];
+   context.amiba.traceSlotsByAlienSlotId={...source.amiba.traceSlotsByAlienSlotId,[id]:{...grid,blue:{...grid.blue}}};
+  }else{
+   const slot=source.aliens[id];
+   context.aliens={...source.aliens,[id]:{...slot,traces:{...slot.traces,blue:{...slot.traces.blue}}}};
+  }
+  return context;
  }
  // Blue-trace metrics and one known completed trigger card can change.
  // Unknown new cards never become Type3 scoring facts.
@@ -132,7 +139,7 @@
      ||nextThreshold!==null&&tail.selected.endpoint.resources.score>=nextThreshold)return zero('income-analysis-new-mark-needs-native-value');
   }
   const net=arithmetic.sum([selected.linear,tail.selected.planNetGain,selected.after,-baseValue],weights);
-  return{...tail,value:Math.max(0,net),selected:{...tail.selected,incomeCardId:selected.cardId,preparationPlacements:3,incomePreparation:{linear:selected.linear,capitalAfter:selected.after,greedyValue:selected.value},planNetGain:net},
+  return{value:Math.max(0,net),selected:{...tail.selected,incomeCardId:selected.cardId,preparationPlacements:3,incomePreparation:{linear:selected.linear,capitalAfter:selected.after,greedyValue:selected.value},planNetGain:net},get candidates(){return tail.candidates;},set candidates(value){tail.candidates=value;},
    reason:net>0?'funded-known-income-amiba-analysis':'income-amiba-analysis-not-profitable',
    scope:'One current-data-funded computer4 income followed by the existing fixed computer5/6 and analysis plan. Greedy known currency income ranked once by linear income and shared base portfolio, then one analysis quote; same hand, wallet and data, no unknown identity or new mark funding, native successor, search or pruning bound.'};
  }
@@ -160,23 +167,74 @@
   if(nextThreshold===undefined)return zero('mixed-analysis-following-mark-missing');
   let markBoundary=false;
   const choices=facts.board.aliens.slots.flatMap(slot=>{
-   if(Number(slot.slotId)===Number(id))return[...amiba.TRACE_POSITIONS.filter(position=>amiba.canPlaceAmibaTrace(originalAliens,id,'blue',position).ok).map(position=>({slot,position,reward:amiba.getTraceReward(originalAliens,'blue',position)})),
+   if(Number(slot.slotId)===Number(id))return[...amiba.TRACE_POSITIONS.filter(position=>amiba.canPlaceAmibaTrace(originalAliens,id,'blue',position).ok).map(position=>({slot,position,reward:amiba.getTraceReward(originalAliens,'blue',position,readOnlyRewards)})),
     ...(mixed&&slot.traces?.blue?.firstPlaced?[{slot,first:false,reward:aliens.getExtraTraceReward()}]:[])];
    if(slot.revealed)return slot.traces?.blue?.firstPlaced?[{slot,first:false,reward:aliens.getExtraTraceReward()}]:[];const first=!slot.traces?.blue?.firstPlaced;
    if(first&&['pink','yellow'].every(t=>slot.traces?.[t]?.firstPlaced))return[];
    return[{slot,first,reward:first?aliens.getFirstTraceRewardForSlot(slot.slotId):aliens.getExtraTraceReward()}];
   });
+  // Technology ownership, column rewards and arithmetic key order stay the
+  // same across this quote's local trace wallets. Funding remains per wallet.
+  const resourceKeys=Object.keys(weights).filter(k=>k!=='handSize');
+  const blueTails=Object.entries(initial.techState.blueBoardSlots).flatMap(([tileId,slot])=>{
+   const required=placement.getRequiredComputerSlotForBlueBonus(slot),bonus=placement.getBlueTileDataBonus(tileId);
+   if(!initial.techState.ownedTiles[tileId]||initial.techState.disabledTiles[tileId]||!required||required>=4||!bonus||!['credits','energy','publicity'].includes(bonus.type))return[];
+   const columns=Object.entries(initial.techState.blueBoardSlots).filter(([tile,s])=>initial.techState.ownedTiles[tile]&&!initial.techState.disabledTiles[tile]&&placement.getRequiredComputerSlotForBlueBonus(s)<=required).length;
+   return[{slot:Number(slot),required,bonus,columns}];
+  });
+  // Snapshot value-copied metadata at quote time. Lazy explanations never
+  // read a later wallet, slot shell, blue progress or final-mark input.
+  const symbolKeys=Object.keys(facts.researchSymbols),blueSnapshot=(facts.blueSlots||[]).map(b=>({...b,occupied:false,unlocked:false})),alienSnapshot={...facts.board.aliens},extraUnknownCount=facts.extraUnknownCount;
+  // Fixed secured score without blue-data observers does not inspect the
+  // new face marker while ranking. Snapshot its original blue grid once;
+  // selected portfolio/explanation still gets the complete owned context.
+  const deferFaces=scope.fixed&&choices.some(choice=>choice.position),faceGrid=deferFaces?originalAliens.amiba.traceSlotsByAlienSlotId[String(id)]:null;
+  const faceSource=deferFaces?{...originalAliens,amiba:{...originalAliens.amiba,traceSlotsByAlienSlotId:{...originalAliens.amiba.traceSlotsByAlienSlotId,[String(id)]:{...faceGrid,blue:{...faceGrid.blue}}}}}:null;
+  const actor={playerId:initial.id,playerColor:initial.color};
+  function materialize(candidate){
+   if(candidate.materialized)return candidate.plan;
+   const {plan,traceCounts,triggerProgress,wallet,required,ordinaryLeft}=candidate;
+   let context=candidate.context;
+   if(!context){
+    context=analysisAliens(faceSource,{slot:{slotId:plan.slotId},position:plan.position});
+    context.amiba.traceSlotsByAlienSlotId[String(id)].blue[plan.position]={traceType:'blue',position:plan.position,...actor};
+    context.amiba.blindCardCount=candidate.blindCardCount;context.amiba.displayedCardAvailable=candidate.displayedCardAvailable;
+    if(plan.region){const prepared=regionalPlans.get(plan.region.region);context.amiba.symbolSlots=prepared.symbolSlots;context.amiba.symbolsById=prepared.symbolsById;}
+   }
+   const symbols=Object.fromEntries(symbolKeys.map(k=>[k,context.amiba[k]])),traces={revealedSlotId:id,traceSlotsByAlienSlotId:context.amiba.traceSlotsByAlienSlotId,
+    blindCardCount:context.amiba.blindCardCount,displayedCardAvailable:context.amiba.displayedCardAvailable},slots=Object.entries(context.aliens).map(([slotId,s])=>({...s,slotId:Number(slotId)}));
+   plan.endpoint={resources:wallet,...(traceCounts?{traceCounts}:{}),computerSlots:required===null?[]:[1,2,3].filter(n=>n<=required),
+    blueSlots:blueSnapshot.map(b=>required===null?{...b}:{...b,occupied:b.slot===plan.blueSlot,unlocked:placement.getRequiredComputerSlotForBlueBonus(b.slot)<=required}),researchSymbols:symbols,amibaTraces:traces,
+    extraUnknownCount:extraUnknownCount+plan.unknownCards,aliens:{...alienSnapshot,slots,amiba:symbols,amibaTraces:traces},ordinaryDrawCount:ordinaryLeft,...triggerProgress};
+   if(plan.region)plan.region={...plan.region,results:plan.region.results.map(r=>({...r,move:r.move&&{...r.move}}))};
+   candidate.materialized=true;return plan;
+  }
+  // Every blue position resolves the same original symbol layout. Execute
+  // that Native prefix once per region, then apply its rewards to each wallet.
+  // Only privately copied symbol maps/entries are shared read-only; each
+  // candidate still owns its traces, draw counts, wallet and result wrappers.
+  const regionalPlans=new Map();
+  function regionalPlan(region){
+   if(regionalPlans.has(region))return regionalPlans.get(region);
+   const alien={amiba:amiba.copyPublicSymbolState(originalAliens.amiba)},result=amiba.resolveRegionReward(alien,region,readOnlyRewards);
+   if(!result.ok)throw Error('AMIBA_ANALYSIS_REGION_QUERY_FAILED');
+   Object.values(alien.amiba.symbolsById).forEach(Object.freeze);
+   const plan={result,symbolSlots:Object.freeze(alien.amiba.symbolSlots),symbolsById:Object.freeze(alien.amiba.symbolsById)};
+   regionalPlans.set(region,plan);return plan;
+  }
   for(const choice of choices){
-   const context=analysisAliens(originalAliens),wallet={...paid};let unknownCards=0,ordinaryLeft=facts.board.ordinaryDrawCount;
+   const deferredFace=scope.fixed&&Boolean(choice.position),context=deferredFace?null:analysisAliens(originalAliens,choice),wallet={...paid};let unknownCards=0,ordinaryLeft=facts.board.ordinaryDrawCount;
+   let blindCardCount=originalAliens.amiba.blindCardCount,displayedCardAvailable=originalAliens.amiba.displayedCardAvailable;
    const apply=reward=>{
     players.gainResources({resources:wallet},reward.gain||{});if(reward.dataCount)players.gainResources({resources:wallet},{availableData:reward.dataCount});
     if((reward.drawCards||0)>ordinaryLeft)return false;ordinaryLeft-=reward.drawCards||0;unknownCards+=reward.drawCards||0;return true;
    };
    if(choice.position){
     // Occupancy metric for formal scoring only; no sequence/entity is made.
-    context.amiba.traceSlotsByAlienSlotId[String(id)].blue[choice.position]={traceType:'blue',position:choice.position,playerId:initial.id,playerColor:initial.color};
+    if(context)context.amiba.traceSlotsByAlienSlotId[String(id)].blue[choice.position]={traceType:'blue',position:choice.position,playerId:initial.id,playerColor:initial.color};
     if(choice.reward.pickAlienCard){
-     if(context.amiba.blindCardCount>0)context.amiba.blindCardCount--;else if(context.amiba.displayedCardAvailable)context.amiba.displayedCardAvailable=false;else continue;
+     if(blindCardCount>0)blindCardCount--;else if(displayedCardAvailable)displayedCardAvailable=false;else continue;
+     if(context){context.amiba.blindCardCount=blindCardCount;context.amiba.displayedCardAvailable=displayedCardAvailable;}
      unknownCards++;
     }
    }else{
@@ -186,7 +244,9 @@
    }
    if(!apply(choice.reward))continue;
    let region=null;
-   if(choice.reward.region){region=amiba.resolveRegionReward(context,choice.reward.region);if(!region.ok)throw Error('AMIBA_ANALYSIS_REGION_QUERY_FAILED');let valid=true;
+   if(choice.reward.region){
+    const plan=regionalPlan(choice.reward.region);if(context){context.amiba.symbolSlots=plan.symbolSlots;context.amiba.symbolsById=plan.symbolsById;}
+    region=plan.result;let valid=true;
     for(const r of region.results)if(!apply(r.reward)){valid=false;break;}if(!valid)continue;
    }
    if(nextThreshold!==null&&wallet.score>=nextThreshold){markBoundary=true;continue;}
@@ -194,32 +254,32 @@
    const trigger=scope.blueData?blueDataChoice(traceCounts?{...facts,traceCounts}:facts,weights,wallet,context,scope.stableB1):null;
    if(trigger)Object.assign(wallet,trigger.wallet);
    wallet.handSize+=unknownCards;
-   const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,context.amiba[k]])),traces={revealedSlotId:id,traceSlotsByAlienSlotId:context.amiba.traceSlotsByAlienSlotId,
-    blindCardCount:context.amiba.blindCardCount,displayedCardAvailable:context.amiba.displayedCardAvailable},slots=Object.entries(context.aliens).map(([slotId,s])=>({...s,slotId:Number(slotId)}));
-   const cleared={...(traceCounts?{traceCounts}:{}),computerSlots:[],blueSlots:(facts.blueSlots||[]).map(b=>({...b,occupied:false,unlocked:false})),researchSymbols:symbols,amibaTraces:traces,
-    extraUnknownCount:facts.extraUnknownCount+unknownCards,aliens:{...facts.board.aliens,slots,amiba:symbols,amibaTraces:traces},ordinaryDrawCount:ordinaryLeft,
-    ...(trigger?{reservedCards:trigger.reservedCards,nextFinalMark:facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>o.tileId==='c'?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,{...wallet,reservedCards:trigger.reservedCards},{})*o.multiplier}:o)}}:{})};
+   // Trigger consumption and final-mark facts are captured now; only their
+   // explanatory endpoint container may be built after local ranking.
+   const triggerProgress=trigger?{reservedCards:trigger.reservedCards,nextFinalMark:facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>o.tileId==='c'?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,{...wallet,reservedCards:trigger.reservedCards},{})*o.multiplier}:o)}}:null;
    const securedGain=scope.fixed?0:secured(context,{...facts,...(traceCounts?{traceCounts}:{}),player:wallet,reservedCards:trigger?.reservedCards||facts.reservedCards},scope.stableB1)-beforeSecured;
-   const delta=w=>arithmetic.sum([w.score-initial.score,securedGain,unknownCards*weights.handSize,...Object.keys(weights).filter(k=>k!=='handSize').map(k=>(w[k]-initial[k])*weights[k])],weights);
-   let best={value:delta(wallet),wallet,progress:cleared,blueSlot:null};
-   for(const[tileId,slot]of Object.entries(initial.techState.blueBoardSlots)){
-    const required=placement.getRequiredComputerSlotForBlueBonus(slot),bonus=placement.getBlueTileDataBonus(tileId);
-    if(!initial.techState.ownedTiles[tileId]||initial.techState.disabledTiles[tileId]||!required||required>=4||!bonus||!['credits','energy','publicity'].includes(bonus.type)||wallet.availableData<required+1)continue;
+   const delta=w=>arithmetic.sum([w.score-initial.score,securedGain,unknownCards*weights.handSize,...resourceKeys.map(k=>(w[k]-initial[k])*weights[k])],weights);
+   let best={value:delta(wallet),wallet,required:null,blueSlot:null};
+   for(const {slot,required,bonus,columns}of blueTails){
+    if(wallet.availableData<required+1)continue;
     const after={...wallet,availableData:wallet.availableData-required-1};
     if(required>=2)players.gainResources({resources:after},{publicity:placement.getComputerSlotBonus(2).publicity});
-    const count=Object.entries(initial.techState.blueBoardSlots).filter(([tile,s])=>initial.techState.ownedTiles[tile]&&!initial.techState.disabledTiles[tile]&&placement.getRequiredComputerSlotForBlueBonus(s)<=required).length;
-    players.gainResources({resources:after},{[bonus.type]:bonus[bonus.type],score:count*placement.getBlueColumnScoreBonus().score});
-    const progress={...cleared,computerSlots:[1,2,3].filter(n=>n<=required),blueSlots:cleared.blueSlots.map(b=>({...b,occupied:b.slot===Number(slot),unlocked:placement.getRequiredComputerSlotForBlueBonus(b.slot)<=required}))},value=delta(after);
-    if(value>best.value)best={value,wallet:after,progress,blueSlot:Number(slot)};
+    players.gainResources({resources:after},{[bonus.type]:bonus[bonus.type],score:columns*placement.getBlueColumnScoreBonus().score});
+    const value=delta(after);
+    if(value>best.value)best={value,wallet:after,required,blueSlot:Number(slot)};
    }
-   candidates.push({slotId:choice.slot.slotId,position:choice.position||null,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:best.blueSlot,
-    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet),securedGain,unknownCards,region,...(trigger?{blueDataTrigger:trigger.trigger}:{}),endpoint:{resources:best.wallet,...best.progress}});
+   const plan={slotId:choice.slot.slotId,position:choice.position||null,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:best.blueSlot,
+    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet),securedGain,unknownCards,region,...(trigger?{blueDataTrigger:trigger.trigger}:{})};
+   candidates.push({plan,context,traceCounts,triggerProgress,wallet:best.wallet,required:best.required,ordinaryLeft,blindCardCount,displayedCardAvailable,materialized:false});
   }
-  candidates.sort((a,b)=>b.localPlanValue-a.localPlanValue||a.slotId-b.slotId||(b.position||0)-(a.position||0));
-  const selected=candidates[0];
+  candidates.sort((a,b)=>b.plan.localPlanValue-a.plan.localPlanValue||a.plan.slotId-b.plan.slotId||(b.plan.position||0)-(a.plan.position||0));
+  const selected=candidates.length?materialize(candidates[0]):null;
   if(!selected&&markBoundary)return zero('mixed-analysis-final-mark-needs-native-value');
   if(selected){const {resources,aliens,...progress}=selected.endpoint;selected.planNetGain=arithmetic.sum([selected.linearGain,portfolio(resources,aliens.slots,{...progress,aliens}),-baseValue],weights);}
-  return{value:Math.max(0,selected?.planNetGain||0),selected:selected||null,candidates,
+  let explanations,explanationsReady=false;
+  return{value:Math.max(0,selected?.planNetGain||0),selected:selected||null,
+   get candidates(){if(!explanationsReady){explanations=candidates.map(materialize);explanationsReady=true;}return explanations;},
+   set candidates(value){explanations=value;explanationsReady=true;},
    reason:selected?.planNetGain>0?'funded-known-amiba-analysis':'amiba-analysis-not-profitable',
    scope:'One fixed locally greedy funded analysis/blue-trace/currency-tail plan, ranked by current formal net rewards, then exactly one shared-portfolio requote. Unselected local candidates have no planNetGain. Anonymous draw counts only; shared wallet and existing base portfolio opportunity cost. No hidden reveal, entity allocation, successor observation, new final mark or pruning bound.'};
  }

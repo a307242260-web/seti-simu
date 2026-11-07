@@ -1,0 +1,34 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V320 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "income-before-amiba",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v320-cold-income-before-amiba-20261107-v1.json",
+  "reference": "reports/ai-foundation-20261107/income-before-amiba-scalar-v320-v1/source-manifest-20261107-v1.json",
+  "referenceSha256": "5d91b4ecdcaf5d2a4a8ce364344a23920bcb002c464b7086799ed3c86a10e8a2",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+  "fixtureSha256": "f37441ed40736082eb16f0b3c9c4f3b8821d11593e90c9aa4ab4dbaeb31f745b",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-scalar-v320-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "5d91b4ecdcaf5d2a4a8ce364344a23920bcb002c464b7086799ed3c86a10e8a2",
+  "prototype": "reports/ai-foundation-20261107/income-before-amiba-prepaid-trace-v1/ready-analysis-prepaid-trace-prototype-20261107-v1.js",
+  "prototypeSha256": "d854b611605ea3dbd6f26fb93334bb4e4ccfbc0747fbfb0e621bb4e23a421a4a",
+  "ms": 562.187458,
+  "nativeInputs": 98,
+  "rank": [
+    "play_card:cb499bba",
+    125,
+    -19.5,
+    0,
+    2
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "researchWork": {
+    "hits": 51484,
+    "misses": 690,
+    "contexts": 88,
+    "factories": 705,
+    "symbolPartBuilds": 2246,
+    "symbolPartHits": 6760,
+    "symbolKeyFallbacks": 2034,
+    "entries": 88
+  },
+  "newAutonomousRuns": 0
+}

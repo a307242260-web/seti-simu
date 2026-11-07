@@ -10,6 +10,7 @@
  if(common)module.exports=api;else root.SetiResearchSymbolCapital=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(effects,cards,amiba,probe,players,tech,science,end,arithmetic,symbol,sector,movement,triggers){
  'use strict';
+ const readOnlyRewards=Object.freeze({readOnlyRewards:true});
  const zero=reason=>({value:0,selected:null,candidates:[],reason});
  const inertTasks=new Set(['orbitOrLandCount','completedSectors','completedSectorsByColor','traceCount','probeDistanceFromEarth']);
  const inertScoring=new Set(['sectorWinsByColor','traceCount','amibaTraceCount','distinctSignalSectors','planetOrbitOrLand','probeLocation','planetLandingPairs','allOrbitOrLand']);
@@ -67,9 +68,9 @@
    players.gainResources({resources:funded},{publicity:payment.gain});if(funded.publicity<facts.researchCost)continue;
    for(const rule of ctx.rules){
     const regional={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)},wallet={...funded,publicity:funded.publicity-facts.researchCost};
-    const choices=amiba.listSymbolsInRegion(regional,rule.region).map(entry=>({entry,value:rewardValue(wallet,entry.reward,weights)}))
+    const choices=amiba.listSymbolsInRegion(regional,rule.region,readOnlyRewards).map(entry=>({entry,value:rewardValue(wallet,entry.reward,weights)}))
       .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
-    if(!choices.length)continue;const firstMove=amiba.resolveSymbolAtSlot(regional,choices[0].entry.slotId);if(!firstMove.ok)throw Error('RESEARCH_SYMBOL_MOVE_QUERY_FAILED');
+    if(!choices.length)continue;const firstMove=amiba.resolveSymbolAtSlot(regional,choices[0].entry.slotId,readOnlyRewards);if(!firstMove.ok)throw Error('RESEARCH_SYMBOL_MOVE_QUERY_FAILED');
     if(!amiba.REGION_SYMBOL_SLOTS[symbol.supported(beneficiary).region].includes(firstMove.move?.toSlotId))continue;
     for(const[tileId,stack]of Object.entries(facts.supply?.stacks||{})){
      if(tech.getTechType(tileId)!==rule.techType||rule.techType==='blue'||p.techState.ownedTiles[tileId]||!(stack.remaining>0)||stack.bonusHidden)continue;
@@ -78,9 +79,9 @@
      const first=stack.firstTakeClaimedBy==null?tech.FIRST_TAKE_TYPE_SCORE:0;
      players.gainResources({resources:next},{...Object.fromEntries(Object.entries(bonus).filter(([k])=>k!=='cardSelection')),score:first+(bonus.score||0)});
      players.gainResources({resources:next},{availableData:science.getResearchDataCount(tileId)});
-     const ranked=amiba.listSymbolsInRegion(alien,rule.region).map(entry=>({entry,value:rewardValue(next,entry.reward,weights)}))
+     const ranked=amiba.listSymbolsInRegion(alien,rule.region,readOnlyRewards).map(entry=>({entry,value:rewardValue(next,entry.reward,weights)}))
        .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
-     const chosen=ranked[0];if(!chosen)continue;const resolved=amiba.resolveSymbolAtSlot(alien,chosen.entry.slotId);if(!resolved.ok)throw Error('RESEARCH_SYMBOL_REWARD_QUERY_FAILED');
+     const chosen=ranked[0];if(!chosen)continue;const resolved=amiba.resolveSymbolAtSlot(alien,chosen.entry.slotId,readOnlyRewards);if(!resolved.ok)throw Error('RESEARCH_SYMBOL_REWARD_QUERY_FAILED');
      if(!amiba.REGION_SYMBOL_SLOTS[symbol.supported(beneficiary).region].includes(resolved.move?.toSlotId)
        ||resolved.reward.pickCard||resolved.reward.pickAlienCard||resolved.reward.region)continue;
      apply(next,resolved.reward);let unknown=resolved.reward.drawCards||0,draws=facts.board.ordinaryDrawCount-unknown;if(draws<0)continue;

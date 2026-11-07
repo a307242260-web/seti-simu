@@ -1,0 +1,13 @@
+{
+  "scope": "341 captured full portfolios and Native mission scalar/menu controls. Distinct wallet and weights, private directory isolation and mutable shallow-freeze fallback. No new search.",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-scalar-v320-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "5d91b4ecdcaf5d2a4a8ce364344a23920bcb002c464b7086799ed3c86a10e8a2",
+  "fullPortfolios": 341,
+  "scalar": 48,
+  "nativeFunding": 24,
+  "privateDirectoryIsolation": true,
+  "mutableGeometryFallback": true,
+  "immutableGeometryParity": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

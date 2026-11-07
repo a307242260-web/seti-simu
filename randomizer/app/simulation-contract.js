@@ -137,6 +137,7 @@ function sanitizeSelfPlayer(player, turn = {}, pendingEffectOwnerIds = []) {
     pendingCardTriggers: cardEffects.listPendingTriggerKeys(player, turn),
     pendingHandCardTriggers: cardEffects.listPendingTriggerKeys({ ...player, reservedCards: player.hand || [] }, turn),
     pendingNativeEffects: pendingEffectOwnerIds.includes(player.id),
+    turnCardBonusCount: (turn.cardTurnEventBonuses || []).length,
     industryId: player.industryId,
     industryCardId: player.industryCardId,
     industryAbilityUsed: player.industryAbilityUsed,

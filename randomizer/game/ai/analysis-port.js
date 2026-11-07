@@ -297,6 +297,7 @@
     let cardPickRootStats = cardPickPlanner.getDiagnostics();
     let cardPickSpecs = new WeakMap();
     let envelopeCardSpecs = new WeakMap();
+    let envelopeCompanyIntents = new WeakMap();
     let goalMovementGeometryNodes = 0;
     let openedRoot = null;
     let movementPolicies = new WeakMap();
@@ -686,6 +687,7 @@
       const session=envelope.session?.session;
       const policySession=barrier&&session?{...session,baseState:planningState(session.baseState,barrier,knownCards(envelope)),workingState:state}:session;
       const result=cardPickPlanner.plan({state,seatId,actions,status,session:policySession,
+        committedCompanySwap:envelopeCompanyIntents.get(envelope)||null,
         endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
       const frozen=result&&freeze(result);envelopeCardSpecs.set(envelope,frozen);return frozen;
     }
@@ -994,12 +996,24 @@
       }
     }
 
-    function movementTiming(state, id, path, freePoints) {
+    let timingPrefixBuilds = 0, timingPrefixReuses = 0;
+    function timingForOneGoalQuery(state) {
+      let prefix, query;
       const native = productionKernel || globalThis.SetiProductionKernel;
-      const key = native.plannedMovementTimingKey(state,seatId,id,path,freePoints);
+      return (id, path, freePoints) => {
+        if (prefix === undefined) {
+          timingPrefixBuilds++;
+          prefix = native.plannedMovementTimingKeyPrefix(state, seatId);
+          query = native.createPlannedMovementTimingQuery(state, seatId);
+        } else timingPrefixReuses++;
+        return movementTiming(id, path, freePoints, native.appendMovementTimingKey(prefix, id, path, freePoints), query);
+      };
+    }
+
+    function movementTiming(id, path, freePoints, key, query) {
       if (movementTimingCache.has(key)) { movementTimingCacheHits++; return movementTimingCache.get(key); }
       movementTimingCacheMisses++;
-      const result = native.comparePlannedMovementTiming(state,seatId,id,path,freePoints);
+      const result = query(id,path,freePoints);
       if (movementTimingCache.size >= 256) movementTimingCache.delete(movementTimingCache.keys().next().value);
       movementTimingCache.set(key,result);
       return result;
@@ -1013,7 +1027,7 @@
       if ((source?.family === "move" || prepaid) && session.baseState) {
         const state = planningState(session.baseState,barrier,knownCards(envelope));
         const selected = goalMovement.plan({state,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
-          compareTiming:(id,path,free)=>movementTiming(state,id,path,free),
+          compareTiming:timingForOneGoalQuery(state),
           endpoints:()=> (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId)?.candidates || []});
         goalMovementGeometryNodes += selected?.routingNodes || 0;
         const intent = selected?.intent, first = intent?.path[0];
@@ -1052,7 +1066,7 @@
       const anchor = frame.queueBefore[0];
       const selected = goalMovement.plan({ state: frame.stateBefore, seatId, actions: [], status: "decision",
         session: { queue: [anchor] }, objectiveOnly: true, routeCache: movementRouteCache,
-        compareTiming: (id,path,free) => movementTiming(frame.stateBefore,id,path,free),
+        compareTiming: timingForOneGoalQuery(frame.stateBefore),
         endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(frame.stateBefore, seatId, anchor)?.candidates || [] });
       goalMovementGeometryNodes += selected?.routingNodes || 0;
       const intent = selected?.intent, ship = intent && session.workingState.pieces.rockets.find(r => r.id === intent.rocketId);
@@ -1067,10 +1081,11 @@
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (movementPolicies.has(node)) return movementPolicies.get(node);
-      const result = goalMovement.plan({ state: readPlanningState(stored), seatId,
+      const state = readPlanningState(stored);
+      const result = goalMovement.plan({ state, seatId,
         actions: node.legalActions, status: node.status, session: stored.envelope.session?.session,
         intent: stored.intent, routeCache: movementRouteCache,
-        compareTiming: (id,path,free) => movementTiming(readPlanningState(stored),id,path,free), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(readPlanningState(stored), seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
+        compareTiming: timingForOneGoalQuery(state), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state, seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
       goalMovementGeometryNodes += result?.routingNodes || 0;
       const frozen = result && freeze(result);
       movementPolicies.set(node, frozen);
@@ -1241,6 +1256,14 @@
       const newBarrier = Boolean(carriedBarrier) || revealed;
       const envelope = snapshot(comp);
       inheritCardKnowledge(envelope,source,sourceAction);
+      if(cardPickPlanning&&source&&sourceAction){
+        const intent=envelopeCardSpecs.get(source.envelope)?.companySwap,head=envelope.session?.session?.queue?.[0],previous=source.envelope.session?.session?.queue?.[0];
+        if(intent&&head?.type==='residual_company_decision'&&head.ownerId===seatId
+          &&(sourceAction.family==='industry'&&sourceAction.target?.abilityId==='deepspace_swap_cards'&&head.payload?.step==='swap_hand'
+            ||previous?.type==='residual_company_decision'&&previous.payload?.step==='swap_hand'&&sourceAction.family==='choose_card'
+              &&sourceAction.target?.cardInstanceId===intent.discardIds[0]&&head.payload?.step==='swap_public'
+              &&head.payload.handCardInstanceId===intent.discardIds[0]))envelopeCompanyIntents.set(envelope,intent);
+      }
       loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
       // A refill does not end a root-known post-main plan. Unknown owned
@@ -2018,9 +2041,10 @@
       const state=readPlanningState(stored);
       const owner=state.players.players.find(player=>player.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
       // A scan can fund the new mission/data continuation. The old linear
-      // scan bound did not cover that increase in purpose capital.
-      if(hasUnprovedProbeCapital(state)&&Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]
-        &&["blue1","blue2","blue4"].includes(id)))return null;
+      // scan bound did not cover that increase in purpose capital. Final-round
+      // deployed missions now stay open regardless of active blue technology.
+      if(hasUnprovedProbeCapital(state)&&(state.turn.roundNumber===4||Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]
+        &&["blue1","blue2","blue4"].includes(id))))return null;
       const quietCompany=company && (company.activeAbilityId==="turing_borrow_tech" && company.passiveIds.length===0
         || company.activeAbilityId===null && company.passiveIds.length===1 && company.passiveIds[0]==="alien_lab_panels");
       if (!quietCompany || !owner || state.turn.currentPlayerId!==seatId || state.match.initialSetup || owner.passCompletionPending
@@ -2099,7 +2123,7 @@
 
     function hasUnprovedProbeCapital(state) {
       const owner=state.players.players.find(p=>p.id===seatId);
-      return state.turn.roundNumber<4&&(state.pieces.rockets||[]).some(r=>r.playerId===owner.id
+      return (state.pieces.rockets||[]).some(r=>r.playerId===owner.id
         &&r.surface==="solar-board"&&(r.kind||"standard")==="standard"&&r.fossilId==null);
     }
 
@@ -2112,7 +2136,7 @@
       if(movementValueBounds.has(node))return movementValueBounds.get(node);
       let bound=null;
       const end=turnTailSummary(node,"end-turn"),state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
-      if(end&&state.turn.roundNumber<4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
+      if(end&&state.turn.roundNumber<=4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
         &&[...owner.hand,...owner.reservedCards].every(c=>knownCards(stored.envelope).has(c.id))){
         const policy=goalMovementSpec(node),action=node.legalActions.find(a=>a.actionId===policy?.selectedActionId);
         if(action?.family==="move"&&policy.intent?.path.length){
@@ -2127,6 +2151,16 @@
       movementValueBounds.set(node,bound);return bound;
     }
 
+    function completedPaidPrefix(state,intent){
+      if(!intent||intent.free||intent.prefixOnly||!Array.isArray(intent.path)||intent.path.length
+        ||intent.goal?.timing!=="advance-before-rotation"||intent.startedTurn!==state.turn.turnNumber
+        ||intent.startedRound!==state.turn.roundNumber)return false;
+      const ship=state.pieces.rockets.find(r=>r.id===intent.rocketId);
+      if(!ship||ship.playerId!==seatId||ship.surface!=="solar-board"||(ship.kind||"standard")!=="standard"||ship.fossilId!=null)return false;
+      const at=rockets.getRocketSectorCoordinate(ship);
+      return Boolean(at&&Number.isInteger(at.x)&&Number.isInteger(at.y)&&at.x===intent.goal.coordinate?.x&&at.y===intent.goal.coordinate?.y);
+    }
+
     function turnTailSummary(node,kind="end-turn") {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
@@ -2136,7 +2170,7 @@
       if(kind!=="end-turn"&&!movementPlanning&&hasUnprovedProbeCapital(readPlanningState(stored)))return null;
       let variants=turnTailSpecs.get(node);if(variants?.has(kind))return variants.get(kind);
       const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
-      const companyPolicy=kind!=="end-turn"&&state.turn.roundNumber<4?cardPickSpec(node):null;
+      const companyPolicy=kind!=="end-turn"?cardPickSpec(node):null;
       if(kind!=="end-turn"&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"&&(!companyPolicy||companyPolicy.retainedActionIds.includes(a.actionId))))return null;
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
       const passives={deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
@@ -2145,6 +2179,7 @@
       // An already committed movement intent needs its materialized cold path.
       // An unbound probe may use the existing per-boundary stationary proof.
       const computerPrefix=computerPolicy?.plans.some(p=>p.goal.kind==="computer-prefix");
+      const completedPrefix=completedPaidPrefix(state,stored.intent);
       if(computerPrefix&&stored.intent)return null;
       const stationaryComputerPrefix=computerPrefix&&hasOwnVisitSource(state);
       if(stationaryComputerPrefix&&cardPickSpec(node)?.goal)return null;
@@ -2188,20 +2223,23 @@
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail
               ||publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&localPlans.blueCompletion({state,seatId,goal:plan.goal});
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
-            if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&(tail.selected||publicAmibaCurrencyTail))||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
+            const fixedDataOrdering=state.turn.roundNumber===4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
+              &&hasPostMainInertReservations(state,hasOwnVisitSource(state));
+            if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&(tail.selected||publicAmibaCurrencyTail||fixedDataOrdering))||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
               let stationary,reachedIntent,noMovementPayment;
               const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
               const sourceMoveCards=moveCards(owner);
-              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail,
+              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail,fixedDataOrdering,
                 initialIncomeGoal:plan.goal.kind==="income"?plan.goal:null,initialIncomeTail:policy.incomeTail,
-                firstBlueGoal:publicAmibaCurrencyTail&&plan.goal.kind==="blue-data"?plan.goal:null,
-                canContinue:publicAmibaCurrencyTail?preview=>{
+                firstBlueGoal:(publicAmibaCurrencyTail||fixedDataOrdering)&&plan.goal.kind==="blue-data"?plan.goal:null,
+                canContinue:publicAmibaCurrencyTail||fixedDataOrdering?preview=>{
                   const p=preview.players.players.find(p=>p.id===seatId),cost=quickTrades.getTradeAction('publicity-for-card').cost.publicity;
                   // A newly affordable acquisition is outside this fixed tail.
                   if(owner.resources.publicity<cost&&p.resources.publicity>=cost)return false;
                   return !cardPickPlanner.plan({state:preview,seatId,status:"stable",actions:node.legalActions})?.goal;
                 }:null,
                 canLeaveProbeStationary: preview => {
+                  if(completedPrefix)return true;
                   if(stationary===undefined){
                     const policy=goalMovementSpec(node);
                     noMovementPayment=stationaryComputerPrefix&&!policy&&owner.resources.energy===0
@@ -2245,12 +2283,25 @@
                   // payment remains valid even when this income adds energy.
                   if(reachedIntent&&p.resources.credits>=owner.resources.credits
                     &&p.resources.energy>=owner.resources.energy)return true;
+                  // Experimental: exact existing movement policy on each R4 wallet.
+                  // No successor/Native state is made and no coarse value bound is restored.
+                  if(stationary&&p.resources.energy<=owner.resources.energy
+                    &&p.resources.publicity>=owner.resources.publicity&&moveCards(p)<=sourceMoveCards)return true;
+                  if(!stored.intent&&state.turn.roundNumber===4
+                    &&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)){
+                    const native=productionKernel||globalThis.SetiProductionKernel;
+                    const objective=goalMovement.plan({state:preview,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+                      endpoints:()=>native.getProbeRouteRequirements(preview,seatId)?.candidates||[],
+                      compareTiming:timingForOneGoalQuery(preview)});
+                    goalMovementGeometryNodes+=objective?.routingNodes||0;
+                    return !objective?.intent?.path.length;
+                  }
                   return stationary&&p.resources.energy<=owner.resources.energy
                     &&p.resources.publicity>=owner.resources.publicity&&moveCards(p)<=sourceMoveCards;
                 }});
               if(compound.available&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
-                spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,
+                spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,...(compound.primaryOnly?{primaryOnly:true}:{}),
                   ...(publicAmibaCurrencyTail?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:{})};
               else if(!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
@@ -2266,7 +2317,7 @@
       if(!variants){variants=new Map();turnTailSpecs.set(node,variants);}variants.set(kind,spec);return spec;
     }
     function turnTailBoundary(node,spec){
-      if(!spec||turnTailSummary(node,spec.kind)!==spec)throw new Error("ANALYSIS_TURN_TAIL_PROOF_INVALID");
+      if(!spec||spec.primaryOnly||turnTailSummary(node,spec.kind)!==spec)throw new Error("ANALYSIS_TURN_TAIL_PROOF_INVALID");
       let variants=turnTailNodes.get(node);if(variants?.has(spec.kind))return variants.get(spec.kind);
       const leaf=Object.freeze({status:"turn-tail-value",boundary:"quiet-turn-tail-value",legalActions:Object.freeze([]),planSummary:spec,
         get observation(){throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");}});
@@ -3134,6 +3185,7 @@
       resourceSpecs = new WeakMap();
       cardPickSpecs = new WeakMap();
       envelopeCardSpecs = new WeakMap();
+      envelopeCompanyIntents = new WeakMap();
       openedRoot = null;
       identities.clear();physicalIdentityKeys.clear();
       resourceOrders = new WeakMap();
@@ -3173,7 +3225,10 @@
     function getDiagnostics() {
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
-        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+        companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+        companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

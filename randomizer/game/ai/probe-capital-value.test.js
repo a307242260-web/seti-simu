@@ -60,8 +60,12 @@ try {
     'the native mission matches its base quote; the independently verified research-income alternative is separate');
   assert.equal(quote(next.observation).value, 0, 'consumed probe must not retain a mission');
   assert.equal(quote({ ...obs, terminal: true }).value, 0);
-  const round4 = structuredClone(obs); round4.publicState.roundNumber = 4; delete round4.publicState.board.data;
-  assert.equal(quote(round4).value, 0);
+  const round4 = structuredClone(obs); round4.publicState.roundNumber = 4;
+  assert(quote(round4).value > 0, 'an unpassed final-round probe retains a currently funded mission');
+  delete round4.publicState.board.data;
+  assert.throws(() => quote(round4), /PROBE_CAPITAL_PUBLIC_FACTS_MISSING: data/);
+  round4.publicState.passingPlayerIds.push(seatId);
+  assert.equal(quote(round4).value, 0, 'a passed final-round owner has no later mission window');
   const passed = structuredClone(obs); passed.publicState.roundNumber = 3; passed.publicState.passingPlayerIds.push(seatId);
   assert.equal(quote(passed).value, 0);
   const missing = structuredClone(obs); delete missing.publicState.board.data;

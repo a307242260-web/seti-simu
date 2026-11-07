@@ -454,6 +454,46 @@
     return effects;
   }
 
+  function getMovePaymentChoices(state, effect, workingContext) {
+      const root = getRoot(state, workingContext);
+      const action = effect.payload?.action;
+      const player = actor(root, effect.ownerId);
+      const required = Math.max(1, Number(action?.payload?.requiredMovePoints) || 1);
+      if (!player) return [];
+      const moveCards = (player.hand || []).filter(isMovePaymentCard);
+      const subsets = [[]];
+      for (const card of moveCards) {
+        for (const selected of [...subsets]) {
+          if (selected.length < required) subsets.push([...selected, card]);
+        }
+      }
+      // 同一弃牌集合的排列（[a,b] 与 [b,a]）去重：choiceId 按排序后的
+      // cardId 生成，避免同一支付方案重复出现在移动支付选择中。
+      const seenPaymentKeys = new Set();
+      return science.formalizeChoices(root, effect.ownerId, subsets.flatMap((selected) => {
+        const energyCost = Math.max(0, required - selected.length);
+        if (!players.canAfford(player, { energy: energyCost })) return [];
+        const cardIds = selected.map((card) => card.id).sort((left, right) => (
+          String(left).localeCompare(String(right))
+        ));
+        const paymentKey = cardIds.join("|");
+        if (seenPaymentKeys.has(paymentKey)) return [];
+        seenPaymentKeys.add(paymentKey);
+        return [{
+          family: "choose_payment",
+          phase: "conditional",
+          target: {
+            kind: "move-payment",
+            choiceId: cardIds.length ? paymentKey : "energy",
+            cardIds,
+          },
+          payload: { energyCost, requiredMovePoints: required },
+          summary: cardIds.length
+            ? `弃 ${cardIds.length} 张移动牌${energyCost ? ` + ${energyCost} 能量` : ""}`
+            : `消耗 ${energyCost} 能量`,
+        }];
+      }));
+  }
   function createProbeTurnDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -706,46 +746,6 @@
         events: [{ type: "end_turn", playerId: player.id, ...transitionPayload }],
       });
     });
-    function getMovePaymentChoices(state, effect, workingContext) {
-        const root = getRoot(state, workingContext);
-        const action = effect.payload?.action;
-        const player = actor(root, effect.ownerId);
-        const required = Math.max(1, Number(action?.payload?.requiredMovePoints) || 1);
-        if (!player) return [];
-        const moveCards = (player.hand || []).filter(isMovePaymentCard);
-        const subsets = [[]];
-        for (const card of moveCards) {
-          for (const selected of [...subsets]) {
-            if (selected.length < required) subsets.push([...selected, card]);
-          }
-        }
-        // 同一弃牌集合的排列（[a,b] 与 [b,a]）去重：choiceId 按排序后的
-        // cardId 生成，避免同一支付方案重复出现在移动支付选择中。
-        const seenPaymentKeys = new Set();
-        return science.formalizeChoices(root, effect.ownerId, subsets.flatMap((selected) => {
-          const energyCost = Math.max(0, required - selected.length);
-          if (!players.canAfford(player, { energy: energyCost })) return [];
-          const cardIds = selected.map((card) => card.id).sort((left, right) => (
-            String(left).localeCompare(String(right))
-          ));
-          const paymentKey = cardIds.join("|");
-          if (seenPaymentKeys.has(paymentKey)) return [];
-          seenPaymentKeys.add(paymentKey);
-          return [{
-            family: "choose_payment",
-            phase: "conditional",
-            target: {
-              kind: "move-payment",
-              choiceId: cardIds.length ? paymentKey : "energy",
-              cardIds,
-            },
-            payload: { energyCost, requiredMovePoints: required },
-            summary: cardIds.length
-              ? `弃 ${cardIds.length} 张移动牌${energyCost ? ` + ${energyCost} 能量` : ""}`
-              : `消耗 ${energyCost} 能量`,
-          }];
-        }));
-    }
     runtime.registerExecutor(EFFECT_TYPES.MOVE_PAYMENT, {
       getLegalChoices: getMovePaymentChoices,
       resolveDecision(state, effect, choice, workingContext) {
@@ -989,6 +989,6 @@
   return Object.freeze({
     DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES, PASS_HAND_LIMIT,
     DOMAIN_HANDOFF_EFFECT_TYPE, DOMAIN_HANDOFF_SCHEMA_VERSION,
-    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds,
+    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds, getMovePaymentChoices,
   });
 });

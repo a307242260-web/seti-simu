@@ -37,6 +37,38 @@
     return structuredClone(value);
   }
 
+  // Internal Native fork graphs consist of data objects and arrays. Preserve
+  // aliasing, holes, signed zero, insertion order and undefined exactly.
+  // Unsupported values still use the original platform clone end to end.
+  function copyForkData(value) {
+    const seen = new Map();
+    const unsupported = {};
+    function copy(source) {
+      if (source === null || typeof source !== "object") {
+        if (typeof source === "function" || typeof source === "symbol") throw unsupported;
+        return source;
+      }
+      const hit = seen.get(source);
+      if (hit !== undefined) return hit;
+      const array = Array.isArray(source);
+      const proto = Object.getPrototypeOf(source);
+      if (array ? proto !== Array.prototype : proto !== Object.prototype && proto !== null) throw unsupported;
+      const result = array ? new Array(source.length) : {};
+      seen.set(source, result);
+      for (const key of Object.keys(source)) {
+        if (key === "__proto__") throw unsupported;
+        result[key] = copy(source[key]);
+      }
+      return result;
+    }
+    try {
+      return copy(value);
+    } catch (error) {
+      if (error !== unsupported) throw error;
+      return clone(value);
+    }
+  }
+
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const child of Object.values(value)) deepFreeze(child);
@@ -356,7 +388,7 @@ function stableSerialize(value) {
       return {
         ok: true,
         baseVersion: currentVersion,
-        state: clone(committedState),
+        state: trustedIsolatedOwnership ? copyForkData(committedState) : clone(committedState),
       };
     }
 
@@ -533,5 +565,6 @@ function stableSerialize(value) {
     REQUIRED_ROOT_SLICES,
     createCommittedGameState,
     createStateStore,
+    copyForkData,
   });
 });

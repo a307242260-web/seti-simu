@@ -1,0 +1,10 @@
+{
+  "scope": "Same Native trace rewards, prefix/computer occupancy, publicity cap, custom arithmetic, unrevealed vs revealed/mixed, no mutations. No search.",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-prepaid-trace-v321-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "376d655e0365a84344757b290989da3dc576992fe88f3ab8e06f3f6d07e1a7d8",
+  "comparisons": 320,
+  "nonzero": 72,
+  "originalFactsUnchanged": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

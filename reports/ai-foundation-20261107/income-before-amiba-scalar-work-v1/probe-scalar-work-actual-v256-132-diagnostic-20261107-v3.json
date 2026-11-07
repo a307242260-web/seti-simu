@@ -1,0 +1,47 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V319 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "actual-v256-132",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-132-20261107-v1.json",
+  "reference": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+  "referenceSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+  "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-probe-v319-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6c56ce1d9ad240e6677eedd241d01993a84eb3a9a1637919818334e2c9a15949",
+  "prototype": "reports/ai-foundation-20261107/income-before-amiba-scalar-work-v1/probe-scalar-work-prototype-20261107-v3.js",
+  "prototypeSha256": "91ea427baf335b64a9eabb91baad1ffe23e0bd991e9b99599febbd4a65f345f9",
+  "valuePrototype": "reports/ai-foundation-20261107/income-before-amiba-scalar-work-v1/state-value-mission-data-window-prototype-20261107-v3.js",
+  "valuePrototypeSha256": "0ee7c50aeb304a5072b4238684c8c1769801d02d019275534a2b48abf44a3a54",
+  "ms": 545.886916,
+  "nativeInputs": 162,
+  "rank": [
+    "industry:e887dc52",
+    140.08333333333334,
+    -28.583333333333332,
+    0,
+    14
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "queries": 3283,
+    "refs": 3198,
+    "serialized": 85,
+    "fallbacks": 0,
+    "geometryMisses": 4,
+    "fundedDirectories": 36,
+    "fundedDirectoryHits": 2580,
+    "fundedDirectoryPayments": 504,
+    "emptyFundedScalar": 2183
+  },
+  "researchWork": {
+    "hits": 23032,
+    "misses": 1460,
+    "contexts": 167,
+    "factories": 912,
+    "symbolPartBuilds": 2188,
+    "symbolPartHits": 4092,
+    "symbolKeyFallbacks": 587,
+    "entries": 167
+  },
+  "newAutonomousRuns": 0
+}

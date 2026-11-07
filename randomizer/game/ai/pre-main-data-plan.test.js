@@ -10,11 +10,12 @@ const cards = require("../cards/deck"), data = require("../data");
 const read = id => JSON.parse(fs.readFileSync(path.resolve(__dirname,
   `../../../adhoc/ai-decision-corpus-20261023-v1/case-${id}-20261023-v1.json`)));
 const original = read("062"), alien = read("008"), rows = [], passRows = [];
-function configure(fixture, ids, { round, energy = 0 } = {}) {
+function configure(fixture, ids, { round, energy = 0, noProbe = false } = {}) {
   const state = JSON.parse(fixture.compositionEnvelope.committedState), owner = state.players.players.find(p => p.id === fixture.seatId);
   state.cards.discardPile.push(...owner.hand.filter(c => !ids.includes(c.cardId)));
   owner.hand = owner.hand.filter(c => ids.includes(c.cardId)); assert.equal(owner.hand.length, ids.length);
   if (round) state.turn.roundNumber = round;
+  if (noProbe) state.pieces.rockets = state.pieces.rockets.filter(r => r.playerId !== owner.id || r.surface !== "solar-board");
   owner.industryRoundMarkRound = state.turn.roundNumber; owner.industryRoundMarkTurn = state.turn.turnNumber;
   Object.assign(owner.resources, { credits: 0, energy, publicity: 0, availableData: 0, handSize: owner.hand.length });
   owner.dataState = data.createDefaultDataState(); owner.blueBonusResources = { credits: 0, energy: 0 };
@@ -44,15 +45,19 @@ function run(fixture, enabled, cache = 0) {
       return out;
     }
     assert(out.complete,out.stopReason);
-    if (enabled&&root.observation.publicState.roundNumber===4) { assert(out.diagnostics.preMainDataProofNodes > 0);
+    const hasLiveProbe = root.observation.publicState.board.rockets.some(r =>
+      r.playerId === fixture.seatId && r.surface === "solar-board" && (r.kind || "standard") === "standard" && r.fossilId == null);
+    if (enabled && !hasLiveProbe) {
+      assert(out.diagnostics.preMainDataProofNodes > 0);
       for (const id of proof.excludedActionIds) { const excluded = out.roots.find(r => r.actionId === id);
         assert.equal(excluded.valueType, "not-executed"); assert.equal(excluded.value, null); assert(excluded.prunedByPlan.witness); }
-    }
+    } else assert.equal(out.diagnostics.preMainDataProofNodes, 0, "a deployed probe can change the continuation quote");
     return out;
   } finally { port.close(); k.composition.dispose(); }
 }
 const cases = [["one-cash-round2", configure(original, ["dlc_40.png"])],
-  ["one-cash-round4", configure(original, ["dlc_40.png"], { round: 4 })],
+  ["one-cash-round4-with-probe", configure(original, ["dlc_40.png"], { round: 4 })],
+  ["one-cash-round4-without-probe", configure(original, ["dlc_40.png"], { round: 4, noProbe: true })],
   ["cash-and-move", configure(original, ["dlc_40.png", "b_10.webp"], { energy: 1 })],
   ["main-return", configure(original, ["dlc_40.png", "dlc_5.png"])],
   ["alien-composed", configure(alien, ["b_86.webp"])]];

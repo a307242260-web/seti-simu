@@ -5,6 +5,7 @@
  if(common)module.exports=api;else root.SetiResearchTriggerCapital=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(effects,amiba,players,tech,arithmetic){
  'use strict';
+ const readOnlyRewards=Object.freeze({readOnlyRewards:true});
  const decline=reason=>({available:false,reason}),models=new WeakMap(),gainTotals=new Map();
  function researchRules(model){
   if(models.has(model))return models.get(model);
@@ -42,8 +43,9 @@
   // Use a zero-origin score ledger: only future trigger deltas are priced.
   const wallet={score:0,publicity,availableData:funding.resources.availableData};
   if(Object.values(wallet).some(v=>!Number.isFinite(v)))throw TypeError('RESEARCH_TRIGGER_WALLET_INVALID');
-  const maximumScoreGain=Math.min(2,rules.length)*Math.max(0,...Object.keys(facts.researchSymbols.symbolsById).map(id=>amiba.getSymbolReward(id).gain?.score||0));
-  return {available:true,rules,completionGroups,maximumScoreGain,symbols:facts.researchSymbols,wallet,reason:'known-once-only-research-symbols'};
+  const maximumSingleScoreGain=Math.max(0,...Object.keys(facts.researchSymbols.symbolsById).map(id=>amiba.getSymbolReward(id,readOnlyRewards).gain?.score||0));
+  const maximumScoreGain=Math.min(2,rules.length)*maximumSingleScoreGain;
+  return {available:true,rules,completionGroups,maximumScoreGain,maximumSingleScoreGain,symbols:facts.researchSymbols,wallet,reason:'known-once-only-research-symbols'};
  }
  const noOutcome=Object.freeze({value:0,dataGain:0});
  const noDevelopment=Object.freeze({scoreGain:0,completedTaskGain:0}),noTotal=Object.freeze({value:0,outcome:noOutcome,development:noDevelopment});
@@ -82,10 +84,10 @@
     if(index===1&&paymentAfterFirst)wallet.publicity=Math.max(0,wallet.publicity-paidPublicity);
     for(const rule of context.rules.filter(r=>r.techType===types[index])){
     const id=rule.cardInstanceId+':'+rule.ruleId;if(used.has(id))continue;used.add(id);
-    const choices=amiba.listSymbolsInRegion(alien,rule.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
+    const choices=amiba.listSymbolsInRegion(alien,rule.region,readOnlyRewards).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
      .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
     if(!choices.length)continue;
-    const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId);if(!resolved.ok)throw Error('RESEARCH_TRIGGER_SYMBOL_QUERY_FAILED');
+    const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId,readOnlyRewards);if(!resolved.ok)throw Error('RESEARCH_TRIGGER_SYMBOL_QUERY_FAILED');
     value=arithmetic.sum([value,apply(wallet,resolved.reward)],weights);consumed.add(id);
    }
    }
@@ -94,8 +96,13 @@
    const result=Object.freeze({value,outcome,development});totals.set(key,result);return result;
   }
   const gain=(id,prior=null)=>{
-   const type=tech.getTechType(id),before=prior?[tech.getTechType(prior)]:[];
-   return arithmetic.sum([total([...before,type]).value,-total(before).value],weights);
+   const type=tech.getTechType(id),previous=prior?tech.getTechType(prior):null;
+   // Both dependent ledgers already exist after the first quote. Only the
+   // immutable default arithmetic can reuse their normalized difference.
+   const key=weights===arithmetic.DEFAULT_WEIGHTS?(prior?'gain2:'+previous+':'+type:'gain1:'+type):null;
+   if(key!==null&&totals.has(key))return totals.get(key);
+   const before=prior?[previous]:[],value=arithmetic.sum([total([...before,type]).value,-total(before).value],weights);
+   if(key!==null)totals.set(key,value);return value;
   };
   Object.defineProperty(gain,'outcome',{value:ids=>total(ids.map(tech.getTechType)).outcome});
   Object.defineProperty(gain,'development',{value:ids=>total(ids.map(tech.getTechType)).development});return Object.freeze(gain);

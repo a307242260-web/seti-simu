@@ -113,13 +113,14 @@
         record(Number(value.sequence), `${path}.sequence`);
       } else if (!Array.isArray(value) && value.id != null) {
         const id = String(value.id);
-        const sequence = inferSequence(id, /^alien-[^-]+-\d+-(\d+)$/)
-          || inferSequence(id, /^aomomo-(?:orbit|landing)-(\d+)$/)
-          || inferSequence(id, /^banrenma-mark-(\d+)$/);
+        const sequence = id.startsWith("alien-") ? inferSequence(id, /^alien-[^-]+-\d+-(\d+)$/)
+          : id.startsWith("aomomo-") ? inferSequence(id, /^aomomo-(?:orbit|landing)-(\d+)$/)
+          : id.startsWith("banrenma-mark-") ? inferSequence(id, /^banrenma-mark-(\d+)$/) : 0;
         if (sequence) record(sequence, `${path}.id`);
       }
-      for (const [key, child] of Object.entries(value)) {
-        visit(child, `${path}.${key}`);
+      for (const key of Object.keys(value)) {
+        const child = value[key];
+        if (child && typeof child === "object") visit(child, `${path}.${key}`);
       }
     }
 
@@ -139,12 +140,13 @@
     while (stack.length) {
       const { value, path } = stack.pop();
       if (!value || typeof value !== "object") continue;
-      for (const [key, child] of Object.entries(value)) {
-        const childPath = `${path}.${key}`;
+      for (const key of Object.keys(value)) {
+        const child = value[key];
         if (PRESENTATION_KEYS.has(key) || (path === "$.solarSystem" && key === "wheelSteps")) {
+          const childPath = `${path}.${key}`;
           errors.push(error(childPath, "STATE_HOST_FIELD_FORBIDDEN", `${childPath} 不属于 committed state`));
-        } else {
-          stack.push({ value: child, path: childPath });
+        } else if (child && typeof child === "object") {
+          stack.push({ value: child, path: `${path}.${key}` });
         }
       }
     }

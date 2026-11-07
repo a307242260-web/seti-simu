@@ -1,0 +1,13 @@
+{
+  "scope": "Full Native scan descriptors across all four-sector permutations, six orbit steps, two activation states, and planet, landing and signal-conditioned scan modes. No new action or search.",
+  "manifest": "reports/ai-foundation-20261107/teacher-r3-after-amiba-scan-coordinate-v322-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "5c7538bbb58dcb972499f6f5986418cfc47b289e24c200f3177700ec78a789d4",
+  "comparisons": 3744,
+  "nonempty": 3312,
+  "conditionalNonempty": 576,
+  "landingNonempty": 288,
+  "enabledAomomo": 144,
+  "rootUnchanged": true,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

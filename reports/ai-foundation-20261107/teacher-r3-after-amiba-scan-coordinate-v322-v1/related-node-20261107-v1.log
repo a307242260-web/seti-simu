@@ -1,0 +1,15 @@
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":46},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":46.5},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":46.5},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":48}],"strictAndTieAndWatchdog":true}
+science scan and blue reward tests passed
+solar-system-core tests passed
+{"publicGeometryParity":true,"nebulaCases":10240,"wheelCases":6336,"mutableInputAndResultIsolation":true}
+SUMMARY unit passed=6 failed=0 total=6 time=1.33s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=2
+OWNER rules/actions tests=1
+OWNER rules/data tests=1

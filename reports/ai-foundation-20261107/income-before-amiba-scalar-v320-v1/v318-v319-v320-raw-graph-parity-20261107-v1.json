@@ -1,0 +1,22 @@
+{
+  "scope": "Cross-source V318 or V319 to V320 first-sample raw graph parity. Duplicated roots compared once. No additional search queries.",
+  "gate": "reports/ai-foundation-20261107/income-before-amiba-scalar-v320-v1/serial-cold-gate-20261107-v1.json",
+  "gateSha256": "7467cc86e0e1a49d8f5178ea9c868eedd8a27804385bd5b56419d6a24d9cc6c1",
+  "status": "failed-gate",
+  "tested": 1,
+  "unique": 1,
+  "compared": [
+    {
+      "label": "income-before-amiba",
+      "previous": "reports/ai-foundation-20261105/third-round-teacher-v1/v319-cold-income-before-amiba-20261107-v1.json",
+      "current": "reports/ai-foundation-20261105/third-round-teacher-v1/v320-cold-income-before-amiba-20261107-v1.json",
+      "inputs": 98,
+      "previousMs": 610.175083,
+      "currentMs": 605.6788750000001,
+      "fullGraphUnchanged": true,
+      "lines": 87
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

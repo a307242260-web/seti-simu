@@ -5,6 +5,7 @@
  if(common)module.exports=api;else root.SetiKnownSymbolCapital=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(effects,amiba,players,probe,arithmetic){
  'use strict';
+ const readOnlyRewards=Object.freeze({readOnlyRewards:true});
  const zero=reason=>({value:0,selected:null,candidates:[],reason}),models=new WeakMap();
  const keys=(value,allowed)=>Object.keys(value||{}).every(k=>allowed.includes(k));
  function supported(card){
@@ -46,10 +47,10 @@
     energy:facts.player.energy-payment.spend.energy,handSize:facts.hand.length+facts.extraUnknownCount-1};
    players.gainResources({resources:wallet},{availableData:body.dataCount});
    const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
-   const choices=amiba.listSymbolsInRegion(alien,body.region).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
+   const choices=amiba.listSymbolsInRegion(alien,body.region,readOnlyRewards).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
     .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
    if(!choices.length)continue;
-   const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+   const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId,readOnlyRewards);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
    apply(wallet,resolved.reward);const blindCount=resolved.reward.drawCards||0;wallet.handSize+=blindCount;
    const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,alien.amiba[k]]));
    const reserved=structuredClone(card);effects.ensureCardEffectState(reserved);

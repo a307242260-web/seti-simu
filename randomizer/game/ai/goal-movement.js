@@ -24,12 +24,13 @@
     const cacheKey=JSON.stringify([state.solarSystem,state.pieces,owner.id,owner.techState,owner.industryBorrowedTechTileId,owner.industryBorrowedTechRound,owner.industryBorrowedTechTurn,state.turn.roundNumber,state.turn.turnNumber,state.turn.cardTurnEventBonuses||[],ship.id]);
     if(cache?.has(cacheKey))return{best:cache.get(cacheKey),settled:0};
     const context={state,players:state.players,pieces:state.pieces,turn:state.turn,solarSystem:state.solarSystem};
+    const canMove=rockets.createStaticCoordinateMoveQuery(state.pieces,ship.id);
     const start=rockets.getRocketSectorCoordinate(ship),best=new Map(),queue=[{coordinate:start,cost:0,path:[],key:''}];let settled=0;
     while(queue.length){queue.sort((a,b)=>a.cost-b.cost||a.path.length-b.path.length||(a.key<b.key?-1:a.key>b.key?1:0));
       const next=queue.shift(),key=`${next.coordinate.x},${next.coordinate.y}`;if(best.has(key))continue;best.set(key,next);settled+=1;
       const cost=ability.getRequiredMovePointsFromCoordinate(context,owner,next.coordinate);if(!Number.isSafeInteger(cost)||cost<1)throw new Error('GOAL_MOVEMENT_COST_INVALID');
 
-      for(const d of ability.MOVE_DIRECTIONS){const move=rockets.canMoveFromCoordinate(state.pieces,next.coordinate,d.deltaX,d.deltaY,ship.id);if(!move.ok)continue;
+      for(const d of ability.MOVE_DIRECTIONS){const move=canMove(next.coordinate,d.deltaX,d.deltaY);if(!move.ok)continue;
         if(best.has(`${move.to.x},${move.to.y}`))continue;const step={from:next.coordinate,to:move.to,deltaX:d.deltaX,deltaY:d.deltaY,requiredMovePoints:cost};
         queue.push({coordinate:move.to,cost:next.cost+cost,path:[...next.path,step],key:next.key+'/'+d.id});
       }
@@ -76,7 +77,16 @@
     }
     const ships=state.pieces.rockets.filter(r=>r.playerId===seatId&&rockets.isControllablePlayerRocket(r)),goals=[],pathByShip=new Map();let routingNodes=0;
     for(const ship of ships){const found=routes(state,owner,ship,routeCache);routingNodes+=found.settled;pathByShip.set(ship.id,found.best);}
-    const normalized={...owner,reservedCards:owner.reservedCards.map(c=>{const copy=structuredClone(c);effects.ensureCardEffectState(copy);return copy;})};
+    let visitCards;
+    function triggerPlayer() {
+      // Native collection itself ignores cards with no triggers. Normalize
+      // only matching-capable entities, once for this query, without writing
+      // the owner's stored cards. A native match still checks the event.
+      if (visitCards === undefined) visitCards={...owner,reservedCards:owner.reservedCards
+        .filter(c=>effects.getCardModel(c)?.triggers?.length)
+        .map(c=>{const copy=structuredClone(c);effects.ensureCardEffectState(copy);return copy;})};
+      return visitCards;
+    }
     const arrivalValue=content=>owner.resources.publicity>=players.RESOURCE_LIMITS.publicity?0:
       content.kind==='comet'||content.kind==='planet'&&content.planetId!=='earth'||content.kind==='asteroid'&&players.playerOwnsTech(owner,'orange2',{turn:state.turn})? 0.5 : 0;
     function add(goal,ship,route,gain,endpointCost=0){if(!route||mandatoryPrefix&&!route.path.length||!mandatoryPrefix&&goal.timing!=='next-turn'&&route.cost>allowance)return;const first=route.path[0],selected=first&&moving.find(a=>matches(a,ship.id,first));if(!objectiveOnly&&route.path.length&&!selected)return;
@@ -87,18 +97,32 @@
       goals.push({goal,rocketId:ship.id,path:route.path,cost:route.cost,net,selected,startedTurn:state.turn.turnNumber,startedRound:state.turn.roundNumber,free,prefixOnly:mandatoryPrefix});
     }
     for(const ship of ships)for(const route of pathByShip.get(ship.id).values()){
-      if(!route.path.length)continue;const c=solar.resolveVisibleContent(route.coordinate.x,route.coordinate.y,state.solarSystem).content;
+      // add() already rejects these routes before comparing gains. Check the
+      // same resource and legal-first-step conditions before reading events.
+      if(!route.path.length)continue;
+      const first=route.path[0];
+      if((!mandatoryPrefix&&route.cost>allowance)||(!objectiveOnly&&!moving.some(a=>matches(a,ship.id,first)))){
+        __planetQueries.skippedUnusableVisitQuotes++;continue;
+      }
+      const c=solar.resolveVisibleContent(route.coordinate.x,route.coordinate.y,state.solarSystem).content;
       const type={planet:'visitPlanet',asteroid:'visitAsteroid',comet:'visitComet'}[c.kind];if(!type)continue;
-      const ownOrbit=(state.planets.planets[c.planetId]?.orbitMarkers||[]).some(m=>m.playerId===seatId||m.playerColor===owner.color||m.color===owner.color);
-      const event={type,planetId:c.planetId,playerId:seatId,source:free?'card':'move',hasOwnOrbit:ownOrbit};
-      const rewards=effects.collectMatchingTriggers(normalized,event).map(match=>({id:`${match.card.id}:${match.trigger.id}`,value:value(match.trigger.effect)})).sort((a,b)=>b.value-a.value||(a.id<b.id?-1:1));
+      const normalized=triggerPlayer();
+      let rewards=[];
+      if(normalized.reservedCards.length){
+        const ownOrbit=(state.planets.planets[c.planetId]?.orbitMarkers||[]).some(m=>m.playerId===seatId||m.playerColor===owner.color||m.color===owner.color);
+        const event={type,planetId:c.planetId,playerId:seatId,source:free?'card':'move',hasOwnOrbit:ownOrbit};
+        rewards=effects.collectMatchingTriggers(normalized,event).map(match=>({id:`${match.card.id}:${match.trigger.id}`,value:value(match.trigger.effect)})).sort((a,b)=>b.value-a.value||(a.id<b.id?-1:1));
+      }
       const reward=rewards[0],gain=arrivalValue(c)+(reward?.value||0);
       add({id:`visit:${ship.id}:${route.coordinate.x}:${route.coordinate.y}:${reward?.id||'publicity'}`,kind:'visit',timing:'current-turn',label:reward?`领取访问奖励 ${reward.id}`:'领取到达宣传',coordinate:route.coordinate},ship,route,gain);
     }
     // Production给出合法环绕/登陆终点、费用与收益；本策略只确定目标及路线。
+    let planetLocations;
     for(const candidate of endpoints()){
       const ship=ships.find(s=>s.id===candidate.rocketId);if(!ship)continue;
-      const location=solar.createSolarSnapshot(state.solarSystem).planetLocations.find(p=>p.planetId===candidate.planetId);if(!location)continue;
+      if(planetLocations){__planetQueries.reuses++;}
+      else{planetLocations=solar.collectPlanetLocations(state.solarSystem);__planetQueries.builds++;}
+      const location=planetLocations.find(p=>p.planetId===candidate.planetId);if(!location)continue;
       const coordinate={x:location.x,y:location.y},route=pathByShip.get(ship.id).get(`${coordinate.x},${coordinate.y}`),cost=candidate.endpointFacts?.cost||{};
       if(!mandatoryPrefix&&!owner.mainActionCompleted&&((cost.credits||0)>owner.resources.credits||(cost.energy||0)>owner.resources.energy
         ||!free&&(route?.cost||0)+(cost.energy||0)>allowance))continue;
@@ -143,5 +167,6 @@
     if(objectiveOnly)return chosen?{routingNodes,intent:{goal:chosen.goal,rocketId:chosen.rocketId,path:chosen.path,startedTurn:chosen.startedTurn,startedRound:chosen.startedRound,free:chosen.free,prefixOnly:chosen.prefixOnly===true}}:null;
     return result(chosen||null,chosen?.selected||(free?stop:null),chosen?'selected-objective':'no-affordable-objective',routingNodes,goals.length);
   }
-  return Object.freeze({VERSION,isDirection:direction,movementAllowance:(head,state)=>cardPlay.getMovementAllowance(head,state),plan});
+  const __planetQueries={builds:0,reuses:0,skippedUnusableVisitQuotes:0};
+  return Object.freeze({VERSION,diagnosticPlanetQueries:()=>({...__planetQueries}),isDirection:direction,movementAllowance:(head,state)=>cardPlay.getMovementAllowance(head,state),plan});
 });

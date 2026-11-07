@@ -1,0 +1,34 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V321 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "teacher-r3-after-amiba-reveal",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v321-cold-teacher-r3-after-amiba-reveal-20261107-v1.json",
+  "reference": "reports/ai-foundation-20261107/income-before-amiba-prepaid-trace-v321-v1/source-manifest-20261107-v1.json",
+  "referenceSha256": "376d655e0365a84344757b290989da3dc576992fe88f3ab8e06f3f6d07e1a7d8",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-after-amiba-reveal-20261105-v1.json",
+  "fixtureSha256": "f0a36bb277eb75145991f97f03766a7970e6d2a76212b84159caaa8f93f6bcca",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-prepaid-trace-v321-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "376d655e0365a84344757b290989da3dc576992fe88f3ab8e06f3f6d07e1a7d8",
+  "prototype": "reports/ai-foundation-20261107/teacher-r3-after-amiba-scan-coordinate-v1/science-scan-coordinates-prototype-20261107-v1.js",
+  "prototypeSha256": "80c5ca86d1f8dc8c8730f2488b02882a227ad443813246f19b3a2abb8ca67192",
+  "ms": 546.768583,
+  "nativeInputs": 170,
+  "rank": [
+    "play_card:e527bf01",
+    122,
+    -20.083333333333332,
+    0,
+    8
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "researchWork": {
+    "hits": 79888,
+    "misses": 928,
+    "contexts": 55,
+    "factories": 991,
+    "symbolPartBuilds": 4,
+    "symbolPartHits": 112,
+    "symbolKeyFallbacks": 17406,
+    "entries": 55
+  },
+  "newAutonomousRuns": 0
+}

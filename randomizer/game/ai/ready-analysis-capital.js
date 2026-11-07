@@ -10,20 +10,42 @@
  function quiet(cards,allowLandingPairs=false){return(cards||[]).every(card=>{const m=effects.getCardModel(card);return m&&(!m.endGameScoring||allowLandingPairs&&m.endGameScoring.kind==='planetLandingPairs')&&(!m?.triggers?.length||allowLandingPairs&&m.triggers.every(t=>(t.event?.types||[t.event?.type]).every(type=>type==='researchTech'||type==='alienTrace'&&['pink','yellow'].includes(t.event.traceType))))&&!m?.temporaryTasks?.length;});}
  // Landing pairs and research/pink/yellow triggers do not observe computer
  // placement or the future blue trace. The prepaid asset clears with its data.
+ const extraTraceGain=aliens.getExtraTraceReward().gain,firstTraceGains=new Map();
+ function firstTraceGain(slotId){
+  if(!Number.isSafeInteger(slotId))return aliens.getFirstTraceRewardForSlot(slotId).gain;
+  if(!firstTraceGains.has(slotId))firstTraceGains.set(slotId,aliens.getFirstTraceRewardForSlot(slotId).gain);
+  return firstTraceGains.get(slotId);
+ }
  function prepaidCapital(facts,weights){
   if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards,true))return 0;
-  const slots=[...(facts.computerSlots||[])].sort((a,b)=>a-b);
-  if(!slots.length||slots.length>=data.ANALYZE_REQUIRED_COMPUTER_SLOT||slots.some((s,i)=>s!==i+1))return 0;
+  const slots=facts.computerSlots||[],count=slots.length,required=data.ANALYZE_REQUIRED_COMPUTER_SLOT;
+  if(!count||count>=required)return 0;
+  let seen=0;
+  for(const slot of slots){
+   if(!Number.isInteger(slot)||slot<1||slot>count)return 0;
+   seen|=1<<(slot-1);
+  }
+  if(seen!==(1<<count)-1)return 0;
   if(!Array.isArray(facts.board?.aliens?.slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
-  const rewards=facts.board.aliens.slots.flatMap(slot=>{
-   if(slot.revealed)return[];const first=!slot.traces?.blue?.firstPlaced;
-   if(first&&['yellow','pink'].every(type=>slot.traces?.[type]?.firstPlaced))return[];
-   const gain=(first?aliens.getFirstTraceRewardForSlot(slot.slotId):aliens.getExtraTraceReward()).gain;
-   if(Object.keys(gain).some(k=>!['score','publicity'].includes(k)))return[];
-   const wallet={...facts.player};players.gainResources({resources:wallet},gain);
-   return[wallet.score-facts.player.score+(wallet.publicity-facts.player.publicity)*weights.publicity];
-  });
-  return arithmetic.normalize(Math.max(0,...rewards)*slots.length/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
+  const {score,publicity}=facts.player,cap=players.RESOURCE_LIMITS.publicity;let best=0;
+  for(const slot of facts.board.aliens.slots){
+   if(slot.revealed)continue;
+   const first=!slot.traces?.blue?.firstPlaced;
+   if(first&&slot.traces?.yellow?.firstPlaced&&slot.traces?.pink?.firstPlaced)continue;
+   const gain=first?firstTraceGain(slot.slotId):extraTraceGain;
+   if(Object.keys(gain).some(k=>k!=='score'&&k!=='publicity'))continue;
+   // Pure quote of the same existing score delta and Native publicity cap;
+   // there is no game action or mutation of the wallet during valuation.
+   if(Number.isFinite(score)&&Number.isFinite(publicity)){
+    const scoreAfter=gain.score==null?score:score+gain.score;
+    const publicityAfter=gain.publicity==null?publicity:Math.min(cap,Math.max(0,publicity+gain.publicity));
+    best=Math.max(best,scoreAfter-score+(publicityAfter-publicity)*weights.publicity);
+   }else{
+    const wallet={...facts.player};players.gainResources({resources:wallet},gain);
+    best=Math.max(best,wallet.score-score+(wallet.publicity-publicity)*weights.publicity);
+   }
+  }
+  return arithmetic.normalize(best*count/required,weights);
  }
  function quote(facts,weights,portfolio,baseValue){
   if(facts.terminal||facts.round+Number(facts.passing)>=4)return zero('analysis-window-closed');
