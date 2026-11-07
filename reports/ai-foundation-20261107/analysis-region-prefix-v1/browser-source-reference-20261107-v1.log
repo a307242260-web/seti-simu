@@ -1,0 +1,2 @@
+PASS production-ready-amiba-source-reference http://127.0.0.1:51575/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

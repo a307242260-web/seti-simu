@@ -1,0 +1,67 @@
+{
+  "factorySummary": [
+    {
+      "kind": "direct",
+      "factories": 3938,
+      "unusedFactories": 690,
+      "methodCalls": 17321,
+      "instrumentedCreationMilliseconds": 16.088400000005095,
+      "instrumentedUnusedCreationMilliseconds": 2.8884420000005946
+    },
+    {
+      "kind": "prepared",
+      "factories": 546,
+      "unusedFactories": 27,
+      "methodCalls": 20376,
+      "instrumentedCreationMilliseconds": 1.1548790000005056,
+      "instrumentedUnusedCreationMilliseconds": 0.060127000000079533
+    }
+  ],
+  "scope": "V309 exact direct/prepared trigger-gain factory creation/use diagnostic. Every original gain factory still eagerly constructs; only method-use counters added. Creation timing excludes method execution and diagnostic serialization, not acceptance timing. No lazy factory or cache change implemented, full roots and Native/RNG exact.",
+  "manifest": "reports/ai-foundation-20261107/research-single-window-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "3f947eb9b9330dd8bfdb3a55695dd0659ccb1f79d9ab0112cc65758d89bc7ad5",
+  "stats": {
+    "calls": 4131,
+    "milliseconds": 7.646526000003092,
+    "available": 4125,
+    "frozenReservedArrayCalls": 2936,
+    "sameReservedArrayCalls": 3588,
+    "unchangedReservedArrayCalls": 3588,
+    "frozenModelsCalls": 4131,
+    "ceilingSymbolKeys": 20625,
+    "repeatedSymbolReferences": 2402,
+    "prepareCalls": 191,
+    "gainCalls": 3938
+  },
+  "sites": [
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:385:16)",
+      "calls": 1306,
+      "milliseconds": 2.879994999998587
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:397:19)",
+      "calls": 1814,
+      "milliseconds": 2.835542000003926
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:348:15\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:355:65)",
+      "calls": 613,
+      "milliseconds": 1.1789129999990848
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:348:15\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:355:65",
+      "calls": 154,
+      "milliseconds": 0.47070500000009474
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at publicityPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:386:36)",
+      "calls": 244,
+      "milliseconds": 0.2813710000013998
+    }
+  ],
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

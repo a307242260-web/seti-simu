@@ -1,0 +1,10 @@
+PASS production-mixed-blue-analysis http://127.0.0.1:55468/randomizer/index.html
+PASS production-ready-amiba-source-reference http://127.0.0.1:55468/randomizer/index.html
+PASS production-ready-amiba-analysis http://127.0.0.1:55468/randomizer/index.html
+PASS production-read-only-amiba-rewards http://127.0.0.1:55468/randomizer/index.html
+PASS production-analysis-region-prefix http://127.0.0.1:55468/randomizer/index.html
+PASS production-research-new-final-mark http://127.0.0.1:55468/randomizer/index.html
+PASS production-research-symbol-composition http://127.0.0.1:55468/randomizer/index.html
+PASS production-r4-company-tail http://127.0.0.1:55468/randomizer/index.html
+PASS production-blue-data-analysis http://127.0.0.1:55468/randomizer/index.html
+SUMMARY browserSmoke passed=9 failed=0 total=9

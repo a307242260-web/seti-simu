@@ -1,0 +1,15 @@
+{
+  "scope": "One in-memory common Native reward-query prototype after failed V305. Normalize/deep-freeze the finite public symbol/trace catalog once; only four pure AI valuation modules request shared immutable rewards. Default Native calls still obtain detached copies and central movement/reward resolution unchanged. All serialized roots and162Native exact, source/RNG restored. No runtime source edits, acceptance timing/resampling/autonomous game. New optional API not yet admitted or implemented.",
+  "manifest": "reports/ai-foundation-20261107/research-mark-score-ceiling-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6d6eeb32aca5b843d7a1fee3be8e4862e9d670b70be2ae727382d34eb6843ad2",
+  "stats": {
+    "readOnlySymbolRewards": 46158,
+    "readOnlyTraceRewards": 8836
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

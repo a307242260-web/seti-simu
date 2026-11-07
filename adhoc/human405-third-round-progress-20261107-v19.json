@@ -1,0 +1,61 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: reject full joint cache60.37ms cost vs30.37saved, capture4093validtyped joint inputs. V308 one paidGain/target completecomparison109kto94kcalls,4093joint432boundary1536portfolio exact15Node6Chrome65audit+old1; first162/624.815375fails. V309 exactsinglewindow/pairkeys removes39780keys/39788windowarrays, explicit3periodcase,16currentNodeobligations and6Chrome65audit+old1; first162/625.486834fails. All15serializedroots exactV307/V308/V309; currentCPU2396samples narrowsnextcallback construction. No new autonomous score.",
+  "thisGoalTurnClassification": "progress: reject description6.78ms/unusedgain2.89ms small optimizations. V310 local Native regional symbols prefix7292to1823 exact90/1536 and14Node9Chrome65audit+old1; stale112.5Browser provedoldV309/new116.5B48 beforetestfix; first162/611.243542fails. V311 target-only trace copy6write/40candidate controls and15Node9Chrome65audit+old1; first162/608.938250fails. All15serializedroots equalV309/V310/V311. Current explanation-read trace identifies9027eager endpoints vs1823selected,887spread-only reads; nextcontract for snapshot-safe lazy explanation, not implemented. No autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V311/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/analysis-target-trace-copy-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "a5d30c320886448e0d7f7d90f48f41e2f530536e6c9869db35b44ae0fc78bd02",
+  "sourceHashesUnchangedAfterFreeze": 161,
+  "V310": {
+    "NativeInputs": 162,
+    "milliseconds": 611.2435419999999,
+    "complete": true,
+    "NodePassed": 14,
+    "BrowserPassed": 9,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "directCases": 90,
+    "fullPortfolios": 1536,
+    "regionalExecutionsBefore": 7292,
+    "regionalExecutionsAfter": 1823
+  },
+  "V311": {
+    "NativeInputs": 162,
+    "milliseconds": 608.93825,
+    "complete": true,
+    "NodePassed": 15,
+    "BrowserPassed": 9,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "writePathCases": 6,
+    "candidateCases": 40,
+    "blueCopiesBefore": 12,
+    "blueCopiesAfter": 4,
+    "gridCopiesBefore": 6,
+    "gridCopiesAfter": 2
+  },
+  "fullNodeRegressionRun": false,
+  "coldGate": {
+    "cases": 1258,
+    "measuredPerSource": 1,
+    "failure": "actual-v256-132",
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "explanationDiagnostic": {
+    "quotes": 1823,
+    "eagerCandidates": 9027,
+    "selectedCandidates": 1823,
+    "reads": 887,
+    "readSites": "incomePreparation object spread only",
+    "arraysNeverRead": 936,
+    "lazyImplemented": false
+  },
+  "diagnosticQueries": 4,
+  "newAutonomousRuns": 0,
+  "document": "docs/human405-analysis-prefix-learning-20261107.md",
+  "nextContract": "adhoc/v312-analysis-explanation-next-contract-20261107-v1.md",
+  "next": "Prototype selected endpoint eager/unselected explanation lazy, preserving all scoring/ranking/candidates and complete field/order/object/mutable snapshot semantics, including incomePreparation spread and full debug/JSON/clone equality. No drop of candidate or deferred portfolio evaluation. Then justified new-source256/600 and full1258/Node/Browser/audit admission, actualfirst2 assets, original23 autonomousfirst3 andR2end review. Teacher105 full development not aligned; V41 unchanged."
+}

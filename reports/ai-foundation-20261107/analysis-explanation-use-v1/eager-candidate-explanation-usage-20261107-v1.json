@@ -1,0 +1,23 @@
+{
+  "scope": "V311 diagnostic only, all explanations/endpoints still eagerly constructed. Per-inner-quote enumerable candidate property read counter preserves values, mutability and JSON shape. No lazy materialization implemented, complete roots/Native/RNG exact; not acceptance resampling.",
+  "manifest": "reports/ai-foundation-20261107/analysis-target-trace-copy-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "a5d30c320886448e0d7f7d90f48f41e2f530536e6c9869db35b44ae0fc78bd02",
+  "stats": {
+    "quotes": 1823,
+    "eagerCandidates": 9027,
+    "selectedCandidates": 1823,
+    "candidateArrayReads": 887,
+    "arraysNeverRead": 936,
+    "unreadCandidates": 4634
+  },
+  "readSites": [
+    {
+      "stack": "    at incomePreparation (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:142:3)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:157:31)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/ready-analysis-capital.js:35:25)",
+      "reads": 887
+    }
+  ],
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

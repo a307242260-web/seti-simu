@@ -1,0 +1,18 @@
+from pathlib import Path
+p=Path('tools/browser-smoke-inventory.js');s=p.read_text();needle="  id:'production-ready-amiba-analysis',file:'randomizer/index.html',";assert s.count(needle)==1
+entry="""  id:'production-ready-amiba-source-reference',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAmibaAnalysisCapital && window.SetiStateValue && window.SetiProbeCapital)',
+  actionExpression:`(async()=>{
+    const old=Object.create(window);for(const path of ['/reports/ai-foundation-20261107/analysis-region-prefix-v1/amiba-analysis-v309-reference-20261107-v1.js','/randomizer/game/ai/ready-analysis-capital.js','/randomizer/game/ai/state-value.js']){const source=await fetch(path).then(r=>r.text());new Function('module','globalThis','window',source)(undefined,old,old);}
+    const F='/reports/ai-foundation-20261105/third-round-teacher-v1/',cp=await fetch(F+'teacher-before-input-160-20261105-v1.checkpoint.json').then(r=>r.json()),factor=await fetch(F+'v208-income-factor-prefixes-20261106-v1.checkpoint.json').then(r=>r.json()),info=await fetch(F+'v204-actual-safety-choice-native-20261106-v1.json').then(r=>r.json()),envelope=cp.coreState.compositionEnvelope,seed=JSON.parse(envelope.committedState).meta.seed,seat='player-white',k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>window.SetiRuleObservation.buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;
+    try{if(!c.lifecycle.restore(envelope).ok)throw Error('reference restore');const original=JSON.stringify(c.lifecycle.save().envelope),observe=()=>c.projection({role:'player',playerId:seat}).state,compare=o=>{const a=old.SetiStateValue.evaluateStateValue(o,seat),b=window.SetiStateValue.evaluateStateValue(o,seat),f={...window.SetiProbeCapital.factsFromObservation(o,seat),supply:o.publicState.board.techSupply,researchCost:6,analyzeEnergyCost:0},p=old.SetiStateValue.purposeCapital(f),q=window.SetiStateValue.purposeCapital(f);if(JSON.stringify(a)!==JSON.stringify(b)||JSON.stringify(p)!==JSON.stringify(q))throw Error('old/current full valuation or plan differs');return{value:b.total,plan:q.analysisPlan};};compare(observe());
+      const masked=e=>{if(!c.lifecycle.restore(e).ok)throw Error('reference income restore');return window.SetiRuleComposition.sanitizeHiddenInformationObservation(info.branches.safety.observation,observe(),{code:'hidden_card_reveal'});},start=compare(masked(factor.common.prefixes[1])),end=compare(masked(factor.branches['energy-B48'].envelope));compare(masked(factor.branches['energy-Amiba3'].envelope));if(start.value!==116.5||end.value!==116.5||start.plan.selected.incomeCardId!=='card-18-0'||start.plan.selected.preparationPlacements!==3)throw Error('old/current same-wallet native income handoff not116.5/B48');
+      if(!c.lifecycle.restore(envelope).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('reference changed source/RNG');window.__readyAmibaReference={ok:true,value:start.value,incomeCardId:start.plan.selected.incomeCardId};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__readyAmibaReference?.ok === true',
+  obligation:'Independently reinstantiate exactV309 analysis and current callers in same browser, compare all current components/plans and Native masked income endpoints116.5/B48 before repairing stale historical smoke',
+  counterexample:'Make new implementation fit old112.5 instead of Native handoff, compare different inputs or rely only on Node to rewrite browser expectation',
+}), Object.freeze({
+"""
+s=s.replace(needle,entry+needle);p.write_text(s)

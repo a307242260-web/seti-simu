@@ -1,0 +1,10 @@
+{
+  "scope": "The same full behavior test with its candidate module replaced by exact frozen V301. Expected performance-obligation failure; no runtime source changes or Native execution.",
+  "status": "reproduced",
+  "message": "same fully priced color pair must not repeat normalized delta arithmetic\n\n19764 !== 19744\n",
+  "operator": "strictEqual",
+  "actual": 19764,
+  "expected": 19744,
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

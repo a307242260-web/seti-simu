@@ -1,0 +1,49 @@
+{
+  "scope": "V309 exact research-trigger description construction diagnostic, every description still computes and mutable card array snapshots compared anew. No cache implemented. Instrumented description time excludes diagnostic serialization, not acceptance timing. Full roots and Native/RNG exact.",
+  "manifest": "reports/ai-foundation-20261107/research-single-window-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "3f947eb9b9330dd8bfdb3a55695dd0659ccb1f79d9ab0112cc65758d89bc7ad5",
+  "stats": {
+    "calls": 4131,
+    "milliseconds": 6.784782000002139,
+    "available": 4125,
+    "frozenReservedArrayCalls": 2936,
+    "sameReservedArrayCalls": 3588,
+    "unchangedReservedArrayCalls": 3588,
+    "frozenModelsCalls": 4131,
+    "ceilingSymbolKeys": 20625,
+    "repeatedSymbolReferences": 2402,
+    "prepareCalls": 191,
+    "gainCalls": 3938
+  },
+  "sites": [
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:397:19)",
+      "calls": 1814,
+      "milliseconds": 2.7509160000031727
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:385:16)",
+      "calls": 1306,
+      "milliseconds": 2.3447279999982698
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:348:15\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:355:65)",
+      "calls": 613,
+      "milliseconds": 0.943491000000904
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:348:15\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:355:65",
+      "calls": 154,
+      "milliseconds": 0.4563219999994885
+    },
+    {
+      "site": "    at researchFunding (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:154:36)\n    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:377:33)\n    at publicityPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:386:36)",
+      "calls": 244,
+      "milliseconds": 0.2893250000003036
+    }
+  ],
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

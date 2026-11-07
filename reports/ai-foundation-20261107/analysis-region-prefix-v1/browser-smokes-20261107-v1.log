@@ -1,0 +1,5 @@
+PASS production-mixed-blue-analysis http://127.0.0.1:50077/randomizer/index.html
+Error: production-ready-amiba-analysis 操作异常：Error: known computer3 income analysis missing
+    at <anonymous>:10:147
+    at runInteractiveSmoke (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-v263-research-completion-mark-20261106-v1/tools/run_browser_smokes.js:294:11)
