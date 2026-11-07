@@ -139,6 +139,7 @@ function scanRedWithVisibleDlc24(a,reverse=false){
 options['amiba0-r179-red']=scanRedWithVisibleDlc24;
 function finishRed(a,trace='trace:1:pink:state-extra',reverse=false){
  scanRedWithVisibleDlc24(a,reverse);a.take('choose_target',trace);
+ if(trace==='trace:1:pink:amiba:3')a.take('choose_card','amiba:display:5');
  if(pending(a.c)?.choices.some(x=>x.target?.choiceId?.includes('amiba0-pink-data')))
   a.pick('accept_optional_effect',x=>x.target?.choiceId?.includes('amiba0-pink-data')&&x.target.choiceId.startsWith('confirm:'));
  a.pick('complete_task',x=>x.target?.ruleId==='dlc9-three-sector-wins');a.checkpoint('afterTask');a.end();
@@ -148,8 +149,8 @@ function redIncomeTech(a,trace,reverse=false){
 }
 options['amiba0-r179-orange']=a=>redIncomeTech(a,'trace:1:pink:state-extra');
 options['amiba0-r179-orange-pink2']=a=>redIncomeTech(a,'trace:1:pink:amiba:2');
-function sixthResearch(a,tile='blue1',corner='b_16.webp',reverse=false){
- redIncomeTech(a,'trace:1:pink:amiba:2',reverse);a.corner('amiba_9.webp');a.corner(corner);a.end();
+function sixthResearch(a,tile='blue1',corner='b_16.webp',reverse=false,trace='trace:1:pink:amiba:2'){
+ redIncomeTech(a,trace,reverse);a.corner('amiba_9.webp');a.corner(typeof corner==='function'?corner(a):corner);a.end();
  a.research(tile,3);a.place();a.place('blueBonus',3);a.checkpoint('sixthTechnology');
 }
 options['amiba0-r179-money-preserve']=a=>{sixthResearch(a);a.end();assert(a.avail('pass'));};
@@ -157,11 +158,35 @@ options['amiba0-r179-money-reverse']=a=>{sixthResearch(a,'blue1','b_16.webp',tru
 options['amiba0-r179-money-keep-scan']=a=>{sixthResearch(a,'blue1','dlc_25.png');a.end();assert(a.avail('pass'));};
 options['amiba0-r179-money-blue4']=a=>{sixthResearch(a,'blue4');a.end();assert(a.avail('pass'));};
 options['amiba0-r179-money-analyze']=a=>{sixthResearch(a,'blue1','dlc_25.png');a.place();a.end();a.pick('analyze');};
-function secondAnalysis(a){
- a.use('amiba_7.webp');a.choosePublic('dlc_17.png');a.take('choose_target','symbol:blue_2');a.corner('dlc_17.png');
+options['amiba0-r179-pink3-income-supplier']=a=>{sixthResearch(a,'blue1','b_16.webp',false,'trace:1:pink:amiba:3');a.end();assert(a.avail('pass'));};
+options['amiba0-r179-pink3-adapt-visible']=a=>{sixthResearch(a,'blue1',x=>x.cardId('b_16.webp')?'b_16.webp':'dlc_25.png',false,'trace:1:pink:amiba:3');a.end();assert(a.avail('pass'));};
+function secondAnalysis(a,pick='dlc_17.png'){
+ a.use('amiba_7.webp');a.choosePublic(pick);a.take('choose_target','symbol:blue_2');a.corner('dlc_17.png');
  a.checkpoint('thirdCycleFunding');a.place();a.end();a.pick('analyze');
 }
 options['late-analyze-menu']=secondAnalysis;
+options['late-electric-shortfall']=a=>{
+ secondAnalysis(a);a.take('choose_target','trace:1:blue:amiba:3');a.take('choose_card','amiba:display:5');
+ a.swap('dlc_25.png','dlc_15.png');a.corner('dlc_15.png');a.checkpoint('knownThirdIncomeFinance');
+ const p=owner(a.c);assert.equal(p.resources.availableData,3);assert.deepEqual(p.hand.map(c=>cards.getIncomeGainForCard(c)),[{energy:1}]);
+ for(let i=0;i<3;i++)a.place();assert(!a.avail('place_data'));a.end();assert(a.avail('pass'));
+};
+options['late-both-incomes']=a=>{
+ secondAnalysis(a);a.take('choose_target','trace:1:blue:amiba:3');a.take('choose_card','amiba:display:2');
+ a.corner('amiba_5.webp');a.corner('amiba_2.webp');a.checkpoint('fundedElectric');
+ assert.equal(owner(a.c).resources.availableData,4);for(let i=0;i<4;i++)a.place();
+ a.selectedIncome('dlc_25.png');a.end();assert(a.avail('pass'));
+};
+options['late-adapt-visible']=a=>{
+ const knownData=a.cardId('dlc_17.png');
+ secondAnalysis(a,knownData?'b_16.webp':'dlc_17.png');
+ a.take('choose_target','trace:1:blue:amiba:3');a.take('choose_card','amiba:display:2');
+ if(knownData){a.swap('b_16.webp','dlc_15.png');a.corner('dlc_15.png');}
+ else a.corner('amiba_5.webp');
+ a.corner('amiba_2.webp');a.checkpoint('fundedElectric');
+ assert.equal(owner(a.c).resources.availableData,4);for(let i=0;i<4;i++)a.place();
+ a.selectedIncome(knownData?'amiba_5.webp':'dlc_25.png');a.end();assert(a.avail('pass'));
+};
 const labels=process.env.SETI_CASE?process.env.SETI_CASE.split(','):['blue4-alone','scan-electric-income','scan-money-income','b16-electric-income','dlc25-first-money','dlc25-first-energy','amiba0-before-red'];
 assert(labels.length<=7&&labels.every(n=>options[n]));
 const early=labels.some(x=>x.startsWith('dlc25'))?beforePurple():null;
@@ -172,9 +197,9 @@ const beforeAmiba3=labels.some(x=>x.startsWith('amiba0-r179'))?JSON.parse(fs.rea
 const changeHidden=process.env.SETI_REORDER_NEXT==='1';let changedDrawIds=null;
 if(changeHidden){assert(beforeAmiba3&&!beforeAmiba3.session);const s=JSON.parse(beforeAmiba3.committedState),draw=s.cards.drawPileCardIds;
  changedDrawIds=draw.slice(0,2);assert.notEqual(draw[0],draw[1]);[draw[0],draw[1]]=[draw[1],draw[0]];beforeAmiba3.committedState=JSON.stringify(s);}
-const lateProof=process.env.SETI_LATE_PROOF,late=labels.some(x=>x.startsWith('late-'))&&JSON.parse(fs.readFileSync(lateProof)).rows.find(r=>r.name==='amiba0-r179-money-preserve').endpoint;
+const lateProof=process.env.SETI_LATE_PROOF,lateRow=process.env.SETI_LATE_ROW||'amiba0-r179-money-preserve',late=labels.some(x=>x.startsWith('late-'))&&JSON.parse(fs.readFileSync(lateProof)).rows.find(r=>r.name===lateRow).endpoint;
 const rows=labels.map(n=>run(n,options[n],n.startsWith('late-')?late:n.startsWith('dlc25')?early:n.startsWith('amiba0-r179')?beforeAmiba3:n.startsWith('amiba0')?beforeRed:root));
 assert(physical<=340&&rows.every(r=>r.path.length<=60));
 if(out)fs.writeFileSync(out,JSON.stringify({input,sha256:sha(input),redFixture,redFixtureSha256:sha(redFixture),amiba3Fixture,amiba3FixtureSha256:sha(amiba3Fixture),changedDrawIds,
- ...(late?{lateProof,lateProofSha256:sha(lateProof)}:{}),rows,physical,newAutonomousRuns:0},null,2)+'\n',{flag:'wx'});
+ ...(late?{lateProof,lateProofSha256:sha(lateProof),lateRow}:{}),rows,physical,newAutonomousRuns:0},null,2)+'\n',{flag:'wx'});
 console.log(JSON.stringify(rows.map(x=>({name:x.name,steps:x.path.length,state:x.endState,legal:x.legal}))));
