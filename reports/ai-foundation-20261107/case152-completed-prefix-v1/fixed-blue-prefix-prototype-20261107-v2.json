@@ -1,0 +1,5043 @@
+{
+  "scope": "Nonacceptance in-memory experimental R4 quiet excluded-company fixed data tail: preserve current greedy computer/income/blue tie ordering in strictly audited R4 inert company scope and query exact shared movement objective and native rotation timing on each intermediate wallet. Only the exact already-completed paid advance-before-rotation prefix can certify stationarity while preserving its full intent; all other stored intents retain old guards; old linear ceiling remains disabled, no runtime edit, no admission cold resampling. Every root action/goal/value/completion must match V314. New scalar proofs not yet independently materialized, not admitted.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "nativeInputs": 320,
+  "family": [
+    {
+      "key": "choose_target",
+      "count": 125
+    },
+    {
+      "key": "place_data",
+      "count": 47
+    },
+    {
+      "key": "choose_payment",
+      "count": 43
+    },
+    {
+      "key": "move",
+      "count": 40
+    },
+    {
+      "key": "choose_card",
+      "count": 29
+    },
+    {
+      "key": "play_card",
+      "count": 11
+    },
+    {
+      "key": "end_turn",
+      "count": 7
+    },
+    {
+      "key": "card_corner",
+      "count": 5
+    },
+    {
+      "key": "quick_trade",
+      "count": 3
+    },
+    {
+      "key": "pass",
+      "count": 2
+    },
+    {
+      "key": "analyze",
+      "count": 2
+    },
+    {
+      "key": "land",
+      "count": 2
+    },
+    {
+      "key": "scan",
+      "count": 2
+    },
+    {
+      "key": "research_tech",
+      "count": 2
+    }
+  ],
+  "familyDetail": [
+    {
+      "key": "choose_target:",
+      "count": 60
+    },
+    {
+      "key": "place_data:place-data",
+      "count": 47
+    },
+    {
+      "key": "move:",
+      "count": 40
+    },
+    {
+      "key": "choose_payment:move-payment",
+      "count": 40
+    },
+    {
+      "key": "choose_target:computer",
+      "count": 36
+    },
+    {
+      "key": "choose_card:",
+      "count": 22
+    },
+    {
+      "key": "choose_target:planet-reward-alien-trace",
+      "count": 16
+    },
+    {
+      "key": "play_card:",
+      "count": 11
+    },
+    {
+      "key": "choose_target:blueBonus",
+      "count": 11
+    },
+    {
+      "key": "end_turn:end-turn",
+      "count": 7
+    },
+    {
+      "key": "choose_card:income",
+      "count": 5
+    },
+    {
+      "key": "card_corner:",
+      "count": 5
+    },
+    {
+      "key": "quick_trade:",
+      "count": 3
+    },
+    {
+      "key": "pass:pass",
+      "count": 2
+    },
+    {
+      "key": "choose_card:pass-hand-limit",
+      "count": 2
+    },
+    {
+      "key": "analyze:computer",
+      "count": 2
+    },
+    {
+      "key": "choose_payment:discard-hand-card",
+      "count": 2
+    },
+    {
+      "key": "land:",
+      "count": 2
+    },
+    {
+      "key": "scan:standard-scan",
+      "count": 2
+    },
+    {
+      "key": "research_tech:research-tech",
+      "count": 2
+    },
+    {
+      "key": "choose_target:residual-domain",
+      "count": 2
+    },
+    {
+      "key": "choose_payment:confirm",
+      "count": 1
+    }
+  ],
+  "goalKinds": [
+    {
+      "key": "expandGoalMovementPlan:none",
+      "count": 77
+    },
+    {
+      "key": "expandResourcePlan:blue-data",
+      "count": 56
+    },
+    {
+      "key": "expandWithCardPick:none",
+      "count": 41
+    },
+    {
+      "key": "expandResourcePlan:effect-purpose",
+      "count": 32
+    },
+    {
+      "key": "expandResourcePlan:research_tech",
+      "count": 27
+    },
+    {
+      "key": "expandResourcePlan:computer-prefix",
+      "count": 26
+    },
+    {
+      "key": "expandResourcePlan:analyze",
+      "count": 19
+    },
+    {
+      "key": "expandResourcePlan:route",
+      "count": 16
+    },
+    {
+      "key": "expandResourcePlan:scan-flow",
+      "count": 16
+    },
+    {
+      "key": "expandResourcePlan:income",
+      "count": 10
+    }
+  ],
+  "goalIds": [
+    {
+      "key": "expandGoalMovementPlan:none",
+      "count": 77
+    },
+    {
+      "key": "expandWithCardPick:none",
+      "count": 41
+    },
+    {
+      "key": "expandResourcePlan:data:blue:3",
+      "count": 33
+    },
+    {
+      "key": "expandResourcePlan:effect:tech:card:card-9-0",
+      "count": 26
+    },
+    {
+      "key": "expandResourcePlan:data:blue:1",
+      "count": 23
+    },
+    {
+      "key": "expandResourcePlan:data:computer-prefix:6",
+      "count": 20
+    },
+    {
+      "key": "expandResourcePlan:data:analyze:6",
+      "count": 19
+    },
+    {
+      "key": "expandResourcePlan:rocket:4:land:saturn:planet:",
+      "count": 16
+    },
+    {
+      "key": "expandResourcePlan:data:income:4",
+      "count": 10
+    },
+    {
+      "key": "expandResourcePlan:effect:tech:card:card-11-0",
+      "count": 6
+    },
+    {
+      "key": "expandResourcePlan:scan:sector:sector-2-b",
+      "count": 6
+    },
+    {
+      "key": "expandResourcePlan:scan:sector:sector-4-a",
+      "count": 6
+    },
+    {
+      "key": "expandResourcePlan:data:computer-prefix:1",
+      "count": 6
+    },
+    {
+      "key": "expandResourcePlan:tech:blue3:1",
+      "count": 5
+    },
+    {
+      "key": "expandResourcePlan:tech:purple3:",
+      "count": 4
+    },
+    {
+      "key": "expandResourcePlan:tech:purple4:",
+      "count": 4
+    },
+    {
+      "key": "expandResourcePlan:scan:sector:sector-3-a",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:scan:sector:sector-3-b",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:blue4:1",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:orange1:",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:orange2:",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:orange3:",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:orange4:",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:purple1:",
+      "count": 2
+    },
+    {
+      "key": "expandResourcePlan:tech:purple2:",
+      "count": 2
+    }
+  ],
+  "mainPhase": [
+    {
+      "key": "post-main",
+      "count": 244
+    },
+    {
+      "key": "pre-main",
+      "count": 76
+    }
+  ],
+  "rows": [
+    {
+      "index": 0,
+      "actionId": "play_card:9da016bc",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-41-0"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 1,
+      "actionId": "play_card:ce05056e",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-54-0"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 2,
+      "actionId": "play_card:ac125846",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 3,
+      "actionId": "play_card:bab3140b",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-83-0"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 4,
+      "actionId": "pass:ac4b4ab2",
+      "family": "pass",
+      "phase": "main",
+      "target": {
+        "kind": "pass"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 5,
+      "actionId": "choose_card:de5977d4",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-54-0|card-31-pass-3-2",
+        "cardIds": [
+          "card-54-0",
+          "card-31-pass-3-2"
+        ]
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 6,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 7,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 8,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 9,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 10,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 11,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 12,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 13,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 14,
+      "actionId": "choose_card:82b5d5cb",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "income:card-31-pass-3-2",
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 15,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 16,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 17,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 18,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 19,
+      "actionId": "analyze:c31ddbb9",
+      "family": "analyze",
+      "phase": "main",
+      "target": {
+        "kind": "computer",
+        "requiredSlot": 6
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 20,
+      "actionId": "choose_card:fe96c6cd",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "income:card-54-0",
+        "cardInstanceId": "card-54-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": false
+    },
+    {
+      "index": 21,
+      "actionId": "play_card:ad9d7edf",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-11-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": false
+    },
+    {
+      "index": 22,
+      "actionId": "play_card:3e8e8ea5",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-9-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": false
+    },
+    {
+      "index": 23,
+      "actionId": "quick_trade:5ad269c5",
+      "family": "quick_trade",
+      "phase": "quick",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 24,
+      "actionId": "quick_trade:9256f5c4",
+      "family": "quick_trade",
+      "phase": "quick",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 25,
+      "actionId": "choose_payment:cacda29a",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "discard-hand-card",
+        "cardInstanceId": "card-54-0",
+        "select": true
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 26,
+      "actionId": "choose_payment:48d9dab5",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "discard-hand-card",
+        "cardInstanceId": "card-31-pass-3-2",
+        "select": true
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 27,
+      "actionId": "choose_payment:0cdfa336",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "confirm",
+        "confirm": true
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 28,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 29,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 30,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 31,
+      "actionId": "choose_payment:698a02de",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0|card-83-0",
+        "cardIds": [
+          "card-11-0",
+          "card-83-0"
+        ]
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 32,
+      "actionId": "land:c95c1043",
+      "family": "land",
+      "phase": "main",
+      "target": {
+        "select": true
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 33,
+      "actionId": "scan:0ca111ac",
+      "family": "scan",
+      "phase": "main",
+      "target": {
+        "kind": "standard-scan"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": false
+    },
+    {
+      "index": 34,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 35,
+      "actionId": "choose_card:27e621f3",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-45-0:sector-2-b",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-2-b"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 36,
+      "actionId": "choose_card:d0d4aff9",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-69-0:sector-3-a",
+        "cardInstanceId": "card-69-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-3-a"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-3-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 37,
+      "actionId": "choose_card:4d468efb",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-45-0:sector-3-b",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-3-b"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-3-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 38,
+      "actionId": "choose_card:0c658dc1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-69-0:sector-4-a",
+        "cardInstanceId": "card-69-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-4-a"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 39,
+      "actionId": "card_corner:296892d5",
+      "family": "card_corner",
+      "phase": "quick",
+      "target": {
+        "cardInstanceId": "card-41-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue3:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 40,
+      "actionId": "research_tech:547c8803",
+      "family": "research_tech",
+      "phase": "main",
+      "target": {
+        "kind": "research-tech"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue3:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 41,
+      "actionId": "choose_target:eff1d7df",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue3:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 42,
+      "actionId": "choose_target:bfa4b62b",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue4:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 43,
+      "actionId": "choose_target:6ea8196a",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange1",
+        "tileId": "orange1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange1:",
+      "mainCompleted": false
+    },
+    {
+      "index": 44,
+      "actionId": "choose_target:5537a104",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange2",
+        "tileId": "orange2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange2:",
+      "mainCompleted": false
+    },
+    {
+      "index": 45,
+      "actionId": "choose_target:8f07ac06",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange3",
+        "tileId": "orange3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange3:",
+      "mainCompleted": false
+    },
+    {
+      "index": 46,
+      "actionId": "choose_target:a0d14a44",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange4",
+        "tileId": "orange4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange4:",
+      "mainCompleted": false
+    },
+    {
+      "index": 47,
+      "actionId": "choose_target:738413d6",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple1",
+        "tileId": "purple1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple1:",
+      "mainCompleted": false
+    },
+    {
+      "index": 48,
+      "actionId": "choose_target:ad822fbc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple2",
+        "tileId": "purple2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple2:",
+      "mainCompleted": false
+    },
+    {
+      "index": 49,
+      "actionId": "choose_target:1b595a4e",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple3",
+        "tileId": "purple3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple3:",
+      "mainCompleted": false
+    },
+    {
+      "index": 50,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple3:",
+      "mainCompleted": true
+    },
+    {
+      "index": 51,
+      "actionId": "choose_target:70241330",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple4",
+        "tileId": "purple4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple4:",
+      "mainCompleted": false
+    },
+    {
+      "index": 52,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple4:",
+      "mainCompleted": true
+    },
+    {
+      "index": 53,
+      "actionId": "play_card:9da016bc",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-41-0"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 54,
+      "actionId": "play_card:c32c6395",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 55,
+      "actionId": "play_card:9bc146a4",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-83-0"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 56,
+      "actionId": "pass:ac4b4ab2",
+      "family": "pass",
+      "phase": "main",
+      "target": {
+        "kind": "pass"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 57,
+      "actionId": "choose_card:2984722d",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-31-pass-3-2",
+        "cardIds": [
+          "card-31-pass-3-2"
+        ]
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": false
+    },
+    {
+      "index": 58,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 59,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 60,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 61,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 62,
+      "actionId": "analyze:c31ddbb9",
+      "family": "analyze",
+      "phase": "main",
+      "target": {
+        "kind": "computer",
+        "requiredSlot": 6
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "analyze",
+      "goalId": "data:analyze:6",
+      "mainCompleted": false
+    },
+    {
+      "index": 63,
+      "actionId": "play_card:ad9d7edf",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-11-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": false
+    },
+    {
+      "index": 64,
+      "actionId": "play_card:3e8e8ea5",
+      "family": "play_card",
+      "phase": "main",
+      "target": {
+        "cardInstanceId": "card-9-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": false
+    },
+    {
+      "index": 65,
+      "actionId": "quick_trade:5ad269c5",
+      "family": "quick_trade",
+      "phase": "quick",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 66,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 67,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 68,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 69,
+      "actionId": "choose_payment:698a02de",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0|card-83-0",
+        "cardIds": [
+          "card-11-0",
+          "card-83-0"
+        ]
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 70,
+      "actionId": "land:c95c1043",
+      "family": "land",
+      "phase": "main",
+      "target": {
+        "select": true
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "route",
+      "goalId": "rocket:4:land:saturn:planet:",
+      "mainCompleted": false
+    },
+    {
+      "index": 71,
+      "actionId": "research_tech:547c8803",
+      "family": "research_tech",
+      "phase": "main",
+      "target": {
+        "kind": "research-tech"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue3:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 72,
+      "actionId": "choose_target:eff1d7df",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue3:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 73,
+      "actionId": "choose_target:bfa4b62b",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:blue4:1",
+      "mainCompleted": false
+    },
+    {
+      "index": 74,
+      "actionId": "choose_target:6ea8196a",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange1",
+        "tileId": "orange1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange1:",
+      "mainCompleted": false
+    },
+    {
+      "index": 75,
+      "actionId": "choose_target:5537a104",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange2",
+        "tileId": "orange2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange2:",
+      "mainCompleted": false
+    },
+    {
+      "index": 76,
+      "actionId": "choose_target:8f07ac06",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange3",
+        "tileId": "orange3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange3:",
+      "mainCompleted": false
+    },
+    {
+      "index": 77,
+      "actionId": "choose_target:a0d14a44",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange4",
+        "tileId": "orange4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:orange4:",
+      "mainCompleted": false
+    },
+    {
+      "index": 78,
+      "actionId": "choose_target:738413d6",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple1",
+        "tileId": "purple1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple1:",
+      "mainCompleted": false
+    },
+    {
+      "index": 79,
+      "actionId": "choose_target:ad822fbc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple2",
+        "tileId": "purple2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple2:",
+      "mainCompleted": false
+    },
+    {
+      "index": 80,
+      "actionId": "choose_target:1b595a4e",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple3",
+        "tileId": "purple3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple3:",
+      "mainCompleted": false
+    },
+    {
+      "index": 81,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple3:",
+      "mainCompleted": true
+    },
+    {
+      "index": 82,
+      "actionId": "choose_target:70241330",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple4",
+        "tileId": "purple4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple4:",
+      "mainCompleted": false
+    },
+    {
+      "index": 83,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "research_tech",
+      "goalId": "tech:purple4:",
+      "mainCompleted": true
+    },
+    {
+      "index": 84,
+      "actionId": "scan:0ca111ac",
+      "family": "scan",
+      "phase": "main",
+      "target": {
+        "kind": "standard-scan"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": false
+    },
+    {
+      "index": 85,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 86,
+      "actionId": "choose_card:27e621f3",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-45-0:sector-2-b",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-2-b"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-2-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 87,
+      "actionId": "choose_card:d0d4aff9",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-69-0:sector-3-a",
+        "cardInstanceId": "card-69-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-3-a"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-3-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 88,
+      "actionId": "choose_card:4d468efb",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-45-0:sector-3-b",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-3-b"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-3-b",
+      "mainCompleted": true
+    },
+    {
+      "index": 89,
+      "actionId": "choose_card:0c658dc1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "public:card-69-0:sector-4-a",
+        "cardInstanceId": "card-69-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-4-a"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 90,
+      "actionId": "choose_target:273b18e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:blue",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "blue"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 91,
+      "actionId": "choose_target:0562b069",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:blue",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "blue"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 92,
+      "actionId": "choose_target:273b18e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:blue",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "blue"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 93,
+      "actionId": "choose_target:0562b069",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:blue",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "blue"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 94,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 95,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 96,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 97,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 98,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 99,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 100,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 101,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 102,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 103,
+      "actionId": "choose_target:48a67af4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:d",
+        "tileId": "d"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 104,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 105,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 106,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 107,
+      "actionId": "choose_payment:698a02de",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0|card-83-0",
+        "cardIds": [
+          "card-11-0",
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 108,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 109,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 110,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 111,
+      "actionId": "choose_payment:698a02de",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0|card-83-0",
+        "cardIds": [
+          "card-11-0",
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 112,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 113,
+      "actionId": "choose_target:48a67af4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:d",
+        "tileId": "d"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 114,
+      "actionId": "choose_target:d843cd69",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 115,
+      "actionId": "choose_target:b66b64e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 116,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 117,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 118,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 119,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 120,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 121,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 122,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 123,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 124,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 125,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 126,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 127,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 128,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 129,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 130,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 131,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 132,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 133,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 134,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 135,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 136,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 137,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 138,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 139,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 140,
+      "actionId": "card_corner:7003d11e",
+      "family": "card_corner",
+      "phase": "quick",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 141,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 142,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 143,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 144,
+      "actionId": "choose_target:55267bf9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 145,
+      "actionId": "choose_target:de100b79",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "yellow"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 146,
+      "actionId": "choose_target:622d0cc4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 147,
+      "actionId": "choose_target:60c4b2a0",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 148,
+      "actionId": "choose_target:67abff7d",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange1",
+        "tileId": "orange1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 149,
+      "actionId": "choose_target:7ce6880f",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange2",
+        "tileId": "orange2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 150,
+      "actionId": "choose_target:dbe322cd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange3",
+        "tileId": "orange3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 151,
+      "actionId": "choose_target:549f90f3",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange4",
+        "tileId": "orange4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 152,
+      "actionId": "choose_target:4d020fed",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple1",
+        "tileId": "purple1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 153,
+      "actionId": "choose_target:3604000b",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple2",
+        "tileId": "purple2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 154,
+      "actionId": "choose_target:94774bd9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple3",
+        "tileId": "purple3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 155,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 156,
+      "actionId": "choose_target:8422c993",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple4",
+        "tileId": "purple4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 157,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 158,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 159,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 160,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 161,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 162,
+      "actionId": "card_corner:7003d11e",
+      "family": "card_corner",
+      "phase": "quick",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 163,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 164,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 165,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 166,
+      "actionId": "choose_target:622d0cc4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 167,
+      "actionId": "choose_target:60c4b2a0",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 168,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 169,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 170,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 171,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 172,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 173,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 174,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 175,
+      "actionId": "card_corner:7003d11e",
+      "family": "card_corner",
+      "phase": "quick",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 176,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 177,
+      "actionId": "choose_target:0db6031c",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 178,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 179,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 180,
+      "actionId": "choose_target:d843cd69",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 181,
+      "actionId": "choose_target:b66b64e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 182,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 183,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 184,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 185,
+      "actionId": "choose_payment:bb463207",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 186,
+      "actionId": "move:060dbf6f",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 187,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 188,
+      "actionId": "move:6eceb1c2",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 189,
+      "actionId": "choose_payment:bb463207",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 190,
+      "actionId": "choose_target:4054f661",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "4:-1:0",
+        "rocketId": 4,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 191,
+      "actionId": "choose_target:b7ba7fe8",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "skip",
+        "skip": true
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 192,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 193,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 194,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 195,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 196,
+      "actionId": "choose_target:0db6031c",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 197,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 198,
+      "actionId": "choose_target:4054f661",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "4:-1:0",
+        "rocketId": 4,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 199,
+      "actionId": "choose_target:b7ba7fe8",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "skip",
+        "skip": true
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 200,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 201,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 202,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 203,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 204,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 205,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 206,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 207,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 208,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 209,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 210,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 211,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 212,
+      "actionId": "choose_card:fe96c6cd",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "income:card-54-0",
+        "cardInstanceId": "card-54-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "income",
+      "goalId": "data:income:4",
+      "mainCompleted": true
+    },
+    {
+      "index": 213,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 214,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 215,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 216,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:6",
+      "mainCompleted": true
+    },
+    {
+      "index": 217,
+      "actionId": "card_corner:7003d11e",
+      "family": "card_corner",
+      "phase": "quick",
+      "target": {
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 218,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 219,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 220,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 221,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 222,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 223,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 224,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 225,
+      "actionId": "choose_target:d843cd69",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 226,
+      "actionId": "choose_target:b66b64e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 227,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 228,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 229,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 230,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 231,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 232,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 233,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 234,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 235,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 236,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 237,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 238,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 239,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 240,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 241,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 242,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 243,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 244,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 245,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 246,
+      "actionId": "choose_payment:7b5aca87",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-83-0",
+        "cardIds": [
+          "card-83-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 247,
+      "actionId": "choose_target:55267bf9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 248,
+      "actionId": "choose_target:de100b79",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "yellow"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 249,
+      "actionId": "choose_target:622d0cc4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 250,
+      "actionId": "choose_target:60c4b2a0",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 251,
+      "actionId": "choose_target:67abff7d",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange1",
+        "tileId": "orange1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 252,
+      "actionId": "choose_target:7ce6880f",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange2",
+        "tileId": "orange2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 253,
+      "actionId": "choose_target:dbe322cd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange3",
+        "tileId": "orange3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 254,
+      "actionId": "choose_target:549f90f3",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:orange4",
+        "tileId": "orange4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 255,
+      "actionId": "choose_target:4d020fed",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple1",
+        "tileId": "purple1",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 256,
+      "actionId": "choose_target:3604000b",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple2",
+        "tileId": "purple2",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 257,
+      "actionId": "choose_target:94774bd9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple3",
+        "tileId": "purple3",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 258,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 259,
+      "actionId": "choose_target:8422c993",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:purple4",
+        "tileId": "purple4",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 260,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-9-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 261,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 262,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 263,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 264,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 265,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 266,
+      "actionId": "choose_target:622d0cc4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue3:slot:1",
+        "tileId": "blue3",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 267,
+      "actionId": "choose_target:60c4b2a0",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "tech:blue4:slot:1",
+        "tileId": "blue4",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "effect-purpose",
+      "goalId": "effect:tech:card:card-11-0",
+      "mainCompleted": true
+    },
+    {
+      "index": 268,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 269,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "computer-prefix",
+      "goalId": "data:computer-prefix:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 270,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 271,
+      "actionId": "choose_target:69f502d4",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 272,
+      "actionId": "choose_card:447795a6",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "pick:card-45-0",
+        "cardInstanceId": "card-45-0",
+        "publicSlotIndex": 2
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:1",
+      "mainCompleted": true
+    },
+    {
+      "index": 273,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 274,
+      "actionId": "choose_target:4b5ac2fc",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "nebula:sector-4-a",
+        "nebulaId": "sector-4-a",
+        "sectorX": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "scan-flow",
+      "goalId": "scan:sector:sector-4-a",
+      "mainCompleted": true
+    },
+    {
+      "index": 275,
+      "actionId": "choose_target:d843cd69",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:1:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 276,
+      "actionId": "choose_target:b66b64e9",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "trace:2:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 277,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 278,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 279,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 280,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 281,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 282,
+      "actionId": "choose_payment:f893f500",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 283,
+      "actionId": "move:630a7f69",
+      "family": "move",
+      "phase": "quick",
+      "target": {
+        "rocketId": 4,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 284,
+      "actionId": "choose_payment:0312b33f",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-11-0",
+        "cardIds": [
+          "card-11-0"
+        ]
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 285,
+      "actionId": "choose_target:4054f661",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "4:-1:0",
+        "rocketId": 4,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 286,
+      "actionId": "choose_target:b7ba7fe8",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "skip",
+        "skip": true
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 287,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 288,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 289,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 290,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 291,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 292,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 293,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 294,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 295,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 296,
+      "actionId": "choose_card:fe96c6cd",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "income:card-54-0",
+        "cardInstanceId": "card-54-0"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 297,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 298,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 299,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 300,
+      "actionId": "choose_target:0db6031c",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 301,
+      "actionId": "choose_target:4054f661",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "4:-1:0",
+        "rocketId": 4,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 302,
+      "actionId": "choose_target:b7ba7fe8",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "skip",
+        "skip": true
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 303,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 304,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 305,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 306,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 307,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 308,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 309,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 310,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 311,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 312,
+      "actionId": "choose_card:82b5d5cb",
+      "family": "choose_card",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "income:card-31-pass-3-2",
+        "cardInstanceId": "card-31-pass-3-2"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 313,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 314,
+      "actionId": "choose_target:9e798bfd",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 315,
+      "actionId": "place_data:50a9ac16",
+      "family": "place_data",
+      "phase": "quick",
+      "target": {
+        "kind": "place-data"
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 316,
+      "actionId": "choose_target:0db6031c",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "kind": "expandResourcePlan",
+      "goalKind": "blue-data",
+      "goalId": "data:blue:3",
+      "mainCompleted": true
+    },
+    {
+      "index": 317,
+      "actionId": "end_turn:d59ab08c",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "target": {
+        "kind": "end-turn"
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 318,
+      "actionId": "choose_target:4054f661",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "4:-1:0",
+        "rocketId": 4,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "kind": "expandGoalMovementPlan",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    },
+    {
+      "index": 319,
+      "actionId": "choose_target:b7ba7fe8",
+      "family": "choose_target",
+      "phase": "conditional",
+      "target": {
+        "choiceId": "skip",
+        "skip": true
+      },
+      "kind": "expandWithCardPick",
+      "goalKind": null,
+      "goalId": null,
+      "mainCompleted": true
+    }
+  ],
+  "allRootActionGoalValueCompletionExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

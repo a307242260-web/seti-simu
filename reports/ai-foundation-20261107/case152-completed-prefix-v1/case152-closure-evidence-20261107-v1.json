@@ -1,0 +1,138 @@
+{
+  "status": "passed-diagnostic-evidence-only",
+  "goalStatus": "active",
+  "formal": "V278/V48",
+  "frozenCandidate": "V314/V54/Resource25",
+  "sourceHashesUnchanged": 179,
+  "oldGateStillFailed": true,
+  "sourceAdmitted": false,
+  "newAutonomousRuns": 0,
+  "newScore": false,
+  "baseline": "V41",
+  "prefixAliasProbe": {
+    "NativeExpandMisses": 654,
+    "sourceEnvelopes": 579,
+    "strictUnique": 654,
+    "strictRepeated": 0,
+    "envelopeOnlyUnique": 654,
+    "envelopeOnlyRepeated": 0
+  },
+  "fullIdentityProbe": {
+    "identities": 575,
+    "materializationMilliseconds": 12.720347999999973,
+    "exactUnique": 650,
+    "exactRepeated": 4,
+    "logicalUnique": 650,
+    "logicalRepeated": 4
+  },
+  "completedPaidPrefixFalseRejections": 21,
+  "steps": [
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/completed-prefix-prototype-20261107-v1.json",
+      "sha256": "b8ab875ba5790f520bb25b9b9750368e9c32348409953a048e87696733c06881",
+      "NativeInputs": 507,
+      "diagnosticMilliseconds": null
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/fixed-blue-prefix-prototype-20261107-v2.json",
+      "sha256": "965fd6f970ef1326ce424978e731e350d3540d15a7e0a2ed5979387368914c22",
+      "NativeInputs": 320,
+      "diagnosticMilliseconds": null
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/r4-energy-bound-prototype-20261107-v3.json",
+      "sha256": "5388712225703c5c73c3c04827be15a2b04f840fb6a2dc9fd586d35cf077c1fc",
+      "NativeInputs": 320,
+      "diagnosticMilliseconds": null
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-native-proofs-20261107-v5.json",
+      "sha256": "ce5bdc346d717d65482c14b58d5ffadf441b3c2040f9c87393d8d7e3f0f0826b",
+      "NativeInputs": 260,
+      "diagnosticMilliseconds": 1269.14925,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 781
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-analysis-priority-proofs-20261107-v6.json",
+      "sha256": "5d1b5d149efb1af1f0d3e037d1351a5e2d086d0fc8d7720549f78efc33a1d68b",
+      "NativeInputs": 260,
+      "diagnosticMilliseconds": 1278.0277919999999,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 781
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-analysis-chain-priority-proofs-20261107-v7.json",
+      "sha256": "c4fcc3bc557953b3ff97447afd31b1b3c60c0dd283abaacddbc391d44d04cb8a",
+      "NativeInputs": 260,
+      "diagnosticMilliseconds": 1272.2638749999999,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 781
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-movement-defer-proofs-20261107-v8.json",
+      "sha256": "f9183fcaefe099213e7a981dc1ea41de613b740af296dfc3343f3a7960750471",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 1275.9410830000002,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-fast-stationary-proofs-20261107-v9.json",
+      "sha256": "5913e23745997aa58a6d560cfe2cfb70b2fac161dd0cea0cb7e8d826f2db1604",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 818.296125,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-objective-memo-proofs-20261107-v10.json",
+      "sha256": "39b71dd94f645b793f53fc249d0bf751266a7e600cdf7048280dfbc3c4387924",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 820.0437499999999,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-rotated-distances-proofs-20261107-v11.json",
+      "sha256": "5699b9fca2884877d09b4880e970dd9f7a38afc19dc744c8447a9091baed28d8",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 900.630625,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-rotated-geometry-proofs-20261107-v12.json",
+      "sha256": "e2f97fbbd88d9220bc8f528b7c2a3c7eaa680573228baacd897097ca06023723",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 845.1305,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-affordable-prefix-proofs-20261107-v13.json",
+      "sha256": "4b8324a704a10f9a75b5cdb74050b0d9e5e5ca5a58ba54c00a5ddb342d7ae27f",
+      "NativeInputs": 256,
+      "diagnosticMilliseconds": 869.122584,
+      "proofRowsSharedWithIndependentReference": 65,
+      "materializedNativeInputs": 785,
+      "newNativeSubmissionsDuringMaterialization": 785
+    }
+  ],
+  "independentProofs": 65,
+  "independentReplayNativeInputs": 785,
+  "currentBestPrototype": "v9",
+  "currentBestPrototypeNativeInputs": 256,
+  "currentBestPrototypeDiagnosticMilliseconds": 818.296125,
+  "originalPaymentEnumeratorBodyUnchanged": true,
+  "sourceSyntaxChecks": 44,
+  "profileScopeNote": "The v1 CPU profile metadata inherited materialization wording from its template; its zero proof rows and zero materialization fields are authoritative. Both CPU profiles are diagnosis only; v2 metadata has the corrected scope."
+}

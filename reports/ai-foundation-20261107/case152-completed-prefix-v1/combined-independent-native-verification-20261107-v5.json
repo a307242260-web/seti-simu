@@ -1,0 +1,403 @@
+{
+  "status": "passed",
+  "report": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-native-proofs-20261107-v5.json",
+  "reportSha256": "ce5bdc346d717d65482c14b58d5ffadf441b3c2040f9c87393d8d7e3f0f0826b",
+  "checkpoint": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-native-proofs-20261107-v5.checkpoint.json",
+  "checkpointSha256": "8a3a622088bf24d36f67dec051053d526eca7e19d90470c4f4819b786f8ff51b",
+  "independentNativeInputs": 785,
+  "rows": [
+    {
+      "proof": 0,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 1,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 2,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 3,
+      "inputs": 9,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 4,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 5,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 6,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 7,
+      "inputs": 11,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 8,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 9,
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 10,
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 11,
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 12,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 13,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 14,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 15,
+      "inputs": 9,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 16,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 17,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 18,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 19,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 20,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 21,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 22,
+      "inputs": 4,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 23,
+      "inputs": 7,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 24,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 25,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 26,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 27,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 28,
+      "inputs": 20,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 29,
+      "inputs": 20,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 30,
+      "inputs": 20,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 31,
+      "inputs": 20,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 32,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 33,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 34,
+      "inputs": 15,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 35,
+      "inputs": 15,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 36,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 37,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 38,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 39,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 40,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 41,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 42,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 43,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 44,
+      "inputs": 17,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 45,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 46,
+      "inputs": 17,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 47,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 48,
+      "inputs": 14,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 49,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 50,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 51,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 52,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 53,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 54,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 55,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 56,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 57,
+      "inputs": 13,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 58,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 59,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 60,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 61,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 62,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 63,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 64,
+      "inputs": 18,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "allStateSessionRngExact": true
+}

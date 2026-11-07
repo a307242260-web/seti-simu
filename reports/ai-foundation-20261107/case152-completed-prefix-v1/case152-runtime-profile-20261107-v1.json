@@ -1,0 +1,342 @@
+{
+  "scope": "Unadmitted in-memory combined completed-prefix/fixed-blue-prefix/shared Native payment R4 movement proof. Current Native payment enumerator body hoisted unchanged, no duplicated payment rules. No old R4 linear bound restored. Winning action/value unchanged; losing-root values may be attained lower bounds after certified movement pruning, never claimed exact maxima. Every positive data/movement tail quoted by this diagnostic is materialized. R4 sole fixed-movement alternative may be deferred once behind existing pending purposes; it remains queued and is executed unless the unchanged strict bound later proves it dominated. No budget, beam, depth or candidate change. No acceptance timing or new game.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "baselineNativeInputs": 805,
+  "prototypeNativeInputs": 256,
+  "selected": {
+    "actionId": "place_data:50a9ac16",
+    "value": 49
+  },
+  "rootComparisons": [
+    {
+      "actionId": "play_card:3e8e8ea5",
+      "exactPreviousValue": 38,
+      "currentAttainedValue": 38,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ad9d7edf",
+      "exactPreviousValue": 34,
+      "currentAttainedValue": 34,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:9da016bc",
+      "exactPreviousValue": 30,
+      "currentAttainedValue": 30,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ce05056e",
+      "exactPreviousValue": 31,
+      "currentAttainedValue": 31,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ac125846",
+      "exactPreviousValue": 35,
+      "currentAttainedValue": 35,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:bab3140b",
+      "exactPreviousValue": 32.5,
+      "currentAttainedValue": null,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "pass:ac4b4ab2",
+      "exactPreviousValue": 30.5,
+      "currentAttainedValue": 30.5,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "move:060dbf6f",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "move:630a7f69",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "move:d8c62915",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:5ad269c5",
+      "exactPreviousValue": 45,
+      "currentAttainedValue": 45,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "quick_trade:aedbd0df",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:9256f5c4",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:c3f1770e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:11754f92",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:c49d725c",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:d5283853",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:27fd8eef",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:296892d5",
+      "exactPreviousValue": 45.5,
+      "currentAttainedValue": 45.5,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "card_corner:83e7e18b",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:7003d11e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:9b656c6e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "exactPreviousValue": 49,
+      "currentAttainedValue": 49,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    }
+  ],
+  "dataProofs": 49,
+  "movementProofs": 16,
+  "proofs": [],
+  "materializedNativeInputs": 0,
+  "actualAdditionalNativeExecutions": 0,
+  "movementQuoteReasons": [
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    }
+  ],
+  "diagnostics": {
+    "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+    "valueEvaluations": 83,
+    "valueCacheHits": 193,
+    "finalMarkPlanning": true,
+    "scanPlanning": true,
+    "resourcePlanning": "goal-bound-greedy-preparation",
+    "cardPickPlanning": "purpose-bound-fixed-plan",
+    "movementPlanning": "goal-directed-policy",
+    "movementPolicyNodes": 93,
+    "movementDirectionsExcluded": 267,
+    "routeGeometryNodes": 800,
+    "incomePlanProofs": 0,
+    "provedIncomeInputs": 0,
+    "turnTailProofs": 62,
+    "provedTurnTailInputs": 573,
+    "movementValuePrunes": 16,
+    "winningIncomePlans": 0,
+    "winningIncomeInputs": 0,
+    "deferredMovementPlans": 1,
+    "nativeExecutions": 256,
+    "logicalResourceInputs": 253,
+    "sharedResourceInputHits": 51,
+    "sharedResourceInternalStates": 143,
+    "localFinalMarkStates": 0,
+    "localFinalMarkExcluded": 0,
+    "fixedDataChoiceStates": 0,
+    "fixedDataChoicesExcluded": 0,
+    "branchingStates": 29,
+    "singleAlternativeStates": 89,
+    "disabledBorrowStarts": 0,
+    "disabledRemoveTechIncomeStarts": 32,
+    "scanPurposePlans": 10,
+    "resourceGoalPlans": 83,
+    "resourcePreparationInputs": 253,
+    "resourceFallbacks": 4,
+    "resourceExcludedActions": 1386,
+    "transitions": 256,
+    "nodes": 342,
+    "graphNodes": 189,
+    "certificateNodes": 153,
+    "postMainOptimalPlans": 0,
+    "postMainOptimalPlanSteps": 0,
+    "equivalents": 1,
+    "selectionMacros": 0,
+    "peakFrontier": 48,
+    "dominancePrunes": 0,
+    "resourceDominance": "disabled-for-movement-policy",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "disabled-for-movement-policy",
+    "postMainValuePrunes": 0,
+    "scanValuePrunes": 0,
+    "scanActionPrunes": 0,
+    "cardTradePrunes": 0,
+    "cardTradePruning": "disabled-for-selection-certificate",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "postMainBorrowProofNodes": 0,
+    "postMainBorrowExcludedChoices": 0,
+    "postMainBorrowMacros": 0,
+    "cardChoiceProofNodes": 0,
+    "cardChoiceExcludedActions": 0,
+    "cardCornerProofNodes": 0,
+    "cardCornerExcludedActions": 0,
+    "preMainDataProofNodes": 0,
+    "preMainDataExcludedActions": 0,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "not-requested",
+    "milliseconds": 1334.198625,
+    "limits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    }
+  },
+  "checkpoint": "reports/ai-foundation-20261107/case152-completed-prefix-v1/case152-runtime-profile-20261107-v1.checkpoint.json",
+  "checkpointSha256": "4b9a00facf0f3133086b93192ebeaa8967b99f315a97bcd0c73e22aea1a972b4",
+  "rootAndRngRestored": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

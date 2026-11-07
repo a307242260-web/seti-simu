@@ -1,0 +1,136 @@
+{
+  "scope": "Value-tie audit of the uninstalled v9 prototype. Actual search unchanged; no cold timing or new autonomous run. Equal primary values do not establish debt/realization/distance parity.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "NativeInputs": 256,
+  "choices": [
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 3,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 3,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 3,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 5,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 1,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 1.5,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:1",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:1",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 4,
+      "stopGain": 0
+    }
+  ],
+  "ties": [
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:1",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:3",
+      "continueGain": 0,
+      "stopGain": 0
+    },
+    {
+      "goalId": "data:blue:1",
+      "continueGain": 0,
+      "stopGain": 0
+    }
+  ],
+  "rootAndRngRestored": true
+}

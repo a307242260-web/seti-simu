@@ -1,0 +1,24 @@
+{
+  "scope": "Post-profile correctness audit: primary-value equality alone does not prove secondary ordering. Uninstalled v14 returns equal stop/continue quotes to Native. No frozen source or official cold resample.",
+  "tiesObserved": 9,
+  "nonpositiveBlueComparisons": 16,
+  "aggressivePrototypeInputs": 256,
+  "conservativeTieFallbackInputs": 291,
+  "conservativeDiagnosticMilliseconds": 900.345292,
+  "selected": {
+    "actionId": "place_data:50a9ac16",
+    "value": 49
+  },
+  "dataProofs": 49,
+  "movementProofs": 16,
+  "materializedNativeInputs": 777,
+  "exactIndependentRowsReused": 57,
+  "freshIndependentRows": 8,
+  "freshIndependentNativeInputs": 32,
+  "totalIndependentEvidenceInputs": 777,
+  "fullStateSessionRngExact": true,
+  "proofReport": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-tie-safe-proofs-20261107-v14.json",
+  "independentReport": "reports/ai-foundation-20261107/case152-completed-prefix-v1/combined-tie-safe-independent-20261107-v14.json",
+  "newAutonomousRuns": 0,
+  "sourceAdmitted": false
+}

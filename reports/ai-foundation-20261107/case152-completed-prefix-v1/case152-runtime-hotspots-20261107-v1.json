@@ -1,0 +1,427 @@
+{
+  "samples": 1047,
+  "self": [
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 576,
+      "milliseconds": 129.916
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 65.042
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 61.875
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "line": 725,
+      "milliseconds": 47.834
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 576,
+      "milliseconds": 35.168
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 576,
+      "milliseconds": 25.501
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 24.167
+    },
+    {
+      "function": "post",
+      "file": "node:inspector",
+      "line": 118,
+      "milliseconds": 15.709
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "analysis-port.js",
+      "line": 153,
+      "milliseconds": 15.166
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "line": 725,
+      "milliseconds": 13.042
+    },
+    {
+      "function": "buildTopologyBody",
+      "file": "production-kernel.js",
+      "line": 444,
+      "milliseconds": 11.958
+    },
+    {
+      "function": "plannedMovementTimingKey",
+      "file": "production-kernel.js",
+      "line": 1823,
+      "milliseconds": 11.958
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 10.584
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 10.583
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 10.541
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 10.501
+    },
+    {
+      "function": "getSectorOccupancy",
+      "file": "rockets.js",
+      "line": 216,
+      "milliseconds": 10.209
+    },
+    {
+      "function": "getOccupiedSlotIndices",
+      "file": "rockets.js",
+      "line": 229,
+      "milliseconds": 9.792
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 9.376
+    },
+    {
+      "function": "",
+      "file": "core.js",
+      "line": 403,
+      "milliseconds": 9.082
+    },
+    {
+      "function": "settleRocketsAfterSolarRotation",
+      "file": "rocket.js",
+      "line": 573,
+      "milliseconds": 9.042
+    },
+    {
+      "function": "movementTiming",
+      "file": "analysis-port.js",
+      "line": 999,
+      "milliseconds": 9.041
+    },
+    {
+      "function": "getSolarCellBoundary",
+      "file": "core.js",
+      "line": 284,
+      "milliseconds": 8.999
+    },
+    {
+      "function": "cloneMovementPreview",
+      "file": "production-kernel.js",
+      "line": 651,
+      "milliseconds": 8.959
+    },
+    {
+      "function": "",
+      "file": "production-kernel.js",
+      "line": 653,
+      "milliseconds": 8.959
+    },
+    {
+      "function": "probeRouteTopologyKey",
+      "file": "production-kernel.js",
+      "line": 417,
+      "milliseconds": 7.584
+    },
+    {
+      "function": "settleRocketsAfterSolarRotation",
+      "file": "rocket.js",
+      "line": 573,
+      "milliseconds": 7.04
+    },
+    {
+      "function": "contentAt",
+      "file": "production-kernel.js",
+      "line": 448,
+      "milliseconds": 6.999
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "line": 725,
+      "milliseconds": 6.084
+    },
+    {
+      "function": "routeKey",
+      "file": "production-kernel.js",
+      "line": 464,
+      "milliseconds": 6.042
+    },
+    {
+      "function": "resolveVisibleContent",
+      "file": "core.js",
+      "line": 594,
+      "milliseconds": 6.042
+    },
+    {
+      "function": "append",
+      "file": "production-kernel.js",
+      "line": 485,
+      "milliseconds": 5.916
+    },
+    {
+      "function": "collectVisibleCoordinateContents",
+      "file": "core.js",
+      "line": 653,
+      "milliseconds": 5.667
+    },
+    {
+      "function": "",
+      "file": "core.js",
+      "line": 403,
+      "milliseconds": 4.626
+    },
+    {
+      "function": "rotateSolarSystem",
+      "file": "turn-flow.js",
+      "line": 97,
+      "milliseconds": 4.626
+    }
+  ],
+  "inclusive": [
+    {
+      "function": "(root)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 1364.417
+    },
+    {
+      "function": "",
+      "file": "profile-v314-case152-current-runtime-20261107-v1.js",
+      "line": 1,
+      "milliseconds": 1299.375
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "milliseconds": 1270.083
+    },
+    {
+      "function": "turnTailSummary",
+      "file": "analysis-port.js",
+      "line": 2151,
+      "milliseconds": 546.919
+    },
+    {
+      "function": "dataTailCompletion",
+      "file": "local-decision-plans.js",
+      "line": 209,
+      "milliseconds": 543.835
+    },
+    {
+      "function": "canLeaveProbeStationary",
+      "file": "analysis-port.js",
+      "line": 2228,
+      "milliseconds": 405.334
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 40,
+      "milliseconds": 403.834
+    },
+    {
+      "function": "comparePlannedMovementTiming",
+      "file": "production-kernel.js",
+      "line": 1832,
+      "milliseconds": 381.417
+    },
+    {
+      "function": "compareTiming",
+      "file": "analysis-port.js",
+      "line": 2280,
+      "milliseconds": 381.417
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 215,
+      "milliseconds": 341.002
+    },
+    {
+      "function": "afterRotation",
+      "file": "production-kernel.js",
+      "line": 1839,
+      "milliseconds": 289.665
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 40,
+      "milliseconds": 244.0
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "line": 1068,
+      "milliseconds": 244.0
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "line": 950,
+      "milliseconds": 229.498
+    },
+    {
+      "function": "movementTiming",
+      "file": "analysis-port.js",
+      "line": 999,
+      "milliseconds": 204.166
+    },
+    {
+      "function": "compareTiming",
+      "file": "analysis-port.js",
+      "line": 1075,
+      "milliseconds": 204.166
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 576,
+      "milliseconds": 200.876
+    },
+    {
+      "function": "comparePlannedMovementTiming",
+      "file": "production-kernel.js",
+      "line": 1832,
+      "milliseconds": 180.209
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 605,
+      "milliseconds": 175.583
+    },
+    {
+      "function": "afterRotation",
+      "file": "production-kernel.js",
+      "line": 1839,
+      "milliseconds": 160.75
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 576,
+      "milliseconds": 119.752
+    },
+    {
+      "function": "dataTailCompletion",
+      "file": "local-decision-plans.js",
+      "line": 209,
+      "milliseconds": 103.291
+    },
+    {
+      "function": "executeCurrent",
+      "file": "analysis-port.js",
+      "line": 1170,
+      "milliseconds": 97.292
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 40,
+      "milliseconds": 92.458
+    },
+    {
+      "function": "canLeaveProbeStationary",
+      "file": "analysis-port.js",
+      "line": 2228,
+      "milliseconds": 92.458
+    },
+    {
+      "function": "rotateSolarSystem",
+      "file": "turn-flow.js",
+      "line": 97,
+      "milliseconds": 84.331
+    },
+    {
+      "function": "cloneMovementPreview",
+      "file": "production-kernel.js",
+      "line": 651,
+      "milliseconds": 81.293
+    },
+    {
+      "function": "comparePlannedMovementTiming",
+      "file": "production-kernel.js",
+      "line": 1832,
+      "milliseconds": 80.583
+    },
+    {
+      "function": "compareTiming",
+      "file": "analysis-port.js",
+      "line": 2280,
+      "milliseconds": 80.583
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 798,
+      "milliseconds": 76.878
+    },
+    {
+      "function": "settleRocketsAfterSolarRotation",
+      "file": "rocket.js",
+      "line": 573,
+      "milliseconds": 73.623
+    },
+    {
+      "function": "submitDecision",
+      "file": "rule-composition.js",
+      "line": 782,
+      "milliseconds": 67.541
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 65.042
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 63.375
+    },
+    {
+      "function": "clone",
+      "file": "production-kernel.js",
+      "line": 199,
+      "milliseconds": 63.375
+    }
+  ]
+}

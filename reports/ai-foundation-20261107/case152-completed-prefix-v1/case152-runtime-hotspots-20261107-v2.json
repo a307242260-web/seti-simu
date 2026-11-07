@@ -1,0 +1,282 @@
+{
+  "samples": 729,
+  "inclusive": [
+    {
+      "function": "(root)",
+      "file": "",
+      "ms": 932.416
+    },
+    {
+      "function": "",
+      "file": "profile-v314-case152-current-runtime-20261107-v2.js",
+      "ms": 877.166
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "ms": 846.5
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "ms": 372.125
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "ms": 293.416
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "ms": 269.04
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "ms": 255.331
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "ms": 238.166
+    },
+    {
+      "function": "compareTiming",
+      "file": "analysis-port.js",
+      "ms": 235.208
+    },
+    {
+      "function": "movementTiming",
+      "file": "analysis-port.js",
+      "ms": 233.666
+    },
+    {
+      "function": "comparePlannedMovementTiming",
+      "file": "production-kernel.js",
+      "ms": 194.082
+    },
+    {
+      "function": "afterRotation",
+      "file": "production-kernel.js",
+      "ms": 164.375
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "ms": 160.13
+    },
+    {
+      "function": "executeCurrent",
+      "file": "analysis-port.js",
+      "ms": 148.417
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "ms": 144.75
+    },
+    {
+      "function": "dataTailCompletion",
+      "file": "local-decision-plans.js",
+      "ms": 102.583
+    },
+    {
+      "function": "submitDecision",
+      "file": "rule-composition.js",
+      "ms": 91.499
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "ms": 84.044
+    },
+    {
+      "function": "runWithWorkingStateContext",
+      "file": "rule-composition.js",
+      "ms": 83.913
+    },
+    {
+      "function": "runWithWorkingState",
+      "file": "production-kernel.js",
+      "ms": 83.913
+    },
+    {
+      "function": "turnTailSummary",
+      "file": "analysis-port.js",
+      "ms": 82.959
+    },
+    {
+      "function": "",
+      "file": "rule-composition.js",
+      "ms": 82.413
+    },
+    {
+      "function": "planningCapital",
+      "file": "resource-demand.js",
+      "ms": 76.961
+    },
+    {
+      "function": "resolveDecision",
+      "file": "session-runtime.js",
+      "ms": 73.416
+    },
+    {
+      "function": "finishChild",
+      "file": "analysis-port.js",
+      "ms": 72.247
+    },
+    {
+      "function": "previewBlueCompletion",
+      "file": "local-decision-plans.js",
+      "ms": 63.709
+    },
+    {
+      "function": "purposeCapital",
+      "file": "state-value.js",
+      "ms": 62.879
+    },
+    {
+      "function": "purposeCapitalWithoutFutureProbe",
+      "file": "state-value.js",
+      "ms": 62.879
+    },
+    {
+      "function": "commit",
+      "file": "session-runtime.js",
+      "ms": 61.624
+    },
+    {
+      "function": "purposeCapitalWithoutPublicityPreparation",
+      "file": "state-value.js",
+      "ms": 61.42
+    }
+  ],
+  "self": [
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "ms": 153.13
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "ms": 55.25
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "ms": 35.793
+    },
+    {
+      "function": "stableSerialize",
+      "file": "state-store.js",
+      "ms": 21.999
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "analysis-port.js",
+      "ms": 21.127
+    },
+    {
+      "function": "movementTiming",
+      "file": "analysis-port.js",
+      "ms": 21.042
+    },
+    {
+      "function": "getBaseWheelCell",
+      "file": "core.js",
+      "ms": 20.541
+    },
+    {
+      "function": "plannedMovementTimingKey",
+      "file": "production-kernel.js",
+      "ms": 17.042
+    },
+    {
+      "function": "post",
+      "file": "node:inspector",
+      "ms": 15.916
+    },
+    {
+      "function": "visit",
+      "file": "low-coupling-slices.js",
+      "ms": 14.749
+    },
+    {
+      "function": "normalizeObject",
+      "file": "analysis-port.js",
+      "ms": 13.709
+    },
+    {
+      "function": "",
+      "file": "production-kernel.js",
+      "ms": 12.624
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "ms": 12.166
+    },
+    {
+      "function": "getOccupiedSlotIndices",
+      "file": "rockets.js",
+      "ms": 12.084
+    },
+    {
+      "function": "normalize",
+      "file": "analysis-port.js",
+      "ms": 11.999
+    },
+    {
+      "function": "buildProbeCandidateStructures",
+      "file": "production-kernel.js",
+      "ms": 11.541
+    },
+    {
+      "function": "buildTopologyBody",
+      "file": "production-kernel.js",
+      "ms": 11.209
+    },
+    {
+      "function": "deepFreeze",
+      "file": "rule-composition.js",
+      "ms": 10.542
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "resource-demand.js",
+      "ms": 10.417
+    },
+    {
+      "function": "getSectorOccupancy",
+      "file": "rockets.js",
+      "ms": 9.625
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "file": "core.js",
+      "ms": 9.125
+    },
+    {
+      "function": "deepFreeze",
+      "file": "state-store.js",
+      "ms": 8.665
+    },
+    {
+      "function": "routeKey",
+      "file": "production-kernel.js",
+      "ms": 8.415
+    },
+    {
+      "function": "requirements",
+      "file": "probe-capital.js",
+      "ms": 8.334
+    },
+    {
+      "function": "mod8",
+      "file": "core.js",
+      "ms": 7.832
+    }
+  ]
+}
