@@ -3,9 +3,9 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens,common?require('../industry/catalog'):root.SetiIndustryCatalog,common?require('../abilities'):root.SetiAbilities,common?require('../turn-flow'):root.SetiTurnFlow);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow){
  'use strict';
  const VERSION='seti-local-mark-and-scan-purpose-v10';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -313,7 +313,7 @@
  }
  // A proved followup is an alternative, valued from the same wallet as the
  // scan. It never materializes a successor or treats a refill as known.
- function quoteKnownSector({state,seatId,p,paid,knownCards,details,followup=null}){
+ function quoteKnownSector({state,seatId,p,paid,knownCards,details,followup=null,knownAlienDisplay=null,claimNewPublicity=false,knownLaunchTech=null}){
   const first=scanEffects.buildScanEffectQueue(paid,{turn:state.turn})[0],source=science.getPlanetScanSource(state,first.type);
   if(!source||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
   const publicCards=state.cards.publicCards.map(c=>c&&knownCards.has(c.id)?c:null);
@@ -342,45 +342,267 @@
    finalScoring:structuredClone(s.finalScoring),aliens:structuredClone(s.aliens),
    cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},actor).totalScore;
   const base=total(state,p),baseCapital=demand.planningCapital(state,p);
-  const event={type:'alienTrace',traceType,playerId:seatId,alienSlotId:Number(alienId)};
   for(const position of aliens.amiba.TRACE_POSITIONS){
    const root={...q,meta:structuredClone(q.meta),aliens:structuredClone(q.aliens)},copy=dataPreviewPlayer(paid);
    root.players={...q.players,players:q.players.players.map(v=>v.id===seatId?copy:v)};
-   if(!aliens.amiba.canPlaceAmibaTrace(root.aliens,alienId,traceType,position).ok)continue;
-   const placed=aliens.amiba.placeAmibaTrace(root.aliens,alienId,traceType,position,copy,{sequence:root.meta.sequences.alienEntity});
-   if(!placed.ok)continue;
-   const apply=r=>{
-    if(!r||r.pickAlienCard||r.pickCard||r.drawCards)return false;
-    players.gainResources(copy,r.gain||{});
-    for(let i=0;i<(r.dataCount||0);i++){const added=data.gainData(copy,{root});if(!added.ok&&!added.discarded)return false;}
-    return true;
-   };
-   if(!apply(placed.reward))continue;
-   if(placed.reward.region){
-    const symbols=aliens.amiba.listSymbolsInRegion(root.aliens,placed.reward.region);
-    if(!symbols.every(symbol=>apply(symbol.reward))||!aliens.amiba.resolveRegionReward(root.aliens,placed.reward.region).ok)continue;
-   }
-   copy.reservedCards=structuredClone(copy.reservedCards);
-   const traceEvent={...event,region:placed.reward.region},matches=effects.collectMatchingTriggers(copy,traceEvent);
-   if(matches.length){
-    if(matches.length!==1)continue;
-    const {card,trigger}=matches[0],settled=residual.queryCardSettlement(root,seatId,{kind:'trigger',cardInstanceId:card.id,ruleId:trigger.id,event:traceEvent});
-    if(settled?.effects.length!==1||settled.effects[0].type!=='gain_data'||settled.effects[0].options?.count!==1||(settled.effects[0].options?.repeat??1)!==1)continue;
-    const consumed=structuredClone(card);
-    if(!effects.consumeTrigger(consumed,trigger.id)||effects.areAllTriggersConsumed(consumed)||!data.gainData(copy,{root}).ok)continue;
-    copy.reservedCards=copy.reservedCards.map(c=>c.id===consumed.id?consumed:c);
-   }
+   const trace=previewKnownAmibaTrace({root,copy,alienId,traceType,position,knownAlienDisplay,seatId});
+   if(!trace)continue;
+   const {displayed}=trace;
    // Crossing a mark or creating an unproved trigger must remain Native.
    if(state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=copy.resources.score))continue;
    const weights=stateValue.DEFAULT_WEIGHTS,linear=Object.entries(weights).reduce((n,[k,w])=>n+(copy.resources[k]-p.resources[k])*w,0);
    const capital=demand.planningCapital(root,copy),score=total(root,copy);
-   const scanValue=stateValue.sumValueParts([score,-base,linear,capital,-baseCapital]);
+   let scanValue=stateValue.sumValueParts([score,-base,linear,capital,-baseCapital]),claimedTask=null,knownLaunch=null;
+   if(claimNewPublicity){
+    const tasks=copy.reservedCards.flatMap(card=>{
+     const r=knownCards.has(card.id)&&sectorPublicityReward(card);
+     return r&&r.model.cardType===2&&!r.model.endGameScoring
+       &&copy.resources.publicity+r.gain.publicity<=players.RESOURCE_LIMITS.publicity
+       &&!effects.taskConditionMet(r.task,p,{data:state.data})
+       &&effects.taskConditionMet(r.task,copy,{data:root.data})
+       ?[{cardId:card.id,taskId:r.task.id,gain:r.gain.publicity}]:[];
+    });
+    if(tasks.length===1){
+     const claim=previewCappedSectorClaim({state:root,seatId,task:tasks[0],allowPublicityGain:true});
+     if(claim){
+      const settled=owner(claim,seatId),after=stateValue.sumValueParts([total(claim,settled),-base,linear,
+       (settled.resources.publicity-copy.resources.publicity)*weights.publicity,
+       demand.planningCapital(claim,settled),-baseCapital]);
+      if(after>scanValue){
+       claimedTask={...tasks[0],delta:after-scanValue};scanValue=after;
+       if(knownLaunchTech){
+        knownLaunch=quoteKnownResearchLaunch({state:claim,seatId,knownCards,knownTech:knownLaunchTech,
+         scanPublicSlot:card.target.publicSlotIndex,total});
+        if(knownLaunch)scanValue=stateValue.sumValueParts([scanValue,knownLaunch.value]);
+       }
+      }
+     }
+    }
+   }
    const continuation=followup?.(root,copy,score,capital);
    if(followup&&!continuation)continue;
    const value=continuation?stateValue.sumValueParts([scanValue,continuation.value]):scanValue;
    if(value>0)quotes.push({value,sectorId:id,publicCardId:card.target.cardInstanceId,traceType,tracePosition:position,
     scoreGain:copy.resources.score-p.resources.score,dataGain:copy.resources.availableData-p.resources.availableData,...details,
-    ...(continuation?{scanValue,research:continuation}:{})});
+    ...(claimedTask?{claimedTask}:{}),...(knownLaunch?{knownLaunch}:{}),
+    ...(continuation?{scanValue,research:continuation}:{}),...(displayed?{displayedCard:{id:displayed.id,cardId:displayed.cardId}}:{})});
+  }
+  return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
+ }
+ function quoteKnownResearchLaunch({state,seatId,knownCards,knownTech,scanPublicSlot,total}){
+  const p=owner(state,seatId),tileId='orange1',stack=state.tech.stacks[tileId],bonus=catalog.BONUS_EFFECTS[stack?.bonusId];
+  if(industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
+    ||p.resources.credits||p.resources.energy||p.resources.availableData!==3
+    ||data.listComputerPlacedTokens(p).map(t=>t.placementSlot).join(',')!=='1,2,3,4'
+    ||p.resources.publicity<tech.getResearchPublicityCost(p)||!knownTech(tileId,stack)
+    ||p.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(t=>(t.event.types||[t.event.type]).some(type=>type==='researchTech'||type==='launch')))
+    ||p.reservedCards.some(c=>effects.getCardModel(c)?.tasks?.some(t=>effects.taskConditionMet(t,p,{data:state.data})))
+    ||effects.listPendingTriggerKeys(p,state.turn).length
+    ||state.cards.drawPileCardIds.length<2||bonus?.cardSelection!==1||Object.keys(bonus).length!==1)return null;
+  const offers=science.listPickCardChoices(state).filter(a=>knownCards.has(a.target.cardInstanceId));
+  if(offers.length!==1)return null;
+  const before=quietEndCompletion({state,seatId});
+  if(!before.available||before.markedTiles.length)return null;
+  const next=structuredClone(state),copy=owner(next,seatId);
+  const advanced=turnFlow.advanceTurnAfterPlayerAction(next,seatId);
+  if(!advanced.turnAdvanced||advanced.roundAdvanced||advanced.gameEnded||advanced.nextPlayerId!==seatId)return null;
+  copy.mainActionCompleted=false;
+  const take=next.tech.stacks[tileId];
+  take.bonusQueue=take.bonusQueue.map((id,i)=>i===take.bonusIndex?id:null);
+  const context=science.createActionContext(next,seatId),rotated=tech.rotateForResearch(context,1);
+  const action=rotated.ok&&!rotated.events.length&&science.listResearchChoices(next,seatId,{skipRotate:true}).find(a=>a.target.tileId===tileId);
+  const result=action&&science.executeResearchChoice(next,seatId,action,{skipRotate:true});
+  if(!result?.ok||!result.awaitingCardSelection||result.events.some(e=>e.type!=='researchTech')
+    ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=copy.resources.score))return null;
+  if(!abilities.executeAbility('launchProbe',context,{skipCost:true,source:'tech'}).ok)return null;
+  const {publicSlotIndex:index,cardInstanceId}=offers[0].target,offer=next.cards.publicCards[index];
+  if(!offer||offer.id!==cardInstanceId||copy.hand.some(c=>c.id===offer.id))return null;
+  copy.hand.push(offer);copy.resources.handSize=copy.hand.length;copy.mainActionCompleted=true;
+  next.cards.publicCards[index]=null;
+  next.cards.unknownPublicSlotIndices=[...new Set([...(next.cards.unknownPublicSlotIndices||[]),scanPublicSlot,index])];
+  next.cards.drawPileCardIds=new Array(next.cards.drawPileCardIds.length-2).fill(null);
+  const ready=fillQuietAnalysisComputer(next,seatId),q=ready&&owner(ready,seatId);
+  if(!q||q.resources.availableData!==1)return null;
+  const end=quietEndCompletion({state:ready,seatId});
+  if(!end.available||end.markedTiles.length)return null;
+  const weights=stateValue.DEFAULT_WEIGHTS;
+  const linear=Object.entries(weights).reduce((n,[k,w])=>n+(q.resources[k]-p.resources[k])*w,0);
+  const value=stateValue.sumValueParts([total(ready,q),-total(state,p),linear,
+   stateValue.technologyCapital(q.techState,3),-stateValue.technologyCapital(p.techState,3),
+   demand.planningCapital(ready,q),-demand.planningCapital(state,p)]);
+  return value>0?{value,tileId,cardInstanceId,computerPlacements:2,probe:1}:null;
+ }
+ function previewKnownAmibaTrace({root,copy,alienId,traceType,position,knownAlienDisplay,seatId}){
+   const event={type:'alienTrace',traceType,playerId:seatId,alienSlotId:Number(alienId)};
+   if(!aliens.amiba.canPlaceAmibaTrace(root.aliens,alienId,traceType,position).ok)return null;
+   const placed=aliens.amiba.placeAmibaTrace(root.aliens,alienId,traceType,position,copy,{sequence:root.meta.sequences.alienEntity});
+   if(!placed.ok)return null;
+   let displayed=null;
+   const apply=r=>{
+    if(!r||r.pickCard||r.drawCards)return false;
+    if(r.pickAlienCard){
+     const amiba=root.aliens.amiba;
+     if(displayed||knownAlienDisplay===null||amiba.displayedCardHidden||amiba.displayedCardIndex!==knownAlienDisplay)return false;
+     // The native placement consumes one entity sequence before this choice.
+     const sequence=root.meta.sequences.alienEntity+1;
+     const card=aliens.amiba.createAlienCard(knownAlienDisplay,sequence);
+     if(!card||copy.hand.some(c=>c.id===card.id))return false;
+     displayed=card;copy.hand.push(card);copy.resources.handSize=copy.hand.length;
+     const drawCount=amiba.cardDeck.length;
+     amiba.displayedCardIndex=null;amiba.displayedCardHidden=drawCount>0;
+     amiba.cardDeck=new Array(Math.max(0,drawCount-1)).fill(null);
+    }
+    players.gainResources(copy,r.gain||{});
+    for(let i=0;i<(r.dataCount||0);i++){const added=data.gainData(copy,{root});if(!added.ok&&!added.discarded)return false;}
+    return true;
+   };
+   if(!apply(placed.reward))return null;
+   if(placed.reward.region){
+    const symbols=aliens.amiba.listSymbolsInRegion(root.aliens,placed.reward.region);
+    if(!symbols.every(symbol=>apply(symbol.reward))||!aliens.amiba.resolveRegionReward(root.aliens,placed.reward.region).ok)return null;
+   }
+   if(displayed&&copy.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(t=>(t.event.types||[t.event.type]).includes('alien_card_gain'))))return null;
+   copy.reservedCards=structuredClone(copy.reservedCards);
+   const traceEvent={...event,region:placed.reward.region},matches=effects.collectMatchingTriggers(copy,traceEvent);
+   if(matches.length){
+    if(matches.length!==1)return null;
+    const {card,trigger}=matches[0],settled=residual.queryCardSettlement(root,seatId,{kind:'trigger',cardInstanceId:card.id,ruleId:trigger.id,event:traceEvent});
+    if(settled?.effects.length!==1||settled.effects[0].type!=='gain_data'||settled.effects[0].options?.count!==1||(settled.effects[0].options?.repeat??1)!==1)return null;
+    const consumed=structuredClone(card);
+    if(!effects.consumeTrigger(consumed,trigger.id)||effects.areAllTriggersConsumed(consumed)||!data.gainData(copy,{root}).ok)return null;
+    copy.reservedCards=copy.reservedCards.map(c=>c.id===consumed.id?consumed:c);
+   }
+   return {displayed};
+ }
+ const visibleOrOpaque=(c,known,opaque)=>known.has(c.id)||Boolean(opaque&&c.hidden&&!c.id&&!c.cardId);
+ function quoteFundedSector({state,seatId,knownCards,knownAlienDisplay,allowOpaque=false,claimNewPublicity=false,knownLaunchTech=null}){
+  const p=owner(state,seatId),t=state.turn;
+  if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+    ||!t.activePlayerIds?.includes(seatId)||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+    ||p.resources.availableData!==0||p.hand.some(c=>!visibleOrOpaque(c,knownCards,allowOpaque))||p.reservedCards.some(c=>!knownCards.has(c.id))
+    ||turnHasScanObservers(state,p)||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color)
+    ||!state.aliens.amiba?.revealInitialized||Object.values(state.aliens.aliens).some(a=>a.revealed&&a.alienId!=='阿米巴'))return null;
+  const cost=scanEffects.getStandardScanCost(p),types=scanEffects.EFFECT_TYPES;
+  if(p.resources.credits!==cost.credits||p.resources.energy!==cost.energy
+    ||scanEffects.buildScanEffectQueue(p,{turn:t}).some(e=>![types.EARTH_SECTOR_SCAN,types.IMPROVED_SECTOR_SCAN,types.PUBLIC_CARD_SCAN,types.SCAN_ACTION_4].includes(e.type)))return null;
+  const paid=dataPreviewPlayer(p);
+  if(!players.spendResources(paid,cost).ok)return null;
+  return quoteKnownSector({state,seatId,p,paid,knownCards,knownAlienDisplay,claimNewPublicity,knownLaunchTech,details:{cost}});
+ }
+ // After a known analysis has reset the computer, prove one new
+ // research can pay both the income and blue-energy placements with data.
+ function quoteResearchIncomeScan({state,seatId,knownCards,knownTech,allowOpaque=false}){
+  const p=owner(state,seatId),cost=scanEffects.getStandardScanCost(p);
+  if(p.resources.credits!==cost.credits-1||p.resources.energy!==cost.energy-1
+    ||p.resources.publicity<tech.getResearchPublicityCost(p)||data.listComputerPlacedTokens(p).length!==0
+    ||p.resources.availableData<=0||p.resources.availableData>=5||p.hand.length!==4
+    ||p.hand.some(c=>!visibleOrOpaque(c,knownCards,allowOpaque))||p.reservedCards.some(c=>!knownCards.has(c.id))||turnHasScanObservers(state,p)
+    ||p.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(x=>(x.event.types||[x.event.type]).includes('researchTech')))
+    ||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color))return null;
+  const suppliers=p.hand.filter(c=>{
+   const gain=cards.getIncomeGainForCard(c);return gain?.credits===1&&Object.keys(gain).length===1;
+  });
+  const producer=tech.listTakeableTiles(state.tech,p.techState).filter(id=>science.getResearchDataCount(id)===5-p.resources.availableData);
+  if(suppliers.length===0||producer.length!==1||!knownTech(producer[0],state.tech.stacks[producer[0]]))return null;
+  const tile=producer[0],stack=state.tech.stacks[tile],bonus=catalog.BONUS_EFFECTS[stack.bonusId];
+  if(!bonus||stack.bonusHidden||Object.keys(bonus).some(k=>!['credits','energy','publicity','score'].includes(k)))return null;
+  const source=structuredClone(state),copy=owner(source,seatId),take=source.tech.stacks[tile];
+  take.bonusQueue=take.bonusQueue.map((id,i)=>i===take.bonusIndex?id:null);
+  const rotated=tech.rotateForResearch(science.createActionContext(source,seatId),1);
+  const choice=rotated.ok&&!rotated.events.length&&science.listResearchChoices(source,seatId,{skipRotate:true}).find(a=>a.target.tileId===tile);
+  const result=choice&&science.executeResearchChoice(source,seatId,choice,{skipRotate:true});
+  if(!result?.ok||result.awaitingCardSelection||result.events.some(e=>e.type!=='researchTech')
+    ||copy.resources.availableData!==5||copy.resources.credits!==p.resources.credits||copy.resources.energy!==p.resources.energy)return null;
+  copy.mainActionCompleted=true;
+  const menu=science.formalizeChoices(source,seatId,science.listIncomeChoices(source,seatId));
+  const ids=new Set(suppliers.map(c=>c.id)),selection=demand.incomeChoice({state:source,seatId,goal:{required:{}},actions:menu.filter(a=>ids.has(a.target.cardInstanceId))});
+  const supplier=suppliers.find(c=>menu.some(a=>a.actionId===selection?.actionId&&a.target.cardInstanceId===c.id));
+  const income=supplier&&demand.previewIncomeTail({state:source,seatId,goal:{incomeCardId:supplier.id}});
+  if(!income?.available||income.placements!==4||income.player.resources.availableData!==1)return null;
+  const replace=(s,a)=>({...s,players:{...s.players,players:s.players.players.map(v=>v.id===seatId?a:v)}});
+  const placed=replace({...source,cards:{...source.cards,removedFromGameCardIds:[...source.cards.removedFromGameCardIds,supplier.cardId]}},income.player);
+  const blueSlots=data.listBluePlacementRequirements(income.player).filter(x=>data.getBlueBonusPlacementReward(income.player,x.blueSlot)?.type==='energy');
+  if(blueSlots.length!==1)return null;
+  const blueSlot=blueSlots[0].blueSlot,blue=previewBlueCompletion({state:placed,seatId,goal:{blueSlot}});
+  if(!blue.available||blue.computerPlacements||blue.incomeCardId||blue.dataCornerId||blue.player.resources.availableData!==0)return null;
+  const charged=replace(placed,blue.player),end=quietEndCompletion({state:charged,seatId});
+  if(!end.available||end.netGain!==0||end.markedTiles.length)return null;
+  const total=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,currentPlayer:q,
+   finalScoring:structuredClone(s.finalScoring),aliens:structuredClone(s.aliens),cardEffects:effects,
+   getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},q).totalScore;
+  const weights=stateValue.DEFAULT_WEIGHTS;
+  const funded=ready=>{
+   const scan=quoteFundedSector({state:ready,seatId,knownCards,knownAlienDisplay:null,allowOpaque,claimNewPublicity:true,knownLaunchTech:knownTech});
+   if(!scan)return null;
+   const q=owner(ready,seatId);
+   const linear=Object.entries(weights).reduce((n,[k,w])=>n+(q.resources[k]-p.resources[k]+q.income[k]-p.income[k])*w,0);
+   const fundedValue=stateValue.sumValueParts([total(ready,q),-total(state,p),linear,
+     stateValue.technologyCapital(q.techState,3),-stateValue.technologyCapital(p.techState,3),
+     demand.planningCapital(ready,q),-demand.planningCapital(state,p)]);
+   const value=stateValue.sumValueParts([fundedValue,scan.value]);
+   return value>0?{value,fundedValue,tileId:tile,incomeCardId:supplier.id,blueSlot,scan}:null;
+  };
+  const base=funded(charged);
+  if(!base)return null;
+  const stock=blue.player;
+  if(industry.getPlayerIndustryDefinition(stock)?.activeAbilityId!=='deepspace_swap_cards')return base;
+  const extraSlots=data.listBluePlacementRequirements(stock).filter(x=>data.getBlueBonusPlacementReward(stock,x.blueSlot)?.type==='choose_card');
+  const sources=stock.hand.filter(c=>knownCards.has(c.id)&&c.set==='alien:阿米巴'&&cards.getDiscardActionRewardForCard(c)?.dataCount===1);
+  const offers=charged.cards.publicCards.filter(c=>{
+   const gain=c&&cards.getIncomeGainForCard(c);
+   return c&&knownCards.has(c.id)&&gain?.energy===1&&Object.keys(gain).length===1;
+  });
+  if(extraSlots.length!==1||sources.length!==1||offers.length!==1||!charged.cards.drawPileCardIds.length)return base;
+  const extraSlot=extraSlots[0].blueSlot,corner=sources[0],offer=offers[0];
+  if(!data.listComputerPlacedTokens(stock).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(extraSlot))
+    ||stock.hand.some(c=>c.id===offer.id))return base;
+  const cornerRoot=previewScoredAmibaDataCorner({state:charged,seatId,cardId:corner.id});
+  if(!cornerRoot)return base;
+  const extra=owner(cornerRoot,seatId),bonusResult=data.placeDataToComputer(extra,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:extraSlot});
+  if(!bonusResult.ok||bonusResult.slotBonuses?.length!==1||bonusResult.slotBonuses[0].type!=='choose_card'
+    ||charged.finalScoring.thresholds.some(n=>n>stock.resources.score&&n<=extra.resources.score))return base;
+  const picked=science.listPickCardChoices(cornerRoot).find(a=>a.target.cardInstanceId===offer.id);
+  if(!picked)return base;
+  extra.hand.push({...offer,blueBonusOwnerId:seatId});extra.resources.handSize=extra.hand.length;
+  const index=picked.target.publicSlotIndex;
+  const quoted=funded({...cornerRoot,cards:{...cornerRoot.cards,
+    publicCards:cornerRoot.cards.publicCards.map((c,i)=>i===index?null:c),
+    unknownPublicSlotIndices:[...new Set([...(cornerRoot.cards.unknownPublicSlotIndices||[]),index])],
+    drawPileCardIds:new Array(cornerRoot.cards.drawPileCardIds.length-1).fill(null)}});
+  if(!quoted||quoted.value<=base.value||quoted.scan.sectorId!==base.scan.sectorId||quoted.scan.publicCardId!==base.scan.publicCardId)return base;
+  return {...quoted,knownBlueMarket:{blueSlot:extraSlot,cornerId:corner.id,publicCardId:offer.id,deltaAgainstNoPick:quoted.value-base.value}};
+ }
+ function quoteReadyAnalysisFunding({state,seatId,knownCards,knownTech,knownAlienDisplay}){
+  const p=owner(state,seatId),t=state.turn,amiba=state.aliens.amiba;
+  const occupied=data.listComputerPlacedTokens(p).map(x=>x.placementSlot);
+  if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+    ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+    ||p.resources.availableData!==2||p.resources.credits!==0||p.resources.energy!==1||p.hand.length!==3
+    ||occupied.join(',')!=='1,2,3,4,5,6'||p.hand.some(c=>!visibleOrOpaque(c,knownCards,true))
+    ||p.reservedCards.some(c=>!knownCards.has(c.id))||turnHasScanObservers(state,p)
+    ||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color)
+    ||!amiba?.revealInitialized||amiba.displayedCardHidden||knownAlienDisplay===null||amiba.displayedCardIndex!==knownAlienDisplay
+    ||Object.values(state.aliens.aliens).some(a=>a.revealed&&a.alienId!=='阿米巴'))return null;
+  const alienId=String(amiba.revealedSlotId),quotes=[];
+  const total=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,currentPlayer:q,
+   finalScoring:structuredClone(s.finalScoring),aliens:structuredClone(s.aliens),
+   cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},q).totalScore;
+  const beforeScore=total(state,p),beforeCapital=demand.planningCapital(state,p);
+  for(const position of aliens.amiba.TRACE_POSITIONS){
+   if(!aliens.amiba.getTraceReward(state.aliens,'blue',position)?.pickAlienCard)continue;
+   const q=dataPreviewPlayer(p),root={...state,meta:structuredClone(state.meta),aliens:structuredClone(state.aliens),
+    players:{...state.players,players:state.players.players.map(v=>v===p?q:v)}};
+   if(!data.analyzeDataWithoutEnergy(q).ok)continue;
+   const trace=previewKnownAmibaTrace({root,copy:q,alienId,traceType:'blue',position,knownAlienDisplay,seatId});
+   if(!trace?.displayed||q.resources.availableData!==3||q.hand.length!==4
+     ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=q.resources.score))continue;
+   const known=new Set([...knownCards,trace.displayed.id]);
+   const funding=quoteResearchIncomeScan({state:root,seatId,knownCards:known,knownTech,allowOpaque:true});
+   if(!funding)continue;
+   const linear=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(q.resources[k]-p.resources[k])*w,0);
+   const analysisValue=stateValue.sumValueParts([total(root,q),-beforeScore,linear,demand.planningCapital(root,q),-beforeCapital]);
+   const value=stateValue.sumValueParts([analysisValue,funding.value]);
+   if(value>0)quotes.push({value,analysisValue,tracePosition:position,displayedCardId:trace.displayed.cardId,funding});
   }
   return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
  }
@@ -457,7 +679,7 @@
   });
   return source.length===1&&reward.length===1?{source:source[0].id,card:reward[0].id}:null;
  }
- function quoteAmibaRegionFollowup({state,seatId,purpose,continueKnownSwap=null}){
+ function quoteAmibaRegionFollowup({state,seatId,purpose,continueKnownSwap=null,continueAnalysis=null}){
   const p=owner(state,seatId),slot=state.aliens.amiba?.revealedSlotId;
   const card=p.hand.find(c=>c.id===purpose.card),positions=data.listComputerPlacedTokens(p).map(t=>t.placementSlot);
   if(!slot||!card||!p.reservedCards.some(c=>c.id===purpose.source)||positions.length+p.resources.availableData<6
@@ -499,30 +721,291 @@
    // Count the hand increment separately; no hand/tool/swap query can use it.
    const direct=stateValue.sumValueParts([total(q,copy),-base,linear,directCapital,-capital,anonymous*weights.handSize]);
    const swap=anonymous?null:continueKnownSwap?.(q,copy,directCapital);
-   const value=stateValue.sumValueParts([direct,Math.max(0,swap?.value||0)]);
+   const analysisFunding=continueAnalysis?.(q,copy,anonymous);
+   const value=stateValue.sumValueParts([direct,Math.max(0,swap?.value||0,analysisFunding?.value||0)]);
    if(value>0)rows.push({value,direct,cardId:card.id,traceType:choice.traceType,position:choice.position,region:choice.region,
     symbols:symbols.map(x=>x.symbolId),score:copy.resources.score-p.resources.score,data:copy.resources.availableData-p.resources.availableData,
-    ...(anonymous?{anonymousDrawCount:anonymous}:{}),...(swap?.value>0?{companySwap:swap}:{})});
+    ...(anonymous?{anonymousDrawCount:anonymous}:{}),...(swap?.value>0?{companySwap:swap}:{}),
+    ...(analysisFunding?.value>0?{analysisFunding}:{})});
   }
   return rows.sort((a,b)=>b.value-a.value||a.traceType.localeCompare(b.traceType)||a.position-b.position)[0]||null;
  }
- function deferredPublicityTask({state,seatId,actions,session,payload}){
-  const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
-  if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
-    ||advance.ownerId!==seatId||advance.payload?.didPass!==false||!p.mainActionCompleted||p.passCompletionPending
-    ||turn.currentPlayerId!==seatId||!turn.activePlayerIds?.length
+ function preparedRegionPurpose({state,seatId,knownCards}){
+  const p=owner(state,seatId),t=state.turn,types=aliens.amiba.EFFECT_TYPES;
+  if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.passCompletionPending
+    ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+    ||p.resources.credits!==0||p.resources.energy!==1||p.hand.length!==3
+    ||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+    ||turnHasScanObservers(state,p)||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color)
+    ||!state.aliens.amiba?.revealInitialized)return null;
+  const slots=data.listComputerPlacedTokens(p).map(x=>x.placementSlot);
+  if(slots.length<4||slots.length>6||slots.length+p.resources.availableData!==7||slots.some((s,i)=>s!==i+1))return null;
+  const source=p.reservedCards.filter(c=>{
+   const e=effects.buildPlayEffects(c);
+   return e.length===2&&e[0].type==='gain_data'&&e[0].options?.count>=2&&e[1].type===types.CHOOSE_SYMBOL_REWARD;
+  });
+  const remover=p.hand.filter(c=>{
+   const e=effects.buildPlayEffects(c);
+   return effects.getCardModel(c)?.cardType===0&&e.length===1&&e[0].type===types.REMOVE_TRACE_FOR_REGION_REWARD
+     &&!Object.values(effects.getCardPlayCost(c)).some(n=>n>0);
+  });
+  return source.length===1&&remover.length===1?{source:source[0].id,card:remover[0].id}:null;
+ }
+ function quotePreparedRegionAnalysis({state,seatId,knownCards,knownTech,knownAlienDisplay,purpose}){
+  const p=owner(state,seatId);
+  if(data.listComputerPlacedTokens(p).length!==6||p.resources.availableData!==1)return null;
+  return quoteAmibaRegionFollowup({state,seatId,purpose,continueAnalysis:(q,actor,anonymous)=>{
+   if(anonymous!==1||actor.resources.availableData!==2||actor.hand.length!==2)return null;
+   const withOpaque={...actor,hand:[...actor.hand,{hidden:true,faceUp:false}],resources:{...actor.resources,handSize:actor.hand.length+1}};
+   const next={...q,players:{...q.players,players:q.players.players.map(v=>v===actor?withOpaque:v)}};
+   return quoteReadyAnalysisFunding({state:next,seatId,knownCards,knownTech,knownAlienDisplay});
+  }});
+ }
+ function fillQuietAnalysisComputer(state,seatId,stock=7){
+  const p=owner(state,seatId),slots=data.listComputerPlacedTokens(p).map(x=>x.placementSlot);
+  if(slots.length<4||slots.length>6||slots.some((s,i)=>s!==i+1)||slots.length+p.resources.availableData!==stock)return null;
+  if(slots.length===6)return state;
+  const copy=dataPreviewPlayer(p);
+  for(let i=slots.length+1;i<=6;i++){
+   const placed=data.placeDataToComputer(copy);
+   if(!placed.ok||placed.placementSlot!==i||placed.slotBonuses.length
+     ||effects.collectMatchingTriggers(copy,{type:'placeData',playerId:seatId,placementKind:'computer',placementSlot:i}).length)return null;
+  }
+  return {...state,players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+ }
+ function previewAnalysisPreparation({state,seatId,knownCards,knownTech,knownAlienDisplay,purpose}){
+  if(!owner(state,seatId).mainActionCompleted)return null;
+  const ready=fillQuietAnalysisComputer(state,seatId);
+  const quote=ready&&ready!==state&&quotePreparedRegionAnalysis({state:ready,seatId,knownCards,knownTech,knownAlienDisplay,purpose});
+  return quote?.analysisFunding?quote:null;
+ }
+ function previewReversedAnalysisPreparation({state,seatId,knownCards,knownTech,knownAlienDisplay}){
+  const p=owner(state,seatId);
+  if(!p.mainActionCompleted||p.resources.availableData<3||p.resources.availableData>4)return null;
+  const ready=fillQuietAnalysisComputer(state,seatId,8);
+  return ready&&ready!==state?quoteReadyAnalysisFunding({state:ready,seatId,knownCards,knownTech,knownAlienDisplay}):null;
+ }
+    function preserveResearchInThreeCornerIncome(state,p,goal){
+      const source=p.hand.find(c=>c.id===goal.incomeCardId),gain=source&&cards.getIncomeGainForCard(source);
+      if(gain?.energy!==1||Object.keys(gain).length!==1||!tech.listTakeableTiles(state.tech,p.techState).length)return null;
+      const publicity=card=>cards.getDiscardActionRewardForCard(card)?.gain?.publicity||0;
+      const need=tech.getResearchPublicityCost(p)-p.resources.publicity-(data.getComputerSlotBonus(2)?.publicity||0);
+      if(need<=0||publicity(source)!==need||p.hand.filter(c=>publicity(c)>=need).length!==1)return null;
+      const supplier=p.hand.filter(c=>{
+        const effect=cards.getIncomeGainForCard(c);
+        return c!==source&&effect?.energy===1&&Object.keys(effect).length===1
+          &&!(cards.getDiscardActionRewardForCard(c)?.dataCount>0)&&publicity(c)<need;
+      }).sort((a,b)=>publicity(a)-publicity(b)||a.id.localeCompare(b.id))[0];
+      return supplier?{...goal,incomeCardId:supplier.id}:null;
+    }
+
+ function previewAnalysisSwapSupply({state,seatId,knownCards,knownAlienDisplay,readyNow=false}){
+  const p=owner(state,seatId),t=state.turn;
+  if(p.industryRoundMarkRound===t.roundNumber||data.listComputerPlacedTokens(p).length!==(readyNow?6:4)
+    ||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+    ||p.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1).length!==(readyNow?2:1))return null;
+  const incoming=state.cards.publicCards.filter(c=>{
+   const corner=c&&cards.getDiscardActionRewardForCard(c);
+   return c&&knownCards.has(c.id)&&corner?.dataCount===1&&!Object.keys(corner.gain).length;
+  });
+  const outgoing=p.hand.filter(c=>{
+   const gain=cards.getIncomeGainForCard(c),corner=cards.getDiscardActionRewardForCard(c);
+   return gain?.credits===1&&Object.keys(gain).length===1&&!(corner?.dataCount>0)&&!cards.getDiscardActionMoveRewardForCard(c);
+  });
+  const analysis={seatId,knownCards,knownAlienDisplay,prepare:!readyNow,allowKnownTraceWithoutCard:readyNow};
+  if(incoming.length!==1||outgoing.length!==1
+    ||quoteLateAnalysisIncome({state,...analysis,allowThreeCorners:readyNow}))return null;
+  const copy=dataPreviewPlayer(p);
+  copy.hand=copy.hand.map(c=>c===outgoing[0]?incoming[0]:c);
+  copy.industryRoundMarkRound=t.roundNumber;copy.industryRoundMarkTurn=t.turnNumber;
+  const preview={...state,cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===incoming[0]?null:c)},
+   players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+  const quote=quoteLateAnalysisIncome({state:preview,...analysis,allowThreeCorners:true});
+  if(!quote?.corners.includes(incoming[0].id))return null;
+  const netGain=stateValue.sumValueParts([quote.value,demand.planningCapital(preview,copy),-demand.planningCapital(state,p)]);
+  return netGain>0?{goal:{kind:'known-late-analysis-supply',id:'income:company-data:'+incoming[0].id,netGain,quote},
+   discardIds:[outgoing[0].id],selection:{cardId:incoming[0].id,blind:false},reason:'company-data-funds-electricity-income'}:null;
+ }
+ function quoteAnalysisLaunchPick({state,seatId,knownCards,knownAlienDisplay,offers}){
+  const p=owner(state,seatId),independent=p.resources.availableData===4;
+  const analysis={seatId,knownCards,knownAlienDisplay,prepare:true,allowKnownTraceWithoutCard:independent};
+  if(!p.mainActionCompleted||p.resources.credits!==0||p.resources.energy!==0||![3,4].includes(p.resources.availableData)||p.hand.length!==4
+    ||data.listComputerPlacedTokens(p).length!==4||p.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1).length!==1
+    ||quoteLateAnalysisIncome({state,...analysis}))return null;
+  const choices=offers.filter(({card})=>{
+   const corner=cards.getDiscardActionRewardForCard(card);
+   return knownCards.has(card.id)&&corner?.dataCount===1&&!Object.keys(corner.gain).length;
+  });
+  if(choices.length!==1)return null;
+  const {card,action}=choices[0],copy=dataPreviewPlayer(p);
+  copy.hand.push(card);copy.resources.handSize=copy.hand.length;
+  const preview={...state,cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===card?null:c)},
+    players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+  const quote=quoteLateAnalysisIncome({state:preview,...analysis,allowThreeCorners:true});
+  return quote?.corners.includes(card.id)?{cardId:card.id,action,quote}:null;
+ }
+ function quoteLateAnalysisIncome({state,seatId,knownCards,knownAlienDisplay,prepare=false,minimumHand=4,allowThreeCorners=false,allowKnownTraceWithoutCard=false}){
+  const p=owner(state,seatId),t=state.turn,amiba=state.aliens.amiba;
+  if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+    ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+    ||p.resources.credits!==0||p.resources.energy!==0||p.resources.availableData<1||p.resources.availableData>(prepare?4:3)
+    ||p.hand.length<minimumHand||p.hand.length>5||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+    ||turnHasScanObservers(state,p)||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+    ||!amiba?.revealInitialized||amiba.displayedCardHidden||knownAlienDisplay===null||amiba.displayedCardIndex!==knownAlienDisplay
+    ||!state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color))return null;
+  const end=quietEndCompletion({state,seatId});
+  if(!end.available||end.markedTiles.length)return null;
+  const stock=data.listComputerPlacedTokens(p).length+p.resources.availableData;
+  const ready=prepare?fillQuietAnalysisComputer(state,seatId,stock===8?8:7):state;
+  if(!ready||data.listComputerPlacedTokens(owner(ready,seatId)).length!==6)return null;
+  const alienId=String(amiba.revealedSlotId),quotes=[];
+  const total=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,currentPlayer:q,
+   finalScoring:structuredClone(s.finalScoring),aliens:structuredClone(s.aliens),cardEffects:effects,
+   getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},q).totalScore;
+  const beforeScore=total(state,p),beforeCapital=demand.planningCapital(state,p);
+  for(const position of aliens.amiba.TRACE_POSITIONS){
+   const reward=aliens.amiba.getTraceReward(state.aliens,'blue',position);
+   if(allowKnownTraceWithoutCard?(!reward||reward.pickAlienCard||reward.pickCard||reward.drawCards):!reward?.pickAlienCard)continue;
+   const q=dataPreviewPlayer(owner(ready,seatId)),root={...ready,meta:structuredClone(ready.meta),aliens:structuredClone(ready.aliens),
+    players:{...ready.players,players:ready.players.players.map(v=>v.id===seatId?q:v)}};
+   if(!data.analyzeDataWithoutEnergy(q).ok)continue;
+   q.mainActionCompleted=true;
+   const trace=previewKnownAmibaTrace({root,copy:q,alienId,traceType:'blue',position,knownAlienDisplay,seatId});
+   const three=allowThreeCorners&&trace&&q.resources.availableData===1
+     &&q.hand.length===(trace.displayed?6:5)
+     &&q.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1).length===3;
+   if(!trace||(allowKnownTraceWithoutCard?trace.displayed||!three&&q.resources.availableData!==2:!trace.displayed)||q.resources.availableData!==2&&!three
+     ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=q.resources.score+7))continue;
+   let goal=demand.catalog({state:root,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(q)}}).find(g=>g.kind==='income');
+   if(three&&goal)goal=preserveResearchInThreeCornerIncome(root,q,goal)||goal;
+   if(!goal)continue;
+   const fundedGoals=[goal],primary=q.hand.find(c=>c.id===goal.incomeCardId);
+   if(stock===8&&q.resources.availableData===2&&cards.getIncomeGainForCard(primary)?.energy===1
+     &&cards.getDiscardActionRewardForCard(primary)?.dataCount===1){
+    const score=c=>cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0;
+    const dedicated=q.hand.filter(c=>{
+     const gain=cards.getIncomeGainForCard(c);
+     return c!==primary&&gain?.energy===1&&Object.keys(gain).length===1
+      &&!(cards.getDiscardActionRewardForCard(c)?.dataCount>0);
+    }).sort((a,b)=>score(a)-score(b)||a.id.localeCompare(b.id))[0];
+    if(dedicated)fundedGoals.push({...goal,incomeCardId:dedicated.id});
+   }
+   for(const funded of fundedGoals){
+    const incomeCard=q.hand.find(c=>c.id===funded.incomeCardId),gain=incomeCard&&cards.getIncomeGainForCard(incomeCard);
+    if(gain?.energy!==1||Object.keys(gain).length!==1)continue;
+    const actions=q.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1&&!cards.getDiscardActionMoveRewardForCard(c))
+     .map(c=>({family:'card_corner',actionId:'known-corner:'+c.id,target:{cardInstanceId:c.id},payload:{kind:'resource',multiplier:1}}));
+    const payment=demand.dataIncomeFunding({state:root,seatId,goal:funded,actions,maxCorners:three?3:2});
+    if(!payment)continue;
+    const paid=previewIncomeCompletion({state:payment.state,seatId,goal:funded});
+    if(!paid.preview?.available||paid.placements!==4)continue;
+    const after=paid.preview.player,completed={...payment.state,cards:{...payment.state.cards,
+     removedFromGameCardIds:[...payment.state.cards.removedFromGameCardIds,incomeCard.cardId]},
+     players:{...payment.state.players,players:payment.state.players.players.map(v=>v.id===seatId?after:v)}};
+    const linear=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(after.resources[k]-p.resources[k]+after.income[k]-p.income[k])*w,0);
+    const value=stateValue.sumValueParts([total(completed,after),-beforeScore,linear,demand.planningCapital(completed,after),-beforeCapital]);
+    if(value>0)quotes.push({value,tracePosition:position,displayedCardId:trace.displayed?.cardId??null,incomeCardId:incomeCard.id,corners:payment.corners.map(c=>c.cardId)});
+   }
+  }
+  return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
+ }
+ function quoteLatePublicDataPick({state,seatId,knownCards,knownAlienDisplay,region,offers}){
+  const p=owner(state,seatId),slots=data.listComputerPlacedTokens(p).length;
+  if(state.turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||slots!==6||p.resources.availableData!==1
+    ||p.resources.credits!==0||p.resources.energy!==0||p.hand.length!==2
+    ||p.hand.some(c=>(cards.getDiscardActionRewardForCard(c)?.dataCount||0)>0)
+    ||!p.hand.some(c=>cards.getIncomeGainForCard(c)?.energy===1)||!state.aliens.amiba?.revealInitialized)return null;
+  const choices=offers.filter(({card})=>{
+   const reward=cards.getDiscardActionRewardForCard(card);
+   return knownCards.has(card.id)&&reward?.dataCount===1&&!Object.keys(reward.gain).length&&!cards.getDiscardActionMoveRewardForCard(card);
+  });
+  const symbols=aliens.amiba.listSymbolsInRegion(state.aliens,region);
+  if(!choices.length||symbols.length!==1)return null;
+  const {reward}=symbols[0],gain=reward?.gain;
+  if(!gain||Object.keys(gain).join(',')!=='score'||!(gain.score>0)||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard
+    ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=p.resources.score+gain.score))return null;
+  if(p.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(t=>(t.event.types||[t.event.type])
+    .some(type=>['drawCard','drawCards','amiba_symbol_resolved'].includes(type)))))return null;
+  const ranked=choices.flatMap(({card,action})=>{
+   const copy=dataPreviewPlayer(p),preview={...state,meta:structuredClone(state.meta),aliens:structuredClone(state.aliens),
+    cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===card?null:c)},
+    players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+   copy.hand.push(card);copy.resources.handSize=copy.hand.length;
+   players.gainResources(copy,gain);
+   if(!aliens.amiba.resolveSymbolAtSlot(preview.aliens,symbols[0].slotId).ok)return [];
+   const quote=quoteLateAnalysisIncome({state:preview,seatId,knownCards,knownAlienDisplay,minimumHand:3});
+   return quote?.corners.includes(card.id)?[{action,cardId:card.id,quote}]:[];
+  });
+  return ranked.sort((a,b)=>b.quote.value-a.quote.value||a.cardId.localeCompare(b.cardId))[0]||null;
+ }
+ function lateIncomePayment({state,seatId,knownCards,knownAlienDisplay,goals,trade}){
+  const p=owner(state,seatId);
+  if(p.mainActionCompleted||p.passCompletionPending||p.resources.credits!==0||p.resources.energy!==0||p.resources.availableData!==1
+    ||p.hand.length!==5||data.listComputerPlacedTokens(p).length!==6
+    ||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+    ||trade?.payload?.cost?.handSize!==2||Object.keys(trade.payload.cost).length!==1
+    ||trade.payload.gain?.credits!==1||Object.keys(trade.payload.gain).length!==1)return null;
+  const plays=goals.flatMap(goal=>{
+   if(goal.kind!=='play_card'||goal.required.credits!==1||Object.keys(goal.required).length!==1)return [];
+   const card=p.hand.find(c=>c.id===goal.cardId);
+   if(!card||card.set!=='alien:阿米巴'||effects.getCardModel(card)?.cardType!==3)return [];
+   const play=effects.buildPlayEffects(card),cost=effects.getCardPlayCost(card);
+   return cost.credits===1&&Object.keys(cost).length===1&&play.length===2&&play[0].type==='pick_card'&&play[0].options?.count===1
+    &&play[1].type===aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD&&play[1].options?.region
+     ?[{goal,card,region:play[1].options.region}]:[];
+  });
+  if(plays.length!==1)return null;
+  const {goal,card,region}=plays[0];
+  const income=p.hand.filter(c=>{
+   const gain=cards.getIncomeGainForCard(c),corner=cards.getDiscardActionRewardForCard(c);
+   return c!==card&&gain?.energy===1&&Object.keys(gain).length===1&&!(corner?.dataCount>0);
+  }).sort((a,b)=>(cards.getDiscardActionRewardForCard(a)?.gain?.publicity||0)-(cards.getDiscardActionRewardForCard(b)?.gain?.publicity||0)
+    ||a.id.localeCompare(b.id))[0];
+  if(!income)return null;
+  // Slot 2 supplies one publicity. Preserve a different held corner
+  // only when it uniquely pays the otherwise unfunded following research.
+  const researchGap=tech.getResearchPublicityCost(p)-p.resources.publicity-(data.getComputerSlotBonus(2)?.publicity||0);
+  const research=researchGap>0&&tech.listTakeableTiles(state.tech,p.techState).length
+   ?p.hand.filter(c=>c!==card&&c!==income&&cards.getDiscardActionRewardForCard(c)?.gain?.publicity===researchGap):[];
+  const goalWithSupplier={...goal,continuationCardId:income.id,...(research.length===1?{retainedResearchCardId:research[0].id}:{})};
+  if(!demand.paymentCards(state,seatId,goal,2)?.includes(income.id))return null;
+  const discard=demand.paymentCards(state,seatId,goalWithSupplier,2);
+  if(!discard||!demand.capacity(state,seatId,goalWithSupplier))return null;
+  const copy=dataPreviewPlayer(p),preview={...state,players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
+  copy.hand=copy.hand.filter(c=>c!==card&&!discard.includes(c.id));copy.resources.handSize=copy.hand.length;
+  copy.reservedCards=[...copy.reservedCards,card];copy.mainActionCompleted=true;
+  const offers=state.cards.publicCards.filter(Boolean).map(card=>({card}));
+  const proof=quoteLatePublicDataPick({state:preview,seatId,knownCards,knownAlienDisplay,region,offers});
+  if(proof?.quote?.incomeCardId!==income.id)return null;
+  return {goal:goalWithSupplier,proof:{discard,incomeCardId:income.id,pickCardId:proof.cardId,retainedResearchCardId:goalWithSupplier.retainedResearchCardId??null,forecast:proof.quote}};
+ }
+ function knownSectorPublicityTask({state,seatId,cardId,taskId,single=false}){
+  const p=owner(state,seatId),turn=state.turn;
+  if(!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId||!turn.activePlayerIds?.length
     ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
-  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId),entry=sectorPublicityReward(card);
-  if(entry?.task.id!==payload.ruleId)return null;
-  const {task,gain}=entry;
+  const card=p.reservedCards.find(c=>c.id===cardId),entry=sectorPublicityReward(card);
+  if(entry?.task.id!==taskId||single&&p.reservedCards.some(c=>c.amibaTask||aliens.amiba.getCardTask(c)||c.chongTask))return null;
+  return entry;
+ }
+ function canDeferSectorPublicityTask(args){
+  const entry=knownSectorPublicityTask(args);
+  if(!entry)return null;
+  const {state,seatId,taskId}=args,p=owner(state,seatId);
   const publicity=p.resources.publicity,limit=players.RESOURCE_LIMITS.publicity,cost=tech.getResearchPublicityCost(p);
-  if(publicity<cost||publicity+gain.publicity<=limit||publicity-cost+gain.publicity>limit
+  if(publicity<cost||publicity+entry.gain.publicity<=limit||publicity-cost+entry.gain.publicity>limit
     ||!tech.listTakeableTiles(state.tech,p.techState).length)return null;
-  const skip=actions.find(a=>a.target?.choiceId===`skip:task:${card.id}:${task.id}`);
-  const confirm=actions.some(a=>a.target?.choiceId===`confirm:task:${card.id}:${task.id}`);
+  return {overflow:publicity+entry.gain.publicity-limit,researchCost:cost,taskId};
+ }
+ function deferredPublicityTask({state,seatId,actions,session,payload}){
+  const advance=session.queue[1];
+  if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
+    ||advance.ownerId!==seatId||advance.payload?.didPass!==false)return null;
+  const fact=canDeferSectorPublicityTask({state,seatId,cardId:payload.cardInstanceId,taskId:payload.ruleId});
+  if(!fact)return null;
+  const skip=actions.find(a=>a.target?.choiceId===`skip:task:${payload.cardInstanceId}:${payload.ruleId}`);
+  const confirm=actions.some(a=>a.target?.choiceId===`confirm:task:${payload.cardInstanceId}:${payload.ruleId}`);
   if(!skip||!confirm)return null;
-  return fixedChoice(actions,skip,'fixed-defer-overflow-task',{reason:'claim-after-funded-research',
-    overflow:publicity+gain.publicity-limit,researchCost:cost,taskId:task.id,
+  return fixedChoice(actions,skip,'fixed-defer-overflow-task',{reason:'claim-after-funded-research',...fact,
     assumption:'already affordable research; a persistent held sector task is still manually claimable next turn'});
  }
  function pureOptional({state,seatId,actions,session}){
@@ -730,15 +1213,23 @@
      .filter(g=>g.kind!=='income'||incomeCompletion({state:s,seatId,goal:g}).selected);
   };
   const goals=retained(prepared);
-  if(!goals.length){
-    return {netGain:prefix.netGain,unrealizedPurposeDelta:stateValue.sumValueParts([prefix.capital.afterCapital,-prefix.capital.beforeCapital]),
-      requiredNativeInputs:prefix.requiredNativeInputs+end.requiredNativeInputs,markedTiles:[],
-      computerThenQuietEnd:{placements:prefix.placements,requiredPlacementInputs:prefix.requiredNativeInputs}};
-  }
+  const stop=(extra={})=>({netGain:prefix.netGain,unrealizedPurposeDelta:stateValue.sumValueParts([prefix.capital.afterCapital,-prefix.capital.beforeCapital]),
+    requiredNativeInputs:prefix.requiredNativeInputs+end.requiredNativeInputs,markedTiles:[],
+    computerThenQuietEnd:{placements:prefix.placements,requiredPlacementInputs:prefix.requiredNativeInputs,...extra}});
+  if(!goals.length)return stop();
   if(goals.length!==1||goals[0].kind!=='blue-data'||goals[0].targetComputerSlot>goal.targetComputerSlot)return null;
   const blue=goals[0],reward=data.getBlueBonusPlacementReward(mid,blue.blueSlot);
   if(!reward||!['credits','energy','publicity'].includes(reward.type)||Object.keys(reward).some(k=>k!=='type'&&k!==reward.type))return null;
   const candidates=mid.hand.filter(c=>(cards.getDiscardActionRewardForCard(c)?.dataCount||0)>0);
+  // The ordinary post-main policy tests one greedy supplier. Two known
+  // offers do not require the whole computer prefix to run again when its
+  // selected currency finish is flat and the policy already excludes it.
+  if(candidates.length===2){
+   const alternative=previewBlueCompletion({state:prepared,seatId,goal:blue},prefix.capital.afterCapital);
+   if(alternative.available&&!alternative.selected&&!alternative.realizesForecast&&alternative.netGain===0
+     &&alternative.computerPlacements===0&&!alternative.incomeCardId&&alternative.dataCornerIds.length===1)
+    return stop({unprofitableBlue:{blueSlot:blue.blueSlot,cardId:alternative.dataCornerIds[0],netGain:0}});
+  }
   const card=candidates.length===1&&candidates[0],corner=card&&cards.getDiscardActionRewardForCard(card);
   if(card?.set!=='alien:阿米巴'||corner.dataCount!==1||corner.gain.score!==1||Object.keys(corner.gain).length!==1)return null;
   const funded=previewScoredAmibaDataCorner({state:prepared,seatId,cardId:card.id});
@@ -940,7 +1431,10 @@
   }
   return goals;
  }
- function scanStep({state,seatId,goal,actions,status,session,operation={}}){
+ function visibleAmibaDataCorner(index){
+  return Number.isInteger(index)&&cards.getDiscardActionRewardForCard(aliens.amiba.createAlienCard(index,1))?.dataCount===1;
+ }
+ function scanStep({state,seatId,goal,actions,status,session,operation={},retainedSupply=null}){
   if(status==='stable'){
    const a=actions.find(a=>a.family==='scan');
    if(!owner(state,seatId).mainActionCompleted&&a)return{kind:'fixed',actionId:a.actionId,reason:'start-purpose-scan'};
@@ -968,12 +1462,13 @@
    const gain=(next&&a.payload?.gainData!==false&&p.resources.availableData<players.RESOURCE_LIMITS.availableData ? .5 : 0)+(next?data.getNebulaSlotScoreReward(nebulaId,next.slotIndex):0);
    const progress=empty>0?1/empty:lead?0:1,target=nebulaId===goal.nebulaId;
    const score=(target&&progress>0?10+progress:0)+gain-loss-markerCost-cost;
-   scores.push({actionId:a.actionId,nebulaId,score,cardId:card?.id||null,loss,progress,gain,target});
+   scores.push({actionId:a.actionId,nebulaId,score,cardId:card?.id||null,loss,progress,gain,target,
+    ...(retainedSupply?{usesRetainedSupply:target&&a.target.cardInstanceId===retainedSupply}: {})});
   }
-  scores.sort((a,b)=>b.score-a.score||a.loss-b.loss||tie(a,b));const skip=actions.find(a=>a.target?.done||a.target?.skip),chosen=scores[0];
+  scores.sort((a,b)=>b.score-a.score||a.loss-b.loss||Number(Boolean(a.usesRetainedSupply))-Number(Boolean(b.usesRetainedSupply))||tie(a,b));const skip=actions.find(a=>a.target?.done||a.target?.skip),chosen=scores[0];
   const id=skip&&(!chosen||chosen.score<=0)?skip.actionId:chosen?.actionId||skip?.actionId;
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,quoteAnalysisLaunchPick,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
 });

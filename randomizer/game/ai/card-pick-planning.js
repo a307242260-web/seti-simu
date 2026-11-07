@@ -326,7 +326,7 @@
       if(status==='stable'){
         const trades=actions.filter(isTrade),company=actions.find(swapStart);if(!trades.length&&!company)return null;
         let chosen=paid(state,seatId,actions,endpoints);
-        const companySwap=company&&swapIntent(state,seatId,endpoints,null,false,knownSourceCapital);
+        const companySwap=company&&(committedCompanySwap||swapIntent(state,seatId,endpoints,null,false,knownSourceCapital));
         // Acquisition is one greedy preparation for one purpose. When the
         // company gets the very same card for that purpose and its outgoing
         // card is a subset of the paid discard, do not branch over paying more.

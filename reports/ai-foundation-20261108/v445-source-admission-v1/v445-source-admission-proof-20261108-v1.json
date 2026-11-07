@@ -1,0 +1,40 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V445",
+  "searchVersion": "seti-complete-decision-search-v406",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "11ba1f7d9fe3490b471aac4c9e67947ba242a882",
+  "snapshotTree": "eec936ffbf74ecc32fa63797365a4f2f8ff19933",
+  "runtimeSubtrees": {
+    "randomizer": "93b91f526105aabb8396aa86f5b641151c866353",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v445-source-admission-v1/v445-source-manifest-20261108-v1.json",
+  "manifestSha256": "e8a6b770e1318ba142ee4bfd8a76af8fa912e7bd365d34b578c85cbb0bbcf463",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "b9bcfbe2e1d92a0fe6c234eb452a9aeb2b2f074d36af0c651def4759140888d1",
+    "randomizer/game/ai/card-pick-planning.js": "04f512346668e98a4f4c2bf69d0eba99ed54a22d106d0db26f5181664c023f7e",
+    "randomizer/game/ai/decision-search.js": "bb5ae58c0ea0cffb648191c97c83831c69ff9e76aa5dc8972303f03cda8d8883",
+    "randomizer/game/ai/local-decision-plans.js": "6c308b5444f5f19fe1230999df5d3893da173162c7b301724374a6f19886a37b",
+    "randomizer/game/ai/resource-demand.js": "7b93352db3c1aad57d3554c0c40d004b5edb10091058e01ef399ea3cf388e000"
+  },
+  "evidenceSha256": {
+    "v445-source-manifest-20261108-v1.json": "e8a6b770e1318ba142ee4bfd8a76af8fa912e7bd365d34b578c85cbb0bbcf463",
+    "v445-cold-gate-20261108-v1.json": "6ba3cf943f30a3e33beafdbea5f4c4c1f6674bf2c1c491a18953aad2e83aaf3f",
+    "v445-known-launch-evidence-20261108-v1.tar.gz": "75ab03dbc135775cd71003f9481461bb57d479dad49dbf1b68db2873f3a564e9"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 577.822584,
+  "firstTwoFullGraphsUnchanged": 304,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

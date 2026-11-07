@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v398";
+  const VERSION = "seti-complete-decision-search-v406";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -163,7 +163,9 @@
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.amibaRegionPurpose?.():null;
     const scanTiming=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.scanTimingPurpose?.():null;
-    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming;
+    const analysisFunding=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
+      &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.analysisFundingSource?.():null;
+    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -256,7 +258,9 @@
       const researchIncome=deferredComputerIncome&&BOUNDARIES.has(node.status)?port.quoteDeferredComputerIncome(node,deferredComputerIncome):null;
       const regionFollowup=amibaRegion&&BOUNDARIES.has(node.status)?port.quoteAmibaRegionPurpose(node,amibaRegion):null;
       const scanTimingQuote=scanTiming&&BOUNDARIES.has(node.status)?port.quoteScanTimingPurpose(node,scanTiming):null;
-      const forecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0);
+      const fundedScanQuote=node.status==="turn-tail-value"?node.planSummary.nextFundedScan:null;
+      const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
+      const forecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
       const value = forecast?stateValue.sumValueParts([baseValue,forecast]):baseValue;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
@@ -269,7 +273,12 @@
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
       let decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
-      const resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
+      let resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
+      const fundedEnd=analysisFunding&&resourcePolicy&&port.analysisFundingEnd?.(node,analysisFunding);
+      if(fundedEnd&&resourcePolicy.excludedActionIds.includes(fundedEnd)){
+        resourcePolicy={...resourcePolicy,retainedActionIds:[...resourcePolicy.retainedActionIds,fundedEnd],
+          excludedActionIds:resourcePolicy.excludedActionIds.filter(id=>id!==fundedEnd),keptForAnalysisFunding:fundedEnd};
+      }
       // A concrete resource purpose owns its data slot. The unbound generic
       // computer-first advisory must not delete its fixed blue funding choice.
       if(resourcePolicy?.plans.length&&decisionPolicy?.kind==="fixed-data-choice")decisionPolicy=null;
@@ -405,7 +414,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -578,7 +587,7 @@
         const regionNeedsTail=tailKind!=="end-turn"&&amibaRegion&&port.amibaRegionNeedsNativeTail(entry.node,amibaRegion);
         let tail=tailKind&&!regionNeedsTail&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
         if((tail?.bluePublicPick?.taskChoice||tail?.computerThenScoredBlue)&&(researchDataPurpose||deferredComputerIncome||amibaRegion))tail=null;
-        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie)&&extendedPurpose)tail=null;
+        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.computerThenKnownBluePick||tail?.quietTaskChoice||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie)&&extendedPurpose)tail=null;
         if(!extendedPurpose&&tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const currentValue=valueForNode(entry.node),upperBound=exactTailSum(currentValue,tail.netGain);
@@ -796,6 +805,7 @@
       ...(entry.researchIncome?{deferredComputerIncome:entry.researchIncome}:{}),
       ...(entry.regionFollowup?{knownAmibaRegion:entry.regionFollowup}:{}),
       ...(entry.scanTimingQuote?{knownScanTiming:entry.scanTimingQuote}:{}),
+      ...(entry.analysisFundingQuote?{knownAnalysisFunding:entry.analysisFundingQuote}:{}),
       ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       ...(entry.publicDataCard?{retainedPublicDataCard:entry.publicDataCard}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"

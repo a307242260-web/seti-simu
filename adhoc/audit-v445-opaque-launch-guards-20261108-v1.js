@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const load=n=>require(path.resolve(n)),read=p=>JSON.parse(fs.readFileSync(p));
+const {quoteReadyAnalysisFunding}=load('randomizer/game/ai/local-decision-plans');
+const [source,witness,out]=process.argv.slice(2),raw=read(source),base=JSON.parse(raw.compositionEnvelope.committedState),seat=raw.seatId;
+const end=read(witness).rows[0].end,state=JSON.parse(end.committedState),owner=s=>s.players.players.find(p=>p.id===seat);
+const known=new Set([...owner(base).hand,...owner(base).reservedCards,...base.cards.publicCards].map(c=>c.id));
+owner(state).hand=owner(state).hand.map(c=>known.has(c.id)?c:{hidden:true,faceUp:false});
+const before=JSON.stringify(state),display=base.aliens.amiba.displayedCardIndex;
+const quote=(s,excluded=null)=>quoteReadyAnalysisFunding({state:s,seatId:seat,knownCards:known,knownAlienDisplay:display,
+ knownTech:(id,stack)=>id!==excluded&&!stack?.bonusHidden&&stack?.bonusIndex===base.tech.stacks[id].bonusIndex});
+const actual=quote(state),noLaunch=quote(state,'orange1');
+assert.equal(actual.value,22);assert.equal(actual.funding.scan.knownLaunch.value,8.5);
+assert.equal(noLaunch.value,13.5);assert.equal(noLaunch.funding.scan.knownLaunch,undefined);
+assert.equal(noLaunch.funding.knownBlueMarket.deltaAgainstNoPick,1);
+const without=structuredClone(state);
+without.cards.publicCards=without.cards.publicCards.map(c=>c?.id===actual.funding.knownBlueMarket.publicCardId?null:c);
+const noOffer=quote(without);
+assert(!noOffer?.funding.scan.knownLaunch);assert(!noOffer?.funding.knownBlueMarket);
+assert.equal(JSON.stringify(state),before);
+fs.writeFileSync(out,JSON.stringify({actual,noLaunch,noOffer,rootUnchanged:true},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({actual:actual.value,noLaunch:noLaunch.value,noOffer:noOffer?.value,rootUnchanged:true}));
