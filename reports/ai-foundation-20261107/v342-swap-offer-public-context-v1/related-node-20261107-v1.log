@@ -1,0 +1,12 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":116.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"companyFixedIntent":"passed","reusedNativeControlInputs":3,"runs":[{"stage":0,"submissions":3,"reuses":2,"recoveries":0},{"stage":1,"submissions":2,"reuses":1,"recoveries":1},{"stage":2,"submissions":1,"reuses":0,"recoveries":1}],"changedContextGuards":8,"warmColdCompleteNativeState":true,"ruleRngPreserved":true,"siblingIntentIsolation":true,"rootRestored":true,"newAiQueries":0,"newAutonomousRuns":0}
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+{"computerPreinvestment":"passed","nativeInputs":6,"retainedCredit":3.6666666666666665,"retainedTeacherTotal":69.16666666666667,"consumedAnalysisTotal":68.5,"commonNativeSuffixInputs":46,"noImmediateAnalysisInvented":true,"noDoubleClaimAfterClear":true,"stateObservationParity":true,"rootAndRngRestored":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=7 failed=0 total=7 time=2.68s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=2
