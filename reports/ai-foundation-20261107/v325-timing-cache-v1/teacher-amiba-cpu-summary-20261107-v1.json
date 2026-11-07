@@ -1,0 +1,249 @@
+{
+  "scope": "Instrumented V325 CPU sample, separate from the first cold acceptance. Inclusive stack times overlap and must not be added.",
+  "profileSha256": "295e3491c8d826d020ef1464e20bbd4dfda0aaecc8ef21e18ce86685dddb2eb0",
+  "samples": 1526,
+  "leaf": [
+    {
+      "frame": "js_transferable:112 structuredClone",
+      "ms": 56.663
+    },
+    {
+      "frame": ":0 (garbage collector)",
+      "ms": 48.083
+    },
+    {
+      "frame": "node:fs:696 readSync",
+      "ms": 25.751
+    },
+    {
+      "frame": "node:fs:433 readFileSync",
+      "ms": 24.836
+    },
+    {
+      "frame": "realm:385 compileForInternalLoader",
+      "ms": 21.918
+    },
+    {
+      "frame": "state-store.js:46 copy",
+      "ms": 21.668
+    },
+    {
+      "frame": "loader:1596 wrapSafe",
+      "ms": 19.083
+    },
+    {
+      "frame": "probe-capital.js:204 evaluateMission",
+      "ms": 18.418
+    },
+    {
+      "frame": "analysis-port.js:153 forwardIdentity",
+      "ms": 16.751
+    },
+    {
+      "frame": "state-value.js:459 ",
+      "ms": 13.709
+    },
+    {
+      "frame": "probe-capital.js:239 capital",
+      "ms": 12.207
+    },
+    {
+      "frame": "state-value.js:313 cardResearchOptions",
+      "ms": 11.875
+    },
+    {
+      "frame": "state-store.js:91 stableSerialize",
+      "ms": 10.667
+    },
+    {
+      "frame": "state-value.js:413 jointResearchCapital",
+      "ms": 10.21
+    },
+    {
+      "frame": "resource-demand.js:123 immutableCapitalInput",
+      "ms": 10.042
+    },
+    {
+      "frame": "analysis-port.js:205 normalize",
+      "ms": 9.749
+    },
+    {
+      "frame": "analysis-port.js:226 normalizeObject",
+      "ms": 9.125
+    },
+    {
+      "frame": "amiba-analysis-capital.js:146 quote",
+      "ms": 7.501
+    },
+    {
+      "frame": "value-arithmetic.js:28 sum",
+      "ms": 6.959
+    },
+    {
+      "frame": "state-value.js:152 researchFunding",
+      "ms": 6.917
+    },
+    {
+      "frame": "ready-analysis-capital.js:10 ",
+      "ms": 6.833
+    },
+    {
+      "frame": "ready-analysis-capital.js:50 quote",
+      "ms": 6.251
+    },
+    {
+      "frame": "low-coupling-slices.js:110 visit",
+      "ms": 6.209
+    },
+    {
+      "frame": "known-symbol-capital.js:23 quote",
+      "ms": 5.71
+    },
+    {
+      "frame": "state-value.js:162 internalResearchFunding",
+      "ms": 5.709
+    },
+    {
+      "frame": "research-income-capital.js:173 bestFor",
+      "ms": 5.667
+    },
+    {
+      "frame": "state-value.js:476 basePurposeCapital",
+      "ms": 5.209
+    },
+    {
+      "frame": "rule-composition.js:42 deepFreeze",
+      "ms": 5.208
+    },
+    {
+      "frame": "state-value.js:365 handOptions",
+      "ms": 5.208
+    },
+    {
+      "frame": "ready-analysis-capital.js:19 prepaidCapital",
+      "ms": 5.208
+    }
+  ],
+  "inclusive": [
+    {
+      "frame": ":0 (root)",
+      "ms": 896.25
+    },
+    {
+      "frame": "run_main_module:1 ",
+      "ms": 826.208
+    },
+    {
+      "frame": "run_main:157 executeUserEntryPoint",
+      "ms": 824.958
+    },
+    {
+      "frame": "loader:1169 Module._load",
+      "ms": 824.292
+    },
+    {
+      "frame": "node:diagnostics_channel:326 traceSync",
+      "ms": 824.292
+    },
+    {
+      "frame": "loader:230 wrapModuleLoad",
+      "ms": 824.292
+    },
+    {
+      "frame": "loader:1804 Module._extensions..js",
+      "ms": 823.667
+    },
+    {
+      "frame": "loader:1432 Module.load",
+      "ms": 823.667
+    },
+    {
+      "frame": "profile-v324-case-152-20261107-v1.js:1 ",
+      "ms": 823.042
+    },
+    {
+      "frame": "loader:1656 Module._compile",
+      "ms": 823.042
+    },
+    {
+      "frame": "decision-search.js:14 searchDecision",
+      "ms": 661.084
+    },
+    {
+      "frame": "resource-demand.js:148 planningCapital",
+      "ms": 327.625
+    },
+    {
+      "frame": "state-value.js:632 purposeCapital",
+      "ms": 321.084
+    },
+    {
+      "frame": "state-value.js:624 purposeCapitalWithoutFutureProbe",
+      "ms": 313.625
+    },
+    {
+      "frame": "state-value.js:617 purposeCapitalWithoutPublicityPreparation",
+      "ms": 308.416
+    },
+    {
+      "frame": "state-value.js:612 purposeCapitalWithoutTools",
+      "ms": 294.958
+    },
+    {
+      "frame": "analysis-port.js:957 expandResourcePlan",
+      "ms": 291.249
+    },
+    {
+      "frame": "state-value.js:607 purposeCapitalWithoutSymbols",
+      "ms": 276.749
+    },
+    {
+      "frame": "state-value.js:602 capitalWithoutSector",
+      "ms": 272.957
+    },
+    {
+      "frame": "state-value.js:492 capitalWithoutIncomeSwap",
+      "ms": 269.624
+    },
+    {
+      "frame": "card-pick-planning.js:232 plan",
+      "ms": 215.082
+    },
+    {
+      "frame": "card-pick-planning.js:176 swapIntent",
+      "ms": 208.166
+    },
+    {
+      "frame": "state-value.js:476 basePurposeCapital",
+      "ms": 196.628
+    },
+    {
+      "frame": "analysis-port.js:685 describeCardPick",
+      "ms": 174.041
+    },
+    {
+      "frame": "analysis-port.js:696 cardPickSpec",
+      "ms": 173.374
+    },
+    {
+      "frame": "analysis-port.js:606 expand",
+      "ms": 153.918
+    },
+    {
+      "frame": "known-symbol-capital.js:23 quote",
+      "ms": 144.252
+    },
+    {
+      "frame": "decision-search.js:215 add",
+      "ms": 138.793
+    },
+    {
+      "frame": "probe-capital.js:201 quoteValue",
+      "ms": 137.128
+    },
+    {
+      "frame": "probe-capital.js:204 evaluateMission",
+      "ms": 133.461
+    }
+  ]
+}

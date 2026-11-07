@@ -1,0 +1,40 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/v326-observation-score-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "48bb3215ce7bbe92a2e1bfa05b14bf7d6ff3ed942f30e0b0ce0a2a38f73519a7",
+  "cases": 1261,
+  "rows": [
+    {
+      "label": "teacher-r3-after-amiba-reveal",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-after-amiba-reveal-20261105-v1.json",
+      "identity": "56ecc4854c3c2e8cc1654da1dd5937b2549d051c46e503f357f6dbf923441367",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v326-cold-teacher-r3-after-amiba-reveal-20261107-v1.json",
+      "nativeInputs": 170,
+      "milliseconds": 623.204166,
+      "value": 122,
+      "actionId": "play_card:e527bf01",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 1,
+  "maxNativeInputs": 170,
+  "maxMilliseconds": 623.204166,
+  "failure": {
+    "label": "teacher-r3-after-amiba-reveal",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-after-amiba-reveal-20261105-v1.json",
+    "identity": "56ecc4854c3c2e8cc1654da1dd5937b2549d051c46e503f357f6dbf923441367",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v326-cold-teacher-r3-after-amiba-reveal-20261107-v1.json",
+    "nativeInputs": 170,
+    "milliseconds": 623.204166,
+    "value": 122,
+    "actionId": "play_card:e527bf01",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}
