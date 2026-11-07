@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "report": "reports/ai-foundation-20261107/r4-company-tail-v1/prototype-native-proof-20261107-v1.json",
+  "reportSha256": "57bc4519bcaafe618eadc882f98e02af37a33ea99a99b661a6b9373913ae687e",
+  "checkpoint": "reports/ai-foundation-20261107/r4-company-tail-v1/prototype-native-proof-20261107-v1.checkpoint.json",
+  "checkpointSha256": "f5de05f41c7a4a0f622ebdb067c4eade2d8ab8ec6a995e2433d8a2843efc2ab7",
+  "independentNativeInputs": 67,
+  "rows": [
+    {
+      "proof": 0,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 1,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 2,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 3,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 4,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 5,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 6,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 7,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 8,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 9,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 10,
+      "inputs": 5,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 11,
+      "inputs": 6,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "proof": 12,
+      "inputs": 6,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "allStateSessionRngExact": true
+}

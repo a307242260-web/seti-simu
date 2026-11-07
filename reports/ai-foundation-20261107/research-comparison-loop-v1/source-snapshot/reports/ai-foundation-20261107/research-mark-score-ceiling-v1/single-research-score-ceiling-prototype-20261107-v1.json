@@ -1,0 +1,15 @@
+{
+  "scope": "One in-memory reachability prototype after failed V304: the existing supported trigger contract admits at most one rule per researched color; maximum single reward derived from current public symbol ledger. Skip first-crossing details only when known Native score plus prefix length times this ceiling cannot reach threshold. Whole serialized roots exact; no runtime modification, no new Native branch pruning or acceptance timing/resampling/autonomous game. Derived field is prototype only, not yet an admitted evaluation path.",
+  "manifest": "reports/ai-foundation-20261107/research-mark-prefix-reuse-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "fb5f92474320086ee33b2dfcf792498dad522538a3ee17da0daa265b72b6a44c",
+  "stats": {
+    "prefixRequests": 46116,
+    "scoreCeilingPrunes": 24909
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

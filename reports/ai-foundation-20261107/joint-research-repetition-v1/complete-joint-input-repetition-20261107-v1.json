@@ -1,0 +1,97 @@
+{
+  "scope": "One diagnostic, no cold acceptance resampling. Every full jointResearchCapital input/weights is serialized diagnostically and snapshot-deep-compared on repeats, actual computation always runs. No memo implemented; complete source/roots/Native/RNG preserved. Timings measured inside joint body only, not acceptance.",
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "stats": {
+    "calls": 6060,
+    "repeats": 3879,
+    "unsupported": 0,
+    "milliseconds": 60.602586999994486,
+    "repeatedMilliseconds": 32.207105999999754,
+    "uniqueInputs": 2181
+  },
+  "sites": [
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:371:16)\n    at capitalWithoutSector (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:481:16)\n    at purposeCapitalWithoutSymbols (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:486:16)",
+      "calls": 2112,
+      "repeats": 1330,
+      "milliseconds": 16.783227000002
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:383:19)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:126:121\n    at quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:229:128)",
+      "calls": 897,
+      "repeats": 547,
+      "milliseconds": 11.000087999999238
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at publicityPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:372:36)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-publicity-capital.js:46:78)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:383:85)",
+      "calls": 197,
+      "repeats": 100,
+      "milliseconds": 8.767210999999634
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:383:19)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:118:72\n    at Array.flatMap (<anonymous>)",
+      "calls": 993,
+      "repeats": 596,
+      "milliseconds": 7.814341999998334
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at analysisPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:383:19)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/amiba-analysis-capital.js:229:128)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/ready-analysis-capital.js:35:25)",
+      "calls": 926,
+      "repeats": 728,
+      "milliseconds": 7.454913999998666
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65)\n    at capital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:120:17)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:180:26)",
+      "calls": 318,
+      "repeats": 188,
+      "milliseconds": 3.0814639999988174
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65\n    at Object.incomeAllocationCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:350:53)\n    at Object.incomeSwapPlan (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/resource-demand.js:178:55)",
+      "calls": 69,
+      "repeats": 50,
+      "milliseconds": 2.1360430000001713
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65)\n    at capital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:120:17)\n    at incomePurpose (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:148:21)",
+      "calls": 213,
+      "repeats": 121,
+      "milliseconds": 1.5875419999975122
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65\n    at incomeAllocationCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:350:53)\n    at Object.incomePreparationCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:354:22)",
+      "calls": 85,
+      "repeats": 84,
+      "milliseconds": 0.7662089999998329
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at publicityPortfolio (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:372:36)\n    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/analysis-publicity-capital.js:39:23\n    at Array.map (<anonymous>)",
+      "calls": 162,
+      "repeats": 104,
+      "milliseconds": 0.7100889999999254
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65)\n    at capital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:120:17)\n    at Object.quote (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:245:44)",
+      "calls": 64,
+      "repeats": 26,
+      "milliseconds": 0.38345300000082716
+    },
+    {
+      "stack": "    at /private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:335:19\n    at Object.investment (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:341:65)\n    at capital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:120:17)\n    at incomePurpose (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/probe-capital.js:151:131)",
+      "calls": 18,
+      "repeats": 5,
+      "milliseconds": 0.1157539999996402
+    },
+    {
+      "stack": "    at basePurposeCapital (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:364:23)\n    at capitalWithoutIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:371:16)\n    at publicIncomeSwap (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:467:19)\n    at capitalWithoutSector (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/state-value.js:481:61)",
+      "calls": 6,
+      "repeats": 0,
+      "milliseconds": 0.0022509999998874264
+    }
+  ],
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

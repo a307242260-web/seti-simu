@@ -1,0 +1,64 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: V307 private fixed-tail capital endpoints,54fullfact/547public-result exact and meaningful oldsource failure;11Node5Chrome65audit+old1; first162/649.217583failed. Four complete-root-preserving current diagnostics reject lowyield region/localfullkey memo and locate lowerportfolio callbacks for next investigation. No autonomous score.",
+  "thisGoalTurnClassification": "progress: reject full joint cache60.37ms cost vs30.37saved, capture4093validtyped joint inputs. V308 one paidGain/target completecomparison109kto94kcalls,4093joint432boundary1536portfolio exact15Node6Chrome65audit+old1; first162/624.815375fails. V309 exactsinglewindow/pairkeys removes39780keys/39788windowarrays, explicit3periodcase,16currentNodeobligations and6Chrome65audit+old1; first162/625.486834fails. All15serializedroots exactV307/V308/V309; currentCPU2396samples narrowsnextcallback construction. No new autonomous score.",
+  "production": "V278/V48",
+  "candidate": "V309/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/research-single-window-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "3f947eb9b9330dd8bfdb3a55695dd0659ccb1f79d9ab0112cc65758d89bc7ad5",
+  "sourceHashesUnchangedAfterFreeze": 150,
+  "V308": {
+    "NativeInputs": 162,
+    "milliseconds": 624.815375,
+    "complete": true,
+    "NodePassed": 15,
+    "BrowserPassed": 6,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "jointCases": 4093,
+    "boundaryCases": 432,
+    "fullPortfolios": 1536,
+    "referenceGainCalls": 108308,
+    "candidateGainCalls": 93860
+  },
+  "V309": {
+    "NativeInputs": 162,
+    "milliseconds": 625.4868339999999,
+    "complete": true,
+    "NodeCurrentBusinessObligationsWithPassEvidence": 16,
+    "initialNodeBatchPassed": 15,
+    "initialNodeBatchFailed": 1,
+    "testOnlyFixPassed": 1,
+    "BrowserPassed": 6,
+    "auditPassed": 65,
+    "oldAomomoFail": 1,
+    "threePaymentPeriodsRetained": true,
+    "pairKeysBefore": 39780,
+    "pairKeysAfter": 0,
+    "windowArraysBefore": 39796,
+    "windowArraysAfter": 8
+  },
+  "fullNodeRegressionRun": false,
+  "coldGate": {
+    "cases": 1258,
+    "measuredPerSource": 1,
+    "failure": "actual-v256-132",
+    "complete": true,
+    "rootAndRngRestored": true
+  },
+  "rootComparison": {
+    "readOnly": true,
+    "sources": [
+      307,
+      308,
+      309
+    ],
+    "roots": 15,
+    "allSerializedFieldsEqual": true
+  },
+  "newAutonomousRuns": 0,
+  "diagnosticQueries": 3,
+  "document": "docs/human405-research-comparison-learning-20261107.md",
+  "next": "Inspect local Amiba incomePreparation->analysisPortfolio/publicityPortfolio construction and reusable already-computed source scalars without whole-key caches. Keep full wallet/card/trigger/mark identity and every necessary branch. Need justified new-source first256/600 then full1258/Node/Browser/audit admission, actualfirst2 assets, original23 autonomousfirst3 andR2end review. Teacher105 complete development not aligned; V41 unchanged."
+}

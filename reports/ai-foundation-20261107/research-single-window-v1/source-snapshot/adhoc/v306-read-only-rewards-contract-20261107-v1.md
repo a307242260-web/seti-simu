@@ -1,0 +1,11 @@
+# V306 / V54：纯估值读取正式规则的固定只读奖励向量（2026-11-07）
+
+完整goal继续；V305上限证明、10Node7Chrome和65audit+旧1通过，但首次162Native/668.866417ms失败，不能跑新局。固定未来收入来源优先原型没有减少447次完整报价，不实施；已有证据显示原生提交/恢复/观察/快照仅约146ms，未动事务或身份等价，也不重新启用已在V223证明低命中的identitySubtrees。
+
+V305的明确内存原型：共用同一Native Amiba代码，只给四个纯估值模块提供冻结的、按cloneReward原逻辑规范化后的有限规则向量，可省46158次symbol与8836次trace奖励副本。默认Native调用仍返回独立可变副本，中央符号移动及顺序均保持；完整roots、首选、值和162Native不变。这个计数不是时间验收。
+
+新增显式选项readOnlyRewards:true用于getSymbolReward/getTraceReward及listSymbolsInRegion/resolveSymbolAtSlot/resolveRegionReward的奖励返回值。仅缓存公开固定规则5symbol+12trace的规范化结果，gain和外壳冻结；不存状态、实体、钱包或动作。传给resolve的棋盘仍会按原规则移动，选项只管奖励所有权；AI仍只在自己的私有符号账本上调用。未识别规则走原结果路径，不因普通对象原型属性改变原有默认语义。
+
+普通调用与保存/replay/Session/RNG和Native默认奖励逐值不变，调用方默认可独立改返回副本。只有四个已读审计的纯估值模块请求只读值，它们只读reward或把gain应用到自有钱包，不写奖励体；每模块复用一个冻结选项，避免新临时对象。Browser/Simulation继续同一正式规则API，不新造奖励模型。
+
+先在旧源复现共享只读接口义务，再测全部目录、未知参数、默认副本隔离、冻结写拒绝、中央单符号/区域移动及私有端点逐值一致；独立参考模块图比较1536完整组合+288定向边界，补Node、Native/Browser和输入审计。行为/接口契约同步文档。冻结新SOURCE后唯一首次冷测；不删必要分支、不变状态等价/资源下界或四null预算，256Native/600ms不变。全1258/source准入、前两轮实际资产、原23自主前三轮及R2轮末回查继续未完成，V41不替换。

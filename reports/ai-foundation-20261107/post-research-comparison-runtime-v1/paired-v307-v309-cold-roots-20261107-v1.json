@@ -1,0 +1,48 @@
+{
+  "scope": "Read-only comparison of previously retained unique first cold outputs, no new query/resampling. Every serialized root field equals V307, not just selected action/value.",
+  "rows": [
+    {
+      "version": 307,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v307-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+      "rawSha256": "d736a290531821153b1d1f6c1944cd5cb9f05e3da7eedcc7a8d9499db637b423",
+      "nativeInputs": 162,
+      "milliseconds": 649.217583,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "version": 308,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v308-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/research-comparison-loop-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "7e24b75add418179548bf0308888a1f361034ee19dbf3ebf3f164fb422d206bf",
+      "rawSha256": "ece61347f4380da91fb978b859b95d06b089f87ba3eacf898645daecffb6516a",
+      "nativeInputs": 162,
+      "milliseconds": 624.815375,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "version": 309,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v309-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/research-single-window-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "3f947eb9b9330dd8bfdb3a55695dd0659ccb1f79d9ab0112cc65758d89bc7ad5",
+      "rawSha256": "9748020e7ced01010c27810131522dba0938e999f11bce7d21861b3dfda1a7ca",
+      "nativeInputs": 162,
+      "milliseconds": 625.4868339999999,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "allSerializedRootsExact": true,
+  "rootCount": 15,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

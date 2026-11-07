@@ -1,0 +1,4 @@
+{"researchSingleWindow":"passed","jointCases":4093,"capitalCases":432,"fullPortfolios":1536,"paymentWindows":3,"purposeGainCalls":93860,"referencePairKeys":39780,"candidatePairKeys":0,"referenceWindowArrays":39796,"candidateWindowArrays":8,"fullComponentsAndPlansExact":true,"mutableInputsAndCustomWeightsPreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+SUMMARY unit passed=1 failed=0 total=1 time=1.63s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

@@ -1,0 +1,447 @@
+{
+  "scope": "Read-only complete fact/value equivalence of actual Native source prefixes and typed data previews; override player versus installing that same player in players. Mutable and frozen sources, no memo/cache/Native successor or cold timing.",
+  "manifest": "reports/ai-foundation-20261107/read-only-rewards-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "0efff735623fc3433b8b60219d7dc20267743b6c10bd44cd9f33a14d70e0311f",
+  "frames": 16,
+  "comparisons": 54,
+  "declined": 214,
+  "rows": [
+    {
+      "label": "v278-prefix-114",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 10.166666666666666
+    },
+    {
+      "label": "v278-prefix-114",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 10.75
+    },
+    {
+      "label": "v278-prefix-114",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 10.166666666666666
+    },
+    {
+      "label": "v278-prefix-114",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 10.75
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": false,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 11.5
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 10.583333333333334
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 13.583333333333334
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 5.333333333333333
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": true,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 11.5
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 10.583333333333334
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 13.583333333333334
+    },
+    {
+      "label": "v278-prefix-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 5.333333333333333
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": false,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 26.5
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 14.583333333333334
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 28.583333333333332
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 11.083333333333334
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 15.75
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": true,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 26.5
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 14.583333333333334
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 28.583333333333332
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 11.083333333333334
+    },
+    {
+      "label": "v278-prefix-142",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 15.75
+    },
+    {
+      "label": "v278-prefix-148",
+      "frozen": false,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 26
+    },
+    {
+      "label": "v278-prefix-148",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 14.583333333333334
+    },
+    {
+      "label": "v278-prefix-148",
+      "frozen": true,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 26
+    },
+    {
+      "label": "v278-prefix-148",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 14.583333333333334
+    },
+    {
+      "label": "v278-prefix-157",
+      "frozen": false,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 25
+    },
+    {
+      "label": "v278-prefix-157",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 27.583333333333332
+    },
+    {
+      "label": "v278-prefix-157",
+      "frozen": true,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 25
+    },
+    {
+      "label": "v278-prefix-157",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 27.583333333333332
+    },
+    {
+      "label": "v278-prefix-181",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 2.3333333333333335
+    },
+    {
+      "label": "v278-prefix-181",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 2.3333333333333335
+    },
+    {
+      "label": "v278-prefix-181",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 2.3333333333333335
+    },
+    {
+      "label": "v278-prefix-181",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 2.3333333333333335
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": false,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 11.5
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 10.583333333333334
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 13.583333333333334
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 5.333333333333333
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": true,
+      "goal": "blue-data",
+      "blueSlot": 2,
+      "target": null,
+      "value": 11.5
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 10.583333333333334
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 13.583333333333334
+    },
+    {
+      "label": "actual-v256-132",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 5.333333333333333
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 21
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income0-e4",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 21
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": false,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": false,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 6.5
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 2,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": true,
+      "goal": "computer-prefix",
+      "blueSlot": null,
+      "target": 3,
+      "value": 0
+    },
+    {
+      "label": "actual-v300-r4-proof-income1-e4",
+      "frozen": true,
+      "goal": "income",
+      "blueSlot": null,
+      "target": 4,
+      "value": 6.5
+    }
+  ],
+  "allCompleteFactsAndValuesExact": true,
+  "sourceAndRngPreserved": true,
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

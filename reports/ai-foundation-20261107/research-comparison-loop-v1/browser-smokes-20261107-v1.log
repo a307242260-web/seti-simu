@@ -1,0 +1,7 @@
+PASS production-research-score-ceiling http://127.0.0.1:50393/randomizer/index.html
+PASS production-research-trigger-capital http://127.0.0.1:50393/randomizer/index.html
+PASS production-research-symbol-composition http://127.0.0.1:50393/randomizer/index.html
+PASS production-r4-company-tail http://127.0.0.1:50393/randomizer/index.html
+PASS production-next-income-probe-capital http://127.0.0.1:50393/randomizer/index.html
+PASS production-research-order-mark http://127.0.0.1:50393/randomizer/index.html
+SUMMARY browserSmoke passed=6 failed=0 total=6

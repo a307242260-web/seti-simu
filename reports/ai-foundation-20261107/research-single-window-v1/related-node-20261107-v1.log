@@ -1,0 +1,46 @@
+{"conditionalResearchForecast":"passed","rows":[{"cardId":"dlc_18.png","value":65.66666666666667,"handCapital":0,"nativeChoices":[]},{"cardId":"b_101.webp","value":67.66666666666667,"handCapital":2,"nativeChoices":["orange1","orange2","orange3","orange4"]}],"nativeInputs":4,"searchMs":13.996166999999986,"allChoicesEntered":true,"rootAndRngUnchanged":true}
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+{"fixedTailCapitalCarry":"passed","frames":17,"cases":547,"available":159,"selectedPlans":66,"marked":14,"incomeSources":12,"mutations":51,"referencePlanningCapitalCalls":646,"candidatePlanningCapitalCalls":378,"allPublicFieldsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+{"r4CompanyTail":"passed","fullRootActionsGoalsValuesCompletionsExact":true,"baselineNativeInputs":263,"actualNativeInputs":245,"provedTailCount":13,"materializedNativeInputs":67,"independentNativeInputsReused":67,"noNewCardOrNativeObservationFromProof":true,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"researchComparisonLoop":"passed","jointCases":4093,"capitalCases":432,"fullPortfolios":1536,"referencePurposeGainCalls":108308,"candidatePurposeGainCalls":93860,"fullComponentsAndPlansExact":true,"mutableInputsAndCustomWeightsPreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":4896,"postMainFundingBounds":3,"stateObservationParity":true,"rootAndRngUnchanged":true}
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"researchMarkPrefixMemo":"passed","completeHistoricalPortfolioInputs":1536,"controlledWalletThresholdDataWeights":288,"comparisons":1824,"reference":{"developmentCalls":101686,"outcomeCalls":12493},"candidate":{"developmentCalls":27388,"outcomeCalls":7101},"allComponentsAndPlansExact":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"heldFirstCompletionMark":4,"paidFirstMark":0,"nativeOrdersShareRoot":true,"noDoubleCompletionOrFutureFunding":true,"rootAndRngUnchanged":true}
+{"researchScoreCeiling":"passed","completeHistoricalPortfolioInputs":1536,"controlledWalletThresholdDataWeights":288,"comparisons":1824,"boundCases":9072,"fallbackCases":7,"publicLayouts":6,"declinedContexts":6,"reference":{"developmentCalls":50782,"outcomeCalls":7325},"candidate":{"developmentCalls":27892,"outcomeCalls":7325},"allComponentsAndPlansExact":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: three distinct current/future payment periods must all remain
+
+12 !== 24
+
+    at Object.<anonymous> (/private/tmp/seti-v263-research-completion-mark-20261106-v1/randomizer/game/ai/research-single-window.test.js:11:491)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 12,
+  expected: 24,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"onlyNecessaryHeldAndPaidQuotes":true,"siblingSignaturePreparedOnce":true,"rootAndRngUnchanged":true}
+independent state value accounting and strict inputs passed
+{"teacherDevelopment":"passed","knownFreeResearchPreserved":true,"nativePassAndIncomeInputs":13,"unknownDrawIdentitiesUnused":true,"nativeFundingContinuity":true,"rootAndRngRestored":true}
+{"triggerDeltaMemo":"passed","cases":10465,"mutableInputsAndWeightsPreserved":true,"sameColorPairRepeatedArithmeticAvoided":20,"completeSourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+SUMMARY unit passed=15 failed=1 total=16 time=37.33s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=13
+FAIL randomizer/game/ai/research-single-window.test.js status=1 signal=none

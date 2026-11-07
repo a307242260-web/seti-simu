@@ -1,0 +1,97 @@
+{
+  "status": "passed",
+  "control": "reports/ai-foundation-20261107/final-round-proof-audit-v1/native-income-vs-old-bound-20261107-v2.json",
+  "controlSha256": "78e240deec5810532a998b98a8868518b399bd9dd6b878481f54d958c5e292b3",
+  "checkpoint": "reports/ai-foundation-20261107/final-round-proof-audit-v1/native-income-vs-old-bound-20261107-v2.checkpoint.json",
+  "checkpointSha256": "8faef5a5367d7464edd570f88723a2a907b079652d8cbce5e0b42093006d55dc",
+  "independentNativeInputs": 140,
+  "rows": [
+    {
+      "case": "income0-E0",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E1",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E2",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E3",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E0",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E1",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E2",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E3",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E4",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E5",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income0-E6",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E4",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E5",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    },
+    {
+      "case": "income1-E6",
+      "inputs": 10,
+      "entireStateSessionRngExact": true,
+      "sourceRestored": true
+    }
+  ],
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "allStateSessionRngExact": true
+}
