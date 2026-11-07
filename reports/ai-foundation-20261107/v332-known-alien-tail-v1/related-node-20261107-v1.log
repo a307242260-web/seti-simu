@@ -1,0 +1,9 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"knownPostdrawTail":"passed","nativeControlledBranches":2,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+initial offer, settlement and income information boundaries, removal equivalence and recovery passed
+SUMMARY unit passed=4 failed=0 total=4 time=2.55s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=2
+OWNER rules/initial-setup tests=1

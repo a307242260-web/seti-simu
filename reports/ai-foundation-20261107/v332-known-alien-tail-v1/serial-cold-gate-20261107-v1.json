@@ -1,0 +1,66 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "c35f5876509d5659e3b878db319e1e693781d94ab25f839d2a97d4b44ae381d0",
+  "cases": 1263,
+  "rows": [
+    {
+      "label": "v323-actual-r3-step-189",
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json",
+      "identity": "55676396001c4c9a204a66f440d853207223395b67696edff13a7fcda9a82bd2",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v332-cold-v323-actual-r3-step-189-20261107-v1.json",
+      "nativeInputs": 21,
+      "milliseconds": 73.88716700000002,
+      "value": 146.5,
+      "actionId": "place_data:8fd12fd3",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "v323-actual-r3-step-194",
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-194-root-20261107-v1.json",
+      "identity": "445517a3ed49f432043f1b70fe75c7aab35c0c0f6db090e6c5a5186708278048",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v332-cold-v323-actual-r3-step-194-20261107-v1.json",
+      "nativeInputs": 15,
+      "milliseconds": 73.286958,
+      "value": 146.5,
+      "actionId": "choose_target:06ca6510",
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v332-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 695.820959,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 3,
+  "maxNativeInputs": 106,
+  "maxMilliseconds": 695.820959,
+  "failure": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v332-cold-income-before-amiba-20261107-v1.json",
+    "nativeInputs": 106,
+    "milliseconds": 695.820959,
+    "value": 125,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}
