@@ -1,0 +1,249 @@
+{
+  "scope": "Instrumented V325 CPU sample, separate from the first cold acceptance. Inclusive stack times overlap and must not be added.",
+  "profileSha256": "d46e3edc3dfdd28c40da10d7e52f895ced102a1efddb1f2cb8993f726577ee45",
+  "samples": 1715,
+  "leaf": [
+    {
+      "frame": "js_transferable:112 structuredClone",
+      "ms": 97.581
+    },
+    {
+      "frame": ":0 (garbage collector)",
+      "ms": 54.205
+    },
+    {
+      "frame": "probe-capital.js:204 evaluateMission",
+      "ms": 36.251
+    },
+    {
+      "frame": "probe-capital.js:239 capital",
+      "ms": 22.959
+    },
+    {
+      "frame": "realm:385 compileForInternalLoader",
+      "ms": 22.543
+    },
+    {
+      "frame": ":0 (idle)",
+      "ms": 21.959
+    },
+    {
+      "frame": "amiba-analysis-capital.js:146 quote",
+      "ms": 20.126
+    },
+    {
+      "frame": "loader:1596 wrapSafe",
+      "ms": 18.375
+    },
+    {
+      "frame": "probe-capital.js:201 quoteValue",
+      "ms": 16.374
+    },
+    {
+      "frame": "state-value.js:205 orderedResearchSignature",
+      "ms": 12.125
+    },
+    {
+      "frame": "amiba-analysis-capital.js:109 incomePreparation",
+      "ms": 11.956
+    },
+    {
+      "frame": "value-arithmetic.js:28 sum",
+      "ms": 11.043
+    },
+    {
+      "frame": "state-value.js:487 basePurposeCapital",
+      "ms": 10.541
+    },
+    {
+      "frame": "state-value.js:228 researchPurposeGains",
+      "ms": 10.042
+    },
+    {
+      "frame": "state-store.js:46 copy",
+      "ms": 9.793
+    },
+    {
+      "frame": "research-trigger-capital.js:21 describe",
+      "ms": 8.959
+    },
+    {
+      "frame": "state-value.js:134 newResearchMark",
+      "ms": 8.873
+    },
+    {
+      "frame": "analysis-publicity-capital.js:9 quote",
+      "ms": 7.791
+    },
+    {
+      "frame": "analysis-port.js:153 forwardIdentity",
+      "ms": 7.582
+    },
+    {
+      "frame": "state-value.js:162 internalResearchFunding",
+      "ms": 7.54
+    },
+    {
+      "frame": "probe-capital.js:268 incomePurpose",
+      "ms": 7.416
+    },
+    {
+      "frame": "state-value.js:512 analysisPortfolio",
+      "ms": 7.252
+    },
+    {
+      "frame": "amiba-analysis-capital.js:115 ",
+      "ms": 7.043
+    },
+    {
+      "frame": "ready-analysis-capital.js:10 ",
+      "ms": 6.708
+    },
+    {
+      "frame": "analysis-port.js:226 normalizeObject",
+      "ms": 6.708
+    },
+    {
+      "frame": "analysis-port.js:205 normalize",
+      "ms": 6.626
+    },
+    {
+      "frame": "ready-analysis-capital.js:10 quiet",
+      "ms": 6.499
+    },
+    {
+      "frame": "state-value.js:460 ",
+      "ms": 6.374
+    },
+    {
+      "frame": "node:fs:433 readFileSync",
+      "ms": 5.75
+    },
+    {
+      "frame": "state-store.js:91 stableSerialize",
+      "ms": 5.626
+    }
+  ],
+  "inclusive": [
+    {
+      "frame": ":0 (root)",
+      "ms": 963.084
+    },
+    {
+      "frame": "run_main_module:1 ",
+      "ms": 865.877
+    },
+    {
+      "frame": "run_main:157 executeUserEntryPoint",
+      "ms": 864.585
+    },
+    {
+      "frame": "loader:1169 Module._load",
+      "ms": 863.96
+    },
+    {
+      "frame": "node:diagnostics_channel:326 traceSync",
+      "ms": 863.96
+    },
+    {
+      "frame": "loader:230 wrapModuleLoad",
+      "ms": 863.96
+    },
+    {
+      "frame": "loader:1804 Module._extensions..js",
+      "ms": 863.335
+    },
+    {
+      "frame": "loader:1432 Module.load",
+      "ms": 863.335
+    },
+    {
+      "frame": "loader:1656 Module._compile",
+      "ms": 862.169
+    },
+    {
+      "frame": "profile-v324-case-152-20261107-v1.js:1 ",
+      "ms": 862.044
+    },
+    {
+      "frame": "decision-search.js:14 searchDecision",
+      "ms": 750.918
+    },
+    {
+      "frame": "state-value.js:643 purposeCapital",
+      "ms": 492.42
+    },
+    {
+      "frame": "state-value.js:635 purposeCapitalWithoutFutureProbe",
+      "ms": 491.503
+    },
+    {
+      "frame": "state-value.js:628 purposeCapitalWithoutPublicityPreparation",
+      "ms": 487.503
+    },
+    {
+      "frame": "state-value.js:623 purposeCapitalWithoutTools",
+      "ms": 483.877
+    },
+    {
+      "frame": "resource-demand.js:148 planningCapital",
+      "ms": 460.129
+    },
+    {
+      "frame": "state-value.js:618 purposeCapitalWithoutSymbols",
+      "ms": 459.959
+    },
+    {
+      "frame": "state-value.js:613 capitalWithoutSector",
+      "ms": 458.709
+    },
+    {
+      "frame": "state-value.js:503 capitalWithoutIncomeSwap",
+      "ms": 447.333
+    },
+    {
+      "frame": "analysis-publicity-capital.js:9 quote",
+      "ms": 391.378
+    },
+    {
+      "frame": "known-symbol-capital.js:23 quote",
+      "ms": 339.59
+    },
+    {
+      "frame": "ready-analysis-capital.js:76 quote",
+      "ms": 339.208
+    },
+    {
+      "frame": "state-value.js:637 ",
+      "ms": 335.627
+    },
+    {
+      "frame": "amiba-analysis-capital.js:146 quote",
+      "ms": 334.752
+    },
+    {
+      "frame": "card-pick-planning.js:232 plan",
+      "ms": 330.462
+    },
+    {
+      "frame": "card-pick-planning.js:176 swapIntent",
+      "ms": 328.628
+    },
+    {
+      "frame": "state-value.js:624 ",
+      "ms": 320.131
+    },
+    {
+      "frame": "state-value.js:487 basePurposeCapital",
+      "ms": 303.249
+    },
+    {
+      "frame": "amiba-analysis-capital.js:109 incomePreparation",
+      "ms": 302.212
+    },
+    {
+      "frame": "analysis-port.js:685 describeCardPick",
+      "ms": 293.751
+    }
+  ]
+}
