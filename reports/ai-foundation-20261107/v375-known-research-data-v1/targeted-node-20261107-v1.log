@@ -1,0 +1,12 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":116.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+trusted analysis fork isolation and exact reuse passed
+{"analysisPublicityCapital":"passed","NativeCommutationInputsReused":10,"nativeHandoffInputsReused":1,"newNativeInputs":0,"directResearchHandoff":116.5,"fullFormalCompactAndState":true,"unknownAndUnsafeRejected":true,"rootAndRngRestored":true,"results":[{"case":"actual142","before":140.08333333333334,"preparationCapital":0,"corners":["alien-amiba-9-5","alien-amiba-0-1"]},{"case":"legacy259","before":138.75,"preparationCapital":10.5,"corners":["alien-amiba-9-5"]}],"unfundedResearchPreparation":{"repeatedCalls":{"candidate":{"baseCalls":480,"fundingCalls":492},"reference":{"baseCalls":576,"fundingCalls":624}},"changedFacts":11,"weightOrders":3},"newAiQueries":0,"newAutonomousRuns":0}
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":2.6666666666666665,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+SUMMARY unit passed=7 failed=0 total=7 time=4.44s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=3

@@ -1,0 +1,35 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V375",
+  "baseCommit": "1de44065945bcc87f713e02e1ecc3444e10ca49d",
+  "snapshotTree": "a8f4828c444d99ac7331549059de2365e060672d",
+  "runtimeSubtrees": {
+    "randomizer": "40929f5d3a4a1dddbd9a733c315b316353882407",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e",
+    "tools": "4b130d05942f93f761c4febb5629879865419db1"
+  },
+  "manifest": "reports/ai-foundation-20261107/v375-known-research-data-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "52e159ba09d5aaad285c830ba81598edad90a61bf1f9472a3b8fa2fa0e7b5474",
+  "runtimeFiles": {
+    "randomizer/game/ai/analysis-port.js": "32dd4c42d49431b087a8f1268c0b4ce440808f3cdc5e0a67bbaea89ecb38d981",
+    "randomizer/game/ai/decision-search.js": "a5083fea899b173bd2b37dca1c00802701d55c4eb3a8f4e4eff8e54f07329d3a",
+    "randomizer/game/ai/local-decision-plans.js": "91e7302d113ef7927baa0b724ec40d9dec2f73f084ea2d920dd3194dad292ed0",
+    "randomizer/game/ai/resource-demand.js": "51d48403ada2a9fd5d1b34b64958cb9afea2f38e9ad4619a2e39a58e4026f165",
+    "randomizer/index.html": "40b384199d47c5ee9ca6ed52dd55e7fd593f51c9fd9c785c8843464b8d5583b8"
+  },
+  "completeNamedColdCases": 1281,
+  "uniqueNativeRoots": 840,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 576.77475,
+  "coldGateSha256": "9e6049785599fb576044b2e8054d6082d0f8a47e51de80f8dff11ff9fdeccc59",
+  "firstTwoFullGraphsUnchanged": 304,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRelevantPassed": 6,
+  "inputAuditPassed": 66,
+  "fourRuntimeBudgetsStillNull": true,
+  "baseline": "V41",
+  "developmentAligned": false,
+  "newAutonomousRuns": 0
+}

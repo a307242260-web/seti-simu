@@ -3304,6 +3304,52 @@
         &&data.listComputerPlacedTokens(player).length===3);
     }
 
+    function deferredSectorPublicityEnabled() {
+      const stored=nodes.get(openedRoot);
+      if(!stored?.envelope)return false;
+      const state=readIdentityState(stored.envelope),turn=state.turn;
+      if(turn.roundNumber!==3||!turn.activePlayerIds?.length||turn.passedPlayerIds.includes(seatId)
+        ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return false;
+      const player=state.players.players.find(p=>p.id===seatId);
+      return industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId==="deepspace_swap_cards"
+        &&player.reservedCards.some(c=>knownRootCardIds.has(c.id)&&localPlans.sectorPublicityReward(c)!==null);
+    }
+
+    function deferredSectorPublicityQuote(node) {
+      if(!resourcePlanning||rootObservation?.publicState.roundNumber!==3
+        ||!["turn-boundary","information-barrier"].includes(node.status))return null;
+      const stored=nodes.get(node);
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readIdentityState(stored.envelope),turn=state.turn;
+      if(turn.currentPlayerId!==seatId||JSON.stringify([turn.roundNumber,turn.turnNumber,turn.actionCycleNumber])===rootTurnKey)return null;
+      const player=state.players.players.find(p=>p.id===seatId);
+      // Deep Space has a stable standard fee. The existing movement and
+      // post-main value bounds exclude this company; the synthetic quiet
+      // turn tail excludes ready card tasks and cannot create a sector win.
+      if(industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId!=="deepspace_swap_cards")return null;
+      return localPlans.deferredSectorPublicityQuote({state,seatId,knownCards:knownRootCardIds});
+    }
+
+    function researchDataPurpose() {
+      if(!openedRoot?.legalActions.some(a=>a.family==='research_tech'))return null;
+      const state=readPlanningState(nodes.get(openedRoot));
+      return localPlans.researchDataPurpose({state,seatId,knownCards:knownRootCardIds});
+    }
+
+    function quoteResearchDataPurpose(node,purpose) {
+      let stored=nodes.get(node);
+      if(node.status==='turn-tail-value'){
+        // Only the zero-delta, no-input-change native end-turn certificate.
+        if(node.planSummary.kind!=='end-turn'||node.planSummary.netGain!==0)return null;
+        stored=nodes.get(stored.turnTailBase);
+      }else if(!['turn-boundary','information-barrier'].includes(node.status))return null;
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readPlanningState(stored),turn=state.turn;
+      if(turn.roundNumber!==3||turn.currentPlayerId!==seatId)return null;
+      if(node.status!=='turn-tail-value'&&JSON.stringify([turn.roundNumber,turn.turnNumber,turn.actionCycleNumber])===rootTurnKey)return null;
+      return localPlans.quoteResearchDataPurpose({state,seatId,purpose});
+    }
+
     function valueObservation(node) {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(stored.incomeProofBase||stored.turnTailBase)throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");
@@ -3344,7 +3390,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

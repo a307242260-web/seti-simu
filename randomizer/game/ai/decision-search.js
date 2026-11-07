@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v372";
+  const VERSION = "seti-complete-decision-search-v375";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -149,6 +149,12 @@
         planContinuation: reusedPlan?.hit ? "hit" : planReuse ? "not-requested" : "off",
         milliseconds: now() - startedAt, limits: configuredLimits },
     };
+    // The new R3 asset is inapplicable to earlier and final rounds. Do
+    // not run a portfolio hook at any leaf of those existing searches.
+    const quoteDeferredSector = resourcePlanning && realizationTies
+      && root.observation.publicState.roundNumber===3 && port.deferredSectorPublicityEnabled?.()===true;
+    const researchDataPurpose=quoteDeferredSector&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      ?port.researchDataPurpose?.():null;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -157,8 +163,8 @@
     const useResourceDominance = !resourcePlanning && !movementPlanning && !cardPickPlanning && resourceDominance && !port.selectionSpec?.(root);
     const useMoneyCapacity = !resourcePlanning && !movementPlanning && !cardPickPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
     const useCardTradePruning = !resourcePlanning && cardTradePruning && !port.selectionSpec?.(root);
-    const useScanBound = cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
-    const usePostMainValueBound = postMainPruning && !port.selectionSpec?.(root);
+    const useScanBound = !researchDataPurpose && cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
+    const usePostMainValueBound = !researchDataPurpose && postMainPruning && !port.selectionSpec?.(root);
     let movementPolicyNodes = 0, movementDirectionsExcluded = 0, routeGeometryNodes = 0;
     let transitions = 0, logicalResourceInputs = 0, sharedResourceInputHits = 0;
     const sharedInternalStates=new Set();
@@ -233,7 +239,11 @@
       }
       const boundary = BOUNDARIES.has(node.status) || node.status === "plan-infeasible";
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
-      const value = BOUNDARIES.has(node.status) ? valueForNode(node) : null;
+      const deferredPublicity = quoteDeferredSector&&BOUNDARIES.has(node.status)?port.deferredSectorPublicityQuote(node):null;
+      const researchData=researchDataPurpose&&BOUNDARIES.has(node.status)?port.quoteResearchDataPurpose(node,researchDataPurpose):null;
+      const baseValue = BOUNDARIES.has(node.status) ? valueForNode(node) : null;
+      if(deferredPublicity&&researchData)throw new Error('SEARCH_RESEARCH_TASK_QUOTED_TWICE');
+      const value = researchData||deferredPublicity?stateValue.sumValueParts([baseValue,(researchData||deferredPublicity).value]):baseValue;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
       const preparationDebt = BOUNDARIES.has(node.status) ? preparationDebtForNode(node) : null;
@@ -380,7 +390,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -526,7 +536,7 @@
       }
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
-        if(alternative.goalPlan&&incumbent&&resourcePlanning&&movementPlanning&&cardPickPlanning&&finalMarkPlanning
+        if(!researchDataPurpose&&alternative.goalPlan&&incumbent&&resourcePlanning&&movementPlanning&&cardPickPlanning&&finalMarkPlanning
           &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const bound=port.movementPlanValueBound?.(entry.node);
@@ -549,7 +559,7 @@
           :["income","computer-prefix"].includes(alternative.resourcePlan?.goal.kind)?"data-end-turn"
           :entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="end_turn")?"end-turn":null;
         const tail=tailKind&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
-        if(tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
+        if(!researchDataPurpose&&tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const currentValue=valueForNode(entry.node),upperBound=exactTailSum(currentValue,tail.netGain);
           if(upperBound!==null&&incumbent.value>upperBound){
@@ -757,6 +767,8 @@
       expanded: entry.expanded, alternatives:entry.deferredPolicy?null:entry.alternativeCount, edges: entry.edges,
       ...(entry.deferredPolicy?{policyPending:!entry.prunedByBound}:{}),
       distance: Number.isFinite(entry.distance) ? entry.distance : null,
+      ...(entry.deferredPublicity?{deferredSectorPublicity:entry.deferredPublicity}:{}),
+      ...(entry.researchData?{researchData:entry.researchData}:{}),
       ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
         : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",

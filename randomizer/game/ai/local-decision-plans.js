@@ -3,9 +3,9 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement){
  'use strict';
  const VERSION='seti-local-mark-and-scan-purpose-v10';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -60,21 +60,119 @@
    ...(retained.length===1?{selectedActionId:retained[0].actionId}:{}),retainedActionIds:retained.map(a=>a.actionId),excludedActionIds:actions.filter(a=>!retained.includes(a)).map(a=>a.actionId),reason:'one-board-slot-per-tech-type',
    assumption:'prefer an already covered computer column, otherwise nearest known computer progress; keep every tech type'};
  }
+ function sectorPublicityReward(card){
+  const model=card&&effects.getCardModel(card),task=model?.tasks?.length===1&&model.tasks[0];
+  if(!task||task.condition?.type!=='completedSectors'||model.triggers?.length
+    ||model.temporaryTasks?.length||task.rewards.length!==1)return null;
+  const reward=task.rewards[0],gain=reward.options?.gain;
+  if(reward.type!=='gain_resources'||(reward.options.repeat??1)!==1||!gain||Object.keys(gain).length!==1
+    ||!Number.isSafeInteger(gain.publicity)||gain.publicity<=0)return null;
+  return {task,gain,model};
+ }
+ function deferredSectorPublicityQuote({state,seatId,knownCards}){
+  const p=owner(state,seatId),turn=state.turn;
+  if(turn.roundNumber!==3||turn.gameEnded||turn.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
+    ||turn.passedPlayerIds.includes(seatId)||!turn.activePlayerIds?.length
+    ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
+  const publicity=p.resources.publicity,limit=players.RESOURCE_LIMITS.publicity,cost=tech.getResearchPublicityCost(p);
+  if(publicity<cost||publicity-cost>=cost)return null;
+  const ready=p.reservedCards.flatMap(card=>{
+    if(!knownCards.has(card.id))return [];
+    const entry=sectorPublicityReward(card);
+    if(!entry||entry.model.cardType!==2||entry.model.endGameScoring)return [];
+    const gain=entry.gain.publicity,task=entry.task;
+    if(publicity+gain<=limit||publicity-cost+gain>limit||publicity-cost+gain<cost
+      ||!effects.taskConditionMet(task,p,{data:state.data}))return [];
+    if(!residual.queryCardSettlement(state,seatId,{kind:'task',cardInstanceId:card.id,ruleId:task.id}))return [];
+    return [{cardId:card.id,taskId:task.id,publicity,afterFirst:publicity-cost,afterClaim:publicity-cost+gain,researchCost:cost,gain}];
+  });
+  if(ready.length!==1||tech.listTakeableTiles(state.tech,p.techState).length<2)return null;
+  // Already earned, still held, and fully usable after paying for one known
+  // research. Only price the publicity itself, without any tile reward.
+  return {...ready[0],value:ready[0].gain*stateValue.DEFAULT_WEIGHTS.publicity};
+ }
+ function researchDataPurpose({state,seatId,knownCards}){
+  const p=owner(state,seatId),turn=state.turn;
+  if(p.hand.length!==1||!knownCards.has(p.hand[0].id)||turn.cardTurnEventBonuses?.length
+    ||state.pieces.rockets.some(r=>r.playerId===seatId)
+    ||Object.values(state.aliens.aliens).some(s=>s.revealed&&s.alienId==='符文族')
+    ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles).some(t=>t.marks.some(m=>m.playerId===seatId&&m.threshold===n)))
+    ||p.reservedCards.some(c=>{const m=effects.getCardModel(c);return !m||m.triggers?.length||m.temporaryTasks?.length;}))return null;
+  const occupied=data.listComputerPlacedTokens(p).map(t=>t.placementSlot);
+  if(occupied.length!==4||![1,2,3,4].every(s=>occupied.includes(s)))return null;
+  const corner=cards.getDiscardActionRewardForCard(p.hand[0]);
+  if(!corner?.gain?.publicity||corner.dataCount||Object.keys(corner.gain).some(k=>k!=='publicity'))return null;
+  const ready=deferredSectorPublicityQuote({state,seatId,knownCards});if(!ready)return null;
+  const targets=tech.listTakeableTiles(state.tech,p.techState);
+  const production=targets.filter(id=>science.getResearchDataCount(id)>0);
+  const funding=targets.filter(id=>placement.getBlueTileDataBonus(id)?.type==='publicity');
+  if(production.length!==1||funding.length!==1||production[0]===funding[0])return null;
+  return {pair:[production[0],funding[0]],bonusIds:Object.fromEntries([...production,...funding].map(id=>[id,state.tech.stacks[id].bonusId])),
+   techState:p.techState,cornerCardId:p.hand[0].id,cornerPublicity:corner.gain.publicity,ready,
+   taskCardId:p.reservedCards.find(c=>c.id===ready.cardId).cardId,completedTasks:p.completedTaskCount||0};
+ }
+ function quoteResearchDataPurpose({state,seatId,purpose}){
+  const p=owner(state,seatId),turn=state.turn;
+  if(turn.currentPlayerId!==seatId||p.passCompletionPending||turn.passedPlayerIds.includes(seatId)
+    ||p.hand.length!==1||p.hand[0].id!==purpose.cornerCardId||turn.cardTurnEventBonuses?.length
+    ||p.resources.publicity<purpose.ready.researchCost
+    ||p.completedTaskCount!==purpose.completedTasks+1||p.reservedCards.some(c=>c.id===purpose.ready.cardId)
+    ||!state.cards.removedFromGameCardIds.includes(purpose.taskCardId))return null;
+  const first=Object.keys(p.techState.ownedTiles).filter(id=>!purpose.techState.ownedTiles[id]);
+  if(first.length!==1||!purpose.pair.includes(first[0]))return null;
+  const second=purpose.pair.find(id=>id!==first[0]),[producer,blue]=purpose.pair,stack=state.tech.stacks[second];
+  if(!tech.listTakeableTiles(state.tech,p.techState).includes(second)||stack.bonusId!==purpose.bonusIds[second])return null;
+  const bonus=catalog.BONUS_EFFECTS[stack.bonusId];
+  if(!bonus||Object.keys(bonus).some(k=>!['score','energy','publicity'].includes(k)))return null;
+  const progress=data.listComputerPlacedTokens(p).map(t=>t.placementSlot);
+  if(progress.length!==4||![1,2,3,4].every(s=>progress.includes(s)))return null;
+  const free=tech.getAvailableBlueSlots(p.techState);
+  const blueSlot=p.techState.blueBoardSlots[blue]??free[0],through=data.getRequiredComputerSlotForBlueBonus(blueSlot);
+  if(through!==5||data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===blueSlot))return null;
+  const dataGain=second===producer?science.getResearchDataCount(second):0,copy=dataPreviewPlayer(p),cost=purpose.ready.researchCost;
+  if(copy.resources.availableData+dataGain>players.RESOURCE_LIMITS.availableData||copy.resources.availableData+dataGain<2)return null;
+  const techState=copy.techState={...p.techState,ownedTiles:{...p.techState.ownedTiles,[second]:true},
+   blueBoardSlots:{...p.techState.blueBoardSlots,...(second===blue?{[second]:blueSlot}:{})}};
+  const localRoot={meta:structuredClone(state.meta)};
+  if(!players.spendResources(copy,{publicity:cost}).ok)return null;
+  if(stack.firstTakeClaimedBy==null)players.gainResources(copy,{score:catalog.FIRST_TAKE_TYPE_SCORE});
+  players.gainResources(copy,bonus);
+  for(let i=0;i<dataGain;i++)if(!data.gainData(copy,{source:second,root:localRoot}).ok)return null;
+  for(const place of [{},{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot}]){
+   const result=data.placeDataToComputer(copy,place);if(!result.ok)return null;
+   for(const gain of result.slotBonuses){
+    if(!['score','publicity'].includes(gain.type))return null;
+    players.gainResources(copy,{[gain.type]:gain[gain.type]});
+   }
+  }
+  if(copy.resources.publicity>=cost||copy.resources.publicity+purpose.cornerPublicity<cost)return null;
+  const board={...state.tech,stacks:{...state.tech.stacks,[second]:{...stack,remaining:0,depleted:true,bonusId:null}}};
+  if(!tech.listTakeableTiles(board,techState).some(id=>{
+   const gain=catalog.BONUS_EFFECTS[board.stacks[id].bonusId];return gain&&!gain.cardSelection;
+  }))return null;
+  // The next two payments and data placements are a fixed purpose. Compare
+  // with the whole existing portfolio, then carry only the now-funded
+  // analysis/held-publicity preparation value; do not also carry the old data.
+  const after={...state,tech:board,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
+  const score=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,aliens:structuredClone(s.aliens),
+   finalScoring:structuredClone(s.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},q).totalScore;
+  const weights=stateValue.DEFAULT_WEIGHTS;
+  const linear=Object.entries(weights).reduce((n,[k,w])=>n+(copy.resources[k]-p.resources[k])*w,0);
+  const analysis=demand.planningAnalysisCapital(after,copy),baseline=demand.planningCapital(state,p);
+  const value=stateValue.sumValueParts([score(after,copy),-score(state,p),linear,
+   stateValue.technologyCapital(techState,3),-stateValue.technologyCapital(p.techState,3),analysis,-baseline]);
+  return value>0?{value,first:first[0],second,blueSlot,cornerCardId:purpose.cornerCardId,publicityAfterPlacement:copy.resources.publicity,
+   dataAfterPlacement:copy.resources.availableData,analysis,baseline}:null;
+ }
  function deferredPublicityTask({state,seatId,actions,session,payload}){
   const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
   if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
     ||advance.ownerId!==seatId||advance.payload?.didPass!==false||!p.mainActionCompleted||p.passCompletionPending
     ||turn.currentPlayerId!==seatId||!turn.activePlayerIds?.length
     ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
-  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId),model=card&&effects.getCardModel(card);
-  const task=model?.tasks?.length===1&&model.tasks[0];
-  // Sector wins persist. Leave one ordinary held task available for a
-  // subsequent manual claim; triggers and expiring/physical tasks may not.
-  if(task?.id!==payload.ruleId||task.condition?.type!=='completedSectors'||model.triggers?.length
-    ||model.temporaryTasks?.length||task.rewards.length!==1)return null;
-  const reward=task.rewards[0],gain=reward.options?.gain;
-  if(reward.type!=='gain_resources'||(reward.options.repeat??1)!==1||!gain||Object.keys(gain).length!==1
-    ||!Number.isSafeInteger(gain.publicity)||gain.publicity<=0)return null;
+  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId),entry=sectorPublicityReward(card);
+  if(entry?.task.id!==payload.ruleId)return null;
+  const {task,gain}=entry;
   const publicity=p.resources.publicity,limit=players.RESOURCE_LIMITS.publicity,cost=tech.getResearchPublicityCost(p);
   if(publicity<cost||publicity+gain.publicity<=limit||publicity-cost+gain.publicity>limit
     ||!tech.listTakeableTiles(state.tech,p.techState).length)return null;
@@ -452,5 +550,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,reorganization,incomeCompletion,blueCompletion,computerCompletion,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,reorganization,incomeCompletion,blueCompletion,computerCompletion,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
 });

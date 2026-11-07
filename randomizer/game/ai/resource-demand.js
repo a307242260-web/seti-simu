@@ -149,6 +149,7 @@
     return Object.isFrozen(state)&&Object.isFrozen(p)?planningCapitalDetails(state,p).total
       :stateValue.purposeCapital(valueFacts(state,p)).total;
   }
+  function planningAnalysisCapital(state,p){return planningCapitalDetails(state,p).analysisPotential;}
   const knownDirectSwapEffects=new Set(['card_research_tech','card_pick_card_corner_reward','card_income','card_tuck_played_card_to_income','card_discard_any_for_income']);
   function purePublicityCorner(card){
     if(!card?.id||!card.cardId||card.hidden)return 0;
@@ -927,5 +928,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,publicLandingSupplier,blueLandingSupplyGoal,blueLandingWait,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,publicLandingSupplier,blueLandingSupplyGoal,blueLandingWait,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,planningAnalysisCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });
