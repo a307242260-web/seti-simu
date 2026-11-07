@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "label": "deferred-sector-actual-179",
+      "fixture": "reports/ai-foundation-20261107/v373-deferred-sector-publicity-v1/roots/deferred-sector-actual-179.json",
+      "fixtureSha256": "6b8fc9962127b9f4c1a1d04e68cacc29bbb66f047a81ddb100bd068272ea1c27"
+    },
+    {
+      "label": "deferred-sector-actual-182",
+      "fixture": "reports/ai-foundation-20261107/v373-deferred-sector-publicity-v1/roots/deferred-sector-actual-182.json",
+      "fixtureSha256": "5dd49ddcba96b47d0bf32600e8192fc684a103f31d1d589eb182ac369ec5cac5"
+    },
+    {
+      "label": "deferred-sector-actual-188",
+      "fixture": "reports/ai-foundation-20261107/v373-deferred-sector-publicity-v1/roots/deferred-sector-actual-188.json",
+      "fixtureSha256": "1f644fab9160cf6af23fece9ac3caa7edf1270a09db8a4d05998c8da937ac1b4"
+    },
+    {
+      "label": "deferred-sector-before-pass",
+      "fixture": "reports/ai-foundation-20261107/v373-deferred-sector-publicity-v1/roots/deferred-sector-before-pass.json",
+      "fixtureSha256": "f903543811bc148682c0d1b9a2990ffa90da55530d3bfc93b9541298ccabc0b8"
+    }
+  ]
+}
