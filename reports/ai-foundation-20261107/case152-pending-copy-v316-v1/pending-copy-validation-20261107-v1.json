@@ -1,0 +1,61 @@
+{
+  "scope": "Pending session fast-copy controls and V315/V316 official first-sample behavioral parity. No second samples, additional autonomous games, or full source admission.",
+  "checkpointGroups": 12,
+  "fixturePaths": [
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v292-orange2-scan-launch-177-root-20261107-v1.json",
+    "reports/ai-foundation-20261107/public-alien-offer-v1/v277-before-156-white-root-20261107-v1.json",
+    "reports/ai-foundation-20261106/analysis-blue-choice-v1/v274-actual-before-156-root-20261106-v1.json",
+    "reports/ai-foundation-20261106/mixed-blue-analysis-v1/deferred-analysis-data-menu-root-20261106-v1.json",
+    "reports/ai-foundation-20261106/mixed-blue-analysis-v1/actual-v264-188-root-20261106-v1.json",
+    "reports/ai-foundation-20261106/scan-analysis-income-v1/actual-v263-176-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-114-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-116-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-118-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-124-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-126-root-20261106-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v215-actual-v214-128-root-20261106-v1.json"
+  ],
+  "restoreModes": [
+    "trusted-write",
+    "trusted-read",
+    "ordinary"
+  ],
+  "aliasAndFallbackControls": true,
+  "regularCopiesUntouched": true,
+  "compared": [
+    {
+      "label": "corpus-case-152",
+      "rank": [
+        "place_data:50a9ac16",
+        49,
+        -7,
+        0,
+        26
+      ],
+      "rootActions": 24,
+      "complete": true,
+      "firstV315Milliseconds": 601.823666,
+      "firstV316Milliseconds": 612.0332089999999,
+      "firstV315Gate": false,
+      "firstV316Gate": false
+    },
+    {
+      "label": "actual-v256-132",
+      "rank": [
+        "industry:e887dc52",
+        140.08333333333334,
+        -28.583333333333332,
+        0,
+        14
+      ],
+      "rootActions": 15,
+      "complete": true,
+      "firstV315Milliseconds": 566.656291,
+      "firstV316Milliseconds": 549.526875,
+      "firstV315Gate": true,
+      "firstV316Gate": true
+    }
+  ],
+  "targetedNodePassed": 5,
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,145 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: delivered exact ordinary scalar movement topology and key prefix, f2179e28f, 256/680ms search diagnostic.",
+  "thisGoalTurnClassification": "progress: verified actual duplicate rotation, planet locations, route gaps, read-only score data and trusted session copy; ran first cold on two distinct frozen sources. Both clear step132, case152 misses 600ms in both; no formal production changes.",
+  "production": "V278/V48",
+  "candidate": "V316/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/case152-pending-copy-v316-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "71a79d4087512bc531ad67e662535c6aeea18bd3b1723166d368b7f0e416ac09",
+  "retainedOriginalV314": true,
+  "diagnostics": [
+    {
+      "report": "reports/ai-foundation-20261107/case152-rotation-reuse-v1/rotation-reuse-proofs-20261107-v1.json",
+      "sha256": "0faf83b446afe96514a228d3a08c5e796d720a5870aa1c7aceed1b67529693d4",
+      "searchMilliseconds": 666.747333,
+      "includingOpenRootMilliseconds": 680.749459,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-rotation-reuse-v1/rotation-reuse-proofs-20261107-v2.json",
+      "sha256": "177aa8e437e514c0a38873b7849031a5c8a598e3d7fec2becac858b1f53c5520",
+      "searchMilliseconds": 676.199792,
+      "includingOpenRootMilliseconds": 690.449083,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-validator-paths-v1/validator-paths-proofs-20261107-v1.json",
+      "sha256": "b560970867f08c490e69ce7b1740b90e91bd4e987ed084eb264faf296e234228",
+      "searchMilliseconds": 650.904458,
+      "includingOpenRootMilliseconds": 664.600416,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-planet-location-v1/planet-location-proofs-20261107-v1.json",
+      "sha256": "966822da63e87e04e70c21c922fcee8ccc99e693eb5f4167f35eb44cdbd6c795",
+      "searchMilliseconds": 629.7679579999999,
+      "includingOpenRootMilliseconds": 643.2984590000001,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-planet-location-v1/planet-location-proofs-20261107-v2.json",
+      "sha256": "45ea86a259cad1ba35ed0330ee6de608977600612d220399fdd7a063703d69e8",
+      "searchMilliseconds": 625.733125,
+      "includingOpenRootMilliseconds": 639.533833,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-analysis-journal-v1/analysis-journal-proofs-20261107-v1.json",
+      "sha256": "589d6dca21d35a0e6d96685759296ccaaa4a87de8bfcc656556c05420b2be961",
+      "searchMilliseconds": 632.0994579999999,
+      "includingOpenRootMilliseconds": 645.8976250000001,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-score-readonly-data-v1/score-readonly-data-proofs-20261107-v1.json",
+      "sha256": "70ae165d9b0ff0213991f10d9c987ab77710f1b16dd8476ab17ed496bd3c1cf4",
+      "searchMilliseconds": 609.7139999999999,
+      "includingOpenRootMilliseconds": 623.175791,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-score-readonly-data-v1/score-readonly-data-proofs-copy-control-20261107-v2.json",
+      "sha256": "0d6c215a2de471637a906728ab36672cd6f3ba64d63ce8fde6e603ad413f8c58",
+      "searchMilliseconds": 601.898042,
+      "includingOpenRootMilliseconds": 615.5965,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-score-readonly-data-v1/score-readonly-data-proofs-validator-keys-20261107-v3.json",
+      "sha256": "5101f0437ee6df454eeae328ba6e4f57a93881fa50a425702ebd5f35499f63ab",
+      "searchMilliseconds": 601.130083,
+      "includingOpenRootMilliseconds": 614.509584,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-first-blue-quote-v1/first-blue-quote-proofs-20261107-v1.json",
+      "sha256": "77b0fd016886141c16eb9faa8d7090e7008f16254049b7c1c6f789e8bd64a893",
+      "searchMilliseconds": 601.59175,
+      "includingOpenRootMilliseconds": 616.185417,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-route-gap-v1/route-gap-proofs-20261107-v1.json",
+      "sha256": "4bf55590864c97a6e6441ac4ceb4a080e7b3ca50a0766bd9212fd9721db909e3",
+      "searchMilliseconds": 584.6092080000001,
+      "includingOpenRootMilliseconds": 597.411208,
+      "nativeInputs": 256
+    },
+    {
+      "report": "reports/ai-foundation-20261107/case152-pending-copy-v1/pending-copy-proofs-20261107-v1.json",
+      "sha256": "3126105f0f7b89fbb677147f7e4da392b7d3966ba5b3471d671a5c0cec7bbf24",
+      "searchMilliseconds": 563.0415419999999,
+      "includingOpenRootMilliseconds": 575.989625,
+      "nativeInputs": 256
+    }
+  ],
+  "firstCold": [
+    {
+      "version": 315,
+      "case": "corpus-case-152",
+      "report": "reports/ai-foundation-20261105/third-round-teacher-v1/v315-cold-corpus-case-152-20261107-v1.json",
+      "sha256": "f8f61226f63f6c6ae0564db59c211c5a6c163893058d5c5981d857a071859410",
+      "nativeInputs": 256,
+      "coldMilliseconds": 601.823666,
+      "gatePassed": false
+    },
+    {
+      "version": 315,
+      "case": "actual-v256-132",
+      "report": "reports/ai-foundation-20261105/third-round-teacher-v1/v315-cold-actual-v256-132-20261107-v1.json",
+      "sha256": "0d2868a34c18461634d77b44d9db40dee911141c01917b86ed0a8623a9217676",
+      "nativeInputs": 162,
+      "coldMilliseconds": 566.656291,
+      "gatePassed": true
+    },
+    {
+      "version": 316,
+      "case": "corpus-case-152",
+      "report": "reports/ai-foundation-20261105/third-round-teacher-v1/v316-cold-corpus-case-152-20261107-v1.json",
+      "sha256": "c49b69e7c9f07988643c8685fd8ee6a6c80fe664d1e0dd0647125590b88bf5a8",
+      "nativeInputs": 256,
+      "coldMilliseconds": 612.0332089999999,
+      "gatePassed": false
+    },
+    {
+      "version": 316,
+      "case": "actual-v256-132",
+      "report": "reports/ai-foundation-20261105/third-round-teacher-v1/v316-cold-actual-v256-132-20261107-v1.json",
+      "sha256": "95b2f101cd64d7f18545d54cc1873cf8d7602d203daa0b6ef40c76469f550dab",
+      "nativeInputs": 162,
+      "coldMilliseconds": 549.526875,
+      "gatePassed": true
+    }
+  ],
+  "newScore": false,
+  "newAutonomousRuns": 0,
+  "baseline": "V41",
+  "controlledR3Latest": 85,
+  "controlledR3Best": 87,
+  "teacherR3": 105,
+  "autonomousFirst3Run": false,
+  "developmentAligned": false,
+  "document": "docs/human405-case152-lean-native-path-20261107.md",
+  "nextContract": "adhoc/case152-after-v316-next-20261107-v1.md"
+}

@@ -1,0 +1,380 @@
+{
+  "scope": "CPU sampling only on V2 boundary fallback and V1 key prefix. Inclusive frames overlap. No performance acceptance or autonomous game.",
+  "path": "reports/ai-foundation-20261107/case152-after-scalar-profile-v1/current-after-scalar-runtime-20261107-v1.cpuprofile",
+  "sha256": "ac9021ebe9b668af08248731a626fb3312749b9e0e3b28fd00a490dd39a7fe01",
+  "samples": 606,
+  "inclusive": [
+    {
+      "function": "(root) :0",
+      "ms": 758.542
+    },
+    {
+      "function": " adhoc/profile-v314-case152-after-scalar-runtime-20261107-v1.js:1",
+      "ms": 708.753
+    },
+    {
+      "function": "searchDecision ai/decision-search.js:14",
+      "ms": 676.378
+    },
+    {
+      "function": "expand ai/analysis-port.js:605",
+      "ms": 248.418
+    },
+    {
+      "function": "add ai/decision-search.js:215",
+      "ms": 235.208
+    },
+    {
+      "function": "expandResourcePlan ai/analysis-port.js:950",
+      "ms": 230.585
+    },
+    {
+      "function": "executeCurrent ai/analysis-port.js:1183",
+      "ms": 152.958
+    },
+    {
+      "function": "plan ai/goal-movement.js:40",
+      "ms": 147.123
+    },
+    {
+      "function": "goalMovementSpec ai/analysis-port.js:1080",
+      "ms": 134.873
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112",
+      "ms": 124.379
+    },
+    {
+      "function": "submitDecision game/rule-composition.js:782",
+      "ms": 106.747
+    },
+    {
+      "function": " ai/analysis-port.js:1003",
+      "ms": 97.958
+    },
+    {
+      "function": "movementTiming ai/analysis-port.js:1012",
+      "ms": 91.999
+    },
+    {
+      "function": "resolveDecision effects/session-runtime.js:727",
+      "ms": 91.538
+    },
+    {
+      "function": "dataTailCompletion ai/local-decision-plans.js:209",
+      "ms": 90.584
+    },
+    {
+      "function": "resourceSpec ai/analysis-port.js:798",
+      "ms": 90.083
+    },
+    {
+      "function": "comparePlannedMovementTiming game/production-kernel.js:1872",
+      "ms": 77.999
+    },
+    {
+      "function": "commit effects/session-runtime.js:383",
+      "ms": 71.624
+    },
+    {
+      "function": "afterRotation game/production-kernel.js:1879",
+      "ms": 70.29
+    },
+    {
+      "function": "runWithWorkingState game/production-kernel.js:1669",
+      "ms": 69.082
+    },
+    {
+      "function": "runWithWorkingStateContext game/rule-composition.js:399",
+      "ms": 69.082
+    },
+    {
+      "function": "turnTailSummary ai/analysis-port.js:2164",
+      "ms": 67.959
+    },
+    {
+      "function": "finishChild ai/analysis-port.js:1249",
+      "ms": 65.876
+    },
+    {
+      "function": "compareAndCommit state/state-store.js:363",
+      "ms": 63.873
+    },
+    {
+      "function": "previewBlueCompletion ai/local-decision-plans.js:117",
+      "ms": 63.457
+    },
+    {
+      "function": "planningCapital ai/resource-demand.js:147",
+      "ms": 61.624
+    },
+    {
+      "function": "buildProbeRouteRequirements game/production-kernel.js:584",
+      "ms": 59.666
+    },
+    {
+      "function": "validate state/state-store.js:273",
+      "ms": 57.665
+    },
+    {
+      "function": "expandWithCardPick ai/analysis-port.js:715",
+      "ms": 55.667
+    },
+    {
+      "function": "purposeCapitalWithoutTools ai/state-value.js:504",
+      "ms": 52.998
+    },
+    {
+      "function": "purposeCapitalWithoutPublicityPreparation ai/state-value.js:509",
+      "ms": 52.998
+    },
+    {
+      "function": "purposeCapitalWithoutFutureProbe ai/state-value.js:516",
+      "ms": 52.998
+    }
+  ],
+  "self": [
+    {
+      "function": "structuredClone worker/js_transferable:112",
+      "ms": 122.962
+    },
+    {
+      "function": "(garbage collector) :0",
+      "ms": 49.789
+    },
+    {
+      "function": "forwardIdentity ai/analysis-port.js:153",
+      "ms": 25.877
+    },
+    {
+      "function": "stableSerialize state/state-store.js:59",
+      "ms": 24.502
+    },
+    {
+      "function": "visit state/low-coupling-slices.js:110",
+      "ms": 19.207
+    },
+    {
+      "function": "immutableCapitalInput ai/resource-demand.js:122",
+      "ms": 17.084
+    },
+    {
+      "function": "post node:inspector:118",
+      "ms": 16.042
+    },
+    {
+      "function": "movementTiming ai/analysis-port.js:1012",
+      "ms": 14
+    },
+    {
+      "function": "requirements ai/probe-capital.js:68",
+      "ms": 12.874
+    },
+    {
+      "function": "scanForbidden state/high-coupling-slices.js:113",
+      "ms": 10.583
+    },
+    {
+      "function": "normalizeObject ai/analysis-port.js:226",
+      "ms": 10.501
+    },
+    {
+      "function": "deepFreeze state/state-store.js:40",
+      "ms": 7.75
+    },
+    {
+      "function": "getSectorOccupancy game/rockets.js:216",
+      "ms": 7.626
+    },
+    {
+      "function": "getBaseWheelCell solar-system/core.js:500",
+      "ms": 7.583
+    },
+    {
+      "function": "quote ai/probe-capital.js:99",
+      "ms": 6.833
+    },
+    {
+      "function": "mod8 solar-system/core.js:91",
+      "ms": 6.041
+    },
+    {
+      "function": "snapshot ai/analysis-port.js:426",
+      "ms": 5.999
+    },
+    {
+      "function": "settleRocketsAfterSolarRotation abilities/rocket.js:573",
+      "ms": 5.625
+    },
+    {
+      "function": "validateForbiddenFields state/low-coupling-slices.js:137",
+      "ms": 5.417
+    },
+    {
+      "function": "stableHash effects/science-session.js:226",
+      "ms": 5.333
+    },
+    {
+      "function": "getSolarCellBoundary solar-system/core.js:284",
+      "ms": 5.208
+    },
+    {
+      "function": " state/high-coupling-slices.js:224",
+      "ms": 4.584
+    },
+    {
+      "function": "capital ai/probe-capital.js:117",
+      "ms": 4.542
+    },
+    {
+      "function": "restoreCheckpoint effects/session-runtime.js:899",
+      "ms": 4.5
+    },
+    {
+      "function": "deepFreeze game/rule-composition.js:42",
+      "ms": 4.5
+    },
+    {
+      "function": "serializeString state/state-store.js:49",
+      "ms": 4.458
+    },
+    {
+      "function": "collectVisibleCoordinateContents solar-system/core.js:653",
+      "ms": 4.167
+    },
+    {
+      "function": "contentAt game/production-kernel.js:448",
+      "ms": 3.917
+    },
+    {
+      "function": "buildProbeCandidateStructures game/production-kernel.js:754",
+      "ms": 3.667
+    },
+    {
+      "function": "getWheelStep solar-system/core.js:182",
+      "ms": 3.5
+    }
+  ],
+  "selectedPaths": [
+    {
+      "function": "resourceSpec ai/analysis-port.js:798 <- add ai/decision-search.js:215 <- searchDecision ai/decision-search.js:14 <-  adhoc/profile-v314-case152-after-scalar-runtime-20261107-v1.js:1 <- (root) :0",
+      "ms": 81.292
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone effects/session-runtime.js:19 <- restoreCheckpoint effects/session-runtime.js:899 <- restore game/rule-composition.js:888 <- restoreEnvelope ai/analysis-port.js:438",
+      "ms": 25.084
+    },
+    {
+      "function": "stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59",
+      "ms": 19.042
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone state/state-store.js:36 <- beginWorkingCopy state/state-store.js:346 <- dispatchStandardAction effects/session-runtime.js:484 <- submitAction game/rule-composition.js:687",
+      "ms": 18.126
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewBlueCompletion ai/local-decision-plans.js:117 <- dataTailCompletion ai/local-decision-plans.js:209 <- turnTailSummary ai/analysis-port.js:2164 <- searchDecision ai/decision-search.js:14",
+      "ms": 8.917
+    },
+    {
+      "function": "stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- serializeForkSnapshot state/state-store.js:482 <- save game/rule-composition.js:829",
+      "ms": 8.334
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone app/rule-observation.js:39 <- buildRuleObservation app/rule-observation.js:126 <- projectCounterfactualState adhoc/profile-v314-case152-after-scalar-runtime-20261107-v1.js:12 <- projectState game/production-kernel.js:1691",
+      "ms": 8.333
+    },
+    {
+      "function": "normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205 <- normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205 <- normalizeObject ai/analysis-port.js:226",
+      "ms": 7.834
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewComputerCompletion ai/local-decision-plans.js:167 <-  ai/local-decision-plans.js:242 <- dataTailCompletion ai/local-decision-plans.js:209 <- turnTailSummary ai/analysis-port.js:2164",
+      "ms": 7.5
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone effects/session-runtime.js:19 <- commit effects/session-runtime.js:383 <- resolveDecision effects/session-runtime.js:727 <- submitDecision game/rule-composition.js:782",
+      "ms": 6.209
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- settleRocketsAfterSolarRotation abilities/rocket.js:573 <- context.rotateSolarOrbit effects/science-session.js:158 <- rotateForResearch tech/resolver.js:329 <- executeTakeTech tech/resolver.js:386",
+      "ms": 5.458
+    },
+    {
+      "function": "normalizeDescriptor actions/standard-action.js:71 <- enumerate actions/standard-action.js:126 <- enumerate game/production-composition.js:822 <-  game/rule-composition.js:797 <- runWithWorkingState game/production-kernel.js:1669",
+      "ms": 4.667
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewBlueCompletion ai/local-decision-plans.js:117 <- dataTailCompletion ai/local-decision-plans.js:209 <- movementTail ai/funded-movement-tail.js:19 <- quote adhoc/profile-v314-case152-after-scalar-runtime-20261107-v1.js:9",
+      "ms": 4.5
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewComputerCompletion ai/local-decision-plans.js:167 <- computerCompletion ai/local-decision-plans.js:191 <-  ai/analysis-port.js:830 <- resourceSpec ai/analysis-port.js:798",
+      "ms": 4.458
+    },
+    {
+      "function": "normalize ai/analysis-port.js:205 <- normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205 <- normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205",
+      "ms": 3.376
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone effects/session-runtime.js:19 <- inspect effects/session-runtime.js:291 <- inspect game/rule-composition.js:625 <- executeCurrent ai/analysis-port.js:1183",
+      "ms": 3.042
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewComputerCompletion ai/local-decision-plans.js:167 <-  ai/local-decision-plans.js:242 <- dataTailCompletion ai/local-decision-plans.js:209 <- movementTail ai/funded-movement-tail.js:19",
+      "ms": 3.042
+    },
+    {
+      "function": "stableSerialize effects/session-runtime.js:23 <- resolveDecision effects/session-runtime.js:727 <- submitDecision game/rule-composition.js:782 <- executeCurrent ai/analysis-port.js:1183 <- expand ai/analysis-port.js:605",
+      "ms": 3.041
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- takeSelectedTechTile tech/resolver.js:238 <- executeTakeTech tech/resolver.js:386 <- executeResearchChoice effects/science-session.js:397 <- resolveDecision effects/science-session.js:1870",
+      "ms": 2.958
+    },
+    {
+      "function": "normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205 <- normalizeObject ai/analysis-port.js:226 <- normalize ai/analysis-port.js:205 <- forwardIdentity ai/analysis-port.js:153",
+      "ms": 2.667
+    },
+    {
+      "function": "stableSerialize effects/science-session.js:218 <-  effects/science-session.js:221 <- stableSerialize effects/science-session.js:218 <- stableHash effects/science-session.js:226 <-  effects/science-session.js:237",
+      "ms": 1.625
+    },
+    {
+      "function": "stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- stableSerialize state/state-store.js:59 <- serializeForkSnapshot state/state-store.js:482",
+      "ms": 1.542
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone effects/session-runtime.js:19 <- commit effects/session-runtime.js:383 <- advance effects/session-runtime.js:665 <- drain effects/session-runtime.js:708",
+      "ms": 1.542
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- buildProbeCandidateStructures game/production-kernel.js:754 <- buildProbeRouteRequirements game/production-kernel.js:584 <- getProbeRouteRequirements game/production-kernel.js:1938 <- endpoints ai/analysis-port.js:1088",
+      "ms": 1.542
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone game/rule-composition.js:23 <- publish game/rule-composition.js:441 <- finishIfTerminal game/rule-composition.js:655 <- advanceSession game/rule-composition.js:674",
+      "ms": 1.542
+    },
+    {
+      "function": "normalizeGroup effects/session-runtime.js:71 <- dispatchAction effects/session-runtime.js:544 <- dispatchStandardAction effects/session-runtime.js:484 <- submitAction game/rule-composition.js:687 <- submitQuickAction game/rule-composition.js:763",
+      "ms": 1.542
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone state/state-store.js:36 <- loadCurrent state/state-store.js:301 <- deserialize state/state-store.js:317 <- validateRestore game/rule-composition.js:859",
+      "ms": 1.5
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone game/production-composition.js:97 <- createSessionDecisionEffect game/production-composition.js:558 <- attachNextDecision game/production-composition.js:590 <- execute game/production-composition.js:803",
+      "ms": 1.5
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- clone game/rule-composition.js:23 <- executeRegisteredAction game/rule-composition.js:411 <-  effects/standard-action-session.js:30 <-  game/rule-composition.js:481",
+      "ms": 1.5
+    },
+    {
+      "function": "structuredClone worker/js_transferable:112 <- previewBlueCompletion ai/local-decision-plans.js:117 <- dataTailCompletion ai/local-decision-plans.js:209 <- dataTailCompletion ai/local-decision-plans.js:209 <- dataTailCompletion ai/local-decision-plans.js:209",
+      "ms": 1.5
+    }
+  ]
+}

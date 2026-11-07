@@ -1,0 +1,101 @@
+{
+  "scope": "Native timing and exact warm-query controls, current full endpoint menus, validator errors including path and order, and original targeted Node behavior suites. No official cold gate or game.",
+  "rotationCases": 237,
+  "queryGroups": 33,
+  "fullMenuGroups": 33,
+  "controls": [
+    "missing-native-target",
+    "borrowed-movement-tech",
+    "temporary-move-effect",
+    "company-free-movement",
+    "paid-wallet-changed",
+    "free-prefix-credit",
+    "stale-move-cost",
+    "zero-paid-distance",
+    "bad-cost-after-cached-valid-prefix",
+    "noncanonical-delta-not-shared",
+    "no-req",
+    "null-req",
+    "numeric-req",
+    "object-req",
+    "terminal"
+  ],
+  "diagnostics": {
+    "nativeRotations": 552,
+    "rotationReuses": 742,
+    "preparedDistanceContexts": 549
+  },
+  "committedValidatorComparisons": 130,
+  "malformedValidatorComparisons": 4,
+  "errors": [
+    [
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.data.extra.playerLabel"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.data.extra.nested.tokenSrc"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.solarSystem.wheelSteps"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.turn.overlay"
+      }
+    ],
+    [
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.players.players.0.hand.0.src"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.pieces.rockets.0.asset"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.cards.ui"
+      },
+      {
+        "code": "STATE_HOST_FIELD_FORBIDDEN",
+        "path": "$.tech.stacks.blue1.label"
+      }
+    ],
+    [
+      {
+        "code": "STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE",
+        "path": "$.aliens.extra.1.id"
+      },
+      {
+        "code": "STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE",
+        "path": "$.aliens.extra.2.id"
+      },
+      {
+        "code": "STATE_ALIEN_ENTITY_SEQUENCE_INVALID",
+        "path": "$.aliens.extra.3.sequence"
+      },
+      {
+        "code": "STATE_ALIEN_ENTITY_SEQUENCE_INVALID",
+        "path": "$.meta.sequences.alienEntity"
+      }
+    ],
+    [
+      {
+        "code": "STATE_ALIEN_ENTITY_SEQUENCE_INVALID",
+        "path": "$.meta.sequences.alienEntity"
+      }
+    ]
+  ],
+  "tests": [
+    "low-coupling-slices",
+    "high-coupling-slices",
+    "state-store",
+    "goal-movement"
+  ],
+  "trace": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "traceSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "newAutonomousRuns": 0
+}
