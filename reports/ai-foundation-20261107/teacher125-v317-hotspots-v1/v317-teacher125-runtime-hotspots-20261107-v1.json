@@ -1,0 +1,261 @@
+{
+  "scope": "CPU sample attribution only. Existing first cold result remains authoritative and is not overwritten. No acceptance sample or autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "existingColdEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v317-cold-actual-v256-125-20261107-v1.json",
+  "rank": [
+    "card_corner:295d3b4f",
+    123.58333333333333,
+    -14.083333333333334,
+    0,
+    7
+  ],
+  "nativeInputs": 127,
+  "samples": 612,
+  "profile": "reports/ai-foundation-20261107/teacher125-v317-hotspots-v1/v317-teacher125-runtime-20261107-v1.cpuprofile",
+  "profileSha256": "764b4dbe115a569708e0abde7dd8d27f58fd51eed0dc4dca7c855e46488d6374",
+  "self": [
+    {
+      "name": "structuredClone worker/js_transferable:112",
+      "ms": 50.833
+    },
+    {
+      "name": "(garbage collector) :0",
+      "ms": 42.711
+    },
+    {
+      "name": " ai/state-value.js:204",
+      "ms": 26.082
+    },
+    {
+      "name": "createGains ai/research-trigger-capital.js:66",
+      "ms": 22.541
+    },
+    {
+      "name": "gains ai/research-trigger-capital.js:62",
+      "ms": 18.625
+    },
+    {
+      "name": "markGain ai/state-value.js:170",
+      "ms": 17.582
+    },
+    {
+      "name": "requirements ai/probe-capital.js:69",
+      "ms": 14.916
+    },
+    {
+      "name": "forwardIdentity ai/analysis-port.js:153",
+      "ms": 13.791
+    },
+    {
+      "name": "quote ai/amiba-analysis-capital.js:146",
+      "ms": 13.583
+    },
+    {
+      "name": "post node:inspector:118",
+      "ms": 12.792
+    },
+    {
+      "name": "prepaidCapital ai/ready-analysis-capital.js:13",
+      "ms": 11.001
+    },
+    {
+      "name": "getTechType tech/catalog.js:57",
+      "ms": 10.96
+    },
+    {
+      "name": "normalize ai/analysis-port.js:205",
+      "ms": 10.333
+    },
+    {
+      "name": "normalizeObject ai/analysis-port.js:226",
+      "ms": 9.916
+    },
+    {
+      "name": "newResearchMark ai/state-value.js:134",
+      "ms": 9.751
+    },
+    {
+      "name": "immutableCapitalInput ai/resource-demand.js:122",
+      "ms": 9.376
+    },
+    {
+      "name": "copyPublicSymbolState aliens/amiba.js:570",
+      "ms": 9.042
+    },
+    {
+      "name": "handOptions ai/state-value.js:264",
+      "ms": 8.916
+    },
+    {
+      "name": "basePurposeCapital ai/state-value.js:372",
+      "ms": 8.499
+    },
+    {
+      "name": "stableSerialize state/state-store.js:91",
+      "ms": 8
+    },
+    {
+      "name": "sum ai/value-arithmetic.js:28",
+      "ms": 7.584
+    },
+    {
+      "name": "researchPurposeGains ai/state-value.js:159",
+      "ms": 7.501
+    },
+    {
+      "name": "gain ai/research-trigger-capital.js:98",
+      "ms": 7.417
+    },
+    {
+      "name": "researchFunding ai/state-value.js:148",
+      "ms": 7.291
+    },
+    {
+      "name": "copy state/state-store.js:46",
+      "ms": 6.583
+    },
+    {
+      "name": "quote ai/probe-capital.js:100",
+      "ms": 6.251
+    },
+    {
+      "name": "visit state/low-coupling-slices.js:110",
+      "ms": 6.209
+    },
+    {
+      "name": "incomePreparation ai/amiba-analysis-capital.js:109",
+      "ms": 5.959
+    },
+    {
+      "name": "deepFreeze state/state-store.js:72",
+      "ms": 5.958
+    },
+    {
+      "name": "newMark ai/state-value.js:181",
+      "ms": 5.624
+    }
+  ],
+  "inclusive": [
+    {
+      "name": "(root) :0",
+      "ms": 730.709
+    },
+    {
+      "name": " adhoc/profile-v317-teacher125-native-path-20261107-v1.js:1",
+      "ms": 687.998
+    },
+    {
+      "name": "searchDecision ai/decision-search.js:14",
+      "ms": 661.706
+    },
+    {
+      "name": "purposeCapital ai/state-value.js:524",
+      "ms": 403.169
+    },
+    {
+      "name": "purposeCapitalWithoutFutureProbe ai/state-value.js:516",
+      "ms": 396.793
+    },
+    {
+      "name": "purposeCapitalWithoutPublicityPreparation ai/state-value.js:509",
+      "ms": 396.127
+    },
+    {
+      "name": "purposeCapitalWithoutTools ai/state-value.js:504",
+      "ms": 386.087
+    },
+    {
+      "name": "planningCapital ai/resource-demand.js:147",
+      "ms": 373.962
+    },
+    {
+      "name": "purposeCapitalWithoutSymbols ai/state-value.js:499",
+      "ms": 370.963
+    },
+    {
+      "name": "capitalWithoutSector ai/state-value.js:494",
+      "ms": 367.922
+    },
+    {
+      "name": "capitalWithoutIncomeSwap ai/state-value.js:384",
+      "ms": 366.381
+    },
+    {
+      "name": "plan ai/card-pick-planning.js:232",
+      "ms": 287.711
+    },
+    {
+      "name": "swapIntent ai/card-pick-planning.js:176",
+      "ms": 284.711
+    },
+    {
+      "name": "basePurposeCapital ai/state-value.js:372",
+      "ms": 264.127
+    },
+    {
+      "name": "quote ai/known-symbol-capital.js:23",
+      "ms": 250.38
+    },
+    {
+      "name": " ai/state-value.js:505",
+      "ms": 235.256
+    },
+    {
+      "name": "quote ai/ready-analysis-capital.js:28",
+      "ms": 206.962
+    },
+    {
+      "name": "quote ai/analysis-publicity-capital.js:9",
+      "ms": 206.081
+    },
+    {
+      "name": "quote ai/amiba-analysis-capital.js:146",
+      "ms": 199.253
+    },
+    {
+      "name": " ai/state-value.js:518",
+      "ms": 179.71
+    },
+    {
+      "name": "describeCardPick ai/analysis-port.js:684",
+      "ms": 179.253
+    },
+    {
+      "name": "cardPickSpec ai/analysis-port.js:695",
+      "ms": 178.795
+    },
+    {
+      "name": "expandResourcePlan ai/analysis-port.js:950",
+      "ms": 175.667
+    },
+    {
+      "name": "turnTailSummary ai/analysis-port.js:2164",
+      "ms": 173.541
+    },
+    {
+      "name": " ai/card-pick-planning.js:200",
+      "ms": 163.627
+    },
+    {
+      "name": "jointResearchCapital ai/state-value.js:311",
+      "ms": 157.583
+    },
+    {
+      "name": "incomePreparation ai/amiba-analysis-capital.js:109",
+      "ms": 154.085
+    },
+    {
+      "name": "dataTailCompletion ai/local-decision-plans.js:209",
+      "ms": 148.041
+    },
+    {
+      "name": "analysisPortfolio ai/state-value.js:393",
+      "ms": 125.501
+    },
+    {
+      "name": "add ai/decision-search.js:215",
+      "ms": 119.956
+    }
+  ]
+}

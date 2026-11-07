@@ -1,0 +1,1000 @@
+(function (root, factory) {
+  "use strict";
+
+  const api = factory();
+
+  if (typeof module === "object" && module.exports) {
+    module.exports = api;
+  }
+
+  if (typeof module === "undefined") root.SetiEffectSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  "use strict";
+
+  const SCHEMA_VERSION = "seti-effect-session-v1";
+  const CHECKPOINT_SCHEMA_VERSION = "seti-effect-session-checkpoint-v1";
+  const INTERNAL_RESUME_EFFECT = "@@seti/resume-interrupted-decision";
+  const TERMINAL_PHASES = new Set(["completed", "aborted", "irreversible_locked"]);
+  const SPAWN_PRIORITY = Object.freeze({ direct: 0, trigger: 1, deferred: 2 });
+
+  function clone(value) {
+    return value == null ? value : structuredClone(value);
+  }
+
+  function stableSerialize(value) {
+    if (value == null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+    return `{${Object.keys(value).sort().map((key) => (
+      `${JSON.stringify(key)}:${stableSerialize(value[key])}`
+    )).join(",")}}`;
+  }
+
+  function fail(code, message, details = {}) {
+    return { ok: false, code, message, ...details };
+  }
+
+  function normalizeResultArray(result, key, effect) {
+    if (result[key] == null) return [];
+    if (!Array.isArray(result[key])) {
+      throw new TypeError(`${effect.type} result.${key} 必须是数组`);
+    }
+    return clone(result[key]);
+  }
+
+  function assertFunction(value, name) {
+    if (typeof value !== "function") throw new TypeError(`${name} 必须是函数`);
+  }
+
+  function normalizeEffect(rawEffect, session, group, index) {
+    if (!rawEffect || typeof rawEffect !== "object") throw new TypeError("Effect 必须是对象");
+    if (!rawEffect.type) throw new TypeError("Effect 缺少 type");
+    const kind = rawEffect.kind || "effect";
+    if (kind !== "effect" && kind !== "decision") {
+      throw new TypeError(`未知 Effect kind: ${kind}`);
+    }
+    session.nextEffectSequence += 1;
+    return Object.freeze({
+      schemaVersion: SCHEMA_VERSION,
+      effectId: rawEffect.effectId || `${session.sessionId}:effect:${session.nextEffectSequence}`,
+      groupId: group.groupId,
+      groupKind: group.kind,
+      type: rawEffect.type,
+      kind,
+      ownerId: rawEffect.ownerId || group.ownerId || null,
+      decisionKind: rawEffect.decisionKind || null,
+      allowQuickActions: Boolean(rawEffect.allowQuickActions),
+      payload: clone(rawEffect.payload || {}),
+      source: clone(rawEffect.source || null),
+      groupIndex: index,
+    });
+  }
+
+  function normalizeGroup(rawGroup, session, defaultKind = "action") {
+    if (!rawGroup || typeof rawGroup !== "object") throw new TypeError("Effect Group 必须是对象");
+    if (!Array.isArray(rawGroup.effects)) throw new TypeError("Effect Group.effects 必须是数组");
+    if (rawGroup.effects.length === 0) throw new TypeError("Effect Group.effects 不得为空");
+    session.nextGroupSequence += 1;
+    const group = {
+      schemaVersion: SCHEMA_VERSION,
+      groupId: rawGroup.groupId || `${session.sessionId}:group:${session.nextGroupSequence}`,
+      kind: rawGroup.kind || defaultKind,
+      ownerId: rawGroup.ownerId || null,
+      action: clone(rawGroup.action || null),
+    };
+    return Object.freeze({
+      ...group,
+      effects: Object.freeze(rawGroup.effects.map((effect, index) => (
+        normalizeEffect(effect, session, group, index)
+      ))),
+    });
+  }
+
+  function normalizeSpawnedEffects(spawnedEffects, session, parentEffect) {
+    const normalized = (Array.isArray(spawnedEffects) ? spawnedEffects : []).map((entry, index) => {
+      const rawEffect = entry?.effect || entry;
+      const priority = entry?.priority || "direct";
+      if (!(priority in SPAWN_PRIORITY)) throw new TypeError(`未知 spawned Effect priority: ${priority}`);
+      const group = normalizeGroup({
+        kind: "spawned",
+        ownerId: rawEffect?.ownerId || parentEffect.ownerId,
+        effects: [{
+          ...rawEffect,
+          source: {
+            parentEffectId: parentEffect.effectId,
+            priority,
+            ...(rawEffect?.source || {}),
+          },
+        }],
+      }, session, "spawned");
+      return { priority, index, effect: group.effects[0] };
+    });
+    normalized.sort((left, right) => (
+      SPAWN_PRIORITY[left.priority] - SPAWN_PRIORITY[right.priority]
+      || left.index - right.index
+    ));
+    return normalized.map((entry) => entry.effect);
+  }
+
+  let checkpointCopies = 0, choiceIdRejects = 0, serializedCandidates = 0;
+  function createRuntime(options = {}) {
+    const cloneState = options.cloneState || clone;
+    const cloneTrustedCheckpoint = options.cloneTrustedCheckpoint || clone;
+    const getStateVersion = options.getStateVersion
+      || ((state) => state?.meta?.stateVersion ?? state?.version ?? null);
+    const validateState = options.validateState || (() => ({ ok: true }));
+    const projectState = options.projectState || ((state) => cloneState(state));
+    const stateStore = options.stateStore || null;
+    const beginWorkingCopy = stateStore?.beginWorkingCopy?.bind(stateStore) || null;
+    const compareAndCommit = stateStore?.compareAndCommit?.bind(stateStore) || null;
+    const readCommittedState = options.readCommittedState
+      || stateStore?.getSnapshot?.bind(stateStore)
+      || null;
+    const trustedIsolatedOwnership = options.trustedIsolatedOwnership === true;
+    const maxDrainSteps = Math.max(1, Number(options.maxDrainSteps) || 1000);
+    const executors = new Map();
+    let nextSessionSequence = 0;
+
+    assertFunction(cloneState, "cloneState");
+    assertFunction(getStateVersion, "getStateVersion");
+    assertFunction(validateState, "validateState");
+    assertFunction(projectState, "projectState");
+    if (readCommittedState != null) assertFunction(readCommittedState, "readCommittedState");
+    if (stateStore && (!beginWorkingCopy || !compareAndCommit || !readCommittedState)) {
+      throw new TypeError("stateStore 必须实现 getSnapshot/beginWorkingCopy/compareAndCommit");
+    }
+
+    function registerExecutor(type, executor) {
+      if (!type) throw new TypeError("executor type 不能为空");
+      if (executors.has(type)) throw new Error(`重复注册 Effect executor: ${type}`);
+      if (typeof executor === "function") {
+        executors.set(type, Object.freeze({ execute: executor }));
+        return executor;
+      }
+      if (!executor || typeof executor !== "object") throw new TypeError("Effect executor 必须是函数或对象");
+      if (typeof executor.execute !== "function" && typeof executor.getLegalChoices !== "function") {
+        throw new TypeError(`${type} executor 缺少 execute() 或 getLegalChoices()`);
+      }
+      executors.set(type, Object.freeze({ ...executor }));
+      return executor;
+    }
+
+    function createSession(committedState, meta = {}) {
+      nextSessionSequence += 1;
+      const sessionId = meta.sessionId || `effect-session-${nextSessionSequence}`;
+      const baseState = trustedIsolatedOwnership ? committedState : cloneState(committedState);
+      return {
+        schemaVersion: SCHEMA_VERSION,
+        sessionId,
+        phase: "session_open",
+        baseVersion: meta.baseVersion ?? getStateVersion(committedState),
+        baseState,
+        workingState: trustedIsolatedOwnership ? baseState : cloneState(baseState),
+        committedState: null,
+        queue: [],
+        journal: {
+          actions: [],
+          decisions: [],
+          effects: [],
+          events: [],
+          rng: [],
+          history: [],
+          logs: [],
+          replay: [],
+        },
+        failure: null,
+        irreversibleBarrier: null,
+        revision: 0,
+        nextEffectSequence: 0,
+        nextGroupSequence: 0,
+        interruptContext: null,
+        undoFrames: [],
+        commitResult: null,
+      };
+    }
+
+    function appendReplayStep(session, kind, payload) {
+      const cursor = session.journal.replay.length;
+      session.journal.replay.push({
+        cursor,
+        kind,
+        confirmed: true,
+        ...clone(payload),
+      });
+      return cursor + 1;
+    }
+
+    function captureUndoFrame(session, effect) {
+      if (trustedIsolatedOwnership) return null;
+      const journalLengths = {};
+      for (const [key, entries] of Object.entries(session.journal)) {
+        if (Array.isArray(entries)) journalLengths[key] = entries.length;
+      }
+      return {
+        effectId: effect.effectId,
+        stateBefore: trustedIsolatedOwnership
+          ? session.workingState
+          : cloneState(session.workingState),
+        queueBefore: clone(session.queue),
+        revisionBefore: session.revision,
+        phaseBefore: session.phase,
+        journalLengths,
+        irreversibleBarrierBefore: clone(session.irreversibleBarrier),
+        interruptContextBefore: clone(session.interruptContext),
+        nextEffectSequenceBefore: session.nextEffectSequence,
+        nextGroupSequenceBefore: session.nextGroupSequence,
+      };
+    }
+
+    function restoreUndoFrame(session, frame) {
+      session.workingState = trustedIsolatedOwnership
+        ? frame.stateBefore
+        : cloneState(frame.stateBefore);
+      session.queue = clone(frame.queueBefore);
+      session.revision = frame.revisionBefore;
+      session.phase = frame.phaseBefore;
+      session.irreversibleBarrier = clone(frame.irreversibleBarrierBefore);
+      session.interruptContext = clone(frame.interruptContextBefore);
+      session.nextEffectSequence = frame.nextEffectSequenceBefore;
+      session.nextGroupSequence = frame.nextGroupSequenceBefore;
+      for (const [key, length] of Object.entries(frame.journalLengths)) {
+        if (Array.isArray(session.journal[key])) session.journal[key].length = length;
+      }
+    }
+
+    function isActive(session) {
+      return session && !TERMINAL_PHASES.has(session.phase);
+    }
+
+    function currentEffect(session) {
+      return session?.queue?.[0] || null;
+    }
+
+    function getDecisionSnapshot(session, effect = currentEffect(session), options = {}) {
+      if (!effect || effect.kind !== "decision") return null;
+      const executor = executors.get(effect.type);
+      if (!executor || typeof executor.getLegalChoices !== "function") {
+        return fail("EFFECT_DECISION_EXECUTOR_MISSING", `DecisionEffect ${effect.type} 缺少合法项枚举器`, {
+          effectId: effect.effectId,
+          type: effect.type,
+        });
+      }
+      const snapshot = {
+        ok: true,
+        decisionId: effect.effectId,
+        decisionVersion: session.revision,
+        ownerId: effect.ownerId,
+        decisionKind: effect.decisionKind || effect.type,
+        allowQuickActions: effect.allowQuickActions,
+        choices: null,
+      };
+      // 搜索中间节点只需要 decision 元数据（decisionId/version/ownerId）与后续 choices；
+      // 前提交 inspect 与 cheap 投影跳过完整枚举，避免每节点 2-3 次 getLegalChoices。
+      if (options.skipChoices === true) return snapshot;
+      let choices;
+      try {
+        choices = executor.getLegalChoices(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+        ) || [];
+      } catch (error) {
+        return fail("EFFECT_DECISION_ENUMERATION_FAILED", error?.message || `${effect.type} 合法项枚举失败`, {
+          effectId: effect.effectId,
+          type: effect.type,
+        });
+      }
+      if (!Array.isArray(choices)) {
+        return fail("EFFECT_DECISION_CHOICES_INVALID", `${effect.type} 未返回合法项数组`, {
+          effectId: effect.effectId,
+        });
+      }
+      snapshot.choices = clone(choices);
+      return snapshot;
+    }
+
+    function inspect(session, options = {}) {
+      if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
+      const effect = currentEffect(session);
+      const decision = session.phase === "awaiting_input"
+        ? getDecisionSnapshot(session, effect, options)
+        : null;
+      const undoFrame = session.undoFrames[session.undoFrames.length - 1] || null;
+      const undoCrossesBarrier = Boolean(
+        undoFrame
+        && session.irreversibleBarrier
+        && stableSerialize(session.irreversibleBarrier) !== stableSerialize(undoFrame.irreversibleBarrierBefore),
+      );
+      const canUndo = Boolean(undoFrame) && !undoCrossesBarrier
+        && !["effect_running", "committing", "completed", "aborted", "irreversible_locked"].includes(session.phase);
+      const completedEffects = session.journal.effects.length;
+      return {
+        ok: !session.failure,
+        schemaVersion: SCHEMA_VERSION,
+        sessionId: session.sessionId,
+        phase: session.phase,
+        baseVersion: session.baseVersion,
+        revision: session.revision,
+        queueLength: session.queue.length,
+        currentEffect: effect ? clone(effect) : null,
+        decision,
+        controls: {
+          canUndo,
+          undoDisabledReason: canUndo
+            ? null
+            : (undoCrossesBarrier
+              ? "不可越过隐藏信息屏障撤销"
+              : (undoFrame ? "只能在 Effect 边界撤销" : "没有可撤销的 Effect")),
+          allowQuickActions: Boolean(
+            decision?.ok === true && decision.allowQuickActions
+          ),
+        },
+        progress: {
+          completedEffects,
+          remainingEffects: session.queue.length,
+          totalEffects: completedEffects + session.queue.length,
+          currentEffectId: effect?.effectId || null,
+          currentEffectType: effect?.type || null,
+        },
+        irreversibleBarrier: clone(session.irreversibleBarrier),
+        failure: clone(session.failure),
+      };
+    }
+
+    function observe(session, viewer = null, options = {}) {
+      if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
+      const state = session.phase === "completed" ? session.committedState : session.workingState;
+      const skipDecisionChoices = options.skipDecisionChoices === true;
+      const inspection = inspect(session, { skipChoices: skipDecisionChoices });
+      // 同一次观察只枚举一次；投影与返回决策各持独立副本，不跨调用缓存。
+      const decision = session.phase === "awaiting_input" && !skipDecisionChoices
+        ? clone(inspection.decision)
+        : null;
+      return {
+        schemaVersion: SCHEMA_VERSION,
+        sessionId: session.sessionId,
+        phase: session.phase,
+        revision: session.revision,
+        state: projectState(
+          trustedIsolatedOwnership ? state : cloneState(state),
+          viewer,
+          inspection,
+        ),
+        decision,
+      };
+    }
+
+    function abort(session, failure) {
+      session.failure = clone(failure);
+      if (session.irreversibleBarrier) {
+        session.phase = "irreversible_locked";
+        return fail("EFFECT_SESSION_IRREVERSIBLE_LOCKED", "session 已越过不可撤销屏障，拒绝回滚", {
+          failure: clone(failure),
+          irreversibleBarrier: clone(session.irreversibleBarrier),
+          session,
+        });
+      }
+      session.workingState = trustedIsolatedOwnership
+        ? session.baseState
+        : cloneState(session.baseState);
+      session.queue = [];
+      session.phase = "aborted";
+      return fail(failure.code || "EFFECT_SESSION_ABORTED", failure.message || "Effect Session 已回滚", {
+        failure: clone(failure),
+        session,
+      });
+    }
+
+    function commit(session) {
+      if (session.queue.length > 0) {
+        return fail("EFFECT_SESSION_NOT_DRAINED", "Effect Queue 未清空，不能提交");
+      }
+      session.phase = "committing";
+      if (!compareAndCommit) {
+        const authorityState = readCommittedState ? readCommittedState() : session.baseState;
+        const currentVersion = getStateVersion(authorityState);
+        if (currentVersion !== session.baseVersion) {
+          return abort(session, {
+            code: "EFFECT_SESSION_VERSION_CONFLICT",
+            message: "committedState 版本已变化，拒绝覆盖",
+            baseVersion: session.baseVersion,
+            currentVersion,
+          });
+        }
+      }
+      const validation = validateState(
+        trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+        session,
+      );
+      if (validation?.ok === false) {
+        return abort(session, {
+          code: validation.code || "EFFECT_SESSION_INVARIANT_FAILED",
+          message: validation.message || "session 提交前不变量失败",
+          validation: clone(validation),
+        });
+      }
+      if (compareAndCommit) {
+        let committed;
+        try {
+          committed = compareAndCommit(
+            session.baseVersion,
+            trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+            {
+            sessionId: session.sessionId,
+            journal: clone(session.journal),
+            },
+          );
+        } catch (error) {
+          return abort(session, {
+            code: "EFFECT_SESSION_COMMIT_THROWN",
+            message: error?.message || "StateStore compareAndCommit 抛出异常",
+          });
+        }
+        if (!committed?.ok) {
+          return abort(session, {
+            code: committed?.code || "EFFECT_SESSION_COMMIT_FAILED",
+            message: committed?.message || "StateStore compareAndCommit 拒绝提交",
+            commit: clone(committed),
+          });
+        }
+        if (!committed.snapshot) {
+          return abort(session, {
+            code: "EFFECT_SESSION_COMMIT_SNAPSHOT_MISSING",
+            message: "StateStore 提交成功但未返回 committed snapshot",
+          });
+        }
+        session.committedState = trustedIsolatedOwnership
+          ? committed.snapshot
+          : cloneState(committed.snapshot);
+        session.commitResult = trustedIsolatedOwnership ? committed : clone(committed);
+      } else {
+        session.committedState = cloneState(session.workingState);
+      }
+      session.phase = "completed";
+      return {
+        ok: true,
+        session,
+        committedState: trustedIsolatedOwnership
+          ? session.committedState
+          : cloneState(session.committedState),
+      };
+    }
+
+    function dispatchStoredAction(action, createEffectGroup, meta = {}) {
+      if (!beginWorkingCopy) {
+        return fail("EFFECT_SESSION_STATE_STORE_REQUIRED", "runtime 未配置 StateStore");
+      }
+      let working;
+      try {
+        working = beginWorkingCopy(meta.baseVersion);
+      } catch (error) {
+        return fail(
+          "EFFECT_SESSION_WORKING_COPY_THROWN",
+          error?.message || "StateStore beginWorkingCopy 抛出异常",
+        );
+      }
+      if (!working?.ok) {
+        return fail(
+          working?.code || "EFFECT_SESSION_WORKING_COPY_FAILED",
+          working?.message || "StateStore 拒绝建立 working copy",
+          { working: clone(working) },
+        );
+      }
+      return dispatchAction(working.state, action, createEffectGroup, {
+        ...clone(meta),
+        baseVersion: working.baseVersion,
+      });
+    }
+
+    function dispatchStandardAction(action, registry, createEffectGroup, meta = {}) {
+      if (!beginWorkingCopy || !compareAndCommit) {
+        return fail(
+          "EFFECT_STANDARD_ACTION_STORE_REQUIRED",
+          "Standard Action 生产入口必须绑定 StateStore",
+        );
+      }
+      if (!registry || typeof registry.validate !== "function") {
+        return fail(
+          "EFFECT_STANDARD_ACTION_REGISTRY_REQUIRED",
+          "Standard Action 生产入口缺少唯一 registry.validate",
+        );
+      }
+      if (typeof createEffectGroup !== "function") {
+        return fail(
+          "EFFECT_STANDARD_ACTION_GROUP_FACTORY_REQUIRED",
+          "Standard Action 生产入口缺少 Effect Group 构建器",
+        );
+      }
+
+      let working;
+      try {
+        working = beginWorkingCopy(meta.baseVersion);
+      } catch (error) {
+        return fail("EFFECT_STATE_WORKING_COPY_FAILED", error?.message || "StateStore working copy 创建失败");
+      }
+      if (!working?.ok) {
+        return fail(
+          working?.code || "EFFECT_STATE_WORKING_COPY_FAILED",
+          working?.message || "StateStore working copy 创建失败",
+          { stateStore: clone(working) },
+        );
+      }
+
+      let validation;
+      try {
+        validation = registry.validate(
+          trustedIsolatedOwnership ? working.state : cloneState(working.state),
+          clone(action),
+        );
+      } catch (error) {
+        return fail(
+          "EFFECT_STANDARD_ACTION_VALIDATION_FAILED",
+          error?.message || "Standard Action 校验失败",
+        );
+      }
+      if (!validation?.ok) {
+        return fail(
+          validation?.code || "EFFECT_STANDARD_ACTION_NOT_LEGAL",
+          validation?.message || "Standard Action 已过期或不合法",
+          { validation: clone(validation) },
+        );
+      }
+
+      return dispatchAction(working.state, action, createEffectGroup, {
+        ...clone(meta),
+        baseVersion: working.baseVersion,
+      });
+    }
+
+    function dispatchAction(committedState, action, createEffectGroup, meta = {}) {
+      assertFunction(createEffectGroup, "createEffectGroup");
+      const session = createSession(committedState, meta);
+      let rawGroup;
+      try {
+        rawGroup = createEffectGroup(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          clone(action),
+        );
+      } catch (error) {
+        return abort(session, {
+          code: "EFFECT_ACTION_REJECTED",
+          message: error?.message || "Action 未能生成 Effect Group",
+        });
+      }
+      if (rawGroup?.ok === false) return abort(session, rawGroup);
+      let group;
+      try {
+        group = normalizeGroup({ ...rawGroup, action }, session, "action");
+      } catch (error) {
+        return abort(session, {
+          code: "EFFECT_GROUP_INVALID",
+          message: error?.message || "Action 生成了无效 Effect Group",
+        });
+      }
+      session.queue.push(...group.effects);
+      session.journal.actions.push({
+        action: clone(action),
+        groupId: group.groupId,
+        groupKind: "action",
+        quick: false,
+        revision: session.revision,
+      });
+      appendReplayStep(session, "action", {
+        action,
+        groupId: group.groupId,
+        groupKind: "action",
+      });
+      session.phase = "action_accepted";
+      if (session.queue.length === 0) return commit(session);
+      return { ok: true, session, group };
+    }
+
+    function applyResult(session, effect, result, undoFrame = null) {
+      if (!result || result.ok !== true || !("nextState" in result)) {
+        return abort(session, {
+          code: result?.code || "EFFECT_EXECUTION_FAILED",
+          message: result?.message || `${effect.type} 未返回 { ok: true, nextState }`,
+          effectId: effect.effectId,
+          type: effect.type,
+        });
+      }
+      let spawnedEffects;
+      let events;
+      let rng;
+      let history;
+      try {
+        spawnedEffects = normalizeSpawnedEffects(result.spawnedEffects, session, effect);
+        events = normalizeResultArray(result, "events", effect);
+        rng = normalizeResultArray(result, "rng", effect);
+        history = normalizeResultArray(result, "history", effect);
+      } catch (error) {
+        return abort(session, {
+          code: "EFFECT_RESULT_INVALID",
+          message: error?.message || "Effect result 无效",
+          effectId: effect.effectId,
+        });
+      }
+      session.workingState = trustedIsolatedOwnership
+        ? result.nextState
+        : cloneState(result.nextState);
+      session.revision += 1;
+      session.queue.shift();
+      if (spawnedEffects.length) session.queue.unshift(...spawnedEffects);
+      session.journal.events.push(...events);
+      session.journal.rng.push(...rng);
+      session.journal.history.push(...history);
+      if (result.log != null) session.journal.logs.push(clone(result.log));
+      if (result.irreversible) {
+        session.irreversibleBarrier = {
+          effectId: effect.effectId,
+          revision: session.revision,
+          code: result.irreversible.code || "irreversible",
+          reason: result.irreversible.reason || "效果已向外暴露隐藏信息",
+        };
+      }
+      session.journal.effects.push({
+        effectId: effect.effectId,
+        groupId: effect.groupId,
+        groupKind: effect.groupKind,
+        type: effect.type,
+        revision: session.revision,
+      });
+      if (undoFrame) session.undoFrames.push(undoFrame);
+      return { ok: true, session, effect, result };
+    }
+
+    function resumeInterruptedDecision(session, marker) {
+      session.queue.shift();
+      session.revision += 1;
+      const effect = currentEffect(session);
+      if (!effect || effect.effectId !== marker.payload.effectId) {
+        return abort(session, {
+          code: "EFFECT_INTERRUPT_RESUME_MISMATCH",
+          message: "快速行动结束后找不到原 Effect",
+          expectedEffectId: marker.payload.effectId,
+          actualEffectId: effect?.effectId || null,
+        });
+      }
+      const interruptedKind = session.interruptContext?.kind || null;
+      session.interruptContext = null;
+      if (interruptedKind === "decision") {
+        session.phase = "awaiting_input";
+        const snapshot = getDecisionSnapshot(session, effect);
+        if (snapshot?.ok === false) return abort(session, snapshot);
+        return { ok: true, session, decision: snapshot, resumed: true };
+      }
+      session.phase = "draining";
+      return { ok: true, session, resumed: true };
+    }
+
+    function advance(session) {
+      if (!isActive(session)) return fail("EFFECT_SESSION_NOT_ACTIVE", "Effect Session 不在可推进状态", { session });
+      const effect = currentEffect(session);
+      if (!effect) return commit(session);
+      if (effect.type === INTERNAL_RESUME_EFFECT) return resumeInterruptedDecision(session, effect);
+      if (effect.kind === "decision") {
+        session.phase = "awaiting_input";
+        const snapshot = getDecisionSnapshot(session, effect);
+        if (snapshot?.ok === false) return abort(session, snapshot);
+        return { ok: true, session, decision: snapshot };
+      }
+      const executor = executors.get(effect.type);
+      if (!executor || typeof executor.execute !== "function") {
+        return abort(session, {
+          code: "EFFECT_EXECUTOR_NOT_REGISTERED",
+          message: `未注册 Effect executor: ${effect.type}`,
+          effectId: effect.effectId,
+          type: effect.type,
+        });
+      }
+      const undoFrame = captureUndoFrame(session, effect);
+      session.phase = session.interruptContext ? "interrupting" : "effect_running";
+      let result;
+      try {
+        result = executor.execute(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+        );
+      } catch (error) {
+        return abort(session, {
+          code: "EFFECT_EXECUTOR_THROWN",
+          message: error?.message || `${effect.type} executor 抛出异常`,
+          effectId: effect.effectId,
+          type: effect.type,
+        });
+      }
+      const applied = applyResult(session, effect, result, undoFrame);
+      if (!applied.ok) return applied;
+      if (session.queue.length === 0) return commit(session);
+      session.phase = session.interruptContext ? "interrupting" : "draining";
+      return applied;
+    }
+
+    function drain(session, options = {}) {
+      const limit = Math.max(1, Number(options.maxSteps) || maxDrainSteps);
+      let steps = 0;
+      while (isActive(session) && session.phase !== "awaiting_input") {
+        if (steps >= limit) {
+          return abort(session, {
+            code: "EFFECT_DRAIN_LIMIT_EXCEEDED",
+            message: `Effect drain 超过 ${limit} 步`,
+            maxSteps: limit,
+          });
+        }
+        const result = advance(session);
+        if (!result.ok) return result;
+        steps += 1;
+      }
+      return { ok: true, session, steps,
+        ...(trustedIsolatedOwnership && options.skipInspection === true ? {} : { inspection: inspect(session) }) };
+    }
+
+    function resolveDecision(session, submission) {
+      if (!isActive(session) || session.phase !== "awaiting_input") {
+        return fail("EFFECT_DECISION_NOT_AWAITING", "当前没有等待输入的 DecisionEffect");
+      }
+      const effect = currentEffect(session);
+      const snapshot = getDecisionSnapshot(session, effect);
+      if (snapshot?.ok === false) return abort(session, snapshot);
+      if (submission?.decisionId !== snapshot.decisionId || submission?.decisionVersion !== snapshot.decisionVersion) {
+        return fail("EFFECT_DECISION_STALE", "Decision 已过期", { decision: snapshot });
+      }
+      if (submission?.ownerId !== snapshot.ownerId) {
+        return fail("EFFECT_DECISION_OWNER_MISMATCH", "Decision 提交者不是当前 owner", {
+          expectedOwnerId: snapshot.ownerId,
+          submittedOwnerId: submission.ownerId,
+          decision: snapshot,
+        });
+      }
+      const executor = executors.get(effect.type);
+      if (typeof executor?.resolveDecision !== "function") {
+        return abort(session, {
+          code: "EFFECT_DECISION_RESOLVER_MISSING",
+          message: `DecisionEffect ${effect.type} 缺少 resolveDecision()`,
+        });
+      }
+      const serializedChoice = stableSerialize(submission.choice);
+      const actionId = trustedIsolatedOwnership ? submission.choice?.actionId : undefined;
+      const plainActionId = typeof actionId === "string" && !Array.isArray(submission.choice)
+        && Object.prototype.propertyIsEnumerable.call(submission.choice, "actionId");
+      const legalChoice = snapshot.choices.find(choice => {
+        // Different own serialized action IDs cannot match. An ID match is
+        // never sufficient: still compare the complete authoritative choice.
+        if (plainActionId && typeof choice?.actionId === "string" && choice.actionId !== actionId
+          && !Array.isArray(choice) && Object.prototype.propertyIsEnumerable.call(choice, "actionId")) {
+          choiceIdRejects++;
+          return false;
+        }
+        serializedCandidates++;
+        return stableSerialize(choice) === serializedChoice;
+      });
+      if (!legalChoice) {
+        return fail("EFFECT_DECISION_NOT_LEGAL", "提交项不在最新 legal choices 中", { decision: snapshot });
+      }
+      const undoFrame = captureUndoFrame(session, effect);
+      let result;
+      try {
+        result = executor.resolveDecision(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+          clone(legalChoice),
+        );
+      } catch (error) {
+        return abort(session, {
+          code: "EFFECT_DECISION_RESOLVER_THROWN",
+          message: error?.message || `${effect.type} decision resolver 抛出异常`,
+        });
+      }
+      const applied = applyResult(session, effect, result, undoFrame);
+      if (!applied.ok) return applied;
+      session.journal.decisions.push({
+        decisionId: snapshot.decisionId,
+        decisionVersion: snapshot.decisionVersion,
+        ownerId: snapshot.ownerId,
+        choice: clone(legalChoice),
+      });
+      appendReplayStep(session, "decision", {
+        decisionId: snapshot.decisionId,
+        decisionVersion: snapshot.decisionVersion,
+        ownerId: snapshot.ownerId,
+        choice: legalChoice,
+      });
+      if (session.queue.length === 0) return commit(session);
+      session.phase = "draining";
+      return applied;
+    }
+
+    function dispatchQuickAction(session, action, createEffectGroup, options = {}) {
+      if (!isActive(session)) return fail("EFFECT_SESSION_NOT_ACTIVE", "Effect Session 不在可中断状态");
+      if (session.interruptContext) {
+        return fail("EFFECT_INTERRUPT_NESTED_UNSUPPORTED", "当前已有快速行动中断，拒绝嵌套中断");
+      }
+      const decision = session.phase === "awaiting_input" ? getDecisionSnapshot(session) : null;
+      if (decision?.ok === false) return decision;
+      const boundaryAllowed = ["action_accepted", "draining"].includes(session.phase)
+        && options.allowAtBoundary === true;
+      const decisionAllowed = decision?.ok === true && decision.allowQuickActions;
+      if (!boundaryAllowed && !decisionAllowed) {
+        return fail("EFFECT_INTERRUPT_NOT_ALLOWED", "当前 Effect 边界不允许快速行动");
+      }
+      assertFunction(createEffectGroup, "createEffectGroup");
+      let rawGroup;
+      try {
+        rawGroup = createEffectGroup(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          clone(action),
+        );
+      } catch (error) {
+        return fail("EFFECT_QUICK_ACTION_REJECTED", error?.message || "Quick Action 未能生成 Effect Group");
+      }
+      if (rawGroup?.ok === false) return rawGroup;
+      let group;
+      let markerGroup;
+      const interruptedEffect = currentEffect(session);
+      const sequenceCheckpoint = {
+        nextEffectSequence: session.nextEffectSequence,
+        nextGroupSequence: session.nextGroupSequence,
+      };
+      try {
+        group = normalizeGroup({ ...rawGroup, action, kind: "quick" }, session, "quick");
+        markerGroup = normalizeGroup({
+          kind: "internal",
+          effects: [{
+            type: INTERNAL_RESUME_EFFECT,
+            payload: { effectId: interruptedEffect.effectId },
+          }],
+        }, session, "internal");
+      } catch (error) {
+        session.nextEffectSequence = sequenceCheckpoint.nextEffectSequence;
+        session.nextGroupSequence = sequenceCheckpoint.nextGroupSequence;
+        return fail("EFFECT_QUICK_GROUP_INVALID", error?.message || "Quick Action 生成了无效 Effect Group");
+      }
+      session.queue.unshift(...group.effects, markerGroup.effects[0]);
+      session.revision += 1;
+      session.interruptContext = {
+        effectId: interruptedEffect.effectId,
+        kind: interruptedEffect.kind,
+        decisionVersion: decision?.decisionVersion ?? null,
+        quickGroupId: group.groupId,
+      };
+      session.journal.actions.push({
+        action: clone(action),
+        groupId: group.groupId,
+        groupKind: "quick",
+        quick: true,
+        revision: session.revision,
+      });
+      appendReplayStep(session, "action", {
+        action,
+        groupId: group.groupId,
+        groupKind: "quick",
+      });
+      session.phase = "interrupting";
+      return { ok: true, session, group };
+    }
+
+    function undoLastEffect(session) {
+      if (!isActive(session)) {
+        return fail("EFFECT_SESSION_NOT_ACTIVE", "Effect Session 不在可撤销状态");
+      }
+      if (["effect_running", "committing"].includes(session.phase)) {
+        return fail("EFFECT_UNDO_NOT_AT_BOUNDARY", "只能在 Effect 边界撤销");
+      }
+      const frame = session.undoFrames[session.undoFrames.length - 1];
+      if (!frame) return fail("EFFECT_UNDO_EMPTY", "没有可撤销的 Effect");
+      if (session.irreversibleBarrier
+        && stableSerialize(session.irreversibleBarrier) !== stableSerialize(frame.irreversibleBarrierBefore)) {
+        return fail("EFFECT_UNDO_IRREVERSIBLE_BARRIER", "不可越过隐藏信息屏障撤销", {
+          irreversibleBarrier: clone(session.irreversibleBarrier),
+        });
+      }
+      session.undoFrames.pop();
+      restoreUndoFrame(session, frame);
+      return { ok: true, session, effectId: frame.effectId };
+    }
+
+    function createCheckpoint(session, options = {}) {
+      if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
+      if (["effect_running", "committing"].includes(session.phase)) {
+        return fail("EFFECT_CHECKPOINT_UNSAFE_PHASE", "同步 Effect 或提交期间不能建立 checkpoint");
+      }
+      const replayCursor = session.journal?.replay?.length;
+      if (!Number.isSafeInteger(replayCursor)) {
+        return fail("EFFECT_REPLAY_JOURNAL_INVALID", "session replay journal 无效");
+      }
+      return {
+        ok: true,
+        checkpoint: {
+          schemaVersion: CHECKPOINT_SCHEMA_VERSION,
+          replayCursor,
+          session: options.trustedReference === true && trustedIsolatedOwnership
+            ? session
+            : clone(session),
+        },
+      };
+    }
+
+    function restoreCheckpoint(checkpoint, options = {}) {
+      if (!checkpoint || checkpoint.schemaVersion !== CHECKPOINT_SCHEMA_VERSION) {
+        return fail("EFFECT_CHECKPOINT_SCHEMA_UNSUPPORTED", "未知 Effect Session checkpoint schema");
+      }
+      const source=checkpoint.session;
+      const shareBase=options.trustedFrozenState===true&&trustedIsolatedOwnership
+        &&source&&Object.isFrozen(source)&&Object.isFrozen(source.baseState)&&(!source.committedState||Object.isFrozen(source.committedState));
+      // Confirmed journal entries are append-only. Trusted in-memory forks
+      // copy their containers while retaining the frozen historic entries;
+      // working state, queue and all other writable session fields stay private.
+      const shareJournal=shareBase&&source.journal&&Object.isFrozen(source.journal)
+        &&Object.values(source.journal).every(entries=>Array.isArray(entries)&&Object.isFrozen(entries)
+          &&entries.every(entry=>entry===null||typeof entry!=="object"||Object.isFrozen(entry)));
+      const shareWorking=shareBase&&options.readOnly===true&&Object.isFrozen(source.workingState);
+      if (shareBase && cloneTrustedCheckpoint !== clone) checkpointCopies++;
+      const restored=shareBase?{...cloneTrustedCheckpoint({...source,baseState:null,committedState:null,...(shareJournal?{journal:null}:{}),...(shareWorking?{workingState:null}:{})}),baseState:source.baseState,committedState:source.committedState,
+        ...(shareJournal?{journal:Object.fromEntries(Object.entries(source.journal).map(([key,entries])=>[key,entries.slice()]))}:{}),...(shareWorking?{workingState:source.workingState}:{})}:clone(source);
+      if (!restored || restored.schemaVersion !== SCHEMA_VERSION) {
+        return fail("EFFECT_CHECKPOINT_SESSION_INVALID", "checkpoint 缺少合法 session");
+      }
+      const replay = restored.journal?.replay;
+      if (!Array.isArray(replay)
+        || checkpoint.replayCursor !== replay.length
+        || replay.some((entry, index) => entry?.cursor !== index || entry.confirmed !== true)) {
+        return fail("EFFECT_CHECKPOINT_REPLAY_CURSOR_MISMATCH", "checkpoint replay cursor 与已确认输入不一致");
+      }
+      if (!Array.isArray(restored.undoFrames)) {
+        return fail("EFFECT_CHECKPOINT_UNDO_INVALID", "checkpoint 缺少统一撤销帧");
+      }
+      return { ok: true, session: restored };
+    }
+
+    function getConfirmedReplay(source, fromCursor = 0) {
+      const checkpoint = source?.schemaVersion === CHECKPOINT_SCHEMA_VERSION ? source : null;
+      const session = checkpoint ? checkpoint.session : source;
+      const replay = session?.journal?.replay;
+      const cursor = Number(fromCursor);
+      const confirmedLimit = checkpoint ? checkpoint.replayCursor : replay?.length;
+      if (!Array.isArray(replay)
+        || replay.some((entry, index) => entry?.cursor !== index || entry.confirmed !== true)
+        || !Number.isSafeInteger(confirmedLimit)
+        || confirmedLimit < 0
+        || confirmedLimit > replay.length
+        || !Number.isSafeInteger(cursor)
+        || cursor < 0
+        || cursor > confirmedLimit) {
+        return fail("EFFECT_REPLAY_CURSOR_INVALID", "replay cursor 无效");
+      }
+      return {
+        ok: true,
+        fromCursor: cursor,
+        replayCursor: confirmedLimit,
+        steps: clone(replay.slice(cursor, confirmedLimit)),
+      };
+    }
+
+    return Object.freeze({
+      registerExecutor,
+      dispatchAction,
+      dispatchStoredAction,
+      dispatchStandardAction,
+      dispatchQuickAction,
+      resolveDecision,
+      advance,
+      drain,
+      inspect,
+      observe,
+      undoLastEffect,
+      createCheckpoint,
+      restoreCheckpoint,
+      getConfirmedReplay,
+      abort: (session, reason = {}) => abort(session, {
+        code: reason.code || "EFFECT_SESSION_ABORTED_BY_HOST",
+        message: reason.message || "宿主中止 Effect Session",
+      }),
+    });
+  }
+
+  return Object.freeze({
+    SCHEMA_VERSION,
+    CHECKPOINT_SCHEMA_VERSION,
+    diagnosticTrustedCheckpointCopies: () => checkpointCopies,
+    diagnosticDecisionChoicePrefilter: () => ({choiceIdRejects,serializedCandidates}),
+    SPAWN_PRIORITY,
+    createRuntime,
+  });
+});

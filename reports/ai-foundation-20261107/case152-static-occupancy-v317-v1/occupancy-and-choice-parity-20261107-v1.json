@@ -1,0 +1,26 @@
+{
+  "scope": "Frozen V317 targeted equivalence and first-sample Native graph parity. No repeats of the cold performance roots.",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "geometricChecks": 44160,
+  "layouts": 36,
+  "fullMenuGroups": 33,
+  "timingCases": 237,
+  "choiceControls": 12,
+  "cold": [
+    {
+      "label": "corpus-case-152",
+      "nativeInputs": 256,
+      "milliseconds": 575.689958,
+      "unchangedLines": 181
+    },
+    {
+      "label": "actual-v256-132",
+      "nativeInputs": 162,
+      "milliseconds": 549.610125,
+      "unchangedLines": 153
+    }
+  ],
+  "tests": 4,
+  "newAutonomousRuns": 0
+}

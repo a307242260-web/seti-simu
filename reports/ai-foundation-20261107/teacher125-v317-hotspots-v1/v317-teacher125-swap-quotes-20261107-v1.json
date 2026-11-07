@@ -1,0 +1,20 @@
+{
+  "scope": "Isolated function-level swap quote attribution; output rows and all Native graph lines unchanged. No new acceptance sample.",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-125-root-20261106-v1.json",
+  "fixtureSha256": "6d3a69e4a96e097966a11d7a1cbd1d92f009ab2cfaa94e24db4372d50d72991b",
+  "checkpoint": "reports/ai-foundation-20261107/teacher125-v317-hotspots-v1/v317-teacher125-swap-quotes-20261107-v1.checkpoint.json.gz",
+  "checkpointSha256": "9154294dc2c1e17d989fa30e4d5018e32c4b77115d0cf6262992ecd576387624",
+  "swaps": 101,
+  "successfulSwaps": 4,
+  "portfolioSwaps": 4,
+  "portfolioBeforeQuotes": 101,
+  "portfolioOfferQuotes": 240,
+  "distinctPricedStates": 301,
+  "identicalPricedStates": 40,
+  "totalSwapMilliseconds": 293.86937700000044,
+  "totalPricingMilliseconds": 282.2176179999998,
+  "nativeInputs": 127,
+  "newAutonomousRuns": 0
+}

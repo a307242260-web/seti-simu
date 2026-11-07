@@ -1,0 +1,18 @@
+{
+  "scope": "Offline effective inputs of all actual portfolio quotes; JSON equality is observational, not yet a safe general cache contract.",
+  "checkpoint": "reports/ai-foundation-20261107/teacher125-v317-hotspots-v1/v317-teacher125-swap-quotes-20261107-v1.checkpoint.json.gz",
+  "checkpointSha256": "9154294dc2c1e17d989fa30e4d5018e32c4b77115d0cf6262992ecd576387624",
+  "calls": 341,
+  "full": {
+    "hits": 52,
+    "misses": 289,
+    "estimatedSavedMs": 37.88208100000031,
+    "maxPayloadBytes": 35006,
+    "keyMs": 20.901161000000016,
+    "repeatedGroups": 52
+  },
+  "exactStateHits": 40,
+  "exactDuplicateMs": 31.723666000000208,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}
