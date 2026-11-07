@@ -1,0 +1,91 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4088,10 +4088,17 @@
+       return localPlans.quoteResearchDataPurpose({state,seatId,purpose});
+     }
+ 
++    function isKnownAnalysisProducer(card){
++      if(card.set!=='alien:阿米巴')return false;
++      const cost=cardEffects.getCardPlayCost(card),play=cardEffects.buildPlayEffects(card);
++      return cost.credits===2&&Object.keys(cost).length===1&&play.length===2
++        &&play[0].type==='gain_data'&&play[0].options?.count===3&&play[1].type==='amiba_choose_symbol_reward';
++    }
++
+     function analysisPreparation(state,stored,node){
+       const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
+       if(t.roundNumber!==3||!p.mainActionCompleted||p.resources.credits!==0
+-        ||p.resources.availableData<2||p.resources.availableData>3||stored.intent||stored.resourceControl
++        ||p.resources.availableData<2||p.resources.availableData>4||stored.intent||stored.resourceControl
+         ||node.legalActions.some(a=>a.family==='complete_task')
+         ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze'))return null;
+       const known=knownCards(stored.envelope),knownAlienDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex??null;
+@@ -4100,6 +4107,13 @@
+         const purpose=localPlans.preparedRegionPurpose({state,seatId,knownCards:known});
+         const knownTech=(id,stack)=>Boolean(stack&&!stack.bonusHidden&&stack.bonusIndex===knownRootTechIndices.get(id));
+         if(purpose)quote=localPlans.previewAnalysisPreparation({state,seatId,knownCards:known,knownTech,knownAlienDisplay,purpose});
++        if(!quote&&p.hand.length===3&&p.resources.availableData>=3
++          &&p.reservedCards.some(c=>known.has(c.id)&&isKnownAnalysisProducer(c))
++          &&hasPostMainInertReservations(state,false,true,true)){
++          const next=previewTurn(state);
++          if(next.turnAdvanced&&!next.roundAdvanced&&!next.gameEnded&&next.nextPlayerId===seatId)
++            quote=localPlans.previewReversedAnalysisPreparation({state,seatId,knownCards:known,knownTech,knownAlienDisplay});
++        }
+       }else if(p.resources.energy===0&&hasOwnVisitSource(state)&&hasPostMainInertReservations(state,true,true,true)){
+         const next=previewTurn(state);
+         if(next.turnAdvanced&&!next.roundAdvanced&&!next.gameEnded&&next.nextPlayerId===seatId)
+@@ -4269,6 +4283,21 @@
+           &&!hasOwnVisitSource(state)&&industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
+           &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))
+           return {lateElectricity:true,turn:t.turnNumber};
++      }
++      if(visible?.energy===1&&visible.credits<=2&&visible.availableData>=1&&visible.availableData<=4
++        &&visible.handCount>=3&&visible.handCount<=4&&visible.dataProgress?.computerSlots.length>=4){
++        const source=session?.journal?.actions?.[0]?.action;
++        const state=session?.baseState?planningState(session.baseState,root.informationBarrier,knownRootCardIds):readPlanningState(root);
++        const p=state.players.players.find(q=>q.id===seatId),t=state.turn,computer=data.listComputerPlacedTokens(p).length;
++        if(t.roundNumber===3&&industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
++          &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))&&!hasOwnVisitSource(state)){
++          const beforePlay=!p.mainActionCompleted&&p.resources.credits===2&&p.resources.availableData===1&&p.hand.length===4&&computer===4
++            &&p.hand.some(c=>knownRootCardIds.has(c.id)&&isKnownAnalysisProducer(c)
++             &&(source?.target?.cardInstanceId===c.id||openedRoot.legalActions.some(a=>a.family==='play_card'&&a.target.cardInstanceId===c.id)));
++          const beforeEnd=p.mainActionCompleted&&p.resources.credits===0&&computer+p.resources.availableData===8&&p.hand.length===3
++            &&p.reservedCards.some(c=>knownRootCardIds.has(c.id)&&isKnownAnalysisProducer(c));
++          if(beforePlay||beforeEnd)return {turn:t.turnNumber,beforeAnalysis:true,reversePreparation:true};
++        }
+       }
+       if(!visible||visible.credits!==0)return null;
+       if(visible.energy===0&&visible.handCount>=4&&visible.handCount<=5&&visible.availableData>=1&&visible.availableData<=3
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -659,9 +659,9 @@
+    return quoteReadyAnalysisFunding({state:next,seatId,knownCards,knownTech,knownAlienDisplay});
+   }});
+  }
+- function fillQuietAnalysisComputer(state,seatId){
++ function fillQuietAnalysisComputer(state,seatId,stock=7){
+   const p=owner(state,seatId),slots=data.listComputerPlacedTokens(p).map(x=>x.placementSlot);
+-  if(slots.length<4||slots.length>6||slots.some((s,i)=>s!==i+1)||slots.length+p.resources.availableData!==7)return null;
++  if(slots.length<4||slots.length>6||slots.some((s,i)=>s!==i+1)||slots.length+p.resources.availableData!==stock)return null;
+   if(slots.length===6)return state;
+   const copy=dataPreviewPlayer(p);
+   for(let i=slots.length+1;i<=6;i++){
+@@ -676,6 +676,12 @@
+   const ready=fillQuietAnalysisComputer(state,seatId);
+   const quote=ready&&ready!==state&&quotePreparedRegionAnalysis({state:ready,seatId,knownCards,knownTech,knownAlienDisplay,purpose});
+   return quote?.analysisFunding?quote:null;
++ }
++ function previewReversedAnalysisPreparation({state,seatId,knownCards,knownTech,knownAlienDisplay}){
++  const p=owner(state,seatId);
++  if(!p.mainActionCompleted||p.resources.availableData<3||p.resources.availableData>4)return null;
++  const ready=fillQuietAnalysisComputer(state,seatId,8);
++  return ready&&ready!==state?quoteReadyAnalysisFunding({state:ready,seatId,knownCards,knownTech,knownAlienDisplay}):null;
+  }
+  function quoteLateAnalysisIncome({state,seatId,knownCards,knownAlienDisplay,prepare=false,minimumHand=4}){
+   const p=owner(state,seatId),t=state.turn,amiba=state.aliens.amiba;
+@@ -1266,5 +1272,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ });

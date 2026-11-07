@@ -1,0 +1,81 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const load=n=>require(path.resolve(n)),read=p=>JSON.parse(fs.readFileSync(p));
+const {createSeededRandom}=load('randomizer/game/random'),{createSimulationRuleComposition}=load('randomizer/training/simulation-rule-composition');
+const {buildRuleObservation}=load('randomizer/app/rule-observation'),{createAnalysisPort}=load('randomizer/game/ai/analysis-port');
+const {createSearchAgent}=load('randomizer/game/ai/search-agent');
+const [source,out,mode='normal']=process.argv.slice(2),ref=read(source),base=ref.origin,seat='player-white',seed=JSON.parse(base.committedState).meta.seed;
+const sourceState=JSON.parse(base.committedState);
+const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+ projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});
+const c=k.composition,save=()=>c.lifecycle.save().envelope,menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+const restore=e=>{assert(c.lifecycle.restore(e).ok);assert.deepEqual(save(),e);};
+function act(w){
+ const d=c.inspect().session?.decision,a=menu().find(x=>x.actionId===w.actionId&&x.actorId===seat);
+ assert(a,w.summary);assert.deepEqual(a.target,w.target);
+ const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+ :a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);
+ assert(r.ok,JSON.stringify(r));return a;
+}
+function assets(e){
+ const s=e.session?.session?.workingState||JSON.parse(e.committedState),p=s.players.players.find(q=>q.id===seat),
+  v=c.projection({role:'player',playerId:seat}).state;
+ return {turn:s.turn.turnNumber,wallet:p.resources,income:p.income,hand:p.hand.map(h=>[h.id,h.cardId]),data:p.dataState,tech:p.techState,
+  probes:s.pieces.rockets.filter(x=>x.playerId===seat),wins:s.data.sectorSettlements.winsByPlayerId[seat],traces:v.selfState.traceCounts,
+  projectedFinal:v.publicState.players.find(q=>q.playerId===seat).finalScore};
+}
+try{
+ const s=structuredClone(sourceState);
+ if(mode.includes('masked')){
+  assert(!base.session);
+  for(const ids of [s.cards.drawPileCardIds,s.aliens.amiba.cardDeck]){
+   assert(ids.length>=2);
+   [ids[0],ids[1]]=[ids[1],ids[0]];
+  }
+ }
+ assert(c.lifecycle.restore(mode.includes('masked')?{...base,committedState:JSON.stringify(s)}:base).ok);
+ const origin=save(),accepted=[],fixed=[];let stop,checkpoint=null;
+ ref.fixed.forEach(a=>fixed.push(act(a)));
+ ref.accepted.slice(0,2).forEach(x=>fixed.push(act(x.action)));
+ function choose(label,test){
+  const a=menu().find(test);if(!a)throw Error(label+': '+JSON.stringify(menu().map(x=>[x.family,x.summary,x.target])));
+  fixed.push(act(a));return a;
+ }
+ const family=f=>choose(f,a=>a.family===f);
+ const comp=i=>{family('place_data');choose('computer'+i,a=>a.family==='choose_target'&&a.summary==='第一排放置位 '+i);};
+ comp(5);comp(6);family('analyze');
+ choose('public blue4',a=>a.target?.traceType==='blue'&&a.target?.position===4);
+ choose('take already displayed',a=>a.target?.source==='display');
+ const afterAnalysis=save(),afterAnalysisAssets=assets(afterAnalysis);
+ if(mode!=='after-analysis'){
+  for(const card of ['amiba_7.webp','amiba_5.webp']){
+   const id=assets(save()).hand.find(x=>x[1]===card)?.[0];assert(id,card);
+   choose(card,a=>a.family==='card_corner'&&a.target?.cardInstanceId===id);
+  }
+  for(let i=1;i<=4;i++)comp(i);
+  const incomeId=mode==='electricity'?'card-60-0':'alien-amiba-1-2';
+  choose('income '+mode,a=>a.family==='choose_card'&&a.target?.cardInstanceId===incomeId);
+ }
+ const afterFixed=save();
+ for(let i=0;i<105;i++){
+  const e=save(),port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+  try{
+   const agent=createSearchAgent({seatId:seat,analysisPort:port});
+   if(checkpoint)agent.loadCheckpoint(checkpoint);
+   const r=agent.decide({seatId:seat,legalActions:menu()}),q=r.search,a=menu().find(x=>x.actionId===r.actionId);
+   const inputCheckpoint=checkpoint;checkpoint=structuredClone(agent.createCheckpoint());
+   assert.deepEqual(save(),e);assert(a);
+   if(!q.complete||q.unresolved.length||q.diagnostics.nativeExecutions>256||q.rootAndSearchMilliseconds>600){stop={kind:'gate',e,q};break;}
+   if(a.family==='pass'){stop={kind:'settled-before-pass',e};break;}
+   const planned=q.lines.filter(x=>x.resourcePolicy?.protectedIncome||x.knownAnalysisFunding||x.cardPickPolicy?.goal?.kind==='late-public-data-income');
+   const rootPlans=(q.candidates||[]).filter(x=>x.plan?.goal?.continuationCardId);
+   const action=act(a);accepted.push({action,native:q.diagnostics.nativeExecutions,ms:q.rootAndSearchMilliseconds,
+    value:q.value,continuation:q.diagnostics.planContinuation,inputCheckpoint,...(planned.length||rootPlans.length?{before:e,planned,rootPlans}:{}),assets:assets(save())});
+  }finally{port.close();}
+ }
+ assert(stop);const end=assets(stop.e);restore(origin);fixed.forEach(act);accepted.forEach(x=>act(x.action));assert.deepEqual(save(),stop.e);restore(base);
+ const summary={stop:stop.kind,assets:[end.wallet.score,Object.keys(end.tech.ownedTiles).length,end.income.credits,end.income.energy,end.probes.length],projectedFinal:end.projectedFinal,
+  inputs:accepted.length,maxNative:Math.max(...accepted.map(a=>a.native)),maxMs:Math.max(...accepted.map(a=>a.ms))};
+ fs.writeFileSync(out,JSON.stringify({scope:'A3 same Pink3/Purple1/Orange1 prefix, retain two disclosed data corners for a proved analysis and exact choice of credit or electricity income. No standard run.',mode,origin,fixed,afterAnalysis,afterAnalysisAssets,afterFixed,accepted,stop,end,summary,rootAndRngRestored:true,nativeReplayExact:true,newAutonomousRuns:0},null,2)+'\n',{flag:'wx'});
+ console.log(JSON.stringify(summary));
+}finally{c.dispose();}
