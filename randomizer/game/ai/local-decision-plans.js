@@ -3,9 +3,9 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech){
  'use strict';
  const VERSION='seti-local-mark-and-scan-purpose-v10';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -60,9 +60,36 @@
    ...(retained.length===1?{selectedActionId:retained[0].actionId}:{}),retainedActionIds:retained.map(a=>a.actionId),excludedActionIds:actions.filter(a=>!retained.includes(a)).map(a=>a.actionId),reason:'one-board-slot-per-tech-type',
    assumption:'prefer an already covered computer column, otherwise nearest known computer progress; keep every tech type'};
  }
+ function deferredPublicityTask({state,seatId,actions,session,payload}){
+  const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
+  if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
+    ||advance.ownerId!==seatId||advance.payload?.didPass!==false||!p.mainActionCompleted||p.passCompletionPending
+    ||turn.currentPlayerId!==seatId||!turn.activePlayerIds?.length
+    ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
+  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId),model=card&&effects.getCardModel(card);
+  const task=model?.tasks?.length===1&&model.tasks[0];
+  // Sector wins persist. Leave one ordinary held task available for a
+  // subsequent manual claim; triggers and expiring/physical tasks may not.
+  if(task?.id!==payload.ruleId||task.condition?.type!=='completedSectors'||model.triggers?.length
+    ||model.temporaryTasks?.length||task.rewards.length!==1)return null;
+  const reward=task.rewards[0],gain=reward.options?.gain;
+  if(reward.type!=='gain_resources'||(reward.options.repeat??1)!==1||!gain||Object.keys(gain).length!==1
+    ||!Number.isSafeInteger(gain.publicity)||gain.publicity<=0)return null;
+  const publicity=p.resources.publicity,limit=players.RESOURCE_LIMITS.publicity,cost=tech.getResearchPublicityCost(p);
+  if(publicity<cost||publicity+gain.publicity<=limit||publicity-cost+gain.publicity>limit
+    ||!tech.listTakeableTiles(state.tech,p.techState).length)return null;
+  const skip=actions.find(a=>a.target?.choiceId===`skip:task:${card.id}:${task.id}`);
+  const confirm=actions.some(a=>a.target?.choiceId===`confirm:task:${card.id}:${task.id}`);
+  if(!skip||!confirm)return null;
+  return fixedChoice(actions,skip,'fixed-defer-overflow-task',{reason:'claim-after-funded-research',
+    overflow:publicity+gain.publicity-limit,researchCost:cost,taskId:task.id,
+    assumption:'already affordable research; a persistent held sector task is still manually claimable next turn'});
+ }
  function pureOptional({state,seatId,actions,session}){
   if(!actions.length||!actions.every(a=>a.family==='accept_optional_effect'))return null;
-  const payload=session?.queue?.[0]?.payload;if(payload?.kind!=='trigger')return null;
+  const payload=session?.queue?.[0]?.payload;
+  if(payload?.kind==='task')return deferredPublicityTask({state,seatId,actions,session,payload});
+  if(payload?.kind!=='trigger')return null;
   const confirms=actions.filter(a=>a.target?.choiceId?.startsWith('confirm:')),skip=actions.find(a=>a.target?.choiceId?.startsWith('skip:'));
   if(!confirms.length||!skip)return null;
   const ranks=[];

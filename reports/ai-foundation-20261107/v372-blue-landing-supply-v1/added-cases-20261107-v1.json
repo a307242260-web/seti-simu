@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "label": "blue-landing-141",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-141.json",
+      "fixtureSha256": "aaaad715d92e2be16c53797f9e8168d9a8bca12b19b51d4f9321156dc3f657b0"
+    },
+    {
+      "label": "blue-landing-151",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-151.json",
+      "fixtureSha256": "23247a2b1e04bdc26eea85b130d252786d43e0494f61fd13eba1bc78ecfd4e0e"
+    },
+    {
+      "label": "blue-landing-prior-alt175",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-prior-alt175.json",
+      "fixtureSha256": "f0a3a7dcc44638e6341aec407e85e3b9d3f6572a70a8b0ea2bb4a4088b96d678"
+    },
+    {
+      "label": "blue-landing-overflow-task",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-overflow-task.json",
+      "fixtureSha256": "fd0474e69a23c862b8a29ea861d326eaae0af17a61202b328d75dd6a2ba98b6f"
+    },
+    {
+      "label": "blue-landing-resume-1",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-resume-1.json",
+      "fixtureSha256": "b8a58f0d5a0857e05dd454e17fa711967c02fefe6657d6976465ae3e2eed0dd5"
+    },
+    {
+      "label": "blue-landing-resume-2",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-resume-2.json",
+      "fixtureSha256": "18967adefadd40e090987d66afd390d46ab7a21add144ccb4c7cfdfae23e6f49"
+    },
+    {
+      "label": "blue-landing-resume-3",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-resume-3.json",
+      "fixtureSha256": "5e938cb9094e811c0c5dbd224bb6c4e1e423eddf7bd76823a65690ef4965992e"
+    },
+    {
+      "label": "blue-landing-handoff-cycle4",
+      "fixture": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/roots/blue-landing-handoff-cycle4.json",
+      "fixtureSha256": "aaf811d6b7db736949ec06a37e51e4c677799ac3c45338961900c0143f41ef3a"
+    }
+  ]
+}

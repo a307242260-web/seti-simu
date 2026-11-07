@@ -693,6 +693,73 @@
   // Quote the entire known mission from the same wallet. The Native
   // directory gives one path per target; the only timing assumption is
   // the existing one-rotation comparison, never a prediction of an opponent.
+  function publicLandingSupplier(state){
+    return probeCapital.heldLandingCard({hand:state.cards.publicCards.filter(Boolean),round:state.turn.roundNumber},stateValue.DEFAULT_WEIGHTS);
+  }
+  // A known landing supplier can use a ready blue reward without spending
+  // the company exchange. This is a Native option, not a pruning proof.
+  function blueLandingSupplyGoal({state,seatId,candidates,compareTiming}){
+    const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
+    if(!p||turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
+      ||p.industryRoundMarkRound===turn.roundNumber||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
+      ||p.hand.some(c=>!c.id||!c.cardId||c.hidden)||p.hand.length+p.resources.availableData!==2
+      ||p.resources.availableData>1||p.dataState.poolTokens.length!==p.resources.availableData)return null;
+    const computer=data.listComputerPlacedTokens(p).map(t=>t.placementSlot).sort((a,b)=>a-b);
+    if(computer.length!==3||computer.some((n,i)=>n!==i+1))return null;
+    const ready=data.listBluePlacementRequirements(p).filter(({blueSlot})=>bluePrerequisites(p,blueSlot)===0
+      &&data.getBlueBonusPlacementReward(p,blueSlot)?.type==='choose_card');
+    if(ready.length!==1)return null;
+    const corner=!p.resources.availableData&&p.hand.find(c=>{
+      const gain=cards.getDiscardActionRewardForCard(c);
+      return gain?.dataCount===1&&!Object.keys(gain.gain||{}).length;
+    });
+    if(!p.resources.availableData&&(!corner||industry.shouldDoubleDiscardCornerRewards?.(p)||observes(state,seatId,'cardCorner')))return null;
+    const rest=p.hand.filter(c=>c!==corner);
+    if(rest.length!==1||cards.getIncomeGainForCard(rest[0])?.handSize!==1)return null;
+    const supplier=publicLandingSupplier(state);
+    if(!supplier||p.resources.credits<supplier.cost.credits)return null;
+    const next=deferredLandingRoute({p,supplier,candidates,compareTiming});if(!next)return null;
+    return {kind:'blue-landing-supply',id:'blue-landing:'+supplier.card.id+':'+next.c.requirementId,
+      blueSlot:ready[0].blueSlot,cardId:supplier.card.id,cornerId:corner?.id||null,protectedIncomeCardId:rest[0].id,
+      required:{},landing:{planetId:next.c.planetId,rocketId:next.c.rocketId,fee:supplier.cost.credits,points:next.points}};
+  }
+  function deferredLandingRoute({p,supplier,candidates,compareTiming}){
+    const weights=stateValue.DEFAULT_WEIGHTS;
+    const feasible=candidates().flatMap(c=>{
+      if(c.launchRequired||c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||c.path.length!==1)return [];
+      const points=c.required.paidMovementPoints, ordinary={...c.endpointFacts.cost,energy:(c.endpointFacts.cost.energy||0)+points};
+      if(probeCapital.funding(p.resources,ordinary,weights))return [];
+      const payment=probeCapital.funding(p.resources,{...supplier.cost,energy:points},weights);
+      if(!payment||payment.creditPurchases||c.targetBenefit.grossEquivalentValue<=payment.value+weights.handSize)return [];
+      const timing=compareTiming(c.requirementId,c.path.map(step=>({...step,rocketId:c.rocketId})),0);
+      if(!timing.comparable||timing.bestPrefixLength!==0||timing.waitPaidPoints>points)return [];
+      return [{c,points,payment}];
+    }).sort((a,b)=>b.c.targetBenefit.grossEquivalentValue-b.payment.value-(a.c.targetBenefit.grossEquivalentValue-a.payment.value)
+      ||a.c.requirementId.localeCompare(b.c.requirementId));
+    return feasible[0]||null;
+  }
+  function blueLandingWait({state,seatId,candidates,compareTiming}){
+    const p=owner(state,seatId),turn=state.turn;
+    if(!p||turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
+      ||p.industryRoundMarkRound===turn.roundNumber||p.resources.availableData!==0||placed(p)!==3||p.hand.length!==2
+      ||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards')return null;
+    const supplier=probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber},stateValue.DEFAULT_WEIGHTS);
+    if(!supplier||supplier.card.blueBonusOwnerId!==seatId||!p.hand.some(c=>c.id!==supplier.card.id&&!c.hidden&&cards.getIncomeGainForCard(c)?.handSize===1))return null;
+    if(!data.listBlueBonusPlacedTokens(p).some(t=>data.getBlueBonusPlacementReward(p,t.blueSlot)?.type==='choose_card'))return null;
+    return deferredLandingRoute({p,supplier,candidates,compareTiming})?.c.requirementId||null;
+  }
+  function blueLandingSupplyStep({state,seatId,goal,actions,status}){
+    const p=owner(state,seatId);
+    if(status==='stable'&&p.hand.some(c=>c.id===goal.cardId))return {kind:'complete',reason:'known-blue-landing-supplier-acquired'};
+    const find=(predicate,reason)=>{const a=actions.find(predicate);return a?{kind:'fixed',actionId:a.actionId,reason}:{kind:'infeasible',reason};};
+    if(status==='decision'){
+      if(actions.every(a=>a.family==='choose_target'&&['computer','blueBonus'].includes(a.target?.target)))
+        return find(a=>a.target.blueSlot===goal.blueSlot,'place-data-for-known-landing');
+      return find(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('pick:')&&a.target.cardInstanceId===goal.cardId,'take-known-landing-supplier');
+    }
+    if(p.resources.availableData>0)return find(a=>a.family==='place_data','start-known-landing-blue-reward');
+    return find(a=>a.family==='card_corner'&&a.target?.cardInstanceId===goal.cornerId&&a.payload?.kind==='resource','fund-known-landing-blue-reward');
+  }
   function heldLandingGoal({state,seatId,candidates,compareTiming}){
     const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
     const supplier=probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber,passing:p.passCompletionPending},weights);
@@ -768,6 +835,7 @@
   }
   function step({state,seatId,goal,actions,status,session,operation={}}){
     goal=currentGoal(state,goal);
+    if(goal.kind==='blue-landing-supply')return blueLandingSupplyStep({state,seatId,goal,actions,status});
     if(goal.kind==='held-landing-route')return heldLandingStep({state,seatId,goal,actions,status,operation});
     if(goal.kind==='route'&&operation.targetStarted&&status==='stable')
       return{kind:'complete',reason:'route-endpoint-completed'};
@@ -859,5 +927,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,publicLandingSupplier,blueLandingSupplyGoal,blueLandingWait,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });

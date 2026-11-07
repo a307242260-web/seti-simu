@@ -1,0 +1,5 @@
+PASS production-search-agent-entry http://127.0.0.1:59720/randomizer/index.html?agent=search
+Error: production-analysis-lazy-explanations 操作异常：Error: lazy snapshot/JSON/clone differs from V311
+    at <anonymous>:6:131
+    at runInteractiveSmoke (/private/tmp/seti-v372-functional-validation-20261107-v1/browser-v372-landing-tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-v372-functional-validation-20261107-v1/browser-v372-landing-tools/run_browser_smokes.js:294:11)

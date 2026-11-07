@@ -1,0 +1,4 @@
+host architecture audit tests passed
+SUMMARY unit passed=1 failed=0 total=1 time=0.08s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/host-source-zero tests=1

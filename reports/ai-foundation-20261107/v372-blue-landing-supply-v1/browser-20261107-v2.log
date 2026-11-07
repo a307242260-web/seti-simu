@@ -1,0 +1,7 @@
+PASS production-search-agent-entry http://127.0.0.1:60314/randomizer/index.html?agent=search
+PASS production-analysis-lazy-explanations http://127.0.0.1:60314/randomizer/index.html
+PASS production-amiba-currency-tail-value http://127.0.0.1:60314/randomizer/index.html
+PASS production-known-postdraw-tail http://127.0.0.1:60314/randomizer/index.html
+PASS production-blue-data-analysis http://127.0.0.1:60314/randomizer/index.html
+PASS production-v372-blue-landing-supply http://127.0.0.1:60314/randomizer/index.html
+SUMMARY browserSmoke passed=6 failed=0 total=6

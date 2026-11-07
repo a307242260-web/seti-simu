@@ -1,0 +1,38 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V372",
+  "baseCommit": "82470397df884c02c7d86b04829a94992db0ff67",
+  "snapshotTree": "686c991e80cf6cd632db7a7b7468d649324dc69c",
+  "runtimeSubtrees": {
+    "randomizer": "08ccb351c2b9f3fc852a86c9669721a54a5b896f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e",
+    "tools": "4b130d05942f93f761c4febb5629879865419db1"
+  },
+  "manifest": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/source-manifest-20261107-v2.json",
+  "manifestSha256": "b0d73fc4b530ccf4dc167c669a78542f9aa6d92489ff7f498da99285d2cd9ad2",
+  "validationOverlay": "reports/ai-foundation-20261107/v372-blue-landing-supply-v1/validation-overlay-20261107-v2.json",
+  "validationOverlaySha256": "2b95d1afe5e94edf3853e31cda50848a8fb25cade2d80e7907a7437666eb4355",
+  "runtimeFiles": {
+    "randomizer/game/ai/analysis-port.js": "19196e6ff3b0ea917e95084e891d2313ce4935f87a153288e915256f79ad3522",
+    "randomizer/game/ai/decision-search.js": "90f8fdc26bba73d57c5ac4c7eab418ee0a0ece4ee80312f713875f08c60455aa",
+    "randomizer/game/ai/local-decision-plans.js": "4c1c7eda5e275cd6b871bbde43dd3a724b4d8398f3ba435a10661ef77d30d938",
+    "randomizer/game/ai/resource-demand.js": "d1fd8a6db935a48d1a088c75e737ef1382cb3db0a7500ca44c4f584273ca1a43",
+    "randomizer/index.html": "6c40e45bedbc8f8597df316de81eb1bda2bf48132f7684e3f7e35ec70bed94c3"
+  },
+  "completeNamedColdCases": 1276,
+  "uniqueNativeRoots": 836,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 565.722208,
+  "coldGateSha256": "a4554a3adbeeec0ab373db0e2cbd9470382b8998a58361c24c9f5924ef14e0b3",
+  "commentOnlyBeforeGateArtifact": "2b03fb9f98ed83265630ad30c8199cb447629a3b8ec2c61175570d80f7621b1a",
+  "firstTwoFullGraphsUnchanged": 304,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRelevantPassed": 6,
+  "inputAuditPassed": 66,
+  "fourRuntimeBudgetsStillNull": true,
+  "baseline": "V41",
+  "developmentAligned": false,
+  "newAutonomousRuns": 0
+}

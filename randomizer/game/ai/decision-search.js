@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v371";
+  const VERSION = "seti-complete-decision-search-v372";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -237,6 +237,7 @@
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
       const preparationDebt = BOUNDARIES.has(node.status) ? preparationDebtForNode(node) : null;
+      const landingCompanyRetained = realizationTies && BOUNDARIES.has(node.status) ? port.landingCompanyRetained?.(node) || 0 : 0;
       // A closed leaf retains its exact native envelope and scalar V; its full
       // observation can be regenerated, rather than pinning a second large tree.
       if (BOUNDARIES.has(node.status)&&!["income-plan-value","turn-tail-value"].includes(node.status)) port.releaseBoundaryObservation?.(node);
@@ -329,7 +330,7 @@
           || action.target?.tradeId === "energy-for-move" || action.family === "card_corner" && action.payload?.kind === "move"));
       let movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
       if(resourcePlanning&&movementPolicy?.chosenGoal?.timing==="advance-before-rotation"&&movementPolicy.selectedActionId
-        &&!resourcePolicy?.plans.some(p=>p.goal.kind==="held-landing-route")){
+        &&!resourcePolicy?.plans.some(p=>["held-landing-route","blue-landing-supply"].includes(p.goal.kind))){
         movementPolicy={...movementPolicy,forceExecution:true,reason:"execute-selected-advance-timing",
           retainedActionIds:[movementPolicy.selectedActionId],excludedActionIds:node.legalActions.filter(a=>a.actionId!==movementPolicy.selectedActionId).map(a=>a.actionId),
           suppressedResourceGoals:resourcePolicy?.plans.map(p=>p.goal.id)||[]};
@@ -379,7 +380,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -708,11 +709,13 @@
           if (parent.value == null || target.value > parent.value
             || (target.value === parent.value && (target.preparationDebt < parent.preparationDebt
               || (target.preparationDebt === parent.preparationDebt && (target.realization > parent.realization
-                || (target.realization === parent.realization && (distance < parent.distance
-                  || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))) {
+                || (target.realization === parent.realization && (target.landingCompanyRetained > parent.landingCompanyRetained
+                  || (target.landingCompanyRetained === parent.landingCompanyRetained && (distance < parent.distance
+                    || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))) {
             parent.value = target.value;
             parent.realization = target.realization;
             parent.preparationDebt = target.preparationDebt;
+            parent.landingCompanyRetained = target.landingCompanyRetained;
             parent.distance = distance;
             parent.best = edge;
             changed.push(index);
@@ -754,6 +757,7 @@
       expanded: entry.expanded, alternatives:entry.deferredPolicy?null:entry.alternativeCount, edges: entry.edges,
       ...(entry.deferredPolicy?{policyPending:!entry.prunedByBound}:{}),
       distance: Number.isFinite(entry.distance) ? entry.distance : null,
+      ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
         : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",
       ...(entry.prunedBy ? { prunedBy: entry.prunedBy } : {}),
@@ -799,7 +803,7 @@
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
         JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
-        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
+        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[b.target].landingCompanyRetained-nodes[a.target].landingCompanyRetained||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
       if (selection && !action.target?.confirm) return {
         actionId: action.actionId, target: null, value: nodes[0].value,
         completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",

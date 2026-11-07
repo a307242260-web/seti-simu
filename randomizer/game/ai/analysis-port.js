@@ -300,6 +300,7 @@
     let envelopeCompanyIntents = new WeakMap();
     let goalMovementGeometryNodes = 0;
     let openedRoot = null;
+    let rootPublicLandingOffer = null;
     let movementPolicies = new WeakMap();
     const movementRouteCache = new Map();
     const movementTimingCache = new Set();
@@ -585,6 +586,10 @@
       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
       const authoritative = snapshot(composition);
       const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
+      const player=state.players.players.find(p=>p.id===seatId);
+      const supplier=state.turn.roundNumber===3&&player.mainActionCompleted&&player.industryRoundMarkRound!==3
+        &&industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId==="deepspace_swap_cards"&&resourceDemand.publicLandingSupplier(state);
+      rootPublicLandingOffer=supplier&&supplier.card.blueBonusOwnerId!==seatId?supplier.card.id:null;
       knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
       knownRootTechIndices = new Map(Object.values(state.tech.stacks).map(stack=>[stack.tileId,stack.bonusIndex]));
       knownRootAlienIds = new Set((rootObservation.publicState.board.aliens.slots||[]).filter(a=>a.revealed).map(a=>a.alienId));
@@ -682,11 +687,32 @@
       return passPlanningState(state,session);
     }
 
+    function blueLandingGoalFor(state) {
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      return resourceDemand.blueLandingSupplyGoal({state,seatId,compareTiming:timingForOneGoalQuery(state),
+        candidates:()=>native.getProbeRouteRequirements(state,seatId)?.candidates||[]});
+    }
+
     function describeCardPick(envelope,actions,status,barrier=null) {
       if (envelopeCardSpecs.has(envelope)) return envelopeCardSpecs.get(envelope);
       const state=readPlanningState({envelope,informationBarrier:barrier});
       const session=envelope.session?.session;
       const policySession=barrier&&session?{...session,baseState:planningState(session.baseState,barrier,knownCards(envelope)),workingState:state}:session;
+      const head=session?.queue?.[0];
+      if(resourcePlanning&&status==="decision"&&head?.type===scienceSession.EFFECT_TYPES.PICK_CARD&&head.ownerId===seatId
+        &&head.payload.blueBonusSource&&session.journal?.actions?.[0]?.action?.family==="place_data"){
+        const base=policySession.baseState,goal=base&&blueLandingGoalFor(base);
+        const slot=session.journal.actions.find(row=>row.action?.family==="choose_target"&&row.action.target?.target==="blueBonus");
+        if(goal&&slot?.action.target.blueSlot===goal.blueSlot){
+          const action=actions.find(a=>a.family==="choose_card"&&a.target?.choiceId?.startsWith("pick:")&&a.target.cardInstanceId===goal.cardId);
+          if(!action)throw new Error("BLUE_LANDING_PUBLIC_SUPPLIER_UNAVAILABLE");
+          const result=freeze({policy:"seti-fixed-blue-landing-supply-v1",isEquivalence:false,kind:"fixed-card-plan",fixed:true,
+            goal,selection:{cardId:goal.cardId,blind:false},discardIds:[],selectedActionId:action.actionId,
+            retainedActionIds:[action.actionId],excludedActionIds:actions.filter(a=>a!==action).map(a=>a.actionId),
+            reason:"take-known-landing-supplier"});
+          envelopeCardSpecs.set(envelope,result);return result;
+        }
+      }
       const result=cardPickPlanner.plan({state,seatId,actions,status,session:policySession,
         committedCompanySwap:envelopeCompanyIntents.get(envelope)||null,
         endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
@@ -815,6 +841,9 @@
       }
       if(node.status==="stable"){
         goals=resourceCatalog(state,node.legalActions);
+        if(node.legalActions.some(a=>a.family==="place_data"||a.family==="card_corner"&&a.payload?.kind==="resource")){
+          const supply=blueLandingGoalFor(state);if(supply)goals=[...goals,supply];
+        }
         const native=productionKernel||globalThis.SetiProductionKernel;
         if(node.legalActions.some(a=>goalMovement.isDirection(a))){
           const landing=resourceDemand.heldLandingGoal({state,seatId,compareTiming:timingForOneGoalQuery(state),
@@ -830,6 +859,10 @@
               return first.actionId===source.actionId||first.kind==="fallback"&&first.actionIds.includes(source.actionId);
             });
           operation={placing:source.family==="place_data",finalPlacement:false};
+          if(source.family==="place_data"){
+            const base=planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope));
+            const supply=blueLandingGoalFor(base);if(supply)goals=[...goals,supply];
+          }
         }
       }
       if(goals.some(g=>g.kind==="computer-prefix")){
@@ -924,7 +957,11 @@
       const swapGain=competingSwap?stateValue.normalizeValue(competingSwap.goal.netGain):0;
       const swapAction=swapGain>Math.max(0,stateValue.normalizeValue(forcedGain))&&node.legalActions.find(a=>a.actionId===cardPick.selectedActionId
         &&a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards");
-      const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:swapAction?[]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
+      // Preserve the existing fixed tail, adding only the single known
+      // supplier. Its arrival must not reopen other data/corner purposes.
+      const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
+      const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+        plans:swapAction?supplyPlans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"):plans,
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
         retainedActionIds:forcedKind?(swapAction?[swapAction.actionId]:[]):node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind?node.legalActions.filter(a=>a!==swapAction).map(a=>a.actionId):excluded.map(a=>a.actionId)});
@@ -1100,6 +1137,19 @@
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (movementPolicies.has(node)) return movementPolicies.get(node);
       const state = readPlanningState(stored);
+      if(node.status==="stable"&&!stored.intent&&node.legalActions.some(a=>a.family==="end_turn")){
+        const wait=resourceDemand.blueLandingWait({state,seatId,compareTiming:timingForOneGoalQuery(state),
+          candidates:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId)?.candidates||[]});
+        if(wait){
+          const movement=node.legalActions.filter(a=>goalMovement.isDirection(a)||a.target?.tradeId==="energy-for-move"
+            ||a.family==="card_corner"&&a.payload?.kind==="move");
+          const policy=freeze({policy:"seti-fixed-blue-landing-supply-v1",selectedActionId:null,chosenGoal:{id:wait,timing:"defer"},
+            retainedActionIds:node.legalActions.filter(a=>!movement.includes(a)).map(a=>a.actionId),
+            excludedActionIds:movement.map(a=>a.actionId),excludedDirectionCount:movement.filter(goalMovement.isDirection).length,
+            routingNodes:0,reason:"reserve-income-and-wait-for-known-landing"});
+          movementPolicies.set(node,policy);return policy;
+        }
+      }
       const result = goalMovement.plan({ state, seatId,
         actions: node.legalActions, status: node.status, session: stored.envelope.session?.session,
         intent: stored.intent, routeCache: movementRouteCache,
@@ -3242,6 +3292,18 @@
       publicSeed = null;rootTurnKey=null;
     }
 
+    function landingCompanyRetained(node) {
+      if(!rootPublicLandingOffer)return 0;
+      const stored=nodes.get(node),base=stored?.incomeProofBase||stored?.turnTailBase;
+      const state=readIdentityState((base?nodes.get(base):stored).envelope),player=state.players.players.find(p=>p.id===seatId);
+      // Inspect only the supplier that was visible before this window; neither
+      // the replenishment identity nor any blind draw enters the tie break.
+      return Number(state.turn.roundNumber===3&&player.industryRoundMarkRound!==3
+        &&player.hand.some(c=>c.id===rootPublicLandingOffer&&c.blueBonusOwnerId===seatId)
+        &&player.hand.some(c=>knownRootCardIds.has(c.id)&&cards.getIncomeGainForCard(c)?.handSize===1)
+        &&data.listComputerPlacedTokens(player).length===3);
+    }
+
     function valueObservation(node) {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(stored.incomeProofBase||stored.turnTailBase)throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");
@@ -3282,7 +3344,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
