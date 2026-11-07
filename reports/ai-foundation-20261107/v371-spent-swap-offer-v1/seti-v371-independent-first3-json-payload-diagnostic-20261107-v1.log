@@ -1,0 +1,73 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 163:payload
++ actual - expected
+
+  {
+    options: {
++     afterLandRewards: undefined,
+      allowDuplicateLanding: false,
+      allowDuplicateSatelliteLanding: false,
+      allowSatelliteWithoutTech: false,
+      cost: {},
++     displayLandingSlot: undefined,
+      forceFirstLandingReward: false,
+      grantRewards: true,
++     referenceOffsetTokenWidths: undefined,
+      rememberPreLandingMarker: false,
+      rememberPreLandingOwnMarker: false,
+      repeat: 1,
+      skipCost: true,
+      source: 'card'
+
+    at Object.<anonymous> (/private/tmp/seti-v371-autonomous-first3-20261107-v1/adhoc/verify-v371-autonomous-first3-20261107-v1.js:44:89)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    options: {
+      skipCost: true,
+      allowDuplicateLanding: false,
+      allowDuplicateSatelliteLanding: false,
+      allowSatelliteWithoutTech: false,
+      forceFirstLandingReward: false,
+      displayLandingSlot: undefined,
+      referenceOffsetTokenWidths: undefined,
+      grantRewards: true,
+      afterLandRewards: undefined,
+      rememberPreLandingOwnMarker: false,
+      rememberPreLandingMarker: false,
+      repeat: 1,
+      cost: {},
+      source: 'card'
+    }
+  },
+  expected: {
+    options: {
+      skipCost: true,
+      allowDuplicateLanding: false,
+      allowDuplicateSatelliteLanding: false,
+      allowSatelliteWithoutTech: false,
+      forceFirstLandingReward: false,
+      grantRewards: true,
+      rememberPreLandingOwnMarker: false,
+      rememberPreLandingMarker: false,
+      repeat: 1,
+      cost: {},
+      source: 'card'
+    }
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

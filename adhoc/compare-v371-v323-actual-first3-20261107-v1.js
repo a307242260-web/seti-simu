@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto'),read=p=>JSON.parse(fs.readFileSync(p)),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const root='reports/ai-foundation-20261107/',before=root+'committed-computer-recovery-v323-v1/v323-first3-native-development-20261107-v1.json',after=root+'v371-spent-swap-offer-v1/v371-first3-native-development-20261107-v1.json';
+const a=read(before),b=read(after),old=read(a.save).replaySteps,next=read(b.save).replaySteps;assert.equal(a.saveSha256,sha(a.save));assert.equal(b.saveSha256,sha(b.save));
+let common=0;while(old[common]&&next[common]&&old[common].actorPlayerId===next[common].actorPlayerId&&JSON.stringify(old[common].action)===JSON.stringify(next[common].action))common++;
+assert.equal(common,150);
+const detail=(steps,from,to)=>steps.slice(from-1,to).map((r,i)=>({input:from+i,actor:r.actorPlayerId,family:r.action.family,target:r.action.target,summary:r.action.summary}));
+const changes=b.compare.map((r,i)=>{const prior=a.compare[i].ai.assets,now=r.ai.assets;return{round:r.round,changedFields:Object.keys(prior).filter(key=>JSON.stringify(prior[key])!==JSON.stringify(now[key])),oldScore:prior.boardScore,newScore:now.boardScore,oldIncome:prior.income,newIncome:now.income,oldData:prior.data,newData:now.data};});
+assert(!changes[0].changedFields.length&&!changes[1].changedFields.length);assert.equal(changes[2].newScore-changes[2].oldScore,6);
+const result={scope:'Compare the recorded actions and independently Native-replayed endpoints of the two actual autonomous runs; no counterfactual or new AI inputs.',before,beforeSha256:sha(before),after,afterSha256:sha(after),equalInitialActions:common,firstDifference:{old:detail(old,151,151)[0],new:detail(next,151,151)[0]},comparisons:changes,oldThirdRoundDivergence:detail(old,151,174),newThirdRoundDivergence:detail(next,151,174),newAutonomousRuns:0};
+fs.writeFileSync(process.argv[2],JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({common,round3:changes[2],newAutonomousRuns:0}));

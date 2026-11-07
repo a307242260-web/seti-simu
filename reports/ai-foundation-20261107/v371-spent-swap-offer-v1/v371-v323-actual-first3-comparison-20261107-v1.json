@@ -1,0 +1,724 @@
+{
+  "scope": "Compare the recorded actions and independently Native-replayed endpoints of the two actual autonomous runs; no counterfactual or new AI inputs.",
+  "before": "reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/v323-first3-native-development-20261107-v1.json",
+  "beforeSha256": "1d32fda644f088ba3dea42e8f860e0be2288c1e7e89ffc53558af9dd2092e06d",
+  "after": "reports/ai-foundation-20261107/v371-spent-swap-offer-v1/v371-first3-native-development-20261107-v1.json",
+  "afterSha256": "9e66d05424b44c0d0e4b5a98009a3d7d7b81c73495e15361f698e5ab91a2e9c8",
+  "equalInitialActions": 150,
+  "firstDifference": {
+    "old": {
+      "input": 151,
+      "actor": "player-white",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-49-0"
+      },
+      "summary": "dlc_32.png：弃牌角标"
+    },
+    "new": {
+      "input": 151,
+      "actor": "player-white",
+      "family": "industry",
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "summary": "深空探测 1x 行动"
+    }
+  },
+  "comparisons": [
+    {
+      "round": 1,
+      "changedFields": [],
+      "oldScore": 15,
+      "newScore": 15,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "oldData": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-4",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-11",
+            "index": 5,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "newData": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-4",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-11",
+            "index": 5,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      }
+    },
+    {
+      "round": 2,
+      "changedFields": [],
+      "oldScore": 48,
+      "newScore": 48,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "oldData": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "newData": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      }
+    },
+    {
+      "round": 3,
+      "changedFields": [
+        "boardScore",
+        "technology",
+        "resources",
+        "income",
+        "hand",
+        "reserved",
+        "data",
+        "alienPreinvestments",
+        "projectedFinalScore"
+      ],
+      "oldScore": 90,
+      "newScore": 96,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "oldData": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-32",
+            "index": 9,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-33",
+            "index": 10,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "newData": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      }
+    }
+  ],
+  "oldThirdRoundDivergence": [
+    {
+      "input": 151,
+      "actor": "player-white",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-49-0"
+      },
+      "summary": "dlc_32.png：弃牌角标"
+    },
+    {
+      "input": 152,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 153,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "summary": "blue2 下方"
+    },
+    {
+      "input": 154,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 155,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:a",
+        "tileId": "a"
+      },
+      "summary": "标记 A"
+    },
+    {
+      "input": 156,
+      "actor": "player-green",
+      "family": "pass",
+      "target": {
+        "kind": "pass"
+      },
+      "summary": "PASS"
+    },
+    {
+      "input": 157,
+      "actor": "player-green",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-27-pass-2-3|card-54-0|card-55-0|card-56-0",
+        "cardIds": [
+          "card-27-pass-2-3",
+          "card-54-0",
+          "card-55-0",
+          "card-56-0"
+        ]
+      },
+      "summary": "弃置 b_7.webp、b_62.webp、dlc_29.png、b_15.webp"
+    },
+    {
+      "input": 158,
+      "actor": "player-green",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-34-pass-3-5",
+        "cardId": "b_138.webp"
+      },
+      "summary": "b_138.webp"
+    },
+    {
+      "input": 159,
+      "actor": "player-white",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "input": 160,
+      "actor": "player-white",
+      "family": "move",
+      "target": {
+        "rocketId": 5,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "summary": "移动探测器 5 向外"
+    },
+    {
+      "input": 161,
+      "actor": "player-white",
+      "family": "choose_payment",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-29-pass-2-5",
+        "cardIds": [
+          "card-29-pass-2-5"
+        ]
+      },
+      "summary": "弃 1 张移动牌"
+    },
+    {
+      "input": 162,
+      "actor": "player-white",
+      "family": "land",
+      "target": {
+        "select": true
+      },
+      "summary": "登陆"
+    },
+    {
+      "input": 163,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:1:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow"
+      },
+      "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹"
+    },
+    {
+      "input": 164,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 165,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:2",
+        "target": "blueBonus",
+        "blueSlot": 2
+      },
+      "summary": "blue3 下方"
+    },
+    {
+      "input": 166,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "choiceId": "pick:card-51-0",
+        "cardInstanceId": "card-51-0",
+        "publicSlotIndex": 1
+      },
+      "summary": "dlc_31.png"
+    },
+    {
+      "input": 167,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 168,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 4"
+    },
+    {
+      "input": 169,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "choiceId": "income:card-51-0",
+        "cardInstanceId": "card-51-0"
+      },
+      "summary": "收入 dlc_31.png"
+    },
+    {
+      "input": 170,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 171,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-3-3"
+      },
+      "summary": "amiba_3.webp"
+    },
+    {
+      "input": 172,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:pink:1",
+        "traceType": "pink",
+        "position": 1,
+        "region": "red"
+      },
+      "summary": "粉色痕迹 1号位"
+    },
+    {
+      "input": 173,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 174,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:b",
+        "tileId": "b"
+      },
+      "summary": "标记 B"
+    }
+  ],
+  "newThirdRoundDivergence": [
+    {
+      "input": 151,
+      "actor": "player-white",
+      "family": "industry",
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "summary": "深空探测 1x 行动"
+    },
+    {
+      "input": 152,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "hand:card-49-0",
+        "cardInstanceId": "card-49-0"
+      },
+      "summary": "dlc_32.png"
+    },
+    {
+      "input": 153,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "public:1:card-51-0",
+        "slotIndex": 1,
+        "cardInstanceId": "card-51-0"
+      },
+      "summary": "dlc_31.png"
+    },
+    {
+      "input": 154,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 155,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:a",
+        "tileId": "a"
+      },
+      "summary": "标记 A"
+    },
+    {
+      "input": 156,
+      "actor": "player-green",
+      "family": "pass",
+      "target": {
+        "kind": "pass"
+      },
+      "summary": "PASS"
+    },
+    {
+      "input": 157,
+      "actor": "player-green",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-27-pass-2-3|card-54-0|card-55-0|card-56-0",
+        "cardIds": [
+          "card-27-pass-2-3",
+          "card-54-0",
+          "card-55-0",
+          "card-56-0"
+        ]
+      },
+      "summary": "弃置 b_7.webp、b_62.webp、dlc_29.png、b_15.webp"
+    },
+    {
+      "input": 158,
+      "actor": "player-green",
+      "family": "choose_card",
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-34-pass-3-5",
+        "cardId": "b_138.webp"
+      },
+      "summary": "b_138.webp"
+    },
+    {
+      "input": 159,
+      "actor": "player-white",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "input": 160,
+      "actor": "player-white",
+      "family": "move",
+      "target": {
+        "rocketId": 5,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "summary": "移动探测器 5 向外"
+    },
+    {
+      "input": 161,
+      "actor": "player-white",
+      "family": "choose_payment",
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "summary": "消耗 1 能量"
+    },
+    {
+      "input": 162,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "card-51-0"
+      },
+      "summary": "dlc_31.png"
+    },
+    {
+      "input": 163,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "land:5:mars:planet:",
+        "actionType": "land",
+        "rocketId": 5,
+        "planetId": "mars",
+        "landTarget": {
+          "type": "planet",
+          "rocketId": 5
+        }
+      },
+      "summary": "登陆火星 - 奖励：首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记（主星，R5，0）"
+    },
+    {
+      "input": 164,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:1:yellow",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow"
+      },
+      "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹"
+    },
+    {
+      "input": 165,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 166,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "summary": "第一排放置位 4"
+    },
+    {
+      "input": 167,
+      "actor": "player-white",
+      "family": "choose_card",
+      "target": {
+        "choiceId": "income:card-29-pass-2-5",
+        "cardInstanceId": "card-29-pass-2-5"
+      },
+      "summary": "收入 b_101.webp"
+    },
+    {
+      "input": 168,
+      "actor": "player-white",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "summary": "放置数据"
+    },
+    {
+      "input": 169,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "data:blueBonus:1",
+        "target": "blueBonus",
+        "blueSlot": 1
+      },
+      "summary": "blue2 下方"
+    },
+    {
+      "input": 170,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 171,
+      "actor": "player-white",
+      "family": "play_card",
+      "target": {
+        "cardInstanceId": "alien-amiba-3-3"
+      },
+      "summary": "amiba_3.webp"
+    },
+    {
+      "input": 172,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "choiceId": "trace:pink:1",
+        "traceType": "pink",
+        "position": 1,
+        "region": "red"
+      },
+      "summary": "粉色痕迹 1号位"
+    },
+    {
+      "input": 173,
+      "actor": "player-white",
+      "family": "end_turn",
+      "target": {
+        "kind": "end-turn"
+      },
+      "summary": "结束回合"
+    },
+    {
+      "input": 174,
+      "actor": "player-white",
+      "family": "choose_target",
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:b",
+        "tileId": "b"
+      },
+      "summary": "标记 B"
+    }
+  ],
+  "newAutonomousRuns": 0
+}
