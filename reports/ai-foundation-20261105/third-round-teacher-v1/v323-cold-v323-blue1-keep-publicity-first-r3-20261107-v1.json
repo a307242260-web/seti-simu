@@ -1,0 +1,496 @@
+{
+  "sourceCommit": null,
+  "hostBaseCommit": "8190a6718a15f441a076c9fab5a43b4aca3634a2",
+  "candidateAdmitted": false,
+  "candidateSourceManifest": "reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/source-manifest-20261107-v1.json",
+  "candidateSourceManifestSha256": "b26df154d681636ffea2a4ffacf0788cac453e007d0faf2803397779d8027cb3",
+  "label": "v323-blue1-keep-publicity-first-r3",
+  "fixture": "reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/v323-r2-blue1-keep-publicity-r3-root-20261107-v1.json",
+  "fixtureSha256": "7dd5fd767b239c09933ee8cf8f4b2ca45f6e747d6dfe31d9d24e7a676b1a72c0",
+  "searchVersion": "seti-complete-decision-search-v323",
+  "valueModel": "seti-purpose-capital-state-value-v54",
+  "timingScope": "fresh-process-root-and-search",
+  "complete": true,
+  "stopReason": null,
+  "actionId": "scan:2d21a323",
+  "value": 99.5,
+  "nativeInputs": 114,
+  "milliseconds": 217.178291,
+  "decisionGatePassed": true,
+  "diagnostics": {
+    "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+    "valueEvaluations": 19,
+    "valueCacheHits": 38,
+    "finalMarkPlanning": true,
+    "scanPlanning": true,
+    "resourcePlanning": "goal-bound-greedy-preparation",
+    "cardPickPlanning": "purpose-bound-fixed-plan",
+    "movementPlanning": "goal-directed-policy",
+    "movementPolicyNodes": 16,
+    "movementDirectionsExcluded": 47,
+    "routeGeometryNodes": 64,
+    "incomePlanProofs": 0,
+    "provedIncomeInputs": 0,
+    "turnTailProofs": 14,
+    "provedTurnTailInputs": 14,
+    "movementValuePrunes": 0,
+    "dataPrimaryBoundPrunes": 0,
+    "winningIncomePlans": 0,
+    "winningIncomeInputs": 0,
+    "deferredMovementPlans": 0,
+    "nativeExecutions": 114,
+    "logicalResourceInputs": 114,
+    "sharedResourceInputHits": 25,
+    "sharedResourceInternalStates": 65,
+    "localFinalMarkStates": 0,
+    "localFinalMarkExcluded": 0,
+    "fixedDataChoiceStates": 0,
+    "fixedDataChoicesExcluded": 0,
+    "branchingStates": 2,
+    "singleAlternativeStates": 38,
+    "disabledBorrowStarts": 0,
+    "disabledRemoveTechIncomeStarts": 0,
+    "scanPurposePlans": 12,
+    "resourceGoalPlans": 29,
+    "resourcePreparationInputs": 114,
+    "resourceFallbacks": 1,
+    "resourceExcludedActions": 280,
+    "transitions": 114,
+    "nodes": 134,
+    "graphNodes": 59,
+    "certificateNodes": 75,
+    "postMainOptimalPlans": 0,
+    "postMainOptimalPlanSteps": 0,
+    "equivalents": 0,
+    "selectionMacros": 0,
+    "peakFrontier": 18,
+    "dominancePrunes": 0,
+    "resourceDominance": "disabled-for-movement-policy",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "disabled-for-movement-policy",
+    "postMainValuePrunes": 0,
+    "scanValuePrunes": 0,
+    "scanActionPrunes": 0,
+    "cardTradePrunes": 0,
+    "cardTradePruning": "disabled-for-selection-certificate",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "postMainBorrowProofNodes": 0,
+    "postMainBorrowExcludedChoices": 0,
+    "postMainBorrowMacros": 0,
+    "cardChoiceProofNodes": 0,
+    "cardChoiceExcludedActions": 0,
+    "cardCornerProofNodes": 0,
+    "cardCornerExcludedActions": 0,
+    "preMainDataProofNodes": 0,
+    "preMainDataExcludedActions": 0,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "not-requested",
+    "milliseconds": 203.954666,
+    "limits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    }
+  },
+  "rootActions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "launch",
+      "phase": "main",
+      "actionId": "launch:c94cda79",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": null,
+      "payload": {},
+      "decision": null,
+      "summary": "发射"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "scan",
+      "phase": "main",
+      "actionId": "scan:2d21a323",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "standard-scan"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "扫描"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:52a456f8",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-29-pass-2-5"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "b_101.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:ec548c50",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-51-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 1
+      },
+      "decision": null,
+      "summary": "dlc_31.png"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "pass",
+      "phase": "main",
+      "actionId": "pass:a1f33c73",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "pass"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "PASS"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:f385e2ac",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:49c75492",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "credits-for-card"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:12411a2c",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:a39c1a77",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:37140fcf",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "cards-for-pick-card"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:122c43fc",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "energy-for-card"
+      },
+      "payload": {
+        "cost": {
+          "energy": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2能量 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:df811f99",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "energy": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2能量 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:71814d67",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "payload": {
+        "cost": {
+          "publicity": 3
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "3宣传 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "industry",
+      "phase": "quick",
+      "actionId": "industry:e887dc52",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "深空探测 1x 行动"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:68a82599",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-29-pass-2-5"
+      },
+      "payload": {
+        "kind": "move",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "b_101.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:bd2c359f",
+      "actorId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-51-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "dlc_31.png：弃牌角标"
+    }
+  ],
+  "portDiagnostics": {
+    "cardPick": {
+      "rankingCacheEntries": 1,
+      "maxRankingCacheEntries": 64,
+      "rankingCacheHits": 0,
+      "rankingCacheMisses": 1,
+      "rankedCards": 3,
+      "companyIntentReuses": 0,
+      "companyIntentRecoveries": 0,
+      "companyIntentGuardRejects": 0,
+      "rankingCacheHitsThisRoot": 0,
+      "rankingCacheMissesThisRoot": 1,
+      "rankedCardsThisRoot": 3,
+      "companyIntentReusesThisRoot": 0,
+      "companyIntentRecoveriesThisRoot": 0,
+      "companyIntentGuardRejectsThisRoot": 0
+    },
+    "goalMovementGeometryNodes": 64,
+    "movementRouteCacheEntries": 2,
+    "maxMovementRouteCacheEntries": 64,
+    "nodeCount": 134,
+    "submissionCount": 114,
+    "cacheHits": 0,
+    "stableRestoreSkips": 39,
+    "timingPrefixBuilds": 8,
+    "timingPrefixReuses": 35,
+    "movementTimingCacheHits": 30,
+    "movementTimingCacheMisses": 13,
+    "cacheEntries": 0,
+    "observationCount": 43,
+    "observationReleases": 5,
+    "movementTimingCacheEntries": 13,
+    "maxMovementTimingCacheEntries": 256,
+    "normalizedIdentityCacheEntries": 64,
+    "maxNormalizedIdentityCacheEntries": 64,
+    "identityCount": 110,
+    "identityMaterializations": 110,
+    "identitySubtreeCacheHits": 0,
+    "identitySubtreeCacheStores": 0,
+    "maxCacheEntries": 0,
+    "sharedPrefixEdges": 114,
+    "sharedPrefixNodes": 120,
+    "sharedPrefixHits": 25,
+    "decodedStateCacheEntries": 58,
+    "maxDecodedStateCacheEntries": 64,
+    "decodedStateCacheBytes": 3846772,
+    "maxDecodedStateCacheBytes": 8388608,
+    "observationCacheHits": 52,
+    "resourceQueryHits": 1,
+    "resourceQueryMisses": 39,
+    "goalCatalogHits": 0,
+    "goalCatalogMisses": 39,
+    "movementBoundQueries": 0,
+    "movementRuleQueries": 0,
+    "movementIntentRecoveries": 0,
+    "completedMovementRecoveries": 0,
+    "committedDecodeCount": 1,
+    "committedDecodeHits": 631,
+    "committedReferenceCount": 57,
+    "selectionEvidenceEntries": 0,
+    "maxSelectionEvidenceEntries": 1,
+    "planEvidenceEntries": 1,
+    "planPrefixEntries": 9,
+    "maxPlanPrefixEntries": 32,
+    "milliseconds": {
+      "restore": 7.505462000000335,
+      "execute": 45.83754000000002,
+      "observation": 11.142877999999854,
+      "checkpoint": 13.310086000000041,
+      "resourceOrder": 0,
+      "valueBound": 0,
+      "postMainPlan": 0,
+      "preMainDataPlan": 0
+    }
+  },
+  "rootAndRngUnchanged": true,
+  "rawPath": "reports/ai-foundation-20261105/third-round-teacher-v1/v323-cold-v323-blue1-keep-publicity-first-r3-20261107-v1.raw.json.gz",
+  "rawSha256": "bae5bb20b172db867b0266f9930c6ceb97338719e0765db26f3788a87f4f5f66",
+  "sourceHashes": {}
+}

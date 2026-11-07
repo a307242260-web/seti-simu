@@ -1,0 +1,95 @@
+{
+  "scope": "One distinct code prototype in-memory diagnostic; not a frozen-source admission or a game. Six boundary controls, scalar/full parity and Native-derived funding witness. Does not forecast Type3 scoring, new cards or arrival events.",
+  "prototype": "reports/ai-foundation-20261107/v323-known-landing-quote-prototype-v1/probe-capital-held-landing-prototype-20261107-v1.js",
+  "prototypeSha256": "3fd6851657add6e54e59f1705f07b55d2354382c646b9207bb5aebcd744e888d",
+  "native": "reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/v323-known-free-landing-native-20261107-v1.json",
+  "nativeSha256": "08d4cec91d4bfc2adb39447b98f6bd32a65683e725f20d886b9ca7e5fa6dfef9",
+  "originalQuotedValue": 5,
+  "candidateQuotedValue": 11,
+  "exactJupiterAlternative": {
+    "id": "5:land:jupiter:planet:card:card-51-0",
+    "family": "land",
+    "planet": "jupiter",
+    "funded": true,
+    "knownLandingCardId": "card-51-0",
+    "supported": true,
+    "payment": {
+      "spend": {
+        "credits": 3,
+        "energy": 2
+      },
+      "energyPurchases": 1,
+      "creditPurchases": 0,
+      "value": 5
+    },
+    "route": {
+      "coordinate": {
+        "x": 0,
+        "y": 3
+      },
+      "cost": 3,
+      "path": [
+        {
+          "deltaX": 0,
+          "deltaY": 1,
+          "requiredMovePoints": 1
+        },
+        {
+          "deltaX": 0,
+          "deltaY": 1,
+          "requiredMovePoints": 1
+        },
+        {
+          "deltaX": 1,
+          "deltaY": 0,
+          "requiredMovePoints": 1
+        }
+      ]
+    },
+    "ledger": [
+      {
+        "type": "gain_data",
+        "count": 2,
+        "value": 1
+      },
+      {
+        "type": "gain_resources",
+        "gain": {
+          "score": 7
+        },
+        "value": 7
+      },
+      {
+        "type": "alien_trace",
+        "slotId": 1,
+        "traceType": "yellow",
+        "first": true,
+        "gain": {
+          "score": 5,
+          "publicity": 1
+        },
+        "value": 5.5,
+        "excluded": "revealed-species effects and future discovery"
+      }
+    ],
+    "capitalDelta": 0,
+    "dataContinuation": null,
+    "value": 7.5
+  },
+  "controls": 6,
+  "selected": "scan:2d21a323",
+  "value": 99.5,
+  "launch": {
+    "actionId": "launch:c94cda79",
+    "target": 1,
+    "value": 95,
+    "realization": -9,
+    "preparationDebt": 0,
+    "completion": "complete"
+  },
+  "nativeInputs": 114,
+  "ms": 207.76795800000002,
+  "rootAndRngExact": true,
+  "sourceReleased": false,
+  "newAutonomousRuns": 0
+}
