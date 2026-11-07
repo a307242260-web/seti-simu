@@ -1,0 +1,91 @@
+{
+  "fixture": "reports/ai-foundation-20261107/v351-known-income-scan-funding-v1/v323-r3-income-166-public-energy-20261107-v1.raw.json.gz",
+  "fixtureSha256": "aa01ca38851b198cc42645f7aee1eae946ed692c243a6692a02270b9a924c360",
+  "candidateManifestSha256": "e5f22ac2ba757dfc16f23ad6e6e00db971e798d4b882c04a12ec12bbd41dfcf6",
+  "old": "choose_card:2db479c6",
+  "candidate": "choose_card:710b84b9",
+  "goal": {
+    "kind": "income",
+    "id": "income:computer:4",
+    "amount": 1,
+    "priority": 5,
+    "protectedCardId": null
+  },
+  "publicOffers": [
+    {
+      "actionId": "choose_card:710b84b9",
+      "id": "card-60-0",
+      "model": "dlc_25.png",
+      "gain": {
+        "energy": 1
+      }
+    },
+    {
+      "actionId": "choose_card:2db479c6",
+      "id": "card-51-0",
+      "model": "dlc_31.png",
+      "gain": {
+        "credits": 1
+      }
+    },
+    {
+      "actionId": "choose_card:345c28fb",
+      "id": "card-61-0",
+      "model": "dlc_24.png",
+      "gain": {
+        "handSize": 1
+      }
+    }
+  ],
+  "wallet": {
+    "additionalPublicScan": 0,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 3,
+    "energy": 0,
+    "handSize": 0,
+    "publicity": 7,
+    "score": 65
+  },
+  "guards": [
+    {
+      "name": "standard-scan-already-funded",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "income-does-not-close-the-gap",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "opponent-still-active",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "purple4-disabled",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "probe-already-in-flight",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "income-too-late",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "main-action-still-open",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "anonymous-hand-card",
+      "selected": "choose_card:2db479c6"
+    },
+    {
+      "name": "offer-not-known",
+      "selected": "choose_card:2db479c6"
+    }
+  ],
+  "rootAndRngUnchanged": true,
+  "searchNodesAdded": 0,
+  "newAutonomousRuns": 0
+}

@@ -1,0 +1,10 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":4896,"postMainFundingBounds":3,"stateObservationParity":true,"rootAndRngUnchanged":true}
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+SUMMARY unit passed=5 failed=0 total=5 time=26.17s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=2
