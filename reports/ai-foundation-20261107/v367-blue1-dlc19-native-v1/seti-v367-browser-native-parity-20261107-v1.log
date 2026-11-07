@@ -1,0 +1,5 @@
+PASS production-analysis-lazy-explanations http://127.0.0.1:51234/randomizer/index.html
+PASS production-amiba-currency-tail-value http://127.0.0.1:51234/randomizer/index.html
+PASS production-known-postdraw-tail http://127.0.0.1:51234/randomizer/index.html
+PASS production-blue-data-analysis http://127.0.0.1:51234/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

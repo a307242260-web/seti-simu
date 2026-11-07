@@ -1,0 +1,28 @@
+{
+  "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+  "fixtureSha256": "d3e641767a29796301d8b6feb0f80436d35918627e519db551583d503eee1284",
+  "proof": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-blue1-dlc19-research-20261107-v1.json",
+  "proofSha256": "6b5af1e1588e5640d4a022445331d24e7195ba4b53349ca3b5428eb471b66869",
+  "inputs": 12,
+  "bothStateSessionRngExact": true,
+  "rootAndRngRestored": true,
+  "round": 3,
+  "score": 98,
+  "technologies": [
+    "blue1",
+    "blue2",
+    "blue3",
+    "purple2",
+    "purple4"
+  ],
+  "permanentIncome": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 7,
+    "energy": 3,
+    "handSize": 1,
+    "publicity": 0
+  },
+  "newAutonomousRuns": 0,
+  "originalProofSha256": "b8ea5619b864f1f7dd3680620a90f044ba4b662a54111e5833d8b374ddf0c33b"
+}

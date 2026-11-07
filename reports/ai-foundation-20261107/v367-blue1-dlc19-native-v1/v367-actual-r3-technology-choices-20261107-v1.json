@@ -1,0 +1,657 @@
+{
+  "scope": "Same archived Native roots and fixed official-route fork; independently decoded legal menus. Cold value differences do not imply an autonomous round endpoint.",
+  "gate": "reports/ai-foundation-20261107/v367-canonical-default-weights-v1/serial-cold-gate-20261107-v1.json",
+  "gateSha256": "6c8ccfa5060c30458d5b5fc9722a5760950e2aa012036e3becb559c0d594928c",
+  "official": "reports/research/614d33af.720da076.quick-400.json",
+  "officialSha256": "f582f53c4c1d428f377ac9b980d8d977a84d681219960e831afb585a17dcf69b",
+  "fixedControl": "reports/ai-foundation-20261107/v335-research-layout-key-v1/v323-r3-blue1-purple2-equal-corner-20261107-v1.json.gz",
+  "fixedControlSha256": "98096f620315020bf3d3ecaa1a27f32fc1811cdd7791d20e264c7cb5c05dbbe0",
+  "choices": [
+    {
+      "step": 186,
+      "fixture": "reports/ai-foundation-20261107/v333-visible-analysis-corner-v1/v323-actual-r3-step-186-root-20261107-v1.json",
+      "fixtureSha256": "f5b86aed05ecd44dbc19c90993dd167587c344ede2f5cfe79488263fbb6f0b5e",
+      "coldEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v367-cold-v323-actual-r3-step-186-20261107-v1.json",
+      "original": {
+        "actionId": "research_tech:806ccfc8",
+        "target": {
+          "kind": "research-tech"
+        },
+        "value": 146.5
+      },
+      "candidate": {
+        "actionId": "research_tech:806ccfc8",
+        "target": {
+          "kind": "research-tech"
+        },
+        "value": 148,
+        "nativeInputs": 25,
+        "milliseconds": 94.8145
+      },
+      "roots": [
+        {
+          "actionId": "research_tech:806ccfc8",
+          "target": {
+            "kind": "research-tech"
+          },
+          "value": 148,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "target": {
+            "kind": "pass"
+          },
+          "value": 124.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": {
+            "tradeId": "publicity-for-card"
+          },
+          "value": null,
+          "completion": "excluded-by-card-pick-policy"
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": {
+            "companyId": "深空探测",
+            "abilityId": "deepspace_swap_cards"
+          },
+          "value": null,
+          "completion": "excluded-by-card-pick-policy"
+        },
+        {
+          "actionId": "card_corner:508a13ba",
+          "target": {
+            "cardInstanceId": "alien-amiba-9-8"
+          },
+          "value": null,
+          "completion": "excluded-by-resource-policy"
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": {
+            "kind": "place-data"
+          },
+          "value": 143.5,
+          "completion": "complete"
+        }
+      ]
+    },
+    {
+      "step": 187,
+      "fixture": "reports/ai-foundation-20261107/v333-visible-analysis-corner-v1/v323-actual-r3-step-187-root-20261107-v1.json",
+      "fixtureSha256": "dde8ccf1230c67e3eddb35670c40a56bf7f92e75792cb0550b717fdbc8038dae",
+      "coldEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v367-cold-v323-actual-r3-step-187-20261107-v1.json",
+      "original": {
+        "actionId": "choose_target:405d1e5d",
+        "target": {
+          "choiceId": "tech:purple1",
+          "tileId": "purple1",
+          "blueSlot": null
+        },
+        "value": 146.5
+      },
+      "candidate": {
+        "actionId": "choose_target:bdea2e94",
+        "target": {
+          "choiceId": "tech:blue1:slot:3",
+          "tileId": "blue1",
+          "blueSlot": 3
+        },
+        "value": 148,
+        "nativeInputs": 11,
+        "milliseconds": 77.52970799999999
+      },
+      "roots": [
+        {
+          "actionId": "choose_target:bdea2e94",
+          "target": {
+            "choiceId": "tech:blue1:slot:3",
+            "tileId": "blue1",
+            "blueSlot": 3
+          },
+          "value": 148,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:36a6b668",
+          "target": {
+            "choiceId": "tech:blue1:slot:4",
+            "tileId": "blue1",
+            "blueSlot": 4
+          },
+          "value": null,
+          "completion": "excluded-by-local-decision-policy"
+        },
+        {
+          "actionId": "choose_target:89054c28",
+          "target": {
+            "choiceId": "tech:blue4:slot:3",
+            "tileId": "blue4",
+            "blueSlot": 3
+          },
+          "value": 146,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:7b13c554",
+          "target": {
+            "choiceId": "tech:blue4:slot:4",
+            "tileId": "blue4",
+            "blueSlot": 4
+          },
+          "value": null,
+          "completion": "excluded-by-local-decision-policy"
+        },
+        {
+          "actionId": "choose_target:03fdb62d",
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "value": 145.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:70b9a53f",
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "value": 141.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:22eefebd",
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "value": 144.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:a16882e3",
+          "target": {
+            "choiceId": "tech:orange4",
+            "tileId": "orange4",
+            "blueSlot": null
+          },
+          "value": 141.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:405d1e5d",
+          "target": {
+            "choiceId": "tech:purple1",
+            "tileId": "purple1",
+            "blueSlot": null
+          },
+          "value": 146.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:66c1a4bb",
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "value": 145.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:d57e0409",
+          "target": {
+            "choiceId": "tech:purple3",
+            "tileId": "purple3",
+            "blueSlot": null
+          },
+          "value": 145.5,
+          "completion": "complete"
+        }
+      ]
+    },
+    {
+      "step": 189,
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json",
+      "fixtureSha256": "b21a1bf50250d503997cbbb2175da4273bece0ff1f5573f41cc751c925f7260c",
+      "coldEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v367-cold-v323-actual-r3-step-189-20261107-v1.json",
+      "original": {
+        "actionId": "place_data:8fd12fd3",
+        "target": {
+          "kind": "place-data"
+        },
+        "value": 145.5
+      },
+      "candidate": {
+        "actionId": "place_data:8fd12fd3",
+        "target": {
+          "kind": "place-data"
+        },
+        "value": 146.5,
+        "nativeInputs": 21,
+        "milliseconds": 75.199875
+      },
+      "roots": [
+        {
+          "actionId": "pass:a1f33c73",
+          "target": {
+            "kind": "pass"
+          },
+          "value": 132,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "target": {
+            "tradeId": "publicity-for-card"
+          },
+          "value": null,
+          "completion": "excluded-by-card-pick-policy"
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "target": {
+            "companyId": "深空探测",
+            "abilityId": "deepspace_swap_cards"
+          },
+          "value": null,
+          "completion": "excluded-by-card-pick-policy"
+        },
+        {
+          "actionId": "card_corner:508a13ba",
+          "target": {
+            "cardInstanceId": "alien-amiba-9-8"
+          },
+          "value": null,
+          "completion": "excluded-by-resource-policy"
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "target": {
+            "kind": "place-data"
+          },
+          "value": 146.5,
+          "completion": "complete"
+        }
+      ]
+    },
+    {
+      "step": 194,
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-194-root-20261107-v1.json",
+      "fixtureSha256": "71d8d7136f3e44971d9351c2ab92d40aea92cfbaf19c8ce0ca32f6aab86f9c61",
+      "coldEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v367-cold-v323-actual-r3-step-194-20261107-v1.json",
+      "original": {
+        "actionId": "choose_target:411af34c",
+        "target": {
+          "choiceId": "trace:1:blue:amiba:2",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue",
+          "speciesId": "amiba",
+          "position": 2
+        },
+        "value": 145.5
+      },
+      "candidate": {
+        "actionId": "choose_target:06ca6510",
+        "target": {
+          "choiceId": "trace:1:blue:amiba:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue",
+          "speciesId": "amiba",
+          "position": 4
+        },
+        "value": 146.5,
+        "nativeInputs": 15,
+        "milliseconds": 73.671209
+      },
+      "roots": [
+        {
+          "actionId": "choose_target:0c6b3a23",
+          "target": {
+            "choiceId": "trace:1:blue:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "stateExtra": true
+          },
+          "value": 141,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:411af34c",
+          "target": {
+            "choiceId": "trace:1:blue:amiba:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "speciesId": "amiba",
+            "position": 2
+          },
+          "value": 145.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:5c6d197a",
+          "target": {
+            "choiceId": "trace:1:blue:amiba:3",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "speciesId": "amiba",
+            "position": 3
+          },
+          "value": 145.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:06ca6510",
+          "target": {
+            "choiceId": "trace:1:blue:amiba:4",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "speciesId": "amiba",
+            "position": 4
+          },
+          "value": 146.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:46f3414a",
+          "target": {
+            "choiceId": "trace:2:blue",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue"
+          },
+          "value": 141,
+          "completion": "complete"
+        }
+      ]
+    }
+  ],
+  "arms": [
+    {
+      "earlyTech": "blue1",
+      "earlySlot": 3,
+      "research": {
+        "cost": 6,
+        "available": 3,
+        "heldCorner": 2,
+        "knownResearchFunded": false
+      },
+      "score": 91,
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "purple4": true
+        }
+      },
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 91
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-32",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          }
+        ],
+        "poolTokens": []
+      },
+      "hand": [
+        [
+          "alien-amiba-9-8",
+          "amiba_9.webp"
+        ]
+      ],
+      "rockets": [],
+      "scan": [
+        [
+          "sector-1-b",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-2-a",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-4-b",
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      "trace": {
+        "blue": 4,
+        "pink": 2,
+        "yellow": 2
+      },
+      "projected": 121
+    },
+    {
+      "earlyTech": "blue4",
+      "earlySlot": 3,
+      "research": {
+        "cost": 6,
+        "available": 3,
+        "heldCorner": 2,
+        "knownResearchFunded": false
+      },
+      "score": 88,
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue4": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "blue3": true,
+          "blue4": true,
+          "purple4": true
+        }
+      },
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 88
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-32",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          }
+        ],
+        "poolTokens": []
+      },
+      "hand": [
+        [
+          "alien-amiba-9-8",
+          "amiba_9.webp"
+        ]
+      ],
+      "rockets": [],
+      "scan": [
+        [
+          "sector-1-b",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-2-a",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-4-b",
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      "trace": {
+        "blue": 4,
+        "pink": 2,
+        "yellow": 2
+      },
+      "projected": 118
+    },
+    {
+      "earlyTech": "purple2",
+      "earlySlot": null,
+      "research": {
+        "cost": 6,
+        "available": 4,
+        "heldCorner": 2,
+        "knownResearchFunded": true
+      },
+      "score": 91,
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 91
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-32",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          }
+        ],
+        "poolTokens": []
+      },
+      "hand": [],
+      "rockets": [],
+      "scan": [
+        [
+          "sector-1-b",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-2-a",
+          [
+            1,
+            2
+          ]
+        ],
+        [
+          "sector-4-b",
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      "trace": {
+        "blue": 4,
+        "pink": 2,
+        "yellow": 2
+      },
+      "projected": 121
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}
