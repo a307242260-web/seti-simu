@@ -1,0 +1,51 @@
+{
+  "scope": "Read-only restore of the exact Browser smoke before/after Native snapshots. Compare frozen prechangeV303 withV304 on the same masked observation; no Native action, no new AI query or performance sample.",
+  "previousBrowserExpected": 112.5,
+  "referenceV303": {
+    "modelVersion": "seti-purpose-capital-state-value-v54",
+    "total": 116.5,
+    "components": {
+      "realizedScore": 50,
+      "currentEndGameBonus": 22,
+      "resources": 9.5,
+      "hand": 5,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 5.75,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 1.75,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "candidateV304": {
+    "modelVersion": "seti-purpose-capital-state-value-v54",
+    "total": 116.5,
+    "components": {
+      "realizedScore": 50,
+      "currentEndGameBonus": 22,
+      "resources": 9.5,
+      "hand": 5,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 5.75,
+      "researchPotential": 0,
+      "probePotential": 4,
+      "analysisPotential": 1.75,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "newFinalMark": null,
+  "allComponentsExact": true,
+  "rootAndRngRestored": true,
+  "newNativeInputs": 0,
+  "newAutonomousRuns": 0
+}

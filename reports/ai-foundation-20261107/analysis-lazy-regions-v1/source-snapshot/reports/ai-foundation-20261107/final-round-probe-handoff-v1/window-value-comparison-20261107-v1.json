@@ -1,0 +1,2668 @@
+{
+  "scope": "Single pure valuation-window prototype on exact replay of previously verified22 Native control inputs; all player/board/session/RNG states unchanged, no AI search, no autonomous game or performance acceptance.",
+  "sourcePath": "reports/ai-foundation-20261107/venus-orbit-investment-v1/native-control-20261107-v1.checkpoint.json",
+  "sourceSha256": "8767141789ddd315f1d07c05d2730cdbdc46b11a0ebdb7059b843f3cd124b9d2",
+  "verificationPath": "reports/ai-foundation-20261107/venus-orbit-investment-v1/independent-native-verification-20261107-v1.json",
+  "verificationSha256": "06e52d98d01d6960017168178a9ae2a2d5fbac35f4907803f514d7ccb3899053",
+  "manifestPath": "reports/ai-foundation-20261107/probe-witness-source-order-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eb72eea74436a179b4c30059a653b8a28b5a9c0dc783d0f0f1457baafa646604",
+  "prototype": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/probe-window-prototype-20261107-v1.js",
+  "prototypeSha256": "41eac74df421afcdec10c76b1fa8b47b6f36bbf76e67b104ac397b22203d2851",
+  "checkpoint": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/replayed-prefixes-20261107-v1.checkpoint.json",
+  "checkpointSha256": "92aca7749b8adf9146be06376093c631d8ae6a9ac8e688f72be38dcd0dc9b125",
+  "nativeInputsReplayed": 22,
+  "valueComparisons": 24,
+  "branches": {
+    "orange2-skip": {
+      "rows": [
+        {
+          "prefix": 0,
+          "nextAction": {
+            "actor": "player-brown",
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            }
+          },
+          "round": 4,
+          "turn": 1,
+          "currentPlayer": "player-brown",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        },
+        {
+          "prefix": 1,
+          "nextAction": {
+            "actor": "player-brown",
+            "family": "choose_card",
+            "target": {
+              "kind": "pass-hand-limit",
+              "choiceId": "card-12-0|card-31-pass-3-2",
+              "cardIds": [
+                "card-12-0",
+                "card-31-pass-3-2"
+              ]
+            }
+          },
+          "round": 4,
+          "turn": 1,
+          "currentPlayer": "player-brown",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        },
+        {
+          "prefix": 2,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "launch",
+            "target": null
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 131,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 13,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        },
+        {
+          "prefix": 3,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "move",
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 129,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 137,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 8,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 8,
+            "total": 8
+          },
+          "standaloneMission": {
+            "value": 8,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 8,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 3,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 4,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_payment",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 129,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 137,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 8,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 8,
+            "total": 8
+          },
+          "standaloneMission": {
+            "value": 8,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 8,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 3,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 5,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "move",
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 4,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 134.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 6,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 6,
+            "total": 6
+          },
+          "standaloneMission": {
+            "value": 6,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 6,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 6,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 4,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 6,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_payment",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 4,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 134.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 6,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 6,
+            "total": 6
+          },
+          "standaloneMission": {
+            "value": 6,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 6,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 6,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 4,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 7,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "end_turn",
+            "target": {
+              "kind": "end-turn"
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 8,
+          "nextAction": {
+            "actor": "player-green",
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            }
+          },
+          "round": 4,
+          "turn": 3,
+          "currentPlayer": "player-green",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 9,
+          "nextAction": {
+            "actor": "player-green",
+            "family": "choose_card",
+            "target": {
+              "kind": "pass-hand-limit",
+              "choiceId": "card-38-0|card-52-0|card-65-0|card-66-0",
+              "cardIds": [
+                "card-38-0",
+                "card-52-0",
+                "card-65-0",
+                "card-66-0"
+              ]
+            }
+          },
+          "round": 4,
+          "turn": 3,
+          "currentPlayer": "player-green",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 10,
+          "nextAction": {
+            "actor": "player-blue",
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            }
+          },
+          "round": 4,
+          "turn": 4,
+          "currentPlayer": "player-blue",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 11,
+          "nextAction": {
+            "actor": "player-blue",
+            "family": "choose_card",
+            "target": {
+              "kind": "pass-hand-limit",
+              "choiceId": "card-3-0|card-47-0|card-55-0",
+              "cardIds": [
+                "card-3-0",
+                "card-47-0",
+                "card-55-0"
+              ]
+            }
+          },
+          "round": 4,
+          "turn": 4,
+          "currentPlayer": "player-blue",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 12,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "orbit",
+            "target": {
+              "rocketId": 5,
+              "planetId": "venus"
+            }
+          },
+          "round": 4,
+          "turn": 5,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 128,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 10,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 5,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 13,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_card",
+            "target": {
+              "choiceId": "income:card-61-0",
+              "cardInstanceId": "card-61-0"
+            }
+          },
+          "round": 4,
+          "turn": 5,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 91
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 8,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 8,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        },
+        {
+          "prefix": 14,
+          "nextAction": null,
+          "round": 4,
+          "turn": 5,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 91
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            },
+            {
+              "id": "card-71-0",
+              "cardId": "dlc_13.png"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 8,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 8,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        }
+      ],
+      "entireFinalStateSessionRngExact": true,
+      "rootRestored": true
+    },
+    "orange2-launch": {
+      "rows": [
+        {
+          "prefix": 0,
+          "nextAction": {
+            "actor": "player-brown",
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            }
+          },
+          "round": 4,
+          "turn": 1,
+          "currentPlayer": "player-brown",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 130,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 5,
+            "total": 5
+          },
+          "standaloneMission": {
+            "value": 5,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 5,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 2,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 1,
+          "nextAction": {
+            "actor": "player-brown",
+            "family": "choose_card",
+            "target": {
+              "kind": "pass-hand-limit",
+              "choiceId": "card-12-0|card-31-pass-3-2",
+              "cardIds": [
+                "card-12-0",
+                "card-31-pass-3-2"
+              ]
+            }
+          },
+          "round": 4,
+          "turn": 1,
+          "currentPlayer": "player-brown",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 130,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 5,
+            "total": 5
+          },
+          "standaloneMission": {
+            "value": 5,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 5,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 2,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 2,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "move",
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 130,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 137,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 7,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 2,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 3,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_payment",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 130,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 137,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 12,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:land:saturn:planet",
+              "value": 7,
+              "planet": "saturn"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 5,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 2,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 4,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "move",
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 4,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 129.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 6,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 6,
+            "total": 6
+          },
+          "standaloneMission": {
+            "value": 6,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 6,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 6,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 3,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 5,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_payment",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 4,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 129.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 135.5,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11.5,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 6,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 6,
+            "total": 6
+          },
+          "standaloneMission": {
+            "value": 6,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 6,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 6,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 3,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 6,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "orbit",
+            "target": {
+              "rocketId": 5,
+              "planetId": "venus"
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": false,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 82
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 129,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 136,
+            "components": {
+              "realizedScore": 82,
+              "currentEndGameBonus": 33,
+              "resources": 11,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 7,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 7,
+            "total": 7
+          },
+          "standaloneMission": {
+            "value": 7,
+            "selected": {
+              "id": "5:orbit:venus:planet",
+              "value": 7,
+              "planet": "venus"
+            },
+            "venus": [
+              {
+                "id": "5:orbit:venus:planet",
+                "value": 7,
+                "supported": true
+              },
+              {
+                "id": "5:land:venus:planet",
+                "value": 4,
+                "supported": true
+              }
+            ]
+          }
+        },
+        {
+          "prefix": 7,
+          "nextAction": {
+            "actor": "player-white",
+            "family": "choose_card",
+            "target": {
+              "choiceId": "income:card-61-0",
+              "cardInstanceId": "card-61-0"
+            }
+          },
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": true,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 91
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-61-0",
+              "cardId": "dlc_24.png"
+            },
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 136,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 9,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 136,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 9,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        },
+        {
+          "prefix": 8,
+          "nextAction": null,
+          "round": 4,
+          "turn": 2,
+          "currentPlayer": "player-white",
+          "pendingSession": false,
+          "mainActionCompleted": true,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 91
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            {
+              "id": "card-30-pass-3-1",
+              "cardId": "b_111.webp"
+            },
+            {
+              "id": "card-64-0",
+              "cardId": "b_16.webp"
+            },
+            {
+              "id": "card-71-0",
+              "cardId": "dlc_13.png"
+            }
+          ],
+          "old": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 136,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 9,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "new": {
+            "modelVersion": "seti-purpose-capital-state-value-v53",
+            "total": 136,
+            "components": {
+              "realizedScore": 91,
+              "currentEndGameBonus": 33,
+              "resources": 9,
+              "hand": 3,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "capital": {
+            "probePotential": 0,
+            "total": 0
+          },
+          "standaloneMission": {
+            "value": 0,
+            "selected": null,
+            "venus": []
+          }
+        }
+      ],
+      "entireFinalStateSessionRngExact": true,
+      "rootRestored": true
+    }
+  },
+  "newAiSearchQueries": 0,
+  "newAutonomousRuns": 0,
+  "candidateInstalled": false
+}

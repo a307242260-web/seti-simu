@@ -1,0 +1,110 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "no progress: last visible response only reported existing score records. Revalidated authoritative isolated179-source manifest, gate terminal and existing diagnostic output before continuing.",
+  "thisGoalTurnClassification": "progress: retained V312/V313/V314 lazy explanation/region/context exact proofs and first cold gates; V314 first162/599.814959 passes then25named24unique stops805/1679.276833case152. New policy and tail rejection diagnostics full805/fullroots/RNG exact. Two in-memory restricted proof prototypes805to686to654; all root action/goal/value/completion exact.37data tails385 real Native materializations and independent385 Native replays entirestateSessionRNG exact, no runtime promotion/game.",
+  "production": "V278/V48",
+  "candidate": "V314/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "sourceHashesUnchangedAfterFreeze": 179,
+  "versions": {
+    "312": {
+      "hard132Native": 162,
+      "hard132Milliseconds": 604.566875,
+      "hard132Passed": false,
+      "relatedNodePassed": 16,
+      "ChromePassed": 10,
+      "auditPassed": 65,
+      "oldAomomoFail": 1,
+      "admitted": false
+    },
+    "313": {
+      "hard132Native": 162,
+      "hard132Milliseconds": 602.63425,
+      "hard132Passed": false,
+      "relatedNodePassed": 17,
+      "ChromePassed": 10,
+      "auditPassed": 65,
+      "oldAomomoFail": 1,
+      "admitted": false
+    },
+    "314": {
+      "hard132Native": 162,
+      "hard132Milliseconds": 599.8149589999999,
+      "hard132Passed": true,
+      "relatedNodePassed": 18,
+      "ChromePassed": 10,
+      "auditPassed": 65,
+      "oldAomomoFail": 1,
+      "admitted": false
+    }
+  },
+  "coldGate": {
+    "totalNamedCases": 1258,
+    "measuredNamedCases": 25,
+    "measuredUniqueRoots": 24,
+    "status": "failed-gate",
+    "firstHard132": {
+      "inputs": 162,
+      "milliseconds": 599.8149589999999,
+      "complete": true,
+      "passed": true
+    },
+    "failure": {
+      "label": "corpus-case-152",
+      "inputs": 805,
+      "milliseconds": 1679.276833,
+      "complete": true,
+      "passed": false
+    },
+    "sameSourceResampled": false
+  },
+  "fullNodeRegressionRun": false,
+  "diagnosticQueriesAfterV314Cold": {
+    "v1": "aborted: complete successor identity mismatch; no result equivalence or cache",
+    "v2": "report assertions completed; process nonzero due stale console seen variable; failure retained",
+    "v3": "full805/fullserializedroots exact, clean exit",
+    "v4": "full805/fullserializedroots exact,96compound reasons clean exit"
+  },
+  "experimentalPrototypes": {
+    "installed": false,
+    "frozenNewVersion": false,
+    "stationaryNative": 686,
+    "orderingNative": 654,
+    "rootActionGoalValueCompletionExact": true,
+    "materializedProofs": 37,
+    "materializedNativeInputs": 385,
+    "independentNativeReplayInputs": 385,
+    "entireStateSessionRngExact": true,
+    "proof": "reports/ai-foundation-20261107/case152-stationary-prototype-v1/ordering-native-proof-20261107-v3.json",
+    "independentProof": "reports/ai-foundation-20261107/case152-stationary-prototype-v1/ordering-independent-native-verification-20261107-v4.json"
+  },
+  "newAutonomousRuns": 0,
+  "newScore": false,
+  "latestControlledR3": {
+    "version": 278,
+    "board": 85,
+    "tech": 6,
+    "income": "7C3E1card+1scan"
+  },
+  "highestControlledR3": {
+    "version": 256,
+    "board": 87,
+    "tech": 6,
+    "income": "7C2E1card+1scan"
+  },
+  "teacherCurrentLegalR3": {
+    "board": 105,
+    "tech": 6,
+    "income": "7C4E1card+1scan"
+  },
+  "developmentAligned": false,
+  "actualFirst2AssetsVerifiedForCurrentCandidate": false,
+  "autonomousFirst3Run": false,
+  "round2EndReviewComplete": false,
+  "baseline": "V41",
+  "document": "docs/human405-analysis-lazy-learning-20261107.md",
+  "nextContract": "adhoc/case152-fixed-tail-next-contract-20261107-v1.md",
+  "next": "Diagnose residual654 fixed preparation and bound movement intent/new-opportunity domains, Native-prove each expansion. Need justified source <=256/600 and full1258/Node/Chrome/audit, actualfirst2 assets, unique original23 autonomousfirst3, third-round full development andR2end review. No unsafeR4linearbound or cache after failed checkpoint probe."
+}

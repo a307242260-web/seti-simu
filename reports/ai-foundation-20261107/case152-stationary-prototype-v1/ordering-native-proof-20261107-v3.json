@@ -1,0 +1,1023 @@
+{
+  "scope": "Controlled source-unchanged V314 prototype: exact R4 movement policy/rotation query at every fixed data boundary and matching existing greedy prefix/income/blue ordering in audited inert excluded-company scope. Every data-tail proof is materialized through real Native inputs and compared to exact scalar value. Full source/root/RNG unchanged; no acceptance timing, new game, legacy bound revival or Native transition cache. 4096 Native/60s total diagnostic guard only, production four budgets remain null.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "prototype": "reports/ai-foundation-20261107/case152-stationary-prototype-v1/analysis-port-ordering-prototype-20261107-v2.js",
+  "prototypeSha256": "c3ba9b109aa54fde04118ca2fc23695d215dde1b65fe259c6b7d5901c0c30dd9",
+  "localPrototype": "reports/ai-foundation-20261107/case152-stationary-prototype-v1/local-decision-plans-ordering-prototype-20261107-v2.js",
+  "localPrototypeSha256": "e110605a44a2a2509ede143c0179aa72ff6945f38f0cfa0246501f5a93a3480d",
+  "baselineNativeInputs": 805,
+  "prototypeNativeInputs": 654,
+  "baselineAndPrototypeRootValuesActionsCompletionsExact": true,
+  "selected": {
+    "actionId": "place_data:50a9ac16",
+    "value": 49
+  },
+  "proofs": [
+    {
+      "index": 0,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 35,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 3
+    },
+    {
+      "index": 1,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 3
+    },
+    {
+      "index": 2,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 33.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 3
+    },
+    {
+      "index": 3,
+      "kind": "data-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 9,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 7
+    },
+    {
+      "index": 4,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 35.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 40.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8
+      },
+      "netGain": 5
+    },
+    {
+      "index": 5,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 41.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9
+      },
+      "netGain": 9
+    },
+    {
+      "index": 6,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 42.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7.5
+      },
+      "after": {
+        "value": 43.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8.5
+      },
+      "netGain": 1
+    },
+    {
+      "index": 7,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 35.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4.5
+      },
+      "netGain": 1.5
+    },
+    {
+      "index": 8,
+      "kind": "data-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 10,
+      "before": {
+        "value": 45,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 49,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4
+    },
+    {
+      "index": 9,
+      "kind": "data-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 10,
+      "before": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 48.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4
+    },
+    {
+      "index": 10,
+      "kind": "data-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 9,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4
+    },
+    {
+      "index": 11,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "netGain": 7
+    },
+    {
+      "index": 12,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4
+      },
+      "netGain": 4
+    },
+    {
+      "index": 13,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 36,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "netGain": 5
+    },
+    {
+      "index": 14,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 15,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 16,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 17,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 18,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 7,
+      "before": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 40,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8
+      },
+      "netGain": 6
+    },
+    {
+      "index": 19,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 7,
+      "before": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5.5
+      },
+      "after": {
+        "value": 41,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9
+      },
+      "netGain": 4.5
+    },
+    {
+      "index": 20,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 7,
+      "before": {
+        "value": 41,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7.5
+      },
+      "after": {
+        "value": 43,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8.5
+      },
+      "netGain": 2
+    },
+    {
+      "index": 21,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 7,
+      "before": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4.5
+      },
+      "netGain": 2.5
+    },
+    {
+      "index": 22,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 23,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 15,
+      "before": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 45,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 24,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 15,
+      "before": {
+        "value": 44,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 25,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 26,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 27,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 28,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 29,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 30,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 31,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 32,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 17,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5
+    },
+    {
+      "index": 33,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 34,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 17,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5
+    },
+    {
+      "index": 35,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    },
+    {
+      "index": 36,
+      "kind": "blue-end-turn",
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5
+    }
+  ],
+  "materializedNativeInputs": 385,
+  "actualAdditionalNativeExecutions": 385,
+  "checkpoint": "reports/ai-foundation-20261107/case152-stationary-prototype-v1/ordering-native-proof-20261107-v3.checkpoint.json",
+  "checkpointSha256": "5ad4f79fd3e374829bab93bffb7997d30166ae78e7f33b64234bd4e295b418b3",
+  "rootAndRngRestored": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

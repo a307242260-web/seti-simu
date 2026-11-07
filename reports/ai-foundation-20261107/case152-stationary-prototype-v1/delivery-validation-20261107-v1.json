@@ -1,0 +1,53 @@
+{
+  "status": "passed-evidence-only",
+  "scope": "No new source admission or runtime promotion. Validates retained frozen source/test logs/cold outcomes/diagnostic checkpoints and independently replayed prototype proofs, no search or game rerun.",
+  "versions": [
+    {
+      "version": 312,
+      "ownedFrozenHashes": 167,
+      "NodePassed": 16,
+      "ChromePassed": 10,
+      "auditPass": 65,
+      "oldAuditFail": 1,
+      "firstNative": 162,
+      "firstMilliseconds": 604.566875,
+      "firstPassed": false
+    },
+    {
+      "version": 313,
+      "ownedFrozenHashes": 173,
+      "NodePassed": 17,
+      "ChromePassed": 10,
+      "auditPass": 65,
+      "oldAuditFail": 1,
+      "firstNative": 162,
+      "firstMilliseconds": 602.63425,
+      "firstPassed": false
+    },
+    {
+      "version": 314,
+      "ownedFrozenHashes": 179,
+      "NodePassed": 18,
+      "ChromePassed": 10,
+      "auditPass": 65,
+      "oldAuditFail": 1,
+      "firstNative": 162,
+      "firstMilliseconds": 599.8149589999999,
+      "firstPassed": true
+    }
+  ],
+  "V314NamedCases": 25,
+  "V314UniqueRoots": 24,
+  "V314FailureNative": 805,
+  "prototypeNative": 654,
+  "prototypeProofs": 37,
+  "NativeMaterialized": 385,
+  "independentNativeReplay": 385,
+  "fullSource179Exact": true,
+  "hard132SerializedRoots15Exact": true,
+  "helperSyntaxChecks": 15,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0,
+  "ProductionVersion": "V278/V48",
+  "baseline": "V41"
+}

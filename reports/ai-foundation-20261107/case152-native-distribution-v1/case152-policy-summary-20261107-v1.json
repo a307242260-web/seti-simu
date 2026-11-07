@@ -1,0 +1,62 @@
+{
+  "scope": "Existing retained first cold comparison and successful nonacceptance policy diagnostics; no cold resampling or new game. More inputs attributed only as an investigation: exact single-change causal attribution not established. Current live-probe guard retained.",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "formal": {
+    "version": 278,
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v278-cold-corpus-case-152-20261107-v1.json",
+    "sha256": "26249a276adc0f7ce05c0ffa3117774a8878bb249f069c883b2cb33103bb8ae3",
+    "nativeInputs": 223,
+    "milliseconds": 493.81962500000003
+  },
+  "candidate": {
+    "version": 314,
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v314-cold-corpus-case-152-20261107-v1.json",
+    "sha256": "b0d8c7979dbf094243bba6c5743cf9a88859e324f8a54ebc6eb667d166968885",
+    "nativeInputs": 805,
+    "milliseconds": 1679.276833
+  },
+  "selectedActionAndValueSame": true,
+  "stablePostMainPolicies": 206,
+  "all206InertReservations": true,
+  "tailAttempts": 96,
+  "tailRejections": [
+    {
+      "goalKind": "computer-prefix",
+      "reason": "computer-prefix-blue-order-needs-native-policy",
+      "count": 26
+    },
+    {
+      "goalKind": "blue-data",
+      "reason": "data-tail-movement-needs-native-continuation",
+      "count": 25
+    },
+    {
+      "goalKind": "blue-data",
+      "reason": "blue-tail-live-probe-needs-native-continuation",
+      "count": 21
+    },
+    {
+      "goalKind": "blue-data",
+      "reason": "available",
+      "count": 17
+    },
+    {
+      "goalKind": "blue-data",
+      "reason": "computer-prefix-blue-order-needs-native-policy",
+      "count": 5
+    },
+    {
+      "goalKind": "blue-data",
+      "reason": "nonpositive-blue-may-fund-another-column",
+      "count": 1
+    },
+    {
+      "goalKind": "income",
+      "reason": "computer-prefix-blue-order-needs-native-policy",
+      "count": 1
+    }
+  ],
+  "failedCheckpointProbeObservedDifference": "effect-session IDs, effectId, groupId and parentEffectId differ; no complete successor equivalence. Do not treat serialized save + input alone as reusable Native transition. Exact counter lifecycle/root cause not yet audited.",
+  "diagnosticV2Terminal": "nonzero due to stale console seen.size AFTER successful persisted report and all805/full-root/RNG/hash assertions; report not called terminal-passed, no requery. V3/V4 clean zero-exit diagnostics independently validate all805 and exact full roots.",
+  "newAutonomousRuns": 0
+}

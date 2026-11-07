@@ -1,0 +1,18 @@
+{
+  "scope": "V312 unchanged runtime, one in-memory lazy regional-explanation prototype. All candidate scores and sorting eager, selected endpoint/portfolio eager, unselected endpoint containers built on explanation reads with original value snapshots. Income wrapper forwards lazy candidates; field/order/value/root/RNG parity asserted. No cold acceptance timing/resampling or autonomous game",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-explanations-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "41c4c98795d8653fd89c3d529e819ca8cf6c11f7de30a61902c801b6bfc89bb1",
+  "stats": {
+    "symbolCopies": 1823,
+    "regionExecutions": 1823,
+    "materializedEndpoints": 1823,
+    "localCandidates": 9027,
+    "regionResultCopies": 1801
+  },
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

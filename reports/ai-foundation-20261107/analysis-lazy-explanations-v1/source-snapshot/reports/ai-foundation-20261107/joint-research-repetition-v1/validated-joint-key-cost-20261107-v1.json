@@ -1,0 +1,42 @@
+{
+  "scope": "One post-validation joint typed-key cost and FIFO-capacity diagnostic. Round/supply/research-cost/supported-card/unfunded guards still run first. Eligible hand plus every remaining joint input encoded by existing complete own-field/type/order scalarCapitalKey; mutable fields traversed, immutable references recursively validated, unsupported inputs decline. Actual body always executes, each repeated key deep-compared against complete snapshotted input and numeric result. Candidate snapshots captured for tests, no memo implemented or cold timing.",
+  "manifest": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8",
+  "stats": {
+    "calls": 4129,
+    "repeats": 2270,
+    "unsupported": 36,
+    "milliseconds": 57.69137799999763,
+    "repeatedMilliseconds": 32.11410699999885,
+    "keyMilliseconds": 60.365309000003606,
+    "uniqueInputs": 1823
+  },
+  "capacities": [
+    {
+      "capacity": 32,
+      "hits": 1996,
+      "instrumentedBodyMillisecondsAvoided": 28.813739999998745
+    },
+    {
+      "capacity": 64,
+      "hits": 2106,
+      "instrumentedBodyMillisecondsAvoided": 30.374404999999
+    },
+    {
+      "capacity": 128,
+      "hits": 2142,
+      "instrumentedBodyMillisecondsAvoided": 30.775155999998958
+    },
+    {
+      "capacity": 256,
+      "hits": 2192,
+      "instrumentedBodyMillisecondsAvoided": 31.299233999998876
+    }
+  ],
+  "capture": "reports/ai-foundation-20261107/joint-research-repetition-v1/validated-joint-inputs-20261107-v1.v8.gz",
+  "captureSha256": "05d5e0c370656dd8cd32bc80695ce58bb72e87529d9e1cefc50acfb5c881a727",
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

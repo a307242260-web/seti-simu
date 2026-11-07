@@ -1,0 +1,61 @@
+{
+  "scope": "Read-only comparison of previously retained unique first cold outputs, no new query/resampling. Every serialized root field equals V311, not just selected action/value.",
+  "rows": [
+    {
+      "version": 311,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v311-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/analysis-target-trace-copy-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "a5d30c320886448e0d7f7d90f48f41e2f530536e6c9869db35b44ae0fc78bd02",
+      "rawSha256": "7254de484bae4e08f9f431dca5bfaa84a480016063afaaf6f02e1d5fcac3c2b9",
+      "nativeInputs": 162,
+      "milliseconds": 608.93825,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "version": 312,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v312-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/analysis-lazy-explanations-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "41c4c98795d8653fd89c3d529e819ca8cf6c11f7de30a61902c801b6bfc89bb1",
+      "rawSha256": "4f19450ed3384ca1188b7dfca871373937377d864e0d6ab0381a37d293dfe07e",
+      "nativeInputs": 162,
+      "milliseconds": 604.566875,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "version": 313,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v313-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/analysis-lazy-regions-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "1aacd7648b7af4b56bf554e423ad25b42c8ba90616226d96b549cf2a28047198",
+      "rawSha256": "5bc9062fe1d348ed63577eed037cf0e3adeb2648d849276bafdbb005cfbd0679",
+      "nativeInputs": 162,
+      "milliseconds": 602.63425,
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "version": 314,
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v314-cold-actual-v256-132-20261107-v1.json",
+      "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+      "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+      "rawSha256": "1bc87c97f2f5fa5102889847f2c238de0bea909aca59399ca07edd5d20f6b00c",
+      "nativeInputs": 162,
+      "milliseconds": 599.8149589999999,
+      "complete": true,
+      "decisionGatePassed": true,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "allSerializedRootsExact": true,
+  "rootCount": 15,
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

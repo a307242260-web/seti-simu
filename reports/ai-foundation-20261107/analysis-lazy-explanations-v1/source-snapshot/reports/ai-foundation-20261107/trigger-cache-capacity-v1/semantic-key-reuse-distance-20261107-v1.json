@@ -1,0 +1,59 @@
+{
+  "scope": "One diagnostic of existing complete semantic trigger-cache keys, unchanged64-entry FIFO runtime. Larger capacities modeled from the same access stream, no reference-only identity or candidate capacity change, no acceptance timing/resampling/autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d",
+  "totals": {
+    "createCalls": 5345,
+    "ledgerCalls": 117019,
+    "originalLedgerMisses": 456
+  },
+  "uniqueSignatures": 84,
+  "capacityModels": [
+    {
+      "capacity": 64,
+      "contextMisses": 169,
+      "ledgerMisses": 456,
+      "ledgerHits": 116563,
+      "evictions": 105,
+      "resident": 64
+    },
+    {
+      "capacity": 128,
+      "contextMisses": 84,
+      "ledgerMisses": 226,
+      "ledgerHits": 116793,
+      "evictions": 0,
+      "resident": 84
+    },
+    {
+      "capacity": 256,
+      "contextMisses": 84,
+      "ledgerMisses": 226,
+      "ledgerHits": 116793,
+      "evictions": 0,
+      "resident": 84
+    },
+    {
+      "capacity": 512,
+      "contextMisses": 84,
+      "ledgerMisses": 226,
+      "ledgerHits": 116793,
+      "evictions": 0,
+      "resident": 84
+    },
+    {
+      "capacity": 1024,
+      "contextMisses": 84,
+      "ledgerMisses": 226,
+      "ledgerHits": 116793,
+      "evictions": 0,
+      "resident": 84
+    }
+  ],
+  "nativeInputs": 162,
+  "value": 140.08333333333334,
+  "actionId": "industry:e887dc52",
+  "fullSerializedRootsExact": true,
+  "sourceUnchanged": true,
+  "rootAndRngRestored": true
+}

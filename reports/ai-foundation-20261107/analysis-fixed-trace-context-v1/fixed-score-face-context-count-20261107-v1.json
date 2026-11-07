@@ -1,0 +1,16 @@
+{
+  "scope": "One V313 diagnostic, every context still eagerly constructs. Count already-proven securedScope.fixed/no-blue-data face cases that may need trace context only for selected portfolio/explanation. No deferral/cache/Native change or cold acceptance resampling; full serialized roots/RNG exact.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-regions-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "1aacd7648b7af4b56bf554e423ad25b42c8ba90616226d96b549cf2a28047198",
+  "stats": {
+    "contexts": 9027,
+    "faceContexts": 7292,
+    "fixedScoreContexts": 9027,
+    "fixedScoreFaceContexts": 7292,
+    "blueDataContexts": 0
+  },
+  "fullSerializedRootsExact": true,
+  "sourceAndRngPreserved": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0
+}

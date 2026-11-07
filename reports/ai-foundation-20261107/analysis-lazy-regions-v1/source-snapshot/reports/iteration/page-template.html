@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI AI 实验中心</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#ffffff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--accent:#2f6fed;--accent-bg:#e8eefa;--good:#1e7e46;--bad:#c0392b;--warn-bg:#fff7e6;--warn-line:#f0c36d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1400px,calc(100% - 32px));margin:auto;padding:28px 0 70px}
+.generation-tabs{display:flex;gap:10px;margin:16px 0}.generation-tabs a{padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.generation-tabs a[aria-current="page"]{background:var(--accent);color:#fff}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 8px;font-size:26px}
+h2{font-size:17px;margin:0 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h3{font-size:14px;margin:0}
+.intro{color:#3d4a5c;max-width:1000px;margin:0 0 4px}
+.note{font-size:12px;color:var(--muted);margin:4px 0 18px}
+code{background:#eef1f6;padding:1px 5px;border-radius:4px;font-size:12px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+table{border-collapse:collapse;width:100%;background:var(--panel);font-size:12.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#eef1f6;font-weight:600;white-space:nowrap}
+tr:hover td{background:#f8faff}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;vertical-align:1px}
+.badge.head{background:#1f6feb;color:#fff}
+.badge.roadmap{background:#f3e8c8;color:#7a5b00}
+.scores{white-space:nowrap}
+.scores b{font-variant-numeric:tabular-nums}
+.src{font-size:10.5px;color:var(--muted)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}
+/* ---- 顶部 best 面板 ---- */
+.best-panel{background:linear-gradient(135deg,#f0f5ff,#f7f9fe);border:1px solid #d3e0f8;border-radius:14px;padding:16px 18px;margin:18px 0 26px}
+.best-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.best-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.best-card .label{font-size:12px;color:var(--muted);font-weight:600}
+.best-card .value{font-size:30px;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.best-card .sub{font-size:12px;color:#44506a}
+.best-card .src{display:inline-block;margin-top:6px;padding:1px 8px;border-radius:8px;font-size:10.5px;background:var(--accent-bg);color:var(--accent)}
+.best-card .src.roadmap{background:#f3e8c8;color:#7a5b00}
+.best-card .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;color:#8a94a6;margin-top:5px;line-height:1.5}
+.top3{margin-top:12px}
+.top3 table{font-size:12px}
+/* ---- 迭表 ---- */
+.iter-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.summary-cell{max-width:340px}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}}
+footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page">
+  <span class="eyebrow">SETI · 机器人迭代记录与复盘体系</span>
+  <h1 id="center-title">AI 实验中心</h1>
+  <nav class="generation-tabs" aria-label="AI 主线"><a id="tab-v2" href="?ai=v2">V2 · 新 AI</a><a id="tab-v1" href="?ai=v1">V1 · 旧 AI</a></nav>
+  <p class="intro" id="generation-scope"></p>
+  <p class="intro">默认盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）。</p>
+  <p class="note">机制说明见 <code>docs/robot-iteration-registry.md</code>；标准迭代入口 <code>node tools/robot_iterate.js run --name &lt;id&gt; --full --summary "..."</code>（跑验证→登记→复盘报告→本页一次完成，绝不重跑同一版本）。</p>
+
+  <!-- 顶部：现在的 best version -->
+  <section class="best-panel">
+    <h2 id="best-title">完整终局成绩</h2>
+    <p class="note" id="world-scope"></p>
+    <div class="best-grid" id="best-grid"></div>
+    <div class="top3" id="top3"></div>
+  </section>
+
+  <!-- 迭代记录（当前 baseline + 历史归档） -->
+  <section>
+    <h2 id="records-title">实验记录</h2>
+    <div class="iter-table-wrap" id="iter-container"></div>
+  </section>
+
+  <!-- 数据完整性审计已移至命令行：node tools/robot_iterate.js check -->
+  <footer id="foot"></footer>
+</main>
+
+<script>
+"use strict";
+const ALL_REGISTRY = /*__REGISTRY_JSON__*/;
+const generation = new URLSearchParams(location.search).get("ai") === "v1" ? "v1" : "v2";
+const REGISTRY = { ...ALL_REGISTRY, ...ALL_REGISTRY.generations[generation],
+  versions: ALL_REGISTRY.versions.filter(version => version.aiGeneration === generation) };
+
+const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
+const ORDER = ["player-blue","player-green","player-brown","player-white"];
+
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function fmtMs(ms){if(ms==null)return "—";const s=ms/1000;if(s<60)return s.toFixed(1)+"s";const m=Math.floor(s/60);return m+"m"+(s-m*60).toFixed(0)+"s";}
+function rel(p){return p?p.replace(/^reports\//,""):null;}
+function scoreCell(r){
+  if(!r) return "—";
+  const cells=ORDER.map(k=>r.scores&&r.scores[k]!=null?`<b>${r.scores[k]}</b>`:"—").join(" / ");
+  return `<span class="scores">${cells}</span><br><span class="src">${r.scoreSource==="save-final"?"完整终局 (save-final)":r.scoreSource==="roadmap"?"roadmap 文档":r.comparisonScope==="white-only-first-three-rounds"?"自主前三轮 · 轮末盘面（选牌/收入前）":"记录口径 (record)"}</span>`;
+}
+function avgCell(r){return r&&r.avgScore!=null?r.avgScore.toFixed(2):"—";}
+function stepsCell(r){return r?`${r.steps}${r.stepsLimit&&!r.terminal?` / ${r.stepsLimit}`:""}${r.terminal?" · 终局":""}`:"—";}
+function timeCell(r){return r?fmtMs(r.wallMs):"—";}
+
+// ---- 版本主结果：优先 save-final（完整终局分）的全盘记录，否则首个记录，否则 roadmap ----
+function primaryResult(v){
+  const full=v.results.filter(r=>!r.missingRecord&&r.mode==="full");
+  if(full.length){
+    const saveFinal=full.find(r=>r.scoreSource==="save-final");
+    if(saveFinal) return {result:saveFinal,isRoadmap:false};
+    return {result:full[0],isRoadmap:false};
+  }
+  if(v.results.some(r=>!r.missingRecord)) return {result:v.results.find(r=>!r.missingRecord),isRoadmap:false};
+  return {result:null,isRoadmap:!!v.roadmap};
+}
+
+function bestGrid(){
+  const b=REGISTRY.bestOf;
+  document.getElementById("best-title").textContent=b.world?"当前世界最佳（完整终局）":"历史成绩（世界身份未核验）";
+  document.getElementById("world-scope").textContent=b.world?
+    `seed ${b.world.seed||"未记录"} · ${b.world.worldVersion} · ${b.world.fingerprint}。只比较同世界指纹的完整终局；其他世界和缺少身份的历史成绩不参与排名。`:
+    "当前版本没有世界身份记录；以下为历史汇总，不能据此判断同盘面策略涨跌。";
+  const card=(label,value,sub,src,srcCls)=>
+    `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
+  const summaryOf=(x)=>{
+    const v=REGISTRY.versions.find(vv=>vv.id===x.versionId);
+    if(!v||!v.summary) return "";
+    return v.summary.length>72?v.summary.slice(0,72)+"…":v.summary;
+  };
+  const runLine=(x)=>{
+    const nm=esc(x.name);
+    const hasId=nm.includes(x.versionId);
+    return (hasId?nm:`${nm} <code>${x.versionId}</code>`)+(x.runKey?" · "+esc(x.runKey):"");
+  };
+  const html=[];
+  if(b.bestPlayer){
+    html.push(card(`最佳分数（${esc(b.bestPlayer.playerColor)}）`,b.bestPlayer.value,
+      `${runLine(b.bestPlayer)}<br><span class="sum" title="${esc(summaryOf(b.bestPlayer))}">${esc(summaryOf(b.bestPlayer))||"（无改动摘要）"}</span>`,
+      `来源 ${b.bestPlayer.provenance}`, b.bestPlayer.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳分数","—","尚无全盘记录","—"));
+  if(b.bestAvg){
+    html.push(card("最佳平均分数",b.bestAvg.value,
+      `${runLine(b.bestAvg)}<br><span class="sum" title="${esc(summaryOf(b.bestAvg))}">${esc(summaryOf(b.bestAvg))||"（无改动摘要）"}</span>`,
+      `来源 ${b.bestAvg.provenance}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
+  // 搜索耗时卡：分两块——最佳分数的耗时 / 最佳均分的耗时（对应前两张卡）
+  const timeLines=[];
+  if(b.bestPlayer){
+    const t=b.bestPlayer.wallMs!=null?`${fmtMs(b.bestPlayer.wallMs)} · 每步约 ${b.bestPlayer.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳分数（${esc(b.bestPlayer.versionId)} · ${b.bestPlayer.value}）：${t}`);
+  }
+  if(b.bestAvg){
+    const t=b.bestAvg.wallMs!=null?`${fmtMs(b.bestAvg.wallMs)} · 每步约 ${b.bestAvg.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳均分（${esc(b.bestAvg.versionId)} · ${b.bestAvg.value}）：${t}`);
+  }
+  html.push(card("对局耗时",
+    b.bestAvg&&b.bestAvg.wallMs!=null?fmtMs(b.bestAvg.wallMs):null,
+    timeLines.join("<br>")||"尚无运行",
+    "全盘运行实测 (wallMs)"));
+  document.getElementById("best-grid").innerHTML=html.join("");
+
+  if(b.topByAvg&&b.topByAvg.length){
+    const rows=b.topByAvg.map(x=>{
+      const bp=x.bestPlayer?`${x.bestPlayer.color} ${x.bestPlayer.score}`:"—";
+      return `<tr>
+      <td><b>${esc(x.name)}</b> <code>${x.versionId}</code>${x.runKey?" · "+esc(x.runKey):""}</td>
+      <td class="num"><b>${x.value.toFixed(2)}</b></td>
+      <td class="num">${bp}</td>
+      <td class="num">${x.steps??"—"}</td>
+      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td></tr>`;
+    }).join("");
+    document.getElementById("top3").innerHTML=`<h3>全盘最佳 Top3（按均分）</h3>
+      <table><thead><tr><th>版本</th><th>均分</th><th>最高玩家</th><th>步数</th><th>耗时</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+}
+
+// ---- 迭代表（全部版本完整行；用户口径 2026-08-21：历史版本与当前 baseline 一样
+//     完整展示，只是页面不额外展开提交/diff 细节——此前误实现为只显示 baseline 一行）----
+function summaryCell(v){
+  const s=v.summary||"";
+  return s.length>110
+    ? `<div class="summary-cell" title="${esc(s)}">${esc(s.slice(0,110)+"…")}</div>`
+    : `<div class="summary-cell">${esc(s)}</div>`;
+}
+// 版本主行
+function versionRow(v){
+  const p=primaryResult(v);
+  const r=p.result;
+  const badges=[];
+  const types=[...new Set(v.results.filter(r=>!r.missingRecord).map(r=>r.agentType))];
+  badges.push(`<span class="badge">${types.map(type=>type==="completion"?"基础策略（无搜索）":type==="search"?"搜索 AI":"旧启发式 AI").join(" / ")||"尚无对局"}</span>`);
+  if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
+  if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
+  const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
+    v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
+  const rmap=v.roadmap;
+  const summary=p.isRoadmap
+    ? (rmap
+      ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步</div></div>`
+      : summaryCell(v))
+    : summaryCell(v);
+  return `<tr>
+    <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}${r&&r.seed?`<br><span class="src">seed ${esc(r.seed)}</span>`:""}</td>
+    <td class="num">${esc(v.date)}</td>
+    <td>${summary}</td>
+    <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
+    <td>${p.isRoadmap?(v.roadmap?'<span class="scores">— / — / — / <b>'+(v.roadmap.scores? v.roadmap.scores["player-white"] ?? "—" : "—")+'</b></span><br><span class="src">roadmap 文档</span>':scoreCell(null)):scoreCell(r)}</td>
+    <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
+    <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
+    <td>${reportLink}</td>
+  </tr>`;
+}
+
+function iterTable(){
+  const all=REGISTRY.versions||[];
+  const el=document.getElementById("iter-container");
+  if(!all.length){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
+  const thead=`<thead><tr>
+    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th>
+  </tr></thead>`;
+  const rows=all.map(v=>versionRow(v)).join("");
+  el.innerHTML=`<table>${thead}<tbody>${rows}</tbody></table>`;
+}
+
+// ---- 初始化 ----
+function init(){
+  const label=generation.toUpperCase();
+  document.title=`SETI AI ${label} 实验中心`;
+  document.getElementById("center-title").textContent=`AI ${label} 实验中心`;
+  document.getElementById(`tab-${generation}`).setAttribute("aria-current","page");
+  document.getElementById("generation-scope").textContent=generation==="v2"
+    ? "新 AI 主线。基础策略与搜索 AI 分别标注；基础策略成绩不能用于搜索 AI 验收。"
+    : "旧 AI 主线。保留历史实验、成绩与复盘。";
+  document.getElementById("records-title").textContent=`${label} 实验记录（${REGISTRY.versionCount} 个版本 · ${REGISTRY.recordCount} 条记录）`;
+  document.getElementById("board-name").textContent=REGISTRY.board.name||"";
+  document.getElementById("board-seed").textContent=REGISTRY.board.seed||"";
+  bestGrid();
+  iterTable();
+  const head=REGISTRY.versions.find(v=>v.id===REGISTRY.currentBaseline);
+  document.getElementById("foot").innerHTML=
+    `生成时间 ${esc(REGISTRY.builtAt)} · HEAD ${esc(REGISTRY.headCommit)}${REGISTRY.worktreeDirty?" · <span style='color:#b3261e'>工作树有未提交改动</span>":""}`+
+    (head?` · 当前 HEAD 对应版本 <code>${esc(head.id)}</code>`:"")+
+    `<br>数据源：<code>reports/iteration/versions.json</code>（人工维护） + <code>reports/research/*.json</code>（调研记录） → <code>reports/iteration/registry.json</code>（构建产物）。`;
+}
+init();
+</script>
+</body>
+</html>
