@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "label": "v323-blue1-keep-publicity-first-r3",
+      "fixture": "reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/v323-r2-blue1-keep-publicity-r3-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-held-landing-after-launch",
+      "fixture": "reports/ai-foundation-20261107/v324-held-landing-route-v1/v323-held-landing-after-launch-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-held-landing-next-white",
+      "fixture": "reports/ai-foundation-20261107/v324-held-landing-route-v1/v323-held-landing-next-white-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-actual-r3-step-189",
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-actual-r3-step-194",
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-194-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-actual-r3-step-186",
+      "fixture": "reports/ai-foundation-20261107/v333-visible-analysis-corner-v1/v323-actual-r3-step-186-root-20261107-v1.json"
+    },
+    {
+      "label": "v323-actual-r3-step-187",
+      "fixture": "reports/ai-foundation-20261107/v333-visible-analysis-corner-v1/v323-actual-r3-step-187-root-20261107-v1.json"
+    }
+  ]
+}

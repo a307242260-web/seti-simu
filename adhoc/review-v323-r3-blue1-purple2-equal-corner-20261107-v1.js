@@ -1,0 +1,32 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const w=process.cwd(),load=p=>require(path.join(w,p)),read=p=>JSON.parse(fs.readFileSync(p)),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const report='reports/research/614d33af.720da076.quick-400.json',record=read(report),save=read(record.savePath),dir='reports/ai-foundation-20261107/committed-computer-recovery-v323-v1/',verification=read(dir+'v323-first3-native-development-20261107-v1.json'),proof=read(verification.checkpoint);
+assert.equal(sha(report),verification.recordSha256);assert.equal(sha(record.savePath),verification.saveSha256);assert.equal(sha(verification.checkpoint),verification.checkpointSha256);
+const source=read(dir+'source-manifest-20261107-v1.json');for(const [p,h] of Object.entries({...source.baseRuntimeHashes,...source.sourceHashes}))assert.equal(sha(p),h,p);
+const {createSimulationRuleComposition}=load('randomizer/training/simulation-rule-composition'),{createSeededRandom}=load('randomizer/game/random'),{buildRuleObservation}=load('randomizer/app/rule-observation'),values=load('randomizer/game/ai/state-value'),seat=record.scenario.learnerSeat,seed=record.seed;
+const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition,env=()=>c.lifecycle.save().envelope,state=()=>{const e=env();return e.session?.session?.workingState||JSON.parse(e.committedState);},actor=()=>state().players.players.find(p=>p.id===seat),menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+const snapshot=()=>{const s=state(),p=actor(),o=c.projection({role:'player',playerId:seat}).state;return{round:s.turn.roundNumber,turn:s.turn.turnNumber,score:p.resources.score,wallet:p.resources,income:p.income,tech:p.techState,hand:p.hand.map(c=>[c.id,c.cardId]),reserve:p.reservedCards.map(c=>[c.id,c.cardId]),data:p.dataState,rockets:s.pieces.rockets.filter(r=>r.playerId===seat),scan:Object.entries(s.data.nebulae).map(([id,b])=>[id,b.tokens.filter(t=>t.replacedByPlayerId===seat||t.replacedByPlayerColor===p.color).map(t=>t.slotIndex)]).filter(([,xs])=>xs.length),trace:o.selfState.traceCounts,aliens:o.publicState.board.aliens,finalScoring:s.finalScoring,projected:o.publicState.players.find(x=>x.playerId===seat).finalScore,model:values.evaluateStateValue(o,seat).total,envelope:env()};};
+function submit(a){const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
+function findRecorded(step,exact){const rr=save.replaySteps[step-1],a=menu().find(q=>q.actionId===rr.action.actionId&&q.actorId===rr.actorPlayerId);if(!a)return null;for(const k of exact?['family','phase','target','payload']:['family','phase','target'])assert.deepEqual(a[k],rr.action[k],step+':'+k);return a;}
+const cards=load('randomizer/game/cards/deck'),tech=load('randomizer/game/tech/resolver');
+try{
+ const source=process.argv[2],old=read(source),initial=proof.roundStarts[3].envelope,branches=[];
+ assert.equal(old.recordSha256,sha(report));let nativeInputs=0;
+ for(const row of old.selected.filter(x=>x.step===187&&['blue1','blue4','purple2'].includes(x.tileId)&&x.slot!==4)){
+  assert(c.lifecycle.restore(row.immediate.envelope).ok);const actions=[];
+  const exec=a=>{submit(a);nativeInputs++;actions.push({id:a.actionId,family:a.family,target:a.target});};
+  const act=(family,ok=()=>true)=>{const found=menu().filter(a=>a.family===family&&a.actorId===seat&&ok(a));assert.equal(found.length,1,family+' '+JSON.stringify(menu().map(a=>a.target)));exec(found[0]);};
+  for(let step=188;step<=193;step++){const a=findRecorded(step,false);assert(a);exec(a);}
+  act('choose_target',a=>a.target.choiceId==='trace:1:blue:amiba:4');act('choose_card',a=>a.target.choiceId==='amiba:display:7');
+  const dataCard=actor().hand.find(c=>c.cardId==='amiba_7.webp');assert(dataCard);
+  act('card_corner',a=>a.target.cardInstanceId===dataCard.id);act('place_data');act('choose_target',a=>a.target.target==='computer');
+  act('end_turn');const before=snapshot(),p=actor(),cost=tech.getResearchPublicityCost(p),sourceCard=p.hand.find(c=>c.cardId==='amiba_9.webp'),gain=cards.getDiscardActionRewardForCard(sourceCard)?.gain?.publicity||0;
+  const knownResearchFunded=before.wallet.publicity+gain>=cost;
+  if(knownResearchFunded){act('card_corner',a=>a.target.cardInstanceId===sourceCard.id);act('research_tech');act('choose_target',a=>a.target.tileId==='blue1'&&a.target.blueSlot===3);act('end_turn');}
+  assert(menu().some(a=>a.family==='pass'));branches.push({earlyTech:row.tileId,earlySlot:row.slot,actions,research:{cost,available:before.wallet.publicity,heldCorner:gain,knownResearchFunded},beforeLastResearch:before,end:snapshot()});
+ }
+ assert(c.lifecycle.restore(initial).ok);assert.deepEqual(env(),initial);
+ const out=process.argv[3];fs.writeFileSync(out,JSON.stringify({scope:'Three fixed actual R3 tech options through the same public Amiba7 corner and computer placement. Run last research only if immediately affordable from the named known card; no speculative future draws.',source,sourceSha256:sha(source),record:report,recordSha256:sha(report),branches,nativeInputs,sourceRestored:true,newAutonomousRuns:0})+'\n',{flag:'wx'});
+ console.log(JSON.stringify({out,nativeInputs,branches:branches.map(x=>[x.earlyTech,x.end.score,Object.keys(x.end.tech.ownedTiles).length,x.end.wallet.energy,x.end.wallet.publicity,x.end.wallet.handSize,x.end.income,x.research])}));
+}finally{c.dispose();}
