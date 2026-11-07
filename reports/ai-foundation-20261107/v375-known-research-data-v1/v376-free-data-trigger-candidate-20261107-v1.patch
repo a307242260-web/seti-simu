@@ -1,0 +1,27 @@
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -190,6 +190,24 @@
+   if(payload?.kind!=='trigger')return null;
+   const confirms=actions.filter(a=>a.target?.choiceId?.startsWith('confirm:')),skip=actions.find(a=>a.target?.choiceId?.startsWith('skip:'));
+   if(!confirms.length||!skip)return null;
++  // A single known trigger can bank a free data token as a fixed reward.
++  // Keep native branches when the card would leave the reserve, another
++  // effect is queued, or the token would overflow and consume future use. Public refill
++  // changes only cards; the new identities are not read.
++  if(confirms.length===1&&!session.interruptContext
++    &&session.queue.slice(1).every(e=>e.type===science.EFFECT_TYPES.PUBLIC_REFILL&&e.ownerId===seatId&&!e.allowQuickActions)
++    &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length){
++   const confirm=confirms[0],settlement=residual.queryCardSettlement(state,seatId,{...payload,cardInstanceId:confirm.target.cardInstanceId||payload.cardInstanceId,ruleId:confirm.target.ruleId||payload.ruleId});
++   const effect=settlement?.effects.length===1&&settlement.effects[0],p=owner(state,seatId);
++   const card=p.reservedCards.find(c=>c.id===settlement?.cardInstanceId);
++   if(settlement?.kind==='trigger'&&effect?.type==='gain_data'&&effect.options?.count===1&&(effect.options?.repeat??1)===1
++     &&card&&p.resources.availableData===p.dataState.poolTokens.length
++     &&p.resources.availableData<players.RESOURCE_LIMITS.availableData){
++    const copy=structuredClone(card);
++    if(effects.consumeTrigger(copy,settlement.ruleId)&&!effects.areAllTriggersConsumed(copy))
++     return fixedChoice(actions,confirm,'fixed-positive-optional',{reason:'greedy-free-retained-trigger-data',gains:[{actionId:confirm.actionId,value:.5}],assumption:'one known free data, spare pool capacity, triggering card stays in reserve, at most automatic public refill after reward'});
++   }
++  }
+   const ranks=[];
+   for(const action of confirms){
+    const preview=structuredClone(state),settlement=residual.queryCardSettlement(preview,seatId,{...payload,cardInstanceId:action.target.cardInstanceId||payload.cardInstanceId,ruleId:action.target.ruleId||payload.ruleId});
