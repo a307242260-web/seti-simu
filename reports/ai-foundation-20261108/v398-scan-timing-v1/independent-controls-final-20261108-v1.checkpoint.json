@@ -1,0 +1,756 @@
+{
+  "scope": "Exact proof delta vs Native through the purple/blue funding path, no guessed deck or next tech bonus, exact Native cold-recovery target. No standard run.",
+  "paths": "reports/ai-foundation-20261108/v397-source-admission-v1/step179-fixed-continuations-20261108-v1.checkpoint.json",
+  "pathsSha256": "da406bfc0bc700e691895d01a162d47244d2dd7b3f20bedb191b653c7ad6b2f0",
+  "candidateSha256": "a0d1a5893d358dc07f8f84c404f602cad2467d87a94276fcec389f639f10ce93",
+  "exact": {
+    "value": 18,
+    "sectorId": "sector-3-a",
+    "publicCardId": "card-61-0",
+    "traceType": "pink",
+    "tracePosition": 2,
+    "scoreGain": 3,
+    "dataGain": 2,
+    "discard": [
+      "alien-amiba-1-2",
+      "alien-amiba-0-1"
+    ],
+    "scanValue": 4,
+    "research": {
+      "value": 14,
+      "first": "purple1",
+      "taskId": "dlc9-three-sector-wins",
+      "continuation": {
+        "value": 12,
+        "first": "purple1",
+        "second": "blue4",
+        "blueSlot": 3,
+        "cornerCardId": "alien-amiba-9-5",
+        "publicityAfterPlacement": 4,
+        "dataAfterPlacement": 2,
+        "analysis": 21.5,
+        "baseline": 14
+      }
+    }
+  },
+  "cold": {
+    "actionId": "choose_target:30cf5375",
+    "reasonCode": "search:complete-visible-window",
+    "search": {
+      "schemaVersion": "seti-complete-decision-search-v398",
+      "complete": true,
+      "actionId": "choose_target:30cf5375",
+      "selectionPlan": null,
+      "planEvidence": {
+        "evidenceId": "plan-evidence-1",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "nodeCount": 8
+      },
+      "value": 152.5,
+      "realization": -17.5,
+      "preparationDebt": 0,
+      "stopReason": null,
+      "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+      "roots": [
+        {
+          "actionId": "choose_target:178e1f5e",
+          "target": 1,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:34d42f2e",
+          "target": 2,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:5b1b18db",
+          "target": 3,
+          "value": 150.5,
+          "realization": -18.5,
+          "preparationDebt": 0,
+          "completion": "complete"
+        },
+        {
+          "actionId": "choose_target:30cf5375",
+          "target": 4,
+          "value": 152.5,
+          "realization": -17.5,
+          "preparationDebt": 0,
+          "completion": "complete"
+        }
+      ],
+      "lines": [
+        {
+          "node": 0,
+          "status": "decision",
+          "boundary": null,
+          "expanded": true,
+          "alternatives": 4,
+          "edges": [
+            {
+              "actionId": "choose_target:178e1f5e",
+              "target": 1,
+              "cost": 1,
+              "equivalent": false,
+              "fixedCardPlan": null,
+              "fixedChoices": [],
+              "steps": [
+                "choose_target:178e1f5e"
+              ]
+            },
+            {
+              "actionId": "choose_target:34d42f2e",
+              "target": 2,
+              "cost": 1,
+              "equivalent": false,
+              "fixedCardPlan": null,
+              "fixedChoices": [],
+              "steps": [
+                "choose_target:34d42f2e"
+              ]
+            },
+            {
+              "actionId": "choose_target:5b1b18db",
+              "target": 3,
+              "cost": 1,
+              "equivalent": false,
+              "fixedCardPlan": null,
+              "fixedChoices": [],
+              "steps": [
+                "choose_target:5b1b18db"
+              ]
+            },
+            {
+              "actionId": "choose_target:30cf5375",
+              "target": 4,
+              "cost": 1,
+              "equivalent": false,
+              "fixedCardPlan": null,
+              "fixedChoices": [],
+              "steps": [
+                "choose_target:30cf5375"
+              ]
+            }
+          ],
+          "distance": 2,
+          "value": 152.5,
+          "realization": -17.5,
+          "preparationDebt": 0,
+          "completion": "reachable",
+          "resourcePolicy": {
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false,
+            "plans": [],
+            "retainedActionIds": [
+              "choose_target:178e1f5e",
+              "choose_target:34d42f2e",
+              "choose_target:5b1b18db",
+              "choose_target:30cf5375"
+            ],
+            "excludedActionIds": []
+          }
+        },
+        {
+          "node": 1,
+          "status": "stable",
+          "boundary": null,
+          "expanded": true,
+          "alternatives": 1,
+          "edges": [
+            {
+              "actionId": "end_turn:b2f9b29d",
+              "target": 7,
+              "cost": 1,
+              "equivalent": false,
+              "turnTailPlanValue": {
+                "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+                "kind": "end-turn",
+                "firstActionId": "end_turn:b2f9b29d",
+                "netGain": 0,
+                "requiredNativeInputs": 1,
+                "markedTiles": [],
+                "publicAmibaPlainEnd": true,
+                "unrealizedPurposeDelta": 0,
+                "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+                "observationAvailable": false,
+                "successorEnvelopeAvailable": false
+              },
+              "actualNativeInputs": 0,
+              "provedNativeInputs": 1
+            }
+          ],
+          "distance": 1,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "reachable",
+          "cardPickPolicy": {
+            "policy": "seti-purpose-card-pick-policy-v16",
+            "isEquivalence": false,
+            "kind": "card-acquisition-plan",
+            "goal": null,
+            "selectedActionId": null,
+            "selection": null,
+            "discardIds": [],
+            "companySwap": null,
+            "retainedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52"
+            ],
+            "reason": "no-pick-purpose"
+          },
+          "resourcePolicy": {
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false,
+            "plans": [],
+            "retainedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37"
+            ]
+          }
+        },
+        {
+          "node": 2,
+          "status": "stable",
+          "boundary": null,
+          "expanded": true,
+          "alternatives": 1,
+          "edges": [
+            {
+              "actionId": "end_turn:b2f9b29d",
+              "target": 6,
+              "cost": 1,
+              "equivalent": false,
+              "turnTailPlanValue": {
+                "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+                "kind": "end-turn",
+                "firstActionId": "end_turn:b2f9b29d",
+                "netGain": 0,
+                "requiredNativeInputs": 1,
+                "markedTiles": [],
+                "publicAmibaPlainEnd": true,
+                "unrealizedPurposeDelta": 0,
+                "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+                "observationAvailable": false,
+                "successorEnvelopeAvailable": false
+              },
+              "actualNativeInputs": 0,
+              "provedNativeInputs": 1
+            }
+          ],
+          "distance": 1,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "reachable",
+          "cardPickPolicy": {
+            "policy": "seti-purpose-card-pick-policy-v16",
+            "isEquivalence": false,
+            "kind": "card-acquisition-plan",
+            "goal": null,
+            "selectedActionId": null,
+            "selection": null,
+            "discardIds": [],
+            "companySwap": null,
+            "retainedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52"
+            ],
+            "reason": "no-pick-purpose"
+          },
+          "resourcePolicy": {
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false,
+            "plans": [],
+            "retainedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37"
+            ]
+          }
+        },
+        {
+          "node": 3,
+          "status": "information-barrier",
+          "boundary": "hidden_card_draw",
+          "expanded": true,
+          "alternatives": 0,
+          "edges": [],
+          "distance": 0,
+          "value": 150.5,
+          "realization": -18.5,
+          "preparationDebt": 0,
+          "completion": "reachable"
+        },
+        {
+          "node": 4,
+          "status": "stable",
+          "boundary": null,
+          "expanded": true,
+          "alternatives": 1,
+          "edges": [
+            {
+              "actionId": "end_turn:b2f9b29d",
+              "target": 5,
+              "cost": 1,
+              "equivalent": false,
+              "turnTailPlanValue": {
+                "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+                "kind": "end-turn",
+                "firstActionId": "end_turn:b2f9b29d",
+                "netGain": 0,
+                "requiredNativeInputs": 1,
+                "markedTiles": [],
+                "publicAmibaPlainEnd": true,
+                "unrealizedPurposeDelta": 0,
+                "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+                "observationAvailable": false,
+                "successorEnvelopeAvailable": false
+              },
+              "actualNativeInputs": 0,
+              "provedNativeInputs": 1
+            }
+          ],
+          "distance": 1,
+          "value": 152.5,
+          "realization": -17.5,
+          "preparationDebt": 0,
+          "completion": "reachable",
+          "cardPickPolicy": {
+            "policy": "seti-purpose-card-pick-policy-v16",
+            "isEquivalence": false,
+            "kind": "card-acquisition-plan",
+            "goal": null,
+            "selectedActionId": null,
+            "selection": null,
+            "discardIds": [],
+            "companySwap": null,
+            "retainedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52"
+            ],
+            "reason": "no-pick-purpose"
+          },
+          "resourcePolicy": {
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false,
+            "plans": [],
+            "retainedActionIds": [
+              "quick_trade:49c75492",
+              "quick_trade:37140fcf",
+              "quick_trade:71814d67",
+              "industry:e887dc52",
+              "end_turn:b2f9b29d"
+            ],
+            "excludedActionIds": [
+              "quick_trade:f385e2ac",
+              "quick_trade:12411a2c",
+              "quick_trade:a39c1a77",
+              "card_corner:ab712e76",
+              "card_corner:e12a0c99",
+              "card_corner:ac30be37"
+            ]
+          }
+        },
+        {
+          "node": 5,
+          "status": "turn-tail-value",
+          "boundary": "quiet-turn-tail-value",
+          "planSummary": {
+            "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+            "kind": "end-turn",
+            "firstActionId": "end_turn:b2f9b29d",
+            "netGain": 0,
+            "requiredNativeInputs": 1,
+            "markedTiles": [],
+            "publicAmibaPlainEnd": true,
+            "unrealizedPurposeDelta": 0,
+            "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+            "observationAvailable": false,
+            "successorEnvelopeAvailable": false
+          },
+          "expanded": true,
+          "alternatives": 0,
+          "edges": [],
+          "distance": 0,
+          "value": 152.5,
+          "realization": -17.5,
+          "preparationDebt": 0,
+          "completion": "reachable"
+        },
+        {
+          "node": 6,
+          "status": "turn-tail-value",
+          "boundary": "quiet-turn-tail-value",
+          "planSummary": {
+            "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+            "kind": "end-turn",
+            "firstActionId": "end_turn:b2f9b29d",
+            "netGain": 0,
+            "requiredNativeInputs": 1,
+            "markedTiles": [],
+            "publicAmibaPlainEnd": true,
+            "unrealizedPurposeDelta": 0,
+            "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+            "observationAvailable": false,
+            "successorEnvelopeAvailable": false
+          },
+          "expanded": true,
+          "alternatives": 0,
+          "edges": [],
+          "distance": 0,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "reachable"
+        },
+        {
+          "node": 7,
+          "status": "turn-tail-value",
+          "boundary": "quiet-turn-tail-value",
+          "planSummary": {
+            "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+            "kind": "end-turn",
+            "firstActionId": "end_turn:b2f9b29d",
+            "netGain": 0,
+            "requiredNativeInputs": 1,
+            "markedTiles": [],
+            "publicAmibaPlainEnd": true,
+            "unrealizedPurposeDelta": 0,
+            "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+            "observationAvailable": false,
+            "successorEnvelopeAvailable": false
+          },
+          "expanded": true,
+          "alternatives": 0,
+          "edges": [],
+          "distance": 0,
+          "value": 152.5,
+          "realization": -20,
+          "preparationDebt": 0,
+          "completion": "reachable"
+        }
+      ],
+      "unresolved": [],
+      "sharedPrefixGraph": {
+        "nodes": [
+          {
+            "id": 0,
+            "status": "decision"
+          },
+          {
+            "id": 1,
+            "status": "stable"
+          },
+          {
+            "id": 2,
+            "status": "stable"
+          },
+          {
+            "id": 3,
+            "status": "information-barrier"
+          },
+          {
+            "id": 4,
+            "status": "stable"
+          }
+        ],
+        "edges": [
+          {
+            "id": 0,
+            "from": 0,
+            "to": 1,
+            "actionId": "choose_target:178e1f5e"
+          },
+          {
+            "id": 1,
+            "from": 0,
+            "to": 2,
+            "actionId": "choose_target:34d42f2e"
+          },
+          {
+            "id": 2,
+            "from": 0,
+            "to": 3,
+            "actionId": "choose_target:5b1b18db"
+          },
+          {
+            "id": 3,
+            "from": 0,
+            "to": 4,
+            "actionId": "choose_target:30cf5375"
+          }
+        ]
+      },
+      "candidates": [
+        {
+          "kind": "action",
+          "actionId": "choose_target:178e1f5e"
+        },
+        {
+          "kind": "action",
+          "actionId": "choose_target:34d42f2e"
+        },
+        {
+          "kind": "action",
+          "actionId": "choose_target:5b1b18db"
+        },
+        {
+          "kind": "action",
+          "actionId": "choose_target:30cf5375"
+        }
+      ],
+      "diagnostics": {
+        "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+        "valueEvaluations": 4,
+        "valueCacheHits": 8,
+        "finalMarkPlanning": true,
+        "scanPlanning": true,
+        "resourcePlanning": "goal-bound-greedy-preparation",
+        "cardPickPlanning": "purpose-bound-fixed-plan",
+        "movementPlanning": "goal-directed-policy",
+        "movementPolicyNodes": 0,
+        "movementDirectionsExcluded": 0,
+        "routeGeometryNodes": 0,
+        "incomePlanProofs": 0,
+        "provedIncomeInputs": 0,
+        "turnTailProofs": 3,
+        "provedTurnTailInputs": 3,
+        "movementValuePrunes": 0,
+        "dataPrimaryBoundPrunes": 0,
+        "winningIncomePlans": 0,
+        "winningIncomeInputs": 0,
+        "deferredMovementPlans": 0,
+        "nativeExecutions": 4,
+        "logicalResourceInputs": 0,
+        "sharedResourceInputHits": 0,
+        "sharedResourceInternalStates": 0,
+        "localFinalMarkStates": 0,
+        "localFinalMarkExcluded": 0,
+        "fixedDataChoiceStates": 0,
+        "fixedDataChoicesExcluded": 0,
+        "branchingStates": 1,
+        "singleAlternativeStates": 3,
+        "disabledBorrowStarts": 0,
+        "disabledRemoveTechIncomeStarts": 0,
+        "scanPurposePlans": 0,
+        "resourceGoalPlans": 0,
+        "resourcePreparationInputs": 0,
+        "resourceFallbacks": 0,
+        "resourceExcludedActions": 18,
+        "transitions": 4,
+        "nodes": 8,
+        "graphNodes": 8,
+        "certificateNodes": 0,
+        "postMainOptimalPlans": 0,
+        "postMainOptimalPlanSteps": 0,
+        "equivalents": 0,
+        "selectionMacros": 0,
+        "peakFrontier": 4,
+        "dominancePrunes": 0,
+        "resourceDominance": "disabled-for-movement-policy",
+        "moneyCapacityPrunes": 0,
+        "moneyCapacityDominance": "disabled-for-movement-policy",
+        "postMainValuePrunes": 0,
+        "scanValuePrunes": 0,
+        "scanActionPrunes": 0,
+        "cardTradePrunes": 0,
+        "cardTradePruning": "disabled-for-selection-certificate",
+        "postMainProofNodes": 0,
+        "postMainExcludedActions": 0,
+        "postMainPruning": "enabled",
+        "openingProofNodes": 0,
+        "openingExcludedActions": 0,
+        "openingPruning": "enabled",
+        "openingPassMacros": 0,
+        "postMainBorrowProofNodes": 0,
+        "postMainBorrowExcludedChoices": 0,
+        "postMainBorrowMacros": 0,
+        "cardChoiceProofNodes": 0,
+        "cardChoiceExcludedActions": 0,
+        "cardCornerProofNodes": 0,
+        "cardCornerExcludedActions": 0,
+        "preMainDataProofNodes": 0,
+        "preMainDataExcludedActions": 0,
+        "cardChoiceEquivalence": "enabled",
+        "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "continuation": "not-requested",
+        "planContinuation": "not-requested",
+        "milliseconds": 36.09245899999999,
+        "limits": {
+          "transitions": null,
+          "nodes": null,
+          "frontier": null,
+          "milliseconds": null
+        }
+      },
+      "rootAndSearchMilliseconds": 54.744541,
+      "analysis": {
+        "cardPick": {
+          "rankingCacheEntries": 0,
+          "maxRankingCacheEntries": 64,
+          "rankingCacheHits": 0,
+          "rankingCacheMisses": 0,
+          "rankedCards": 0,
+          "companyIntentReuses": 0,
+          "companyIntentRecoveries": 0,
+          "companyIntentGuardRejects": 0,
+          "rankingCacheHitsThisRoot": 0,
+          "rankingCacheMissesThisRoot": 0,
+          "rankedCardsThisRoot": 0,
+          "companyIntentReusesThisRoot": 0,
+          "companyIntentRecoveriesThisRoot": 0,
+          "companyIntentGuardRejectsThisRoot": 0
+        },
+        "goalMovementGeometryNodes": 0,
+        "movementRouteCacheEntries": 0,
+        "maxMovementRouteCacheEntries": 64,
+        "nodeCount": 8,
+        "submissionCount": 4,
+        "cacheHits": 0,
+        "stableRestoreSkips": 0,
+        "timingPrefixBuilds": 0,
+        "timingPrefixReuses": 0,
+        "movementTimingCacheHits": 0,
+        "movementTimingCacheMisses": 0,
+        "cacheEntries": 0,
+        "observationCount": 4,
+        "observationReleases": 1,
+        "movementTimingCacheEntries": 0,
+        "maxMovementTimingCacheEntries": 256,
+        "normalizedIdentityCacheEntries": 4,
+        "maxNormalizedIdentityCacheEntries": 64,
+        "identityCount": 5,
+        "identityMaterializations": 5,
+        "identitySubtreeCacheHits": 0,
+        "identitySubtreeCacheStores": 0,
+        "maxCacheEntries": 0,
+        "sharedPrefixEdges": 4,
+        "sharedPrefixNodes": 5,
+        "sharedPrefixHits": 0,
+        "decodedStateCacheEntries": 5,
+        "maxDecodedStateCacheEntries": 64,
+        "decodedStateCacheBytes": 361350,
+        "maxDecodedStateCacheBytes": 8388608,
+        "observationCacheHits": 11,
+        "resourceQueryHits": 0,
+        "resourceQueryMisses": 3,
+        "goalCatalogHits": 0,
+        "goalCatalogMisses": 3,
+        "movementBoundQueries": 0,
+        "movementRuleQueries": 0,
+        "movementIntentRecoveries": 0,
+        "completedMovementRecoveries": 0,
+        "committedDecodeCount": 1,
+        "committedDecodeHits": 31,
+        "committedReferenceCount": 4,
+        "selectionEvidenceEntries": 0,
+        "maxSelectionEvidenceEntries": 1,
+        "planEvidenceEntries": 1,
+        "planPrefixEntries": 2,
+        "maxPlanPrefixEntries": 32,
+        "milliseconds": {
+          "restore": 3.7466239999999402,
+          "execute": 4.2383319999999856,
+          "observation": 2.79879200000002,
+          "checkpoint": 8.600250999999986,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0,
+          "preMainDataPlan": 0
+        }
+      }
+    },
+    "action": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:30cf5375",
+      "actorId": "player-white",
+      "stateVersion": 73,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "trace:blue:1",
+        "traceType": "blue",
+        "position": 1,
+        "region": "blue"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "蓝色痕迹 1号位"
+    }
+  },
+  "independentFinalValue": 170.5,
+  "negatives": {
+    "rotatedSectorUnavailable": true,
+    "otherActiveSeat": true,
+    "paymentObserver": true,
+    "noCredits": true,
+    "unseenPaymentCard": true,
+    "unseenPublicCard": true,
+    "unseenTechBonus": true
+  },
+  "shuffledHiddenDeckAndTechQueueEqual": true,
+  "rootAndRngUnchanged": true,
+  "newAutonomousRuns": 0
+}

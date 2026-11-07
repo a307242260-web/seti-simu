@@ -1,0 +1,48 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V398",
+  "searchVersion": "seti-complete-decision-search-v398",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "d9df959f3c2eeda379bb2d8c9b43e92704e7cea4",
+  "snapshotTree": "69e9a2d2900a5c2944242f32d624a7b4968b76dd",
+  "runtimeSubtrees": {
+    "randomizer": "3264039bff41f1eb49ae6e5bce1a7154b48fc801",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v398-scan-timing-v1/source-manifest-20261108-v1.json",
+  "manifestSha256": "445f90c5bd0038dacecd62cf9740358513713865e9151f4e232e029dd34a06ea",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "35253171e7bfab4fbd58ac2c49469a62e43e86e45038c47b0351bf4ee441a498",
+    "randomizer/game/ai/decision-search.js": "422bbb43354ed676000361c3b212276652191faf776bfb83a8ce706b6ac4fe50",
+    "randomizer/game/ai/local-decision-plans.js": "19ef8a9db2e298b21e2b65ce96633a0770406f448b4886403a17003cbf85ea3d"
+  },
+  "evidenceSha256": {
+    "source-manifest-20261108-v1.json": "445f90c5bd0038dacecd62cf9740358513713865e9151f4e232e029dd34a06ea",
+    "cold-gate-20261108-v1.json": "fd86b7d6f31116cb64fb09cf0686633ea2ba3cf9f80b77e9d910a4e242328ec6",
+    "cold-gate-20261108-v1.log": "1afd29aafcac656500c0c6e08ba20381a5b6c3acde0b2868ed89a83fd607c438",
+    "cold-graphs-20261108-v1.tar.gz": "ce563a66be9c924d6c1753e05cbd903b86da31dfa95714e33696b5f11c3515c2",
+    "turn-horizons-20261108-v1.checkpoint.json": "606515eb82e2c3fd8cd2504fb832f1f96b4077cc2f366dc159054e1167e2e70c",
+    "independent-controls-final-20261108-v1.checkpoint.json": "9df98b39a20f8272d578666c62691b06b18c5875ed5578ab935f8d0fac42f339",
+    "r179-frozen-20261108-v1.checkpoint.json": "a0d1a5893d358dc07f8f84c404f602cad2467d87a94276fcec389f639f10ce93",
+    "income-route-current-production-20261108-v1.checkpoint.json": "566c062bbd03dfd5bf84e32ebccf383bf44d69b1e22761316bb5083f367956f8",
+    "contract-20261108-v1.md": "9dd9fac7da66733cc8f9f0cb106da86a4d5168118868fca5c562de204f4a3490",
+    "full-node-20261108-v1.log": "c74f6e7c1bc799aaa82d4cbfcae0a37f2ddaf877048350ca10537f03f2014cd2",
+    "browser-20261108-v1.log": "b0bba99bf3971e01495dc970f4ed8b92617ddf65de02dd60d2c590656167871f",
+    "input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e"
+  },
+  "completeNamedColdCases": 1285,
+  "uniqueNativeRoots": 844,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 591.44325,
+  "firstTwoFullGraphsUnchanged": 304,
+  "changedSearchGraphs": 1,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

@@ -4099,6 +4099,31 @@
       return localPlans.quoteResearchScanPurpose({state,seatId,purpose});
     }
 
+    function scanTimingPurpose() {
+      const stored=nodes.get(openedRoot);
+      if(!stored)return null;
+      const session=stored.envelope.session?.session;
+      let state;
+      if(session?.journal?.actions?.[0]?.action?.family==='play_card'&&session.baseState){
+        state=planningState(session.baseState,stored.informationBarrier,knownRootCardIds);
+      }else if(openedRoot.status==='stable'&&!session)state=readPlanningState(stored);
+      else return null;
+      return localPlans.scanTimingSource({state,seatId,knownCards:knownRootCardIds,trade:quickTrades.getTradeAction('cards-for-energy')});
+    }
+    function quoteScanTimingPurpose(node,purpose) {
+      let stored=nodes.get(node);
+      if(node.status==='turn-tail-value'){
+        if(node.planSummary.kind!=='end-turn'||node.planSummary.netGain!==0||node.planSummary.markedTiles.length)return null;
+        stored=nodes.get(stored.turnTailBase);
+        const t=stored&&previewTurn(readPlanningState(stored));
+        if(!t?.turnAdvanced||t.roundAdvanced||t.gameEnded||t.nextPlayerId!==seatId)return null;
+      }else if(node.status!=='turn-boundary')return null;
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const state=readPlanningState(stored);
+      return localPlans.quoteScanTiming({state,seatId,knownCards:knownRootCardIds,trade:purpose.trade,
+        knownTech:(id,stack)=>Boolean(stack&&!stack.bonusHidden&&stack.bonusIndex===knownRootTechIndices.get(id))});
+    }
+
     function retainedPublicDataCard(node) {
       let stored=nodes.get(node);
       if(!resourcePlanning||rootObservation.publicState.roundNumber!==3||!stored)return null;
@@ -4163,7 +4188,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v397";
+  const VERSION = "seti-complete-decision-search-v398";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -161,7 +161,9 @@
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.deferredComputerIncomeSource?.():null;
     const amibaRegion=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.amibaRegionPurpose?.():null;
-    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion;
+    const scanTiming=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
+      &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.scanTimingPurpose?.():null;
+    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -253,7 +255,8 @@
       const researchScan=researchScanPurpose&&BOUNDARIES.has(node.status)?port.quoteResearchScanPurpose(node,researchScanPurpose):null;
       const researchIncome=deferredComputerIncome&&BOUNDARIES.has(node.status)?port.quoteDeferredComputerIncome(node,deferredComputerIncome):null;
       const regionFollowup=amibaRegion&&BOUNDARIES.has(node.status)?port.quoteAmibaRegionPurpose(node,amibaRegion):null;
-      const forecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0);
+      const scanTimingQuote=scanTiming&&BOUNDARIES.has(node.status)?port.quoteScanTimingPurpose(node,scanTiming):null;
+      const forecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0);
       const value = forecast?stateValue.sumValueParts([baseValue,forecast]):baseValue;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
@@ -402,7 +405,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -792,6 +795,7 @@
       ...(entry.researchScan?{researchScan:entry.researchScan}:{}),
       ...(entry.researchIncome?{deferredComputerIncome:entry.researchIncome}:{}),
       ...(entry.regionFollowup?{knownAmibaRegion:entry.regionFollowup}:{}),
+      ...(entry.scanTimingQuote?{knownScanTiming:entry.scanTimingQuote}:{}),
       ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       ...(entry.publicDataCard?{retainedPublicDataCard:entry.publicDataCard}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"

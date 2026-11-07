@@ -309,6 +309,11 @@
    players.gainResources(paid,{energy:1});
   }
   if(!players.spendResources(paid,cost).ok)return null;
+  return quoteKnownSector({state,seatId,p,paid,knownCards,details:{tileId,blueSlot,keptCardIds:handNow,...(incomeNeeded?{incomeCardId:used[0]}:{})}});
+ }
+ // A proved followup is an alternative, valued from the same wallet as the
+ // scan. It never materializes a successor or treats a refill as known.
+ function quoteKnownSector({state,seatId,p,paid,knownCards,details,followup=null}){
   const first=scanEffects.buildScanEffectQueue(paid,{turn:state.turn})[0],source=science.getPlanetScanSource(state,first.type);
   if(!source||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
   const publicCards=state.cards.publicCards.map(c=>c&&knownCards.has(c.id)?c:null);
@@ -368,11 +373,66 @@
    // Crossing a mark or creating an unproved trigger must remain Native.
    if(state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=copy.resources.score))continue;
    const weights=stateValue.DEFAULT_WEIGHTS,linear=Object.entries(weights).reduce((n,[k,w])=>n+(copy.resources[k]-p.resources[k])*w,0);
-   const value=stateValue.sumValueParts([total(root,copy),-base,linear,demand.planningCapital(root,copy),-baseCapital]);
-   if(value>0)quotes.push({value,tileId,sectorId:id,publicCardId:card.target.cardInstanceId,traceType,tracePosition:position,
-    blueSlot,scoreGain:copy.resources.score-p.resources.score,dataGain:copy.resources.availableData-p.resources.availableData,keptCardIds:handNow,...(incomeNeeded?{incomeCardId:used[0]}:{})});
+   const capital=demand.planningCapital(root,copy),score=total(root,copy);
+   const scanValue=stateValue.sumValueParts([score,-base,linear,capital,-baseCapital]);
+   const continuation=followup?.(root,copy,score,capital);
+   if(followup&&!continuation)continue;
+   const value=continuation?stateValue.sumValueParts([scanValue,continuation.value]):scanValue;
+   if(value>0)quotes.push({value,sectorId:id,publicCardId:card.target.cardInstanceId,traceType,tracePosition:position,
+    scoreGain:copy.resources.score-p.resources.score,dataGain:copy.resources.availableData-p.resources.availableData,...details,
+    ...(continuation?{scanValue,research:continuation}:{})});
   }
   return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
+ }
+ function scanTimingSource({state,seatId,knownCards,trade}){
+  const p=owner(state,seatId),t=state.turn;
+  if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.passCompletionPending||t.gameEnded
+    ||!t.activePlayerIds?.includes(seatId)||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+    ||p.resources.availableData!==0||p.resources.credits===0||p.hand.length<3||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+    ||data.listComputerPlacedTokens(p).map(x=>x.placementSlot).join(',')!=='1,2,3,4'
+    ||turnHasScanObservers(state,p)||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color)
+    ||!state.aliens.amiba?.revealInitialized||Object.values(state.aliens.aliens).some(a=>a.revealed&&a.alienId!=='阿米巴')
+    ||!trade||trade.cost.handSize!==2||Object.keys(trade.cost).length!==1||trade.gain.energy!==1||Object.keys(trade.gain).length!==1)return null;
+  const cost=scanEffects.getStandardScanCost(p),types=scanEffects.EFFECT_TYPES;
+  if(p.resources.credits<cost.credits||p.resources.energy!==cost.energy-1
+    ||scanEffects.buildScanEffectQueue(p,{turn:t}).some(e=>![types.EARTH_SECTOR_SCAN,types.PUBLIC_CARD_SCAN,types.SCAN_ACTION_4].includes(e.type)))return null;
+  return {cost,trade};
+ }
+ function quoteScanTiming({state,seatId,knownCards,trade,knownTech}){
+  const source=scanTimingSource({state,seatId,knownCards,trade});if(!source)return null;
+  const p=owner(state,seatId),{cost}=source,discard=demand.paymentCards(state,seatId,{kind:'scan',required:cost},trade.cost.handSize);
+  if(!discard)return null;
+  const paid=dataPreviewPlayer(p);
+  paid.hand=paid.hand.filter(c=>!discard.includes(c.id));paid.resources.handSize=paid.hand.length;
+  players.gainResources(paid,trade.gain);
+  if(!players.spendResources(paid,cost).ok||paid.resources.energy!==0)return null;
+  const total=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,currentPlayer:q,
+   finalScoring:structuredClone(s.finalScoring),aliens:structuredClone(s.aliens),
+   cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},q).totalScore;
+  return quoteKnownSector({state,seatId,p,paid,knownCards,details:{discard},followup:(root,afterScan,score,capital)=>{
+   const actor={...afterScan,mainActionCompleted:false};
+   const next={...root,players:{...root.players,players:root.players.players.map(v=>v===afterScan?actor:v)}};
+   const purpose=researchDataPurpose({state:next,seatId,knownCards});
+   if(!purpose||!purpose.pair.every(id=>knownTech?.(id,next.tech.stacks[id])))return null;
+   const producer=purpose.pair[0],stack=next.tech.stacks[producer],bonus=catalog.BONUS_EFFECTS[stack.bonusId];
+   if(!bonus||stack.bonusHidden||Object.keys(bonus).some(k=>!['credits','energy','publicity','score'].includes(k)))return null;
+   const research=structuredClone(next),r=owner(research,seatId),take=research.tech.stacks[producer];
+   // Hide the next bonus before taking this visible one; no later
+   // purpose can use the newly revealed item or its identity.
+   take.bonusQueue=take.bonusQueue.map((id,i)=>i===take.bonusIndex?id:null);
+   const choice=science.listResearchChoices(research,seatId).find(a=>a.target.tileId===producer);
+   const chosen=choice&&science.executeResearchChoice(research,seatId,choice);
+   if(!chosen?.ok||chosen.awaitingCardSelection||chosen.events.some(e=>e.type!=='researchTech')
+      ||research.finalScoring.thresholds.some(n=>n>actor.resources.score&&n<=r.resources.score))return null;
+   const claimed=previewCappedSectorClaim({state:research,seatId,task:purpose.ready,allowPublicityGain:true});
+   const player=claimed&&owner(claimed,seatId),continuation=claimed&&quoteResearchDataPurpose({state:claimed,seatId,purpose});
+   if(!continuation)return null;
+   const linear=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(player.resources[k]-actor.resources[k])*w,0);
+   const value=stateValue.sumValueParts([total(claimed,player),-score,linear,
+    stateValue.technologyCapital(player.techState,3),-stateValue.technologyCapital(actor.techState,3),
+    demand.planningCapital(claimed,player),-capital,continuation.value]);
+   return {value,first:producer,taskId:purpose.ready.taskId,continuation};
+  }});
  }
  function turnHasScanObservers(state,p){
   return state.turn.cardTurnEventBonuses?.length||p.reservedCards.some(c=>{
@@ -915,5 +975,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,amibaRegionFollowup,quoteAmibaRegionFollowup,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
 });

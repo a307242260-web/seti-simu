@@ -1,0 +1,2 @@
+PASS production-v398-scan-timing http://127.0.0.1:52543/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1
