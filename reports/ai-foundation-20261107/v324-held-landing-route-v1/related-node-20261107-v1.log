@@ -1,0 +1,9 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"goalMovement":"passed","goal":{"id":"rocket:5:land:neptune:satellite:triton","kind":"land","label":"land neptune","coordinate":{"x":1,"y":4},"timing":"advance-before-rotation","planetId":"neptune","endpointTarget":{"type":"satellite","satelliteId":"triton","rocketId":5},"endpointCost":{"energy":2},"targetCoordinate":{"x":1,"y":4},"movementTiming":{"comparable":true,"assumption":"one-known-solar-rotation-before-the-future-goal","rotationCount":1,"waitPaidPoints":4,"bestPrefixLength":3,"bestTotalPaidPoints":0,"classification":"advance-before-rotation","alternatives":[{"prefixLength":0,"totalPaidPoints":4,"remainingPaidPoints":4},{"prefixLength":1,"prefixMovementPoints":1,"totalPaidPoints":2,"remainingPaidPoints":2},{"prefixLength":2,"prefixMovementPoints":2,"totalPaidPoints":1,"remainingPaidPoints":1},{"prefixLength":3,"prefixMovementPoints":3,"totalPaidPoints":0,"remainingPaidPoints":0}],"availablePrefixPoints":5}},"routeSteps":3,"searchInputs":13,"policyExclusions":8,"cacheAndRestore":true}
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=4 failed=0 total=4 time=2.03s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=1
