@@ -1,0 +1,175 @@
+{
+  "phase": "v340-dropped-unused-income-quotes-mercury-marginal-native-verified-gate-open",
+  "production": "V323",
+  "baseline": "V41",
+  "first3": [
+    15,
+    48,
+    90
+  ],
+  "teacherR3": 105,
+  "fullRecord": {
+    "version": "V189",
+    "score": 120
+  },
+  "candidate": "V340",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "gates": [
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v338-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 717.59425,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v339-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 668.275042,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v340-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 657.758917,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "nativeControls": [
+    {
+      "line": "blue1",
+      "score": 91,
+      "credit": 6,
+      "energy": 3,
+      "publicity": 4,
+      "hand": 2,
+      "computer": [
+        1,
+        2
+      ],
+      "publicProjectedFinal": 121
+    },
+    {
+      "line": "purple2",
+      "score": 93,
+      "credit": 7,
+      "energy": 1,
+      "publicity": 1,
+      "hand": 0,
+      "computer": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "publicProjectedFinal": 123
+    },
+    {
+      "line": "purple2-skip-mercury",
+      "score": 93,
+      "credit": 7,
+      "energy": 0,
+      "publicity": 2,
+      "hand": 1,
+      "computer": [
+        1,
+        2,
+        3
+      ],
+      "publicProjectedFinal": 123
+    },
+    {
+      "line": "purple2-skip-mercury-b111-corner",
+      "score": 93,
+      "credit": 7,
+      "energy": 0,
+      "publicity": 2,
+      "hand": 0,
+      "computer": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "publicProjectedFinal": 123
+    }
+  ],
+  "newFixedNativeInputs": 23,
+  "next": "Identify exact savings inside the fixed swap offer valuation, leaving all positive or unresolved branches and legal commitments intact. Independently compare Blue1 extra energy with Purple2 developed assets only on public, legal R4 roots.",
+  "evidence": {
+    "adhoc/deliver-v338-v340-data-preview-and-r4-20261107-v1.py": "ddf66ec70b24e591313a993f77d3889e5c5c6c7599ce7f225fdde8a04d5c687c",
+    "adhoc/freeze-v338-blue-tail-reuse-20261107-v1.py": "deb0743b77bb57ac36b350116343e9f708f6986cd23422972b240c26eef0a207",
+    "adhoc/freeze-v339-income-ranking-no-source-requote-20261107-v1.py": "a3c28b6728c8033a4449bee6b900c671849070d31a73be9325c89317e84ca632",
+    "adhoc/freeze-v340-income-preview-handoff-20261107-v1.py": "98f051bc9d0d6f809d2a12d65f39d872b96264dd52c2b08816fb1f1472f06633",
+    "adhoc/gate-v338-blue-tail-reuse-20261107-v1.js": "0bdd9de21c8cc9af369c6972a57fce3d6c3920b381062693afa45311a9b3cfd9",
+    "adhoc/gate-v339-income-ranking-no-source-requote-20261107-v1.js": "7383411392aee079c10d11ded4143c9a0d284934bc7a2767e9d04009e267003e",
+    "adhoc/gate-v340-income-preview-handoff-20261107-v1.js": "16c501226d62026e37ca25cba3f56cbf23111708f478297aaefa6e3bae90b8de",
+    "adhoc/measure-v338-blue-tail-reuse-20261107-v1.js": "f1b75072fd312982227c9226d3107447d9e2a1037dae14699b44be4d238306fa",
+    "adhoc/measure-v338-cross-tail-value-endpoints-20261107-v1.js": "77ce62f929ea2074f1da8638f060f1cdff8aeffeeeedd9739319143fb46c980f",
+    "adhoc/measure-v340-swap-spent-mark-counterfactual-20261107-v1.js": "ecde3843556fcd9088d0b24943fe7247f16a73de662c01b2aa0e95cb9685c6a9",
+    "adhoc/profile-v340-income-before-amiba-20261107-v1.js": "5ce17ef8d59b3decee29b04e6fe92df6347edf02804b2c5a2801b1fdb0d1fdce",
+    "adhoc/review-v323-r4-native-computer-conversion-20261107-v1.js": "830f666ddb0fd64b10291652b115fc2a755a02fae73c1cb785f9e4da426c6c68",
+    "adhoc/review-v323-r4-native-no-mercury-b111-corner-20261107-v1.js": "e87e6b649e37884c802ba7c76dfeb67d6586a4cd3bdacb53981fb17c07da64be",
+    "adhoc/review-v323-r4-native-no-mercury-control-20261107-v1.js": "de9935fac3e9ffee9de06c329051c44f9c29044eb648a3df6b0b30a0fa125cb8",
+    "adhoc/verify-v338-v340-data-preview-and-r4-20261107-v1.js": "f0fceccf295d0091f4180834dc4c55fc1f9a14723c5150d8b25184ca09b14147",
+    "docs/human405-v338-v340-data-income-and-mercury-20261107.md": "732d7cea3988061575a4156112fc7c4f0f548fd1fece022fcccceab2b4423b12",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v338-cold-income-before-amiba-20261107-v1.json": "7925044f560f3682438e690b5b290dc3b044ae369c2fdc97494ef3c3ec401e2d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v338-cold-income-before-amiba-20261107-v1.raw.json.gz": "cae42a3ec032f54c5de5a7956933824595971e565c69f59c46d7d9134dd7eb02",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v339-cold-income-before-amiba-20261107-v1.json": "d66e3c220c5376d774f60a6126e8fb91dad1f4c04bff3bbb15f3df07b9c6f80d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v339-cold-income-before-amiba-20261107-v1.raw.json.gz": "13ca71e819180546fed13948e9f998ce6d1783df933b4eca26cbe028af100003",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v340-cold-income-before-amiba-20261107-v1.json": "667bd896c8e9eb66bcf30b2826ea554049281acf15f97649f1a53e6939183a18",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v340-cold-income-before-amiba-20261107-v1.raw.json.gz": "c04debf93e6477458fa9692c7eb7c394070e6794aaaa25f96796af08daa6629c",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/cross-tail-value-endpoints-20261107-v1.json": "9f25fa6193a0b58fe57ae775a1071db1c5b74562d2a46e3613fa4f435e6de04f",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/reuse-counts-20261107-v1.json": "d2f13dbb9bca1a5c0ed2cfc1ede75a7573d543a139be258cf179b0da089caaf9",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/serial-cold-gate-20261107-v1.json": "d5464bfdb9a1b048199233b1cc51e841825409114e71f56b360131b04f8a7b0a",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/source-manifest-20261107-v1.json": "6ad144fcac9ce3d1cda4368ba871fe23356b05d574bd8f0a7c61e78a5da64574",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/source-snapshot/randomizer/game/ai/decision-search.js": "2eb53fcd79649e3136585546b75b07d4224f3b43f753b8a4bc2583fdc0f2793d",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/source-snapshot/randomizer/game/ai/local-decision-plans.js": "f1d33979cca820bf4e82058ce1361988560aaa4923fe2b2ac0f550b765fa6a3d",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/source-snapshot/randomizer/game/ai/resource-demand.js": "ddd33fd637619da85f298985cc80574f15068b1e1b3ae65dea1baf813a8f992a",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/source-snapshot/randomizer/index.html": "a035e641b9f3d622728ac5701bde0400c046082396aef534dc7aaeb1229fbc5c",
+    "reports/ai-foundation-20261107/v338-blue-tail-reuse-v1/v338-income-before-amiba-cli-20261107-v1.log": "a6dc979e1a6df6fd70f4a34e04f0c80432af779d7b09ae0097a315be5f044e1a",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/related-node-20261107-v1.log": "5a86427d8b3b11cc2cf1621ad876f7048f26ebdce724e6f372a37963f3cee691",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/serial-cold-gate-20261107-v1.json": "14e5439b01711b99f743d3259270ab02f0357ff53502801b3e7d04880c9e00ff",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/source-manifest-20261107-v1.json": "6489f9f3889e3abf79aa68208f775ea1e50486583b9b96280dba6cb26392dcd0",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/source-snapshot/randomizer/game/ai/decision-search.js": "4a07635ba4b60f4884417da30f9fc45d0c605ab4a542e062ca6f4d833e9643e5",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/source-snapshot/randomizer/game/ai/resource-demand.js": "1d05ad2cd634e4db312971f799ccc9fadd9d378dea783b2663421d46d868385c",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/source-snapshot/randomizer/index.html": "3b7f19ad22b8e43afca781b103016ed21dafec41bdd73b79e72e108a6674d796",
+    "reports/ai-foundation-20261107/v339-income-ranking-no-source-requote-v1/v339-income-before-amiba-cli-20261107-v1.log": "fc387d7c0ce53ff3c23a2cc6b8c4384fd40fbe5cab328a2f5e9fbcee438831d6",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/instrumented-cpu-20261107-v1.json.gz": "cc609723eaa44d7601113ed810dcec9de6b02dfd615136e240800b1374ed5365",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/instrumented-cpu-summary-20261107-v1.json": "0591e5ae295969adc1d8afe31480f055929e4dc6f8ef935dc02431d79e909ce7",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/related-node-20261107-v1.log": "50e148801ee42702e532889505e9c3c8c2e637da44a38ba2968af6112f02cf9f",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/serial-cold-gate-20261107-v1.json": "81c3de5e27c3e06cb4998849f2efeaeff462d47639593d23948d145bb7907802",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/source-manifest-20261107-v1.json": "181b46fab6a99b58e1010cb57e71b49aff9db6d805984fffb26344e5b331a0cb",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/source-snapshot/randomizer/game/ai/decision-search.js": "46be029856253fadcb5d22c2f1028ed49ebc2840b30c1068ba1e24ad610b9717",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/source-snapshot/randomizer/game/ai/local-decision-plans.js": "1b41fcfb3217d17a3986dcb11a85e22fc76d9d6284b1cc6ab2913c5077466d4f",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/source-snapshot/randomizer/game/ai/resource-demand.js": "4585733a41390ac8dd49aca6b8fa85daec1094d663db6123fa37e71cde3d3964",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/source-snapshot/randomizer/index.html": "715d110723fdb8977763364604ee71b2b266c95c8f15c77312c0da870c59b6c3",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/swap-spent-mark-counterfactual-20261107-v1.json": "9496623445569fe5667ae60ed656a07179d149e8856e29b0ac786c1ece3ecd55",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/v323-r4-native-computer-conversion-20261107-v1.json.gz": "6508d5f98116159123471204056ec7abceccda1eead5a32f5b27224357dedb23",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/v323-r4-native-no-mercury-b111-corner-20261107-v1.json.gz": "c20d1a7d2bfbc9eb47bab0331cfe113d5a49dc2467a5ae8f0fa16fb3f87d8f0c",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/v323-r4-native-no-mercury-control-20261107-v1.json.gz": "034ee05e22e209f13d4d6c36d089b953b3f467e985571ae80e06e7e2f927e2ab",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/v340-income-before-amiba-cli-20261107-v1.log": "0786352e63c180d194c1e0423058dae5091ce97fac8b59675a9450906af95fcd",
+    "reports/ai-foundation-20261107/v340-income-preview-handoff-v1/verification-20261107-v1.json": "849ef6b565f3f60e09a867e89712199c66bdc74109d08305dac9bbf4658b55e6"
+  }
+}

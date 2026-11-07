@@ -1,0 +1,8 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"localPreviewCopy":"passed","NativePrefixCases":9,"mutableAndFrozenCases":114,"referenceWholePlayerClones":42,"candidateWholePlayerClones":0,"fullPlanResultsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=4 failed=0 total=4 time=1.63s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=1

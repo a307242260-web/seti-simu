@@ -1,0 +1,374 @@
+{
+  "scope": "V340 instrumented sample from root open through complete decision; stack times overlap and are not acceptance timing",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+  "profileSha256": "cc609723eaa44d7601113ed810dcec9de6b02dfd615136e240800b1374ed5365",
+  "samples": 2130,
+  "nativeInputs": 106,
+  "selection": "play_card:cb499bba",
+  "value": 125,
+  "rootAndRngUnchanged": true,
+  "leaf": [
+    {
+      "frame": ":0 (garbage collector)",
+      "ms": 40.544
+    },
+    {
+      "frame": "js_transferable:112 structuredClone",
+      "ms": 29.291
+    },
+    {
+      "frame": "probe-capital.js:266 evaluateMission",
+      "ms": 28.214
+    },
+    {
+      "frame": "amiba-analysis-capital.js:146 quote",
+      "ms": 18.124
+    },
+    {
+      "frame": "probe-capital.js:307 capital",
+      "ms": 17.663
+    },
+    {
+      "frame": "state-value.js:217 orderedResearchSignature",
+      "ms": 17.002
+    },
+    {
+      "frame": "amiba-analysis-capital.js:109 incomePreparation",
+      "ms": 14.835
+    },
+    {
+      "frame": "analysis-port.js:153 forwardIdentity",
+      "ms": 13.039
+    },
+    {
+      "frame": "node:inspector:118 post",
+      "ms": 12.166
+    },
+    {
+      "frame": "state-store.js:46 copy",
+      "ms": 11.374
+    },
+    {
+      "frame": "ready-analysis-capital.js:10 (anonymous)",
+      "ms": 11.208
+    },
+    {
+      "frame": "state-value.js:242 researchPurposeGains",
+      "ms": 10.334
+    },
+    {
+      "frame": "probe-capital.js:263 quoteReadOnlyPortfolio",
+      "ms": 9.879
+    },
+    {
+      "frame": "value-arithmetic.js:28 sum",
+      "ms": 9.75
+    },
+    {
+      "frame": "state-value.js:152 researchFunding",
+      "ms": 8.252
+    },
+    {
+      "frame": "state-store.js:91 stableSerialize",
+      "ms": 8.041
+    },
+    {
+      "frame": "known-symbol-capital.js:23 quote",
+      "ms": 7.998
+    },
+    {
+      "frame": "analysis-publicity-capital.js:9 quote",
+      "ms": 7.834
+    },
+    {
+      "frame": "state-value.js:538 analysisPortfolio",
+      "ms": 7.498
+    },
+    {
+      "frame": "amiba-analysis-capital.js:115 (anonymous)",
+      "ms": 7.457
+    },
+    {
+      "frame": "analysis-port.js:205 normalize",
+      "ms": 7.251
+    },
+    {
+      "frame": "amiba-analysis-capital.js:18 (anonymous)",
+      "ms": 7.169
+    },
+    {
+      "frame": "state-value.js:486 (anonymous)",
+      "ms": 7.041
+    },
+    {
+      "frame": "state-value.js:134 newResearchMark",
+      "ms": 6.791
+    },
+    {
+      "frame": "state-value.js:513 basePurposeCapital",
+      "ms": 6.749
+    },
+    {
+      "frame": "state-value.js:461 (anonymous)",
+      "ms": 6.458
+    },
+    {
+      "frame": "resource-demand.js:123 immutableCapitalInput",
+      "ms": 6.209
+    },
+    {
+      "frame": "ready-analysis-capital.js:62 prepaidCapital",
+      "ms": 5.706
+    },
+    {
+      "frame": "state-value.js:427 jointResearchCapital",
+      "ms": 5.628
+    },
+    {
+      "frame": "state-value.js:162 internalResearchFunding",
+      "ms": 5.625
+    },
+    {
+      "frame": "ready-analysis-capital.js:10 quiet",
+      "ms": 5.29
+    },
+    {
+      "frame": "amiba.js:570 copyPublicSymbolState",
+      "ms": 5.25
+    },
+    {
+      "frame": "amiba-analysis-capital.js:206 materialize",
+      "ms": 5.166
+    },
+    {
+      "frame": "analysis-port.js:226 normalizeObject",
+      "ms": 4.751
+    },
+    {
+      "frame": "research-trigger-capital.js:21 describe",
+      "ms": 4.666
+    },
+    {
+      "frame": "decision-search.js:14 searchDecision",
+      "ms": 4.541
+    },
+    {
+      "frame": "rule-composition.js:42 deepFreeze",
+      "ms": 4.373
+    },
+    {
+      "frame": "low-coupling-slices.js:110 visit",
+      "ms": 4.293
+    },
+    {
+      "frame": "probe-capital.js:109 loadRequirements",
+      "ms": 3.959
+    },
+    {
+      "frame": "ready-analysis-capital.js:76 quote",
+      "ms": 3.875
+    },
+    {
+      "frame": "state-value.js:408 paidResearchFromHeld",
+      "ms": 3.875
+    },
+    {
+      "frame": "state-value.js:185 immutableSymbolPart",
+      "ms": 3.75
+    },
+    {
+      "frame": "players.js:307 gainResources",
+      "ms": 3.542
+    },
+    {
+      "frame": "amiba-analysis-capital.js:63 securedScope",
+      "ms": 3.542
+    },
+    {
+      "frame": "amiba-analysis-capital.js:273 delta",
+      "ms": 3.417
+    }
+  ],
+  "inclusive": [
+    {
+      "frame": ":0 (root)",
+      "ms": 738.75
+    },
+    {
+      "frame": "profile-v340-income-before-amiba-20261107-v1.js:10 (anonymous)",
+      "ms": 698.206
+    },
+    {
+      "frame": "decision-search.js:14 searchDecision",
+      "ms": 672.373
+    },
+    {
+      "frame": "state-value.js:675 purposeCapital",
+      "ms": 416.123
+    },
+    {
+      "frame": "state-value.js:667 purposeCapitalWithoutFutureProbe",
+      "ms": 415.623
+    },
+    {
+      "frame": "state-value.js:660 purposeCapitalWithoutPublicityPreparation",
+      "ms": 413.291
+    },
+    {
+      "frame": "state-value.js:655 purposeCapitalWithoutTools",
+      "ms": 409.582
+    },
+    {
+      "frame": "state-value.js:650 purposeCapitalWithoutSymbols",
+      "ms": 386.497
+    },
+    {
+      "frame": "resource-demand.js:148 planningCapital",
+      "ms": 385.454
+    },
+    {
+      "frame": "state-value.js:645 capitalWithoutSector",
+      "ms": 383.54
+    },
+    {
+      "frame": "state-value.js:529 capitalWithoutIncomeSwap",
+      "ms": 375.666
+    },
+    {
+      "frame": "analysis-publicity-capital.js:9 quote",
+      "ms": 324.291
+    },
+    {
+      "frame": "card-pick-planning.js:232 plan",
+      "ms": 310.202
+    },
+    {
+      "frame": "ready-analysis-capital.js:76 quote",
+      "ms": 309.419
+    },
+    {
+      "frame": "known-symbol-capital.js:23 quote",
+      "ms": 308.121
+    },
+    {
+      "frame": "card-pick-planning.js:176 swapIntent",
+      "ms": 307.119
+    },
+    {
+      "frame": "amiba-analysis-capital.js:146 quote",
+      "ms": 305.628
+    },
+    {
+      "frame": "state-value.js:656 (anonymous)",
+      "ms": 288.412
+    },
+    {
+      "frame": "amiba-analysis-capital.js:109 incomePreparation",
+      "ms": 273.838
+    },
+    {
+      "frame": "state-value.js:669 (anonymous)",
+      "ms": 273.584
+    },
+    {
+      "frame": "analysis-port.js:696 cardPickSpec",
+      "ms": 271.58
+    },
+    {
+      "frame": "analysis-port.js:685 describeCardPick",
+      "ms": 271.372
+    },
+    {
+      "frame": "state-value.js:513 basePurposeCapital",
+      "ms": 233.96
+    },
+    {
+      "frame": "analysis-publicity-capital.js:36 (anonymous)",
+      "ms": 222.421
+    },
+    {
+      "frame": "analysis-port.js:957 expandResourcePlan",
+      "ms": 215
+    },
+    {
+      "frame": "state-value.js:538 analysisPortfolio",
+      "ms": 199.584
+    },
+    {
+      "frame": "card-pick-planning.js:200 (anonymous)",
+      "ms": 191.833
+    },
+    {
+      "frame": "decision-search.js:215 add",
+      "ms": 171.002
+    },
+    {
+      "frame": "analysis-port.js:716 expandWithCardPick",
+      "ms": 164.04
+    },
+    {
+      "frame": "probe-capital.js:263 quoteReadOnlyPortfolio",
+      "ms": 149.336
+    },
+    {
+      "frame": "amiba-analysis-capital.js:115 (anonymous)",
+      "ms": 142.63
+    },
+    {
+      "frame": "probe-capital.js:266 evaluateMission",
+      "ms": 138.708
+    },
+    {
+      "frame": "state-value.js:531 publicityPortfolio",
+      "ms": 114.254
+    },
+    {
+      "frame": "analysis-port.js:606 expand",
+      "ms": 109.752
+    },
+    {
+      "frame": "resource-demand.js:137 planningCapitalDetails",
+      "ms": 99.246
+    },
+    {
+      "frame": "analysis-port.js:799 resourceSpec",
+      "ms": 97.756
+    },
+    {
+      "frame": "probe-capital.js:307 capital",
+      "ms": 82.703
+    },
+    {
+      "frame": "state-value.js:486 (anonymous)",
+      "ms": 65.583
+    },
+    {
+      "frame": "analysis-port.js:2188 turnTailSummary",
+      "ms": 65.499
+    },
+    {
+      "frame": "state-value.js:427 jointResearchCapital",
+      "ms": 63.918
+    },
+    {
+      "frame": "amiba-analysis-capital.js:132 (anonymous)",
+      "ms": 62.705
+    },
+    {
+      "frame": "local-decision-plans.js:238 dataTailCompletion",
+      "ms": 60.541
+    },
+    {
+      "frame": "analysis-port.js:1201 executeCurrent",
+      "ms": 60.502
+    },
+    {
+      "frame": "resource-demand.js:301 catalog",
+      "ms": 60.417
+    },
+    {
+      "frame": "analysis-port.js:756 resourceCatalog",
+      "ms": 54.668
+    }
+  ]
+}
