@@ -1,0 +1,91 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -711,6 +711,29 @@
+             goal,selection:{cardId:goal.cardId,blind:false},discardIds:[],selectedActionId:action.actionId,
+             retainedActionIds:[action.actionId],excludedActionIds:actions.filter(a=>a!==action).map(a=>a.actionId),
+             reason:"take-known-landing-supplier"});
++          envelopeCardSpecs.set(envelope,result);return result;
++        }
++      }
++      if(status==='decision'&&state.turn.roundNumber===3&&session?.queue?.length===2
++        &&head.type==='card_play_domain_pick_card'&&head.ownerId===seatId
++        &&head.payload.cardEffect?.type==='pick_card'&&head.payload.cardEffect.options?.count===1
++        &&session.queue[1].ownerId===seatId&&session.queue[1].payload?.cardInstanceId===head.payload.cardInstanceId
++        &&session.queue[1].payload?.cardEffect?.type==='amiba_choose_symbol_reward'
++        &&actions.every(a=>a.family==='choose_card'&&['public','blind'].includes(a.target?.source))){
++        const p=state.players.players.find(q=>q.id===seatId);
++        const next=industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
++          &&hasOwnVisitSource(state)&&hasPostMainInertReservations(state,true,true,true)&&previewTurn(state);
++        const match=next?.turnAdvanced&&!next.roundAdvanced&&!next.gameEnded&&next.nextPlayerId===seatId
++          &&localPlans.quoteLatePublicDataPick({state,seatId,knownCards:knownCards(envelope),
++            knownAlienDisplay:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex??null,
++            region:session.queue[1].payload.cardEffect.options?.region,
++            offers:actions.filter(a=>a.target.source==='public').map(action=>({action,card:state.cards.publicCards[action.target.slotIndex]})).filter(x=>x.card)});
++        if(match){
++          const result=freeze({policy:'seti-fixed-late-public-data-income-v1',isEquivalence:false,kind:'fixed-card-plan',fixed:true,
++            goal:{id:'income:late-public-data:'+match.cardId,kind:'late-public-data-income',...match.quote},
++            selection:{cardId:match.cardId,blind:false},discardIds:[],selectedActionId:match.action.actionId,
++            retainedActionIds:[match.action.actionId],excludedActionIds:actions.filter(a=>a!==match.action).map(a=>a.actionId),
++            reason:'take-known-data-corner-for-electricity-income'});
+           envelopeCardSpecs.set(envelope,result);return result;
+         }
+       }
+diff --git a/randomizer/game/ai/local-decision-plans.js b/randomizer/game/ai/local-decision-plans.js
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -677,12 +677,12 @@
+   const quote=ready&&ready!==state&&quotePreparedRegionAnalysis({state:ready,seatId,knownCards,knownTech,knownAlienDisplay,purpose});
+   return quote?.analysisFunding?quote:null;
+  }
+- function quoteLateAnalysisIncome({state,seatId,knownCards,knownAlienDisplay,prepare=false}){
++ function quoteLateAnalysisIncome({state,seatId,knownCards,knownAlienDisplay,prepare=false,minimumHand=4}){
+   const p=owner(state,seatId),t=state.turn,amiba=state.aliens.amiba;
+   if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+     ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+     ||p.resources.credits!==0||p.resources.energy!==0||p.resources.availableData<1||p.resources.availableData>3
+-    ||p.hand.length<4||p.hand.length>5||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
++    ||p.hand.length<minimumHand||p.hand.length>5||[...p.hand,...p.reservedCards].some(c=>!knownCards.has(c.id))
+     ||turnHasScanObservers(state,p)||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+     ||!amiba?.revealInitialized||amiba.displayedCardHidden||knownAlienDisplay===null||amiba.displayedCardIndex!==knownAlienDisplay
+     ||!state.pieces.rockets.some(r=>r.playerId===seatId||r.color===p.color))return null;
+@@ -722,6 +722,32 @@
+   }
+   return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
+  }
++ function quoteLatePublicDataPick({state,seatId,knownCards,knownAlienDisplay,region,offers}){
++  const p=owner(state,seatId),slots=data.listComputerPlacedTokens(p).length;
++  if(state.turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||slots!==6||p.resources.availableData!==1
++    ||p.resources.credits!==0||p.resources.energy!==0||p.hand.length!==2
++    ||p.hand.some(c=>(cards.getDiscardActionRewardForCard(c)?.dataCount||0)>0)
++    ||!p.hand.some(c=>cards.getIncomeGainForCard(c)?.energy===1)||!state.aliens.amiba?.revealInitialized)return null;
++  const choices=offers.filter(({card})=>{
++   const reward=cards.getDiscardActionRewardForCard(card);
++   return knownCards.has(card.id)&&reward?.dataCount===1&&!Object.keys(reward.gain).length&&!cards.getDiscardActionMoveRewardForCard(card);
++  });
++  const symbols=aliens.amiba.listSymbolsInRegion(state.aliens,region);
++  if(choices.length!==1||symbols.length!==1)return null;
++  const {reward}=symbols[0],gain=reward?.gain;
++  if(!gain||Object.keys(gain).join(',')!=='score'||!(gain.score>0)||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard
++    ||state.finalScoring.thresholds.some(n=>n>p.resources.score&&n<=p.resources.score+gain.score))return null;
++  if(p.reservedCards.some(c=>effects.getCardModel(c)?.triggers?.some(t=>(t.event.types||[t.event.type])
++    .some(type=>['drawCard','drawCards','amiba_symbol_resolved'].includes(type)))))return null;
++  const {card,action}=choices[0],copy=dataPreviewPlayer(p),preview={...state,meta:structuredClone(state.meta),aliens:structuredClone(state.aliens),
++   cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c===card?null:c)},
++   players:{...state.players,players:state.players.players.map(v=>v===p?copy:v)}};
++  copy.hand.push(card);copy.resources.handSize=copy.hand.length;
++  players.gainResources(copy,gain);
++  if(!aliens.amiba.resolveSymbolAtSlot(preview.aliens,symbols[0].slotId).ok)return null;
++  const quote=quoteLateAnalysisIncome({state:preview,seatId,knownCards,knownAlienDisplay,minimumHand:3});
++  return quote?.corners.includes(card.id)?{action,cardId:card.id,quote}:null;
++ }
+  function deferredPublicityTask({state,seatId,actions,session,payload}){
+   const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
+   if(actions.length!==2||session.queue.length!==2||advance?.type!=='probe_turn_advance'
+@@ -1199,5 +1225,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,quoteLateAnalysisIncome,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep});
+ });
