@@ -1,0 +1,110 @@
+{
+  "goalStatus": "active",
+  "thisGoalTurnClassification": "progress: V318 closes 183 cases; V319 reduces the next failing first cold root from 717.731 to 610.175ms with exact graph; not admitted",
+  "production": "V278/V48",
+  "candidate": "V319/V54/Resource25",
+  "candidateAdmitted": false,
+  "checks": [
+    {
+      "searchVersion": "v318",
+      "manifest": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+      "firstGate": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/serial-cold-gate-20261107-v1.json",
+      "firstGateSha256": "76f338fb545698d3657b37617b1ea61f720da6d6192231e84971fd9db7dded27",
+      "status": "failed-gate",
+      "passedLabels": 183,
+      "totalLabels": 1258,
+      "testedLabels": 184,
+      "testedUniqueRoots": 148,
+      "failure": {
+        "label": "income-before-amiba",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+        "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-income-before-amiba-20261107-v1.json",
+        "nativeInputs": 98,
+        "milliseconds": 717.73125,
+        "value": 125,
+        "actionId": "play_card:cb499bba",
+        "complete": true,
+        "decisionGatePassed": false,
+        "rootAndRngUnchanged": true
+      },
+      "selectedChecks": [
+        {
+          "label": "actual-v256-125",
+          "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-125-root-20261106-v1.json",
+          "identity": "9995e1fadfdf8110ed130786fb1a1393d5e29dabce38a2eb08de4d041317602e",
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-125-20261107-v1.json",
+          "nativeInputs": 127,
+          "milliseconds": 595.691791,
+          "value": 123.58333333333333,
+          "actionId": "card_corner:295d3b4f",
+          "complete": true,
+          "decisionGatePassed": true,
+          "rootAndRngUnchanged": true
+        },
+        {
+          "label": "corpus-case-152",
+          "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+          "identity": "f429f3936f0e2fe348d22e7800a5f11815b1055db1cd82b79fc1f4d6571722ed",
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corpus-case-152-20261107-v1.json",
+          "nativeInputs": 256,
+          "milliseconds": 587.0137080000001,
+          "value": 49,
+          "actionId": "place_data:50a9ac16",
+          "complete": true,
+          "decisionGatePassed": true,
+          "rootAndRngUnchanged": true
+        },
+        {
+          "label": "actual-v256-132",
+          "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+          "identity": "b41b877c600ce7e7ffc0c93384883b8cc8d8cec4e16894e5d6d1346ee90e86c8",
+          "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-actual-v256-132-20261107-v1.json",
+          "nativeInputs": 162,
+          "milliseconds": 538.500041,
+          "value": 140.08333333333334,
+          "actionId": "industry:e887dc52",
+          "complete": true,
+          "decisionGatePassed": true,
+          "rootAndRngUnchanged": true
+        }
+      ]
+    },
+    {
+      "searchVersion": "v319",
+      "manifest": "reports/ai-foundation-20261107/income-before-amiba-probe-v319-v1/source-manifest-20261107-v1.json",
+      "manifestSha256": "6c56ce1d9ad240e6677eedd241d01993a84eb3a9a1637919818334e2c9a15949",
+      "firstGate": "reports/ai-foundation-20261107/income-before-amiba-probe-v319-v1/serial-cold-gate-20261107-v1.json",
+      "firstGateSha256": "1ad6ed841b167f55a78a08608f074af45b911001718c5e12c4f70747829fda42",
+      "status": "failed-gate",
+      "passedLabels": 0,
+      "totalLabels": 1258,
+      "testedLabels": 1,
+      "testedUniqueRoots": 1,
+      "failure": {
+        "label": "income-before-amiba",
+        "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+        "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+        "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v319-cold-income-before-amiba-20261107-v1.json",
+        "nativeInputs": 98,
+        "milliseconds": 610.175083,
+        "value": 125,
+        "actionId": "play_card:cb499bba",
+        "complete": true,
+        "decisionGatePassed": false,
+        "rootAndRngUnchanged": true
+      },
+      "selectedChecks": []
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "newScore": false,
+  "baseline": "V41",
+  "controlledR3Best": 87,
+  "controlledR3Latest": 85,
+  "teacherR3": 105,
+  "whiteOnlyFullBest": 120,
+  "developmentAligned": false,
+  "document": "docs/human405-v318-v319-probe-quotes-20261107.md"
+}

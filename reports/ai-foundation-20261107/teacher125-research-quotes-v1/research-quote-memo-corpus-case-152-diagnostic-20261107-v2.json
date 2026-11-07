@@ -1,0 +1,29 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V317 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "corpus-case-152",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v317-cold-corpus-case-152-20261107-v1.json",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "prototype": "reports/ai-foundation-20261107/teacher125-research-quotes-v1/state-value-research-quote-memo-prototype-20261107-v2.js",
+  "prototypeSha256": "6271d0d613c1d5a98390a21bd8cfff067463859471e4dcd9530d1305c200c7a5",
+  "ms": 569.2575830000001,
+  "nativeInputs": 256,
+  "rank": [
+    "place_data:50a9ac16",
+    49,
+    -7,
+    0,
+    26
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "hits": 0,
+    "misses": 0,
+    "contexts": 0,
+    "factories": 0,
+    "entries": 0
+  },
+  "newAutonomousRuns": 0
+}

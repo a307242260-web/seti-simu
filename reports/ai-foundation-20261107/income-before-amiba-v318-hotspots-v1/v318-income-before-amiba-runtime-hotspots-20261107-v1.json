@@ -1,0 +1,261 @@
+{
+  "scope": "CPU sample attribution only. Existing first cold result remains authoritative and is not overwritten. No acceptance sample or autonomous game.",
+  "manifest": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+  "existingColdEvidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-income-before-amiba-20261107-v1.json",
+  "rank": [
+    "play_card:cb499bba",
+    125,
+    -19.5,
+    0,
+    2
+  ],
+  "nativeInputs": 98,
+  "samples": 652,
+  "profile": "reports/ai-foundation-20261107/income-before-amiba-v318-hotspots-v1/v318-income-before-amiba-runtime-20261107-v1.cpuprofile",
+  "profileSha256": "ec45523d9e6e6ecf60c5b5d4d05ea59e509e3d38100fd4f21b0cc1e73a25b511",
+  "self": [
+    {
+      "name": "requirements ai/probe-capital.js:69",
+      "ms": 73.294
+    },
+    {
+      "name": "quote ai/probe-capital.js:100",
+      "ms": 43.456
+    },
+    {
+      "name": "(garbage collector) :0",
+      "ms": 43.417
+    },
+    {
+      "name": "structuredClone worker/js_transferable:112",
+      "ms": 26.125
+    },
+    {
+      "name": "capital ai/probe-capital.js:118",
+      "ms": 25.625
+    },
+    {
+      "name": "researchPurposeGains ai/state-value.js:184",
+      "ms": 22.833
+    },
+    {
+      "name": "basePurposeCapital ai/state-value.js:432",
+      "ms": 18.625
+    },
+    {
+      "name": "quote ai/amiba-analysis-capital.js:146",
+      "ms": 18.333
+    },
+    {
+      "name": "copy state/state-store.js:46",
+      "ms": 15.876
+    },
+    {
+      "name": "post node:inspector:118",
+      "ms": 12.416
+    },
+    {
+      "name": "sum ai/value-arithmetic.js:28",
+      "ms": 12.335
+    },
+    {
+      "name": "forwardIdentity ai/analysis-port.js:153",
+      "ms": 10.333
+    },
+    {
+      "name": "missionDataContinuation ai/research-income-capital.js:112",
+      "ms": 8.916
+    },
+    {
+      "name": "normalizeObject ai/analysis-port.js:226",
+      "ms": 8.332
+    },
+    {
+      "name": " ai/ready-analysis-capital.js:18",
+      "ms": 8.042
+    },
+    {
+      "name": "stableSerialize state/state-store.js:91",
+      "ms": 8.042
+    },
+    {
+      "name": " ai/state-value.js:415",
+      "ms": 7.75
+    },
+    {
+      "name": " ai/amiba-analysis-capital.js:115",
+      "ms": 7.749
+    },
+    {
+      "name": "immutableCapitalInput ai/resource-demand.js:122",
+      "ms": 7.375
+    },
+    {
+      "name": "normalize ai/analysis-port.js:205",
+      "ms": 7.292
+    },
+    {
+      "name": "quiet ai/ready-analysis-capital.js:10",
+      "ms": 6.917
+    },
+    {
+      "name": "delta ai/amiba-analysis-capital.js:261",
+      "ms": 6.626
+    },
+    {
+      "name": "gainResources game/players.js:307",
+      "ms": 6.334
+    },
+    {
+      "name": "prepaidCapital ai/ready-analysis-capital.js:13",
+      "ms": 6.209
+    },
+    {
+      "name": "jointResearchCapital ai/state-value.js:369",
+      "ms": 6.125
+    },
+    {
+      "name": "capitalWithoutIncomeSwap ai/state-value.js:444",
+      "ms": 6.042
+    },
+    {
+      "name": "quote ai/analysis-publicity-capital.js:9",
+      "ms": 6.042
+    },
+    {
+      "name": " ai/ready-analysis-capital.js:10",
+      "ms": 5.416
+    },
+    {
+      "name": "newResearchMark ai/state-value.js:134",
+      "ms": 5.292
+    },
+    {
+      "name": "describe ai/research-trigger-capital.js:21",
+      "ms": 5
+    }
+  ],
+  "inclusive": [
+    {
+      "name": "(root) :0",
+      "ms": 751.583
+    },
+    {
+      "name": " adhoc/profile-v318-income-before-amiba-native-path-20261107-v1.js:1",
+      "ms": 708.166
+    },
+    {
+      "name": "searchDecision ai/decision-search.js:14",
+      "ms": 682.125
+    },
+    {
+      "name": "purposeCapital ai/state-value.js:584",
+      "ms": 465.667
+    },
+    {
+      "name": "purposeCapitalWithoutFutureProbe ai/state-value.js:576",
+      "ms": 464
+    },
+    {
+      "name": "purposeCapitalWithoutPublicityPreparation ai/state-value.js:569",
+      "ms": 462.709
+    },
+    {
+      "name": "purposeCapitalWithoutTools ai/state-value.js:564",
+      "ms": 456.875
+    },
+    {
+      "name": "purposeCapitalWithoutSymbols ai/state-value.js:559",
+      "ms": 441.251
+    },
+    {
+      "name": "planningCapital ai/resource-demand.js:147",
+      "ms": 437.336
+    },
+    {
+      "name": "capitalWithoutSector ai/state-value.js:554",
+      "ms": 433.541
+    },
+    {
+      "name": "capitalWithoutIncomeSwap ai/state-value.js:444",
+      "ms": 426.917
+    },
+    {
+      "name": "quote ai/analysis-publicity-capital.js:9",
+      "ms": 366.626
+    },
+    {
+      "name": "quote ai/ready-analysis-capital.js:28",
+      "ms": 324.001
+    },
+    {
+      "name": "quote ai/amiba-analysis-capital.js:146",
+      "ms": 320.959
+    },
+    {
+      "name": "quote ai/known-symbol-capital.js:23",
+      "ms": 315.625
+    },
+    {
+      "name": " ai/state-value.js:578",
+      "ms": 313.961
+    },
+    {
+      "name": "basePurposeCapital ai/state-value.js:432",
+      "ms": 310.207
+    },
+    {
+      "name": " ai/state-value.js:565",
+      "ms": 300.001
+    },
+    {
+      "name": "plan ai/card-pick-planning.js:232",
+      "ms": 298.793
+    },
+    {
+      "name": "swapIntent ai/card-pick-planning.js:176",
+      "ms": 295.751
+    },
+    {
+      "name": " ai/analysis-publicity-capital.js:36",
+      "ms": 284.833
+    },
+    {
+      "name": "describeCardPick ai/analysis-port.js:684",
+      "ms": 272.25
+    },
+    {
+      "name": "cardPickSpec ai/analysis-port.js:695",
+      "ms": 271.75
+    },
+    {
+      "name": "incomePreparation ai/amiba-analysis-capital.js:109",
+      "ms": 261.128
+    },
+    {
+      "name": "analysisPortfolio ai/state-value.js:453",
+      "ms": 242
+    },
+    {
+      "name": "quote ai/probe-capital.js:100",
+      "ms": 241.751
+    },
+    {
+      "name": "expandResourcePlan ai/analysis-port.js:950",
+      "ms": 206.458
+    },
+    {
+      "name": " ai/card-pick-planning.js:200",
+      "ms": 193.25
+    },
+    {
+      "name": "add ai/decision-search.js:215",
+      "ms": 176.955
+    },
+    {
+      "name": "expandWithCardPick ai/analysis-port.js:715",
+      "ms": 163.002
+    }
+  ]
+}

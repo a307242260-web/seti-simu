@@ -1,0 +1,38 @@
+{
+  "scope": "Official first cold evidence at the same Native root; graph compared without new searches.",
+  "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+  "before": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-income-before-amiba-20261107-v1.json",
+    "nativeInputs": 98,
+    "milliseconds": 717.73125,
+    "value": 125,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  },
+  "after": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v319-cold-income-before-amiba-20261107-v1.json",
+    "nativeInputs": 98,
+    "milliseconds": 610.175083,
+    "value": 125,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  },
+  "sourceManifestSha256": [
+    "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+    "6c56ce1d9ad240e6677eedd241d01993a84eb3a9a1637919818334e2c9a15949"
+  ],
+  "graphAndRootActionsUnchanged": true,
+  "lines": 87,
+  "nativeInputs": 98,
+  "newAutonomousRuns": 0
+}

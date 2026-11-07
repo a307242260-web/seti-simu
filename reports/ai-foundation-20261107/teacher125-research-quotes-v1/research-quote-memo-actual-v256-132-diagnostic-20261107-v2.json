@@ -1,0 +1,29 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V317 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "actual-v256-132",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v317-cold-actual-v256-132-20261107-v1.json",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+  "fixtureSha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "prototype": "reports/ai-foundation-20261107/teacher125-research-quotes-v1/state-value-research-quote-memo-prototype-20261107-v2.js",
+  "prototypeSha256": "6271d0d613c1d5a98390a21bd8cfff067463859471e4dcd9530d1305c200c7a5",
+  "ms": 561.5371250000001,
+  "nativeInputs": 162,
+  "rank": [
+    "industry:e887dc52",
+    140.08333333333334,
+    -28.583333333333332,
+    0,
+    14
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "hits": 23048,
+    "misses": 1444,
+    "contexts": 163,
+    "factories": 908,
+    "entries": 163
+  },
+  "newAutonomousRuns": 0
+}

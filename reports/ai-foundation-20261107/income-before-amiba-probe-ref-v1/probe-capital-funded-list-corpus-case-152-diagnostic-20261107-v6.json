@@ -1,0 +1,35 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V318 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "corpus-case-152",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-corpus-case-152-20261107-v1.json",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "manifest": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+  "prototype": "reports/ai-foundation-20261107/income-before-amiba-probe-ref-v1/probe-capital-funded-list-prototype-20261107-v6.js",
+  "prototypeSha256": "48441f75a14bce4e984e13503a4df9c140347659c6e23e7c8c5da9c94d9afa0e",
+  "valuePrototype": "reports/ai-foundation-20261107/income-before-amiba-probe-ref-v1/state-value-probe-scalar-prototype-20261107-v2.js",
+  "valuePrototypeSha256": "20ba26f36455a225cc587f8aba6903e4eabba5af76cbd44e4d4c7e73784a51f8",
+  "ms": 590.7914579999999,
+  "nativeInputs": 256,
+  "rank": [
+    "place_data:50a9ac16",
+    49,
+    -7,
+    0,
+    26
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "queries": 1365,
+    "refs": 1018,
+    "serialized": 347,
+    "fallbacks": 188,
+    "geometryMisses": 14,
+    "fundedDirectories": 97,
+    "fundedDirectoryHits": 1196,
+    "fundedDirectoryPayments": 1657,
+    "emptyFundedScalar": 1047
+  },
+  "newAutonomousRuns": 0
+}

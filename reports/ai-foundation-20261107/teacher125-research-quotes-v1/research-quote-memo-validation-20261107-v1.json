@@ -1,0 +1,20 @@
+{
+  "scope": "Full portfolio, all component plans and exact numeric results on 341 captured swap quotes; 160 controlled wallet, trigger, threshold and custom weight variants. Timings are paired CPU diagnostics only.",
+  "source": "reports/ai-foundation-20261107/teacher125-v317-hotspots-v1/v317-teacher125-swap-quotes-20261107-v1.checkpoint.json.gz",
+  "sourceSha256": "9154294dc2c1e17d989fa30e4d5018e32c4b77115d0cf6262992ecd576387624",
+  "prototype": "reports/ai-foundation-20261107/teacher125-research-quotes-v1/state-value-research-quote-memo-prototype-20261107-v1.js",
+  "prototypeSha256": "67acf39c13e3b4129ee0225274dccdfdbb6d5d3447dd4aa120c306aef0c278de",
+  "quotes": 341,
+  "controls": 160,
+  "refMs": 272.6326759999994,
+  "newMs": 181.82912300000032,
+  "corpusWork": {
+    "hits": 167294,
+    "misses": 2429,
+    "contexts": 240,
+    "factories": 221,
+    "entries": 240
+  },
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

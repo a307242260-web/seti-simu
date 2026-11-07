@@ -1,0 +1,29 @@
+{
+  "scope": "Module prototype parity diagnostic. The unchanged V318 cold sample remains authoritative; no new candidate cold acceptance or game.",
+  "label": "income-before-amiba",
+  "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v318-cold-income-before-amiba-20261107-v1.json",
+  "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+  "fixtureSha256": "f37441ed40736082eb16f0b3c9c4f3b8821d11593e90c9aa4ab4dbaeb31f745b",
+  "manifest": "reports/ai-foundation-20261107/teacher125-research-quotes-v318-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "a4f5673be01445cdfff37891799eb2c183560de3dace958a4cc363f79e7f718d",
+  "prototype": "reports/ai-foundation-20261107/income-before-amiba-probe-ref-v1/probe-capital-exact-refs-prototype-20261107-v1.js",
+  "prototypeSha256": "619838ba608c6a95c040ea6fb99302cd6afbfb0f26f90cf2d14cce251eac2ec4",
+  "ms": 652.1168749999999,
+  "nativeInputs": 98,
+  "rank": [
+    "play_card:cb499bba",
+    125,
+    -19.5,
+    0,
+    2
+  ],
+  "fullNativeGraphAndRootExact": true,
+  "work": {
+    "queries": 15718,
+    "refs": 15635,
+    "serialized": 83,
+    "fallbacks": 0,
+    "geometryMisses": 8
+  },
+  "newAutonomousRuns": 0
+}

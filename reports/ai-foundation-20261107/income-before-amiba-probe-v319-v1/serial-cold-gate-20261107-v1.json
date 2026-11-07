@@ -1,0 +1,40 @@
+{
+  "status": "failed-gate",
+  "manifest": "reports/ai-foundation-20261107/income-before-amiba-probe-v319-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6c56ce1d9ad240e6677eedd241d01993a84eb3a9a1637919818334e2c9a15949",
+  "cases": 1258,
+  "rows": [
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v319-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 98,
+      "milliseconds": 610.175083,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": null,
+  "measuredUniqueRoots": 1,
+  "maxNativeInputs": 98,
+  "maxMilliseconds": 610.175083,
+  "failure": {
+    "label": "income-before-amiba",
+    "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+    "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+    "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v319-cold-income-before-amiba-20261107-v1.json",
+    "nativeInputs": 98,
+    "milliseconds": 610.175083,
+    "value": 125,
+    "actionId": "play_card:cb499bba",
+    "complete": true,
+    "decisionGatePassed": false,
+    "rootAndRngUnchanged": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scope": "Exact static quote corpus; counts of repeated funding/mark/trigger inputs and ordered research comparisons. No search or cold timing.",
+  "source": "reports/ai-foundation-20261107/teacher125-v317-hotspots-v1/v317-teacher125-swap-quotes-20261107-v1.checkpoint.json.gz",
+  "sourceSha256": "9154294dc2c1e17d989fa30e4d5018e32c4b77115d0cf6262992ecd576387624",
+  "manifest": "reports/ai-foundation-20261107/case152-static-occupancy-v317-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "6b5d3364e51f7e72f733ff75787115c3e8b23800a14d34163909340a47bf04a2",
+  "comparisons": 169723,
+  "contexts": 240,
+  "factoryCalls": 9115,
+  "marks": 9115,
+  "newMarks": 3179,
+  "trigger": 9115,
+  "fastNoMarks": 0,
+  "unique": 2429,
+  "duplicate": 167294,
+  "signatureMs": 23.387747999999107,
+  "portfolioQuotes": 341
+}
