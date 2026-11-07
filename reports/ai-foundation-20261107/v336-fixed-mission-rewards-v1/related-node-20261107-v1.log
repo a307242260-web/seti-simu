@@ -1,0 +1,10 @@
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":116.5,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"missionDataContinuation":"passed","controlledRoots":80,"nativePlans":75,"nativeInputs":580,"fullMissionValue":68.16666666666667,"occupiedAndUnknownRewardsExcluded":true,"rootAndRngRestored":true}
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"onlyNecessaryHeldAndPaidQuotes":true,"siblingSignaturePreparedOnce":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=5 failed=0 total=5 time=4.54s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=4

@@ -1,0 +1,32 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto'),z=require('node:zlib'),v8=require('node:v8'),Module=require('node:module');
+const W='reports/ai-foundation-20261107/',D=W+'v336-fixed-mission-rewards-v1/',F='reports/ai-foundation-20261105/third-round-teacher-v1/',read=p=>JSON.parse(fs.readFileSync(p)),digest=b=>crypto.createHash('sha256').update(b).digest('hex'),sha=p=>digest(fs.readFileSync(p)),unzip=p=>z.gunzipSync(fs.readFileSync(p)),raw=p=>JSON.parse(unzip(p));
+const manifest=read(D+'source-manifest-20261107-v1.json'),parent=read(manifest.parentManifest);
+assert.equal(sha(manifest.parentManifest),manifest.parentManifestSha256);
+for(const [n,h] of Object.entries({...manifest.baseRuntimeHashes,...manifest.sourceHashes}))assert.equal(sha(n),h,n);
+const data=v=>{const p=F+'v'+v+'-cold-income-before-amiba-20261107-v1.json',e=read(p);assert.equal(sha(e.rawPath),e.rawSha256);assert(e.rootAndRngUnchanged&&e.complete);return{e,g:raw(e.rawPath)};};
+const normal=g=>{const r=JSON.parse(JSON.stringify(g).replace(/seti-complete-decision-search-v(?:335|336)/g,'version'));delete r.diagnostics.milliseconds;return r;};
+const before=data(335),after=data(336);
+assert.equal(before.e.fixtureSha256,after.e.fixtureSha256);assert.deepEqual(normal(before.g),normal(after.g));assert.equal(after.e.nativeInputs,106);assert.equal(after.e.value,125);
+const probeFile='randomizer/game/ai/probe-capital.js',refFile=W+'v330-trace-quote-v1/source-snapshot/'+probeFile;
+assert.equal(sha(refFile),parent.sourceHashes[probeFile]||parent.baseRuntimeHashes[probeFile]);
+const p=require.resolve('../'+probeFile),v=require.resolve('../randomizer/game/ai/state-value'),load=(file,s,dependency)=>{const m=new Module(file,module);m.filename=file;m.paths=module.paths;if(dependency){const r=m.require.bind(m);m.require=x=>x==='./probe-capital'?dependency:r(x);}m._compile(s,file);return m.exports;};
+let optimizedLegs=0;globalThis.__v336VerificationHit=()=>optimizedLegs++;
+const probeSource=fs.readFileSync(p,'utf8'),needle='          if(reward){';assert.equal(probeSource.split(needle).length,2);
+const candidateProbe=load(p,probeSource.replace(needle,needle+' globalThis.__v336VerificationHit();')),priorProbe=load(p,fs.readFileSync(refFile,'utf8'));
+const value=fs.readFileSync(v,'utf8'),candidate=load(v,value,candidateProbe),reference=load(v,value,priorProbe);
+const inputs=['company-fixed-intent-v1/complete-capital-inputs-20261107-v1.v8.gz','portfolio-repetition-v1/hard132-full-portfolio-inputs-20261107-v1.v8.gz'].flatMap(n=>v8.deserialize(unzip(W+n)).inputs);
+for(const {facts,weights} of inputs){
+ const old=JSON.stringify(facts),model=weights===candidate.DEFAULT_WEIGHTS||JSON.stringify(weights)===JSON.stringify(candidate.DEFAULT_WEIGHTS)?candidate.DEFAULT_WEIGHTS:weights;
+ assert.deepEqual(candidate.purposeCapital(facts,model),reference.purposeCapital(facts,model));assert.equal(JSON.stringify(facts),old);
+}
+assert(optimizedLegs>0);
+const blue=raw(D+'v323-blue1-amiba9-native-first-launch-20261107-v1.json.gz'),purple=raw(D+'v323-purple2-native-scan-launch-20261107-v1.json.gz');
+assert(blue.sourceRestored&&purple.sourceRestored);assert.equal(blue.newAutonomousRuns+purple.newAutonomousRuns,0);
+const matchedSource=unzip(W+'v335-research-layout-key-v1/v323-r3-blue1-purple2-equal-corner-20261107-v1.json.gz');assert.equal(blue.sourceSha256,digest(matchedSource));assert.equal(purple.sourceSha256,blue.sourceSha256);
+const snap=x=>({wallet:x.wallet,probeCount:x.rockets.length,scanSlots:x.scan.reduce((n,[,a])=>n+a.length,0),tech:Object.keys(x.tech.ownedTiles),hand:x.hand});
+const b=blue.outcomes.map(o=>({choice:o.choice,...snap(o.after)})),p2=purple.outcomes.map(o=>({use:o.use,...snap(o.after)}));
+assert.deepEqual(b.map(x=>[x.wallet.score,x.wallet.credits,x.wallet.energy,x.wallet.availableData,x.wallet.publicity,x.wallet.handSize,x.probeCount]),[[91,6,3,0,3,3,1],[91,6,3,1,3,2,1],[91,6,3,0,4,2,1]]);
+assert.deepEqual(p2.map(x=>[x.wallet.score,x.wallet.credits,x.wallet.energy,x.wallet.availableData,x.wallet.publicity,x.wallet.handSize,x.probeCount,x.scanSlots-snap(purple.before).scanSlots]),[[91,7,0,3,0,1,1,3]]);
+assert.equal(blue.nativeInputs+purple.nativeInputs,19);
+console.log(JSON.stringify({graphV335V336Exact:true,referencePortfolioComparisons:inputs.length,optimizedLegs,gate:{v335:before.e.milliseconds,v336:after.e.milliseconds,nativeInputs:after.e.nativeInputs},nativeControls:{blue1:b,purple2:p2,nativeInputs:19,sourceAndRngRestored:true},newAutonomousRuns:0}));

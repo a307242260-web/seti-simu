@@ -1,0 +1,241 @@
+{
+  "phase": "v337-repeated-quotes-isolated-r4-tech-controls-and-cold-gates-failed",
+  "production": "V323",
+  "baseline": "V41",
+  "first3": [
+    15,
+    48,
+    90
+  ],
+  "teacherR3": 105,
+  "fullRecord": {
+    "version": "V189",
+    "score": 120
+  },
+  "candidate": "V337",
+  "candidateAdmitted": false,
+  "newAutonomousRuns": 0,
+  "gates": [
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v336-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 689.781917,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "income-before-amiba",
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "identity": "3dcd3985f673a56e39ee37a74603e952ebe3455bf1942eb9589f6945e61da316",
+      "evidence": "reports/ai-foundation-20261105/third-round-teacher-v1/v337-cold-income-before-amiba-20261107-v1.json",
+      "nativeInputs": 106,
+      "milliseconds": 691.607041,
+      "value": 125,
+      "actionId": "play_card:cb499bba",
+      "complete": true,
+      "decisionGatePassed": false,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "nativeControls": {
+    "blue1": [
+      {
+        "choice": {
+          "choiceId": "symbol:orange_1",
+          "slotId": "orange_1",
+          "region": "orange",
+          "symbolId": "symbol_4"
+        },
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 91
+        },
+        "probeCount": 1,
+        "scanSlots": 6,
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "purple4"
+        ],
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ],
+          [
+            "card-71-0",
+            "dlc_13.png"
+          ]
+        ]
+      },
+      {
+        "choice": {
+          "choiceId": "symbol:orange_2",
+          "slotId": "orange_2",
+          "region": "orange",
+          "symbolId": "symbol_2"
+        },
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 91
+        },
+        "probeCount": 1,
+        "scanSlots": 6,
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "purple4"
+        ],
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ]
+        ]
+      },
+      {
+        "choice": {
+          "choiceId": "symbol:orange_3",
+          "slotId": "orange_3",
+          "region": "orange",
+          "symbolId": "symbol_1"
+        },
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 4,
+          "score": 91
+        },
+        "probeCount": 1,
+        "scanSlots": 6,
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "purple4"
+        ],
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ]
+        ]
+      }
+    ],
+    "purple2": [
+      {
+        "use": true,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 7,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 0,
+          "score": 91
+        },
+        "probeCount": 1,
+        "scanSlots": 9,
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "purple2",
+          "purple4"
+        ],
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ]
+        ]
+      }
+    ],
+    "nativeInputs": 19,
+    "sourceAndRngRestored": true
+  },
+  "next": "Avoid repeatedly quoting the same native preview by passing proven results at upstream shared callers or deduplicating exact preparation purposes. Verify remaining performance and compare actual end-game conversion of resources from the two R4 follow-ups, with no hidden R3 input.",
+  "evidence": {
+    "adhoc/deliver-v336-v337-r4-and-quote-reuse-20261107-v1.py": "fe4337ad82503e64734c606360e67037fefb3bf6e7d3b0c300253a3750ae4edb",
+    "adhoc/freeze-v336-fixed-mission-rewards-20261107-v1.py": "b5b7351c62717ca60c885ef5547569c7a2d943ed2c52d3db7ed9a2357624341e",
+    "adhoc/freeze-v337-planning-scalar-reuse-20261107-v1.py": "93140abe4334d885111f3ce04ff7f7491d3dda3378b6df911071820e55bbf3d0",
+    "adhoc/gate-v336-fixed-mission-rewards-20261107-v1.js": "8d95129fe9fa79e38c7e6d400a84e9648e32210e08ce8dd3297cf1be2bc589d3",
+    "adhoc/gate-v337-planning-scalar-reuse-20261107-v1.js": "ec277c22da7ed58c7b4170826d713ccb266d957ad6176846808560653cb84767",
+    "adhoc/measure-v336-complete-lower-portfolio-duplicates-20261107-v1.js": "243c2797ff4fec5affdf7ce9f0951f89fcbcd40a73a7496800d23ff0deaac054",
+    "adhoc/measure-v336-local-base-portfolio-duplicates-20261107-v1.js": "ae647271412661462d985c572619748e36ea5866bc750f04724f37e857b507d2",
+    "adhoc/measure-v336-lower-portfolio-field-tokens-20261107-v1.js": "a46ea55035c500cdb4e135364cd219a37947fd65b1e280971eb488661bdb94eb",
+    "adhoc/measure-v336-lower-portfolio-sections-20261107-v1.js": "126f98f7e4628b5259733a52377e0112bba41d7abaa5dac254b2f50b5e3fe443",
+    "adhoc/measure-v336-portfolio-layer-overlap-20261107-v1.js": "2c61d284f07a8849c0e23159cb37b0c3e726be50b04d33837cc3b9c7a6c94cac",
+    "adhoc/measure-v336-resource-demand-quote-anchors-20261107-v1.js": "adf40764cbabbffcdf9e98fcd2947db9858884dd06c3806ab3bf6eca3fa55a25",
+    "adhoc/review-v323-blue1-amiba9-native-first-launch-20261107-v1.js": "b2ec7a1c53d8f8f5e908b6abed2faaacfc61fc0def3cb9f9d5b3d263bcae4063",
+    "adhoc/review-v323-purple2-native-scan-launch-20261107-v1.js": "d139a833a8118dc6f3b7bcb64d6a6181b5163ee78f8b01c09e559137f0b7a480",
+    "adhoc/verify-v336-fixed-mission-and-r4-controls-20261107-v1.js": "e5ffdc147d3a162c358a378e0d85089386b26bbe5e0b143932f60751968b14a6",
+    "adhoc/verify-v337-planning-scalar-reuse-20261107-v1.js": "63959c898d0c12ab21bff4afe56ee3fb1b9cdcb7da21d2108519a23908b39e88",
+    "docs/human405-v336-v337-r4-and-quote-reuse-20261107.md": "d8a047a0bb452b852d606e46d78feab77d1a7b884b4ef3cfbbdb17ec441bf8eb",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v336-cold-income-before-amiba-20261107-v1.json": "6fe46775cddb77e0a65085ebd21439be9dc6f4a99a2ffd6857f36748dc8dbcd4",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v336-cold-income-before-amiba-20261107-v1.raw.json.gz": "c07bc9cbba020c8a91d5e9fa601ded7d9e955efdbf392b0086ecd650bcc2cc03",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v337-cold-income-before-amiba-20261107-v1.json": "a1ce5ae565513e1114f2de77a37079b219974bb1871c6782aadc6eb85306738d",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v337-cold-income-before-amiba-20261107-v1.raw.json.gz": "6f936da33333954e2bf947f08acfa341e67d961dae258008203c7a0290a1f506",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/related-node-20261107-v1.log": "4311b7ada3217452442cdea062ea832d153c3cf2caaf6de81d19f42351a3b88f",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/serial-cold-gate-20261107-v1.json": "75e95606a148f5253c7a2b2be7d821935a85b90e2782d47be0e01546fc76c843",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/source-manifest-20261107-v1.json": "535b415256764cc80d7d0735e79f03bd9684306c028a3da680a386134e92e685",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/source-snapshot/randomizer/game/ai/decision-search.js": "eddca51d12bfa92b4897ea762eb014c1959faf15c8f403f93811d89fda4c6c26",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/source-snapshot/randomizer/game/ai/probe-capital.js": "573fa59bd11418048e520661db664800364363a13e4c18497746fd749751d14d",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/source-snapshot/randomizer/index.html": "c876f416d6cfa328a8ca81e9b76e3a9cc4fc837f68351ccb2942d7e39a289c0b",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v323-blue1-amiba9-native-first-launch-20261107-v1.json.gz": "6a2dd73b663bf87f3877370469df6b3172a31d013115fde7f9a109e53f955a8b",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v323-purple2-native-scan-launch-20261107-v1.json.gz": "f5b307251eca4120caaabf4cda64075dfd1e35262b4bb563222b46334b916f61",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-complete-lower-portfolio-duplicates-20261107-v1.json": "afecd4797d1f4910827b44bd9e69ee070a27d8cfe1be72c806634ce23a33185b",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-income-before-amiba-cli-20261107-v1.log": "956aca7fb58a78f7160697cfe2886d4df70df36439fa68f8d1eff5a02afde473",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-local-base-portfolio-duplicates-20261107-v1.json": "43e22a05c78a325ea8bdeea909ce1f8f2bb34bbcf12b965dbc8493ccea8ccbfd",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-lower-portfolio-field-tokens-20261107-v1.json": "3cc4665963698e34aa14d18237664aa6333238ff84c25106cd0681395ff5642a",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-lower-portfolio-sections-20261107-v1.json": "368b0345e0e5e890981591401e9169adfa9da65cb7b8bdf6c50d7919e556e01c",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-portfolio-layer-overlap-20261107-v1.json": "32eefe2f62dabf5e809c218ff96c13b5fd4707d5212bd5300294acede9f1c08f",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/v336-resource-demand-quote-anchors-20261107-v1.json": "0d144c53e9541adb0531c9a884da70f3651662ff2e7f55ad91af37e5cc3a0912",
+    "reports/ai-foundation-20261107/v336-fixed-mission-rewards-v1/verification-20261107-v1.json": "19a285ac8ffb1e12fd567599fe9be17b77c62259727cb6d5a3e794b78ddb7ab6",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/related-node-20261107-v1.log": "404c8eb80c6027b90f1e3dca37f04346502eeb73226936b5eb592dc8a3b3f566",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/serial-cold-gate-20261107-v1.json": "8eb34a8c1cbaf11bbd5634110a245a7075a349231f08c4fbb048f20463bc02f5",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/source-manifest-20261107-v1.json": "ffa87dc7d035a0421c2af819338fe7fe3cc8b22470e45747ddf8c6b8d238aea9",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/source-snapshot/randomizer/game/ai/decision-search.js": "96dfe3cb2e2d592e8167ce1b957443cdeaf015470e49da5bff6afe6cbf147406",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/source-snapshot/randomizer/game/ai/resource-demand.js": "20cb35b71d2ef0c9ebd5f819bebcffa820c97d317c63a9091b4fdb0a0fdf0cd5",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/source-snapshot/randomizer/index.html": "8b2f08cfc4d1bb4d8c8d3dfb06a07bcefd938dee058bfa2ab5ad067d943f0e39",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/v337-income-before-amiba-cli-20261107-v1.log": "f9e024880faad12f831c29a77d730a71f7e55a3aa47e3c94bf56c84d8657ae99",
+    "reports/ai-foundation-20261107/v337-planning-scalar-reuse-v1/verification-20261107-v1.json": "77c263e93c4240cc1e01d3482957452972a4166ac095142d0f28628cc9b91093"
+  }
+}
