@@ -203,6 +203,12 @@ assert.equal(
   "duplicate Pluto landings should count as same-planet landing pairs",
 );
 
+// A scoring observation can omit the unrevealed Aomomo panel and is frozen.
+const frozenUnrevealed = Object.freeze({ aliens: Object.freeze({}) });
+assert.equal(endGameScoring.countPlanetLandingPairs(white, { planets: {} }, 2, { aliens: frozenUnrevealed }), 0);
+assert.equal(endGameScoring.countOrbitOrLandMarkers(white, { planets: {} }, { aliens: frozenUnrevealed }), 0);
+assert.equal(Object.hasOwn(frozenUnrevealed, "aomomo"), false);
+
 const aomomoMarkerState = {
   aliens: {
     1: {

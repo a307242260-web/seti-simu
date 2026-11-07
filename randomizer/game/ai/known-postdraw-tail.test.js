@@ -22,7 +22,13 @@ try{for(const name of ['cancel','blind']){const p=open();try{let node=p.openRoot
  }
  for(const variant of maskedVariants.slice(1))assert.deepEqual(maskedVariants[0],variant,'unknown alien identities cannot influence value, fixed suppliers, Native selections or hand-history facts');assert(c.lifecycle.restore(original).ok);
  const disabled=open();try{let node=disabled.openRoot();for(const id of controls.contexts['387'].path)node=disabled.expand(node,id);disabled.setResourcePlanning(false);node=disabled.expand(node,controls.contexts['387'].branches.blind.acceptedActionId);assert.equal(node.status,'information-barrier','without a fixed-resource proof the original boundary remains');assert.deepEqual(c.lifecycle.save().envelope,original);}finally{disabled.close();}
- const p=open();try{let node=p.openRoot();for(const id of controls.contexts['125'].path)node=p.expand(node,id);node=p.expand(node,controls.contexts['125'].branches.display.acceptedActionId);assert.equal(node.status,'information-barrier','the unproved suffix stays closed even though the acquired display identity is known');assert(node.observation.selfState.hand.some(c=>c.cardId==='amiba_9.webp'&&!c.hidden));assert.deepEqual(c.lifecycle.save().envelope,original);}finally{p.close();}
+ const p=open();try{let node=p.openRoot();for(const id of controls.contexts['125'].path)node=p.expand(node,id);node=p.expand(node,controls.contexts['125'].branches.display.acceptedActionId);
+   assert.equal(node.status,'stable','a display identity known at the root admits existing same-turn continuation');
+   assert.equal(node.observation.publicState.board.aliens.amibaTraces.displayedCardIndex,null,'replacement display remains hidden');
+   assert.equal(node.observation.publicState.board.aliens.amibaTraces.displayedCardHidden,true);
+   assert(node.legalActions.length>0);
+   assert(!node.legalActions.some(a=>a.family==='pass'),'cannot progress another turn or round from this rule menu');
+   console.log(JSON.stringify({priorGuard:'information-barrier',newStatus:node.status,knownDisplay:'amiba_9.webp',hiddenReplacement:true,legal:node.legalActions.map(a=>a.family)}));assert(node.observation.selfState.hand.some(c=>c.cardId==='amiba_9.webp'&&!c.hidden));assert.deepEqual(c.lifecycle.save().envelope,original);}finally{p.close();}
  // A known main card's blind reward must not cut a fixed held-data plan.
  // The complete compound scalar proof declines competing computer/blue goals;
  // these four actual inputs must still be materialized, with new cards opaque.

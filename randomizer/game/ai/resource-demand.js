@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v25';
+  const VERSION='seti-goal-resource-preparation-v26';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -15,7 +15,7 @@
   const cornerData=c=>cards.getDiscardActionRewardForCard(c)?.dataCount||0;
   const weight={credits:2,energy:2,publicity:1,handSize:2};
   function currentGoal(state,goal){
-    if(goal.kind!=='route')return goal;
+    if(!['route','held-landing-route'].includes(goal.kind))return goal;
     const probe=state.pieces.rockets.find(r=>r.id===goal.rocketId);if(!probe)return goal;
     const at=rockets.getRocketSectorCoordinate(probe);if(at.x===goal.coordinate.x&&at.y===goal.coordinate.y)return{...goal,path:[],movementPoints:0};
     const index=goal.path.findIndex(s=>s.from.x===at.x&&s.from.y===at.y);
@@ -29,6 +29,7 @@
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),required={...(goal.required||{})};
     if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+movePoints(c),0));
+    if(goal.kind==='held-landing-route')required.energy=goal.movementPoints;
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
       publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
@@ -148,6 +149,45 @@
     return Object.isFrozen(state)&&Object.isFrozen(p)?planningCapitalDetails(state,p).total
       :stateValue.purposeCapital(valueFacts(state,p)).total;
   }
+  const knownDirectSwapEffects=new Set(['card_research_tech','card_pick_card_corner_reward','card_income','card_tuck_played_card_to_income','card_discard_any_for_income']);
+  function purePublicityCorner(card){
+    if(!card?.id||!card.cardId||card.hidden)return 0;
+    const reward=cards.getDiscardActionRewardForCard(card);
+    return reward&&!reward.dataCount&&Object.keys(reward.gain||{}).every(k=>k==='publicity')?reward.gain.publicity||0:0;
+  }
+  function keepSwapPortfolioOffer(outgoingCorner,card){
+    if(!outgoingCorner||purePublicityCorner(card)!==outgoingCorner)return true;
+    const model=effects.getCardModel(card);if(!model)return true;
+    return (model.playEffects||[]).some(e=>knownDirectSwapEffects.has(e.type))
+      ||stateValue.hasKnownSymbolTool([card])||stateValue.hasKnownSectorTool([card])
+      ||stateValue.hasKnownMovementTool([card])||Boolean(probeCapital.heldLandingCost(card));
+  }
+  function knownSwapPortfolioQuotes({state,seatId,outgoing,offered},knownSourceCapital=null){
+    // This is the exceptional-card fallback, after the caller has checked a
+    // funded income swap and concrete income/data/move/card purposes. An
+    // offer with the same publicity corner still needs a distinct known
+    // play purpose here. This is a greedy policy, not Native equivalence.
+    if(state.turn.roundNumber===3){
+      const corner=purePublicityCorner(outgoing);
+      offered=offered.filter(card=>keepSwapPortfolioOffer(corner,card));
+    }
+    if(!offered.length)return[];
+    const p=owner(state,seatId),source=valueFacts(state,p),before=knownSourceCapital??planningCapital(state,p);
+    // The fixed public exchange spends the company mark. Do not price
+    // the replacement as if a second exchange were available this round.
+    const companyState=source.companyState?.abilityId==='deepspace_swap_cards'
+      ?{...source.companyState,roundMarkRound:state.turn.roundNumber,roundMarkTurn:state.turn.turnNumber}
+      :source.companyState;
+    return offered.map(incoming=>{
+      const hand=source.hand.map(c=>c.id===outgoing.id?incoming:c);
+      const preview={...source,hand,companyState,
+        board:{...source.board,publicCards:source.board.publicCards.map(c=>c?.id===incoming.id?outgoing:c)},
+        pendingHandCardTriggers:effects.listPendingTriggerKeys({...p,reservedCards:hand},state.turn)};
+      preview.sourcePendingFinalMarkChoice=source.amibaTraces&&source.companyState?.abilityId==='deepspace_swap_cards'
+        ?probeCapital.pendingFinalMarkOption(preview):null;
+      return{card:incoming,gain:stateValue.purposeCapital(preview).total-before};
+    });
+  }
   function movementToolPlan(state,p){return planningCapitalDetails(state,p).toolPlan;}
   function forecastDataPlan(state,p){
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]&&['blue1','blue2','blue4'].includes(id)))return null;
@@ -218,13 +258,13 @@
     const p=owner(state,seatId);return incomeValueWithCapital(state,p,card,incomePreparationCapital(state,p));
   }
   function computerIncomeValue(state,seatId,card){
-    const quote=incomeTailCapital({state,seatId,goal:{incomeCardId:card.id}});
+    const quote=incomeTailEndpoint({state,seatId,goal:{incomeCardId:card.id}});
     // The fourth-slot choice happens after its data and column rewards.
     // Quote that real fixed endpoint, so it cannot collect computer4 twice.
     return quote.available?quote.netGain+quote.preparedCapital:null;
   }
   const immutableIncomeTailQuotes=new WeakMap();
-  function incomeTailCapital({state,seatId,goal}){
+  function incomeTailEndpoint({state,seatId,goal},knownPreview=null){
     const p=owner(state,seatId),card=p.hand.find(c=>c.id===goal.incomeCardId);
     // Store scalars only, keyed by the complete immutable native source and
     // the exact owner/card objects. Mutable previews never share this cache.
@@ -232,12 +272,25 @@
       &&immutableCapitalInput(state)&&immutableCapitalInput(p);
     let owners=immutable?immutableIncomeTailQuotes.get(state):null,quotes=owners?.get(p);
     if(quotes?.has(card))return quotes.get(card);
-    const preview=previewIncomeTail({state,seatId,goal});
+    const preview=knownPreview??previewIncomeTail({state,seatId,goal});
     const after=preview.available?planningCapital(state,preview.player):null;
-    const quote=Object.freeze(preview.available?{available:true,netGain:preview.netGain,beforeCapital:planningCapital(state,p),afterCapital:after,
+    const quote=Object.freeze(preview.available?{available:true,netGain:preview.netGain,afterCapital:after,
       preparedCapital:incomePreparationCapital(state,preview.player,0,after)}:{available:false,reason:preview.reason});
     if(immutable){if(!owners){owners=new WeakMap();immutableIncomeTailQuotes.set(state,owners);}if(!quotes){quotes=new WeakMap();owners.set(p,quotes);}quotes.set(card,quote);}
     return quote;
+  }
+  function incomeTailCapital(input){return quoteIncomeTail(input);}
+  function quoteIncomeTail(input,knownPreview=null,knownSourceCapital=null){
+    const endpoint=incomeTailEndpoint(input,knownPreview);
+    if(!endpoint.available)return endpoint;
+    // Candidate ranking needs only net gain and prepared endpoint capital.
+    // The source quote belongs to the selected relative proof, not every card.
+    const {state,seatId}=input,{available,netGain,afterCapital,preparedCapital}=endpoint;
+    return Object.freeze({available,netGain,beforeCapital:knownSourceCapital??planningCapital(state,owner(state,seatId)),afterCapital,preparedCapital});
+  }
+  function incomeTailWithPreview(input,knownSourceCapital=null){
+    const preview=previewIncomeTail(input);
+    return{preview,capital:preview.available?quoteIncomeTail(input,preview,knownSourceCapital):null};
   }
   // Scalar facts at the actual unknown-card boundary, not a native successor.
   // The draw consumes one public deck count; its identity never enters funding.
@@ -275,13 +328,36 @@
     return stateValue.sumValueParts([after,-beforeCapital]);
   }
   function cardOpportunityCost(state,seatId,card){return incomeOpportunityCost(state,owner(state,seatId),card);}
-  function dataCornerCards({state,seatId,goal,selectionOnly=false}){
+  function scoredBlueCornerWindow(state,p,goal){
+    return goal.kind==='blue-data'&&goal.targetComputerSlot<=3&&state.turn.roundNumber===4&&p.mainActionCompleted
+      &&!p.passCompletionPending&&industry.getPlayerIndustryDefinition(p)?.activeAbilityId==='deepspace_swap_cards'
+      &&Array.isArray(state.pieces?.rockets)&&!state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===p.id||id===p.color))
+      &&!observes(state,p.id,'cardCorner');
+  }
+  function ordinaryDataCornerCards({state,seatId,goal,selectionOnly=false}){
     const p=owner(state,seatId);
     const eligible=p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length);
     if(!eligible.length)return[];
     if(selectionOnly&&eligible.length===1)return[{card:eligible[0],loss:null}];
     const beforeCapital=incomePreparationCapital(state,p);
     return eligible.map(card=>({card,loss:incomeOpportunityCost(state,p,card,beforeCapital)}))
+      .sort((a,b)=>a.loss-b.loss||(a.card.id<b.card.id?-1:a.card.id>b.card.id?1:0));
+  }
+  function dataCornerCards({state,seatId,goal,selectionOnly=false}){
+    if(state.turn.roundNumber!==4)return ordinaryDataCornerCards({state,seatId,goal,selectionOnly});
+    const p=owner(state,seatId);
+    if(!scoredBlueCornerWindow(state,p,goal))return ordinaryDataCornerCards({state,seatId,goal,selectionOnly});
+    const eligible=p.hand.flatMap(card=>{
+      if(protectedCard(card,goal)||card.hidden)return[];
+      const reward=cards.getDiscardActionRewardForCard(card);if(reward?.dataCount!==1)return[];
+      const keys=Object.keys(reward.gain||{});
+      return !keys.length||keys.length===1&&keys[0]==='score'&&Number.isSafeInteger(reward.gain.score)&&reward.gain.score>0
+        ?[{card,score:reward.gain?.score||0}]:[];
+    });
+    if(!eligible.length)return[];
+    if(selectionOnly&&eligible.length===1)return[{card:eligible[0].card,...(eligible[0].score?{score:eligible[0].score}:{}),loss:null}];
+    const beforeCapital=incomePreparationCapital(state,p);
+    return eligible.map(({card,score})=>({card,...(score?{score}:{}),loss:incomeOpportunityCost(state,p,card,beforeCapital)-score}))
       .sort((a,b)=>a.loss-b.loss||(a.card.id<b.card.id?-1:a.card.id>b.card.id?1:0));
   }
   function catalog({state,seatId,requirements,actions=[]}){
@@ -506,9 +582,23 @@
         greedyFailed,observer:greedyFailed|| (action.family==='card_corner'?observes(state,seatId,'cardCorner'):observes(state,seatId,'quick_trade_payment')||observes(state,seatId,'quick_trade_discard_selection'))});
     }
     if(selectionOnly&&out.length===1)return out;
-    for(const candidate of out){
-      const action=actions.find(a=>a.actionId===candidate.actionId);
-      candidate.loss=action.family==='quick_trade'?Object.entries(action.payload.cost).reduce((n,[k,v])=>n+v*(weight[k]||0),0)-Object.entries(action.payload.gain).reduce((n,[k,v])=>n+v*(weight[k]||0),0):2+2*incomeOpportunityCost(state,owner(state,seatId),owner(state,seatId).hand.find(c=>c.id===action.target.cardInstanceId));
+    if(state.turn.roundNumber===4&&scoredBlueCornerWindow(state,owner(state,seatId),goal)){
+      const p=owner(state,seatId);
+      for(const candidate of out){
+        const action=actions.find(a=>a.actionId===candidate.actionId);
+        if(action.family==='quick_trade')candidate.loss=Object.entries(action.payload.cost).reduce((n,[k,v])=>n+v*(weight[k]||0),0)-Object.entries(action.payload.gain).reduce((n,[k,v])=>n+v*(weight[k]||0),0);
+        else{
+          const card=p.hand.find(c=>c.id===action.target.cardInstanceId),reward=cards.getDiscardActionRewardForCard(card);
+          const score=reward?.dataCount===1&&Object.keys(reward.gain||{}).every(k=>k==='score')&&Number.isSafeInteger(reward.gain?.score)&&reward.gain.score>0
+            &&(action.payload.multiplier??1)===1?reward.gain.score:0;
+          candidate.loss=2+2*(incomeOpportunityCost(state,p,card)-score);
+        }
+      }
+    }else{
+      for(const candidate of out){
+        const action=actions.find(a=>a.actionId===candidate.actionId);
+        candidate.loss=action.family==='quick_trade'?Object.entries(action.payload.cost).reduce((n,[k,v])=>n+v*(weight[k]||0),0)-Object.entries(action.payload.gain).reduce((n,[k,v])=>n+v*(weight[k]||0),0):2+2*incomeOpportunityCost(state,owner(state,seatId),owner(state,seatId).hand.find(c=>c.id===action.target.cardInstanceId));
+      }
     }
     let dataOrder=null;
     const rank=c=>{
@@ -600,8 +690,85 @@
     const chosen=goal.kind==='blue-data'?ranked.find(a=>bluePrerequisites(p,goal.blueSlot)===0?a.target.blueSlot===goal.blueSlot:a.target.target==='computer'):ranked[0];
     return chosen?{kind:'fixed',actionId:chosen.actionId,reason:'greedy-data-placement'}:null;
   }
+  // Quote the entire known mission from the same wallet. The Native
+  // directory gives one path per target; the only timing assumption is
+  // the existing one-rotation comparison, never a prediction of an opponent.
+  function heldLandingGoal({state,seatId,candidates,compareTiming}){
+    const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
+    const supplier=probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber,passing:p.passCompletionPending},weights);
+    if(!supplier||p.resources.credits<supplier.cost.credits)return null;
+    if(p.mainActionCompleted&&turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
+    const options=[];
+    for(const c of candidates()){
+      if(c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!c.path.length)continue;
+      const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);if(!probe)continue;
+      const cost=c.endpointFacts.cost,energy=c.required.paidMovementPoints;
+      if(probeCapital.funding(p.resources,{...cost,energy:(cost.energy||0)+energy},weights))continue;
+      // Timing is comparatively expensive. Only compare candidates payable
+      // today; a route which gets cheaper by waiting needs no advance macro.
+      const payment=probeCapital.funding(p.resources,{...supplier.cost,energy},weights);
+      if(!payment||payment.creditPurchases)continue;
+      let at=rockets.getRocketSectorCoordinate(probe),points=0;
+      const full=c.path.map(s=>{
+        const move=rockets.canMoveFromCoordinate(state.pieces,at,s.deltaX,s.deltaY,c.rocketId);
+        if(!move.ok)throw new Error('HELD_LANDING_ROUTE_INVALID');
+        const requiredMovePoints=rocketAbility.getRequiredMovePointsFromCoordinate({...state,state},p,at);
+        const step={from:at,to:move.to,deltaX:s.deltaX,deltaY:s.deltaY,requiredMovePoints};
+        points+=requiredMovePoints;at=move.to;return step;
+      });
+      if(points!==energy)throw new Error('HELD_LANDING_ROUTE_COST_MISMATCH');
+      let path=full,spend=payment;
+      if(p.mainActionCompleted){
+        const timing=compareTiming(c.requirementId,full.map(s=>({...s,rocketId:c.rocketId})),0);
+        if(!timing.comparable||!timing.bestPrefixLength)continue;
+        const prefix=timing.alternatives.find(t=>t.prefixLength===timing.bestPrefixLength);
+        spend=probeCapital.funding(p.resources,{...supplier.cost,energy:prefix.totalPaidPoints},weights);
+        if(!spend||spend.creditPurchases)continue;
+        path=full.slice(0,prefix.prefixLength);points=prefix.prefixMovementPoints;
+      }
+      const value=c.targetBenefit.grossEquivalentValue-spend.value-weights.handSize;
+      if(value<=0)continue;
+      options.push({id:c.requirementId+':held-card:'+supplier.card.id,kind:'held-landing-route',rocketId:c.rocketId,
+        planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:supplier.card.id,coordinate:path[path.length-1].to,
+        path,movementPoints:points,required:supplier.cost,prefixOnly:p.mainActionCompleted,value});
+    }
+    return options.sort((a,b)=>b.value-a.value||a.movementPoints-b.movementPoints||(a.id<b.id?-1:1))[0]||null;
+  }
+
+  function heldLandingStep({state,seatId,goal,actions,status,operation}){
+    const p=owner(state,seatId),find=(test,reason,kind='fixed')=>{
+      const a=actions.find(test);return a?{kind,actionId:a.actionId,reason}:{kind:'infeasible',reason};
+    };
+    if(operation.targetStarted){
+      if(status==='stable')return{kind:'complete',reason:'held-landing-settled'};
+      const land=actions.some(a=>a.target?.actionType==='land');
+      if(land)return find(a=>a.target?.rocketId===goal.rocketId&&a.target?.planetId===goal.planetId
+        &&a.target?.landTarget?.type===goal.endpointTarget.type,'held-landing-native-target','target');
+      return{kind:'fallback',reason:'held-landing-native-effect',actionIds:actions.map(a=>a.actionId)};
+    }
+    if(status==='decision'){
+      if(actions.some(a=>a.target?.kind==='move-payment'))return find(a=>a.target?.kind==='move-payment'
+        &&a.target.choiceId==='energy'&&!a.target.cardIds?.length,'held-landing-pay-exact-energy');
+      return{kind:'fallback',reason:'held-landing-native-preparation-effect',actionIds:actions.map(a=>a.actionId)};
+    }
+    if(!p.hand.some(c=>c.id===goal.cardId)||p.resources.credits<goal.required.credits)
+      return{kind:'infeasible',reason:'held-landing-card-or-fee-unavailable'};
+    if(!goal.path.length){
+      if(goal.prefixOnly)return{kind:'complete',reason:'held-landing-prefix-completed'};
+      return find(a=>a.family==='play_card'&&a.target.cardInstanceId===goal.cardId,'held-landing-play-known-card','start-target');
+    }
+    if(p.resources.energy<goal.movementPoints){
+      const funding=probeCapital.funding(p.resources,{...goal.required,energy:goal.movementPoints},stateValue.DEFAULT_WEIGHTS);
+      if(!funding||funding.creditPurchases)return{kind:'infeasible',reason:'held-landing-currency-lower-bound'};
+      return find(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy','held-landing-fund-energy');
+    }
+    const next=goal.path[0];
+    return find(a=>a.family==='move'&&a.target.rocketId===goal.rocketId&&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY,
+      'held-landing-fixed-direction');
+  }
   function step({state,seatId,goal,actions,status,session,operation={}}){
     goal=currentGoal(state,goal);
+    if(goal.kind==='held-landing-route')return heldLandingStep({state,seatId,goal,actions,status,operation});
     if(goal.kind==='route'&&operation.targetStarted&&status==='stable')
       return{kind:'complete',reason:'route-endpoint-completed'};
     if(goal.kind==='effect-purpose'&&operation.targetStarted){
@@ -692,5 +859,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,blindIncomeBoundaryCapital,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
 });

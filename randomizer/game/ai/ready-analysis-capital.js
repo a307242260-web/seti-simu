@@ -16,8 +16,8 @@
   if(!firstTraceGains.has(slotId))firstTraceGains.set(slotId,aliens.getFirstTraceRewardForSlot(slotId).gain);
   return firstTraceGains.get(slotId);
  }
- function prepaidCapital(facts,weights){
-  if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0||!quiet(facts.reservedCards,true))return 0;
+ function prepaidCount(facts){
+  if(facts.terminal||facts.round+Number(facts.passing)>=4||facts.analyzeEnergyCost!==0)return 0;
   const slots=facts.computerSlots||[],count=slots.length,required=data.ANALYZE_REQUIRED_COMPUTER_SLOT;
   if(!count||count>=required)return 0;
   let seen=0;
@@ -25,27 +25,71 @@
    if(!Number.isInteger(slot)||slot<1||slot>count)return 0;
    seen|=1<<(slot-1);
   }
-  if(seen!==(1<<count)-1)return 0;
-  if(!Array.isArray(facts.board?.aliens?.slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
-  const {score,publicity}=facts.player,cap=players.RESOURCE_LIMITS.publicity;let best=0;
-  for(const slot of facts.board.aliens.slots){
-   if(slot.revealed)continue;
-   const first=!slot.traces?.blue?.firstPlaced;
-   if(first&&slot.traces?.yellow?.firstPlaced&&slot.traces?.pink?.firstPlaced)continue;
-   const gain=first?firstTraceGain(slot.slotId):extraTraceGain;
-   if(Object.keys(gain).some(k=>k!=='score'&&k!=='publicity'))continue;
-   // Pure quote of the same existing score delta and Native publicity cap;
-   // there is no game action or mutation of the wallet during valuation.
-   if(Number.isFinite(score)&&Number.isFinite(publicity)){
-    const scoreAfter=gain.score==null?score:score+gain.score;
-    const publicityAfter=gain.publicity==null?publicity:Math.min(cap,Math.max(0,publicity+gain.publicity));
-    best=Math.max(best,scoreAfter-score+(publicityAfter-publicity)*weights.publicity);
-   }else{
+  if(seen!==(1<<count)-1||!quiet(facts.reservedCards,true))return 0;
+  return count;
+ }
+ function traceSlots(facts){
+  const slots=facts.board?.aliens?.slots;
+  if(!Array.isArray(slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
+  return slots;
+ }
+ function traceGain(slot){
+  if(slot.revealed)return null;
+  const first=!slot.traces?.blue?.firstPlaced;
+  if(first&&slot.traces?.yellow?.firstPlaced&&slot.traces?.pink?.firstPlaced)return null;
+  const gain=first?firstTraceGain(slot.slotId):extraTraceGain;
+  return Object.keys(gain).some(k=>k!=='score'&&k!=='publicity')?null:gain;
+ }
+ function finiteGain(gain,score,publicity,weights){
+  const scoreAfter=gain.score==null?score:score+gain.score;
+  const publicityAfter=gain.publicity==null?publicity:Math.min(players.RESOURCE_LIMITS.publicity,Math.max(0,publicity+gain.publicity));
+  return scoreAfter-score+(publicityAfter-publicity)*weights.publicity;
+ }
+ // This closure is local to one synchronous portfolio quote. Its callers
+ // keep the computer, reservation and trace inputs fixed and supply only
+ // the current wallet. It is never reused for changed Native states.
+ const noPrepaid=()=>0;
+ function preparePrepaidCapital(facts,weights){
+  const count=prepaidCount(facts);
+  if(!count)return noPrepaid;
+  const slots=traceSlots(facts);
+  if(slots.length===2&&slots[0]&&slots[1]){
+   const first=traceGain(slots[0]),second=traceGain(slots[1]);
+   return(score,publicity,override)=>{
+    if(override&&(!Array.isArray(override)||override.length!==2||!override[0]||!override[1]))return prepaidForSlots(override,count,score,publicity,weights);
+    const a=override&&override[0]!==slots[0]?traceGain(override[0]):first;
+    const b=override&&override[1]!==slots[1]?traceGain(override[1]):second;
+    return arithmetic.normalize(Math.max(0,a?finiteGain(a,score,publicity,weights):0,
+     b?finiteGain(b,score,publicity,weights):0)*count/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
+   };
+  }
+  const gains=slots.map(traceGain).filter(Boolean);
+  return(score,publicity,override)=>{
+   if(override)return prepaidForSlots(override,count,score,publicity,weights);
+   let best=0;
+   for(const gain of gains)best=Math.max(best,finiteGain(gain,score,publicity,weights));
+   return arithmetic.normalize(best*count/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
+  };
+ }
+ function prepaidForSlots(slots,count,score,publicity,weights){
+  if(!Array.isArray(slots))throw Error('READY_ANALYSIS_ALIEN_FACTS_MISSING');
+  let best=0;
+  for(const slot of slots){const gain=traceGain(slot);if(gain)best=Math.max(best,finiteGain(gain,score,publicity,weights));}
+  return arithmetic.normalize(best*count/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
+ }
+ function prepaidCapital(facts,weights){
+  const count=prepaidCount(facts);
+  if(!count)return 0;
+  const {score,publicity}=facts.player;let best=0;
+  for(const slot of traceSlots(facts)){
+   const gain=traceGain(slot);if(!gain)continue;
+   if(Number.isFinite(score)&&Number.isFinite(publicity))best=Math.max(best,finiteGain(gain,score,publicity,weights));
+   else{
     const wallet={...facts.player};players.gainResources({resources:wallet},gain);
     best=Math.max(best,wallet.score-score+(wallet.publicity-publicity)*weights.publicity);
    }
   }
-  return arithmetic.normalize(best*count/required,weights);
+  return arithmetic.normalize(best*count/data.ANALYZE_REQUIRED_COMPUTER_SLOT,weights);
  }
  function quote(facts,weights,portfolio,baseValue){
   if(facts.terminal||facts.round+Number(facts.passing)>=4)return zero('analysis-window-closed');
@@ -102,5 +146,5 @@
    &&!progress.computerSlots.includes(placement.getRequiredComputerSlotForBlueBonus(slot))).length:2;
   return{linear:preparationColumns*placement.getBlueColumnScoreBonus().score+trace+[1,2,3].filter(slot=>placement.getBlueBoardSlotForComputerSlot(slot)!=null).length*placement.getBlueColumnScoreBonus().score+blue+placement.getComputerSlotBonus(2).publicity*weights.publicity,publicity:tracePublicity+placement.getBlueTileDataBonus('blue4').publicity+placement.getComputerSlotBonus(2).publicity};
  }
- return Object.freeze({quote,prepaidCapital,upperBound,energyCost:abilityId=>abilityId==='deepspace_swap_cards'?0:data.ANALYZE_ENERGY_COST});
+ return Object.freeze({quote,prepaidCapital,preparePrepaidCapital,upperBound,energyCost:abilityId=>abilityId==='deepspace_swap_cards'?0:data.ANALYZE_ENERGY_COST});
 });

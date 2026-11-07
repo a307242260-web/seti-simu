@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v323";
+  const VERSION = "seti-complete-decision-search-v371";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -328,7 +328,8 @@
         && (Number.isInteger(action.target?.deltaX) || action.target?.kind === "move-payment"
           || action.target?.tradeId === "energy-for-move" || action.family === "card_corner" && action.payload?.kind === "move"));
       let movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
-      if(resourcePlanning&&movementPolicy?.chosenGoal?.timing==="advance-before-rotation"&&movementPolicy.selectedActionId){
+      if(resourcePlanning&&movementPolicy?.chosenGoal?.timing==="advance-before-rotation"&&movementPolicy.selectedActionId
+        &&!resourcePolicy?.plans.some(p=>p.goal.kind==="held-landing-route")){
         movementPolicy={...movementPolicy,forceExecution:true,reason:"execute-selected-advance-timing",
           retainedActionIds:[movementPolicy.selectedActionId],excludedActionIds:node.legalActions.filter(a=>a.actionId!==movementPolicy.selectedActionId).map(a=>a.actionId),
           suppressedResourceGoals:resourcePolicy?.plans.map(p=>p.goal.id)||[]};
@@ -787,7 +788,8 @@
       if(actionBound)return {actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"proof-pruned",prunedByActionBound:actionBound};
       if(nodes[0].pickPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",
         completion:"excluded-by-card-pick-policy",policy:nodes[0].pickPolicy.policy,goal:nodes[0].pickPolicy.goal,isEquivalence:false};
-      if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)) return {
+      if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)
+        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&e.resourcePlan?.goal.kind==="held-landing-route")) return {
         actionId: action.actionId, target: null, value: null, valueType: "not-executed",
         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
@@ -881,10 +883,12 @@
         if(best.knownIncomePlan||best.turnTailPlanValue){current=best.target;continue;}
         if(best.resourcePlan){
           const macro=resourceExecutions.get(best);
+          const committedGoal=best.resourcePlan.goal.kind==="held-landing-route"?best.resourcePlan.goal.id:null;
+          if(committedGoal)entries.at(-1).committedGoal=committedGoal;
           for(let i=1;i<macro.prefixes.length&&entries.length<32;i++){
             const prefix=macro.prefixes[i];
             entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,realization:entry.realization,preparationDebt:entry.preparationDebt,distance:entry.distance-i,
-              sourceNode:`resource:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
+              sourceNode:`resource:${current}:${i}`,...(committedGoal?{committedGoal}:{}),roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
                 completion:"committed-goal-plan-execution",policy:"seti-goal-resource-preparation-v1",goalId:best.resourcePlan.goal.id,isEquivalence:false}))});
           }

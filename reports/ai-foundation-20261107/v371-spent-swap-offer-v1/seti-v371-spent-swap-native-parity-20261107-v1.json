@@ -1,0 +1,135 @@
+{
+  "rows": [
+    {
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "fixtureSha256": "f37441ed40736082eb16f0b3c9c4f3b8821d11593e90c9aa4ab4dbaeb31f745b",
+      "outgoing": "amiba_3.webp",
+      "incoming": "dlc_32.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:a7e46a74",
+        "choose_card:5c6fe6ed"
+      ],
+      "gain": -1.5,
+      "round": 3,
+      "turn": 7
+    },
+    {
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "fixtureSha256": "f37441ed40736082eb16f0b3c9c4f3b8821d11593e90c9aa4ab4dbaeb31f745b",
+      "outgoing": "amiba_3.webp",
+      "incoming": "dlc_27.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:a7e46a74",
+        "choose_card:b2fcba8d"
+      ],
+      "gain": -0.5,
+      "round": 3,
+      "turn": 7
+    },
+    {
+      "fixture": "reports/ai-foundation-20261105/third-round-teacher-v1/v209-income-before-amiba-root-20261106-v1.json",
+      "fixtureSha256": "f37441ed40736082eb16f0b3c9c4f3b8821d11593e90c9aa4ab4dbaeb31f745b",
+      "outgoing": "amiba_3.webp",
+      "incoming": "b_14.webp",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:a7e46a74",
+        "choose_card:3ecbc9b9"
+      ],
+      "gain": -0.5,
+      "round": 3,
+      "turn": 7
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+      "fixtureSha256": "d3e641767a29796301d8b6feb0f80436d35918627e519db551583d503eee1284",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_25.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:39cc3b5e"
+      ],
+      "gain": 0,
+      "round": 3,
+      "turn": 10
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+      "fixtureSha256": "d3e641767a29796301d8b6feb0f80436d35918627e519db551583d503eee1284",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_20.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:425625f6"
+      ],
+      "gain": 0,
+      "round": 3,
+      "turn": 10
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+      "fixtureSha256": "d3e641767a29796301d8b6feb0f80436d35918627e519db551583d503eee1284",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_19.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:9197279e"
+      ],
+      "gain": 0,
+      "round": 3,
+      "turn": 10
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json",
+      "fixtureSha256": "b21a1bf50250d503997cbbb2175da4273bece0ff1f5573f41cc751c925f7260c",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_25.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:39cc3b5e"
+      ],
+      "gain": -4.5,
+      "round": 3,
+      "turn": 9
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json",
+      "fixtureSha256": "b21a1bf50250d503997cbbb2175da4273bece0ff1f5573f41cc751c925f7260c",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_20.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:425625f6"
+      ],
+      "gain": -4.5,
+      "round": 3,
+      "turn": 9
+    },
+    {
+      "fixture": "reports/ai-foundation-20261107/v332-known-alien-tail-v1/v323-actual-r3-step-189-root-20261107-v1.json",
+      "fixtureSha256": "b21a1bf50250d503997cbbb2175da4273bece0ff1f5573f41cc751c925f7260c",
+      "outgoing": "amiba_9.webp",
+      "incoming": "dlc_19.png",
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:654a0530",
+        "choose_card:9197279e"
+      ],
+      "gain": -4.5,
+      "round": 3,
+      "turn": 9
+    }
+  ],
+  "inputs": 27,
+  "rootAndRngUnchanged": true,
+  "companyRoundMarkSpent": true,
+  "noSecondSwap": true,
+  "newAutonomousRuns": 0
+}

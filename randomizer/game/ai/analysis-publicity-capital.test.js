@@ -32,7 +32,7 @@ const handoff=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../report
 try{
  for(const phase of ['before','after']){
   const envelope=handoff.record[phase];assert(c.lifecycle.restore(envelope).ok);const original=c.lifecycle.save().envelope,full=mask(info,c.projection({role:'player',playerId:seat}).state,{code:'hidden_card_reveal'}),compact=mask(info,c.projection({role:'player',playerId:seat,valueOnly:true}).state,{code:'hidden_card_reveal'}),value=values.evaluateStateValue(full,seat);
-  assert.deepEqual(full,handoff[phase+'Observation']);assert.equal(value.total,116.5);assert.deepEqual(values.evaluateStateValue(compact,seat),value);assert.deepEqual(values.evaluateStateValue(outcomes.createDecisionObservation(full,{seatId:seat}),seat),value);
+  assert.deepEqual(full,handoff[phase+'Observation']);assert.equal(value.total,119);assert.deepEqual(values.evaluateStateValue(compact,seat),value);assert.deepEqual(values.evaluateStateValue(outcomes.createDecisionObservation(full,{seatId:seat}),seat),value);
   const facts={...probe.factsFromObservation(full,seat),supply:full.publicState.board.techSupply,researchCost:6,analyzeEnergyCost:0},plan=values.purposeCapital(facts).analysisPublicityPlan;assert.equal(plan.value,phase==='before'?4:0);
   if(phase==='before'){assert.deepEqual(plan.selected.cornerCardIds,['alien-amiba-3-3']);assert.equal(plan.selected.incomeCardId,null);for(const field of ['pendingCardTriggers','pendingHandCardTriggers']){for(const pending of [undefined,[{cardInstanceId:'pending'}]])assert.equal(values.purposeCapital({...facts,[field]:pending}).analysisPublicityPlan.value,0);}}
   assert.deepEqual(c.lifecycle.save().envelope,original);

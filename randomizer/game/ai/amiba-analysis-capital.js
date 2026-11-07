@@ -112,19 +112,24 @@
   const initial=facts.player,board=facts.board.finalScoring,aMark=board?.tiles?.a?.marks?.find(m=>m.playerId===initial.id);
   const formula=aMark&&end.getFormulaId('a',board.tileVariants.a),incomeScore=wallet=>aMark?end.getFormulaBaseValue(formula,wallet,{})*end.getSlotMultiplier(formula,aMark.slotIndex):0;
   const scalarQuotes=new Map(),incomeCards=new Map(facts.hand.map(c=>[c.id,c]));
+  let shared;
   const options=facts.hand.filter(c=>c.cardId&&!c.hidden).flatMap(card=>{
    const gain=cards.getIncomeGainForCard(card);if(!gain||!Object.keys(gain).length||Object.keys(gain).some(k=>!['credits','energy'].includes(k)))return[];
    const wallet={...initial,availableData:initial.availableData-1,handSize:facts.hand.length+facts.extraUnknownCount-1,income:{...initial.income}};
    players.gainResources({resources:wallet},gain);for(const[k,v]of Object.entries(gain))wallet.income[k]+=v;
-   const columns=Object.entries(initial.techState.blueBoardSlots).filter(([id,slot])=>initial.techState.ownedTiles[id]&&!initial.techState.disabledTiles[id]&&placement.getRequiredComputerSlotForBlueBonus(slot)===4).length;
-   players.gainResources({resources:wallet},{score:columns*placement.getBlueColumnScoreBonus().score});
+   // The pre-income score, columns, and arithmetic order do not depend on
+   // the candidate card. Its live wallet and hand removal still do.
+   shared??={columnScore:Object.entries(initial.techState.blueBoardSlots)
+    .filter(([id,slot])=>initial.techState.ownedTiles[id]&&!initial.techState.disabledTiles[id]&&placement.getRequiredComputerSlotForBlueBonus(slot)===4).length*placement.getBlueColumnScoreBonus().score,
+    incomeScore:incomeScore(initial),weights:Object.entries(weights).filter(([k])=>k!=='handSize')};
+   players.gainResources({resources:wallet},{score:shared.columnScore});
    const nextFinalMark=facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>['a1','a2'].includes(o.formulaId)?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,wallet,{})*o.multiplier}:o)};
    const hand=facts.hand.filter(c=>c.id!==card.id),progress={hand,computerSlots:[1,2,3,4],blueSlots:facts.blueSlots,nextFinalMark};
    const removalClass=portfolio.incomeRemovalClass?.(card),key=removalClass==null?null:JSON.stringify([removalClass,gain]);
    const after=key!==null&&scalarQuotes.has(key)?scalarQuotes.get(key):portfolio(wallet,facts.board.aliens.slots,progress);
    if(key!==null)scalarQuotes.set(key,after);
-   const linear=arithmetic.sum([wallet.score-initial.score,incomeScore(wallet)-incomeScore(initial),-weights.handSize,
-    ...Object.entries(weights).filter(([k])=>k!=='handSize').map(([k,w])=>(wallet[k]-initial[k])*w),
+   const linear=arithmetic.sum([wallet.score-initial.score,incomeScore(wallet)-shared.incomeScore,-weights.handSize,
+    ...shared.weights.map(([k,w])=>(wallet[k]-initial[k])*w),
     ...Object.entries(gain).map(([k,v])=>v*(weights[k]||0)*(4-facts.round))],weights);
    return[{cardId:card.id,wallet,progress,after,linear,value:arithmetic.sum([linear,after,-baseValue],weights)}];
   }).sort((a,b)=>b.value-a.value||incomeOrder.compare(incomeCards.get(a.cardId),incomeCards.get(b.cardId)));
@@ -176,6 +181,18 @@
   // Technology ownership, column rewards and arithmetic key order stay the
   // same across this quote's local trace wallets. Funding remains per wallet.
   const resourceKeys=Object.keys(weights).filter(k=>k!=='handSize');
+  // A root-visible displayed card can fund one immediate computer placement
+  // after this analysis. Price the actual printed corner without inventing a
+  // hand entity, using a blind outcome, or treating the replacement as known.
+  const display=facts.amibaTraces.displayedCardIndex;
+  const known=arithmetic.isDefault(weights)&&scope.fixed&&facts.turnCardBonusCount===0
+   &&facts.companyState?.abilityId==='deepspace_swap_cards'&&facts.amibaTraces.displayedCardAvailable
+   &&Number.isSafeInteger(display)?amiba.getCardDefinition(display):null;
+  const corner=known&&cards.getDiscardActionRewardForCode(known.discardActionCode);
+  const cornerColumnScore=corner?.dataCount===1&&Object.keys(corner.gain||{}).every(k=>k==='score')
+   &&Object.keys(corner).every(k=>['code','label','gain','dataCount'].includes(k))
+   ?Object.entries(initial.techState.blueBoardSlots).filter(([tile,slot])=>initial.techState.ownedTiles[tile]
+    &&!initial.techState.disabledTiles[tile]&&placement.getRequiredComputerSlotForBlueBonus(slot)===1).length*placement.getBlueColumnScoreBonus().score:0;
   const blueTails=Object.entries(initial.techState.blueBoardSlots).flatMap(([tileId,slot])=>{
    const required=placement.getRequiredComputerSlotForBlueBonus(slot),bonus=placement.getBlueTileDataBonus(tileId);
    if(!initial.techState.ownedTiles[tileId]||initial.techState.disabledTiles[tileId]||!required||required>=4||!bonus||!['credits','energy','publicity'].includes(bonus.type))return[];
@@ -258,7 +275,7 @@
    // explanatory endpoint container may be built after local ranking.
    const triggerProgress=trigger?{reservedCards:trigger.reservedCards,nextFinalMark:facts.nextFinalMark&&{...facts.nextFinalMark,options:facts.nextFinalMark.options.map(o=>o.tileId==='c'?{...o,currentValue:end.getFormulaBaseValue(o.formulaId,{...wallet,reservedCards:trigger.reservedCards},{})*o.multiplier}:o)}}:null;
    const securedGain=scope.fixed?0:secured(context,{...facts,...(traceCounts?{traceCounts}:{}),player:wallet,reservedCards:trigger?.reservedCards||facts.reservedCards},scope.stableB1)-beforeSecured;
-   const delta=w=>arithmetic.sum([w.score-initial.score,securedGain,unknownCards*weights.handSize,...resourceKeys.map(k=>(w[k]-initial[k])*weights[k])],weights);
+   const delta=(w,extra=unknownCards)=>arithmetic.sum([w.score-initial.score,securedGain,extra*weights.handSize,...resourceKeys.map(k=>(w[k]-initial[k])*weights[k])],weights);
    let best={value:delta(wallet),wallet,required:null,blueSlot:null};
    for(const {slot,required,bonus,columns}of blueTails){
     if(wallet.availableData<required+1)continue;
@@ -268,8 +285,19 @@
     const value=delta(after);
     if(value>best.value)best={value,wallet:after,required,blueSlot:Number(slot)};
    }
+   if(cornerColumnScore>0&&choice.reward.pickAlienCard&&wallet.availableData<players.RESOURCE_LIMITS.availableData){
+    const after={...wallet,handSize:wallet.handSize-1};
+    players.gainResources({resources:after},{...corner.gain,availableData:corner.dataCount});
+    after.availableData--;players.gainResources({resources:after},{score:cornerColumnScore});
+    // Pending or newly crossed marks require the actual Native decision.
+    if(!facts.nextFinalMark||after.score<facts.nextFinalMark.threshold){
+     const value=delta(after,unknownCards-1);
+     if(value>best.value)best={value,wallet:after,required:1,blueSlot:null,publicCorner:{cardIndex:display,cardId:known.cardId,computerSlot:1,cornerScore:corner.gain?.score||0,placementScore:cornerColumnScore}};
+    }
+   }
+   const remainingUnknown=unknownCards-Number(Boolean(best.publicCorner));
    const plan={slotId:choice.slot.slotId,position:choice.position||null,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:best.blueSlot,
-    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet),securedGain,unknownCards,region,...(trigger?{blueDataTrigger:trigger.trigger}:{})};
+    planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet,remainingUnknown),securedGain,unknownCards:remainingUnknown,region,...(best.publicCorner?{publicCorner:best.publicCorner}:{}),...(trigger?{blueDataTrigger:trigger.trigger}:{})};
    candidates.push({plan,context,traceCounts,triggerProgress,wallet:best.wallet,required:best.required,ordinaryLeft,blindCardCount,displayedCardAvailable,materialized:false});
   }
   candidates.sort((a,b)=>b.plan.localPlanValue-a.plan.localPlanValue||a.plan.slotId-b.plan.slotId||(b.plan.position||0)-(a.plan.position||0));
@@ -281,7 +309,7 @@
    get candidates(){if(!explanationsReady){explanations=candidates.map(materialize);explanationsReady=true;}return explanations;},
    set candidates(value){explanations=value;explanationsReady=true;},
    reason:selected?.planNetGain>0?'funded-known-amiba-analysis':'amiba-analysis-not-profitable',
-   scope:'One fixed locally greedy funded analysis/blue-trace/currency-tail plan, ranked by current formal net rewards, then exactly one shared-portfolio requote. Unselected local candidates have no planNetGain. Anonymous draw counts only; shared wallet and existing base portfolio opportunity cost. No hidden reveal, entity allocation, successor observation, new final mark or pruning bound.'};
+   scope:'One fixed locally greedy funded analysis/blue-trace/currency-tail plan, ranked by current formal net rewards, then exactly one shared-portfolio requote. Unselected local candidates have no planNetGain. Unknown draw counts or one publicly displayed score/data corner followed by computer1; shared wallet and existing base portfolio opportunity cost. No hidden reveal, entity allocation, successor observation, new final mark or pruning bound.'};
  }
  return Object.freeze({quote});
 });

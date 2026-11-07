@@ -1,0 +1,19 @@
+{
+  "status": "failed-execution",
+  "manifest": "reports/ai-foundation-20261107/v370-spent-swap-offer-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "8035b9932d5f8aee2281924be294ae3c37d31ea272bf7ef85c9749761161782a",
+  "cases": 1268,
+  "rows": [],
+  "newAutonomousRuns": 0,
+  "candidateAdmitted": false,
+  "pending": {
+    "label": "r3-blue1-before-dlc19",
+    "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json"
+  },
+  "failure": {
+    "label": "r3-blue1-before-dlc19",
+    "fixture": "reports/ai-foundation-20261107/v367-blue1-dlc19-native-v1/v367-r3-blue1-before-dlc19-root-20261107-v1.json",
+    "log": "reports/ai-foundation-20261107/v370-spent-swap-offer-v1/v370-r3-blue1-before-dlc19-cli-20261107-v1.log",
+    "status": 1
+  }
+}

@@ -172,10 +172,98 @@
     cache.set(key,result);__requirementRefs.fundedDirectories++;return result;
   }
 
+  const fundedHeldLandings = new WeakMap();
+  function preparedHeldLandings(goals, prepared, wallet, fee, weights) {
+    // The prepared ordinary directory is private to exact geometry,
+    // currency wallet and default weights. Add the actual fee as its only
+    // remaining payment input. Card identity and rewards never enter this cache.
+    let byFee=fundedHeldLandings.get(prepared);
+    if(!byFee){byFee=new Map();fundedHeldLandings.set(prepared,byFee);}
+    if(byFee.has(fee))return byFee.get(fee);
+    const ordinary=new Set(prepared.map(entry=>entry.goal)),extra=[];
+    for(const goal of goals){
+      if(goal.endpointFamily!=='land'||!goal.requirementId.endsWith(':planet')||ordinary.has(goal))continue;
+      const payment=funding(wallet,{credits:fee,energy:goal.route.cost},weights);
+      if(payment)extra.push({goal,payment,held:true});
+    }
+    const result=extra.length?[...prepared,...extra]:null;
+    if(byFee.size>=8)byFee.delete(byFee.keys().next().value);
+    byFee.set(fee,result);
+    return result;
+  }
+
+  // An already-known simple paid card can replace the ordinary landing
+  // energy, but only for an existing legal standard planet endpoint. Do
+  // not price secondary card effects, satellite exceptions or reserve V.
+  function heldLandingCost(card) {
+    if (!card.id || !card.cardId || card.hidden) return null;
+    const model = cardEffects.getCardModel(card), effects = model?.playEffects;
+    if (model?.cardType !== 3 || effects?.length !== 1 || model.triggers?.length
+      || model.tasks?.length || model.temporaryTasks?.length || effects[0].type !== 'card_land') return null;
+    const options = effects[0].options || {};
+    if (!options.skipCost || !options.grantRewards || options.allowDuplicateLanding || options.allowDuplicateSatelliteLanding
+      || options.allowSatelliteWithoutTech || options.forceFirstLandingReward || options.afterLandRewards?.length
+      || options.displayLandingSlot != null || options.referenceOffsetTokenWidths != null
+      || (options.repeat ?? 1) !== 1) return null;
+    const cost = cardEffects.getCardPlayCost(card);
+    return Object.keys(cost).length === 1 && Number.isSafeInteger(cost.credits) && cost.credits > 0 ? cost : null;
+  }
+
+  function heldLandingCard(facts, weights) {
+    if (weights !== arithmetic.DEFAULT_WEIGHTS || facts.passing || facts.round >= 4
+      || facts.pendingNativeEffects || !Array.isArray(facts.hand)) return null;
+    let chosen = null;
+    for (const card of facts.hand) {
+      const cost = heldLandingCost(card);
+      if (!cost) continue;
+      // More than one eligible supplier needs an explicit opportunity-cost rule.
+      if (chosen) return null;
+      chosen = { card, cost };
+    }
+    return chosen;
+  }
+
+  const traceTypes = Object.freeze(['yellow','pink','blue']);
+  const knownTraceSelections = new Map();
+  function pickTraceReward(slots, types, publicity, weighted) {
+    return slots.flatMap(slot => types.flatMap(type => {
+      const first = !slot.traces?.[type]?.firstPlaced;
+      if (slot.revealed && first) return [];
+      const gain = { ...(first ? alienState.getFirstTraceRewardForSlot(slot.slotId) : alienState.getExtraTraceReward()).gain };
+      if (gain.publicity) gain.publicity = Math.min(gain.publicity, players.RESOURCE_LIMITS.publicity - publicity);
+      return [{ slot, type, first, gain, value: weighted(gain) }];
+    })).sort((a,b)=>b.value-a.value||a.slot.slotId-b.slot.slotId||a.type.localeCompare(b.type))[0];
+  }
+  function traceShape(slots) {
+    if(slots.length!==2||slots[0]?.slotId!==1||slots[1]?.slotId!==2)return -1;
+    let key=0;
+    for(const slot of slots){
+      if(!slot.traces)return -1;
+      key=(key<<1)|Number(Boolean(slot.revealed));
+      for(const type of traceTypes)key=(key<<1)|Number(Boolean(slot.traces[type]?.firstPlaced));
+    }
+    return key;
+  }
+  function scalarTraceSelection(slots, shape, traceType, publicity, weighted) {
+    const index=traceType?traceTypes.indexOf(traceType)+1:0;
+    if(shape<0||traceType&&index===0||!Number.isInteger(publicity)||publicity<0||publicity>players.RESOURCE_LIMITS.publicity)return undefined;
+    const key=(shape*(players.RESOURCE_LIMITS.publicity+1)+publicity)*4+index;
+    if(knownTraceSelections.has(key))return knownTraceSelections.get(key);
+    const winner=pickTraceReward(slots,index?[traceType]:traceTypes,publicity,weighted);
+    // Store only the outcome of the fixed comparison, not caller objects or a
+    // forecast state. The default weights and Native reward table are fixed.
+    const result=winner?{index:winner.slot.slotId-1,type:winner.type,publicity:winner.gain.publicity||0,value:winner.value}:null;
+    if(knownTraceSelections.size>=512)knownTraceSelections.delete(knownTraceSelections.keys().next().value);
+    knownTraceSelections.set(key,result);return result;
+  }
+
   function quoteValue(facts, weights) {return evaluateMission(facts, weights, true);}
+  // The shared internal portfolio only reads the trace arrays. Custom callers
+  // of quoteValue/quote still receive private deep copies as before.
+  function quoteReadOnlyPortfolio(facts, weights) {return evaluateMission(facts,weights,true,weights===arithmetic.DEFAULT_WEIGHTS);}
   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
 
-  function evaluateMission(facts, weights, scalarOnly) {
+  function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false) {
     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
       || !(facts.board?.rockets || []).some(r => isOwnedProbe(r, seatId))) return scalarOnly ? 0 : zero();
@@ -186,7 +274,8 @@
     // All supported ordinary endpoints still cost at least one energy, or
     // both orbit currencies. With no energy, fewer than two credits cannot
     // fund even that lower bound; route/mission construction is unnecessary.
-    if (planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
+    const cardRoute=heldLandingCard(facts,weights);
+    if (!cardRoute && planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
       && planetAbility.DEFAULT_ORBIT_COST.energy > 0
       && player.energy === 0 && player.credits < cToE.cost.credits) return scalarOnly ? 0 : zero();
     const goals = loadRequirements(facts,scalarOnly);
@@ -194,7 +283,22 @@
     // A finite supplied baseline requires no investment callback. With no
     // affordable endpoint there is also no later mission portfolio to price.
     const prepared=scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null;
-    if(prepared?.length===0&&Array.isArray(facts.hand)&&player.income!=null){
+    let portfolio=null;
+    if(cardRoute){
+      if(prepared)portfolio=preparedHeldLandings(goals,prepared,player,cardRoute.cost.credits,weights);
+      else{
+        const alternatives=[];
+        for(const goal of goals){
+          if(goal.endpointFamily!=='land'||!goal.requirementId.endsWith(':planet'))continue;
+          const ordinaryCost={...goal.endpointFacts.cost,energy:(goal.endpointFacts.cost.energy||0)+goal.route.cost};
+          if(funding(player,ordinaryCost,weights))continue;
+          const payment=funding(player,{...cardRoute.cost,energy:goal.route.cost},weights);
+          if(payment)alternatives.push({goal,payment,held:true});
+        }
+        if(alternatives.length)portfolio=[...goals.map(goal=>({goal})),...alternatives];
+      }
+    }
+    if(!portfolio&&prepared?.length===0&&Array.isArray(facts.hand)&&player.income!=null){
       __requirementRefs.emptyFundedScalar++;
       return 0;
     }
@@ -212,20 +316,20 @@
     const initialCapital = capital(knownHand, player, player.income, null, facts.initialInvestmentCapital);
     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
     const actor = { id: seatId, color: player.color };
-    const candidates = scalarOnly ? null : [];let bestValue=0;
+    const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape;
     // A private scalar directory cannot escape through the full menu or
     // through its numeric result. Reuse only pure payments, never an offer
     // choice, mission portfolio, or projected Native transition.
-    for (const entry of prepared||goals) {
-      const goal=prepared?entry.goal:entry,cost=goal.endpointFacts.cost;
-      const payment=prepared?entry.payment:funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
+    for (const entry of portfolio||prepared||goals) {
+      const goal=portfolio||prepared?entry.goal:entry,cost=goal.endpointFacts.cost,card=entry.held?cardRoute.card:null;
+      const payment=entry.payment||funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
       if (!payment) { if(candidates)candidates.push({ id: goal.requirementId, funded: false, value: 0 }); continue; }
-      const hand = knownHand.slice();
+      const hand = card ? knownHand.filter(c=>c.id!==card.id) : knownHand.slice();
       let publicCards = scalarOnly ? null : (facts.board.publicCards || []).filter(c => c && !c.hidden && c.cardId);
       const wallet = { credits: player.credits - payment.spend.credits, energy: player.energy - payment.spend.energy,
         publicity: player.publicity, availableData: player.availableData };
       const income = { ...player.income };
-      let delta = -payment.value, unknownCount = facts.hand.length - hand.length + facts.extraUnknownCount, supported = true;
+      let delta = -payment.value - (card ? weights.handSize : 0), unknownCount = facts.hand.length - knownHand.length + facts.extraUnknownCount, supported = true;
       let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = scalarOnly ? null : [];
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
@@ -317,17 +421,21 @@
           ledger?.push({ type: effect.type, selected, value: selected?.value || 0,
             excluded: 'sector completion, triggered rewards, new identities and additional technology movement' });
         } else if (effect.type === 'alien_trace') {
-          traceSlots ||= structuredClone(facts.board.aliens.slots);
+          if(readOnlyTraces&&!traceSlots&&(options.count||1)===1){
+            const source=facts.board.aliens.slots,shape=originalTraceShape??=traceShape(source);
+            const selected=scalarTraceSelection(source,shape,options.traceType,wallet.publicity,weighted);
+            if(selected!==undefined){
+              if(!selected){traceSlots=structuredClone(source);supported=false;break;}
+              const {index,type,publicity,value}=selected,slot=source[index];
+              traceSlots=source.slice();traceSlots[index]={...slot,traces:{...slot.traces,[type]:{...slot.traces[type],firstPlaced:true}}};
+              wallet.publicity+=publicity;delta+=value;continue;
+            }
+          }
+          // A later trace can write any slot, including one shared with the
+          // original board by the scalar copy above. Own the full copy first.
+          traceSlots=readOnlyTraces?structuredClone(traceSlots||facts.board.aliens.slots):traceSlots||structuredClone(facts.board.aliens.slots);
           for (let n = 0; n < (options.count || 1); n++) {
-            const types = options.traceType ? [options.traceType] : ['yellow', 'pink', 'blue'];
-            const choices = traceSlots.flatMap(slot => types.flatMap(type => {
-              const first = !slot.traces?.[type]?.firstPlaced;
-              if (slot.revealed && first) return [];
-              const gain = { ...(first ? alienState.getFirstTraceRewardForSlot(slot.slotId) : alienState.getExtraTraceReward()).gain };
-              if (gain.publicity) gain.publicity = Math.min(gain.publicity, players.RESOURCE_LIMITS.publicity - wallet.publicity);
-              return [{ slot, type, first, gain, value: weighted(gain) }];
-            })).sort((a, b) => b.value - a.value || a.slot.slotId - b.slot.slotId || a.type.localeCompare(b.type));
-            const chosen = choices[0];
+            const chosen=pickTraceReward(traceSlots,options.traceType?[options.traceType]:traceTypes,wallet.publicity,weighted);
             if (!chosen) { supported = false; break; }
             const { slot, type, first, gain, value } = chosen;
             slot.traces[type] = { ...slot.traces[type], firstPlaced: true };
@@ -343,8 +451,8 @@
       const dataContinuation = supported && facts.dataContinuation
         ? facts.dataContinuation({ hand, wallet, income, traceSlots }) : null;
       const value=supported ? Math.max(0, arithmetic.sum([delta,capitalDelta,dataContinuation?.value||0],weights)) : 0;
-      if(candidates)candidates.push({ id: goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
-        supported, payment, route: goal.route, ledger, capitalDelta, dataContinuation,value });
+      if(candidates)candidates.push({ id: card ? goal.requirementId+':card:'+card.id : goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
+        ...(card?{knownLandingCardId:card.id}:{}), supported, payment, route: goal.route, ledger, capitalDelta, dataContinuation,value });
       else bestValue=Math.max(bestValue,value);
     }
     if(scalarOnly)return bestValue;
@@ -518,5 +626,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

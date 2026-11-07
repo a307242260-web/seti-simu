@@ -23,7 +23,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol, publicityPreparation) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v54";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v58";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -40,7 +40,10 @@
       if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
       if (number(value, `weights.${key}`) < 0) throw new TypeError(`VALUE_WEIGHT_NEGATIVE: ${key}`);
     }
-    return weights;
+    // Formal previews and observed states use the same canonical default
+    // value domain. A numerically identical private copy must not disable
+    // the default-only known-landing and read-only investment contracts.
+    return arithmetic.isDefault(weights) ? DEFAULT_WEIGHTS : weights;
   }
 
   // Forecast hypotheses, not guaranteed rewards or admissible search bounds.
@@ -202,24 +205,51 @@
     json=JSON.stringify(value);researchSymbolBytes.set(value,json);__researchQuoteWork.symbolPartBuilds++;
     return json;
   }
+  const researchLayoutTokens=new Map();let nextResearchLayoutToken=0;
+  function researchLayoutToken(slots,entries){
+    let byEntries=researchLayoutTokens.get(slots);
+    if(!byEntries){
+      if(researchLayoutTokens.size>=16)researchLayoutTokens.delete(researchLayoutTokens.keys().next().value);
+      byEntries=new Map();researchLayoutTokens.set(slots,byEntries);
+    }
+    if(byEntries.has(entries))return byEntries.get(entries);
+    if(byEntries.size>=16)byEntries.delete(byEntries.keys().next().value);
+    const token=++nextResearchLayoutToken;
+    byEntries.set(entries,token);return token;
+  }
+  const researchLayoutPairs=new WeakMap();
+  const RESEARCH_SYMBOL_FIELDS=["revealInitialized","revealedSlotId","symbolSlots","symbolsById"];
+  function hasResearchSymbolFields(symbols) {
+    for(const field of RESEARCH_SYMBOL_FIELDS){
+      const d=Object.getOwnPropertyDescriptor(symbols,field);
+      if(d?.enumerable!==true||!Object.hasOwn(d,"value"))return false;
+    }
+    return true;
+  }
+  function researchLayoutForPair(slots,entries){
+    const pair=researchLayoutPairs.get(slots);
+    if(pair&&pair.entries===entries)return pair.token;
+    const slotBytes=symbolPartKey(slots),entryBytes=symbolPartKey(entries);
+    if(slotBytes===null||entryBytes===null)return null;
+    const token=researchLayoutToken(slotBytes,entryBytes);
+    // Both complete maps were recursively proved immutable. A re-interned
+    // byte layout may get a new token; an old token is never reassigned.
+    researchLayoutPairs.set(slots,{entries,token});
+    return token;
+  }
   function orderedResearchSignature(mask,marks,opportunity,trigger,paidPublicity,paymentAfterFirst){
     const symbols=trigger?.symbols;
     if(symbols && symbols.revealInitialized===true && Number.isSafeInteger(symbols.revealedSlotId)
       && Object.keys(symbols).length===4 && Object.keys(trigger).length===8
       && !Object.hasOwn(symbols,"toJSON")
       && (Object.getPrototypeOf(symbols)===Object.prototype||Object.getPrototypeOf(symbols)===null)
-      && ["revealInitialized","revealedSlotId","symbolSlots","symbolsById"].every(key=>{
-        const d=Object.getOwnPropertyDescriptor(symbols,key);
-        return d?.enumerable===true&&Object.hasOwn(d,"value");
-      })){
-      const slots=symbolPartKey(symbols.symbolSlots),entries=symbolPartKey(symbols.symbolsById);
-      if(slots!==null&&entries!==null){
-        // Complete native DTO: separate exact immutable layout bytes from
-        // the wallet, rule list, score limits and consumed groups.
-        const head=JSON.stringify([mask,marks,opportunity??null,paidPublicity,paymentAfterFirst,trigger.available,
+      && hasResearchSymbolFields(symbols)){
+      const token=researchLayoutForPair(symbols.symbolSlots,symbols.symbolsById);
+      if(token!==null){
+        // Preserve the complete dynamic funding, payment and trigger facts.
+        return "layout:"+JSON.stringify([mask,marks,opportunity??null,paidPublicity,paymentAfterFirst,trigger.available,
           trigger.rules,trigger.completionGroups,trigger.maximumScoreGain,trigger.maximumSingleScoreGain,trigger.wallet,
-          trigger.reason,symbols.revealInitialized,symbols.revealedSlotId]).slice(0,-1);
-        return "layout:"+head+","+slots+","+entries+"]";
+          trigger.reason,symbols.revealInitialized,symbols.revealedSlotId,token]);
       }
     }
     __researchQuoteWork.symbolKeyFallbacks++;
@@ -443,22 +473,44 @@
 
   function investmentFor(facts,weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
+    let paidOnly;
     return(hand,publicity,funding)=>{
-      // Neither held nor paid research can consume this wallet. Preserve the
-      // original validation path for missing/non-finite funding inputs.
-      if(Number.isFinite(publicity)&&Number.isFinite(funding?.resources?.availableData)
-        &&Number.isSafeInteger(facts.researchCost)&&facts.researchCost>=0
-        &&publicity<facts.researchCost&&!hand.some(supportedResearch))return 0;
+      // No held research means money/income cannot change the paid path.
+      // For this one fixed portfolio, keep data, publicity, and whether the
+      // wallet is still at the exact source score (the new-mark guard).
+      const stock=funding?.resources?.availableData,cost=facts.researchCost;
+      let key=-1;
+      if(Number.isFinite(publicity)&&Number.isFinite(stock)&&Number.isSafeInteger(cost)&&cost>=0){
+        if(publicity<cost){if(!hand.some(supportedResearch))return 0;}
+        else if(weights===DEFAULT_WEIGHTS&&Number.isInteger(publicity)&&publicity>=0&&publicity<=10
+          &&Number.isInteger(stock)&&stock>=0&&stock<=6&&Number.isFinite(player.score)
+          &&!funding.researchMarks&&!funding.researchTriggers&&!hand.some(supportedResearch)){
+          key=2*(7*publicity+stock)+Number(funding.resources.score===player.score);
+          const hit=paidOnly?.[key];if(hit!==undefined)return hit;
+        }
+      }
       funding=internalResearchFunding(facts,funding,publicity);
-      const joint=jointResearchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
-      return joint.held+joint.paid;
+      const joint=jointResearchCapital({hand,techState:player.techState,supply,round,publicity,researchCost:cost,passed:passing,funding},weights);
+      const result=joint.held+joint.paid;
+      if(key>=0)(paidOnly??=[])[key]=result;
+      return result;
     };
   }
-  function dataInvestmentFor(facts,weights){
+  function dataInvestmentFor(facts,weights,fixedPrepaid){
     const investment=investmentFor(facts,weights);
-    return(hand,publicity,funding,progress={})=>arithmetic.sum([investment(hand,publicity,funding),readyAnalysis.prepaidCapital({
-      ...facts,...progress,player:{...facts.player,...funding.resources,publicity,income:funding.income},
-      board:progress.traceSlots?{...facts.board,aliens:{slots:progress.traceSlots}}:facts.board},weights)],weights);
+    return(hand,publicity,funding,progress={})=>{
+      const research=investment(hand,publicity,funding);
+      const score=Object.prototype.propertyIsEnumerable.call(funding.resources||{},"score")?funding.resources.score:facts.player.score;
+      const changes=Object.keys(progress);
+      // The typed mission changes only traces. Keep the already validated
+      // computer and reservations; quote its actual replacement trace slots.
+      const fixed=Number.isFinite(score)&&Number.isFinite(publicity)
+        &&(!changes.length||changes.length===1&&changes[0]==="traceSlots");
+      const prepaid=fixed?(fixedPrepaid??=readyAnalysis.preparePrepaidCapital(facts,weights))(score,publicity,progress.traceSlots)
+        :readyAnalysis.prepaidCapital({...facts,...progress,player:{...facts.player,...funding.resources,publicity,income:funding.income},
+          board:progress.traceSlots?{...facts.board,aliens:{slots:progress.traceSlots}}:facts.board},weights);
+      return arithmetic.sum([research,prepaid],weights);
+    };
   }
   const NO_INCOME_ALLOCATION=Object.freeze({total:0,knownSwapPlan:null});
   function incomeAllocationCapital(facts,weights=DEFAULT_WEIGHTS,initialInvestmentCapital) {
@@ -473,19 +525,22 @@
     if(allocation.total)return allocation.total;
     return dataInvestmentFor(facts,weights)(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
   }
+  const ZERO_JOINT_RESEARCH=Object.freeze({held:0,paid:0});
   function basePurposeCapital(facts, weights) {
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
-    const investment=dataInvestmentFor(facts,weights),computer=readyAnalysis.prepaidCapital(facts,weights);
+    const prepared=Number.isFinite(player.score)&&Number.isFinite(player.publicity)?readyAnalysis.preparePrepaidCapital(facts,weights):undefined;
+    const computer=prepared?prepared(player.score,player.publicity):readyAnalysis.prepaidCapital(facts,weights);
+    const investment=dataInvestmentFor(facts,weights,prepared);
     const unfunded=Number.isFinite(player.publicity)&&Number.isSafeInteger(facts.researchCost)&&facts.researchCost>=0
       &&player.publicity<facts.researchCost&&!facts.hand.some(supportedResearch);
     const funding=unfunded?null:internalResearchFunding(facts,{resources:player,income:player.income,startingIncome:Number(passing)});
-    const {held,paid}=jointResearchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
+    const {held,paid}=unfunded?ZERO_JOINT_RESEARCH:jointResearchCapital({hand:facts.hand,techState:player.techState,supply,round,publicity:player.publicity,researchCost:facts.researchCost,passed:passing,funding},weights);
     // The typed data tail rejects any revealed alien. A mission reward can
     // mark a trace in a local copy, but it cannot undo an existing reveal.
     const dataContinuation=facts.passing||facts.round>=4
       ||(Array.isArray(facts.board?.aliens?.slots)&&facts.board.aliens.slots.some(s=>s?.revealed))
       ?undefined:context=>researchIncome.missionDataContinuation({...context,facts,investment:context.traceSlots?dataInvestmentFor({...facts,board:{...facts.board,aliens:{slots:context.traceSlots}}},weights):investment},weights);
-    const mission=probeCapital.quoteValue({...facts,investment,initialInvestmentCapital:arithmetic.sum([held+paid,computer],weights),dataContinuation},weights);
+    const mission=probeCapital.quoteReadOnlyPortfolio({...facts,investment,initialInvestmentCapital:arithmetic.sum([held+paid,computer],weights),dataContinuation},weights);
     const finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);
     return{handPotential:held,researchPotential:paid,probePotential:mission,computerPotential:computer,finalMarkPotential,total:arithmetic.sum([held,paid,mission,computer,finalMarkPotential],weights)};
   }
@@ -514,9 +569,15 @@
       const reward=cards.getDiscardActionRewardForCard(card);
       return reward&&!reward.dataCount&&Object.keys(reward.gain).every(k=>k==='publicity')?reward.gain.publicity||0:0;
     };
-    let knownPublicityCapacity;
+    let knownPublicityCapacity, probeObservesLandingRemoval;
     analysisPortfolio.incomeRemovalClass=card=>{
       if(supportedResearch(card))return null;
+      // Identical immediate income and corner publicity do not make a held
+      // landing tool interchangeable. Removing one of two suppliers may
+      // also activate the supported single-card quote for the other.
+      if((probeObservesLandingRemoval??=weights===DEFAULT_WEIGHTS&&!facts.passing&&facts.round<4
+        &&!facts.pendingNativeEffects&&probeCapital.ownedProbes(facts.board.rockets,facts.player).length>0)
+        &&probeCapital.heldLandingCost(card))return null;
       const missing=facts.researchCost-facts.player.publicity;if(missing<=0)return 'ordinary-income';
       const publicity=publicityGain(card);
       knownPublicityCapacity??=facts.hand.reduce((total,source)=>total+publicityGain(source),0);
@@ -540,9 +601,12 @@
       ||facts.companyState?.abilityId!=="deepspace_swap_cards"||facts.companyState.roundMarkRound===facts.round
       ||facts.computerSlots.length!==3||facts.computerSlots.some((s,i)=>s!==i+1)||facts.player.availableData<3);
   }
+  const incomeSwapTravelTypes=new Set(["card_land","card_orbit","card_move","card_launch","card_scan"]);
   function ordinaryIncomeSwapCard(card) {
+    // Native expansion only repeats the same printed type. Ordinary-income
+    // eligibility observes its presence, not labels, cloned effects or count.
     return !supportedResearch(card)&&!sectorCard.supported(card)&&!symbolCard.supported(card)&&!movementTool.supported(card)
-      &&!cardEffects.buildPlayEffects(card).some(e=>["card_land","card_orbit","card_move","card_launch","card_scan"].includes(e.type));
+      &&!(cardEffects.getCardModel(card)?.playEffects||[]).some(e=>incomeSwapTravelTypes.has(e.type));
   }
   function publicIncomeSwapInputs(facts,weights) {
     if(!publicIncomeSwapEligible(facts))return null;
@@ -572,14 +636,17 @@
     }
     return offers.size?{hidden,counted,known,offers}:null;
   }
-  function publicIncomeSwap(facts, weights, base, inputs=publicIncomeSwapInputs(facts,weights)) {
-    const none={value:0,plan:null};if(!inputs)return none;
+  function publicIncomeSwap(facts, weights, base, inputs) {
+    const none={value:0,plan:null};
+    if(inputs===null||inputs===undefined&&!publicIncomeSwapEligible(facts))return none;
     // This new forecast fills a missing/valuable income source. A ready
     // ordinary supplier already funds this exact analysis; extra stock for
     // another later income remains in the existing positive-purpose policy.
     const current=facts.hand.find(c=>!c.hidden&&c.id===base.analysisPlan.selected?.incomeCardId);
     if(current&&ordinaryIncomeSwapCard(current))return none;
-    const {hidden,counted,known,offers}=inputs;
+    const prepared=inputs??publicIncomeSwapInputs(facts,weights);
+    if(!prepared)return none;
+    const {hidden,counted,known,offers}=prepared;
     let best=none;
     for(const incoming of offers.values()){
       const hand=facts.hand.slice();if(counted)hand.push(incoming);else hand[hidden>=0?hidden:hand.indexOf(known)]=incoming;

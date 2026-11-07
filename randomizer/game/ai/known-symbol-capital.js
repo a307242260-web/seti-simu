@@ -20,6 +20,35 @@
     ?{dataCount:data.options.count,region:symbol.options.region}:null;
   if(Object.isFrozen(m))models.set(m,result);return result;
  }
+ const immutableLayouts=new WeakMap(),verifiedMaps=new WeakMap();
+ function isFixedDictionary(value,entry=false){
+  if(!value||Object.getPrototypeOf(value)!==Object.prototype||!Object.isFrozen(value))return false;
+  const prior=verifiedMaps.get(value),mask=entry?2:1;if(prior&mask)return true;
+  for(const key of Reflect.ownKeys(value)){
+   const field=Object.getOwnPropertyDescriptor(value,key);
+   if(typeof key!=='string'||!Object.hasOwn(field,'value')||!field.enumerable||
+    !(entry?isFixedDictionary(field.value):['string','number','boolean','undefined'].includes(typeof field.value)||field.value===null))return false;
+  }
+  verifiedMaps.set(value,(prior||0)|mask);return true;
+ }
+ function selectedSlot(alien,region,wallet,apply){
+  const choices=amiba.listSymbolsInRegion(alien,region,readOnlyRewards).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
+   .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
+  return choices.length?choices[0].entry.slotId:null;
+ }
+ function fixedSelection(symbols,region,wallet,apply,weights){
+  if(weights!==arithmetic.DEFAULT_WEIGHTS||![wallet.score,wallet.publicity,wallet.availableData].every(Number.isSafeInteger))return undefined;
+  const {symbolSlots,symbolsById}=symbols;
+  if(!isFixedDictionary(symbolSlots)||!isFixedDictionary(symbolsById,true))return undefined;
+  let layouts=immutableLayouts.get(symbolSlots);if(!layouts){layouts=new WeakMap();immutableLayouts.set(symbolSlots,layouts);}
+  let ranked=layouts.get(symbolsById);if(!ranked){ranked=new Map();layouts.set(symbolsById,ranked);}
+  const key=region+':'+wallet.score+':'+wallet.publicity+':'+wallet.availableData;
+  if(ranked.has(key))return ranked.get(key);
+  // Only the fixed Native reward ranking is shared. The winner's actual move
+  // and every shared-wallet portfolio still receive detached state copies.
+  const slot=selectedSlot({amiba:{...symbols,traceSlotsByAlienSlotId:{},cardDeck:[]}},region,wallet,apply);
+  if(ranked.size>=128)ranked.delete(ranked.keys().next().value);ranked.set(key,slot);return slot;
+ }
  function quote(facts,weights,portfolio,currentCapital){
   const eligible=facts.hand.filter(supported);
   if(!eligible.length||facts.terminal||facts.passing||facts.round>=4)return zero('no-funded-known-symbol-window');
@@ -46,11 +75,12 @@
    const body=supported(card),wallet={...facts.player,credits:facts.player.credits-payment.spend.credits,
     energy:facts.player.energy-payment.spend.energy,handSize:facts.hand.length+facts.extraUnknownCount-1};
    players.gainResources({resources:wallet},{availableData:body.dataCount});
+   let slotId=fixedSelection(facts.researchSymbols,body.region,wallet,apply,weights);
+   if(slotId===null)continue;
    const alien={amiba:amiba.copyPublicSymbolState(facts.researchSymbols)};
-   const choices=amiba.listSymbolsInRegion(alien,body.region,readOnlyRewards).map(entry=>({entry,value:apply({...wallet},entry.reward)}))
-    .sort((a,b)=>b.value-a.value||a.entry.slotId.localeCompare(b.entry.slotId));
-   if(!choices.length)continue;
-   const resolved=amiba.resolveSymbolAtSlot(alien,choices[0].entry.slotId,readOnlyRewards);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
+   if(slotId===undefined)slotId=selectedSlot(alien,body.region,wallet,apply);
+   if(slotId===null)continue;
+   const resolved=amiba.resolveSymbolAtSlot(alien,slotId,readOnlyRewards);if(!resolved.ok)throw Error('KNOWN_SYMBOL_CARD_NATIVE_QUERY_FAILED');
    apply(wallet,resolved.reward);const blindCount=resolved.reward.drawCards||0;wallet.handSize+=blindCount;
    const symbols=Object.fromEntries(Object.keys(facts.researchSymbols).map(k=>[k,alien.amiba[k]]));
    const reserved=structuredClone(card);effects.ensureCardEffectState(reserved);
@@ -61,7 +91,7 @@
    const linear=arithmetic.sum([wallet.score-facts.player.score,...Object.entries(weights).map(([k,w])=>(k==='handSize'?blindCount-1:wallet[k]-facts.player[k])*w)],weights);
    const afterCapital=portfolio(after),netGain=arithmetic.sum([linear,afterCapital,-currentCapital],weights);
    if(!Number.isFinite(netGain))throw Error('KNOWN_SYMBOL_CARD_VALUE_INVALID');
-   candidates.push({cardId:card.id,payment,slotId:choices[0].entry.slotId,reward:resolved.reward,move:resolved.move,
+   candidates.push({cardId:card.id,payment,slotId,reward:resolved.reward,move:resolved.move,
     linear,afterCapital,netGain,wallet,symbols});
   }
   candidates.sort((a,b)=>b.netGain-a.netGain||a.cardId.localeCompare(b.cardId));

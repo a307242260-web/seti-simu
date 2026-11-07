@@ -389,11 +389,13 @@
   }
 
   function listOrbitMarkers(alienState) {
-    return [...(ensureAomomoState(alienState).orbitMarkers || [])];
+    const markers = alienState?.aomomo?.orbitMarkers;
+    return Array.isArray(markers) ? [...markers] : [];
   }
 
   function listLandingMarkers(alienState) {
-    return [...(ensureAomomoState(alienState).landingMarkers || [])];
+    const markers = alienState?.aomomo?.landingMarkers;
+    return Array.isArray(markers) ? [...markers] : [];
   }
 
   function countOrbitMarkers(alienState, player = null) {

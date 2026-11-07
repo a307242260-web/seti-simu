@@ -1,0 +1,42 @@
+{
+  "scope": "Validation-only overlay for current AI rules; retains archival outputs and Native controls. No application, rules, search, evaluation or experiment code changes.",
+  "sourceManifest": "reports/ai-foundation-20261107/v371-spent-swap-offer-v1/source-manifest-20261107-v1.json",
+  "sourceManifestSha256": "977d18808e4d6b96decba93f28fcb60d0975e350de788366c73deba3f235c695",
+  "runtimeChanged": false,
+  "originalSourceHashes": {
+    "randomizer/game/ai/known-postdraw-tail.test.js": "e4fec6b3a57a516af52d4992f71b59e6fa88d6d5022b6eeb2d6209d9500cc9ca",
+    "randomizer/game/ai/final-round-proof-guard.test.js": "9a7f4027b120ec59dde0fa035f14176ce5e559ad1beec2876ba5baf28d265267",
+    "randomizer/game/ai/analysis-lazy-explanations.test.js": "53418ed1ed4eb527a0371adb1bf03ac7f9381444063c28677b22b9c60b6b64b1",
+    "randomizer/game/ai/amiba-analysis-capital.test.js": "d0ee895e1e6755b5505fa2b59909d5958479776300c2d319c20afb65af3a8e87",
+    "randomizer/game/ai/analysis-publicity-capital.test.js": "ebda985e0a18385d6b9f0d0ec4a106d3fb3e08da8bcf54b8db56426a757b631a",
+    "randomizer/game/ai/research-mark-capital.test.js": "c5fee63007c722c2046bf3d060b191c92ed74923389b8965a53a5b9e95a3994e",
+    "randomizer/game/ai/analysis-lazy-regions.test.js": "bc0fdfe2b9ee05af970dc2565560d2d72eac618a55d61b489de20a7aed37f181",
+    "randomizer/game/ai/analysis-lazy-trace-contexts.test.js": "440f7ebea5c53cc464e11e0908d7998d54f806dcfbee42e6fdddf67208143893",
+    "randomizer/game/ai/analysis-region-prefix.test.js": "1b24ac76d3cf0e8d460ffd4de3ef7f5f40ddbec6ce22e39988d1421d682e1d36",
+    "randomizer/game/ai/analysis-target-trace-copy.test.js": "e5326488e969991c456c48bab103ae276cde68c4c438a3c7b7aa596d5ff8efce",
+    "randomizer/game/ai/analysis-invariant.test.js": "1942d5fe714988d9233a28c35ea25427739c72424d821515ab42cdd000f02d12",
+    "randomizer/game/ai/probe-replacement-witness.test.js": "486c4a4ff76d0fb55e5ed8dc1adc2f6d32a5a4cf9fe9536dbd732b45eab76732",
+    "randomizer/game/ai/read-only-rewards.test.js": "4b83e900482b7a818bc468de43dfc11bbf2ad3a95e252ba8f507b37eff378246",
+    "randomizer/game/ai/r4-company-tail.test.js": "52ee50d55d220e822e5f86e0b0ffbafa4db6a4884c3e41af68cbfdec083a440e",
+    "randomizer/game/ai/amiba-currency-tail.test.js": "a4624fac925ad4e1114a4163b4b782bfdc7dcfd1c1ad857e78a3b62b8ece49e3",
+    "tools/audit_v_state_inputs.js": "d01db4d23a6f594b37f15ae86b6a1b149867ec4d13a425ba831e52c6b2169355"
+  },
+  "validationSourceHashes": {
+    "randomizer/game/ai/known-postdraw-tail.test.js": "1b56d4e4ab724c62fab0cea86b7d8615ca21d41760838490fc9f8dfc6e94845b",
+    "randomizer/game/ai/final-round-proof-guard.test.js": "09ff42ff6ae7c2fc05656d890f4bfd0b1998ae9d3092cdc3cc6234a29b0070a3",
+    "randomizer/game/ai/analysis-lazy-explanations.test.js": "039bd210ac8e20f2bb105864568873bc926fb53daf34c0d5f0523d296870c4c5",
+    "randomizer/game/ai/amiba-analysis-capital.test.js": "d015d55269df534b4282ebf330c535660db94454dd99184433a3a93256a1bb18",
+    "randomizer/game/ai/analysis-publicity-capital.test.js": "a6fc90059ccca4f14ee8cacb1766814372397fb390c85b7e2dbf8e0e3d58f75d",
+    "randomizer/game/ai/research-mark-capital.test.js": "a22507925aaee347dd2628cf40b4088591fe376470b76336a9cd7c2ec655f3f6",
+    "randomizer/game/ai/analysis-lazy-regions.test.js": "5a8372bcd883d2800a90787d10cde941790877a6a03e3fd63b03854cca3f6b33",
+    "randomizer/game/ai/analysis-lazy-trace-contexts.test.js": "6432ccb5fe3da7f5fd1ed714e91419af531199a7796d491f9081858f36faef4c",
+    "randomizer/game/ai/analysis-region-prefix.test.js": "0c0e8fc761ecd960b052452f6b71039d395e8233ba7ac35e433ff89106f6b55b",
+    "randomizer/game/ai/analysis-target-trace-copy.test.js": "256253380846a609ed10ec7fda8a48d8a0e5145a5320b688c8fb2e7c0f986cf9",
+    "randomizer/game/ai/analysis-invariant.test.js": "3b5183e0f9a6df4c166e58decd993d238a269b9713ec1a341eb13d5b42de9da9",
+    "randomizer/game/ai/probe-replacement-witness.test.js": "fc529fd37b64e6ecc825c695467ccaa990550246e9e0c828f3916ab3f4202115",
+    "randomizer/game/ai/read-only-rewards.test.js": "80e592bdf1efcd48bea075f54dd5596f47888c4350b2e2aaa66bc0498cb9e328",
+    "randomizer/game/ai/r4-company-tail.test.js": "f677301ef6d4539ae4c842af5566fb5a3950c931927c1449a2c85a2b050bcf73",
+    "randomizer/game/ai/amiba-currency-tail.test.js": "7e000e2ad7b2e42b233591731fffe9c4dd90f90cd947cefbb36c9e502ae8bc8c",
+    "tools/audit_v_state_inputs.js": "1659aeec29d6c5e0252855e3fe9a228483fd8d207e6039d2b7e18842de8d693f"
+  }
+}

@@ -101,20 +101,49 @@
   const positive=gains[0]?.netGain>0?gains[0]:null,chosen=positive?actions.find(a=>a.actionId===positive.actionId):done;
   return fixedChoice(actions,chosen,'fixed-reorganization',{reason:'greedy-positive-reorganization',netGain:positive?.netGain||0,gains,assumption:'current default value; capped known income-corner rewards and current native final scoring; unknown draws counted only; ties kept; no subset exploration'});
  }
- function previewIncomeCompletion({state,seatId,goal}){
-  const preview=demand.previewIncomeTail({state,seatId,goal});if(!preview.available)return{...preview,selected:false};
+ function previewIncomeCompletion({state,seatId,goal},knownSourceCapital=null){
+  const {preview,capital}=demand.incomeTailWithPreview({state,seatId,goal},knownSourceCapital);if(!preview.available)return{...preview,selected:false};
   const p=owner(state,seatId),context={...state,players:state.players.players,aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
   const delta=endScoring.computePlayerFinalScore(context,preview.player).totalScore-endScoring.computePlayerFinalScore(context,p).totalScore;
-  const capital=demand.incomeTailCapital({state,seatId,goal});
   const net=stateValue.sumValueParts([preview.netGain,delta,-preview.immediateScoreGain,capital.afterCapital,-capital.beforeCapital]);
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.incomeCardId===goal.incomeCardId;
-  return{policy:'seti-greedy-income-tail-v2',selected:net>0||realizesForecast,realizesForecast,netGain:net,placements:preview.placements,assumption:preview.assumption,capital};
+  return{policy:'seti-greedy-income-tail-v2',selected:net>0||realizesForecast,realizesForecast,netGain:net,placements:preview.placements,assumption:preview.assumption,capital,preview};
  }
- function incomeCompletion(input){const {capital,...result}=previewIncomeCompletion(input);return result;}
+ function incomeCompletion(input){const {capital,preview,...result}=previewIncomeCompletion(input);return result;}
  // Data plans write only these player fields. Existing card/technology
  // entities remain read-only, just as in resourceDemand.previewIncomeTail.
  function dataPreviewPlayer(p){return{...p,resources:{...p.resources},income:{...p.income},hand:[...p.hand],dataState:structuredClone(p.dataState)};}
- function previewBlueCompletion({state,seatId,goal},beforeCapital=null){
+ const fixedBluePreviews=new WeakMap(),blueGoalKeys=new Set(['id','kind','blueSlot','targetComputerSlot','required']);
+ function standardBlueGoal(goal){
+  if(!goal||Object.getPrototypeOf(goal)!==Object.prototype)return false;
+  // Only the exact catalog goal is eligible. A protected supplier, custom
+  // requirement, accessor, or alternative purpose must get its own quote.
+  const fields=Object.getOwnPropertyDescriptors(goal);
+  if(Reflect.ownKeys(fields).some(k=>!blueGoalKeys.has(k)||!Object.hasOwn(fields[k],'value')))return false;
+  const slot=goal.blueSlot,required=goal.required;
+  return goal.kind==='blue-data'&&Number.isInteger(slot)&&slot>=1&&slot<=3
+   &&goal.id===`data:blue:${slot}`&&goal.targetComputerSlot===data.getRequiredComputerSlotForBlueBonus(slot)
+   &&required&&Object.getPrototypeOf(required)===Object.prototype&&!Reflect.ownKeys(required).length;
+ }
+ function previewBlueCompletion(input,beforeCapital=null,includePlayer=true){
+  const {state,seatId,goal}=input;
+  if(beforeCapital!==null||!Object.isFrozen(state)||!standardBlueGoal(goal)||!demand.immutableCapitalInput(state))
+   return computeBlueCompletion(input,beforeCapital);
+  let previews=fixedBluePreviews.get(state);
+  const key=seatId+':'+goal.blueSlot;
+  let preview=previews?.get(key);
+  if(!preview){
+   preview=computeBlueCompletion(input);
+   if(!previews){previews=new Map();fixedBluePreviews.set(state,previews);}
+   previews.set(key,preview);
+  }
+  if(!preview.available)return {...preview};
+  // Do not expose the stored preview through either public result. The
+  // continuation may modify only its own wallet, data tokens, or hand.
+  const {player,capital,dataCornerIds,...summary}=preview;
+  return {...summary,dataCornerIds:[...dataCornerIds],...(includePlayer?{player:dataPreviewPlayer(player),capital:{...capital}}:{})};
+ }
+ function computeBlueCompletion({state,seatId,goal},beforeCapital=null){
   const p=owner(state,seatId),copy=dataPreviewPlayer(p);const dataCornerIds=[];let incomeCardId=null;
   const required=data.getRequiredComputerSlotForBlueBonus(goal.blueSlot),occupied=new Set(data.listComputerPlacedTokens(p).map(t=>t.placementSlot));
   const computerPlacements=occupied.has(required)?0:Object.keys(data.COMPUTER_DATA_SLOTS).map(Number).filter(n=>n<=required&&!occupied.has(n)).length;
@@ -125,9 +154,10 @@
   while(remaining>0||copy.resources.availableData<1){
    if(copy.resources.availableData<remaining+1&&copy.resources.availableData<players.RESOURCE_LIMITS.availableData){
     const current={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
-    const candidate=demand.dataCornerCards({state:current,seatId,goal,selectionOnly:true})[0]?.card;
+    const choice=demand.dataCornerCards({state:current,seatId,goal,selectionOnly:true})[0],candidate=choice?.card;
     if(!candidate)return{available:false,reason:'blue-tail-needs-preparation'};
     dataCornerIds.push(candidate.id);copy.hand=copy.hand.filter(c=>c.id!==candidate.id);copy.resources.handSize=copy.hand.length;
+    if(choice.score)players.gainResources(copy,{score:choice.score});
     if(!data.gainData(copy,{root:previewRoot}).ok)return{available:false,reason:'blue-tail-data-unavailable'};
     continue;
    }
@@ -163,7 +193,7 @@
   const realizesForecast=net===0&&demand.forecastDataPlan(state,p)?.fixed?.selected?.blueSlot===goal.blueSlot;
   return{policy:'seti-greedy-blue-resource-tail-v2',available:true,selected:net>0||realizesForecast,realizesForecast,netGain:net,blueSlot:goal.blueSlot,dataCornerId:dataCornerIds[0]||null,dataCornerIds,incomeCardId,computerPlacements,requiredNativeInputs:2*(computerPlacements+1)+dataCornerIds.length+(incomeCardId?1:0),immediateScoreGain:copy.resources.score-p.resources.score,player:copy,capital,assumption:'known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity'};
  }
- function blueCompletion(input){const {player,capital,...result}=previewBlueCompletion(input);return result;}
+ function blueCompletion(input){const {player,capital,...result}=previewBlueCompletion(input,null,false);return result;}
  function previewComputerCompletion({state,seatId,goal},beforeCapital=null){
   const p=owner(state,seatId),placements=goal.targetComputerSlot-data.listComputerPlacedTokens(p).length;
   const unavailable=reason=>({available:false,selected:false,reason});
@@ -206,7 +236,7 @@
   const purposeDelta=markedTiles.length?stateValue.sumValueParts([demand.planningCapital(preview,p),-demand.planningCapital(state,p)]):0;
   return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),purposeDelta,requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
- function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null,fixedDataOrdering=false}){
+ function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null,fixedDataOrdering=false,stationaryFinalData=false}){
   // With no owned probe, the shared previews cover held/paid investment and
   // future currency income exactly. No new card identity or owned technology
   // is introduced. Live-probe travel at every round still needs its movement audit.
@@ -218,11 +248,15 @@
   let sourceCapital=null,currentCapital=null,primaryOnly=false;
   // Private scalars from the selected typed preview only. Installing that same
   // player leaves all value facts unchanged; the audited callbacks are pure.
+  // The acquisition and income checks below read this exact installed player.
   // No value survives this call or attaches to a mutable state/player object.
   function retainCapital(capital){
    if(!plans.length)sourceCapital=capital?.beforeCapital??null;
    currentCapital=capital?.afterCapital??null;
   }
+  const prefixPurpose=()=>!plans.length?0:stateValue.sumValueParts([
+   currentCapital??demand.planningCapital(current,owner(current,seatId)),
+   -(sourceCapital??demand.planningCapital(state,initialOwner))]);
   // This branch already selected one native blue goal. Its exact outcome is
   // still quotable when locally unprofitable; do not replace it with ending now.
   if(firstBlueGoal){
@@ -233,11 +267,16 @@
    current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
   }
   while(true){
-   if(canContinue&&!canContinue(current))return{available:false,reason:'data-tail-new-purpose-needs-native-continuation'};
+   if(canContinue&&!canContinue(current,currentCapital))return{available:false,reason:'data-tail-new-purpose-needs-native-continuation'};
    // The caller's audited pure query must reject every intermediate plan
    // boundary that could begin a new movement objective after receiving funds.
    if(liveProbe&&(!canLeaveProbeStationary||!canLeaveProbeStationary(current)))return{available:false,reason:'data-tail-movement-needs-native-continuation'};
-   const p=owner(current,seatId),requirements={bluePlacements:data.listBluePlacementRequirements(p)};
+   const p=owner(current,seatId);
+   // This source has spent its main action, no visit source and no admitted
+   // acquisition. With no pool or known data corner, no placement (including
+   // a different blue slot or the income prerequisite) can start.
+   if(stationaryFinalData&&p.resources.availableData===0&&!p.hand.some(c=>!c.hidden&&(cards.getDiscardActionRewardForCard(c)?.dataCount||0)>0))break;
+   const requirements={bluePlacements:data.listBluePlacementRequirements(p)};
    const goals=demand.catalog({state:current,seatId,requirements});
    const prefixes=goals.filter(g=>g.kind==='computer-prefix').map(goal=>({goal,preview:previewComputerCompletion({state:current,seatId,goal},currentCapital)}))
      .filter(p=>p.preview.available&&p.preview.selected).sort((a,b)=>b.preview.netGain-a.preview.netGain||a.preview.requiredNativeInputs-b.preview.requiredNativeInputs||a.goal.targetComputerSlot-b.goal.targetComputerSlot);
@@ -255,7 +294,7 @@
    // Reuse only at the unchanged source; every intermediate wallet requotes.
    const sameIncome=current===state&&income&&income.id===initialIncomeGoal?.id&&income.incomeCardId===initialIncomeGoal.incomeCardId;
    const reusedIncome=sameIncome&&initialIncomeTail;
-   const incomeTail=income&&(reusedIncome||previewIncomeCompletion({state:current,seatId,goal:income}));
+   const incomeTail=income&&(reusedIncome||previewIncomeCompletion({state:current,seatId,goal:income},currentCapital));
    const forceOrderedBlue=orderedBlue?.selected&&(!incomeTail?.selected||orderedBlue.netGain>incomeTail.netGain);
    if(prefixes.length&&(!incomeTail?.selected||prefixes[0].preview.netGain>incomeTail.netGain)
      &&(!forceOrderedBlue||prefixes[0].preview.netGain>orderedBlue.netGain)){
@@ -266,7 +305,8 @@
    if(incomeTail?.selected&&!forceOrderedBlue){
     const card=p.hand.find(c=>c.id===income.incomeCardId),gain=cards.getIncomeGainForCard(card);
     if(!gain||Object.keys(gain).some(k=>!['credits','energy'].includes(k)))return{available:false,reason:'data-tail-income-needs-native-boundary'};
-    const preview=demand.previewIncomeTail({state:current,seatId,goal:income});if(!preview.available)return preview;
+    const preview=reusedIncome?demand.previewIncomeTail({state:current,seatId,goal:income}):incomeTail.preview;
+    if(!preview.available)return preview;
     preview.player.resources.handSize=preview.player.hand.length;
     // The public initial policy has no trusted private capital packet. Its
     // existing quote is keyed by the complete immutable source, or recomputed
@@ -282,16 +322,21 @@
    if(!preview.available)return preview;
    if(!preview.selected){
     if(requirements.bluePlacements.length>1){
-     if(!fixedDataOrdering||trackPurposeDelta)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
+     if(!fixedDataOrdering)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
      // There is one fixed blue order. Compare stopping now to the suffix
      // beginning with that exact next slot; each recursion consumes one slot.
-     const rest=dataTailCompletion({state:current,seatId,canLeaveProbeStationary,canContinue,firstBlueGoal:goal,fixedDataOrdering});
+     const rest=dataTailCompletion({state:current,seatId,canLeaveProbeStationary,canContinue,firstBlueGoal:goal,fixedDataOrdering,trackPurposeDelta,stationaryFinalData});
      const endNow=quietEndCompletion({state:current,seatId});
      if(!rest.available||!endNow.available)return{available:false,reason:'fixed-blue-prefix-needs-native-continuation'};
      if(rest.netGain>endNow.netGain)return{...rest,plans:[...plans,...rest.plans],
        netGain:stateValue.sumValueParts([netGain,rest.netGain]),requiredNativeInputs:requiredNativeInputs+rest.requiredNativeInputs-1,
-       immediateScoreGain:immediateScoreGain+rest.immediateScoreGain};
-     primaryOnly=rest.netGain===endNow.netGain;
+       immediateScoreGain:immediateScoreGain+rest.immediateScoreGain,
+       ...(trackPurposeDelta?{purposeDelta:stateValue.sumValueParts([prefixPurpose(),rest.purposeDelta])}:{})};
+     // At this stationary round-four source, the move preparation debt is
+     // zero. Equal total and unrealized purpose means equal realization;
+     // only then does the shorter exact end beat the fixed blue suffix.
+     primaryOnly=rest.netGain===endNow.netGain&&!(stationaryFinalData&&!rest.primaryOnly
+       &&rest.purposeDelta===endNow.purposeDelta&&rest.requiredNativeInputs>endNow.requiredNativeInputs);
      break;
     }
     if(canContinue){
@@ -312,7 +357,7 @@
   }
   const end=quietEndCompletion({state:current,seatId});if(!end.available)return end;
   return{available:true,plans,...(primaryOnly?{primaryOnly:true}:{}),netGain:stateValue.sumValueParts([netGain,end.netGain]),requiredNativeInputs:requiredNativeInputs+end.requiredNativeInputs-1,immediateScoreGain,markedTiles:end.markedTiles,
-   ...(trackPurposeDelta?{purposeDelta:!plans.length?end.purposeDelta:stateValue.sumValueParts([currentCapital??demand.planningCapital(current,owner(current,seatId)),-(sourceCapital??demand.planningCapital(state,initialOwner)),end.purposeDelta])}:{})};
+   ...(trackPurposeDelta?{purposeDelta:stateValue.sumValueParts([prefixPurpose(),end.purposeDelta])}:{})};
  }
  function scanDecision(actions){return actions.some(a=>a.target?.nebulaId)&&actions.every(a=>a.target?.nebulaId||a.target?.skip||a.target?.done);}
  function sources(state,seatId,actions,session){

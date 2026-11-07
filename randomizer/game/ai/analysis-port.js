@@ -302,7 +302,8 @@
     let openedRoot = null;
     let movementPolicies = new WeakMap();
     const movementRouteCache = new Map();
-    const movementTimingCache = new Map();
+    const movementTimingCache = new Set();
+    const movementTimingGroups = new Map();
     let nodes = new WeakMap();
     let observationReleasers = new WeakMap(), observationReleases = 0;
     let normalizedIdentityStates = new Map();
@@ -814,6 +815,12 @@
       }
       if(node.status==="stable"){
         goals=resourceCatalog(state,node.legalActions);
+        const native=productionKernel||globalThis.SetiProductionKernel;
+        if(node.legalActions.some(a=>goalMovement.isDirection(a))){
+          const landing=resourceDemand.heldLandingGoal({state,seatId,compareTiming:timingForOneGoalQuery(state),
+            candidates:()=>native.getProbeRouteRequirements(state,seatId)?.candidates||[]});
+          if(landing)goals=[...goals,landing];
+        }
       }else{
         source=session?.journal?.actions?.[0]?.action;
         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
@@ -1004,19 +1011,30 @@
         if (prefix === undefined) {
           timingPrefixBuilds++;
           prefix = native.plannedMovementTimingKeyPrefix(state, seatId);
-          query = native.createPlannedMovementTimingQuery(state, seatId);
         } else timingPrefixReuses++;
-        return movementTiming(id, path, freePoints, native.appendMovementTimingKey(prefix, id, path, freePoints), query);
+        // Both pieces are exact Native JSON bytes. Avoid concatenating and
+        // hashing the whole board on every lookup of a different route.
+        const key = native.appendMovementTimingKey("", id, path, freePoints);
+        let group = movementTimingGroups.get(prefix);
+        const hit = group?.get(key);
+        if (hit) { movementTimingCacheHits++; return hit.result; }
+        movementTimingCacheMisses++;
+        query ||= native.createPlannedMovementTimingQuery(state, seatId);
+        const result = query(id,path,freePoints);
+        if (movementTimingCache.size >= 256) {
+          const oldest = movementTimingCache.values().next().value;
+          const oldGroup = movementTimingGroups.get(oldest.prefix);
+          oldGroup.delete(oldest.key);
+          if (!oldGroup.size) movementTimingGroups.delete(oldest.prefix);
+          movementTimingCache.delete(oldest);
+          if (oldGroup === group && !group.size) group = null;
+        }
+        if (!group) { group = new Map(); movementTimingGroups.set(prefix,group); }
+        const entry = {prefix,key,result};
+        group.set(key,entry);
+        movementTimingCache.add(entry);
+        return result;
       };
-    }
-
-    function movementTiming(id, path, freePoints, key, query) {
-      if (movementTimingCache.has(key)) { movementTimingCacheHits++; return movementTimingCache.get(key); }
-      movementTimingCacheMisses++;
-      const result = query(id,path,freePoints);
-      if (movementTimingCache.size >= 256) movementTimingCache.delete(movementTimingCache.keys().next().value);
-      movementTimingCache.set(key,result);
-      return result;
     }
 
     function recoverMovementIntent(envelope,barrier=null) {
@@ -1269,7 +1287,13 @@
       // A refill does not end a root-known post-main plan. Unknown owned
       // identities, alien reveals, other owners and actual turn changes still close it.
       let knownRewardActions = [], postMainActions = [];
-      if (newBarrier && cardPickPlanning && ["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code)
+      // The acquired displayed Amiba card is root-known; only the replacement
+      // stays hidden. Carry this permission through the same turn, but a new
+      // alien-card barrier must itself prove a new public acquisition.
+      const acquired=cardKnowledgeKey(envelope);
+      const knownAlienAcquisition=barrier?.code==="hidden_alien_card"&&acquired
+        &&(!revealed||acquired!==cardKnowledgeKey(source?.envelope));
+      if (newBarrier && cardPickPlanning && (knownAlienAcquisition||["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code))
         && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
         const nativeActions=legalActions(comp,inspection);
         postMainActions=knownPostMainActions(envelope,nativeActions);
@@ -2199,6 +2223,13 @@
         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id))
         &&owner.reservedCards.every(card=>!cardEffects.getCardModel(card)?.temporaryTasks?.length)
         &&!cardEffects.listPendingTriggerKeys({...owner,reservedCards:owner.hand},state.turn).length;
+      // A filled computer prefix and the ordinary end step do not move a
+      // probe or change the distance of a reserved task. Use that same task
+      // domain only after public Amiba acquisition and with no own visit source.
+      const stationaryAmibaPrefix=state.turn.roundNumber===4&&knownAmibaTail
+        &&stored.informationBarrier?.code==='hidden_alien_card'
+        &&company?.activeAbilityId==='deepspace_swap_cards'&&!hasOwnVisitSource(state)
+        &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id));
       let spec=null;
       if(owner.mainActionCompleted&&!owner.passCompletionPending&&end&&state.turn.currentPlayerId===seatId
         &&quietCompany&&state.turn.activePlayerCount===4
@@ -2211,7 +2242,7 @@
         // visit-capable guard until their complete event set is proved.
         // Plain end never moves; compound previews below separately certify
         // that no movement policy starts at any intermediate goal boundary.
-        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicAmibaCurrencyTail)&&!node.legalActions.some(a=>a.family==="complete_task")){
+        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix)&&!node.legalActions.some(a=>a.family==="complete_task")){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
@@ -2223,20 +2254,20 @@
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail
               ||publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&localPlans.blueCompletion({state,seatId,goal:plan.goal});
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
-            const fixedDataOrdering=state.turn.roundNumber===4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
+            const fixedDataOrdering=stationaryAmibaPrefix||state.turn.roundNumber===4&&["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
               &&hasPostMainInertReservations(state,hasOwnVisitSource(state));
             if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&(tail.selected||publicAmibaCurrencyTail||fixedDataOrdering))||(kind==="data-end-turn"&&(plan.goal.kind==="income"&&policy.incomeTail?.selected||plan.goal.kind==="computer-prefix"&&policy.fixedComputerTail?.selected)))){
               let stationary,reachedIntent,noMovementPayment;
               const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
               const sourceMoveCards=moveCards(owner);
-              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail,fixedDataOrdering,
+              const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail||stationaryAmibaPrefix,fixedDataOrdering,stationaryFinalData:stationaryAmibaPrefix,
                 initialIncomeGoal:plan.goal.kind==="income"?plan.goal:null,initialIncomeTail:policy.incomeTail,
                 firstBlueGoal:(publicAmibaCurrencyTail||fixedDataOrdering)&&plan.goal.kind==="blue-data"?plan.goal:null,
-                canContinue:publicAmibaCurrencyTail||fixedDataOrdering?preview=>{
+                canContinue:publicAmibaCurrencyTail||stationaryAmibaPrefix||fixedDataOrdering?(preview,knownSourceCapital)=>{
                   const p=preview.players.players.find(p=>p.id===seatId),cost=quickTrades.getTradeAction('publicity-for-card').cost.publicity;
                   // A newly affordable acquisition is outside this fixed tail.
                   if(owner.resources.publicity<cost&&p.resources.publicity>=cost)return false;
-                  return !cardPickPlanner.plan({state:preview,seatId,status:"stable",actions:node.legalActions})?.goal;
+                  return !cardPickPlanner.plan({state:preview,seatId,status:"stable",actions:node.legalActions,knownSourceCapital})?.goal;
                 }:null,
                 canLeaveProbeStationary: preview => {
                   if(completedPrefix)return true;
@@ -2302,7 +2333,7 @@
               if(compound.available&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
                 spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,...(compound.primaryOnly?{primaryOnly:true}:{}),
-                  ...(publicAmibaCurrencyTail?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:{})};
+                  ...(publicAmibaCurrencyTail||stationaryAmibaPrefix?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:{})};
               else if(!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
                 spec={firstActionId:plan.firstActionId,netGain:tail.netGain,requiredNativeInputs:tail.requiredNativeInputs+1,
@@ -3179,6 +3210,7 @@
       movementPolicies = new WeakMap();
       movementRouteCache.clear();
       movementTimingCache.clear();
+      movementTimingGroups.clear();
       movementPlanning = false;
       cardPickPlanning = false;
       resourcePlanning = false;finalMarkPlanning=false;scanPlanning=false;localSpecs=new WeakMap();

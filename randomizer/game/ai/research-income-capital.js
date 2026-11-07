@@ -157,6 +157,9 @@ const incomeCounts={credits:0,energy:0,handSize:0};
 for(const entry of cards.CARD_CATALOG)if(!entry.set.startsWith('alien:')){
  const key=['credits','energy','handSize'][entry.income_code];if(key)incomeCounts[key]++;
 }
+// The Native effect builder duplicates a printed effect but never changes its
+// type. This eligibility query does not need effect nodes or repeat labels.
+const hasPrintedResearch=c=>(effects.getCardModel(c)?.playEffects||[]).some(e=>e.type==='card_research_tech');
 function incomeOptions({facts,investment,baseCapital},weights){
  const ctx={facts,hand:facts.hand,wallet:facts.player,income:facts.player.income,investment};
  const fixed=missionDataContinuation(ctx,weights),baseline=arithmetic.sum([baseCapital,fixed.value],weights);
@@ -165,9 +168,9 @@ function incomeOptions({facts,investment,baseCapital},weights){
    ||facts.companyState?.abilityId!=='deepspace_swap_cards'||facts.companyState.roundMarkRound===facts.round)return result;
  // With equal currency weights, a swap can only improve this investment
  // portfolio by changing a known held research card's payment window/loss.
- if(weights.credits===weights.energy&&!facts.hand.some(c=>effects.buildPlayEffects(c).some(e=>e.type==='card_research_tech')))return result;
+ if(weights.credits===weights.energy&&!facts.hand.some(hasPrintedResearch))return result;
  const suppliers=facts.hand.filter(c=>!c.hidden&&c.cardId&&['credits','energy'].some(k=>cards.getIncomeGainForCard(c)?.[k]===1)
-   &&!effects.buildPlayEffects(c).some(e=>e.type==='card_research_tech'));
+   &&!hasPrintedResearch(c));
  if(!suppliers.length)return result;
  const categories=new Map();
  function bestFor(key){
