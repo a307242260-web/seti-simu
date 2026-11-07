@@ -1,0 +1,62 @@
+{
+  "status": "passed",
+  "scope": "Identical movement key bytes and Native timing outputs/errors. Full menus retain every first action after scalar cache use. V2 fallback affects only invalid or terminal requests; search timing for V1 must not be relabeled V2.",
+  "cases": 237,
+  "boundaryCases": 8,
+  "fullMenuCases": 237,
+  "invalid": [
+    {
+      "name": "ended",
+      "nativeOutcome": {
+        "name": "TypeError",
+        "message": "Cannot read properties of null (reading 'candidates')"
+      }
+    },
+    {
+      "name": "undefined",
+      "nativeOutcome": {
+        "value": {
+          "comparable": false,
+          "reason": "target-unreachable-after-rotation",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "null",
+      "nativeOutcome": {
+        "value": {
+          "comparable": false,
+          "reason": "target-unreachable-after-rotation",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "numeric",
+      "nativeOutcome": {
+        "value": {
+          "comparable": false,
+          "reason": "target-unreachable-after-rotation",
+          "rotationCount": 1
+        }
+      }
+    },
+    {
+      "name": "object",
+      "nativeOutcome": {
+        "value": {
+          "comparable": false,
+          "reason": "target-unreachable-after-rotation",
+          "rotationCount": 1
+        }
+      }
+    }
+  ],
+  "prototype": "reports/ai-foundation-20261107/case152-timing-prefix-key-v1/production-kernel-timing-prefix-key-prototype-20261107-v2.js",
+  "prototypeSha256": "a23d7b4c2d5f082d766f544c363ec2edbda39165127abefa5c6b430cc6930504",
+  "trace": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "traceSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "newAiQueries": 0,
+  "newAutonomousRuns": 0
+}

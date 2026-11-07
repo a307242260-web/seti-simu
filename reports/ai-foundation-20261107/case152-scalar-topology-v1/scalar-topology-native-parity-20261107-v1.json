@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "topology": {
+    "misses": {
+      "scalar": 76,
+      "full": 0
+    },
+    "expanded": {
+      "scalar": 3360,
+      "full": 0
+    }
+  },
+  "scope": "Scalar route coalescing in the ordinary zero-allowance phase; full Native timing fields on all observed misses; paired diagnostic timings only, no search or cold gate. No production changes.",
+  "cases": 237,
+  "boundaryCases": 8,
+  "uniqueCompactKeys": 172,
+  "skippedDuplicateMisses": 65,
+  "outsideScopeExactKey": true,
+  "cardHistoryMutationSameNativeTiming": true,
+  "zeroDistance": 0,
+  "unreachable": 0,
+  "alternatives": 1234,
+  "oldMilliseconds": 173.35863300000022,
+  "newMilliseconds": 66.93758499999987,
+  "prototype": "reports/ai-foundation-20261107/case152-primary-bound-v1/../case152-scalar-topology-v1/production-kernel-scalar-topology-prototype-20261107-v1.js",
+  "prototypeSha256": "9ea6a05671d7b0cf61a4b544107c9654c4d9dc631047db94001e88eb57f57f4f",
+  "checkpoint": "reports/ai-foundation-20261107/case152-primary-bound-v1/movement-timing-key-dependencies-20261107-v1.checkpoint.json.gz",
+  "checkpointSha256": "a1c8a5a33fffc4cb4a0ba5039702b95d27ce8531e6cceecf587dcaf6fc9a02ae",
+  "newAutonomousRuns": 0,
+  "sourceUntouched": true
+}

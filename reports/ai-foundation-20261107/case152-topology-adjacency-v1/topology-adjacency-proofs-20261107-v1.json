@@ -1,0 +1,3471 @@
+{
+  "adjacency": {
+    "hits": 8410,
+    "savedChecks": 33640,
+    "nativeChecks": 14464
+  },
+  "proofReference": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-card-history-key-proofs-20261107-v5.checkpoint.json",
+  "proofReferenceSha256": "6f63275c85dfc0f062453e86ea3fe2d605bf342bf4d17950c6bfa3f11a609090",
+  "fullNativeEnvelopeAndRankParity": true,
+  "scope": "Native topology adjacency reuse only within one source and a fixed board snapshot. Same direction order, legal menu, route states and budget. Unadmitted in-memory combined completed-prefix/fixed-blue-prefix/shared Native payment R4 movement proof. Current Native payment enumerator body hoisted unchanged, no duplicated payment rules. No old R4 linear bound restored. Winning action/value unchanged; losing-root values may be attained lower bounds after certified movement pruning, never claimed exact maxima. Every positive data/movement tail quoted by this diagnostic is materialized. R4 sole fixed-movement alternative may be deferred once behind existing pending purposes; it remains queued and is executed unless the unchanged strict bound later proves it dominated. No budget, beam, depth or candidate change. An unresolved secondary tie may only be consumed as a strict primary bound at a non-root alternative. No acceptance timing or new game.",
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+  "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+  "baselineNativeInputs": 805,
+  "prototypeNativeInputs": 256,
+  "selected": {
+    "actionId": "place_data:50a9ac16",
+    "value": 49
+  },
+  "chosenRank": {
+    "value": 49,
+    "realization": -7,
+    "preparationDebt": 0,
+    "distance": 26
+  },
+  "previousRank": {
+    "value": 49,
+    "realization": -7,
+    "preparationDebt": 0,
+    "distance": 26
+  },
+  "tieBounds": [
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 52,
+      "value": 45,
+      "upperBound": 37,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 34,
+      "sourceNode": 34
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 33,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 30,
+      "sourceNode": 75
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 32.5,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 29.5,
+      "sourceNode": 76
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 32.5,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 29.5,
+      "sourceNode": 78
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 32.5,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 29.5,
+      "sourceNode": 79
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 32.5,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 29.5,
+      "sourceNode": 81
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 33,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 30,
+      "sourceNode": 82
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "node": 72,
+      "value": 49,
+      "upperBound": 32,
+      "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+      "modelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "boundKind": "fixed-data-primary-only",
+      "currentValue": 29,
+      "sourceNode": 83
+    }
+  ],
+  "rootComparisons": [
+    {
+      "actionId": "play_card:3e8e8ea5",
+      "exactPreviousValue": 38,
+      "currentAttainedValue": 38,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ad9d7edf",
+      "exactPreviousValue": 34,
+      "currentAttainedValue": 34,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:9da016bc",
+      "exactPreviousValue": 30,
+      "currentAttainedValue": 30,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ce05056e",
+      "exactPreviousValue": 31,
+      "currentAttainedValue": 31,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:ac125846",
+      "exactPreviousValue": 35,
+      "currentAttainedValue": 35,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "play_card:bab3140b",
+      "exactPreviousValue": 32.5,
+      "currentAttainedValue": null,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "pass:ac4b4ab2",
+      "exactPreviousValue": 30.5,
+      "currentAttainedValue": 30.5,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "move:060dbf6f",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "move:630a7f69",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "move:d8c62915",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:5ad269c5",
+      "exactPreviousValue": 45,
+      "currentAttainedValue": 45,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "quick_trade:aedbd0df",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:9256f5c4",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:c3f1770e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:11754f92",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-card-pick-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "quick_trade:c49d725c",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:d5283853",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:27fd8eef",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:296892d5",
+      "exactPreviousValue": 45.5,
+      "currentAttainedValue": 45.5,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    },
+    {
+      "actionId": "card_corner:83e7e18b",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:7003d11e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-resource-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "card_corner:9b656c6e",
+      "exactPreviousValue": null,
+      "currentAttainedValue": null,
+      "currentCompletion": "excluded-by-movement-policy",
+      "currentValueType": "not-executed"
+    },
+    {
+      "actionId": "place_data:50a9ac16",
+      "exactPreviousValue": 49,
+      "currentAttainedValue": 49,
+      "currentCompletion": "covered-by-global-value-bound",
+      "currentValueType": "attained-lower-bound"
+    }
+  ],
+  "dataProofs": 41,
+  "primaryBounds": 8,
+  "movementProofs": 16,
+  "proofs": [
+    {
+      "index": 0,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 29,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 35,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 6,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 6,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 6,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 9,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 7,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 40.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8
+      },
+      "netGain": 8,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 41.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9
+      },
+      "netGain": 9,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 39,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 43.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8.5
+      },
+      "netGain": 4.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 11,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4.5
+      },
+      "netGain": 4.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 10,
+      "before": {
+        "value": 45,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 49,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 10,
+      "before": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 48.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 9,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 4,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "netGain": 7,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4
+      },
+      "netGain": 7.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 4,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0,
+      "dataPlans": [
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 7,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 36,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "netGain": 5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 20,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 40,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8
+      },
+      "netGain": 9.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 20,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 41,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9
+      },
+      "netGain": 10.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 20,
+      "before": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "after": {
+        "value": 43,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 8.5
+      },
+      "netGain": 5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 20,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 4.5
+      },
+      "netGain": 6,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 45.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 10
+      },
+      "after": {
+        "value": 45.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 0,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 15,
+      "before": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 45,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 15,
+      "before": {
+        "value": 44,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 7
+      },
+      "after": {
+        "value": 44.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 30.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 38,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 5
+      },
+      "netGain": 5.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 17,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 17,
+      "before": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "kind": "blue-end-turn",
+      "requiredNativeInputs": 14,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 0.5,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "after": {
+        "value": 37,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 3
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 29,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 29.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "kind": "data-end-turn",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 30,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 3,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 35,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1.5,
+      "dataPlans": [],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 5,
+      "before": {
+        "value": 36.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 34,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -2.5,
+      "dataPlans": [],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 1,
+          "cardIds": [],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 3,
+                "y": 2
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitAsteroid",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move"
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0",
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 2
+              },
+              "to": {
+                "x": 3,
+                "y": 3
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitPlanet",
+              "planetId": "saturn",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 35,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 35,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 53,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 29,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 29,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 55,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 29,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": 2.5,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 44,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9.5
+      },
+      "netGain": 11,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 1,
+          "cardIds": [],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 3,
+                "y": 2
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitAsteroid",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move"
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 1,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 2
+              },
+              "to": {
+                "x": 3,
+                "y": 3
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitPlanet",
+              "planetId": "saturn",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 57,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 13,
+      "before": {
+        "value": 33,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 44,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 9.5
+      },
+      "netGain": 11,
+      "dataPlans": [
+        {
+          "id": "data:computer-prefix:6",
+          "kind": "computer-prefix",
+          "targetComputerSlot": 6,
+          "required": {}
+        },
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        },
+        {
+          "id": "data:blue:4",
+          "kind": "blue-data",
+          "blueSlot": 4,
+          "targetComputerSlot": 6,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 1,
+          "cardIds": [],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 3,
+                "y": 2
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitAsteroid",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move"
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 0,
+          "deltaY": 1,
+          "energy": 1,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 2
+              },
+              "to": {
+                "x": 3,
+                "y": 3
+              },
+              "sameRing": false
+            },
+            {
+              "type": "visitPlanet",
+              "planetId": "saturn",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 58,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 59,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 32,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 31,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 28.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 27.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 61,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 28.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 27.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 28.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 27.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-83-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 33.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 1,
+          "cardIds": [],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "kind": "movement-and-data-tail",
+      "requiredNativeInputs": 18,
+      "before": {
+        "value": 33.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "after": {
+        "value": 32.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "netGain": -1,
+      "dataPlans": [
+        {
+          "id": "data:blue:3",
+          "kind": "blue-data",
+          "blueSlot": 3,
+          "targetComputerSlot": 5,
+          "required": {}
+        }
+      ],
+      "moves": [
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 1,
+          "cardIds": [],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 3,
+                "y": 1
+              },
+              "to": {
+                "x": 4,
+                "y": 1
+              },
+              "sameRing": true
+            }
+          ]
+        },
+        {
+          "rocketId": 4,
+          "deltaX": 1,
+          "deltaY": 0,
+          "energy": 0,
+          "cardIds": [
+            "card-11-0"
+          ],
+          "events": [
+            {
+              "type": "move",
+              "rocketId": 4,
+              "playerId": "player-brown",
+              "source": "move",
+              "from": {
+                "x": 4,
+                "y": 1
+              },
+              "to": {
+                "x": 5,
+                "y": 1
+              },
+              "sameRing": true
+            },
+            {
+              "type": "visitComet",
+              "rocketId": 4,
+              "tokenKind": "standard",
+              "fossilId": null,
+              "playerId": "player-brown",
+              "source": "move",
+              "publicityReward": 1,
+              "publicityGained": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "materializedNativeInputs": 785,
+  "actualAdditionalNativeExecutions": 785,
+  "movementQuoteReasons": [
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    },
+    {
+      "available": true,
+      "reason": null
+    }
+  ],
+  "diagnostics": {
+    "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+    "valueEvaluations": 83,
+    "valueCacheHits": 169,
+    "finalMarkPlanning": true,
+    "scanPlanning": true,
+    "resourcePlanning": "goal-bound-greedy-preparation",
+    "cardPickPlanning": "purpose-bound-fixed-plan",
+    "movementPlanning": "goal-directed-policy",
+    "movementPolicyNodes": 93,
+    "movementDirectionsExcluded": 267,
+    "routeGeometryNodes": 800,
+    "incomePlanProofs": 0,
+    "provedIncomeInputs": 0,
+    "turnTailProofs": 54,
+    "provedTurnTailInputs": 533,
+    "movementValuePrunes": 16,
+    "dataPrimaryBoundPrunes": 8,
+    "winningIncomePlans": 0,
+    "winningIncomeInputs": 0,
+    "deferredMovementPlans": 1,
+    "nativeExecutions": 256,
+    "logicalResourceInputs": 253,
+    "sharedResourceInputHits": 51,
+    "sharedResourceInternalStates": 143,
+    "localFinalMarkStates": 0,
+    "localFinalMarkExcluded": 0,
+    "fixedDataChoiceStates": 0,
+    "fixedDataChoicesExcluded": 0,
+    "branchingStates": 29,
+    "singleAlternativeStates": 89,
+    "disabledBorrowStarts": 0,
+    "disabledRemoveTechIncomeStarts": 32,
+    "scanPurposePlans": 10,
+    "resourceGoalPlans": 83,
+    "resourcePreparationInputs": 253,
+    "resourceFallbacks": 4,
+    "resourceExcludedActions": 1386,
+    "transitions": 256,
+    "nodes": 334,
+    "graphNodes": 181,
+    "certificateNodes": 153,
+    "postMainOptimalPlans": 0,
+    "postMainOptimalPlanSteps": 0,
+    "equivalents": 1,
+    "selectionMacros": 0,
+    "peakFrontier": 48,
+    "dominancePrunes": 0,
+    "resourceDominance": "disabled-for-movement-policy",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "disabled-for-movement-policy",
+    "postMainValuePrunes": 0,
+    "scanValuePrunes": 0,
+    "scanActionPrunes": 0,
+    "cardTradePrunes": 0,
+    "cardTradePruning": "disabled-for-selection-certificate",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "postMainBorrowProofNodes": 0,
+    "postMainBorrowExcludedChoices": 0,
+    "postMainBorrowMacros": 0,
+    "cardChoiceProofNodes": 0,
+    "cardChoiceExcludedActions": 0,
+    "cardCornerProofNodes": 0,
+    "cardCornerExcludedActions": 0,
+    "preMainDataProofNodes": 0,
+    "preMainDataExcludedActions": 0,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v54\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "not-requested",
+    "milliseconds": 723.9366669999999,
+    "limits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    }
+  },
+  "analysisAtSearchEnd": {
+    "cardPick": {
+      "rankingCacheEntries": 1,
+      "maxRankingCacheEntries": 64,
+      "rankingCacheHits": 13,
+      "rankingCacheMisses": 1,
+      "rankedCards": 3,
+      "companyIntentReuses": 0,
+      "companyIntentRecoveries": 0,
+      "companyIntentGuardRejects": 0,
+      "rankingCacheHitsThisRoot": 13,
+      "rankingCacheMissesThisRoot": 1,
+      "rankedCardsThisRoot": 3,
+      "companyIntentReusesThisRoot": 0,
+      "companyIntentRecoveriesThisRoot": 0,
+      "companyIntentGuardRejectsThisRoot": 0
+    },
+    "goalMovementGeometryNodes": 800,
+    "movementRouteCacheEntries": 25,
+    "maxMovementRouteCacheEntries": 64,
+    "nodeCount": 339,
+    "submissionCount": 256,
+    "cacheHits": 0,
+    "stableRestoreSkips": 69,
+    "movementTimingCacheHits": 649,
+    "movementTimingCacheMisses": 172,
+    "cacheEntries": 0,
+    "observationCount": 102,
+    "observationReleases": 9,
+    "movementTimingCacheEntries": 172,
+    "maxMovementTimingCacheEntries": 256,
+    "normalizedIdentityCacheEntries": 64,
+    "maxNormalizedIdentityCacheEntries": 64,
+    "identityCount": 270,
+    "identityMaterializations": 275,
+    "identitySubtreeCacheHits": 0,
+    "identitySubtreeCacheStores": 0,
+    "maxCacheEntries": 0,
+    "sharedPrefixEdges": 256,
+    "sharedPrefixNodes": 265,
+    "sharedPrefixHits": 51,
+    "decodedStateCacheEntries": 64,
+    "maxDecodedStateCacheEntries": 64,
+    "decodedStateCacheBytes": 5052290,
+    "maxDecodedStateCacheBytes": 8388608,
+    "observationCacheHits": 244,
+    "resourceQueryHits": 0,
+    "resourceQueryMisses": 94,
+    "goalCatalogHits": 0,
+    "goalCatalogMisses": 94,
+    "movementBoundQueries": 16,
+    "movementRuleQueries": 32,
+    "movementIntentRecoveries": 0,
+    "completedMovementRecoveries": 0,
+    "committedDecodeCount": 17,
+    "committedDecodeHits": 2284,
+    "committedReferenceCount": 142,
+    "selectionEvidenceEntries": 0,
+    "maxSelectionEvidenceEntries": 1,
+    "planEvidenceEntries": 1,
+    "planPrefixEntries": 17,
+    "maxPlanPrefixEntries": 32,
+    "milliseconds": {
+      "restore": 39.4742059999995,
+      "execute": 138.50949899999924,
+      "observation": 23.892040000000037,
+      "checkpoint": 33.288784000000504,
+      "resourceOrder": 0,
+      "valueBound": 0,
+      "postMainPlan": 0.21295699999990347,
+      "preMainDataPlan": 0
+    }
+  },
+  "checkpoint": "reports/ai-foundation-20261107/case152-primary-bound-v1/combined-card-history-key-proofs-20261107-v5.checkpoint.json",
+  "checkpointSha256": "6f63275c85dfc0f062453e86ea3fe2d605bf342bf4d17950c6bfa3f11a609090",
+  "rootAndRngRestored": true,
+  "newAiDiagnosticQueries": 1,
+  "newAutonomousRuns": 0,
+  "checkpointDeduplicated": true,
+  "generatedCheckpointName": "reports/ai-foundation-20261107/case152-topology-adjacency-v1/topology-adjacency-proofs-20261107-v1.checkpoint.json",
+  "outerWallMs": 737.699334
+}

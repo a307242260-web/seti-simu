@@ -1,0 +1,78 @@
+{
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "progress: strict bound, narrow movement timing key and first CPU profile delivered at 15fb6ca38; intervening user status request only read records.",
+  "thisGoalTurnClassification": "progress: isolated graph copy and neighbor duplication characterized; ordinary scalar topology and per-plan key prefix bring search to 680.451333ms with exact chosen rank, all 65 Native rows, 237 complete route menus, 8 boundary and 5 invalid-input controls.",
+  "production": "V278/V48",
+  "candidate": "V314/V54/Resource25",
+  "candidateAdmitted": false,
+  "manifest": "reports/ai-foundation-20261107/analysis-lazy-trace-contexts-v1/source-manifest-20261107-v1.json",
+  "manifestSha256": "eded403ee0a90b8eb180adc2de639eeab3c39aac3fa68aacc056e9e265f51a91",
+  "sourceHashesUnchanged": 179,
+  "nativeTieAudit": {
+    "pairs": 9,
+    "controlSubmissions": 76,
+    "independentInputs": 84,
+    "stopWinsOnDistance": 9,
+    "assetEquivalent": false
+  },
+  "prototype": {
+    "nativeInputs": 256,
+    "diagnosticMilliseconds": 680.451333,
+    "installed": false,
+    "officialColdGateRun": false,
+    "selected": "place_data:50a9ac16",
+    "value": 49,
+    "preparationDebt": 0,
+    "realization": -7,
+    "distance": 26,
+    "strictDataBounds": 8,
+    "fullNativeWitnessRowsReused": 65,
+    "nativeWitnessInputs": 785,
+    "timingCases": 237,
+    "boundaryCases": 8,
+    "timingMisses": 172,
+    "diagnosticMillisecondsIncludingOpenRoot": 695.352,
+    "fullMenusCompared": 237,
+    "invalidAndTerminalControls": 5,
+    "perPlanTimingKeyReuse": 710,
+    "perPlanTimingKeyBuilds": 111,
+    "diagnostics": {
+      "native-copy": {
+        "report": "reports/ai-foundation-20261107/case152-native-copy-v1/native-copy-proofs-20261107-v1.json",
+        "sha256": "5706bad9e129ffb799345730c3d9e5506d445ffe5e5abf576fdb51434865d582",
+        "searchMilliseconds": 719.542625,
+        "includingOpenRootMilliseconds": 732.764291,
+        "nativeInputs": 256
+      },
+      "topology-adjacency": {
+        "report": "reports/ai-foundation-20261107/case152-topology-adjacency-v1/topology-adjacency-proofs-20261107-v1.json",
+        "sha256": "9afe139182cb53bcafbb51729719a4c5bf22e571568197b35394ef5efc1ff808",
+        "searchMilliseconds": 723.9366669999999,
+        "includingOpenRootMilliseconds": 737.699334,
+        "nativeInputs": 256
+      },
+      "scalar-topology": {
+        "report": "reports/ai-foundation-20261107/case152-scalar-topology-v1/scalar-topology-proofs-20261107-v1.json",
+        "sha256": "1133499ff3e22d61608e2b830b2b1407937c902b4eda992a55e60ea298c8df0f",
+        "searchMilliseconds": 694.6353330000001,
+        "includingOpenRootMilliseconds": 708.478792,
+        "nativeInputs": 256
+      },
+      "timing-prefix-key": {
+        "report": "reports/ai-foundation-20261107/case152-timing-prefix-key-v1/timing-prefix-key-proofs-20261107-v1.json",
+        "sha256": "57beb25e93000626f4123c273878de388a24aaa48290657d503538ba5813e00a",
+        "searchMilliseconds": 680.451333,
+        "includingOpenRootMilliseconds": 695.352,
+        "nativeInputs": 256
+      }
+    }
+  },
+  "document": "docs/human405-case152-scalar-topology-20261107.md",
+  "nextContract": "adhoc/case152-after-scalar-topology-next-20261107-v1.md",
+  "next": "Profile current combined prototype to remove remaining search latency; then a qualified new source cold gate, all source gates, actual first-two-round assets, original23 autonomous first3 and R2 end review.",
+  "newAutonomousRuns": 0,
+  "newScore": false,
+  "baseline": "V41",
+  "autonomousFirst3Run": false,
+  "developmentAligned": false
+}
