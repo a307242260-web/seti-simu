@@ -1,0 +1,50 @@
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -392,7 +392,7 @@
+       ||p.resources.credits!==0||p.resources.energy!==0||p.passCompletionPending
+       ||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
+       ||!t.activePlayerIds?.includes(p.id)||t.activePlayerIds.some(id=>id!==p.id&&!t.passedPlayerIds.includes(id))
+-      ||p.hand.some(c=>c.hidden||movePoints(c))||t.cardTurnEventBonuses?.length||observes(state,p.id,'move'))return rows[0];
++      ||p.hand.some(c=>c.hidden)||t.cardTurnEventBonuses?.length||observes(state,p.id,'move'))return rows[0];
+     const tied=rows.filter(row=>row.value===rows[0].value);
+     const currency=c=>{
+       const gain=cards.getIncomeGainForCard(c),k=Object.keys(gain||{});
+@@ -400,21 +400,35 @@
+     };
+     const types=tied.map(row=>currency(row.card));
+     if(types.includes(null)||new Set(types).size!==2)return rows[0];
++    const movement=p.hand.filter(c=>movePoints(c));
++    if(movement.length){
++      const common=movement[0],reward=cards.getDiscardActionMoveRewardForCard(common);
++      if(movement.length!==1||reward.movementPoints!==1||Object.keys(reward.gain).length
++        ||tied.some(row=>row.card.id===common.id))return rows[0];
++    }
+     const facts=valueFacts(state,p);
+     if(probeCapital.ownedProbes(facts.board.rockets,facts.player).length!==1)return rows[0];
+-    const wallet={credits:p.income.credits,energy:p.income.energy},score={credits:0,energy:0};
++    const wallet={credits:p.income.credits,energy:p.income.energy},score={credits:0,energy:0},veto={credits:false,energy:false};
+     for(const goal of probeCapital.requirements(facts)){
+       if(goal.endpointFamily!=='land')continue;
+       const cost={...goal.endpointFacts.cost,energy:(goal.endpointFacts.cost.energy||0)+goal.route.cost};
+       const floor=goal.endpointFacts.rewards.reduce((n,x)=>n+(x.type==='gain_resources'?(x.options?.gain?.score||0):0),0);
+-      const net=k=>{const payment=probeCapital.funding({...wallet,[k]:wallet[k]+2},cost,stateValue.DEFAULT_WEIGHTS);
++      const net=(k,bill=cost)=>{const payment=probeCapital.funding({...wallet,[k]:wallet[k]+2},bill,stateValue.DEFAULT_WEIGHTS);
+         return payment?Math.max(0,floor-payment.value):0;};
+       const c=net('credits'),e=net('energy');
+       if(c>e)score.credits++;
+       if(e>c)score.energy++;
++      if(movement.length&&goal.route.cost>0){
++        // One common move point can only veto the no-card witness. An
++        // unproved movement discount cannot create a winning route.
++        const reduced={...cost,energy:cost.energy-1},cm=net('credits',reduced),em=net('energy',reduced);
++        if(cm>em)veto.energy=true;
++        if(em>cm)veto.credits=true;
++      }
+     }
+     if(Boolean(score.credits)===Boolean(score.energy))return rows[0];
+-    return tied.find((row,i)=>types[i]===(score.energy?'energy':'credits'));
++    const preferred=score.energy?'energy':'credits';
++    return veto[preferred]?rows[0]:tied.find((row,i)=>types[i]===preferred);
+   }
+   function cardOpportunityCost(state,seatId,card){return incomeOpportunityCost(state,owner(state,seatId),card);}
+   function scoredBlueCornerWindow(state,p,goal){
