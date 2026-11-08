@@ -1,0 +1,10 @@
+{"label":"analysis","world":0,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"label":"scan","world":0,"previewValue":157,"nativeValue":159,"valueDiff":[["analysisPotential",2,4]]}
+{"label":"research","world":0,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"label":"analysis","world":1,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"label":"scan","world":1,"previewValue":157,"nativeValue":159,"valueDiff":[["analysisPotential",2,4]]}
+{"label":"research","world":1,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"label":"analysis","world":2,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"label":"scan","world":2,"previewValue":157,"nativeValue":159,"valueDiff":[["analysisPotential",2,4]]}
+{"label":"research","world":2,"previewValue":160,"nativeValue":161.5,"valueDiff":[["analysisPotential",2,3.5]]}
+{"worlds":3,"nativeInputs":0,"values":[["analysis",160],["scan",157],["research",160]]}

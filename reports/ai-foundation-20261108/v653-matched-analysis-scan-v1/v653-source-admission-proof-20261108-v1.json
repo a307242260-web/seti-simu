@@ -1,0 +1,56 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V653",
+  "searchVersion": "seti-complete-decision-search-v420",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "f9e574e179dd5a86e42f98b8d1376e17de486c06",
+  "runtimeSubtrees": {
+    "randomizer": "1a29b3a65c68725abf03c961159efcd6e155b07e",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v653-matched-analysis-scan-v1/v653-source-manifest-20261108-v1.json",
+  "manifestSha256": "73117390199baede5198676c1c2f24596d7a62007dd1059dbb2d2f8e3bb3e3cf",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "7e0b23997d2bfa82e76e952b4ade1c4626a9e3fd0fc22a21d98b8292de9fa012",
+    "randomizer/game/ai/blue-transport-research.test.js": "a21248fe96cb48f4d80ebf5248ea4704bb670b10a07a8eadc63d55a6ff61eef1",
+    "randomizer/game/ai/decision-search.js": "e2f4407d86aab7ee84b194e383d591221dfc6ff2f797c9a25a14b53ee822f05b",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "978397026832a18d8c2c81807913a8fbe589ded1359b5706d1b3d70a1b82aa79",
+    "randomizer/game/ai/local-decision-plans.js": "8cda932944cddfb8f12cc95c92b1be15a40fd01aa3463b769c12f3366435615f"
+  },
+  "evidenceSha256": {
+    "v653-source-manifest-20261108-v1.json": "73117390199baede5198676c1c2f24596d7a62007dd1059dbb2d2f8e3bb3e3cf",
+    "v653-cold-gate-20261108-v1.json": "97916f6095b0707ef2134f22746a5a8fdf1e9b8df4669c4372e647a2857c6660",
+    "v653-matched-analysis-scan-evidence-20261108-v1.tar.gz": "39d7a3250ff83c231179de5e3983bbaa2f8453ee130f3e5b6478a5cf8c5a0df4",
+    "v653-node-tests-20261108-v1.log": "aeb9d21ff71d893e14e64996416a059894e354c565390a3ed3d68fd3a1f4b109",
+    "v653-state-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v653-browser-20261108-v1.log": "b30a0c8277ed5aaadbdb6653ce61e46a441d073f5a83479af595a5b5d7229267",
+    "v653-blue-transport-targeted-20261108-v1.log": "cdccf2fd9b4a09bc2ef5b6a8b9202d4e8bab7de51fdd69221c25ee7de2b079a6",
+    "v653-matched-preview-20261108-v2.log": "3672d8b78e98b1b9c22fb651654fd29171e18e922c8de828ba363b5a09d20f19"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 576.79975,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 117,
+    "establishedScore": 165,
+    "autonomousInputs": 72,
+    "maxNativeInputs": 228
+  },
+  "knownComparison": {
+    "analysis": 160,
+    "research": 160,
+    "scan": 157
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

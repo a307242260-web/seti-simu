@@ -184,5 +184,22 @@ try {
   assert.equal(deferredComputerPublicity({state:JSON.parse(f.afterChongPickAtPublicityCap.committedState),
     seatId,goal:{kind:'computer-prefix',targetComputerSlot:3},blueTail:true,
     knownTech:()=>false,noAcquisition:()=>true}),null);
+  const matchedQuotes=q=>q.lines.flatMap(l=>l.matchedAnalysisScan?[[l.matchedAnalysisScan.order,l.matchedAnalysisScan.value]]:[]).sort();
+  const knownOrder=decide(f.beforeMatchedAnalysisScan);
+  assert.equal(knownOrder.action.family,'research_tech');
+  assert.deepEqual(matchedQuotes(knownOrder.q),[['analysis',160],['research',160],['scan',157]]);
+  assert.equal(knownOrder.q.roots.find(r=>r.actionId==='analyze:a5629aa3').value,160);
+  const privateOrder=structuredClone(f.beforeMatchedAnalysisScan),hiddenState=JSON.parse(privateOrder.committedState);
+  for(const deck of [hiddenState.aliens.chong.cardDeck,hiddenState.cards.drawPileCardIds]) [deck[0],deck[1]]=[deck[1],deck[0]];
+  privateOrder.committedState=JSON.stringify(hiddenState);
+  const hiddenOrder=decide(privateOrder);
+  assert.deepEqual([hiddenOrder.action,hiddenOrder.q.roots,matchedQuotes(hiddenOrder.q)],
+    [knownOrder.action,knownOrder.q.roots,matchedQuotes(knownOrder.q)]);
+  const paidResearch=decide(f.afterMatchedPurple1);
+  assert.equal(paidResearch.action.family,'analyze');
+  assert.deepEqual(matchedQuotes(paidResearch.q),[['analysis',160],['scan',155.5]]);
+  const noMarket=structuredClone(f.beforeMatchedAnalysisScan),missingScan=JSON.parse(noMarket.committedState);
+  missingScan.cards.publicCards[2]=null;noMarket.committedState=JSON.stringify(missingScan);
+  assert.deepEqual(matchedQuotes(decide(noMarket).q),[]);
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}

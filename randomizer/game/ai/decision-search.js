@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v419";
+  const VERSION = "seti-complete-decision-search-v420";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -165,6 +165,8 @@
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.scanTimingPurpose?.():null;
     const analysisFunding=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.analysisFundingSource?.():null;
+    const matchedAnalysisScan=resourcePlanning&&realizationTies&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      ?port.matchedAnalysisScanSource?.():null;
     const researchTransport=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       ?port.researchTransportPurpose?.():null;
     const transportPreparationEnabled=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3;
@@ -172,7 +174,7 @@
     const upstreamTransport=transportPreparationEnabled&&!transportPreparation&&port.upstreamTransportEnabled?.();
     const displayedTransport=transportPreparationEnabled&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       ?port.displayedTransportPurpose?.():null;
-    const coreExtendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport||transportPreparation||upstreamTransport;
+    const coreExtendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||matchedAnalysisScan||researchTransport||transportPreparation||upstreamTransport;
     const extendedPurpose=coreExtendedPurpose||displayedTransport;
     const nodes = [];
     const known = new Map();
@@ -268,11 +270,12 @@
       const scanTimingQuote=scanTiming&&BOUNDARIES.has(node.status)?port.quoteScanTimingPurpose(node,scanTiming):null;
       const fundedScanQuote=node.status==="turn-tail-value"?node.planSummary.nextFundedScan:null;
       const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
+      const matchedScanQuote=matchedAnalysisScan&&BOUNDARIES.has(node.status)?port.quoteMatchedAnalysisScan(node,matchedAnalysisScan):null;
       const transportQuote=researchTransport&&BOUNDARIES.has(node.status)?port.quoteResearchTransport(node,researchTransport):null;
       const preparedTransport=(transportPreparation||upstreamTransport)&&BOUNDARIES.has(node.status)?port.quoteTransportPreparation(node,transportPreparation):null;
       const displayTransportQuote=displayedTransport&&BOUNDARIES.has(node.status)?port.quoteDisplayedTransport(node,displayedTransport,baseValue):null;
       const preparedGain=preparedTransport?stateValue.sumValueParts([preparedTransport.value,-baseValue]):0;
-      const priorForecast=Math.max(0,preparedGain,displayTransportQuote?.gain||0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
+      const priorForecast=Math.max(0,preparedGain,displayTransportQuote?.gain||0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0,matchedScanQuote?matchedScanQuote.value-baseValue:0);
       const baseRealization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
       // All current unrealized uses may compete for the same wallet/probe.
       // Charge the entire prior capital before offering the landing floor.
@@ -292,7 +295,8 @@
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
       let decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
       let resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
-      const fundedEnd=analysisFunding&&resourcePolicy&&port.analysisFundingEnd?.(node,analysisFunding);
+      const fundedEnd=resourcePolicy&&(analysisFunding&&port.analysisFundingEnd?.(node,analysisFunding)
+        ||matchedAnalysisScan&&port.matchedAnalysisScanEnd?.(node,matchedAnalysisScan));
       if(fundedEnd&&resourcePolicy.excludedActionIds.includes(fundedEnd)){
         resourcePolicy={...resourcePolicy,retainedActionIds:[...resourcePolicy.retainedActionIds,fundedEnd],
           excludedActionIds:resourcePolicy.excludedActionIds.filter(id=>id!==fundedEnd),keptForAnalysisFunding:fundedEnd};
@@ -432,7 +436,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, displayTransportQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, matchedScanQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, displayTransportQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -851,6 +855,7 @@
       ...(entry.regionFollowup?{knownAmibaRegion:entry.regionFollowup}:{}),
       ...(entry.scanTimingQuote?{knownScanTiming:entry.scanTimingQuote}:{}),
       ...(entry.analysisFundingQuote?{knownAnalysisFunding:entry.analysisFundingQuote}:{}),
+      ...(entry.matchedScanQuote?{matchedAnalysisScan:entry.matchedScanQuote}:{}),
       ...(entry.transportQuote?{knownResearchTransport:entry.transportQuote}:{}),
       ...(entry.preparedTransport?{knownTransportPreparation:entry.preparedTransport}:{}),
       ...(entry.displayTransportQuote?{knownDisplayedTransport:entry.displayTransportQuote}:{}),
