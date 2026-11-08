@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v411";
+  const VERSION = "seti-complete-decision-search-v412";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -165,7 +165,9 @@
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.scanTimingPurpose?.():null;
     const analysisFunding=resourcePlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.analysisFundingSource?.():null;
-    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding;
+    const researchTransport=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3
+      ?port.researchTransportPurpose?.():null;
+    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -260,10 +262,17 @@
       const scanTimingQuote=scanTiming&&BOUNDARIES.has(node.status)?port.quoteScanTimingPurpose(node,scanTiming):null;
       const fundedScanQuote=node.status==="turn-tail-value"?node.planSummary.nextFundedScan:null;
       const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
-      const forecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
+      const transportQuote=researchTransport&&BOUNDARIES.has(node.status)?port.quoteResearchTransport(node,researchTransport):null;
+      const priorForecast=Math.max(0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
+      const baseRealization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
+      // All current unrealized uses may compete for the same wallet/probe.
+      // Charge the entire prior capital before offering the landing floor.
+      const transportForecast=transportQuote?stateValue.sumValueParts([transportQuote.value,baseRealization]):0;
+      const takesTransport=transportForecast>priorForecast;
+      const forecast=takesTransport?transportForecast:priorForecast;
       const value = forecast?stateValue.sumValueParts([baseValue,forecast]):baseValue;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
-      const realization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
+      const realization = takesTransport ? -transportQuote.value : baseRealization;
       const preparationDebt = BOUNDARIES.has(node.status) ? preparationDebtForNode(node) : null;
       const landingCompanyRetained = realizationTies && BOUNDARIES.has(node.status) ? port.landingCompanyRetained?.(node) || 0 : 0;
       const publicDataCard=realizationTies&&BOUNDARIES.has(node.status)?port.retainedPublicDataCard?.(node)||null:null;
@@ -414,7 +423,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, transportQuote:takesTransport?transportQuote:null, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -814,6 +823,7 @@
       ...(entry.regionFollowup?{knownAmibaRegion:entry.regionFollowup}:{}),
       ...(entry.scanTimingQuote?{knownScanTiming:entry.scanTimingQuote}:{}),
       ...(entry.analysisFundingQuote?{knownAnalysisFunding:entry.analysisFundingQuote}:{}),
+      ...(entry.transportQuote?{knownResearchTransport:entry.transportQuote}:{}),
       ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       ...(entry.publicDataCard?{retainedPublicDataCard:entry.publicDataCard}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"

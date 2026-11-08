@@ -67,6 +67,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/resource-demand.test.js", "policy/decision-search", "资源准备绑定真实目标和精确缺口，贪心付款保护目标牌，原生逐步输入及恢复一致", "无需求兑换、为付款丢掉目标牌、资金满足后继续兑换、身份敏感弃牌不显式回退或恢复重开兑换树"),
     entry("randomizer/game/ai/stationary-computer-tail.test.js", "policy/decision-search", "静止探测器固定电脑前缀的分数账本摘要与原生尾部逐输入一致，保留原完整搜索的值和动作", "分数值被半单位守卫拒绝导致重复模拟，或摘要漏掉新移动、选牌目的"),
     entry("randomizer/game/ai/computer-prefix-plan.test.js", "policy/decision-search", "主行动后电脑宣传及蓝列作为固定前缀，跨线待领取标记与实际领取价值连续，报价/原生逐步恢复一致", "只剩结束turn、为局部准备弃牌补数据、跨收入选牌、重复领取格位奖励或预算中断污染原根"),
+    entry("randomizer/game/ai/blue-transport-research.test.js", "policy/decision-search", "已知土星路线给已筹资的蓝列研究计价，独立恢复方向支付并保留真实现金、数据及运输牌", "把牌堆或下一科技奖励倒灌为当前估值、把移动当无目标分支，或重复使用蓝槽现金和研究付款"),
     entry("randomizer/game/ai/research-order-mark.test.js", "policy/state-value", "已筹资持牌和宣传研究两种顺序按首次阈值及已知触发完成计价，原生C1收益和根隔离一致", "只报价宣传研究先行、漏计零当前价值C1的确定任务完成，或将后续完成倒灌到较早标记"),
     entry("randomizer/game/ai/research-mark-capital.test.js", "policy/state-value", "延后研究计入已得D标记增值与当前筹资跨阈值的新标记用途，手牌/宣传共享一次领取，原生/完整/紧凑观察一致", "遗漏已得标记增长或确定可跨阈值的新标记、D2/D1及新标记重复计价、借未来支付和当前收益、收入改变固定排序仍报价"),
     entry("randomizer/game/ai/mixed-blue-analysis.test.js", "policy/state-value", "多物种公开时的蓝色分析共享全局痕迹计数、资金及电脑消费，原生兑现并在下一主行动绑定填6", "第二物种使已知分析归零、额外痕迹改写首放者、错算B1或已付分析的数据被低值蓝槽消耗或非紧急准备改变前两轮"),

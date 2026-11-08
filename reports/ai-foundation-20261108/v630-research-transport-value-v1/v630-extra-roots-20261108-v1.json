@@ -1,0 +1,56 @@
+[
+  {
+    "case": "a0-gate-14",
+    "sameRanking": true,
+    "actionId": "research_tech:806ccfc8",
+    "value": 156,
+    "nativeInputs": 72,
+    "milliseconds": 243.353791,
+    "complete": true,
+    "unresolved": 0,
+    "diagnosticLimits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    },
+    "quoteCount": 0,
+    "rootAndRngUnchanged": true
+  },
+  {
+    "case": "a0-gate-21",
+    "sameRanking": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 155.5,
+    "nativeInputs": 209,
+    "milliseconds": 463.769,
+    "complete": true,
+    "unresolved": 0,
+    "diagnosticLimits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    },
+    "quoteCount": 0,
+    "rootAndRngUnchanged": true
+  },
+  {
+    "case": "after-orange-gate",
+    "sameRanking": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 169,
+    "nativeInputs": 254,
+    "milliseconds": 474.669166,
+    "complete": true,
+    "unresolved": 0,
+    "diagnosticLimits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    },
+    "quoteCount": 0,
+    "rootAndRngUnchanged": true
+  }
+]
