@@ -1,0 +1,34 @@
+{
+  "scope": "No new R4 run; formal R3 checkpoint byte-exact to the start of the existing matched PASS/Saturn landing/analysis Native control.",
+  "record": "reports/research/6a713f85.e0a2b317.quick-400.json",
+  "recordSha256": "4bded538fabf4db89b84ee8d0f5245abaf97d1d2deafbee34ef93c04aa143060",
+  "checkpoint": "reports/research/6a713f85.e0a2b317.quick-400.json.round-end-3.checkpoint.json",
+  "checkpointSha256": "55a6691850969bf917a0727779ccd04ce7cca5581f5ab05ec6a86c309636455d",
+  "archive": "reports/ai-foundation-20261108/v488-r227-route-and-income-v1/v488-r227-route-and-income-evidence-20261108-v1.tar.gz",
+  "archiveSha256": "a11eb7bef83843ce6b2260dbb885eb3cac86272ac858b13647dafb63a7eb4092",
+  "controlMembers": {
+    "v484-r227-fourth-saturn-20261108-v1.json": "2270ab33d635f5765d216f0d30a291b234e798e1258a9a9dc5cf848e7d3c290e",
+    "v484-r227-fourth-analysis-20261108-v1.json": "53f2d7807b129e34bf133c699eaf9e8a7a9483ca6122e8cd09a66de73504e76e"
+  },
+  "exactNativeEnvelopeAndRng": true,
+  "oldAfterTwoR4Mains": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 8,
+    "energy": 0,
+    "handSize": 3,
+    "publicity": 1,
+    "score": 135
+  },
+  "newAfterTwoR4Mains": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 8,
+    "energy": 1,
+    "handSize": 3,
+    "publicity": 2,
+    "score": 135
+  }
+}
