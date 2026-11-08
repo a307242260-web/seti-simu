@@ -1044,13 +1044,19 @@
     const taskCountScoreThreshold=Math.min(...jiuzhe.CARD_DEFINITIONS
       .filter(card=>card.condition?.type==="completedTasks").map(card=>card.condition.count));
     function cappedSectorTaskToKeep(state,owner,node) {
-      const turn=state.turn;
+      const turn=state.turn,slots=Object.values(state.aliens.aliens);
+      // A revealed but inactive Chong board adds no observer of task count
+      // or of the ordinary data tail. Live cargo and reserved Chong effects
+      // keep the previous native decision path.
+      const inactiveChong=slots.some(s=>s.revealed&&s.alienId==="虫")
+        &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+        &&owner.reservedCards.every(card=>card.set!=="alien:虫");
       if(node.status!=="stable"||turn.roundNumber!==3||turn.currentPlayerId!==seatId
         ||!owner.mainActionCompleted||owner.passCompletionPending||owner.resources.publicity!==players.RESOURCE_LIMITS.publicity
         ||industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
-        ||node.legalActions.some(goalMovement.isDirection)
+        ||node.legalActions.some(goalMovement.isDirection)&&(!inactiveChong||turn.cardTurnEventBonuses?.length)
         ||!node.legalActions.some(a=>a.family==="end_turn")
-        ||Object.values(state.aliens.aliens).some(s=>s.revealed&&s.alienId!=="阿米巴"))return null;
+        ||slots.some(s=>s.revealed&&s.alienId!=="阿米巴"&&(s.alienId!=="虫"||!inactiveChong)))return null;
       if(Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
         &&(!Number.isSafeInteger(owner.completedTaskCount)||owner.completedTaskCount<0
           ||!Number.isSafeInteger(taskCountScoreThreshold)||owner.completedTaskCount+1>=taskCountScoreThreshold))return null;
@@ -1065,11 +1071,56 @@
         ?{...hold,actionId:ready[0].actionId,reason:"reserve-capped-task-for-known-publicity-payment"}:null;
     }
 
+    // Spend one held data to fund the fee of an already-known transport.
+    // This is a fixed preparation for the next uninterrupted own main,
+    // not a second search tree or an estimate based on future fossil IDs.
+    function transportCashGoal(state,stored) {
+      const turn=state.turn,p=state.players.players.find(a=>a.id===seatId);
+      if(turn.roundNumber!==3||turn.currentPlayerId!==seatId||!p.mainActionCompleted||p.passCompletionPending
+        ||p.resources.credits!==0||p.resources.availableData!==1||p.dataState.poolTokens.length!==1
+        ||!p.hand.some(c=>cardEffects.getCardModel(c)?.playEffects?.some(e=>e.type==="chong_pickup_fossil"))
+        ||!p.hand.every(c=>knownCards(stored.envelope).has(c.id))
+        ||data.listComputerPlacedTokens(p).length!==5
+        ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||turn.cardTurnEventBonuses?.length||stored.intent||stored.resourceControl
+        ||!hasPostMainInertReservations(state,true,true,true))return null;
+      const ready=data.listBluePlacementRequirements(p).filter(r=>
+        data.listComputerPlacedTokens(p).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(r.blueSlot)));
+      if(ready.length!==1||data.getBlueBonusPlacementReward(p,ready[0].blueSlot)?.type!=="credits")return null;
+      const goal={id:"data:blue:"+ready[0].blueSlot,kind:"blue-data",blueSlot:ready[0].blueSlot,required:{}};
+      const q=localPlans.previewBlueCompletion({state,seatId,goal});
+      if(!q.available||q.requiredNativeInputs!==2||q.player.resources.credits!==1||q.player.resources.availableData!==0)return null;
+      const next=previewTurn(state);
+      if(!next.turnAdvanced||next.roundAdvanced||next.gameEnded||next.nextPlayerId!==seatId)return null;
+      const funded={...q.player,mainActionCompleted:false};
+      const future={...state,players:{...state.players,players:state.players.players.map(a=>a===p?funded:a)}};
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      const route=resourceDemand.heldLandingGoal({state:future,seatId,compareTiming:timingForOneGoalQuery(future),
+        candidates:()=>native.getProbeRouteRequirements(future,seatId)?.candidates||[]});
+      return route?.embeddedMove?{...goal,knownTransport:route.id,knownTransportValue:route.value}:null;
+    }
+
     function resourceSpec(node) {
       const stored=nodes.get(node);
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
+      const pending=stored.envelope.session?.session;
+      const cashBase=node.status==="stable"&&node.legalActions.some(a=>a.family==="end_turn"&&a.actorId===seatId)
+        &&!node.legalActions.some(a=>a.family==="complete_task")
+        ?readPlanningState(stored)
+        :node.status==="decision"&&pending?.queue?.length===1&&pending.queue[0].type===scienceSession.EFFECT_TYPES.PLACE_DATA
+          &&pending.journal?.actions?.[0]?.action.family==="place_data"&&pending.baseState
+          ?planningState(pending.baseState,stored.informationBarrier,knownCards(stored.envelope)):null;
+      const cash=cashBase&&transportCashGoal(cashBase,stored);
+      if(cash){
+        const a=node.legalActions.find(a=>node.status==="stable"?a.family==="place_data":a.target?.target==="blueBonus"&&a.target.blueSlot===cash.blueSlot);
+        if(!a)throw Error("HELD_TRANSPORT_BLUE_CASH_TARGET_MISSING");
+        const plan={id:cash.id,goal:cash,operation:{finalPlacement:node.status==="decision"},firstActionId:a.actionId,mode:"greedy",reason:"known-blue-cash-funds-held-transport"};
+        const fixed=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:[plan],retainedActionIds:[],
+          excludedActionIds:node.legalActions.map(a=>a.actionId)});
+        resourceSpecs.set(node,fixed);return fixed;
+      }
       const cardPick=cardPickSpec(node);
       if(cardPick?.fixed){resourceSpecs.set(node,null);return null;}
       const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
@@ -3283,8 +3334,10 @@
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
         &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed
           ||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||fixedR4DeepSpace)&&slot.alienId==="阿米巴"
-          ||fixedR4DeepSpace&&slot.alienId==="虫"
-            &&owner.reservedCards.every(card=>card.set!=="alien:虫"))
+          ||(fixedR4DeepSpace||state.turn.roundNumber===3
+            &&(publicAmibaPlainEnd||!hasOwnVisitSource(state)&&(publicAmibaCurrencyTail||quietR3Computer))
+            &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)
+            &&slot.alienId==="虫"&&owner.reservedCards.every(card=>card.set!=="alien:虫"))
           &&!alienState.isAlienReadyToReveal(slot))
         // A plain end cannot move a probe; the helper still checks historical
         // matching triggers, tasks and scoring. Compound plans keep their

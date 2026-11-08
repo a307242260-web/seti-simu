@@ -1062,10 +1062,32 @@
   return fixedChoice(actions,skip,'fixed-defer-overflow-task',{reason:'claim-after-funded-research',...fact,
     assumption:'already affordable research; a persistent held sector task is still manually claimable next turn'});
  }
+ function fixedPositiveEndTask({state,seatId,actions,session,payload}){
+  const p=owner(state,seatId),turn=state.turn,advance=session.queue[1];
+  if(turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
+    ||actions.length!==2||session.queue.length!==2||session.interruptContext
+    ||advance?.type!=='probe_turn_advance'||advance.ownerId!==seatId||advance.payload?.didPass!==false
+    ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+    ||!Object.values(state.aliens.aliens).every(s=>s.revealed&&['阿米巴','虫'].includes(s.alienId))
+    ||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+    ||p.reservedCards.some(c=>c.set==='alien:虫')
+    ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles).some(t=>t.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
+  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId),model=card&&effects.getCardModel(card);
+  const task=model?.tasks?.length===1&&model.tasks[0],reward=task?.rewards?.length===1&&task.rewards[0],gain=reward?.options?.gain;
+  if(!card||card.hidden||!model||model.cardType!==2||model.endGameScoring||model.triggers?.length||model.temporaryTasks?.length
+    ||task?.id!==payload.ruleId||task.condition?.type!=='orbitOrLandCount'||reward?.type!=='gain_resources'
+    ||(reward.options?.repeat??1)!==1||!gain||Object.keys(gain).length!==2
+    ||!Number.isSafeInteger(gain.score)||gain.score<=0||!Number.isSafeInteger(gain.credits)||gain.credits<=0)return null;
+  const confirm=actions.find(a=>a.target?.choiceId===`confirm:task:${payload.cardInstanceId}:${payload.ruleId}`);
+  if(!confirm||!actions.some(a=>a.target?.choiceId===`skip:task:${payload.cardInstanceId}:${payload.ruleId}`))return null;
+  return fixedChoice(actions,confirm,'fixed-positive-optional',{reason:'greedy-free-known-task-score-credit',
+   assumption:'known completed task adds score and currency at end of own turn without forfeiting reserved triggers or scoring'});
+ }
  function pureOptional({state,seatId,actions,session}){
   if(!actions.length||!actions.every(a=>a.family==='accept_optional_effect'))return null;
   const payload=session?.queue?.[0]?.payload;
-  if(payload?.kind==='task')return deferredPublicityTask({state,seatId,actions,session,payload});
+  if(payload?.kind==='task')return deferredPublicityTask({state,seatId,actions,session,payload})
+    ||fixedPositiveEndTask({state,seatId,actions,session,payload});
   if(payload?.kind!=='trigger')return null;
   const confirms=actions.filter(a=>a.target?.choiceId?.startsWith('confirm:')),skip=actions.find(a=>a.target?.choiceId?.startsWith('skip:'));
   if(!confirms.length||!skip)return null;

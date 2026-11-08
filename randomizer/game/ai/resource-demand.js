@@ -964,8 +964,18 @@
     if(Object.keys(cost).length!==1||!Number.isSafeInteger(cost.credits)||cost.credits<=0||p.resources.credits<cost.credits)return null;
     const energyPayment=p.resources.energy>=1;
     const payers=energyPayment?[]:p.hand.filter(c=>c.id!==card.id&&movePoints(c)===1);
-    if(!energyPayment&&payers.length!==1)return null;
-    const [payment]=payers,options=[];
+    let payment=payers.length===1?payers[0]:null;
+    if(!energyPayment&&!payment&&payers.length>1){
+      // Keep a held substitute landing or paid research card when one
+      // plain move corner supplies the same Native payment. Other ties
+      // have no established order and do not get a fixed plan.
+      const plain=payers.filter(c=>!Object.keys(cards.getDiscardActionMoveRewardForCard(c).gain).length);
+      const distinctUse=c=>(effects.getCardModel(c)?.playEffects||[]).some(e=>
+        e.type==='chong_land_for_pickup'||e.type==='card_research_tech'&&e.options?.skipCost);
+      if(plain.length===1&&payers.every(c=>c===plain[0]||distinctUse(c)))payment=plain[0];
+    }
+    if(!energyPayment&&!payment)return null;
+    const options=[];
     for(const c of candidates()){
       if(c.launchRequired||c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!['jupiter','saturn'].includes(c.planetId)
         ||c.required.paidMovementPoints!==2||c.path.length!==2)continue;

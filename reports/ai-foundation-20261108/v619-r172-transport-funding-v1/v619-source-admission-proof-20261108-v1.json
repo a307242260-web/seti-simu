@@ -1,0 +1,50 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V619",
+  "searchVersion": "seti-complete-decision-search-v411",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "f8d105b0ff09a232707afca3dc0a9588d38b94af",
+  "runtimeSubtrees": {
+    "randomizer": "b7afcee49b4d5fc57b09e10ef4378f0864d44c22",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v619-r172-transport-funding-v1/v619-source-manifest-20261108-v1.json",
+  "manifestSha256": "e489d2576ee6d2ec9aad1e1079c920e68384f73abd8d0f690812195e16600e97",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "f9f186cac1ab399f7505b8f5fafb52779640ed4f7fb4e174224ccda04f79b42b",
+    "randomizer/game/ai/decision-search.js": "8cb4a9e425bf187164501ed089b80ef82490b7682f32dfb9a6634c9795cf07f5",
+    "randomizer/game/ai/local-decision-plans.js": "aebeb9c6c7b20300e1385613bb5efd82f91f99ff37bc4fa5dd1ad56a7c4753f1",
+    "randomizer/game/ai/resource-demand.js": "cbc49ace7b9cf267094e0ecf4c729a96479518c27645e75efbbf678a0fcdf8bf"
+  },
+  "evidenceSha256": {
+    "v619-source-manifest-20261108-v1.json": "e489d2576ee6d2ec9aad1e1079c920e68384f73abd8d0f690812195e16600e97",
+    "v619-cold-gate-20261108-v1.json": "d91f735fe300b048409a6aa710a47e77db6c1b09ca53187569283a71262d0da7",
+    "v619-r172-transport-funding-evidence-20261108-v1.tar.gz": "6766af124413993429729b664cdd683d7caf95e0f87927e9613f1cf7ec42785b",
+    "v619-full-node-20261108-v1.log": "49678c2dadc5ac1512350b2a0199d262382e3730e69570aacb7dbbfa0311ef5c",
+    "v619-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v619-browser-20261108-v1.log": "086201457da99507f4830fac72d74a4bebbc52458a965fd4e40c4d5e3134f79f"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 588.98875,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 831,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "newColdInputs": [
+    72,
+    209,
+    254,
+    2,
+    1
+  ],
+  "fixedTransportEvidence": "V619 cold Native blue cash and hidden fossil masks; all three late gates preserve root rankings",
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}
