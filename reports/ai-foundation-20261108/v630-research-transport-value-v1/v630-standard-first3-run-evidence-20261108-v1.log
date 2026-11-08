@@ -1,0 +1,137 @@
+{
+  "gitCommit": "0d823ef13",
+  "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v412/seti-purpose-capital-state-value-v58/human405-white-first3-v1/seti-human405-pass-only-v1",
+  "scenario": "human405-white-first3-v1",
+  "scenarioResult": {
+    "firstRoundSettled": true,
+    "openingInputs": 23,
+    "firstThreeRoundsSettled": true,
+    "newInputsAfterOpening": 236,
+    "completedRoundEnds": [
+      1,
+      2,
+      3
+    ]
+  },
+  "terminal": false,
+  "stopReason": "first-three-rounds-settled",
+  "wallMs": 12922,
+  "steps": 259,
+  "rounds": [
+    {
+      "round": 1,
+      "score": 15,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 3,
+        "score": 15
+      },
+      "hand": [],
+      "projectedFinalScore": 15
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "blue3": true,
+          "purple4": true
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 48
+      },
+      "hand": [
+        "dlc_32.png"
+      ],
+      "projectedFinalScore": 55
+    },
+    {
+      "round": 3,
+      "score": 116,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 116
+      },
+      "hand": [],
+      "projectedFinalScore": 162
+    }
+  ],
+  "searchCount": 211,
+  "peakNative": 256,
+  "peakMilliseconds": 369.0630000000001
+}
