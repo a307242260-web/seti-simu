@@ -1,0 +1,49 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V534",
+  "searchVersion": "seti-complete-decision-search-v408",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "dd745878d9219e301138ec3ce80469ee0a172e2c",
+  "snapshotTree": "054b1dccbbd312f324ae8ae061907f32c0513fa4",
+  "runtimeSubtrees": {
+    "randomizer": "3a303195fb9d28a9832c398f901219daa7aa12b2",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v534-r4-fixed-data-admission-v1/v534-source-manifest-20261108-v1.json",
+  "manifestSha256": "8859c7fa15f63c72f41caa9bdf58e63781c52f06731aa728c4b9c9557142ba99",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "c3d5f9c6b7c6e1044a15a7992b51b0e6941334572fd4fa348660859dd29cf991",
+    "randomizer/game/ai/decision-search.js": "b9ac3a4beaed1ccb121f9384df03d1b75b2e3a5aa441e511b1d81ab74b649d6d",
+    "randomizer/game/ai/local-decision-plans.js": "db2f1ab196f6817bad6638af0e5620dbb0ce7d0db3ffb36c95a74bd32604a1e6"
+  },
+  "evidenceSha256": {
+    "v534-source-manifest-20261108-v1.json": "8859c7fa15f63c72f41caa9bdf58e63781c52f06731aa728c4b9c9557142ba99",
+    "v534-cold-gate-20261108-v1.json": "1059b717ea4504d0cf4a0fa70c08b5007627a236b924c479cafd6f72ca650de6",
+    "v534-r4-fixed-data-evidence-20261108-v1.tar.gz": "4acc66edec74909959e2b59057da2ae80fdc2e197e484976c9c4f58f15214935",
+    "v534-full-node-20261108-v1.log": "7b19aff8419f61d7cb73f495601a08f9e256eac3b0cb744f7e7e39133ad5b424",
+    "v534-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v534-browser-20261108-v1.log": "43bb415c6bdc151d0a066baf242dc6b5ebddb9ddf406ee440517ef7b38f9d805"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 575.0918330000001,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 894,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "r4ColdNativeInputs": [
+    196,
+    202,
+    186
+  ],
+  "independentNativeReplayInputs": 1098,
+  "materializedFixedTails": 148,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

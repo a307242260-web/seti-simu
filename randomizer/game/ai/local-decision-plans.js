@@ -1327,7 +1327,7 @@
   const purposeDelta=markedTiles.length?stateValue.sumValueParts([demand.planningCapital(preview,p),-demand.planningCapital(state,p)]):0;
   return{available:true,netGain:stateValue.sumValueParts([total(preview)-before,purposeDelta]),purposeDelta,requiredNativeInputs:1+markedTiles.length,markedTiles};
  }
- function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null,fixedDataOrdering=false,stationaryFinalData=false,exactFixedBlueTie=false}){
+ function dataTailCompletion({state,seatId,canLeaveProbeStationary=null,trackPurposeDelta=false,firstBlueGoal=null,canContinue=null,initialIncomeGoal=null,initialIncomeTail=null,fixedDataOrdering=false,stationaryFinalData=false,exactFixedBlueTie=false,publicBlue=null}){
   // With no owned probe, the shared previews cover held/paid investment and
   // future currency income exactly. No new card identity or owned technology
   // is introduced. Live-probe travel at every round still needs its movement audit.
@@ -1348,11 +1348,27 @@
   const prefixPurpose=()=>!plans.length?0:stateValue.sumValueParts([
    currentCapital??demand.planningCapital(current,owner(current,seatId)),
    -(sourceCapital??demand.planningCapital(state,initialOwner))]);
+  function finishPublicBlue(goal,force){
+   const branch=publicBlue?.({state:current,goal,capital:currentCapital});
+   if(!branch)return null;
+   const end=force?null:quietEndCompletion({state:current,seatId});
+   if(end&&!end.available)return null;
+   if(end&&branch.netGain===end.netGain&&branch.unrealizedPurposeDelta===end.purposeDelta
+     &&branch.requiredNativeInputs===end.requiredNativeInputs)return null;
+   const take=!end||branch.netGain>end.netGain||branch.netGain===end.netGain
+     &&(branch.unrealizedPurposeDelta<end.purposeDelta||branch.unrealizedPurposeDelta===end.purposeDelta&&branch.requiredNativeInputs<end.requiredNativeInputs);
+   const selected=take?branch:end;
+   return {available:true,plans:take?[...plans,{goal,bluePublicPick:branch.bluePublicPick}]:plans,
+    netGain:stateValue.sumValueParts([netGain,selected.netGain]),requiredNativeInputs:requiredNativeInputs+selected.requiredNativeInputs-1,
+    immediateScoreGain,markedTiles:selected.markedTiles,...(trackPurposeDelta?{purposeDelta:stateValue.sumValueParts([prefixPurpose(),
+      take?branch.unrealizedPurposeDelta:end.purposeDelta])}:{})};
+  }
   // This branch already selected one native blue goal. Its exact outcome is
   // still quotable when locally unprofitable; do not replace it with ending now.
   if(firstBlueGoal){
    if(firstBlueGoal.kind!=='blue-data')throw new Error('BLUE_TAIL_FIRST_GOAL_INVALID');
-   const preview=previewBlueCompletion({state:current,seatId,goal:firstBlueGoal});if(!preview.available)return preview;
+   const preview=previewBlueCompletion({state:current,seatId,goal:firstBlueGoal});
+   if(!preview.available)return preview.reason==='blue-tail-needs-native-choice'?finishPublicBlue(firstBlueGoal,true)||preview:preview;
    const {player,capital,...summary}=preview;retainCapital(capital);
    plans.push({goal:firstBlueGoal,...summary});netGain=stateValue.sumValueParts([netGain,preview.netGain]);requiredNativeInputs+=preview.requiredNativeInputs;immediateScoreGain+=preview.immediateScoreGain;
    current={...current,players:{...current.players,players:current.players.players.map(v=>v.id===seatId?player:v)}};
@@ -1378,7 +1394,7 @@
    if(prefixes.length&&goals.some(g=>g.kind==='blue-data')){
     if(!fixedDataOrdering)return{available:false,reason:'computer-prefix-blue-order-needs-native-policy'};
     orderedBlue=previewBlueCompletion({state:current,seatId,goal:goals.find(g=>g.kind==='blue-data')},currentCapital);
-    if(!orderedBlue.available)return orderedBlue;
+    if(!orderedBlue.available&&!(publicBlue&&orderedBlue.reason==='blue-tail-needs-native-choice'))return orderedBlue;
    }
    const income=goals.find(g=>g.kind==='income');
    // The native source policy already priced this exact first income goal.
@@ -1410,13 +1426,13 @@
    }
    const goal=goals.find(g=>g.kind==='blue-data');if(!goal)break;
    const preview=orderedBlue||previewBlueCompletion({state:current,seatId,goal},currentCapital);
-   if(!preview.available)return preview;
+   if(!preview.available)return preview.reason==='blue-tail-needs-native-choice'?finishPublicBlue(goal,false)||preview:preview;
    if(!preview.selected){
     if(requirements.bluePlacements.length>1){
      if(!fixedDataOrdering)return{available:false,reason:'nonpositive-blue-may-fund-another-column'};
      // There is one fixed blue order. Compare stopping now to the suffix
      // beginning with that exact next slot; each recursion consumes one slot.
-     const rest=dataTailCompletion({state:current,seatId,canLeaveProbeStationary,canContinue,firstBlueGoal:goal,fixedDataOrdering,trackPurposeDelta,stationaryFinalData,exactFixedBlueTie});
+     const rest=dataTailCompletion({state:current,seatId,canLeaveProbeStationary,canContinue,firstBlueGoal:goal,fixedDataOrdering,trackPurposeDelta,stationaryFinalData,exactFixedBlueTie,publicBlue});
      const endNow=quietEndCompletion({state:current,seatId});
      if(!rest.available||!endNow.available)return{available:false,reason:'fixed-blue-prefix-needs-native-continuation'};
      const exactTie=exactFixedBlueTie&&rest.netGain===endNow.netGain&&!rest.primaryOnly
