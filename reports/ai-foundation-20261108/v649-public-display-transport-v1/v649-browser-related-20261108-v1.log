@@ -1,0 +1,6 @@
+PASS production-browser-full-parity-search http://127.0.0.1:54139/randomizer/index.html?agent=search
+PASS production-search-agent-entry http://127.0.0.1:54139/randomizer/index.html?agent=search
+PASS production-scan-purpose-plan http://127.0.0.1:54139/randomizer/index.html
+PASS production-known-pass-card http://127.0.0.1:54139/randomizer/index.html
+PASS production-mixed-blue-analysis http://127.0.0.1:54139/randomizer/index.html
+SUMMARY browserSmoke passed=5 failed=0 total=5

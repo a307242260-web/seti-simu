@@ -169,7 +169,10 @@ function sanitizeAlienPublicState(state) {
     traces: clone(slot?.traces || {}),
   }));
   const symbols=amiba.getPublicSymbolState(state),traces=amiba.getPublicTraceState(state);
-  return { slots, ...(symbols ? { amiba: symbols } : {}), ...(traces ? { amibaTraces: traces } : {}) };
+  const chongSlot=slots.find(slot=>slot.revealed&&slot.alienId==="虫");
+  const chongOffer=chongSlot?{slotId:chongSlot.slotId,displayedCardIndex:state.chong?.displayedCardIndex??null}:null;
+  return { slots, ...(symbols ? { amiba: symbols } : {}), ...(traces ? { amibaTraces: traces } : {}),
+    ...(chongOffer ? { chongOffer } : {}) };
 }
 
 function sanitizeTechSupply(state) {

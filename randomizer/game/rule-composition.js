@@ -182,6 +182,14 @@
           ...(traces.displayedCardAvailable ? { displayedCardHidden: true } : {}) } };
       }
     }
+    if (aliens.chongOffer) {
+      const offer=aliens.chongOffer;
+      if (!rootSlots.some(slot=>slot.revealed&&slot.alienId==="虫"&&Number(slot.slotId)===Number(offer.slotId))) {
+        result={...result,chongOffer:null};
+      } else if (offer.displayedCardIndex!==rootAliens?.chongOffer?.displayedCardIndex) {
+        result={...result,chongOffer:{slotId:offer.slotId,displayedCardIndex:null}};
+      }
+    }
     return result;
   }
 

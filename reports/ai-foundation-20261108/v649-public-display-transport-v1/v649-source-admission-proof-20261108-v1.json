@@ -1,0 +1,57 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V649",
+  "searchVersion": "seti-complete-decision-search-v416",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "5e4e71219d22c70c68d56b60992c92e6a890d0b2",
+  "runtimeSubtrees": {
+    "randomizer": "365c0ad656b7749c479d249439cb7a281179c8f8",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v649-public-display-transport-v1/v649-source-manifest-20261108-v1.json",
+  "manifestSha256": "16de7a0942ec52c35c774e2331820903c26d69d5efaa8fba800052edc08a2858",
+  "sourceFiles": {
+    "randomizer/app/simulation-contract.js": "237262a780d474e6934e082532199839884cafa600a50b63ee9a091624b158ba",
+    "randomizer/game/ai/analysis-port.js": "fb955650779d63604159497379b14cafa113e0cc133525ca4914824897f6c4f6",
+    "randomizer/game/ai/blue-transport-research.test.js": "0855e859e639078db4516c5d480c60e58c4eeb20082e97215398c9f0de66d2a8",
+    "randomizer/game/ai/decision-search.js": "aefe13f9a025287b7aef66c903455cbbb2f4354a43511923e00da909c4409704",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "8413af12793ea4d11761aaf38f13ddd776c86a12357d6bbfaefa5688c856d003",
+    "randomizer/game/rule-composition.js": "932893b9144338c09cdcd4f3aeeed081fce53d4d95ffaec7e630e76b0bc07b2a"
+  },
+  "evidenceSha256": {
+    "v649-source-manifest-20261108-v1.json": "16de7a0942ec52c35c774e2331820903c26d69d5efaa8fba800052edc08a2858",
+    "v649-cold-gate-20261108-v1.json": "e1766a746029623d4e6a1d70a089ed73afce7c2c60a90eedbc19488ea099d15b",
+    "v649-public-display-transport-evidence-20261108-v1.tar.gz": "7c9c5690987c4a6d1293539cd1e365a0d531192cc96ccdb228d4b84429aae1ac",
+    "v649-extra-roots-20261108-v2.json": "94d3021a46cec3eb269340c48906551a4808326c4a29452053bd3f938b428ff8",
+    "v649-full-node-20261108-v1.log": "eb6820cfeac4cff1e44c0607a2a0b2f1ac45ae5f05ec4c7dc28360e811743a17",
+    "v649-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v649-browser-20261108-v1.log": "1549702b2ca711482f87fa4cef3b609c9afc52ef34f9f8f67ecc041f601c2eb6",
+    "v649-browser-related-20261108-v1.log": "44ba806f6b43ed26cffe21be3384854b406df377ac63c2a8cf966c7f3210a57c",
+    "v649-browser-full-20261108-v1.log": "3ce4eb12a9f451443ed6ffe18369da570fe42fdd4180e7e75f24ddeb1e32e535",
+    "v649-browser-baseline-parity-20261108-v1.log": "bdd3ae1f8bf5a10b1ee978c5255350add1260f36d187ef756b2c4b3ddf9b65f9",
+    "v649-extra-roots-20261108-v1.log": "eaaadd16d2deace24c953ae6b603fcbdac31aa5ac57b46f4ba4dd189731bab02",
+    "v649-extra-roots-20261108-v2.log": "29d6f29c484efa60852e8f0279de97b6d2332e062a4dfc3792ea8db64962b66e"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 589.902791,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 884,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "browserRelatedPassed": 5,
+  "legacyBrowserParityTimeoutBoth": true,
+  "inputAuditPassed": 66,
+  "newColdInputs": [
+    228,
+    44,
+    40
+  ],
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

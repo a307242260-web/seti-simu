@@ -116,5 +116,23 @@ try {
   const withoutPayer=decide(unavailable);
   assert.equal(withoutPayer.q.value,170);
   assert(!withoutPayer.q.lines.some(line=>line.knownTransportPreparation));
+  const scan=decide(f.beforeTransportScan);
+  assert.equal(scan.action.family,'scan');
+  assert.equal(scan.q.value,163);
+  const quote=scan.q.lines.flatMap(line=>line.knownDisplayedTransport?[line.knownDisplayedTransport]:[]);
+  assert(quote.length&&quote.every(v=>v.gain===5&&v.competing===6.5&&v.route.value===11.5));
+  const trace=decide(f.beforeTransportTrace);
+  assert.equal(trace.action.target.speciesId,'chong');
+  assert.equal(trace.action.target.position,4);
+  assert.equal(trace.q.value,163);
+  assert.deepEqual(c.projection({role:'player',playerId:seatId}).state.publicState.board.aliens.chongOffer,{slotId:2,displayedCardIndex:3});
+  const withoutMarket=structuredClone(f.beforeTransportTrace),saved=JSON.parse(withoutMarket.committedState);
+  for(const state of [saved,withoutMarket.session.session.baseState,withoutMarket.session.session.workingState]){
+    state.cards.publicCards[1]=null;
+  }
+  withoutMarket.committedState=JSON.stringify(saved);
+  const missingMarket=decide(withoutMarket);
+  assert.equal(missingMarket.action.target.speciesId,'amiba');
+  assert(!missingMarket.q.lines.some(line=>line.knownDisplayedTransport));
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}

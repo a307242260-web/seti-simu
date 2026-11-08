@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v415";
+  const VERSION = "seti-complete-decision-search-v416";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -170,7 +170,10 @@
     const transportPreparationEnabled=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3;
     const transportPreparation=transportPreparationEnabled?port.transportPreparationPurpose?.():null;
     const upstreamTransport=transportPreparationEnabled&&!transportPreparation&&port.upstreamTransportEnabled?.();
-    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport||transportPreparation||upstreamTransport;
+    const displayedTransport=transportPreparationEnabled&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      ?port.displayedTransportPurpose?.():null;
+    const coreExtendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport||transportPreparation||upstreamTransport;
+    const extendedPurpose=coreExtendedPurpose||displayedTransport;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -267,8 +270,9 @@
       const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
       const transportQuote=researchTransport&&BOUNDARIES.has(node.status)?port.quoteResearchTransport(node,researchTransport):null;
       const preparedTransport=(transportPreparation||upstreamTransport)&&BOUNDARIES.has(node.status)?port.quoteTransportPreparation(node,transportPreparation):null;
+      const displayTransportQuote=displayedTransport&&BOUNDARIES.has(node.status)?port.quoteDisplayedTransport(node,displayedTransport,baseValue):null;
       const preparedGain=preparedTransport?stateValue.sumValueParts([preparedTransport.value,-baseValue]):0;
-      const priorForecast=Math.max(0,preparedGain,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
+      const priorForecast=Math.max(0,preparedGain,displayTransportQuote?.gain||0,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
       const baseRealization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;
       // All current unrealized uses may compete for the same wallet/probe.
       // Charge the entire prior capital before offering the landing floor.
@@ -428,7 +432,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, analysisFundingQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, displayTransportQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -572,6 +576,7 @@
           cardChoiceProofNodes += 1; cardChoiceExcludedActions += actionIds.length - 1;
         }
       }
+      const tailNeedsNative=coreExtendedPurpose||displayedTransport&&port.displayedTransportTailRelevant(entry.node,displayedTransport);
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
         if(!extendedPurpose&&alternative.goalPlan&&incumbent&&resourcePlanning&&movementPlanning&&cardPickPlanning&&finalMarkPlanning
@@ -593,7 +598,7 @@
             }
           }
         }
-        const tailKind=!extendedPurpose&&alternative.cardPickPlan?.goal.id==="income:computer:4"
+        const tailKind=!tailNeedsNative&&alternative.cardPickPlan?.goal.id==="income:computer:4"
           &&entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.target?.tradeId==="publicity-for-card")?"paid-income-end-turn"
           :alternative.resourcePlan?.goal.kind==="blue-data"?"blue-end-turn"
           :["income","computer-prefix"].includes(alternative.resourcePlan?.goal.kind)?"data-end-turn"
@@ -601,8 +606,8 @@
         const regionNeedsTail=tailKind!=="end-turn"&&amibaRegion&&port.amibaRegionNeedsNativeTail(entry.node,amibaRegion);
         let tail=tailKind&&!regionNeedsTail&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
         if((tail?.bluePublicPick?.taskChoice||tail?.computerThenScoredBlue)&&(researchDataPurpose||deferredComputerIncome||amibaRegion))tail=null;
-        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.computerThenKnownBluePick||tail?.quietTaskChoice||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie)&&extendedPurpose)tail=null;
-        if(!extendedPurpose&&tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
+        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.computerThenKnownBluePick||tail?.quietTaskChoice||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie)&&tailNeedsNative)tail=null;
+        if(!tailNeedsNative&&tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const currentValue=valueForNode(entry.node),upperBound=exactTailSum(currentValue,tail.netGain);
           if(upperBound!==null&&incumbent.value>upperBound){
@@ -830,6 +835,7 @@
       ...(entry.analysisFundingQuote?{knownAnalysisFunding:entry.analysisFundingQuote}:{}),
       ...(entry.transportQuote?{knownResearchTransport:entry.transportQuote}:{}),
       ...(entry.preparedTransport?{knownTransportPreparation:entry.preparedTransport}:{}),
+      ...(entry.displayTransportQuote?{knownDisplayedTransport:entry.displayTransportQuote}:{}),
       ...(entry.landingCompanyRetained?{landingCompanyRetained:entry.landingCompanyRetained}:{}),
       ...(entry.publicDataCard?{retainedPublicDataCard:entry.publicDataCard}:{}),
       value: entry.value, realization: entry.realization ?? null, preparationDebt:entry.preparationDebt??null, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
