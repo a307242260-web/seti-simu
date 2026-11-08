@@ -727,6 +727,30 @@
     return Number.isFinite(retained)&&Number.isFinite(both)&&retained>=both?{
       actionId:mandatory.action.actionId,savedCardId:extra.card.id,gain:stateValue.sumValueParts([retained,-both])}:null;
   }
+  function exactBlueCashPublicityPayment(state,seatId,goal,actions,out,need){
+    const p=owner(state,seatId),t=state.turn;
+    if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
+      ||goal.kind!=='research_tech'||goal.tileId!=='blue1'||!goal.blueSlot||goal.publicityCornerCardId
+      ||!need.publicity||need.credits||need.energy||need.data||p.resources.credits||p.resources.energy
+      ||p.resources.availableData!==1||placed(p)!==6||p.hand.length!==4||out.length!==3
+      ||t.cardTurnEventBonuses?.length||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+      ||p.industryRoundMarkRound===t.roundNumber||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
+      ||!state.pieces.rockets.some(r=>r.playerId===seatId&&r.surface==='solar-board'&&!r.fossilId)
+      ||p.hand.some(c=>c.hidden||!c.id||!c.cardId)||out.some(c=>c.observer||c.greedyFailed))return null;
+    const offers=out.map(candidate=>{
+      const action=actions.find(a=>a.actionId===candidate.actionId),card=p.hand.find(c=>c.id===action?.target?.cardInstanceId);
+      const amount=action?.family==='card_corner'&&(action.payload.multiplier??1)===1&&purePublicityCorner(card);
+      return {action,card,amount};
+    });
+    const exact=offers.filter(x=>x.amount===need.publicity),partial=offers.filter(x=>x.amount>0&&x.amount<need.publicity);
+    if(exact.length!==1||partial.length!==2||partial[0].amount+partial[1].amount!==need.publicity)return null;
+    const income=(c,k)=>{const gain=cards.getIncomeGainForCard(c);return gain?.[k]===1&&Object.keys(gain).length===1;};
+    if(!partial.some(x=>income(x.card,'energy'))||!partial.some(x=>income(x.card,'credits')))return null;
+    const future=p.hand.find(c=>!offers.some(o=>o.card===c)),cost=effects.getCardPlayCost(future),play=effects.buildPlayEffects(future);
+    if(cost.credits!==1||Object.keys(cost).length!==1||play.length!==2
+      ||play[0].type!=='pick_card'||play[0].options?.count!==1||play[1].type!=='amiba_choose_symbol_reward')return null;
+    return {actionId:exact[0].action.actionId,savedCardIds:partial.map(x=>x.card.id),proof:'one-exact-corner-preserves-known-income-and-exchange'};
+  }
   function preparations({state,seatId,goal,actions,selectionOnly=false}){
     const before=needs(state,seatId,goal),out=[];
     for(const action of actions.filter(isPreparation)){
@@ -765,7 +789,8 @@
     };
     // A quoted research continuation consumes its known publicity supplier,
     // preserving the symbol card whose later value funded that same plan.
-    const payment=exactPublicityResearchPayment(state,seatId,goal,actions,out,before);
+    const payment=exactBlueCashPublicityPayment(state,seatId,goal,actions,out,before)
+      ||exactPublicityResearchPayment(state,seatId,goal,actions,out,before);
     const preferred=c=>payment?.actionId===c.actionId?1:before.publicity>0&&goal.publicityCornerCardId
       &&actions.find(a=>a.actionId===c.actionId)?.target?.cardInstanceId===goal.publicityCornerCardId?1:0;
     out.sort((a,b)=>preferred(b)-preferred(a)||a.loss*b.reduction-b.loss*a.reduction||a.inputs-b.inputs

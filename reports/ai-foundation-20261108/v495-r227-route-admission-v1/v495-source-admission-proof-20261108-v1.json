@@ -1,0 +1,43 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V495",
+  "searchVersion": "seti-complete-decision-search-v406",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "ec2c7970fa767e4143b7d760e5ad7c93afd55a09",
+  "snapshotTree": "3cd2c4007480eb00b64e18aae9e75ab009a4447f",
+  "runtimeSubtrees": {
+    "randomizer": "cf999a39269fc9efec6f252c816f5d859eb42c6b",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v495-r227-route-admission-v1/v495-source-manifest-20261108-v1.json",
+  "manifestSha256": "a196564b4b8764b613b95c31e1fbc6f20874657431651557e64cbdc42ff58012",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "6acde35fa628870932098ae3ad46133ec77e05cd209f6fad16d31f542a30bf16",
+    "randomizer/game/ai/decision-search.js": "cbc079e93b8a94d2f484bca0b64ff36b16489b88144abc24bfe685bbb3a11171",
+    "randomizer/game/ai/local-decision-plans.js": "815238a1dca5bb4ab5af0a1d12975cbbe04b9f9bba9dc1d7098ed28b8fc7ffe0",
+    "randomizer/game/ai/resource-demand.js": "245ce18e6ca04cb3020f89c465ff16f6adc289ba10f63abee1926cadc957910c"
+  },
+  "evidenceSha256": {
+    "v495-source-manifest-20261108-v1.json": "a196564b4b8764b613b95c31e1fbc6f20874657431651557e64cbdc42ff58012",
+    "v495-cold-gate-20261108-v1.json": "ab221141d3e67aa17e87d71caa4b6df8c99a41600a1884f1af122ba9f6c72381",
+    "v495-r227-route-autonomy-evidence-20261108-v1.tar.gz": "7a4d1be447b1773767c545789a0e2a27c74fc6b8aece539336de90a62f6c1830",
+    "v495-full-node-20261108-v1.log": "2f0e78a98b58d584d5e1b46dc4bc3997544b38d66930b271192808bc20480ac0",
+    "v495-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v495-browser-20261108-v1.log": "c19f507367a2824848476a5d14630005de1daf033267a5e65a11e01b210e9575"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 579.975375,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 894,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

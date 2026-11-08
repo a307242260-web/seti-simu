@@ -843,7 +843,7 @@
       if(nodes[0].pickPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",
         completion:"excluded-by-card-pick-policy",policy:nodes[0].pickPolicy.policy,goal:nodes[0].pickPolicy.goal,isEquivalence:false};
       if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)
-        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&e.resourcePlan?.goal.kind==="held-landing-route")) return {
+        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(e.resourcePlan?.goal.kind==="held-landing-route"||e.resourcePlan?.goal.movementFunding))) return {
         actionId: action.actionId, target: null, value: null, valueType: "not-executed",
         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
