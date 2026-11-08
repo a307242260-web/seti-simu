@@ -1,0 +1,41 @@
+{
+  "record": "reports/research/cf2d3b6a.a5cf6a37.quick-400.json",
+  "recordSha256": "20df72cd9658686dd87337cd090900914772ace6f96532d00e009c9c5e3a69c4",
+  "gitCommit": "a5cf6a370",
+  "steps": 259,
+  "terminal": false,
+  "wallMs": 12743,
+  "rounds": [
+    {
+      "round": 1,
+      "score": 15,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "c552b281a8220c1813a95a97035dfe2a1fe4cad6097e4e348028cb41ea2f426e"
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "c7ce42f56b5f8ffd7db49aff87919b9ebf5d27b616d88946602a1f04084de730"
+    },
+    {
+      "round": 3,
+      "score": 116,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "84ca2aa3eef2cec4ef60db8cf0ea961cf19543044cf01bf0c746424dd9bf973f"
+    }
+  ],
+  "peakNative": 256,
+  "peakMilliseconds": 365.3935419999998,
+  "scenarioResult": {
+    "firstRoundSettled": true,
+    "openingInputs": 23,
+    "firstThreeRoundsSettled": true,
+    "newInputsAfterOpening": 236,
+    "completedRoundEnds": [
+      1,
+      2,
+      3
+    ]
+  }
+}
