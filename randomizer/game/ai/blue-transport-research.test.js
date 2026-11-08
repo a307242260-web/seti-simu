@@ -60,11 +60,11 @@ try {
   assert.deepEqual(alternative.quotes,[]);
   const preparation=decide(f.beforePublicPreparation);
   assert.equal(preparation.action.family,'place_data');
-  assert.equal(preparation.q.value,168.5);
+  assert.equal(preparation.q.value,173.5);
   const proof=preparation.q.lines.find(line=>line.knownTransportPreparation).knownTransportPreparation;
   assert.equal(proof.bluePickSlot,2);
   assert.equal(proof.blueCashSlot,3);
-  assert.equal(proof.route.value,6.5);
+  assert.equal(proof.route.value,11.5);
   const suffix=['place_data','choose_target','place_data','choose_target','choose_card','end_turn'];
   for(const [i,family] of suffix.entries()){
     const {action}=i===0?preparation:decide(save());
@@ -80,7 +80,7 @@ try {
   const company=decide(f.beforeCompanyPreparation);
   const plan=company.q.lines.find(line=>line.knownTransportPreparation)?.knownTransportPreparation;
   assert.equal(company.action.target.abilityId,'deepspace_swap_cards');
-  assert.equal(company.q.value,168.5);
+  assert.equal(company.q.value,173.5);
   assert(company.q.roots.some(r=>r.actionId===company.action.actionId&&r.value===company.q.value));
   assert.equal(plan.blueCashSlot,3);
   assert.equal(plan.bluePickSlot,null);
@@ -98,5 +98,23 @@ try {
   assert(owner.dataState.placedTokens.some(t=>t.placementSlot===5));
   assert(owner.hand.some(card=>card.id===plan.publicPaymentCard));
   assert(companyEnd.cards.publicCards.some(card=>card?.id===plan.swapOutId));
+  const before=decide(f.beforeTransportResearch);
+  assert.equal(before.action.family,'research_tech');
+  assert.equal(before.q.value,173.5);
+  const tracePlan=before.q.lines.find(line=>line.knownTransportPreparation)?.knownTransportPreparation;
+  assert.deepEqual(tracePlan.route.knownYellowTrace,{slotId:2,position:2,score:5});
+  const preResearchState=JSON.parse(f.beforeTransportResearch.committedState);
+  assert(preResearchState.cards.publicCards.some(card=>card?.id===tracePlan.publicPaymentCard));
+  const preparedEdges=before.q.lines.flatMap(line=>line.edges).filter(e=>e.resourcePlan?.goal.id==='data:known-transport-payment:company');
+  assert(preparedEdges.some(edge=>edge.cost===6&&edge.goalStatus==='boundary'&&edge.resourcePlan.goal.cardId===tracePlan.publicPaymentCard));
+  const researchMenu=decide(f.pendingTransportResearch);
+  assert.equal(researchMenu.action.target.tileId,'orange1');
+  assert.equal(researchMenu.q.value,173.5);
+  const unavailable=structuredClone(f.beforeTransportResearch);
+  preResearchState.cards.publicCards=preResearchState.cards.publicCards.map(card=>card?.id===tracePlan.publicPaymentCard?null:card);
+  unavailable.committedState=JSON.stringify(preResearchState);
+  const withoutPayer=decide(unavailable);
+  assert.equal(withoutPayer.q.value,170);
+  assert(!withoutPayer.q.lines.some(line=>line.knownTransportPreparation));
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}

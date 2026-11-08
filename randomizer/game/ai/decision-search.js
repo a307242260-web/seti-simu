@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v414";
+  const VERSION = "seti-complete-decision-search-v415";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -167,9 +167,10 @@
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.analysisFundingSource?.():null;
     const researchTransport=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       ?port.researchTransportPurpose?.():null;
-    const transportPreparation=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3
-      ?port.transportPreparationPurpose?.():null;
-    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport||transportPreparation;
+    const transportPreparationEnabled=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3;
+    const transportPreparation=transportPreparationEnabled?port.transportPreparationPurpose?.():null;
+    const upstreamTransport=transportPreparationEnabled&&!transportPreparation&&port.upstreamTransportEnabled?.();
+    const extendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||researchTransport||transportPreparation||upstreamTransport;
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -265,7 +266,7 @@
       const fundedScanQuote=node.status==="turn-tail-value"?node.planSummary.nextFundedScan:null;
       const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
       const transportQuote=researchTransport&&BOUNDARIES.has(node.status)?port.quoteResearchTransport(node,researchTransport):null;
-      const preparedTransport=transportPreparation&&BOUNDARIES.has(node.status)?port.quoteTransportPreparation(node,transportPreparation):null;
+      const preparedTransport=(transportPreparation||upstreamTransport)&&BOUNDARIES.has(node.status)?port.quoteTransportPreparation(node,transportPreparation):null;
       const preparedGain=preparedTransport?stateValue.sumValueParts([preparedTransport.value,-baseValue]):0;
       const priorForecast=Math.max(0,preparedGain,researchScan?.value||0,(researchData||deferredPublicity)?.value||0,researchIncome?.value||0,regionFollowup?.value||0,scanTimingQuote?.value||0,fundedScanQuote?.value||0,analysisFundingQuote?.value||0);
       const baseRealization = BOUNDARIES.has(node.status) ? realizationForNode(node) : null;

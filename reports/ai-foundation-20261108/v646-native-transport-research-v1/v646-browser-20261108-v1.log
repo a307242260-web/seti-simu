@@ -1,0 +1,2 @@
+PASS production-v646-blue-cash-for-known-transport http://127.0.0.1:58149/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

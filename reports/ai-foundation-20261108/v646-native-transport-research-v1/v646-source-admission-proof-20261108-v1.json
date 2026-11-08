@@ -1,0 +1,49 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V646",
+  "searchVersion": "seti-complete-decision-search-v415",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "1e113d6ad3ea028c1432731e3902964b0fe68615",
+  "runtimeSubtrees": {
+    "randomizer": "d98791d286c91ea81819c37e030a49ec1a19c93a",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v646-native-transport-research-v1/v646-source-manifest-20261108-v1.json",
+  "manifestSha256": "8d5f4274d7c4ffbd0f60c0c9e6bbb48d530cec37d5ee2cf8a1c3a2b3d9e0645c",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "1dc2c967d59803d70bdf13c8d5e9b51dfcc3f5a13c834e5f1c6a1c9011f2a50e",
+    "randomizer/game/ai/blue-transport-research.test.js": "68388a74b66f00fef1bbb1443b54ad8cf21b66cb17079663b9c73507cf0acac3",
+    "randomizer/game/ai/decision-search.js": "d2c89c3c6b77a71e9ec53d7a84ef6858e00fd6744aace2fc5a2a47ddfd1eca36",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "6a7b25c88ab42c97e6fa0439e5145ff41981b233db93587711889bd6c390c83e"
+  },
+  "evidenceSha256": {
+    "v646-source-manifest-20261108-v1.json": "8d5f4274d7c4ffbd0f60c0c9e6bbb48d530cec37d5ee2cf8a1c3a2b3d9e0645c",
+    "v646-cold-gate-20261108-v1.json": "9d476b9618e0b5b4a22d1e9bf97d6de3fc470f12332568a2e737fc9b637dabc8",
+    "v646-native-transport-research-evidence-20261108-v1.tar.gz": "78cc6a27122f99d4627a07df19c6a13e9982957e84ff24e262b0e4b9b5b89a25",
+    "v646-extra-roots-20261108-v1.json": "52fd668c7362b518be9d80f35d3f191e246df6f704ff7e6fd87c3169636b4f27",
+    "v646-full-node-20261108-v1.log": "592d95d8823ba573a05685d230bb7c686ee305c596e8ff23deac1599a3e6d2b0",
+    "v646-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v646-browser-20261108-v1.log": "58ac892fce89111ddc0ac0805fddbd7b4d7af5e7f13a34278b0f003afb6b4013",
+    "v646-extra-roots-20261108-v1.log": "778f571334ccd0727531d9d2edd50c97e62ef9435d920d0348e497ee45536fe1"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 574.816875,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "newColdInputs": [
+    89,
+    19,
+    4
+  ],
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}
