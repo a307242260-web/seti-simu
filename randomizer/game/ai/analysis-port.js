@@ -3179,7 +3179,9 @@
     }
 
     function quoteDataFundedScan(node,stored,charged,owner){
-      if(stored.informationBarrier?.code!=='tech_bonus_reveal'||owner.hand.length!==3
+      const chongOffer=rootObservation.publicState.board.aliens.chongOffer;
+      const useChong=owner.hand.length===4&&Number.isSafeInteger(chongOffer?.displayedCardIndex);
+      if(stored.informationBarrier?.code!=='tech_bonus_reveal'||owner.hand.length!==3&&!useChong
         ||openedRoot?.observation.publicState.roundNumber!==3)return null;
       const base=nodes.get(openedRoot),session=base?.envelope.session?.session;
       const state=session?.journal?.actions?.[0]?.action?.family==='research_tech'&&session.baseState
@@ -3194,6 +3196,7 @@
       if(missing<=0||slots.some((s,i)=>s!==i+1))return null;
       const researched=Object.keys(owner.techState.ownedTiles).filter(id=>!p.techState.ownedTiles[id]);
       if(researched.length!==1||scienceSession.getResearchDataCount(researched[0])!==missing)return null;
+      if(useChong)return localPlans.quoteFundedChongSector({state:charged,seatId,knownCards:knownRootCardIds,offer:chongOffer});
       const knownAlienDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex??null;
       return localPlans.quoteFundedSector({state:charged,seatId,knownCards:knownRootCardIds,knownAlienDisplay});
     }

@@ -1,0 +1,61 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V651",
+  "searchVersion": "seti-complete-decision-search-v418",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "2594ae994006f69cc16ddd34b62f426c7f94272f",
+  "runtimeSubtrees": {
+    "randomizer": "22061e1d9fcb5606541a9c7352519ac040e6eae9",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v651-purple-funded-public-scan-v1/v651-source-manifest-20261108-v1.json",
+  "manifestSha256": "d8c5900aa111f2abfe95b9d35b01ea7aeb34592dd6503029802b6bc3f3e08d80",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "84235217c1c9f7af391f2f8dd7d40f391a2f5a747a0645c4b2c34c5b048bc40d",
+    "randomizer/game/ai/blue-transport-research.test.js": "ff8230250c27aedb9cb127701a85653a996bd8042762934aafba150cb63b0929",
+    "randomizer/game/ai/decision-search.js": "1079a27f8f91162a13f4a11ef16d4122e9eec39bcdde9947ee68f40d93557367",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "6d1518b2460f1a2753c1c688533d7763fb792a416b95e9a39d44c43f1dba4f13",
+    "randomizer/game/ai/local-decision-plans.js": "de1efc8e69fc668732a03d775eb12208dc5ea32af46a11f9381677bdb9e7fdd1"
+  },
+  "evidenceSha256": {
+    "v651-source-manifest-20261108-v1.json": "d8c5900aa111f2abfe95b9d35b01ea7aeb34592dd6503029802b6bc3f3e08d80",
+    "v651-cold-gate-20261108-v1.json": "11461a8a28abb7a242bfc040d4a18a33b30ee4dad303a709ae8bd471d4933076",
+    "v651-purple-funded-scan-evidence-20261108-v1.tar.gz": "a0167bd06ad14b895dd47e38c12ed940b5f16b3a5852d996fa251d9072cc0f27",
+    "v651-extra-roots-20261108-v2.json": "3074f74225357ad6f39b9d98826a37e0b65a67b94a8bd117c90a5f4e6fbc27bf",
+    "v651-node-tests-20261108-v1.log": "81f654e4d27a6029674ef87f331ab94a9b574096774a043c5990d2d773bd849e",
+    "v651-state-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v651-browser-20261108-v1.log": "ee5b0c33af0a779e704a3d1a7b237fc6b798208de6581d3f9dabb88391567630",
+    "v651-extra-roots-20261108-v2.log": "34f41f0b7de6e69e4e1ed9e2de15d9635091568956b8b07151d2fae0135afda2"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 575.45825,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 894,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffixes": [
+    {
+      "root": "computer-0",
+      "autonomousInputs": 67,
+      "maxNative": 237,
+      "maxMs": 490.14725,
+      "boardScore": 117
+    },
+    {
+      "root": "computer-1",
+      "autonomousInputs": 65,
+      "maxNative": 228,
+      "maxMs": 527.9872089999999,
+      "boardScore": 117
+    }
+  ],
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

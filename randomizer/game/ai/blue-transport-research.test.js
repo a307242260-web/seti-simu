@@ -134,5 +134,25 @@ try {
   const missingMarket=decide(withoutMarket);
   assert.equal(missingMarket.action.target.speciesId,'amiba');
   assert(!missingMarket.q.lines.some(line=>line.knownDisplayedTransport));
+  const researchToScan=decide(f.beforeFundedChongScanResearch);
+  assert.equal(researchToScan.action.family,'research_tech');
+  assert.equal(researchToScan.q.value,156);
+  const knownScan=researchToScan.q.lines.find(line=>line.planSummary?.nextFundedScan)?.planSummary.nextFundedScan;
+  assert.equal(knownScan.value,6);
+  assert.deepEqual(knownScan.cost,{credits:1,energy:2});
+  assert.equal(knownScan.publicCardId,'card-61-0');
+  assert.equal(knownScan.displayedCard.cardId,'chong_3.webp');
+  assert.deepEqual([knownScan.remaining.score,knownScan.remaining.publicity,knownScan.remaining.availableData,knownScan.remaining.handSize],[86,10,2,5]);
+  const paidForScan=decide(f.pendingFundedChongScanResearch);
+  assert.equal(paidForScan.action.target.tileId,'purple1');
+  assert.equal(paidForScan.q.value,156);
+  const noKnownSignal=structuredClone(f.beforeFundedChongScanResearch),snapshot=JSON.parse(noKnownSignal.committedState);
+  snapshot.cards.publicCards[2]=null;
+  noKnownSignal.committedState=JSON.stringify(snapshot);
+  assert(!decide(noKnownSignal).q.lines.some(line=>line.planSummary?.nextFundedScan?.displayedCard?.cardId==='chong_3.webp'));
+  const afterFirstSlot=decide(f.afterFirstComputerBeforeResearch);
+  assert.equal(afterFirstSlot.action.family,'research_tech');
+  assert.equal(afterFirstSlot.q.value,156);
+  assert(afterFirstSlot.q.lines.some(line=>line.edges.some(edge=>edge.turnTailPlanValue?.computerThenQuietEnd?.placements===2)));
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}
