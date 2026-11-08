@@ -201,5 +201,46 @@ try {
   const noMarket=structuredClone(f.beforeMatchedAnalysisScan),missingScan=JSON.parse(noMarket.committedState);
   missingScan.cards.publicCards[2]=null;noMarket.committedState=JSON.stringify(missingScan);
   assert.deepEqual(matchedQuotes(decide(noMarket).q),[]);
-  console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
+  // Start with both transport payments already held and the company swap
+  // spent. The fixed public-card pick and exact route reach the native reward
+  // choice without using the replacement display or the fossil identity.
+  const held=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/held-transport-no-company-swap-r3-20261108-v1.json.gz'))));
+  const launch=decide(held.beforeLaunch);
+  const preparationQuote=launch.q.lines.find(l=>l.knownTransportPreparation?.heldPaymentCard)?.knownTransportPreparation;
+  assert.equal(preparationQuote?.value,179.5);
+  assert.equal(preparationQuote.route.knownLandingTask.credits,1);
+  assert.equal(preparationQuote.route.knownYellowTrace.score,5);
+  assert.equal(preparationQuote.swapOutId,undefined);
+  const privateRefill=structuredClone(held.beforeLaunch),privateState=JSON.parse(privateRefill.committedState);
+  for(const deck of [privateState.cards.drawPileCardIds,privateState.aliens.chong.cardDeck]) [deck[0],deck[1]]=[deck[1],deck[0]];
+  privateRefill.committedState=JSON.stringify(privateState);
+  const hiddenLaunch=decide(privateRefill);
+  assert.deepEqual(hiddenLaunch.q.roots,launch.q.roots);
+  assert.deepEqual(hiddenLaunch.q.lines.find(l=>l.knownTransportPreparation?.heldPaymentCard)?.knownTransportPreparation,preparationQuote);
+  const noHeldMover=structuredClone(held.beforeLaunch),lacksMover=JSON.parse(noHeldMover.committedState);
+  const white=lacksMover.players.players.find(p=>p.id===seatId);
+  white.hand=white.hand.filter(card=>card.cardId!=='chong_7.webp');
+  white.resources.handSize=white.hand.length;
+  noHeldMover.committedState=JSON.stringify(lacksMover);
+  assert(!decide(noHeldMover).q.lines.some(l=>l.knownTransportPreparation?.heldPaymentCard));
+  const independentlyFunded=decide(held.beforeBlue);
+  assert.equal(independentlyFunded.action.family,'move');
+  assert.equal(independentlyFunded.q.value,179.5);
+  assert(independentlyFunded.quotes.some(x=>x.knownLandingTask?.score===3&&x.routeId.includes('land:saturn:planet')));
+  let cursor=held.beforeLaunch,heldCheckpoint;
+  for(const expected of held.expectedNativeActions){
+    const {action,checkpoint}=decide(cursor,heldCheckpoint);
+    assert.deepEqual(action,expected);
+    const pending=c.inspect().session?.decision;
+    const result=pending?c.inputPort.submitDecision({decisionId:pending.decisionId,decisionVersion:pending.decisionVersion,ownerId:pending.ownerId,choice:action})
+      :action.phase==='quick'?c.inputPort.submitQuickAction(action):c.inputPort.submitAction(action);
+    assert(result.ok,JSON.stringify(result));
+    cursor=save();heldCheckpoint=checkpoint;
+  }
+  // Cold restoration can renumber an uncommitted Native session. All
+  // contents, including RNG and the pending reward, must otherwise agree.
+  const sessionContents=e=>JSON.parse(JSON.stringify(e).replaceAll(e.session.session.sessionId,'effect-session-test'));
+  assert.deepEqual(sessionContents(cursor),sessionContents(held.afterLanding));
+  console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,
+    privateCardsAndNextTechDoNotChangeRanking:true,knownHeldTransportAutonomousInputs:held.expectedNativeActions.length}));
 } finally {c.dispose();}

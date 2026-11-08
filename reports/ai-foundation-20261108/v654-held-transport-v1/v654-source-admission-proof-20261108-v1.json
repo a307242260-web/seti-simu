@@ -1,0 +1,54 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V654",
+  "searchVersion": "seti-complete-decision-search-v421",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "46f06cc00f3a95a2690301ce60c14cbb02c7d29b",
+  "runtimeSubtrees": {
+    "randomizer": "28b459a0f8b356ccb0a69b446855a95e58619480",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v654-held-transport-v1/v654-source-manifest-20261108-v1.json",
+  "manifestSha256": "6ff79fa2bdd51b459db204d6383ed0355dc7c9e5f2f2dd15289f647f1005abe2",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "531fb5231d4d9e3d5ef00c01c3377b1740eaead29f19738634c563003c196ad9",
+    "randomizer/game/ai/blue-transport-research.test.js": "76e88749e66ce6cb6c10058a458c1f2f3309956064cb1b70a5dcbc5f43746978",
+    "randomizer/game/ai/decision-search.js": "9f3574391b300138c9d782a20ab536f3e92980c15dbc3e9c3bae86e897e7155d",
+    "randomizer/game/ai/fixtures/held-transport-no-company-swap-r3-20261108-v1.json.gz": "095d666f6128cf7000b863523aab93927b88a86899b4116846196c8ac60d65bc"
+  },
+  "evidenceSha256": {
+    "v654-source-manifest-20261108-v1.json": "6ff79fa2bdd51b459db204d6383ed0355dc7c9e5f2f2dd15289f647f1005abe2",
+    "v654-cold-gate-20261108-v1.json": "65fd4a6e880bc7808095f2580fa40f9a69353ef9083bc9caae0ef8d94c25a1b3",
+    "v654-held-transport-evidence-20261108-v1.tar.gz": "ef4f9cdc45f8e726e24082113c1a6a4c42b29c5758c441daec556e09135d9678",
+    "v654-node-tests-20261108-v1.log": "57af4521aec7713bd25f36773e858632f8d020c02e4767605d722108ecd1d0b6",
+    "v654-state-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v654-browser-20261108-v2.log": "a80e69e5423e1a6147881f9c0562ef0f06c811702de4c4153f2e60dc9ef83341",
+    "v654-blue-transport-targeted-20261108-v2.log": "af83cc92311c55147b3c8d9f13d9831c39d28d70e5ebec6e81aa7285141ac75a"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 588.377333,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "nodeVerification": "full run plus selective rerun of the only failed, corrected test; runtime unchanged",
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 125,
+    "establishedScore": 177,
+    "autonomousInputs": 87,
+    "maxNativeInputs": 217
+  },
+  "knownComparison": {
+    "fundedSaturn": 179.5,
+    "immediateVenus": 176.5
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

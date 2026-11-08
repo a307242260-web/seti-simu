@@ -989,6 +989,23 @@
           waitPoints:timing.waitPaidPoints,remainingPoints:advanced.remainingPaidPoints}};
     }
 
+    function isFossilResearchMovePayer(card){
+      const effects=cardEffects.getCardModel(card)?.playEffects;
+      return cards.getDiscardActionMoveRewardForCard(card)?.movementPoints===1
+        &&effects?.length===1&&effects[0].type==="chong_probe_planet_fossil_reward";
+    }
+
+    function retainedScoredTransportPayer(hand){
+      const movers=hand.filter(c=>cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1);
+      if(movers.length!==2||!movers.every(c=>{
+        const gain=cards.getDiscardActionMoveRewardForCard(c).gain;
+        return gain.score===1&&Object.keys(gain).length===1;
+      }))return null;
+      const first=movers.find(isFossilResearchMovePayer),retained=first&&movers.find(c=>c!==first);
+      return retained&&cardEffects.getCardModel(retained)?.playEffects?.some(e=>e.type==="card_research_tech"&&e.options?.skipCost)
+        ?retained:null;
+    }
+
     // Price one move only as payment for the cash-column research purpose.
     // The rule preview selects a unique current publicity stop; no move tree.
     function transportResearchMove(state,actions,known,source=null) {
@@ -1013,17 +1030,30 @@
       });
       // Prefer the card whose only main effect would need a still-unrevealed
       // fossil reward. Preserve the plain movement payer for the named route.
-      const movePayers=p.hand.filter(c=>{
-        const effects=cardEffects.getCardModel(c)?.playEffects;
-        return cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1
-          &&effects?.length===1&&effects[0].type==="chong_probe_planet_fossil_reward";
-      });
+      const movePayers=p.hand.filter(isFossilResearchMovePayer);
       const plain=p.hand.filter(c=>{
         const r=cards.getDiscardActionMoveRewardForCard(c);
         return r?.movementPoints===1&&!Object.keys(r.gain).length;
       });
       const ships=state.pieces.rockets.filter(r=>r.playerId===seatId&&r.surface==="solar-board"&&!r.fossilId);
-      if(suppliers.length!==1||publicity.length!==1||movePayers.length!==1||plain.length!==1||ships.length!==1)return null;
+      if(suppliers.length!==1||movePayers.length!==1||ships.length!==1)return null;
+      let publicityPayer=publicity.length===1&&plain.length===1?publicity[0]:null;
+      let heldPayments=false;
+      if(!publicityPayer&&!plain.length){
+        // A second scored corner can be the landing payer. Keep its paid
+        // research play until the first move is funded. Spend a passive
+        // publicity corner before an active play, then keep the better
+        // income option. No alternative payment enters the search.
+        const scored=retainedScoredTransportPayer(p.hand);
+        if(scored&&scored!==suppliers[0]&&publicity.length){
+          publicityPayer=publicity.length===1?publicity[0]:publicity.map(c=>({c,
+            active:Number(Boolean(cardEffects.getCardModel(c)?.playEffects?.length)),
+            cost:resourceDemand.cardOpportunityCost(state,seatId,c)
+          })).sort((a,b)=>a.active-b.active||a.cost-b.cost||a.c.id.localeCompare(b.c.id))[0].c;
+          heldPayments=true;
+        }
+      }
+      if(!publicityPayer)return null;
       const moves=(source?[source]:actions).filter(a=>a.family==="move"&&a.target.rocketId===ships[0].id
         &&a.payload?.requiredMovePoints===1).filter(({target})=>{
         const copy={...p,resources:{...p.resources}},future={...state,pieces:structuredClone(state.pieces),
@@ -1035,7 +1065,8 @@
       if(moves.length!==1)return null;
       const required={publicity:techResolver.getResearchPublicityCost(p)};
       return {id:"tech:blue1:"+slots[0]+":transport-funding",kind:"research_tech",tileId:"blue1",blueSlot:slots[0],required,
-        movementFunding:{cardId:movePayers[0].id,publicityPayerId:publicity[0].id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity}};
+        movementFunding:{cardId:movePayers[0].id,publicityPayerId:publicityPayer.id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity},
+        ...(heldPayments?{heldPayments:true,probeId:ships[0].id}:{})};
     }
 
     function resourceStep(node,goal,operation={}) {
@@ -1363,7 +1394,9 @@
         const transport=node.status==="stable"?transportResearchMove(state,node.legalActions,knownCards(envelope))
           :source?.family==="move"&&session?.baseState
             ?transportResearchMove(planningState(session.baseState,stored.informationBarrier,knownCards(envelope)),[],knownCards(envelope),source):null;
-        if(transport)goals=[...goals,transport];
+        if(transport&&(!transport.heldPayments||fixedResearchTransportValue(
+          session?.baseState?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):state,
+          knownCards(envelope),transport.probeId,true)))goals=[...goals,transport];
       }
       const preparationBase=state.turn.roundNumber!==3?null
         :node.status==='stable'&&node.legalActions.some(a=>a.family==='place_data')?state
@@ -4640,12 +4673,15 @@
       const menu=openedRoot.legalActions,session=stored.envelope.session?.session;
       const paidChoice=session?.queue?.[0]?.type===scienceSession.EFFECT_TYPES.RESEARCH
         &&session.journal?.actions?.[0]?.action?.family==="research_tech";
-      let payerIds=[];
+      let payerIds=[],heldPayments=false;
       if(!paidChoice&&!menu.some(a=>a.family==="research_tech")){
         const plans=resourceSpec(openedRoot)?.plans||[];
-        const transport=plans.find(x=>x.goal.movementFunding?.publicityPayerId)?.goal.movementFunding;
-        if(transport)payerIds=[transport.cardId,transport.publicityPayerId];
-        else {
+        const transport=plans.find(x=>x.goal.movementFunding?.publicityPayerId)?.goal;
+        if(transport){
+          const {cardId,publicityPayerId}=transport.movementFunding;
+          payerIds=[cardId,publicityPayerId];
+          heldPayments=Boolean(transport.heldPayments);
+        }else {
           if(openedRoot.status!=="stable")return null;
           const plan=plans.find(({goal,mode})=>mode==="greedy"&&goal.kind==="research_tech"
             &&goal.required.publicity===p.resources.publicity+1&&data.getBlueTileDataBonus(goal.tileId)?.type==="credits");
@@ -4657,7 +4693,7 @@
           payerIds=[card.id];
         }
       }
-      return {hand:p.hand.filter(c=>!payerIds.includes(c.id)).map(c=>c.id),player:p,probeId:probes[0].id,turn:t.turnNumber};
+      return {hand:p.hand.filter(c=>!payerIds.includes(c.id)).map(c=>c.id),player:p,probeId:probes[0].id,turn:t.turnNumber,heldPayments};
     }
 
     function quoteResearchTransport(node,purpose) {
@@ -4693,11 +4729,11 @@
       // fixed paid landing from the production route directory, with no
       // speculative value from traces, card draws or the unidentified cargo.
       const future=synthetic?{...state,players:{...state.players,players:state.players.players.map(q=>q===p?{...q,mainActionCompleted:false}:q)}}:state;
-      const quote=publicHeldTransport(future,probe.id,p);
+      const quote=publicHeldTransport(future,probe.id,p,{priceKnownYellow:purpose.heldPayments,priceLandingTask:purpose.heldPayments});
       return quote&&{...quote,blueSlot:cash.blueSlot};
     }
 
-    function publicHeldTransport(future,probeId,p,{priceKnownYellow=false}={}) {
+    function publicHeldTransport(future,probeId,p,{priceKnownYellow=false,priceLandingTask=false}={}) {
       const native=productionKernel||globalThis.SetiProductionKernel;
       let directory;
       const route=resourceDemand.heldLandingGoal({state:future,seatId,compareTiming:timingForOneGoalQuery(future),
@@ -4710,8 +4746,33 @@
       const movePublicity=Math.min(landing.publicityStops,players.RESOURCE_LIMITS.publicity-p.resources.publicity);
       if(![landData,movePublicity].every(v=>Number.isSafeInteger(v)&&v>=0))return null;
       const yellow=priceKnownYellow&&knownPublicLandingTrace(future,p,landing);
-      const w=stateValue.DEFAULT_WEIGHTS,value=stateValue.sumValueParts([score,yellow?.score||0,landData*w.availableData,movePublicity*w.publicity,-w.credits,-w.handSize,-w.handSize]);
-      return value>0?{value,landingScore:score,landData,movePublicity,routeId:route.id,...(yellow?{knownYellowTrace:yellow}:{})}:null;
+      const task=priceLandingTask&&knownLandingTask(future,p);
+      const w=stateValue.DEFAULT_WEIGHTS,value=stateValue.sumValueParts([score,yellow?.score||0,landData*w.availableData,
+        movePublicity*w.publicity,-w.credits,-w.handSize,-w.handSize,task?.score||0,(task?.credits||0)*w.credits]);
+      return value>0?{value,landingScore:score,landData,movePublicity,routeId:route.id,
+        ...(yellow?{knownYellowTrace:yellow}:{}),...(task?{knownLandingTask:task}:{})}:null;
+    }
+
+    function knownLandingTask(state,p){
+      // The already validated destination adds exactly one ordinary landing
+      // marker. Price one newly satisfied persistent task with only score and
+      // credits; no reward choice, cargo, future card or new scoring mark.
+      if(state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles)
+        .some(t=>t.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
+      const context={planets:state.planets,aliens:state.aliens};
+      const tasks=p.reservedCards.flatMap(card=>{
+        const model=cardEffects.getCardModel(card),task=model?.tasks?.length===1&&model.tasks[0];
+        const reward=task?.rewards?.length===1&&task.rewards[0],gain=reward?.options?.gain,count=task?.condition?.count;
+        if(card.hidden||!knownRootCardIds.has(card.id)||model?.cardType!==2||model.triggers?.length||model.endGameScoring
+          ||model.temporaryTasks?.length||task?.condition?.type!=="orbitOrLandCount"||!Number.isSafeInteger(count)||count<2
+          ||card.cardEffectState?.completedTaskIds?.includes(task.id)||reward?.type!=="gain_resources"
+          ||(reward.options.repeat??1)!==1||!gain||Object.keys(gain).length!==2
+          ||!Number.isSafeInteger(gain.score)||gain.score<=0||!Number.isSafeInteger(gain.credits)||gain.credits<=0
+          ||cardEffects.taskConditionMet(task,p,context)
+          ||!cardEffects.taskConditionMet({...task,condition:{...task.condition,count:count-1}},p,context))return [];
+        return [{cardId:card.id,taskId:task.id,score:gain.score,credits:gain.credits}];
+      });
+      return tasks.length===1?tasks[0]:null;
     }
 
     function knownPublicLandingTrace(state,player,landing){
@@ -4772,7 +4833,7 @@
       const advanced=turnFlow.advanceTurnAfterPlayerAction(next,seatId);
       if(!advanced.turnAdvanced||advanced.roundAdvanced||advanced.gameEnded||advanced.nextPlayerId!==seatId)return null;
       q.mainActionCompleted=false;
-      const route=publicHeldTransport(next,probeId,q,{priceKnownYellow:true});
+      const route=publicHeldTransport(next,probeId,q,{priceKnownYellow:true,priceLandingTask:goal.heldPayments});
       if(!route)return null;
       const score=endScoring.computePlayerFinalScore({...next,players:next.players.players,cardEffects,
         getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},q).totalScore;
@@ -4830,7 +4891,10 @@
       };
       const index=state.cards.publicCards.findIndex(isKnownPayment),held=p.hand.filter(isKnownPayment);
       let card=state.cards.publicCards[index],blueSlot=null,swapOutId=null;
-      if(stock===7){
+      const heldPayments=stock===6&&!swapPending&&!held.length&&p.industryRoundMarkRound===t.roundNumber
+        &&head?.type!==scienceSession.EFFECT_TYPES.PICK_CARD&&retainedScoredTransportPayer(p.hand);
+      if(heldPayments)card=heldPayments;
+      else if(stock===7){
         if(swapPending||!card||held.length)return null;
         const ready=data.listBluePlacementRequirements(p).filter(r=>data.getRequiredComputerSlotForBlueBonus(r.blueSlot)<=count
           &&data.getBlueBonusPlacementReward(p,r.blueSlot)?.type==="choose_card");
@@ -4882,7 +4946,7 @@
       if(!quiet.available||quiet.netGain!==0||quiet.markedTiles.length)return null;
       const quote=fixedResearchTransportValue(projected,known,probes[0].id,false,comparison);
       if(!quote)return null;
-      const goal={id:"data:known-transport-payment:"+(blueSlot??(swapOutId?"company":"held")),kind:"transport-data-prep",blueSlot,cardId:card.id,
+      const goal={id:"data:known-transport-payment:"+(blueSlot??(swapOutId?"company":heldPayments?"held-scored":"held")),kind:"transport-data-prep",blueSlot,cardId:card.id,
         ...(swapOutId?{swapOutId,swapPublicSlot:index}:{}),required:{}};
       return {goal,quote,after,turn:t.turnNumber,probe:probes[0],rotation:state.solarSystem.rotation};
     }
@@ -4897,14 +4961,16 @@
         :openedRoot.legalActions.some(a=>a.family==="research_tech");
       const source=ready&&readPlanningState(stored);
       const p=source&&source.players.players.find(q=>q.id===seatId),t=source?.turn;
+      const heldPayments=p&&p.industryRoundMarkRound===t.roundNumber
+        &&p.hand.every(c=>knownRootCardIds.has(c.id))&&retainedScoredTransportPayer(p.hand);
       const eligible=p&&t.roundNumber===3&&t.currentPlayerId===seatId&&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
         &&!t.cardTurnEventBonuses?.length&&!p.mainActionCompleted&&!p.passCompletionPending&&!p.resources.credits&&!p.resources.energy
         &&p.resources.availableData===2&&p.dataState.poolTokens.length===2&&data.listComputerPlacedTokens(p).length===4
-        &&p.industryRoundMarkRound!==t.roundNumber
+        &&(heldPayments||p.industryRoundMarkRound!==t.roundNumber)
         &&industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId==="deepspace_swap_cards"
         &&!source.pieces.rockets.some(r=>r.playerId===seatId&&r.surface==="solar-board")
         &&p.hand.some(c=>knownRootCardIds.has(c.id)&&cardEffects.getCardModel(c)?.playEffects?.some(e=>e.type==="chong_pickup_fossil"));
-      const value=eligible?{source,p,turn:t.turnNumber}:null;
+      const value=eligible?{source,p,turn:t.turnNumber,heldPayments}:null;
       upstreamTransportRoots.set(openedRoot,value);
       return value;
     }
@@ -4926,9 +4992,11 @@
       const gained=p.hand.filter(c=>!root.p.hand.some(old=>c.id===old.id));
       const lost=root.p.hand.filter(c=>!p.hand.some(now=>c.id===now.id));
       const originalSlot=c=>root.source.cards.publicCards.findIndex(old=>old?.id===c.id);
-      if(!advanced){
-        if(p.industryRoundMarkRound!==root.p.industryRoundMarkRound||gained.length!==1||lost.length||originalSlot(gained[0])<0)return null;
-        return {p,probe:probes[0]};
+      if(!advanced||root.heldPayments){
+        if(p.industryRoundMarkRound!==root.p.industryRoundMarkRound
+          ||root.heldPayments&&p.industryRoundMarkTurn!==root.p.industryRoundMarkTurn
+          ||gained.length!==1||lost.length||originalSlot(gained[0])<0)return null;
+        return {p,probe:probes[0],...(root.heldPayments?{payer:root.heldPayments}:{})};
       }
       if(p.industryRoundMarkRound!==3||p.industryRoundMarkTurn!==root.turn||gained.length!==2||lost.length!==1
         ||gained.some(c=>originalSlot(c)<0))return null;
@@ -5042,7 +5110,9 @@
         const completed=upstreamTransportState(state,true);
         if(!completed)return null;
         const quote=fixedResearchTransportValue(state,knownRootCardIds,completed.probe.id,true);
-        return quote&&{...quote,publicPaymentCard:completed.payer.id,bluePickSlot:null,swapOutId:completed.swapOut.id};
+        return quote&&{...quote,bluePickSlot:null,...(completed.swapOut
+          ?{publicPaymentCard:completed.payer.id,swapOutId:completed.swapOut.id}
+          :{heldPaymentCard:completed.payer.id})};
       }
       if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.turnNumber!==purpose.turn+Number(!synthetic)
         ||p.mainActionCompleted!==synthetic||JSON.stringify(p.resources)!==JSON.stringify(purpose.after.resources)
