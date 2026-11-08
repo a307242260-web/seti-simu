@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-v651-white-first3-20261108",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "搜索 V651 · 正式验证中断",
+      "date": "2026-11-08",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "073d9816d84679053600f59ac5b24b71db2d05ce",
+      "commits": [
+        "073d9816d84679053600f59ac5b24b71db2d05ce"
+      ],
+      "summary": "磁盘写入中断；原生复放确认到第 73 输入及首轮 15 分，第三轮无正式成绩。独立冷恢复对照另见证据。",
+      "records": {
+        "65c26c5b.073d9816.quick-400.json": {
+          "note": "磁盘写入中断；原生复放确认到第 73 输入及首轮 15 分，第三轮无正式成绩。独立冷恢复对照另见证据。"
+        }
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v649-white-first3-20261108",
       "aiGeneration": "v2",
       "agentType": "search",

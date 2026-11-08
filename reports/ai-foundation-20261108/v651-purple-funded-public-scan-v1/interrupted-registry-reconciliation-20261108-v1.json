@@ -1,0 +1,14 @@
+{
+  "priorCommit": "073d9816d84679053600f59ac5b24b71db2d05ce",
+  "sourceCommit": "073d9816d84679053600f59ac5b24b71db2d05ce",
+  "id": "ai-search-v651-white-first3-20261108",
+  "record": "reports/research/65c26c5b.073d9816.quick-400.json",
+  "save": "seti-saves/seti-save-research-v651-interrupted-recovered-73-20261108.json",
+  "report": "reports/iteration/ai-search-v651-white-first3-20261108/65c26c5b.073d9816.quick-400.action-log.html",
+  "rowsPreserved": 217,
+  "v1Preserved": true,
+  "v2BaselinePreserved": true,
+  "v2BestOfPreserved": true,
+  "fullThirdRoundRecorded": false,
+  "coldSuffixRecorded": true
+}

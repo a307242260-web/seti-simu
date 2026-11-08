@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-11-08T12:10:06.185Z",
+  "builtAt": "2026-11-08T13:02:25.080Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "b8beae1cd",
+  "headCommit": "073d9816d84679053600f59ac5b24b71db2d05ce",
   "defaultGeneration": "v2",
   "generations": {
     "v1": {
@@ -253,8 +253,8 @@
           }
         ]
       },
-      "versionCount": 76,
-      "recordCount": 75
+      "versionCount": 77,
+      "recordCount": 76
     }
   },
   "currentBaseline": "ai-search-v41-baseline-20261029",
@@ -389,6 +389,342 @@
     ]
   },
   "versions": [
+    {
+      "id": "ai-search-v651-white-first3-20261108",
+      "aiGeneration": "v2",
+      "name": "搜索 V651 · 正式验证中断",
+      "date": "2026-11-08",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "073d9816d84679053600f59ac5b24b71db2d05ce",
+      "commits": [
+        {
+          "hash": "073d9816d",
+          "date": "2026-11-08",
+          "subject": "比较紫科技后可支付的公开扫描"
+        }
+      ],
+      "summary": "磁盘写入中断；原生复放确认到第 73 输入及首轮 15 分，第三轮无正式成绩。独立冷恢复对照另见证据。",
+      "baselineEligible": false,
+      "roadmap": null,
+      "diffStat": "87923 files changed, 41519001 insertions(+), 2318 deletions(-)",
+      "diffFiles": [],
+      "results": [
+        {
+          "recordFile": "65c26c5b.073d9816.quick-400.json",
+          "recordPath": "reports/research/65c26c5b.073d9816.quick-400.json",
+          "mode": "quick-400",
+          "steps": 73,
+          "stepsLimit": 400,
+          "terminal": false,
+          "wallMs": null,
+          "flags": {
+            "compactReplay": true,
+            "scenario": "human405-white-first3-v1"
+          },
+          "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v418/seti-purpose-capital-state-value-v58/human405-white-first3-v1/seti-human405-pass-only-v1",
+          "agentType": "search",
+          "aiGeneration": "v2",
+          "gitCommit": "073d9816d",
+          "createdAt": "2026-11-08T12:57:28.184Z",
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "comparisonScope": "white-only-first-three-rounds",
+          "scoreSemantics": "provisional-first-three-rounds-before-pass-card-and-next-income",
+          "scenarioResult": {
+            "firstThreeRoundsSettled": false,
+            "openingInputs": 23,
+            "newInputsAfterOpening": 50,
+            "completedRoundEnds": [
+              1
+            ]
+          },
+          "roundEnds": [
+            {
+              "round": 1,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 61,
+              "checkpointPath": "reports/research/65c26c5b.073d9816.quick-400.json.round-end-1.checkpoint.json",
+              "checkpointSha256": "d2f633a4f84a80e41550bcfa80a710c9c1cf925b22ed94be747af4f5f8696a15",
+              "score": 15,
+              "resources": {
+                "additionalPublicScan": 0,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 1,
+                "handSize": 0,
+                "publicity": 3,
+                "score": 15
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [
+                "b_117.webp",
+                "dlc_9.png"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-1",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "id": "data-token-2",
+                    "index": 2,
+                    "placementKind": "computer",
+                    "placementSlot": 2
+                  },
+                  {
+                    "id": "data-token-3",
+                    "index": 3,
+                    "placementKind": "computer",
+                    "placementSlot": 3
+                  },
+                  {
+                    "id": "data-token-4",
+                    "index": 4,
+                    "placementKind": "computer",
+                    "placementSlot": 4
+                  },
+                  {
+                    "blueSlot": 1,
+                    "id": "data-token-11",
+                    "index": 5,
+                    "placementKind": "blueBonus"
+                  }
+                ],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "neutral": false,
+                      "ownerPlayerColor": "blue"
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "neutral": false,
+                        "ownerPlayerColor": "blue"
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 2,
+                  "b": 1,
+                  "c": 1,
+                  "d": 2
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": []
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": []
+                  }
+                }
+              },
+              "projectedFinalScore": 15
+            }
+          ],
+          "note": "磁盘写入中断；原生复放确认到第 73 输入及首轮 15 分，第三轮无正式成绩。独立冷恢复对照另见证据。",
+          "scores": {
+            "player-blue": null,
+            "player-green": null,
+            "player-brown": null,
+            "player-white": null
+          },
+          "avgScore": null,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-v651-interrupted-recovered-73-20261108.json",
+          "reportPath": "reports/iteration/ai-search-v651-white-first3-20261108/65c26c5b.073d9816.quick-400.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "65c26c5b.073d9816.quick-400",
+            "path": "reports/iteration/ai-search-v651-white-first3-20261108/65c26c5b.073d9816.quick-400.action-log.html",
+            "mode": "quick-400"
+          }
+        ]
+      }
+    },
     {
       "id": "ai-search-v649-white-first3-20261108",
       "aiGeneration": "v2",
