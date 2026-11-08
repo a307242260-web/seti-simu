@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/private/tmp/seti-v433-r179-open-facts-20261108-v1/probe-seti-experiment-storage-20261108-v1.py", line 10, in <module>
+    for _ in range(size_mib): f.write(block)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/tempfile.py", line 474, in func_wrapper
+    return func(*args, **kwargs)
+OSError: [Errno 28] No space left on device
