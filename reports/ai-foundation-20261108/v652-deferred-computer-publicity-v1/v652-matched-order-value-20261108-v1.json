@@ -1,0 +1,137 @@
+{
+  "scope": "Apply unchanged default evaluator at equal Native horizons in three hidden-order worlds. No search, no hidden identity used to choose any input.",
+  "sourceSha256": "ced60048c984cedcb8517bf5d363972ab3c6ea3acd866db61614c6c4e1a86b4d",
+  "model": "seti-purpose-capital-state-value-v58",
+  "nativeInputs": 0,
+  "rows": [
+    {
+      "world": 0,
+      "sides": [
+        {
+          "label": "scan-first",
+          "total": 159,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 7,
+            "hand": 1,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 4,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        },
+        {
+          "label": "analysis-first",
+          "total": 161.5,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 6,
+            "hand": 5,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 3.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        }
+      ]
+    },
+    {
+      "world": 1,
+      "sides": [
+        {
+          "label": "scan-first",
+          "total": 159,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 7,
+            "hand": 1,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 4,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        },
+        {
+          "label": "analysis-first",
+          "total": 161.5,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 6,
+            "hand": 5,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 3.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "sides": [
+        {
+          "label": "scan-first",
+          "total": 159,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 7,
+            "hand": 1,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 4,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        },
+        {
+          "label": "analysis-first",
+          "total": 161.5,
+          "components": {
+            "realizedScore": 88,
+            "currentEndGameBonus": 33,
+            "resources": 6,
+            "hand": 5,
+            "income": 12.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 4.5,
+            "probePotential": 0,
+            "analysisPotential": 3.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        }
+      ]
+    }
+  ]
+}
