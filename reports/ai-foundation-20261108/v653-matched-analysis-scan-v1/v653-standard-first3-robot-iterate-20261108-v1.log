@@ -1,0 +1,285 @@
+[world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[scenario] human405-white-first3-v1 opening=23 learner=player-white opponents=PASS
+[quick-400进度] 第 1 轮 · 第 1 回合 · 决策#24/400 · 席位=player-white · 动作=play_card:124d76d3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=0.324s · 74.1步/s
+[quick-400进度] 第 1 轮 · 第 6 回合 · 决策#39/400 · 席位=player-white · 动作=orbit:44937d1f · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=11 · 用时=1.457s · 26.8步/s
+[轮末-选牌收入前] {"round":1,"phase":"before-pass-card-and-income","beforeInput":61,"checkpointPath":"reports/research/70a07fff.f19f0856.quick-400.json.round-end-1.checkpoint.json","checkpointSha256":"e460a9e7943d9a60923652df9e3754b7943d557f67b6cd2eb10e66290c53b105","score":15,"resources":{"additionalPublicScan":0,"aomomoFossils":0,"availableData":0,"credits":0,"energy":1,"handSize":0,"publicity":3,"score":15},"income":{"additionalPublicScan":1,"availableData":0,"credits":6,"energy":2,"handSize":1,"publicity":0},"technology":{"blueBoardSlots":{"blue2":1},"disabledTiles":{},"ownedTiles":{"blue2":true,"purple4":true}},"hand":[],"playedCards":["b_117.webp","dlc_9.png"],"data":{"discardedCount":0,"placedTokens":[{"id":"data-token-1","index":1,"placementKind":"computer","placementSlot":1},{"id":"data-token-2","index":2,"placementKind":"computer","placementSlot":2},{"id":"data-token-3","index":3,"placementKind":"computer","placementSlot":3},{"id":"data-token-4","index":4,"placementKind":"computer","placementSlot":4},{"blueSlot":1,"id":"data-token-11","index":5,"placementKind":"blueBonus"}],"poolTokens":[]},"probes":[],"sectorWins":[],"scanProgress":[{"sectorId":"sector-2-a","ownedSlots":[1,2],"capacity":6},{"sectorId":"sector-4-b","ownedSlots":[1],"capacity":5}],"alienTraceSlots":[{"slotId":1,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"aliens":{"slots":[{"slotId":1,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}]},"finalScoring":{"thresholds":[25,50,70],"tileVariants":{"a":2,"b":1,"c":1,"d":2},"tiles":{"a":{"id":"a","marks":[]},"b":{"id":"b","marks":[]},"c":{"id":"c","marks":[]},"d":{"id":"d","marks":[]}}},"projectedFinalScore":15}
+[quick-400进度] 第 2 轮 · 第 2 回合 · 决策#67/400 · 席位=player-blue · 动作=choose_card:4d7a0611 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=15 · 用时=2.491s · 26.9步/s
+[quick-400进度] 第 2 轮 · 第 6 回合 · 决策#82/400 · 席位=player-white · 动作=choose_target:12318841 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=15 · 用时=3.54s · 23.2步/s
+[quick-400进度] 第 2 轮 · 第 9 回合 · 决策#104/400 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=32 · 用时=4.566s · 22.8步/s
+[轮末-选牌收入前] {"round":2,"phase":"before-pass-card-and-income","beforeInput":128,"checkpointPath":"reports/research/70a07fff.f19f0856.quick-400.json.round-end-2.checkpoint.json","checkpointSha256":"06b762ea4067771788264e55a87dcee162a31a1a1fc02ec46d80028e3a71caa3","score":48,"resources":{"additionalPublicScan":0,"aomomoFossils":0,"availableData":0,"credits":0,"energy":1,"handSize":1,"publicity":4,"score":48},"income":{"additionalPublicScan":1,"availableData":0,"credits":6,"energy":3,"handSize":1,"publicity":0},"technology":{"blueBoardSlots":{"blue2":1,"blue3":2},"disabledTiles":{},"ownedTiles":{"blue2":true,"blue3":true,"purple4":true}},"hand":["dlc_32.png"],"playedCards":["b_117.webp","dlc_9.png"],"data":{"discardedCount":0,"placedTokens":[],"poolTokens":[]},"probes":[],"sectorWins":[{"sectorId":"sector-2-a","settlementNumber":1}],"scanProgress":[{"sectorId":"sector-1-b","ownedSlots":[1,2],"capacity":4},{"sectorId":"sector-4-b","ownedSlots":[1,2],"capacity":5}],"alienTraceSlots":[{"slotId":1,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"aliens":{"slots":[{"slotId":1,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}]},"finalScoring":{"thresholds":[25,50,70],"tileVariants":{"a":2,"b":1,"c":1,"d":2},"tiles":{"a":{"id":"a","marks":[]},"b":{"id":"b","marks":[]},"c":{"id":"c","marks":[]},"d":{"id":"d","marks":[{"id":"final-mark-1","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":25,"tileId":"d"}]}}},"projectedFinalScore":55}
+[quick-400进度] 第 3 轮 · 第 1 回合 · 决策#130/400 · 席位=player-blue · 动作=pass:c858282e · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=48 · 用时=5.568s · 23.3步/s
+[quick-400进度] 第 3 轮 · 第 3 回合 · 决策#151/400 · 席位=player-white · 动作=card_corner:4c8b60cc · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=54 · 用时=6.575s · 23.0步/s
+[quick-400进度] 第 3 轮 · 第 6 回合 · 决策#172/400 · 席位=player-white · 动作=play_card:38489727 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=65 · 用时=7.685s · 22.4步/s
+[quick-400进度] 第 3 轮 · 第 9 回合 · 决策#188/400 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=78 · 用时=8.701s · 21.6步/s
+[quick-400进度] 第 3 轮 · 第 10 回合 · 决策#200/400 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=89 · 用时=9.712s · 20.6步/s
+[quick-400进度] 第 3 轮 · 第 12 回合 · 决策#219/400 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=96 · 用时=10.837s · 20.2步/s
+[quick-400进度] 第 3 轮 · 第 14 回合 · 决策#236/400 · 席位=player-white · 动作=choose_card:ecb1eda7 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=103 · 用时=11.884s · 19.9步/s
+[轮末-选牌收入前] {"round":3,"phase":"before-pass-card-and-income","beforeInput":258,"checkpointPath":"reports/research/70a07fff.f19f0856.quick-400.json.round-end-3.checkpoint.json","checkpointSha256":"be1351acb8865d18b121d105212b38d5a6c0b59a4619ada7da9b465399f1af93","score":116,"resources":{"additionalPublicScan":0,"aomomoFossils":0,"availableData":0,"credits":0,"energy":1,"handSize":0,"publicity":1,"score":116},"income":{"additionalPublicScan":1,"availableData":0,"credits":7,"energy":4,"handSize":2,"publicity":0},"technology":{"blueBoardSlots":{"blue1":3,"blue2":1,"blue3":2},"disabledTiles":{},"ownedTiles":{"blue1":true,"blue2":true,"blue3":true,"orange1":true,"purple1":true,"purple4":true}},"hand":[],"playedCards":["b_117.webp","dlc_31.png","amiba_0.webp","amiba_5.webp"],"data":{"discardedCount":0,"placedTokens":[{"id":"data-token-41","index":1,"placementKind":"computer","placementSlot":1},{"id":"data-token-42","index":2,"placementKind":"computer","placementSlot":2},{"id":"data-token-43","index":3,"placementKind":"computer","placementSlot":3},{"id":"data-token-44","index":4,"placementKind":"computer","placementSlot":4}],"poolTokens":[]},"probes":[{"angleDegrees":112.5,"color":"white","id":6,"launchGrid":{"x":5,"y":1},"launchSectorCoordinate":{"x":5,"y":1},"playerId":"player-white","playerSequence":1,"radius":156.26,"sectorX":4,"sectorY":2,"slotIndex":4,"surface":"solar-board"}],"sectorWins":[{"sectorId":"sector-2-a","settlementNumber":1},{"sectorId":"sector-1-b","settlementNumber":1},{"sectorId":"sector-3-a","settlementNumber":1}],"scanProgress":[{"sectorId":"sector-2-a","ownedSlots":[1,2],"capacity":6},{"sectorId":"sector-4-b","ownedSlots":[1,2],"capacity":5}],"alienTraceSlots":[{"slotId":1,"revealed":true,"alienId":"阿米巴","traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"aliens":{"slots":[{"slotId":1,"revealed":true,"alienId":"阿米巴","traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false}}},{"slotId":2,"revealed":false,"alienId":null,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"ownerPlayerColor":"white","neutral":false},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":false,"ownerPlayerColor":null},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}],"amiba":{"revealInitialized":true,"revealedSlotId":1,"symbolSlots":{"orange_2":"symbol_4","orange_3":"symbol_1","orange_1":"symbol_5","red_1":"symbol_2","blue_2":"symbol_3"},"symbolsById":{"symbol_4":{"symbolId":"symbol_4","slotId":"orange_2","sequence":1},"symbol_2":{"symbolId":"symbol_2","slotId":"red_1","sequence":2},"symbol_1":{"symbolId":"symbol_1","slotId":"orange_3","sequence":3},"symbol_5":{"symbolId":"symbol_5","slotId":"orange_1","sequence":4},"symbol_3":{"symbolId":"symbol_3","slotId":"blue_2","sequence":5}}},"amibaTraces":{"revealedSlotId":1,"traceSlotsByAlienSlotId":{"1":{"pink":{"1":{"traceType":"pink","position":1,"sequence":7,"playerId":null,"playerColor":"white","rewardApplied":false},"2":null,"3":{"traceType":"pink","position":3,"sequence":11,"playerId":"player-white","playerColor":"white","rewardApplied":true},"4":{"traceType":"pink","position":4,"sequence":4,"playerId":"player-white","playerColor":"white","rewardApplied":true}},"yellow":{"1":null,"2":null,"3":null,"4":null},"blue":{"1":{"traceType":"blue","position":1,"sequence":6,"playerId":null,"playerColor":"white","rewardApplied":false},"2":null,"3":{"traceType":"blue","position":3,"sequence":13,"playerId":"player-white","playerColor":"white","rewardApplied":true},"4":{"traceType":"blue","position":4,"sequence":9,"playerId":"player-white","playerColor":"white","rewardApplied":true}}}},"blindCardCount":2,"displayedCardAvailable":true,"displayedCardIndex":8}},"finalScoring":{"thresholds":[25,50,70],"tileVariants":{"a":2,"b":1,"c":1,"d":2},"tiles":{"a":{"id":"a","marks":[{"id":"final-mark-2","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":50,"tileId":"a"}]},"b":{"id":"b","marks":[{"id":"final-mark-3","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":70,"tileId":"b"}]},"c":{"id":"c","marks":[]},"d":{"id":"d","marks":[{"id":"final-mark-1","playerColor":"white","playerId":"player-white","slot3Order":null,"slotIndex":1,"threshold":25,"tileId":"d"}]}}},"projectedFinalScore":162}
+[quick-400进度] 第 4 轮 · 第 1 回合 · 决策#259/400 · 席位=player-white · 动作=choose_card:a0bc5e4f · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=116 · 用时=12.931s · 20.0步/s
+
+===== quick-400（seti-free-analyze-v1）=====
+步骤=259（上限 400） 终局=false 耗时=12.9s
+均分=34.5 各席=player-blue=7 player-green=7 player-brown=8 player-white=116
+  player-blue 行动族={"choose_card":9,"choose_payment":2,"pass":3}
+  player-green 行动族={"choose_card":10,"choose_payment":2,"pass":3}
+  player-brown 行动族={"choose_card":9,"pass":3}
+  player-white 行动族={"choose_card":35,"choose_payment":8,"play_card":10,"move":6,"end_turn":24,"research_tech":5,"choose_target":70,"orbit":2,"industry":2,"place_data":36,"pass":3,"scan":3,"analyze":4,"quick_trade":2,"card_corner":6,"accept_optional_effect":1,"complete_task":1}
+白色 quick_trade=2 研究步=[35,104,193,219,230]
+外星人: 首放 5 次、揭示 1 次
+反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）
+
+记录: reports/research/70a07fff.f19f0856.quick-400.json
+存档: seti-saves/seti-save-research-ai-search-v653-white-first3-20261108-f19f0856-quick-400-v115.json
+
+[登记] 版本 ai-search-v653-white-first3-20261108（head=f19f08562，baseline=ai-search-v41-baseline-20261029，commits=258 个）
+  记录: reports/research/70a07fff.f19f0856.quick-400.json
+  存档: seti-saves/seti-save-research-ai-search-v653-white-first3-20261108-f19f0856-quick-400-v115.json
+[页面] /private/tmp/seti-v653-standard-first3-20261108-v1/reports/robot-iteration.html
+[报告] 生成 2 份复盘报告
+[复盘报告] reports/iteration/ai-search-v653-white-first3-20261108/70a07fff.f19f0856.quick-400.action-log.html
+
+===== 当前世界最佳（完整终局 · human-405-world-v1 · 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c）=====
+最佳白分: —
+最佳均分: —
+最快全盘（总耗时）: —
+最快全盘（每步均耗时）: —
+
+[警告 233]
+  ! ai-search-v651-white-first3-20261108 声明的记录缺失：65c26c5b.073d9816.quick-400.json
+  ! ai-search-v649-white-first3-20261108 声明的记录缺失：153b1011.b8beae1c.quick-400.json
+  ! ai-search-v646-white-first3-20261108 声明的记录缺失：11d8ef38.a7b627dc.quick-400.json
+  ! ai-search-v642-white-first3-20261108 声明的记录缺失：4f9f08b4.0effe867.quick-400.json
+  ! ai-search-v634-white-first3-20261108 声明的记录缺失：cd68bc86.0412a8b9.quick-400.json
+  ! ai-search-v630-white-first3-20261108 声明的记录缺失：9e570883.0d823ef1.quick-400.json
+  ! ai-search-v619-white-first3-20261108 声明的记录缺失：6ab0f8ae.515a631b.quick-400.json
+  ! ai-search-v592-white-first3-20261108 声明的记录缺失：03f553ec.a5195669.quick-400.json
+  ! ai-search-v541-white-first3-20261108 声明的记录缺失：cf2d3b6a.a5cf6a37.quick-400.json
+  ! ai-search-v534-white-first3-20261108 声明的记录缺失：9327de43.9f8d21a1.quick-400.json
+  ! ai-search-v509-white-first3-20261108 声明的记录缺失：b1a426bd.bf04ee9d.quick-400.json
+  ! ai-search-v495-white-first3-20261108 声明的记录缺失：6a713f85.e0a2b317.quick-400.json
+  ! ai-search-v480-white-first3-20261108 声明的记录缺失：9534c441.8455b2ce.quick-400.json
+  ! ai-search-v445-white-first3-20261108 声明的记录缺失：78044e14.db2cb29a.quick-400.json
+  ! ai-search-v398-white-first3-20261108 声明的记录缺失：5c70d4cf.f787148c.quick-400.json
+  ! ai-search-v397-white-first3-20261108 声明的记录缺失：5ea0d8a8.bbc28d2f.quick-400.json
+  ! ai-search-v375-white-first3-20261107 声明的记录缺失：13798912.de90ae74.quick-400.json
+  ! ai-search-v372-white-first3-20261107 声明的记录缺失：03e1982d.f30dab02.quick-400.json
+  ! ai-search-v371-white-first3-20261107 声明的记录缺失：58605414.fcc35ea2.quick-400.json
+  ! ai-search-v323-white-first3-20261107 声明的记录缺失：614d33af.720da076.quick-400.json
+  ! ai-search-v278-teacher-r3-20261107 声明的记录缺失：3e9df353.dc540a52.quick-400.json
+  ! ai-search-v277-teacher-r3-20261107 声明的记录缺失：eea49fda.5cb4d4ed.quick-400.json
+  ! ai-search-v276-teacher-r3-20261106 声明的记录缺失：c1769e51.43bf8cfc.quick-400.json
+  ! ai-search-v274-teacher-r3-20261106 声明的记录缺失：095880ce.54a9c02f.quick-400.json
+  ! ai-search-v264-teacher-r3-20261106 声明的记录缺失：8c4df576.4ec84a12.quick-400.json
+  ! ai-search-v263-teacher-r3-20261106 声明的记录缺失：20fa9816.7a747f86.quick-400.json
+  ! ai-search-v262-teacher-r3-20261106 声明的记录缺失：15a2ff39.2055cd4f.quick-400.json
+  ! ai-search-v256-teacher-r3-20261106 声明的记录缺失：85678dfe.e0046883.quick-400.json
+  ! ai-search-v253-teacher-r3-20261106 声明的记录缺失：0fd517be.398cd29e.quick-400.json
+  ! ai-search-v239-teacher-r3-20261106 声明的记录缺失：5f86db3c.ab20f1b9.quick-400.json
+  ! ai-search-v237-teacher-r3-20261106 声明的记录缺失：c0b2b60b.c39f39e8.quick-400.json
+  ! ai-search-v214-teacher-r3-20261106 声明的记录缺失：768b7f09.341f6fad.quick-400.json
+  ! ai-search-v203-teacher-r3-20261106 声明的记录缺失：a121adb0.697b888b.quick-400.json
+  ! ai-search-v189-white-full-20261105 声明的记录缺失：db594a2e.1609bf50.full.json
+  ! ai-search-v189-white-first2-20261105 声明的记录缺失：e01243ba.93989585.quick-400.json
+  ! ai-search-v187-white-first2-20261105 声明的记录缺失：c5ea5600.72bbd878.quick-400.json
+  ! ai-search-v186-white-first2-20261105 声明的记录缺失：92230fbe.9e3fa00b.quick-400.json
+  ! ai-search-v184-white-first2-20261105 声明的记录缺失：ea6138c1.11437f11.quick-400.json
+  ! ai-search-v178-white-first2-20261105 声明的记录缺失：e987ead2.9491f13b.quick-400.json
+  ! ai-search-v166-white-first2-20261105 声明的记录缺失：8b8b00a9.92dc8669.quick-400.json
+  ! ai-search-v165-white-first2-20261105 声明的记录缺失：3d794d7d.b7cd4c9a.quick-400.json
+  ! ai-search-v161-white-first2-20261105 声明的记录缺失：bc76a417.b961ce29.quick-400.json
+  ! ai-search-v158-white-first2-20261104 声明的记录缺失：7c48459b.02f630d5.quick-400.json
+  ! ai-search-v151-white-first2-20261104 声明的记录缺失：61749811.03e58e0d.quick-400.json
+  ! ai-search-v148-white-first2-20261104 声明的记录缺失：d421cdf5.7da81a85.quick-400.json
+  ! ai-search-v129-white-first2-20261104 声明的记录缺失：35f648b3.28f4e95c.quick-400.json
+  ! ai-search-v125-white-first2-20261104 声明的记录缺失：756a2bff.4ec5d3d7.quick-400.json
+  ! ai-search-v124-white-first2-20261104 声明的记录缺失：b3e5178b.38259e7e.quick-400.json
+  ! ai-search-v123-white-full-20261104 声明的记录缺失：788d8a64.1a78d5d3.full.json
+  ! ai-search-v123-white-r1-20261031 声明的记录缺失：19bd7474.94530144.quick-200.json
+  ! ai-search-v121-white-r1-20261031 声明的记录缺失：f1e61527.85e94cc4.quick-200.json
+  ! ai-search-v119-white-r1-20261031 声明的记录缺失：12231ee9.2fb2b091.quick-200.json
+  ! ai-search-v99-white-r1-20261031 声明的记录缺失：f8d9ee42.0dc7785d.quick-200.json
+  ! ai-search-v98-white-r1-20261031 声明的记录缺失：203cd183.cad56459.quick-200.json
+  ! ai-search-v94-b117-prefix-r1-20261031 声明的记录缺失：d58f15db.225966dd.quick-200.json
+  ! ai-search-v94-white-r1-20261031 声明的记录缺失：83388120.a11ea9dc.quick-200.json
+  ! ai-search-v93-white-r1-20261030 声明的记录缺失：5f529430.f2cde3d2.quick-200.json
+  ! ai-search-v92-white-r1-20261030 声明的记录缺失：77dcb58d.9d707d66.quick-200.json
+  ! ai-search-v67-white-r1-20261030 声明的记录缺失：448ff0e0.7e3fc757.quick-200.json
+  ! ai-search-v53-white-r1-20261030 声明的记录缺失：5cfabf5d.692bdf03.quick-200.json
+  ! ai-search-v51-white-r1-20261030 声明的记录缺失：600c9fb2.852263bb.quick-200.json
+  ! ai-search-v49-white-r1-20261030 声明的记录缺失：308feee7.b90f9ae4.quick-200.json
+  ! ai-search-v42-human405-reference-20261029 声明的记录缺失：8929fac4.5d1cae64.full.json
+  ! ai-search-v41-human405-reference-20261029 声明的记录缺失：c69f0990.f24600c7.full.json
+  ! ai-search-v39-unbounded-20261029 声明的记录缺失：a760f3dd.ff4b36c1.full.json
+  ! ai-search-v38-budget1024-20261029 声明的记录缺失：559718b4.f0615b17.full.json
+  ! ai-search-v38-baseline-20261029 声明的记录缺失：6558b617.95a14093.full.json
+  ! ai-foundation-dev-07-20261022 声明的记录缺失：3bbbc445.2bc7b88c.full.json
+  ! ai-foundation-dev-06-20261022 声明的记录缺失：b15f4401.2bc7b88c.full.json
+  ! ai-foundation-dev-05-20261022 声明的记录缺失：7cd473bf.2bc7b88c.full.json
+  ! ai-foundation-dev-04-20261022 声明的记录缺失：199abbfb.2bc7b88c.full.json
+  ! ai-foundation-dev-03-20261022 声明的记录缺失：801a83ba.2bc7b88c.full.json
+  ! ai-foundation-dev-02-20261022 声明的记录缺失：8cf00b93.2bc7b88c.full.json
+  ! ai-foundation-dev-01-20261022 声明的记录缺失：1ed7c0bf.2bc7b88c.full.json
+  ! ai-foundation-dev-00-20261022 声明的记录缺失：3558b009.2bc7b88c.full.json
+  ! ai-foundation-20261022 声明的记录缺失：cdbe7999.576bbc50.full.json
+  ! budget-ladder-03-20260913 声明的记录缺失：c1f12df6.6de4067a.full.json
+  ! budget-clone-01-20260913 声明的记录缺失：0397dbca.c0189da2.full.json
+  ! card-terminal-value-20260913 声明的记录缺失：6d617096.22891395.full.json
+  ! income-choice-greedy-20260913 声明的记录缺失：ac7f0082.5ef60d81.quick-40.json
+  ! income-choice-greedy-20260913 声明的记录缺失：ac7f0082.5ef60d81.full.json
+  ! data-corner-greedy-20260913 声明的记录缺失：44713766.236c6969.quick-40.json
+  ! data-corner-greedy-20260913 声明的记录缺失：44713766.236c6969.full.json
+  ! scan-free-cost-20260913 声明的记录缺失：874d71c3.de73734c.quick-40.json
+  ! scan-free-cost-20260913 声明的记录缺失：874d71c3.de73734c.full.json
+  ! secondary-probe-greedy-20260913 声明的记录缺失：0bce679f.c47eaa17.quick-40.json
+  ! secondary-probe-greedy-20260913 声明的记录缺失：0bce679f.c47eaa17.full.json
+  ! fixed-world-405-20260913 声明的记录缺失：b235ff5f.bddcdae9.quick-40.json
+  ! fixed-world-405-20260913 声明的记录缺失：b235ff5f.bddcdae9.full.json
+  ! runezu-panel-node-projection-20260913 声明的记录缺失：22249691.bea7de03.full.json
+  ! final-income-input-fix-20260913 声明的记录缺失：8aea2b8e.5b3f3e20.full.json
+  ! data-trade-greedy-20260913 声明的记录缺失：a608f874.f0ce26ea.full.json
+  ! public-card-runezu-greedy-20260913 声明的记录缺失：76414b52.3544e2df.full.json
+  ! runezu-effect-fix-20260913 声明的记录缺失：e16bc101.f105f8ea.full.json
+  ! probe-owner-cache-20260912 声明的记录缺失：6502f820.40ce8e97.full.json
+  ! probe-trade-greedy-20260912 声明的记录缺失：364f3d65.18a0d75b.full.json
+  ! income-target-fix-20260912 声明的记录缺失：ff5ca313.d3563b98.full.json
+  ! probe-move-greedy-20260912 声明的记录缺失：82762123.d59d423f.full.json
+  ! alien-pick-greedy-20260912 声明的记录缺失：45c85901.56ce65c8.full.json
+  ! chong-trace-reward-20260912 声明的记录缺失：d4702a6f.35ee7180.full.json
+  ! overflow-trace-greedy-20260912 声明的记录缺失：42bace26.126ed66e.full.json
+  ! trace-score-greedy-input-20260912 声明的记录缺失：ccfb509e.d75fb99a.full.json
+  ! frontier-materialization-20260912 声明的记录缺失：1d63c8e7.eee63294.full.json
+  ! quick-timing-corner-20260912 声明的记录缺失：5097a6bb.a83f69ec.full.json
+  ! quick-timing-20260912 声明的记录缺失：7bb2c6d4.60f8cca6.full.json
+  ! quick-timing-20260912 声明的记录缺失：7bb2c6d4.60f8cca6.quick-24.json
+  ! turn-boundary-20260911 声明的记录缺失：885906e7.31a2e43b.full.json
+  ! turn-boundary-20260911 声明的记录缺失：885906e7.31a2e43b.quick-24.json
+  ! alien-card12-20260911 声明的记录缺失：3522c43c.ea32d6e8.full.json
+  ! alien-card12-20260911 声明的记录缺失：3522c43c.ea32d6e8.quick-24.json
+  ! alien-expectation-superseded-20260911 声明的记录缺失：410a479a.cf4f69f3.quick-24.json
+  ! alien-facts-20260911 声明的记录缺失：9fd08b9f.4d162d24.full.json
+  ! alien-facts-20260911 声明的记录缺失：9fd08b9f.4d162d24.quick-1.json
+  ! round5-correctness-base-20260909 声明的记录缺失：cc9eb28a.f607c6e5.full.json
+  ! counted-card-reveal-20260909 声明的记录缺失：f0ec0eb8.a402ca99.full.json
+  ! counted-card-move-20260909 声明的记录缺失：f14a863e.4bc44eb2.full.json
+  ! route-leaf-eligibility-20260909 声明的记录缺失：4a694948.ad676add.full.json
+  ! route-suffix-facts-20260908 声明的记录缺失：3c7e0003.af937808.full.json
+  ! alien-pick-disabled-tech-20260908 声明的记录缺失：80437cef.5d17835f.full.json
+  ! disabled-tech-value-20260908 声明的记录缺失：e7bcda6c.a6812efe.full.json
+  ! alien-card-pick-greedy-20260908 声明的记录缺失：b6c44201.aa277dac.full.json
+  ! data-demand-pair-20260908 声明的记录缺失：d814807d.6319beb1.full.json
+  ! route-selection-error-20260908 声明的记录缺失：c43c1f88.70043d34.full.json
+  ! counterfactual-identity-20260908 声明的记录缺失：362fa7f3.0b01af15.full.json
+  ! quick-turn-order-20260908 声明的记录缺失：95016f07.438305b4.full.json
+  ! grant-data-route-20260908 声明的记录缺失：1a061690.1501ebfd.full.json
+  ! income-boundary-company-base-20260908 声明的记录缺失：73d04d3a.670441bc.full.json
+  ! income-blind-boundary-20260908 声明的记录缺失：197640a3.f520347d.full.json
+  ! rules-baseline-20260908 声明的记录缺失：6e4b4248.ee3ea52f.full.json
+  ! quick-move-events-20260908 声明的记录缺失：ab2586b3.c50e4f01.full.json
+  ! fangzhou-major-reward-20260908 声明的记录缺失：b58e392b.4d3711c5.full.json
+  ! turing-immediate-expiry-20260908 声明的记录缺失：cb456d23.04648dd1.full.json
+  ! turing-active-tech-20260908 声明的记录缺失：b7968542.cbf7966f.full.json
+  ! borrowed-probe-cache-20260908 声明的记录缺失：1969fccc.addcef7f.full.json
+  ! company-base-income-scoring-20260908 声明的记录缺失：68307c5f.a7d65847.full.json
+  ! chong-blue-card-order-20260908 声明的记录缺失：6a79eb7c.4fbce3b5.full.json
+  ! expired-sector-goal-20260908 声明的记录缺失：d5ef5962.2b44f883.full.json
+  ! route-reward-dependency-20260908 声明的记录缺失：81eb1a1e.bb028006.full.json
+  ! aomomo-reward-ordinal-20260908 声明的记录缺失：f6c9aabe.7a33ec07.full.json
+  ! reward-plan-dependency-20260907 声明的记录缺失：5d9ead50.0b9837be.full.json
+  ! analysis-plan-dependency-20260907 声明的记录缺失：f9209270.36994979.full.json
+  ! data-slot-order-20260907 声明的记录缺失：a5beda5c.3b4e1c3a.full.json
+  ! data-demand-fusion-20260907 声明的记录缺失：a29f82db.75320ae3.full.json
+  ! trigger-scan-mapping-20260907 声明的记录缺失：7dfcf27e.aaaed8d0.full.json
+  ! hidden-reward-boundary-20260907 声明的记录缺失：78020346.646858ac.full.json
+  ! alien-trace-greedy-20260907 声明的记录缺失：9e486f54.4212b427.full.json
+  ! reorganization-resources-20260907 声明的记录缺失：13a491f3.e6923ed1.full.json
+  ! resource-preparation-cache-20260907 声明的记录缺失：aed4e5db.1f55695a.full.json
+  ! company-movement-finish-20260907 声明的记录缺失：f237707b.4b246dca.full.json
+  ! card-movement-finish-20260907 声明的记录缺失：7d87ceb5.6b5381c1.full.json
+  ! ordinary-movement-demand-20260907 声明的记录缺失：1066a36f.0b586daa.full.json
+  ! company-delayed-allowance-20260907 声明的记录缺失：b347c0e8.9968644b.full.json
+  ! main-goal-movement-20260907 声明的记录缺失：14114d45.77d36854.full.json
+  ! asteroid-movement-modifier-20260907 声明的记录缺失：7feb57c3.96e60c14.full.json
+  ! input-classification-20260907 声明的记录缺失：6eb79d83.18839186.full.json
+  ! visit-progress-read-20260907 声明的记录缺失：2a4865e5.1585d689.full.json
+  ! data-event-contract-20260907 声明的记录缺失：7f66d3e1.c555bc33.full.json
+  ! any-alien-contract-20260907 声明的记录缺失：0b8c855d.0caa713a.full.json
+  ! probe-scan-scope-20260907 声明的记录缺失：ddc98722.1f0d82ec.full.json
+  ! probe-scan-contract-20260907 声明的记录缺失：b48d2904.def25c80.full.json
+  ! trade-confirm-20260907 声明的记录缺失：7ac3da29.de8a4056.full.json
+  ! orbit-visit-trigger-20260907 声明的记录缺失：64334dc7.7613a096.full.json
+  ! probe-location-data-20260907 声明的记录缺失：ac62e0db.a41ae85a.full.json
+  ! final-probe-location-20260907 声明的记录缺失：c292b693.01b4d49e.full.json
+  ! probe-location-read-20260907 声明的记录缺失：beaacd3e.b8be61a5.full.json
+  ! card-launch-limit-20260907 声明的记录缺失：39fc344f.b10ae543.full.json
+  ! projection-isolation-20260907 声明的记录缺失：0eee8b82.744c5cf9.full.json
+  ! alien-card-cancel-20260907 声明的记录缺失：e81fab58.61cc94af.full.json
+  ! shared-leaf-observation-20260907 声明的记录缺失：dd9a1dab.a4453b64.full.json
+  ! policy-plan-evidence-20260906 声明的记录缺失：91f9a83a.73e7b2ca.full.json
+  ! amiba-data-overflow-20260906 声明的记录缺失：25c65ece.795cd6eb.full.json
+  ! company-free-move-20260906 声明的记录缺失：ffb71a57.553e19c6.full.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.quick-200.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.full.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.quick-200.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.full.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.quick-200.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.full.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.quick-200.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.full.json
+  ! round-data-income-r4-20260906 声明的记录缺失：cdcd5d61.6d67a974.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.full.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.quick-200.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.full.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.quick-200.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.full.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.quick-200.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.full.json
+  ! income-reserve-r3i1-20260906 声明的记录缺失：990c007e.082d3e12.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.full.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.quick-200.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.full.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.quick-200.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.full.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.quick-200.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.full.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.quick-200.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.full.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.quick-200.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.full.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.quick-200.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.full.json
+  ! resource-realization-r2b-20260905 声明的记录缺失：60664a0b.c1b7bd49.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.full.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.quick-200.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.full.json
+  ! fold-chain-real 声明的记录缺失：e749439d.0a377f88.full.json
+  ! elig-sum4 声明的记录缺失：3eb9e994.56e9a9c0.full.json
+  ! elig-threshold4 声明的记录缺失：aeaabc4b.3ebcf7f0.full.json
+  ! elig-aligned 声明的记录缺失：81738624.e9b52a49.full.json
+  ! completes-v4-placement 声明的记录缺失：ceddb30f.3c78eed2.full.json
+  ! placement-full 声明的记录缺失：5484d4eb.b8cfb508.full.json
+  ! pure-profit 声明的记录缺失：dd6cc9dd.4e6acd93.full.json
+  ! data-chain-fix 声明的记录缺失：a67b0b40.7de69080.full.json
+  ! place-chain 声明的记录缺失：1bafe69d.b355ccd6.full.json
+  ! unified-restore 声明的记录缺失：38e7df89.5cf59018.full.json
+  ! no-overflow 声明的记录缺失：074c68aa.0da417cc.full.json
+  ! overflow-fixed 声明的记录缺失：91b4195c.ba807548.full.json
+  ! overflow-target 声明的记录缺失：f04f92c6.d68e931b.full.json
+  ! place-trigger-final 声明的记录缺失：3c70096b.5e662798.full.json
+  ! place-data-unified 声明的记录缺失：b2570520.f6398808.full.json
+  ! blue-unified 声明的记录缺失：ef14823c.908a41e7.full.json
+  ! blue-analyze-pre 声明的记录缺失：346fb75c.c741f537.full.json
+  ! design-completion-fix 声明的记录缺失：b631c7f0.7b1c0afd.full.json
+  ! budget-4096-fixed 声明的记录缺失：7c12296c.0fc257dd.full.json
+  ! v4-need-placement 声明的记录缺失：efec250b.f6e4c887.full.json
+  ! v3-income-value 声明的记录缺失：c2f5eda1.0058821c.full.json
+  ! v2-countsgoal-removal 声明的记录缺失：085be66b.eae598e8.full.json
+  ! v1-simplify 声明的记录缺失：1d1505c5.294708a6.full.json
+  ! v0 声明的记录缺失：2c23b9bb.c5e0beab.full.json
+
+[提示 1]
+  · 工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（历史上有脏树运行的记录在注记里标注了 gitCommit 偏差）
+
+下一步：人工核对 versions.json 的 summary/records 注记后，提交记录体系产物（改动即文档，同一次提交）。
