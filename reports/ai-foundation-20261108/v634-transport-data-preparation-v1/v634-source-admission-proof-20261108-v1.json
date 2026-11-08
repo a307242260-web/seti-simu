@@ -1,0 +1,52 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V634",
+  "searchVersion": "seti-complete-decision-search-v413",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "0b26c36498ba78740547a12335eb6da8dae893ea",
+  "runtimeSubtrees": {
+    "randomizer": "60b1f4ee1617b7c9f480f1925e7b75924f07bf29",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v634-transport-data-preparation-v1/v634-source-manifest-20261108-v1.json",
+  "manifestSha256": "fa2aca58f1412bc336fe785ea78e6cabee027e0f8ed391f51f886fa0d5437744",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "6492a24bf09a7cae785f2b2f36502778d5df1e268ab4b91738cf683d00337725",
+    "randomizer/game/ai/blue-transport-research.test.js": "339112f63ff279d28f5fe08988badb5517f26d3a9a47c2c0cd4837595af06d2a",
+    "randomizer/game/ai/decision-search.js": "5b850d8dc1b6da65798ec5f6f98215d92a546c85c9d90bf35ae21bd2042c6c6b",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "469ee194b1c3339b1e5837d9c83651b0f7e475711b1fbf38ec45564a626c3a10"
+  },
+  "evidenceSha256": {
+    "v634-source-manifest-20261108-v1.json": "fa2aca58f1412bc336fe785ea78e6cabee027e0f8ed391f51f886fa0d5437744",
+    "v634-cold-gate-20261108-v1.json": "7025603e880e9401ce0cf8c1d56118f66de0512a0a3f3e14bf53ce37f5a53921",
+    "v634-transport-data-preparation-evidence-20261108-v1.tar.gz": "bd445057a733dd2b0663a444cdac21de85b8815b2dcb2a7a4f872b3b453ce815",
+    "v634-extra-roots-20261108-v1.json": "6786e38a117f6c8d143f34bf36201494dfd2cbab4b7569b99f8c4aef2ec53a1e",
+    "v634-full-node-20261108-v1.log": "f8e7563986d5948697060ac5a9d896d849c424aa941ff9fe827317a095cd4b1a",
+    "v634-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v634-browser-20261108-v1.log": "98478d529d5db143dcbc96827e91465cd3c60442f72b8f44b3c5f9c02f3706a7",
+    "v634-extra-roots-20261108-v1.log": "b34c0fb57da56f24e7d0f83ff45a09718d10755d98fecca7435ad4074ec714f8"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 577.153542,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "newColdInputs": [
+    8,
+    5,
+    5,
+    3,
+    2,
+    0
+  ],
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

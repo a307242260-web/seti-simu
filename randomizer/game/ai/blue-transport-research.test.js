@@ -58,5 +58,24 @@ try {
   const alternative=decide(missing);
   assert.notEqual(alternative.action.family,'move');
   assert.deepEqual(alternative.quotes,[]);
+  const preparation=decide(f.beforePublicPreparation);
+  assert.equal(preparation.action.family,'place_data');
+  assert.equal(preparation.q.value,168.5);
+  const proof=preparation.q.lines.find(line=>line.knownTransportPreparation).knownTransportPreparation;
+  assert.equal(proof.bluePickSlot,2);
+  assert.equal(proof.blueCashSlot,3);
+  assert.equal(proof.route.value,6.5);
+  const suffix=['place_data','choose_target','place_data','choose_target','choose_card','end_turn'];
+  for(const [i,family] of suffix.entries()){
+    const {action}=i===0?preparation:decide(save());
+    assert.equal(action.family,family);
+    const pending=c.inspect().session?.decision;
+    assert((pending?c.inputPort.submitDecision({decisionId:pending.decisionId,decisionVersion:pending.decisionVersion,ownerId:pending.ownerId,choice:action})
+      :c.inputPort.submitQuickAction(action)).ok);
+  }
+  const after=JSON.parse(save().committedState).players.players.find(p=>p.id===seatId);
+  assert.equal(after.resources.availableData,1);
+  assert(after.dataState.placedTokens.some(t=>t.placementSlot===5));
+  assert(after.hand.some(card=>card.id===proof.publicPaymentCard));
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}
