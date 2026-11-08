@@ -1,0 +1,54 @@
+{
+  "scope": "Same earlier known display root. Only paid Purple1 is fixed (two Native inputs), then V649 autonomous.",
+  "beforeResearch": {
+    "decision": "放置数据",
+    "native": 237,
+    "value": 155.5
+  },
+  "paidMenu": {
+    "chosen": "研究 blue1（蓝槽 3）",
+    "purple1": 150,
+    "blue1": 151,
+    "native": 17
+  },
+  "results": {
+    "autonomousEarlier": 111,
+    "onlyPinkFixed": 96,
+    "PinkAndVisibleCardFixed": 103,
+    "onlyPurple1FixedThenAutonomous": 117
+  },
+  "first12AfterPurple": [
+    "放置数据",
+    "第一排放置位 1",
+    "放置数据",
+    "第一排放置位 2",
+    "放置数据",
+    "第一排放置位 3",
+    "放置数据",
+    "第一排放置位 4",
+    "收入 amiba_1.webp",
+    "放置数据",
+    "blue2 下方",
+    "结束回合"
+  ],
+  "nativeAfterPurple": 65,
+  "maxNative": 228,
+  "maxMs": 509.54704100000004,
+  "phase": "Before R3 PASS choice/income",
+  "dataAndEnergy": {
+    "beforePurple": [
+      3,
+      1
+    ],
+    "afterPurple": [
+      5,
+      1
+    ],
+    "afterIncomeAndBluePreparation": [
+      0,
+      2
+    ]
+  },
+  "repeatability": "Exact Native replay including source and RNG",
+  "next": "Price the known next funded sector scan from the exact Purple turn-end with retained hands; use same read-only resource ledger, reuse existing quiet tail proof where possible. Pending second species reveal remains a separate unopened-information problem."
+}

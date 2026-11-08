@@ -1,0 +1,11 @@
+{
+  "scope": "Use the standard registered result and render function, preserving every old version row exactly instead of regenerating historical metadata.",
+  "priorCommit": "b8beae1cd6d8e017e4e2f87420ac5c13db7696a5",
+  "id": "ai-search-v649-white-first3-20261108",
+  "oldRowsRetained": 216,
+  "v1Preserved": true,
+  "v2BaselinePreserved": true,
+  "v2BestOfPreserved": true,
+  "newResults": 1,
+  "newAutonomousRuns": 0
+}

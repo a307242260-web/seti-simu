@@ -1,0 +1,85 @@
+{
+  "scope": "Actual standard runs with identical Native opening, early asset parity separated from change to scoring rules and estimated terminal points.",
+  "priorProof": "reports/ai-foundation-20261108/v646-native-transport-research-v1/v646-first3-native-development-20261108-v1.json",
+  "priorProofSha256": "9f98eaf7b7af3141189bb4c8c6af2df3986c2071acca2c40e92a214e0e56cbfc",
+  "currentProof": "reports/ai-foundation-20261108/v649-public-display-transport-v1/v649-first3-native-development-20261108-v1.json",
+  "currentProofSha256": "35f78466d9b4c7b893fb9d10b74da6a2687b6eaf5923f396a33810965ac493d8",
+  "equalInitialActions": 259,
+  "earlyAssetParity": true,
+  "comparisons": [
+    {
+      "round": 1,
+      "changedFields": [],
+      "teacherChangedFields": [],
+      "oldScore": 15,
+      "newScore": 15,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      }
+    },
+    {
+      "round": 2,
+      "changedFields": [],
+      "teacherChangedFields": [],
+      "oldScore": 48,
+      "newScore": 48,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      }
+    },
+    {
+      "round": 3,
+      "changedFields": [],
+      "teacherChangedFields": [
+        "alienPreinvestments"
+      ],
+      "oldScore": 116,
+      "newScore": 116,
+      "oldIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "newIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    }
+  ],
+  "oldFromFirstDifference": [],
+  "newFromFirstDifference": [],
+  "newAutonomousRuns": 0
+}
