@@ -1,0 +1,108 @@
+{
+  "scope": "Positive pool data deltas after the last R3 analysis; both source traces are current Native replays, stopping before PASS card and subsequent income.",
+  "teacher": {
+    "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-third-current-replay-20261105-v2.json",
+    "sha256": "6037289227b9169e8ea45fece24a6f5dd9e4f3eb70fd333f96f72a5a51d10e84",
+    "lastAnalysisSourceRow": 15,
+    "initialPool": 1,
+    "scanGains": 6,
+    "triggerGains": 2,
+    "end": {
+      "pool": 3,
+      "computer": 4,
+      "blue": 2,
+      "hand": 3
+    },
+    "positiveEvents": [
+      {
+        "sourceRow": 19,
+        "action": "扫描 南河三",
+        "family": "choose_target",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 20,
+        "action": "dlc_19.png → 开普勒22",
+        "family": "choose_card",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 22,
+        "action": "扫描 天狼星A",
+        "family": "choose_target",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 24,
+        "action": "结算 amiba_0.webp",
+        "family": "accept_optional_effect",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 40,
+        "action": "扫描 绘架座β",
+        "family": "choose_target",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 41,
+        "action": "dlc_17.png → 开普勒22",
+        "family": "choose_card",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 43,
+        "action": "扫描 比邻星",
+        "family": "choose_target",
+        "availableData": 1
+      },
+      {
+        "sourceRow": 56,
+        "action": "结算 amiba_0.webp",
+        "family": "accept_optional_effect",
+        "availableData": 1
+      }
+    ]
+  },
+  "ai": {
+    "path": "reports/ai-foundation-20261109/v655-blue-column-timing-v1/v655-first3-native-development-20261109-v1.json",
+    "sha256": "e951636986e6da2e728cb611fd4aef4997dff97971aab8ed6478be15534a36b7",
+    "lastAnalysisInput": 242,
+    "initialPool": 0,
+    "discardGains": 3,
+    "totalGains": 4,
+    "end": {
+      "pool": 0,
+      "computer": 4,
+      "blue": 0,
+      "hand": 0
+    },
+    "positiveEvents": [
+      {
+        "input": 244,
+        "action": "获得展示的科学论文",
+        "family": "choose_card",
+        "availableData": 1
+      },
+      {
+        "input": 245,
+        "action": "dlc_17.png：弃牌角标",
+        "family": "card_corner",
+        "availableData": 1
+      },
+      {
+        "input": 246,
+        "action": "amiba_2.webp：弃牌角标",
+        "family": "card_corner",
+        "availableData": 1
+      },
+      {
+        "input": 247,
+        "action": "dlc_15.png：弃牌角标",
+        "family": "card_corner",
+        "availableData": 1
+      }
+    ]
+  },
+  "newAutonomousRuns": 0
+}
