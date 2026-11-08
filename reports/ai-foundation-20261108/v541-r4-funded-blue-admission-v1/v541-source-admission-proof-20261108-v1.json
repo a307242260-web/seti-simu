@@ -1,0 +1,43 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V541",
+  "searchVersion": "seti-complete-decision-search-v409",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "0c4b50ffc6cb966b158f8da7aaed792e8d5ae821",
+  "runtimeSubtrees": {
+    "randomizer": "4956731c193b1aab01a1eabdb8f3f8aae13863ab",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v541-r4-funded-blue-admission-v1/v541-source-manifest-20261108-v1.json",
+  "manifestSha256": "b9909d8285f1e8ac553ac7ba18b983f42fd8f24abc7c2d331e9d70f87aae811d",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "d816f437271a5e65b7838d78374cfbb3973e0451c47fe3f2e33b5f73ae568768",
+    "randomizer/game/ai/decision-search.js": "df49e54069d2b2d58e1ebf255423ccb7a26a245886a56a72268e906d45de9292"
+  },
+  "evidenceSha256": {
+    "v541-source-manifest-20261108-v1.json": "b9909d8285f1e8ac553ac7ba18b983f42fd8f24abc7c2d331e9d70f87aae811d",
+    "v541-cold-gate-20261108-v1.json": "893fabb543b95749c7b34412ed97fe414cdf22baa20b8ec640eed38eb31bc83d",
+    "v541-r4-funded-blue-evidence-20261108-v1.tar.gz": "bccd9be9e8e112af1f76c3d6233c5f5463201f4639640688c45a4a8265177533",
+    "v541-full-node-20261108-v1.log": "fc823e9d0a8b04ac66aa3c18bcd4df04d6ec9ae96a84957cf0e5e4d53e3ca216",
+    "v541-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v541-browser-20261108-v1.log": "eb7232c3fc7daea02254aa7f38147037190a500808fb4ae0c82439b51da6a6ff"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 581.1305829999999,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "r4NewRetainedInputs": 232,
+  "independentNativeReplayInputs": 66,
+  "materializedFixedTails": 6,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

@@ -2758,6 +2758,64 @@
           ...(completion.plans?.length?{continuingDataPlans:completion.plans}:{})}};
     }
 
+    // Same fixed blue goal, but its public pick sits behind funded computer
+    // prerequisites. Price only pure known corners and score/publicity slots;
+    // the shared pick proof still owns the refill and the remainder of the turn.
+    function quietR4FundedPublicBlue({state,owner,node,stored,plan,transition}){
+      const slots=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot).sort((a,b)=>a-b);
+      const target=data.getRequiredComputerSlotForBlueBonus(2),count=target-slots.length;
+      const need=count+1-owner.resources.availableData,hasProbe=hasOwnVisitSource(state);
+      if(plan.goal.id!=="data:blue:2"||plan.goal.targetComputerSlot!==target||target>=4||count<1
+        ||need<1||need>3||count+1>players.RESOURCE_LIMITS.availableData||hasProbe&&!movementPlanning
+        ||slots.some((slot,i)=>slot!==i+1)||owner.resources.availableData!==owner.dataState.poolTokens.length)return null;
+      const stationary=current=>{
+        if(!hasProbe)return true;
+        const objective=goalMovement.plan({state:current,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+          compareTiming:timingForOneGoalQuery(current),endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(current,seatId)?.candidates||[]});
+        goalMovementGeometryNodes+=objective?.routingNodes||0;
+        return !objective?.intent?.path.length;
+      };
+      if(!stationary(state))return null;
+      if(owner.resources.availableData>0&&!node.legalActions.some(a=>a.family==="place_data"))return null;
+      const p={...owner,resources:{...owner.resources},hand:[...owner.hand],dataState:structuredClone(owner.dataState)};
+      const meta=structuredClone(state.meta),discardPile=[...state.cards.discardPile],cornerIds=[];
+      const prepared={...state,meta,players:{...state.players,players:state.players.players.map(q=>q===owner?p:q)},
+        cards:{...state.cards,discardPile}};
+      for(let i=0;i<need;i++){
+        const actions=node.legalActions.filter(a=>a.family!=="card_corner"||p.hand.some(c=>c.id===a.target?.cardInstanceId));
+        const step=resourceDemand.preparations({state:prepared,seatId,goal:plan.goal,actions,selectionOnly:true}).find(c=>!c.observer);
+        const corner=actions.find(a=>a.actionId===step?.actionId&&a.family==="card_corner"&&a.payload?.kind==="resource");
+        const card=corner&&p.hand.find(c=>c.id===corner.target.cardInstanceId),reward=card&&cards.getDiscardActionRewardForCard(card);
+        if(!card||i===0&&corner.actionId!==plan.firstActionId||!knownCards(stored.envelope).has(card.id)
+          ||(corner.payload.multiplier??1)!==1||reward?.dataCount!==1||Object.keys(reward.gain||{}).length)return null;
+        p.hand=p.hand.filter(c=>c!==card);p.resources.handSize=p.hand.length;
+        if(!data.gainData(p,{root:{meta}}).ok)return null;
+        discardPile.push(card);cornerIds.push(card.id);
+        if(!quietTailHasNoAcquisition(prepared)||!stationary(prepared))return null;
+      }
+      for(let i=0;i<count;i++){
+        const r=data.placeDataToComputer(p);
+        if(!r.ok||r.placementSlot!==slots.length+i+1)return null;
+        for(const reward of r.slotBonuses||[]){
+          if(!["score","publicity"].includes(reward.type))return null;
+          players.gainResources(p,{[reward.type]:reward[reward.type]});
+        }
+        if(!quietTailHasNoAcquisition(prepared)||!stationary(prepared))return null;
+      }
+      const pick=quietBluePublicPick({state:prepared,owner:p,node,stored,plan,transition,firstFamily:"card_corner",finalRoundQuiet:true});
+      if(!pick)return null;
+      const final=(s,q)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},q).totalScore;
+      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(prepared,p),-resourceDemand.planningCapital(state,owner)]);
+      const resource=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((sum,[k,w])=>sum+w*((p.resources[k]||0)-(owner.resources[k]||0)),0);
+      const bluePublicPick={...pick.bluePublicPick,fundedComputerPrefix:{cornerIds,placements:count}};
+      return {...pick,netGain:stateValue.sumValueParts([pick.netGain,capital,final(prepared,p),-final(state,owner),resource]),
+        requiredNativeInputs:cornerIds.length+2*count+pick.requiredNativeInputs,
+        unrealizedPurposeDelta:stateValue.sumValueParts([pick.unrealizedPurposeDelta,capital]),
+        exactFixedBlueTie:true,bluePublicPick,dataPlans:[{goal:plan.goal,bluePublicPick}]};
+    }
+
     function quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition,quoteAfterPick=null}){
       if(owner.resources.availableData!==0||hasOwnVisitSource(state)
         ||owner.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0).length!==1)return null;
@@ -3266,6 +3324,8 @@
             if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&plan.goal.blueSlot===2)
               spec=owner.resources.availableData===0&&!deferredTask?quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition}):
                 quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask});
+            if(!spec&&kind==="blue-end-turn"&&fixedR4DeepSpace&&!deferredTask&&plan)
+              spec=quietR4FundedPublicBlue({state,owner,node,stored,plan,transition});
             if(kind==="data-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="income"){
               const income=quietFixedIncomeTail({state,owner,node,stored,plan,policy,transition});
               if(income)spec=deferredTask?{...income,requiredNativeInputs:income.requiredNativeInputs+1,deferredPublicity:deferredTask}:income;
