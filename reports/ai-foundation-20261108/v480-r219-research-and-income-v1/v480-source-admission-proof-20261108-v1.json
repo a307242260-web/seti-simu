@@ -1,0 +1,40 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V480",
+  "searchVersion": "seti-complete-decision-search-v406",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "0e062a6649514945a0f56692e2b2d2c4671f7df3",
+  "snapshotTree": "1861a50a5869eee402c01155b89110066626446a",
+  "runtimeSubtrees": {
+    "randomizer": "7e1f176a783be6e79c9ea007a142a53f859fdfbc",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v480-r219-research-and-income-v1/v480-source-manifest-20261108-v1.json",
+  "manifestSha256": "a1edfa8bceeea6a0d0357b1540dc8079d07d4e9813e4ecbb485286d3dc4cd5af",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "714d801c99279ebaa58d40effb4d5476060e8fd1b2587724aa1fa396a225a5f0"
+  },
+  "evidenceSha256": {
+    "v480-source-manifest-20261108-v1.json": "a1edfa8bceeea6a0d0357b1540dc8079d07d4e9813e4ecbb485286d3dc4cd5af",
+    "v480-cold-gate-20261108-v1.json": "c5147802d1f8e855acb261512849387a0ea3e56b4e52c5994cc7564a54897b66",
+    "v480-r219-research-and-income-evidence-20261108-v1.tar.gz": "f060a4d8bc0d89baf7b6b019e2569bb6f65e82fc5ca603d867aa7e4398066555",
+    "v480-full-node-20261108-v1.log": "07b850c43483a0b4637ab22a78a4e7495334163a37bfafc27a40f3c9a3e2357e",
+    "v480-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v480-browser-20261108-v1.log": "8c1c79ebd1e89017aa612673c160b615c5a09598d872123ff6b798acc41fe4f6"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 581.465583,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

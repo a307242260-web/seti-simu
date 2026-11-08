@@ -1072,8 +1072,14 @@
             const p=state.players.players.find(v=>v.id===seatId),turn=state.turn;
             // Complete a fresh analysis with the minimum known data
             // payments; later income effects still materialize through Native.
+            const supplier=p.hand.length===4&&p.hand.find(c=>c.id===goal.incomeCardId);
+            const gain=supplier&&cards.getIncomeGainForCard(supplier);
+            // One separate supplier remains after the exact three known
+            // data payments. Do not protect a card that must fund a slot.
+            const separateIncome=Boolean(gain?.energy===1&&Object.keys(gain).length===1
+              &&!(cards.getDiscardActionRewardForCard(supplier)?.dataCount>0));
             const threeCorners=turn.roundNumber===3&&p.resources.availableData===1&&hasOwnVisitSource(state)
-              &&(p.hand.length===6||p.hand.length===5&&p.industryRoundMarkRound===turn.roundNumber
+              &&(separateIncome||p.hand.length===6||p.hand.length===5&&p.industryRoundMarkRound===turn.roundNumber
                 &&p.industryRoundMarkTurn===turn.turnNumber)
               &&p.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1).length===3;
             if(turn.roundNumber===3&&data.listComputerPlacedTokens(p).length===0
