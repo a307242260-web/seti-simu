@@ -1,0 +1,36 @@
+[world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[scenario] human405-white-first3-v1 opening=23 learner=player-white opponents=PASS
+[quick-400进度] 第 1 轮 · 第 1 回合 · 决策#24/400 · 席位=player-white · 动作=play_card:124d76d3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=0.288s · 83.3步/s
+[quick-400进度] 第 1 轮 · 第 6 回合 · 决策#39/400 · 席位=player-white · 动作=orbit:44937d1f · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=11 · 用时=1.325s · 29.4步/s
+[轮末-选牌收入前] {"round": 1, "beforeInput": 61, "score": 15, "checkpointSha256": "090b22bc2df81ec026eebf43c27b9a626dd2a397c22864f34789b91b471a41ad", "income": {"additionalPublicScan": 1, "availableData": 0, "credits": 6, "energy": 2, "handSize": 1, "publicity": 0}, "resources": {"additionalPublicScan": 0, "aomomoFossils": 0, "availableData": 0, "credits": 0, "energy": 1, "handSize": 0, "publicity": 3, "score": 15}, "technology": {"blueBoardSlots": {"blue2": 1}, "disabledTiles": {}, "ownedTiles": {"blue2": true, "purple4": true}}}
+[quick-400进度] 第 2 轮 · 第 2 回合 · 决策#66/400 · 席位=player-blue · 动作=pass:c858282e · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=15 · 用时=2.344s · 28.2步/s
+[quick-400进度] 第 2 轮 · 第 6 回合 · 决策#81/400 · 席位=player-white · 动作=play_card:719591bb · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=15 · 用时=3.399s · 23.8步/s
+[quick-400进度] 第 2 轮 · 第 9 回合 · 决策#104/400 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=32 · 用时=4.465s · 23.3步/s
+[轮末-选牌收入前] {"round": 2, "beforeInput": 128, "score": 48, "checkpointSha256": "178d1a4c29d9ccb667409f03762d4d29833428e73ce501883aa4d1f95db271c5", "income": {"additionalPublicScan": 1, "availableData": 0, "credits": 6, "energy": 3, "handSize": 1, "publicity": 0}, "resources": {"additionalPublicScan": 0, "aomomoFossils": 0, "availableData": 0, "credits": 0, "energy": 1, "handSize": 1, "publicity": 4, "score": 48}, "technology": {"blueBoardSlots": {"blue2": 1, "blue3": 2}, "disabledTiles": {}, "ownedTiles": {"blue2": true, "blue3": true, "purple4": true}}}
+[quick-400进度] 第 3 轮 · 第 1 回合 · 决策#130/400 · 席位=player-blue · 动作=pass:c858282e · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=48 · 用时=5.471s · 23.8步/s
+[quick-400进度] 第 3 轮 · 第 3 回合 · 决策#150/400 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=54 · 用时=6.476s · 23.2步/s
+[quick-400进度] 第 3 轮 · 第 6 回合 · 决策#172/400 · 席位=player-white · 动作=play_card:38489727 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=65 · 用时=7.635s · 22.5步/s
+[quick-400进度] 第 3 轮 · 第 9 回合 · 决策#188/400 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=78 · 用时=8.677s · 21.7步/s
+[quick-400进度] 第 3 轮 · 第 10 回合 · 决策#200/400 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=89 · 用时=9.696s · 20.6步/s
+[quick-400进度] 第 3 轮 · 第 12 回合 · 决策#219/400 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=96 · 用时=10.828s · 20.2步/s
+[quick-400进度] 第 3 轮 · 第 14 回合 · 决策#236/400 · 席位=player-white · 动作=choose_card:ecb1eda7 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=103 · 用时=11.882s · 19.9步/s
+[轮末-选牌收入前] {"round": 3, "beforeInput": 258, "score": 116, "checkpointSha256": "70a9d218540e519ed31de4aec8b96b2dda56d4b1c93d7c60538f0cffa5648587", "income": {"additionalPublicScan": 1, "availableData": 0, "credits": 7, "energy": 4, "handSize": 2, "publicity": 0}, "resources": {"additionalPublicScan": 0, "aomomoFossils": 0, "availableData": 0, "credits": 0, "energy": 1, "handSize": 0, "publicity": 1, "score": 116}, "technology": {"blueBoardSlots": {"blue1": 3, "blue2": 1, "blue3": 2}, "disabledTiles": {}, "ownedTiles": {"blue1": true, "blue2": true, "blue3": true, "orange1": true, "purple1": true, "purple4": true}}}
+[quick-400进度] 第 3 轮 · 第 16 回合 · 决策#258/400 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=116 · 用时=12.902s · 20.0步/s
+
+===== quick-400（seti-free-analyze-v1）=====
+步骤=259（上限 400） 终局=false 耗时=13.0s
+均分=34.5 各席=player-blue=7 player-green=7 player-brown=8 player-white=116
+  player-blue 行动族={"choose_card":9,"choose_payment":2,"pass":3}
+  player-green 行动族={"choose_card":10,"choose_payment":2,"pass":3}
+  player-brown 行动族={"choose_card":9,"pass":3}
+  player-white 行动族={"choose_card":35,"choose_payment":8,"play_card":10,"move":6,"end_turn":24,"research_tech":5,"choose_target":70,"orbit":2,"industry":2,"place_data":36,"pass":3,"scan":3,"analyze":4,"quick_trade":2,"card_corner":6,"accept_optional_effect":1,"complete_task":1}
+白色 quick_trade=2 研究步=[35,104,193,219,230]
+外星人: 首放 5 次、揭示 1 次
+反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）
+
+记录: reports/research/11d8ef38.a7b627dc.quick-400.json
+存档: seti-saves/seti-save-research-ai-search-v646-white-first3-20261108-a7b627dc-quick-400-v115.json
+
+[登记] 版本 ai-search-v646-white-first3-20261108（head=a7b627dc2，baseline=ai-search-v41-baseline-20261029，commits=250 个）
+  记录: reports/research/11d8ef38.a7b627dc.quick-400.json
+  存档: seti-saves/seti-save-research-ai-search-v646-white-first3-20261108-a7b627dc-quick-400-v115.json
