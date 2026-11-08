@@ -2,9 +2,9 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('./scan-analysis-income-utility'):root.SetiScanAnalysisIncomeUtility,common?require('../tech/catalog'):root.SetiTechCatalog);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('./scan-analysis-income-utility'):root.SetiScanAnalysisIncomeUtility,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../aliens/chong'):root.SetiAlienChong);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog,chong){
   'use strict';
   const VERSION='seti-goal-resource-preparation-v26';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
@@ -29,7 +29,7 @@
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),required={...(goal.required||{})};
     if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+movePoints(c),0));
-    if(goal.kind==='held-landing-route')required.energy=goal.embeddedMove?(goal.path.length>1&&!goal.movementCardId?1:0):goal.movementPoints;
+    if(goal.kind==='held-landing-route')required.energy=goal.directTransport?0:goal.embeddedMove?(goal.path.length>1&&!goal.movementCardId?1:0):goal.movementPoints;
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
       publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
@@ -959,7 +959,7 @@
         &&!list[1].options?.allowSatellite&&!list[2].options?.allowSatellite
         &&list[1].options?.cardIndex===list[2].options?.cardIndex;
     });
-    if(suppliers.length!==1)return null;
+    if(suppliers.length!==1)return directTransportGoal({state,seatId,p,candidates});
     const [card]=suppliers,cost=effects.getCardPlayCost(card);
     if(Object.keys(cost).length!==1||!Number.isSafeInteger(cost.credits)||cost.credits<=0||p.resources.credits<cost.credits)return null;
     const energyPayment=p.resources.energy>=1;
@@ -993,6 +993,50 @@
       if(value>0)options.push({id:c.requirementId+':held-transport:'+card.id+':'+(payment?.id||'energy'),kind:'held-landing-route',
         rocketId:c.rocketId,planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:card.id,movementCardId:payment?.id||null,
         coordinate:path[1].to,path,movementPoints:2,embeddedMove:path[1],required:cost,prefixOnly:false,value});
+    }
+    return options.sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id))[0]||null;
+  }
+
+  // A direct pickup card supplies the landing, but none of the movement.
+  // Admit one named route only when its fee and every step have disjoint
+  // known payments. This plan does not speculate about which cargo appears.
+  function directTransportGoal({state,seatId,p,candidates}){
+    const transport=p.hand.filter(card=>{
+      const model=effects.getCardModel(card),list=model?.playEffects||[];
+      return model?.cardType===2&&!model.triggers?.length&&list.length===2
+        &&list[0].type==='chong_land_for_pickup'&&list[1].type==='chong_pickup_fossil'
+        &&list[0].options?.cardIndex===list[1].options?.cardIndex;
+    });
+    if(transport.length!==1||p.resources.energy!==0)return null;
+    const [card]=transport,required=effects.getCardPlayCost(card),short=required.credits-p.resources.credits;
+    if(Object.keys(required).length!==1||!Number.isSafeInteger(required.credits)||required.credits<=0||short>1)return null;
+    const others=p.hand.filter(c=>c!==card);
+    const movers=others.filter(c=>movePoints(c)===1);
+    if(!movers.length||movers.length>2||others.some(c=>movePoints(c)>1))return null;
+    const donors=short===1?others.filter(c=>!movePoints(c)).map(c=>c.id):[];
+    if(short===1&&(donors.length!==2||observes(state,seatId,'quick_trade_payment')
+      ||observes(state,seatId,'quick_trade_discard_selection')))return null;
+    const options=[],weights=stateValue.DEFAULT_WEIGHTS;
+    for(const c of candidates()){
+      if(c.launchRequired||c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!['jupiter','saturn'].includes(c.planetId)
+        ||!c.path.length||c.path.length!==movers.length||c.required.paidMovementPoints!==movers.length
+        ||chong.getRemainingPlanetFossilCount(state.aliens,c.planetId)===0)continue;
+      const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);
+      if(!probe||probe.fossilId)continue;
+      let at=rockets.getRocketSectorCoordinate(probe);
+      const path=c.path.map(({deltaX,deltaY},i)=>{
+        const move=rockets.canMoveFromCoordinate(state.pieces,at,deltaX,deltaY,c.rocketId);
+        if(!move.ok)throw Error('DIRECT_TRANSPORT_ROUTE_INVALID');
+        const requiredMovePoints=rocketAbility.getRequiredMovePointsFromCoordinate({...state,state},p,at);
+        const step={from:at,to:move.to,deltaX,deltaY,requiredMovePoints,paymentCardId:movers[i].id};
+        at=move.to;return step;
+      });
+      if(!path.every(s=>s.requiredMovePoints===1))continue;
+      const value=c.targetBenefit.grossEquivalentValue-required.credits*weights.credits
+        -(1+movers.length+donors.length)*weights.handSize;
+      options.push({id:c.requirementId+':direct-transport:'+card.id,kind:'held-landing-route',rocketId:c.rocketId,
+        planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:card.id,coordinate:at,path,
+        movementPoints:path.length,required,prefixOnly:false,value,directTransport:true,creditPaymentIds:donors});
     }
     return options.sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id))[0]||null;
   }
@@ -1039,7 +1083,7 @@
     return options.sort((a,b)=>b.value-a.value||a.movementPoints-b.movementPoints||(a.id<b.id?-1:1))[0]||heldTransportGoal({state,seatId,p,candidates});
   }
 
-  function heldLandingStep({state,seatId,goal,actions,status,operation}){
+  function heldLandingStep({state,seatId,goal,actions,status,session,operation}){
     const p=owner(state,seatId),find=(test,reason,kind='fixed')=>{
       const a=actions.find(test);return a?{kind,actionId:a.actionId,reason}:{kind:'infeasible',reason};
     };
@@ -1052,14 +1096,33 @@
       }
       const land=actions.some(a=>a.target?.actionType==='land');
       if(land)return find(a=>a.target?.rocketId===goal.rocketId&&a.target?.planetId===goal.planetId
-        &&a.target?.landTarget?.type===goal.endpointTarget.type,'held-landing-native-target',goal.embeddedMove?'fixed':'target');
+        &&a.target?.landTarget?.type===goal.endpointTarget.type,'held-landing-native-target',goal.embeddedMove||goal.directTransport?'fixed':'target');
       return{kind:'fallback',reason:'held-landing-native-effect',actionIds:actions.map(a=>a.actionId)};
     }
     if(status==='decision'){
+      if(goal.directTransport){
+        const source=session?.journal?.actions?.[0]?.action;
+        if(source?.target?.tradeId==='cards-for-credit'&&goal.creditPaymentIds.length){
+          const pending=session?.queue?.[0]?.payload?.decisionContext,selected=pending?.selected||[];
+          if(pending?.kind!=='discard'||pending.count!==2||selected.some(id=>!goal.creditPaymentIds.includes(id)))
+            return{kind:'infeasible',reason:'direct-transport-credit-payment-changed'};
+          const next=goal.creditPaymentIds.find(id=>!selected.includes(id));
+          return find(a=>next?a.target.cardInstanceId===next:a.target.confirm,'direct-transport-fixed-credit-payment');
+        }
+        const payer=goal.path[0]?.paymentCardId;
+        return payer?find(a=>a.target?.kind==='move-payment'&&a.target.cardIds?.length===1&&a.target.cardIds[0]===payer,
+          'direct-transport-fixed-movement-payment'):{kind:'infeasible',reason:'direct-transport-movement-payment-changed'};
+      }
       if(actions.some(a=>a.target?.kind==='move-payment'))return find(a=>a.target?.kind==='move-payment'
         &&(goal.embeddedMove&&goal.movementCardId?a.target.cardIds?.length===1&&a.target.cardIds[0]===goal.movementCardId
           :a.target.choiceId==='energy'&&!a.target.cardIds?.length),goal.embeddedMove&&goal.movementCardId?'held-transport-pay-exact-corner':'held-landing-pay-exact-energy');
       return{kind:'fallback',reason:'held-landing-native-preparation-effect',actionIds:actions.map(a=>a.actionId)};
+    }
+    if(goal.directTransport&&p.resources.credits<goal.required.credits){
+      if(goal.required.credits-p.resources.credits!==1||goal.creditPaymentIds.length!==2
+        ||!goal.creditPaymentIds.every(id=>p.hand.some(c=>c.id===id)))
+        return{kind:'infeasible',reason:'direct-transport-fee-changed'};
+      return find(a=>a.family==='quick_trade'&&a.target.tradeId==='cards-for-credit','direct-transport-fund-fee');
     }
     if(!p.hand.some(c=>c.id===goal.cardId)||p.resources.credits<goal.required.credits)
       return{kind:'infeasible',reason:'held-landing-card-or-fee-unavailable'};
@@ -1069,19 +1132,20 @@
     }
     if(goal.embeddedMove&&(goal.movementCardId?!p.hand.some(c=>c.id===goal.movementCardId):p.resources.energy<1))
       return{kind:'infeasible',reason:'held-transport-movement-payment-unavailable'};
-    if(!goal.embeddedMove&&p.resources.energy<goal.movementPoints){
+    if(!goal.embeddedMove&&!goal.directTransport&&p.resources.energy<goal.movementPoints){
       const funding=probeCapital.funding(p.resources,{...goal.required,energy:goal.movementPoints},stateValue.DEFAULT_WEIGHTS);
       if(!funding||funding.creditPurchases)return{kind:'infeasible',reason:'held-landing-currency-lower-bound'};
       return find(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy','held-landing-fund-energy');
     }
     const next=goal.path[0];
+    if(goal.directTransport&&!p.hand.some(c=>c.id===next.paymentCardId))return{kind:'infeasible',reason:'direct-transport-payer-unavailable'};
     return find(a=>a.family==='move'&&a.target.rocketId===goal.rocketId&&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY,
       'held-landing-fixed-direction');
   }
   function step({state,seatId,goal,actions,status,session,operation={}}){
     goal=currentGoal(state,goal);
     if(goal.kind==='blue-landing-supply')return blueLandingSupplyStep({state,seatId,goal,actions,status});
-    if(goal.kind==='held-landing-route')return heldLandingStep({state,seatId,goal,actions,status,operation});
+    if(goal.kind==='held-landing-route')return heldLandingStep({state,seatId,goal,actions,status,session,operation});
     if(goal.kind==='route'&&operation.targetStarted&&status==='stable')
       return{kind:'complete',reason:'route-endpoint-completed'};
     if(goal.kind==='effect-purpose'&&operation.targetStarted){

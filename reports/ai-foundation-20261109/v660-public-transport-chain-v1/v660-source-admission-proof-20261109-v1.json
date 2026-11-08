@@ -1,0 +1,53 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V660",
+  "searchVersion": "seti-complete-decision-search-v424",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "3b08ba42d0e94460d2dd3d47350da3ae5ae2ef19",
+  "runtimeSubtrees": {
+    "randomizer": "fbe240d290e5846204f87ec95e0ef62b7476172f",
+    "tools": "e2520d99b0faa0326e6b59cb49eb78c1943f383c",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261109/v660-public-transport-chain-v1/v660-source-manifest-20261109-v1.json",
+  "manifestSha256": "335378c76398eaff5ace233b9d064e615de2b3a507b65499e30d72dcb1ef1c94",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "aa8f96fce77fbe5de828c4dcf6c1efb6a42b42b1ed1253d8dd31b77a4425eb4a",
+    "randomizer/game/ai/decision-search.js": "79dd88f240283161bd0f5e03b80b1a94862235784c522b75372f9218af8c9ec6",
+    "randomizer/game/ai/fixtures/public-displayed-transport-r3-20261109-v1.json.gz": "3fb55b016ecff445da5377eb8abb31687ceaef5f913c9cd0be4b746451c8640e",
+    "randomizer/game/ai/public-displayed-transport.test.js": "2bfae8a2571353996100d7078b51133a4c3c2babe86af102212b298767756faa",
+    "randomizer/game/ai/resource-demand.js": "948b5cabc37abbf78a1397750cbc9f18341b0dae12e454788773a11fa8f611e4",
+    "tools/node-test-inventory.js": "6e089fc578699ad118c2584f61340611ebd634adb31ee09c5aa3d1d1c0fa3805"
+  },
+  "evidenceSha256": {
+    "v660-source-manifest-20261109-v1.json": "335378c76398eaff5ace233b9d064e615de2b3a507b65499e30d72dcb1ef1c94",
+    "v660-cold-gate-20261109-v1.json": "4bbfd305d89c412b9b1a0f94851b7b138c8a0e946a123945c63d499a791addbb",
+    "v660-cold-gate-20261109-v1.first-attempt.json": "b7c73fc9ebc4b96a62d561a7fbd8651665c3e4d7e79b8d65b62199887b7c94e6",
+    "v660-cold-gate-20261109-v1.first-attempt-failed-root.json.gz": "fe0122510c62f262fa02ec179e36482a1ae2d918e1448087bb7458fbf4de3721",
+    "v660-public-transport-evidence-20261109-v1.tar.gz": "1cf79bd9f49bfc0b5547082c602e2db7adeac6ce5a7f5ccce0364e133272fc7a",
+    "v660-node-tests-20261109-v1.log": "95f53cf8e0fba0d22a136b0a696beb883667b62a1d4788f9165c4b9c9edab619",
+    "v660-state-input-audit-20261109-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v660-browser-20261109-v1.log": "e0be06bf46fdba399c792087c6f98d9b3d4b3e8fe2420835c180b488af8561bb"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 578.606542,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 231,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 127,
+    "establishedScore": 175,
+    "fossil": "fossil_01",
+    "sourceNativeInput": 214,
+    "maxNative": 196
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

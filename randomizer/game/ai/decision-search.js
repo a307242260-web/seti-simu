@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v423";
+  const VERSION = "seti-complete-decision-search-v424";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -170,11 +170,13 @@
     const researchTransport=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3
       ?port.researchTransportPurpose?.():null;
     const transportPreparationEnabled=resourcePlanning&&movementPlanning&&realizationTies&&root.observation.publicState.roundNumber===3;
+    const displayedAnalysisTransport=transportPreparationEnabled&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      ?port.displayedAnalysisTransportSource?.():null;
     const transportPreparation=transportPreparationEnabled?port.transportPreparationPurpose?.():null;
     const upstreamTransport=transportPreparationEnabled&&!transportPreparation&&port.upstreamTransportEnabled?.();
     const displayedTransport=transportPreparationEnabled&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       ?port.displayedTransportPurpose?.():null;
-    const coreExtendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||matchedAnalysisScan||researchTransport||transportPreparation||upstreamTransport;
+    const coreExtendedPurpose=researchDataPurpose||researchScanPurpose||deferredComputerIncome||amibaRegion||scanTiming||analysisFunding||matchedAnalysisScan||researchTransport||displayedAnalysisTransport||transportPreparation||upstreamTransport;
     const extendedPurpose=coreExtendedPurpose||displayedTransport;
     const nodes = [];
     const known = new Map();
@@ -271,7 +273,8 @@
       const fundedScanQuote=node.status==="turn-tail-value"?node.planSummary.nextFundedScan:null;
       const analysisFundingQuote=analysisFunding&&BOUNDARIES.has(node.status)?port.quoteAnalysisFunding(node,analysisFunding):null;
       const matchedScanQuote=matchedAnalysisScan&&BOUNDARIES.has(node.status)?port.quoteMatchedAnalysisScan(node,matchedAnalysisScan):null;
-      const transportQuote=researchTransport&&BOUNDARIES.has(node.status)?port.quoteResearchTransport(node,researchTransport):null;
+      const transportQuote=BOUNDARIES.has(node.status)?(researchTransport&&port.quoteResearchTransport(node,researchTransport)
+        ||displayedAnalysisTransport&&port.quoteDisplayedAnalysisTransport(node,displayedAnalysisTransport)):null;
       const preparedTransport=(transportPreparation||upstreamTransport)&&BOUNDARIES.has(node.status)?port.quoteTransportPreparation(node,transportPreparation):null;
       const displayTransportQuote=displayedTransport&&BOUNDARIES.has(node.status)?port.quoteDisplayedTransport(node,displayedTransport,baseValue):null;
       const preparedGain=preparedTransport?stateValue.sumValueParts([preparedTransport.value,-baseValue]):0;

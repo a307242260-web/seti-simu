@@ -1113,6 +1113,45 @@
         ...(heldPayments?{heldPayments:true,probeId:ships[0].id}:{})};
     }
 
+    function displayedTransportResearchMove(state,actions,known,source=null,proof=displayedAnalysisTransportSource()){
+      if(!proof)return null;
+      const p=state.players.players.find(x=>x.id===seatId),required=techResolver.getResearchPublicityCost(p);
+      if(required-p.resources.publicity!==2||p.mainActionCompleted||p.techState.ownedTiles.blue1
+        ||!p.hand.every(c=>known.has(c.id))||!techResolver.listTakeableTiles(state.tech,p.techState).includes("blue1")
+        ||state.tech.stacks.blue1?.bonusHidden||state.tech.stacks.blue1?.bonusIndex!==knownRootTechIndices.get("blue1"))return null;
+      const movers=p.hand.filter(c=>cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1);
+      const payment=movers.filter(c=>Object.keys(cards.getDiscardActionMoveRewardForCard(c).gain).length===0);
+      if(movers.length!==3||payment.length!==1)return null;
+      const others=p.hand.filter(c=>!movers.includes(c));
+      if(others.length!==3)return null;
+      const publicity=others.filter(c=>{
+        const r=cards.getDiscardActionRewardForCard(c);
+        return r?.gain?.publicity===1&&Object.keys(r.gain).length===1&&!r.dataCount;
+      }).sort((a,b)=>resourceDemand.cardOpportunityCost(state,seatId,a)-resourceDemand.cardOpportunityCost(state,seatId,b)
+        ||a.id.localeCompare(b.id));
+      if(!publicity.length)return null;
+      const [payer]=publicity;
+      const slots=Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number).filter(slot=>!Object.values(p.techState.blueBoardSlots).includes(slot)
+        &&data.getRequiredComputerSlotForBlueBonus(slot)<=data.listComputerPlacedTokens(p).length+1);
+      if(slots.length!==1)return null;
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      const moves=(source?[source]:actions).filter(a=>a.family==="move"&&a.target.rocketId===proof.probeId&&a.payload?.requiredMovePoints===1)
+        .filter(({target})=>{
+          const preview=structuredClone(state),q=preview.players.players.find(x=>x.id===seatId);
+          const moved=rocketAbilities.moveProbe(preview,{...target,movementPoints:1,cost:{},source:"move"});
+          if(!moved.ok||q.resources.publicity!==p.resources.publicity+1
+            ||(moved.events||[]).some(e=>cardEffects.collectMatchingTriggers(p,{...e,...(e.type==="visitPlanet"?{hasOwnOrbit:true}:{})}).length))return false;
+          const rotated=techResolver.rotateForResearch(scienceSession.createActionContext(preview,seatId),1);
+          return rotated.ok&&!rotated.events.length&&(native.getProbeRouteRequirements(preview,seatId)?.candidates||[]).some(c=>
+            c.rocketId===proof.probeId&&!c.launchRequired&&c.endpointFamily==="land"&&c.endpointTarget?.type==="planet"
+            &&["jupiter","saturn"].includes(c.planetId)&&c.path.length===2&&c.required.paidMovementPoints===2
+            &&chong.getRemainingPlanetFossilCount(preview.aliens,c.planetId)>0);
+        });
+      if(moves.length!==1)return null;
+      return {id:"tech:blue1:"+slots[0]+":displayed-analysis-transport",kind:"research_tech",tileId:"blue1",blueSlot:slots[0],required:{publicity:required},
+        movementFunding:{cardId:payment[0].id,publicityPayerId:payer.id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity}};
+    }
+
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
       if(goal.kind==="blue-cash-analysis-tail"){
@@ -1345,6 +1384,12 @@
         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
           const base=planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope));
           goals=resourceCatalog(base,[source]);
+          if(source.family==="move"||source.target?.tradeId==="cards-for-credit"){
+            const native=productionKernel||globalThis.SetiProductionKernel;
+            const landing=resourceDemand.heldLandingGoal({state:base,seatId,compareTiming:timingForOneGoalQuery(base),
+              candidates:()=>native.getProbeRouteRequirements(base,seatId)?.candidates||[]});
+            if(landing?.directTransport)goals=[...goals,landing];
+          }
           protectedIncome=lateIncomePayment(base,stored,[source],goals);
           if(protectedIncome)goals=goals.map(g=>g.id===protectedIncome.goal.id?protectedIncome.goal:g);
           goals=goals.filter(goal=>{
@@ -1450,6 +1495,11 @@
         if(transport&&(!transport.heldPayments||fixedResearchTransportValue(
           session?.baseState?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):state,
           knownCards(envelope),transport.probeId,true)))goals=[...goals,transport];
+        const displayedMove=node.status==="stable"&&node.legalActions.some(a=>a.family==="move")
+          ?displayedTransportResearchMove(state,node.legalActions,knownCards(envelope))
+          :source?.family==="move"&&session?.baseState
+            ?displayedTransportResearchMove(planningState(session.baseState,stored.informationBarrier,knownCards(envelope)),[],knownCards(envelope),source):null;
+        if(displayedMove)goals=[...goals,displayedMove];
       }
       const preparationBase=state.turn.roundNumber!==3?null
         :node.status==='stable'&&node.legalActions.some(a=>a.family==='place_data')?state
@@ -4712,6 +4762,164 @@
       return localPlans.deferredSectorPublicityQuote({state,seatId,knownCards:knownRootCardIds});
     }
 
+    function displayedAnalysisTransportSource(){
+      if(!knownRootAlienIds.has("虫")||!Number.isSafeInteger(knownChongDisplayIndex))return null;
+      const stored=nodes.get(openedRoot),session=stored.envelope.session?.session;
+      const root=["research_tech","move"].includes(session?.journal?.actions?.[0]?.action.family)
+        ?planningState(session.baseState,stored.informationBarrier,knownRootCardIds)
+        :!session&&readPlanningState(stored);
+      if(!root)return null;
+      const t=root.turn,p=root.players.players.find(q=>q.id===seatId);
+      const card=chong.getCardDefinition(knownChongDisplayIndex);
+      const list=card&&cardEffects.getCardModel({cardId:card.cardId,set:"alien:虫"})?.playEffects;
+      if(list?.length!==2||list[0].type!=="chong_land_for_pickup"||list[1].type!=="chong_pickup_fossil"
+        ||t.roundNumber!==3||t.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
+        ||p.resources.energy||p.resources.credits||p.resources.availableData<1
+        ||data.listComputerPlacedTokens(p).length+p.resources.availableData!==7
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
+        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))||t.cardTurnEventBonuses?.length
+        ||p.hand.some(c=>!knownRootCardIds.has(c.id))
+        ||!hasPostMainInertReservations(root,true,true,true))return null;
+      const probes=root.pieces.rockets.filter(q=>q.playerId===seatId&&q.surface==="solar-board"&&!q.fossilId);
+      const offer=rootObservation.publicState.board.aliens.chongOffer;
+      if(probes.length>1||offer?.displayedCardIndex!==knownChongDisplayIndex
+        ||!chong.isChongRevealedSlot(root.aliens,offer.slotId))return null;
+      if(!probes.length&&(!root.cards.publicCards.some(c=>c&&knownRootCardIds.has(c.id)
+        &&cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1)||p.resources.publicity<techResolver.getResearchPublicityCost(p)))return null;
+      return {turn:t.turnNumber,probeId:probes[0]?.id??null,owned:p.techState.ownedTiles,hand:p.hand.map(c=>c.id),
+        index:offer.displayedCardIndex,alienSlot:offer.slotId};
+    }
+
+    function quoteDisplayedAnalysisTransport(node,purpose){
+      const tail=node.status==="turn-tail-value"?node.planSummary:null;
+      if(tail?(tail.kind!=="end-turn"||tail.netGain||tail.markedTiles.length):node.status!=="turn-boundary")return null;
+      const stored=nodes.get(tail?nodes.get(node).turnTailBase:node);
+      if(!stored?.envelope||stored.envelope.session||stored.intent
+        ||stored.informationBarrier&&!["tech_bonus_reveal","hidden_card_reveal"].includes(stored.informationBarrier.code))return null;
+      const s=readPlanningState(stored),t=s.turn,p=s.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.turnNumber!==purpose.turn+Number(!tail)
+        ||p.mainActionCompleted!==Boolean(tail)||p.resources.energy
+        ||s.aliens.chong.displayedCardIndex!==purpose.index
+        ||p.hand.some(c=>!knownRootCardIds.has(c.id)))return null;
+      if(purpose.probeId===null)return quoteLaunchForDisplayedAnalysisTransport(s,p,purpose,Boolean(tail));
+      return previewDisplayedAnalysisTransport(s,p,purpose,Boolean(tail));
+    }
+
+    function previewDisplayedAnalysisTransport(s,p,purpose,advance){
+      if(p.resources.credits!==1)return null;
+      const added=Object.keys(p.techState.ownedTiles).filter(id=>!purpose.owned[id]);
+      const cashSlot=added.length===1&&p.techState.blueBoardSlots[added[0]];
+      if(!cashSlot||data.getBlueBonusPlacementReward(p,cashSlot)?.type!=="credits"
+        ||!data.listBlueBonusPlacedTokens(p).some(x=>x.blueSlot===cashSlot))return null;
+      const slots=data.listComputerPlacedTokens(p).map(x=>x.placementSlot);
+      if(![5,6].includes(slots.length)||slots.some((slot,i)=>slot!==i+1)
+        ||slots.length+p.resources.availableData!==6)return null;
+      const next=structuredClone(s),q=next.players.players.find(x=>x.id===seatId);
+      if(advance){
+        const a=turnFlow.advanceTurnAfterPlayerAction(next,seatId);
+        if(!a.turnAdvanced||a.roundAdvanced||a.gameEnded||a.nextPlayerId!==seatId)return null;
+        q.mainActionCompleted=false;
+      }
+      if(slots.length===5){
+        const r=data.placeDataToComputer(q);
+        if(!r.ok||r.placementSlot!==6||r.slotBonuses?.length
+          ||cardEffects.collectMatchingTriggers(q,{type:"placeData",playerId:seatId,placementKind:"computer",placementSlot:6}).length)return null;
+      }
+      if(!data.analyzeDataWithoutEnergy(q).ok)return null;
+      const triggers=type=>q.reservedCards.some(c=>cardEffects.getCardModel(c)?.triggers?.some(x=>(x.event.types||[x.event.type]).includes(type)));
+      if(triggers("analyze")||triggers("alien_card_gain"))return null;
+      const available=Object.entries(chong.TRACE_REWARDS.blue).flatMap(([k,r])=>{
+        const position=Number(k);
+        return r.pickAlienCard&&r.gain?.score>0&&chong.canPlaceChongTrace(next.aliens,purpose.alienSlot,"blue",position,q).ok
+          ?[{position,score:r.gain.score}]:[];
+      }).sort((a,b)=>b.score-a.score||a.position-b.position);
+      const trace=available[0],event={type:"alienTrace",traceType:"blue",playerId:seatId,alienSlotId:purpose.alienSlot,region:null};
+      if(!trace||cardEffects.collectMatchingTriggers(q,event).length
+        ||cardEffects.collectMatchingTriggers(q,{...event,alienId:"虫"}).length)return null;
+      const serial=next.meta.sequences.alienEntity,card=chong.createAlienCard(purpose.index,serial+1);
+      if(!card||q.hand.some(c=>c.id===card.id))return null;
+      // No next display, no unknown cargo, and no new scoring mark enter this proof.
+      next.aliens.chong.displayedCardIndex=null;
+      if(!chong.placeChongTrace(next.aliens,purpose.alienSlot,"blue",trace.position,q,{sequence:serial}).ok)return null;
+      players.gainResources(q,{score:trace.score});
+      if(next.finalScoring.thresholds.some(n=>!Object.values(next.finalScoring.tiles).some(x=>x.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
+      const a=turnFlow.advanceTurnAfterPlayerAction(next,seatId);
+      if(!a.turnAdvanced||a.roundAdvanced||a.gameEnded||a.nextPlayerId!==seatId)return null;
+      q.mainActionCompleted=false;
+      q.hand.push(card);q.resources.handSize=q.hand.length;
+      let directory;
+      const route=resourceDemand.heldLandingGoal({state:next,seatId,compareTiming:timingForOneGoalQuery(next),
+        candidates:()=>directory??=(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(next,seatId)?.candidates||[]});
+      if(!route?.directTransport||route.cardId!==card.id||route.rocketId!==purpose.probeId||route.creditPaymentIds.length!==2)return null;
+      const land=directory.find(c=>route.id.startsWith(c.requirementId+":direct-transport:"));
+      const landingScore=land?.targetBenefit.score,landData=land?.targetBenefit.dataCount;
+      if(!Number.isSafeInteger(landingScore)||!Number.isSafeInteger(landData))return null;
+      const yellow=knownPublicLandingTrace(next,q,land),task=knownLandingTask(next,q),w=stateValue.DEFAULT_WEIGHTS;
+      const value=stateValue.sumValueParts([trace.score,landingScore,yellow?.score||0,task?.score||0,
+        (landData-p.resources.availableData)*w.availableData,(task?.credits||0)*w.credits,
+        -p.resources.credits*w.credits,-(route.path.length+route.creditPaymentIds.length)*w.handSize]);
+      return value>0?{kind:"known-display-analysis-transport",value,cashSlot,
+        display:purpose.index,trace:trace.position,routeId:route.id,landingScore,landData,
+        ...(yellow?{knownYellowTrace:yellow}:{}),...(task?{knownLandingTask:task}:{})}:null;
+    }
+
+    function quoteLaunchForDisplayedAnalysisTransport(s,p,purpose,advance){
+      const tiles=Object.keys(p.techState.ownedTiles).filter(id=>!purpose.owned[id]);
+      if(tiles.length!==1||s.tech.stacks[tiles[0]]?.techType!=="orange"||p.resources.credits||p.resources.energy
+        ||purpose.hand.length+1!==p.hand.length||purpose.hand.some(id=>!p.hand.some(c=>c.id===id))
+        ||p.resources.availableData!==3||data.listComputerPlacedTokens(p).length!==4)return null;
+      const probes=s.pieces.rockets.filter(q=>q.playerId===seatId&&q.surface==="solar-board"&&!q.fossilId);
+      if(probes.length!==1)return null;
+      const moveCard=p.hand.find(c=>!purpose.hand.includes(c.id));
+      const move=cards.getDiscardActionMoveRewardForCard(moveCard);
+      if(move?.movementPoints!==1||Object.keys(move.gain).length)return null;
+      const next=structuredClone(s),q=next.players.players.find(x=>x.id===seatId);
+      if(advance){
+        const a=turnFlow.advanceTurnAfterPlayerAction(next,seatId);
+        if(!a.turnAdvanced||a.roundAdvanced||a.gameEnded||a.nextPlayerId!==seatId)return null;
+        q.mainActionCompleted=false;
+      }
+      const candidates=rocketAbilities.listPlayerMoveChoices(next,q,{maxPoints:1}).map((target,i)=>
+        ({family:"move",actionId:String(i),target,payload:{requiredMovePoints:target.requiredMovePoints}}));
+      const launched={...purpose,probeId:probes[0].id,owned:p.techState.ownedTiles};
+      const funding=displayedTransportResearchMove(next,candidates,knownRootCardIds,null,launched);
+      if(!funding||funding.movementFunding.cardId!==moveCard.id)return null;
+      const {firstMoveId,cardId,publicityPayerId}=funding.movementFunding;
+      const action=candidates.find(x=>x.actionId===firstMoveId);
+      q.hand=q.hand.filter(c=>c.id!==cardId&&c.id!==publicityPayerId);
+      q.resources.handSize=q.hand.length;
+      const moved=rocketAbilities.moveProbe(next,{...action.target,movementPoints:1,cost:{},source:"move"});
+      if(!moved.ok)return null;
+      players.gainResources(q,{publicity:1});
+      const stack=next.tech.stacks[funding.tileId],idx=stack.bonusIndex;
+      if(stack.bonusHidden||idx!==knownRootTechIndices.get(funding.tileId))return null;
+      stack.bonusQueue=stack.bonusQueue.map((id,i)=>i===idx?id:null);
+      const rotated=techResolver.rotateForResearch(scienceSession.createActionContext(next,seatId),1);
+      const options={skipRotate:true};
+      const choice=rotated.ok&&!rotated.events.length&&scienceSession.listResearchChoices(next,seatId,options)
+        .find(a=>a.target.tileId===funding.tileId&&a.target.blueSlot===funding.blueSlot);
+      const result=choice&&scienceSession.executeResearchChoice(next,seatId,choice,options);
+      if(!result?.ok||result.awaitingCardSelection||result.events.length!==1||result.events[0].type!=="researchTech"
+        ||cardEffects.collectMatchingTriggers(q,result.events[0]).length)return null;
+      q.mainActionCompleted=true;
+      const cash=localPlans.previewBlueCompletion({state:next,seatId,goal:{id:"data:blue:"+funding.blueSlot,kind:"blue-data",blueSlot:funding.blueSlot,required:{}}});
+      if(!cash.available||cash.computerPlacements!==1||cash.incomeCardId||cash.dataCornerId||cash.player.resources.credits!==1)return null;
+      const funded=cash.player;
+      next.players.players=next.players.players.map(x=>x===q?funded:x);
+      const quiet=localPlans.quietEndCompletion({state:next,seatId});
+      if(!quiet.available||quiet.markedTiles.length||quiet.netGain)return null;
+      const route=previewDisplayedAnalysisTransport(next,funded,launched,true);
+      if(!route)return null;
+      const w=stateValue.DEFAULT_WEIGHTS;
+      const total=(st,player)=>endScoring.computePlayerFinalScore({...st,players:st.players.players,cardEffects,
+        finalScoring:structuredClone(st.finalScoring),aliens:structuredClone(st.aliens),
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},player).totalScore;
+      const value=stateValue.sumValueParts([route.value,total(next,funded),-total(s,p),
+        stateValue.technologyCapital(funded.techState,3),-stateValue.technologyCapital(p.techState,3),
+        ...Object.keys(w).map(k=>(funded.resources[k]-p.resources[k])*w[k])]);
+      return value>0?{...route,kind:"known-launch-and-displayed-transport",value,launchTile:tiles[0],moveCardId:moveCard.id}:null;
+    }
+
     function researchTransportPurpose() {
       const stored=nodes.get(openedRoot);
       if(!knownRootAlienIds.has("虫"))return null;
@@ -5725,7 +5933,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

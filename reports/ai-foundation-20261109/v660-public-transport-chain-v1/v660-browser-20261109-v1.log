@@ -1,0 +1,2 @@
+PASS production-v660-public-displayed-transport http://127.0.0.1:57352/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1
