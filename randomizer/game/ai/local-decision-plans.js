@@ -1331,6 +1331,36 @@
   return{policy:'seti-greedy-funded-computer-prefix-v1',available:true,selected:net>0,netGain:net,placements,requiredNativeInputs:placements*2,targetComputerSlot:goal.targetComputerSlot,
    immediateScoreGain:copy.resources.score-p.resources.score,player:copy,capital,assumption:'held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity'};
  }
+ // Preserve the second slot's otherwise lost publicity when an immediately
+ // affordable public research leaves room for it and both allocations fit.
+ function deferredComputerPublicity({state,seatId,goal,blueTail,knownTech,noAcquisition}){
+  const p=owner(state,seatId),occupied=data.listComputerPlacedTokens(p).length;
+  if(occupied>=2||goal.targetComputerSlot!==3||p.resources.publicity!==players.RESOURCE_LIMITS.publicity)return null;
+  const bonus=data.getComputerSlotBonus(2),cost=tech.getResearchPublicityCost(p);
+  const held=p.reservedCards.map(c=>{const copy=structuredClone(c);effects.ensureCardEffectState(copy);return copy;});
+  const receiver={...p,reservedCards:held};
+  const need=goal.targetComputerSlot-occupied+Number(blueTail);
+  if(Object.values(state.aliens.aliens).some(s=>s.revealed&&s.alienId==='符文族')||state.turn.cardTurnEventBonuses?.length)return null;
+  if(bonus?.type!=='publicity'||cost<bonus.publicity||p.resources.publicity<cost)return null;
+  const tileId=tech.listTakeableTiles(state.tech,p.techState).find(id=>{
+   const stack=state.tech.stacks[id],reward=catalog.BONUS_EFFECTS[stack?.bonusId],gain=science.getResearchDataCount(id);
+   const supplied=p.resources.availableData+gain;
+   return gain>0&&supplied>=need&&supplied<=players.RESOURCE_LIMITS.availableData&&knownTech(id,stack)
+    &&reward&&Object.keys(reward).every(k=>['score','credits','energy','publicity'].includes(k))
+    &&(reward.publicity||0)+bonus.publicity<=cost
+    &&!effects.collectMatchingTriggers(receiver,{type:'researchTech',playerId:seatId,tileId:id,
+      techType:stack.techType,firstTake:stack.firstTakeClaimedBy==null}).length;
+  });
+  if(!tileId)return null;
+  const prefix=previewComputerCompletion({state,seatId,goal});
+  if(!prefix.available||!prefix.selected||prefix.player.resources.publicity!==p.resources.publicity)return null;
+  const placed={...state,players:{...state.players,players:state.players.players.map(v=>v===p?prefix.player:v)}};
+  for(const current of [state,placed]){
+   const quiet=quietEndCompletion({state:current,seatId});
+   if(!quiet.available||quiet.netGain||quiet.markedTiles.length||!noAcquisition(current,current===placed?prefix.capital.afterCapital:prefix.capital.beforeCapital))return null;
+  }
+  return {tileId,retainedPublicity:bonus.publicity};
+ }
  function computerCompletion(input){const {player,capital,...result}=previewComputerCompletion(input);return result;}
  function previewScoredAmibaDataCorner({state,seatId,cardId}){
   const p=owner(state,seatId),card=p.hand.find(c=>c.id===cardId),reward=card&&cards.getDiscardActionRewardForCard(card);
@@ -1631,5 +1661,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
 });

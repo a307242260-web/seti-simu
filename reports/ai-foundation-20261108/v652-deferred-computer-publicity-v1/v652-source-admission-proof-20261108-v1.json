@@ -1,0 +1,55 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V652",
+  "searchVersion": "seti-complete-decision-search-v419",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "e0abae4c4b2cd8a2f41e86d682e43a039257ae7a",
+  "runtimeSubtrees": {
+    "randomizer": "c1c6cf2d5bd2c6ea6154b52299f65a2f663b577f",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v652-deferred-computer-publicity-v1/v652-source-manifest-20261108-v1.json",
+  "manifestSha256": "3c46d94d14f071b455f666586426decf52e49e3b9fa7c704a58af69a9b6f2bf3",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "fd5646bdf3d8765224b50b290e857c650e0d7748ed1e4f3ee6c77463a5388c62",
+    "randomizer/game/ai/blue-transport-research.test.js": "64b1e49884dbf52254471be894a5c981645f45496563911e6afe33c7e5240134",
+    "randomizer/game/ai/decision-search.js": "76c39a95cb8520d7a66d04c0495c087e9ceac234575dd9274d6ddd49c7fd8f35",
+    "randomizer/game/ai/fixtures/blue-transport-r3-20261108-v1.json.gz": "9db07fed8eb4f9a0a868f627cb283dc46b5a24d597a15cdd8958f2c9a81d0557",
+    "randomizer/game/ai/local-decision-plans.js": "86bab58df7d7a09670a2ee0ac817efa2d8dd619fd4b025460372dc26e8c91028"
+  },
+  "evidenceSha256": {
+    "v652-source-manifest-20261108-v1.json": "3c46d94d14f071b455f666586426decf52e49e3b9fa7c704a58af69a9b6f2bf3",
+    "v652-cold-gate-20261108-v1.json": "84ef147d5d1144a3d5d3cbb6ce449728dae5269c7c03c50f1e08a2cc892a7bb1",
+    "v652-deferred-computer-evidence-20261108-v1.tar.gz": "6a863f765a15e99ad686c5a4785e436565159e8b56934dff1293ebf7cced584e",
+    "v652-node-tests-20261108-v1.log": "b8a486541021d8e0c8e2b3aa2bac972db4c9dc5d384e7a34c5a760d8d3676ba1",
+    "v652-state-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v652-browser-20261108-v1.log": "cc6b9e3415e5367cc1916eef4a627a651a82855967243f043855aed24b394c39",
+    "v652-blue-transport-targeted-20261108-v6.log": "cdccf2fd9b4a09bc2ef5b6a8b9202d4e8bab7de51fdd69221c25ee7de2b079a6"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 592.679125,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 884,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 117,
+    "establishedScore": 165,
+    "autonomousInputs": 70,
+    "maxNativeInputs": 237,
+    "priorBlindFailure": 338
+  },
+  "standardRevealRootsUnchanged": [
+    172,
+    175
+  ],
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

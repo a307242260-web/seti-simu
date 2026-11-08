@@ -1396,6 +1396,22 @@
         if(i>=0)plans[i]=competingCash;else plans.push(competingCash);
       }
       const owner=state.players.players.find(p=>p.id===seatId);
+      const fixedPrefix=computerTail?.selected&&plans.find(p=>p.goal.kind==="computer-prefix");
+      if(node.status==="stable"&&state.turn.roundNumber===3&&owner.mainActionCompleted
+        &&!stored.intent&&fixedPrefix&&plans.every(p=>p.goal.kind==="computer-prefix"
+          ||p.goal.kind==="blue-data"&&p.goal.targetComputerSlot<=computerTail.targetComputerSlot)
+        &&!cardPick?.goal&&!node.legalActions.some(a=>a.family==="complete_task")&&!hasOwnVisitSource(state)
+        &&owner.hand.every(c=>knownCards(envelope).has(c.id))
+        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+        &&industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId==="deepspace_swap_cards"
+        &&hasPostMainInertReservations(state,false,true,true)){
+        const transition=previewTurn(state);
+        if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded&&transition.nextPlayerId===seatId
+          &&localPlans.deferredComputerPublicity({state,seatId,goal:fixedPrefix.goal,blueTail:plans.some(p=>p.goal.kind==="blue-data"),noAcquisition:quietTailHasNoAcquisition,
+            knownTech:(id,stack)=>Boolean(stack&&!stack.bonusHidden&&stack.bonusIndex===knownRootTechIndices.get(id))})){
+          plans.length=0;computerTail=null;
+        }
+      }
       let sharedDataFunding=null;
       if(node.status==="stable"&&plans.length===1&&plans[0].goal.kind==="blue-data"
         &&incomeTail?.reason==="income-tail-needs-additional-funding"&&owner.resources.availableData===0){

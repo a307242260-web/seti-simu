@@ -11,17 +11,20 @@ k.newGame({seed});
 const c=k.composition,save=()=>c.lifecycle.save().envelope;
 const menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
 function restore(envelope){
-  assert(c.lifecycle.restore(envelope).ok);
+  const restored=c.lifecycle.restore(envelope);
+  assert(restored.ok,JSON.stringify(restored.error));
   assert.deepEqual(save(),envelope);
 }
-function decide(envelope){
+function decide(envelope,checkpoint){
   restore(envelope);
   const actions=menu(),port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   try {
-    const q=createSearchAgent({seatId,analysisPort:port}).decide({seatId,legalActions:actions}).search;
+    const agent=createSearchAgent({seatId,analysisPort:port});
+    if(checkpoint)agent.loadCheckpoint(checkpoint);
+    const q=agent.decide({seatId,legalActions:actions}).search;
     assert(q.complete&&!q.unresolved.length&&q.diagnostics.nativeExecutions<=256);
     assert.deepEqual(save(),envelope);
-    return {action:actions.find(a=>a.actionId===q.actionId),q,
+    return {action:actions.find(a=>a.actionId===q.actionId),q,checkpoint:structuredClone(agent.createCheckpoint()),
       quotes:q.lines.flatMap(r=>r.knownResearchTransport?[r.knownResearchTransport]:[])};
   } finally {port.close();}
 }
@@ -154,5 +157,32 @@ try {
   assert.equal(afterFirstSlot.action.family,'research_tech');
   assert.equal(afterFirstSlot.q.value,156);
   assert(afterFirstSlot.q.lines.some(line=>line.edges.some(edge=>edge.turnTailPlanValue?.computerThenQuietEnd?.placements===2)));
+  const traceBeforePick=decide(f.beforeChongTraceAtPublicityCap);
+  assert.equal(traceBeforePick.action.target.choiceId,'trace:2:blue:chong:9');
+  const pendingTrace=c.inspect().session.decision;
+  assert(c.inputPort.submitDecision({decisionId:pendingTrace.decisionId,decisionVersion:pendingTrace.decisionVersion,
+    ownerId:pendingTrace.ownerId,choice:traceBeforePick.action}).ok);
+  assert.deepEqual(save(),f.beforeChongPickAtPublicityCap);
+  const atChoice=decide(save(),traceBeforePick.checkpoint);
+  assert.equal(atChoice.q.diagnostics.nativeExecutions,0);
+  assert.equal(atChoice.action.target.choiceId,'chong:display:9');
+  const pendingChong=c.inspect().session.decision;
+  assert(c.inputPort.submitDecision({decisionId:pendingChong.decisionId,decisionVersion:pendingChong.decisionVersion,
+    ownerId:pendingChong.ownerId,choice:atChoice.action}).ok);
+  assert.deepEqual(save(),f.afterChongPickAtPublicityCap);
+  const atCap=decide(save());
+  assert.equal(atCap.action.family,'end_turn');
+  assert(c.inputPort.submitAction(atCap.action).ok);
+  const next=decide(save());
+  assert.equal(next.action.family,'research_tech');
+  assert.equal(next.q.value,156);
+  const canCollect=structuredClone(f.afterChongPickAtPublicityCap),notCapped=JSON.parse(canCollect.committedState);
+  notCapped.players.players.find(p=>p.id===seatId).resources.publicity--;
+  canCollect.committedState=JSON.stringify(notCapped);
+  assert.equal(decide(canCollect).action.family,'place_data');
+  const {deferredComputerPublicity}=require('./local-decision-plans');
+  assert.equal(deferredComputerPublicity({state:JSON.parse(f.afterChongPickAtPublicityCap.committedState),
+    seatId,goal:{kind:'computer-prefix',targetComputerSlot:3},blueTail:true,
+    knownTech:()=>false,noAcquisition:()=>true}),null);
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}

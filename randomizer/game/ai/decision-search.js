@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v418";
+  const VERSION = "seti-complete-decision-search-v419";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -765,13 +765,30 @@
       const chongOffer = root.legalActions.some(a => a.target?.kind === "residual-domain"
         && a.target.source === "display" && a.target.choiceId?.startsWith("chong:display:"))
         && root.legalActions.find(a => a.target?.kind === "residual-domain" && a.target.choiceId === "chong:blind");
-      const chongBlindRank = (index, edge) => Number(index === 0 && Boolean(chongOffer) && edge?.actionId === chongOffer.actionId);
+      const knownChongIndex=root.observation?.publicState?.board?.aliens?.chongOffer?.displayedCardIndex;
+      const nestedChongBlind=new Map();
+      const chongBlindRank = (index, edge) => {
+        if(!edge)return 0;
+        if(index===0)return Number(edge.actionId===chongOffer?.actionId);
+        const node=nodes[index].node;
+        if(!Number.isSafeInteger(knownChongIndex)||node.status!=="decision")return 0;
+        if(!nestedChongBlind.has(index)){
+          const offered=node.legalActions.some(a=>a.target?.kind==="residual-domain"&&a.target.source==="display"
+            &&a.target.choiceId===`chong:display:${knownChongIndex}`);
+          const blind=offered&&node.legalActions.find(a=>a.target?.kind==="residual-domain"&&a.target.choiceId==="chong:blind");
+          nestedChongBlind.set(index,blind?.actionId??null);
+        }
+        return Number(edge.actionId===nestedChongBlind.get(index));
+      };
       for (let head = 0; head < changed.length; head += 1) {
         const target = nodes[changed[head]];
         for (const { index, edge } of parents[changed[head]]) {
           const parent = nodes[index];
           const distance = target.distance + edge.cost;
-          const blindRank = chongBlindRank(index,edge) - chongBlindRank(index,parent.best);
+          // Carry the secondary cost to every parent. Switching a nested
+          // choice from blind to public may lengthen the retained witness.
+          const blindCount=(target.chongBlindCount??0)+chongBlindRank(index,edge);
+          const blindRank=blindCount-(parent.chongBlindCount??0);
           if (parent.value == null || target.value > parent.value
             || (target.value === parent.value && (target.preparationDebt < parent.preparationDebt
               || (target.preparationDebt === parent.preparationDebt && (target.realization > parent.realization
@@ -785,6 +802,7 @@
             parent.preparationDebt = target.preparationDebt;
             parent.landingCompanyRetained = target.landingCompanyRetained;
             parent.publicDataCard = target.publicDataCard;
+            parent.chongBlindCount = blindCount;
             parent.distance = distance;
             parent.best = edge;
             changed.push(index);
@@ -884,7 +902,7 @@
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
         JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
-        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[b.target].landingCompanyRetained-nodes[a.target].landingCompanyRetained||Number(Boolean(nodes[b.target].publicDataCard))-Number(Boolean(nodes[a.target].publicDataCard))||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
+        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[b.target].landingCompanyRetained-nodes[a.target].landingCompanyRetained||Number(Boolean(nodes[b.target].publicDataCard))-Number(Boolean(nodes[a.target].publicDataCard))||(nodes[a.target].chongBlindCount??0)-(nodes[b.target].chongBlindCount??0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
       if (selection && !action.target?.confirm) return {
         actionId: action.actionId, target: null, value: nodes[0].value,
         completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",
