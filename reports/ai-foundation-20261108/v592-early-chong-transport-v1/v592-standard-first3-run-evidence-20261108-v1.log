@@ -1,0 +1,41 @@
+{
+  "record": "reports/research/03f553ec.a5195669.quick-400.json",
+  "gitCommit": "a5195669f",
+  "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v410/seti-purpose-capital-state-value-v58/human405-white-first3-v1/seti-human405-pass-only-v1",
+  "steps": 259,
+  "wallMs": 12868,
+  "stopReason": "first-three-rounds-settled",
+  "roundEnds": [
+    {
+      "round": 1,
+      "score": 15,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "8896241425cd273c77eb656ef47044ce91a075011517b3e47d16fa96841278c6"
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "e60e6bad0ace7fed9c53a0beb3a2f7a385e9f8d0dc85783a32f0ec3b18be6894"
+    },
+    {
+      "round": 3,
+      "score": 116,
+      "phase": "before-pass-card-and-income",
+      "checkpointSha256": "55910c7e71683e23007b37dc33c0899593f2ea50cf9a2ae4d06d6266d235fc6a"
+    }
+  ],
+  "peakNative": 256,
+  "peakMilliseconds": 354.87254100000064,
+  "scenarioResult": {
+    "firstRoundSettled": true,
+    "openingInputs": 23,
+    "firstThreeRoundsSettled": true,
+    "newInputsAfterOpening": 236,
+    "completedRoundEnds": [
+      1,
+      2,
+      3
+    ]
+  }
+}
