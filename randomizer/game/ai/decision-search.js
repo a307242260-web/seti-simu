@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v413";
+  const VERSION = "seti-complete-decision-search-v414";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -610,7 +610,7 @@
             dataPrimaryBoundPrunes++;continue;
           }
         }
-        if(tail&&!tail.primaryOnly&&tail.firstActionId===alternative.firstActionId
+        if(tail&&!alternative.resourcePlan?.goal.competingTransportCash&&!tail.primaryOnly&&tail.firstActionId===alternative.firstActionId
           &&(tail.netGain===0
             ||exactTailSum(valueForNode(entry.node),tail.netGain)!==null)){
           if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break outer;}
@@ -863,7 +863,8 @@
         completion: complete ? "proof-pruned" : "pending-retained-search", valueType: "not-executed", prunedByPlan: excluded };
       const actionBound=nodes[0].actionBounds?.find(bound=>bound.actionId===action.actionId);
       if(actionBound)return {actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"proof-pruned",prunedByActionBound:actionBound};
-      if(nodes[0].pickPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",
+      const transportEdge=nodes[0].edges.some(e=>e.actionId===action.actionId&&e.resourcePlan?.goal.kind==="transport-data-prep");
+      if(!transportEdge&&nodes[0].pickPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",
         completion:"excluded-by-card-pick-policy",policy:nodes[0].pickPolicy.policy,goal:nodes[0].pickPolicy.goal,isEquivalence:false};
       if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)
         && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(e.resourcePlan?.goal.kind==="held-landing-route"||e.resourcePlan?.goal.movementFunding))) return {
@@ -871,7 +872,7 @@
         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
       if(nodes[0].resourcePolicy?.excludedActionIds.includes(action.actionId)&&!nodes[0].edges.some(e=>e.actionId===action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-resource-policy",policy:nodes[0].resourcePolicy.policy,isEquivalence:false};
-      if(nodes[0].decisionPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-local-decision-policy",policy:nodes[0].decisionPolicy.policy,isEquivalence:false};
+      if(!transportEdge&&nodes[0].decisionPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-local-decision-policy",policy:nodes[0].decisionPolicy.policy,isEquivalence:false};
       const selection = nodes[0].selection;
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
@@ -913,7 +914,8 @@
         if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
         const roots = entry.node.legalActions.map(action => {
           const edge = entry.edges.find(edge => edge.actionId === action.actionId);
-          const policyExclusion = entry.decisionPolicy?.excludedActionIds.includes(action.actionId)?entry.decisionPolicy.policy:entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
+          const policyExclusion = edge?.resourcePlan?.goal.kind==="transport-data-prep"?null:
+            entry.decisionPolicy?.excludedActionIds.includes(action.actionId)?entry.decisionPolicy.policy:entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
             :entry.movementPolicy?.excludedActionIds.includes(action.actionId) ? entry.movementPolicy.policy : null;
           const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null);
           return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,

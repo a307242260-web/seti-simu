@@ -77,5 +77,26 @@ try {
   assert.equal(after.resources.availableData,1);
   assert(after.dataState.placedTokens.some(t=>t.placementSlot===5));
   assert(after.hand.some(card=>card.id===proof.publicPaymentCard));
+  const company=decide(f.beforeCompanyPreparation);
+  const plan=company.q.lines.find(line=>line.knownTransportPreparation)?.knownTransportPreparation;
+  assert.equal(company.action.target.abilityId,'deepspace_swap_cards');
+  assert.equal(company.q.value,168.5);
+  assert(company.q.roots.some(r=>r.actionId===company.action.actionId&&r.value===company.q.value));
+  assert.equal(plan.blueCashSlot,3);
+  assert.equal(plan.bluePickSlot,null);
+  for(const [i,family] of ['industry','choose_card','choose_card',...suffix.slice(0,2),'end_turn'].entries()){
+    const {action}=i===0?company:decide(save());
+    assert.equal(action.family,family);
+    if(i===1)assert.equal(action.target.cardInstanceId,plan.swapOutId);
+    if(i===2)assert.equal(action.target.cardInstanceId,plan.publicPaymentCard);
+    const pending=c.inspect().session?.decision;
+    assert((pending?c.inputPort.submitDecision({decisionId:pending.decisionId,decisionVersion:pending.decisionVersion,ownerId:pending.ownerId,choice:action})
+      :c.inputPort.submitQuickAction(action)).ok);
+  }
+  const companyEnd=JSON.parse(save().committedState),owner=companyEnd.players.players.find(p=>p.id===seatId);
+  assert.equal(owner.resources.availableData,1);
+  assert(owner.dataState.placedTokens.some(t=>t.placementSlot===5));
+  assert(owner.hand.some(card=>card.id===plan.publicPaymentCard));
+  assert(companyEnd.cards.publicCards.some(card=>card?.id===plan.swapOutId));
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,privateCardsAndNextTechDoNotChangeRanking:true}));
 } finally {c.dispose();}
