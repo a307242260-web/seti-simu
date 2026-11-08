@@ -1,0 +1,51 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V656",
+  "searchVersion": "seti-complete-decision-search-v423",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "cf3f8699fb926e00ca73b08d102ea912fa1b07f8",
+  "runtimeSubtrees": {
+    "randomizer": "2cab0a94b03d9a41de9cbe3f92c6ca906aedda3c",
+    "tools": "1aeab256d219638bfe3edf56470eee6292af243f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261109/v656-chong-pickup-boundary-v1/v656-source-manifest-20261109-v2.json",
+  "manifestSha256": "80afa235ede65fea245363ea2cc29f1cfb92d34d8fe6455cbbec8d2a80d2f7cf",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "65d810631bc53627b8b855c6fa3baabbe2dde2bed36b9cf5f114740672e8d462",
+    "randomizer/game/ai/chong-pickup-information-boundary.test.js": "f8d2bf13d39bc884f34467f0e94c8d4b2a75b4c6214685523ce67212748486ed",
+    "randomizer/game/ai/decision-search.js": "0ad8174df9650e1728d06a3599911c1760b3a97c4c5d558d833763a374763811",
+    "randomizer/game/ai/fixtures/chong-pickup-fossil-r3-20261109-v1.json.gz": "58a4a24acb7b8e5451f404f2cea01e7fc67468f05771250b7626324d6f1b992e",
+    "tools/node-test-inventory.js": "463821041552274d39ba1f0a2efbd0fcc79e04e4c0407a44383b8818cefa1f08"
+  },
+  "evidenceSha256": {
+    "v656-source-manifest-20261109-v2.json": "80afa235ede65fea245363ea2cc29f1cfb92d34d8fe6455cbbec8d2a80d2f7cf",
+    "v656-source-manifest-20261109-v1.json": "77aca70e9184527f63d70082cf332c00b26af3b31e88de65b29a6d4f6c6ebd37",
+    "v656-cold-gate-20261109-v1.json": "6e115fd5823b8945069bcc0c7ef90e9b756be6012cc9c0297780c056ff836b36",
+    "v656-chong-pickup-evidence-20261109-v1.tar.gz": "09a943cb081add273ffa365c5cbb27dfb257986e6087dce5021bc13672a2fd01",
+    "v656-node-tests-20261109-v1.log": "cbbb6e0077a68d6eb16c84a8004045b4a6e4a74f45d4b383039348cd4439c18c",
+    "v656-state-input-audit-20261109-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v656-browser-20261109-v1.log": "ea6982054ff94b7b3d2fbb25ac62927178f55dd07fccccd6b9a89b0a966a6fd1"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 579.016875,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 230,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 127,
+    "establishedScore": 175,
+    "fossil": "fossil_01",
+    "beforeNative": 730,
+    "afterNative": 34
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

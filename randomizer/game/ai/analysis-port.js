@@ -1947,7 +1947,7 @@
       // The landing resolves before Native presents the destination's
       // previously hidden fossils. Search may value the settled landing,
       // but cannot select from the newly disclosed IDs.
-      const fossilReveal = head?.ownerId===seatId && effect?.type==="chong_pickup_fossil" && effect.options?.cardIndex===3
+      const fossilReveal = head?.ownerId===seatId && effect?.type==="chong_pickup_fossil"
         && inspection.session?.decision?.choices.some(a=>a.target?.fossilId&&!knownRootFossilIds.has(a.target.fossilId));
       const revealed = fossilReveal || ruleComposition.isHiddenInformationBarrier(nativeBarrier)
         && JSON.stringify(nativeBarrier) !== JSON.stringify(before.session?.irreversibleBarrier);

@@ -1,0 +1,447 @@
+browser machine player tests passed
+action bar tests passed
+browser host tests passed
+browser decision UI tests passed
+resident-renderer tests passed
+browser trajectory recording tests passed
+game recovery composition lifecycle tests passed
+host architecture audit tests passed
+income target classification tests passed
+public-api tests passed
+rule composition tests passed
+simulation counterfactual outcome tests passed
+simulation decision owner tests passed
+simulation Effect Session worker crash recovery tests passed
+simulation host public contract tests passed
+simulation no-browser-globals tests passed
+simulation committed-state checkpoint tests passed
+simulation-training-replay tests passed
+standard full-flow v2 passed
+action ability tests passed
+quick move requires an affordable one-point direction; blocked routes leave root unchanged
+quick trade tests passed
+standard action protocol tests passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+agent runtime isolation, completion and recovery tests passed
+{"alienOpeningPlan":"passed","fullInputs":102,"value":51,"small":[{"cardId":null,"rawInputs":61,"prunedInputs":61,"value":36.5},{"cardId":"dlc_9.png","rawInputs":36,"prunedInputs":22,"value":44},{"cardId":"b_86.webp","rawInputs":36,"prunedInputs":22,"value":44},{"cardId":"b_114.webp","rawInputs":64,"prunedInputs":52,"value":37.5}]}
+{"nativeAnalysisInputs":8,"nativeIncomeMissionInputs":8,"anonymousIncomeMissionFloor":4,"anonymousIncomeMissionActualLinear":5.5,"nativeLinearGain":9.5,"analysisIncrement":10.083333333333334,"totalBeforeAndAfter":124.08333333333333,"sharedWalletAndConsumedComputer":true,"anonymousIncomeConsumptionOnly":true,"noHiddenIdentityFunding":true,"knownIncomeComputer3Plan":119,"actualKnownIncomePolicyMatches":true,"earnedPendingBHandOff":120,"pendingFutureThresholdGuard":true,"publicTraceCardsFullCompactNativeParity":true,"rootAndRngRestored":true}
+{"publicAmibaBlindIncome":true,"nativeSearchInputs":186,"nativeIncomeControls":7,"nativeIncomeInputs":21,"exactUnknownBoundaryValueAndRealization":true,"publicDeckCountConsumedOnce":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaFixedCurrencyTail":true,"nativeSearchInputs":97,"nativeTailControls":21,"nativeTailInputs":88,"fullNativeChoiceValueAndRealizationMatch":true,"noInventedObservation":true,"rootAndRngUnchanged":true}
+{"publicAmibaPlainEnd":true,"nativeEndControls":2,"earnedBRealizationDelta":-8,"actualPendingEffectsDecline":true,"noInventedObservation":true,"rootAndRngRestored":true}
+{"analysisCurrentDataLowerBound":"passed","unfundedDetailedQuotesAvoided":3,"fundedQuoteUnchanged":true,"futureIncomeNotUsedForPreparation":true,"newNativeInputs":0}
+{"analysisInvariant":"passed","completeRecordedV50Inputs":580,"selectedAnalysisCases":433,"customCases":48,"reference":{"blueBonusQueries":5014,"symbolCopies":2020},"candidate":{"blueBonusQueries":1010,"symbolCopies":505},"everyCandidateAndEndpointExact":true,"mutableFrozenAndSourcePreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisLazyExplanations":"passed","valueOnlyEndpointBuilds":1,"fullPortfolios":1536,"snapshotCases":3,"emptyCandidateCovered":true,"fullFieldOrderValuesAndIdentityExact":true,"assignmentDeletionAndRepeatedReadsPreserved":true,"jsonAndStructuredCloneExact":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisLazyRegions":"passed","valueOnlyRegionalCopies":1,"referenceValueOnlyRegionalCopies":4,"allFieldsAndIndependentResultsExact":true,"readOnceAndSourcePreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisLazyTraceContexts":"passed","valueOnlyFixedFaceContexts":1,"fullExplanationsExact":true,"gridActorAvailabilitySnapshotsExact":true,"uncappedScoreAndBlueDataRemainEager":true,"sourceAndRepeatedReadsPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+trusted analysis fork isolation and exact reuse passed
+{"analysisPublicityCapital":"passed","NativeCommutationInputsReused":10,"nativeHandoffInputsReused":1,"newNativeInputs":0,"directResearchHandoff":116.5,"fullFormalCompactAndState":true,"unknownAndUnsafeRejected":true,"rootAndRngRestored":true,"results":[{"case":"actual142","before":140.08333333333334,"preparationCapital":0,"corners":["alien-amiba-9-5","alien-amiba-0-1"]},{"case":"legacy259","before":138.75,"preparationCapital":10.5,"corners":["alien-amiba-9-5"]}],"unfundedResearchPreparation":{"repeatedCalls":{"candidate":{"baseCalls":480,"fundingCalls":480},"reference":{"baseCalls":576,"fundingCalls":624}},"changedFacts":11,"weightOrders":3},"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisPublicityPreparation":"passed","before":138.75,"after":138.75,"nativeInputs":1,"existingSourceStillLegal":true,"preparationAlreadyValued":true,"noRepeat":true,"rootAndRngRestored":true}
+{"actual148FundingAfterMain":"passed","actionId":"play_card:52a456f8","value":140.58333333333334,"nativeInputs":130,"rootAndRngRestored":true}
+{"analysisRegionPrefix":"passed","directCases":90,"fullPortfolios":1536,"reference":{"symbolCopies":17093,"regionExecutions":17093},"candidate":{"symbolCopies":4299,"regionExecutions":4299},"allLocalCandidatesAndCompletePortfoliosExact":true,"privateSharedSymbolsReadOnly":true,"walletTraceAndExplanationOwnershipPreserved":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"analysisTargetTraceCopy":"passed","writePathCases":6,"planCases":40,"oldCopiedBlue":12,"newCopiedBlue":4,"oldCopiedGrids":6,"newCopiedGrids":2,"allCandidateResultsExact":true,"mutableAndFrozenSourcePreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"anonymousKnownDataContinuation":"passed","anonymousCards":2,"hiddenDeckWorlds":6,"preparationNativeInputs":5,"fullNativeControlInputs":7,"before":138,"after":140,"unknownIdentityUsed":false,"rootAndRngRestored":true,"newAiQueries":0}
+blue bonus value tests passed
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"knownBlueDataTrigger":"passed","cases":[{"completedSlot":false,"beforeAndAfter":124,"analysisValue":8,"trigger":{"cardInstanceId":"alien-amiba-9-5","ruleId":"amiba9-blue-data-1","gainedData":1,"completed":false}},{"completedSlot":true,"beforeAndAfter":138.75,"analysisValue":13.75,"trigger":{"cardInstanceId":"alien-amiba-9-5","ruleId":"amiba9-blue-data-2","gainedData":1,"completed":true}}],"nativeInputs":30,"newCardIdentityMasked":true,"rootAndRngRestored":true}
+{"knownTransportQuote":{"value":6.5,"landingScore":8,"landData":2,"movePublicity":1,"routeId":"rocket:6:land:saturn:planet::held-transport:alien-chong-3-13:card-62-0","blueSlot":3},"coldPayment":["alien-chong-2-6"],"privateCardsAndNextTechDoNotChangeRanking":true,"knownHeldTransportAutonomousInputs":19,"deferredColumnInputs":12}
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+card trade information bounds match all 90 formal leaves and reject extra rewards
+{"companyCardTrade":"passed","rows":[{"label":"层云核心","physicalLeaves":34},{"label":"图灵系统","physicalLeaves":34},{"label":"哨兵探测网络","physicalLeaves":34},{"label":"寰宇动力","physicalLeaves":34},{"label":"赫利昂联合体","physicalLeaves":34},{"label":"任务中继站","physicalLeaves":34},{"label":"芬威克研究中心","physicalLeaves":34},{"label":"深空探测","physicalLeaves":34},{"label":"未来跨度研究所","physicalLeaves":34},{"label":"异星实验室","physicalLeaves":34},{"label":"宇宙战略集团","physicalLeaves":34},{"label":"b_114.webp","physicalLeaves":18},{"label":"dlc_9.png","physicalLeaves":18}],"physicalLeaves":410,"paymentInputs":{"raw":[21,20,19,4],"equivalence":[21,20,19,4],"reused":[21,0,0,4]},"reuseHits":2}
+{"companyFixedIntent":"passed","reusedNativeControlInputs":3,"runs":[{"stage":0,"submissions":3,"reuses":2,"recoveries":0},{"stage":1,"submissions":2,"reuses":1,"recoveries":1},{"stage":2,"submissions":1,"reuses":0,"recoveries":1}],"changedContextGuards":8,"warmColdCompleteNativeState":true,"ruleRngPreserved":true,"siblingIntentIsolation":true,"rootRestored":true,"newAiQueries":0,"newAutonomousRuns":0}
+{"companyIncomePriority":"passed","oneKnownSwapSurvivesIncomeTail":true,"complete":true,"value":123.08333333333333,"actionId":"industry:e887dc52","nativeInputs":3,"rootAndRngRestored":true}
+{"canonicalPreparationTie":"passed","value":68.50732600732601,"nativeInputs":256,"rootAndRngRestored":true}
+{"companyMoneyDominance":"passed","results":[{"label":"层云核心","rawInputs":54,"prunedInputs":46,"value":30},{"label":"图灵系统","rawInputs":144,"prunedInputs":126,"value":28.5},{"label":"哨兵探测网络","rawInputs":29,"prunedInputs":26,"value":28.5},{"label":"寰宇动力","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"赫利昂联合体","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"任务中继站","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"芬威克研究中心","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"深空探测","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"未来跨度研究所","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"异星实验室","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"宇宙战略集团","rawInputs":25,"prunedInputs":20,"value":29.5}],"abilityResults":[{"label":"层云核心","inputsPerWallet":3,"leaves":1},{"label":"图灵系统","inputsPerWallet":9,"leaves":8},{"label":"哨兵探测网络","inputsPerWallet":1,"leaves":1},{"label":"寰宇动力","inputsPerWallet":5,"leaves":4},{"label":"赫利昂联合体","inputsPerWallet":3,"leaves":1},{"label":"任务中继站","inputsPerWallet":4,"leaves":3},{"label":"芬威克研究中心","inputsPerWallet":4,"leaves":3},{"label":"深空探测","inputsPerWallet":5,"leaves":3},{"label":"未来跨度研究所","inputsPerWallet":4,"leaves":3},{"label":"宇宙战略集团","inputsPerWallet":4,"leaves":3}]}
+{"computerPrefixPlan":true,"prefixInputs":4,"quotedAndNativeValueGain":2.6666666666666665,"coldRestoreAtEveryInput":true,"quietAmibaTailNativeInputControls":[5,6],"pendingRevealHistoryAndProbeRefuseProof":true,"noUnfundedOrIncomeCrossing":true,"rootAndRngUnchanged":true}
+{"computerPreinvestment":"passed","nativeInputs":6,"retainedCredit":3.6666666666666665,"retainedTeacherTotal":69.16666666666667,"consumedAnalysisTotal":68.5,"commonNativeSuffixInputs":46,"noImmediateAnalysisInvented":true,"noDoubleClaimAfterClear":true,"stateObservationParity":true,"rootAndRngRestored":true}
+{"conditionalResearchForecast":"passed","rows":[{"cardId":"dlc_18.png","value":65.66666666666667,"handCapital":0,"nativeChoices":[]},{"cardId":"b_101.webp","value":67.66666666666667,"handCapital":2,"nativeChoices":["orange1","orange2","orange3","orange4"]}],"nativeInputs":4,"searchMs":16.09337499999998,"allChoicesEntered":true,"rootAndRngUnchanged":true}
+conditional resolution tests passed
+data token fungibility, real placement diamonds and every immediate successor passed
+data resource greedy contracts passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+失效科技：所有权/计数不变，V、叶排序与搜索优先级共同扣除能力未来价值
+{"exactDataTailArithmetic":"passed","nativeReferenceInputs":6,"defaultLedgerScale":2184,"base":122.08333333333333,"netGain":2.1666666666666665,"final":124.25,"replayedSetupInputs":12,"additionalSearchNativeInputs":0,"provedNativeInputs":6,"rootAndRngUnchanged":true}
+final mark company income and required inputs passed
+{"finalRoundProbeWindow":"passed","oldInputCases":1536,"unopenedWindowFullPlanParity":1536,"finalRoundChanged":0,"realNativeObservations":24,"actualOrbitHandoffs":2,"missionPotentialBeforeOrbit":7,"lateTotalBeforeAndAfter":135,"earlyTotalBeforeAndAfter":136,"fullCompactNativeParity":true,"passTerminalAndEmptyWalletGuards":true,"noFutureOrHiddenFunding":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"rootAndRngUnchanged":true}
+{"finalRoundProofGuard":"passed","reusedIndependentlyVerifiedNativeInputs":140,"sourceAndEndpointObservationPairs":14,"oldBoundViolations":2,"oldUpper":24,"actualEndpoints":[43.5,29],"stationaryChecks":2,"noProbeBoundCases":2,"noNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"fullCompactNativeParity":true,"sourceAndRngRestored":true}
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"fixedTailCapitalCarry":"passed","frames":17,"cases":547,"available":159,"selectedPlans":66,"marked":14,"incomeSources":12,"mutations":51,"referencePlanningCapitalCalls":646,"candidatePlanningCapitalCalls":356,"allPublicFieldsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"negativeRemainingBlueGuard":true,"quietClosureStillAvailable":true,"laterPurposeRetainsNativeContinuation":true,"existingCardAndTokenIdsOnly":true,"noNativeGameOrSearch":true}
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":6.5,"nextRoundValue":6.5,"fundingControls":1568,"memoControls":64,"shallowFrozenWalletInvalidation":true,"nativeIncomeInputs":9,"sameRoundFundedResearch":true,"jointNativeMissionFunds":{"orbit":{"hand":10.5,"value":70.66666666666667},"land":{"hand":6.5,"value":68.5}},"rootAndRngUnchanged":true}
+{"nativeControlledPlans":20,"nativeControlledInputs":122,"rejectedNativeChoices":9,"rootValue":71,"actionIdenticalToFullReference":true,"nativeInputs":207,"movementValuePrunes":20,"ruleMoveQueries":31,"rootAndRngUnchanged":true}
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+{"goalMovement":"passed","goal":{"id":"rocket:5:land:neptune:satellite:triton","kind":"land","label":"land neptune","coordinate":{"x":1,"y":4},"timing":"advance-before-rotation","planetId":"neptune","endpointTarget":{"type":"satellite","satelliteId":"triton","rocketId":5},"endpointCost":{"energy":2},"targetCoordinate":{"x":1,"y":4},"movementTiming":{"comparable":true,"assumption":"one-known-solar-rotation-before-the-future-goal","rotationCount":1,"waitPaidPoints":4,"bestPrefixLength":3,"bestTotalPaidPoints":0,"classification":"advance-before-rotation","alternatives":[{"prefixLength":0,"totalPaidPoints":4,"remainingPaidPoints":4},{"prefixLength":1,"prefixMovementPoints":1,"totalPaidPoints":2,"remainingPaidPoints":2},{"prefixLength":2,"prefixMovementPoints":2,"totalPaidPoints":1,"remainingPaidPoints":1},{"prefixLength":3,"prefixMovementPoints":3,"totalPaidPoints":0,"remainingPaidPoints":0}],"availablePrefixPoints":5}},"routeSteps":3,"searchInputs":13,"policyExclusions":8,"cacheAndRestore":true}
+heuristic evaluator outcome behavior tests passed
+heuristic policy outcome behavior tests passed
+{"incomeChoiceConsistency":"passed","equalUtility":6,"tieFixture":"case-062 player-blue","actualPublicityOpportunityValues":[{"id":"card-49-0","value":29.083333333333332},{"id":"alien-amiba-9-5","value":16.25}],"preservedPrice":2,"selected":"card-49-0","menuPermutationStable":true,"explicitPurposeRespected":true,"strictlyHigherValueRespected":true,"noNewSearchBranches":true,"nativeInputs":6,"rootAndRngRestored":true,"scalarAnalysisSupplierAligned":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"incomePreparationReuse":"passed","repeatedRequests":24,"repeatRecomputations":0,"separateProjectedData":true,"mutableAndShallowFrozenDecline":true,"sourceUnchanged":true}
+{"incomePurposeEligibility":"passed","preMainSelectedIncome":{"energy":1},"postMainAndCommittedUnrestricted":true,"sourceUnchanged":true,"nativeWindowValue":49,"nativeInputs":205,"rootAndRngRestored":true}
+{"incomePurposeScheduling":"passed","preMainIncomeRequiresResourcePurpose":true,"postMainDevelopmentRetained":true,"realFundingRetained":true,"blindIncomeDeferredWithoutKnownPurpose":true,"newAiSearches":0}
+{"inertReservation":"passed","rawInputs":314,"prunedInputs":314,"boundLeaves":40}
+{"inertSectorTasks":"passed","rows":[{"round":1,"cardId":"b_114.webp","rawInputs":1900,"prunedInputs":1900,"value":46.5},{"round":1,"cardId":"dlc_9.png","rawInputs":1729,"prunedInputs":1729,"value":53},{"round":4,"cardId":"b_114.webp","rawInputs":1900,"prunedInputs":1,"value":12},{"round":4,"cardId":"dlc_9.png","rawInputs":1729,"prunedInputs":1,"value":13.5}]}
+{"knownCardMoney":"passed","results":[{"raw":483,"pruned":417,"value":36},{"raw":489,"pruned":477,"value":28.5},{"raw":237,"pruned":231,"value":21}],"paired":[{"inputs":1576,"leaves":278,"extraStops":0},{"inputs":2745,"leaves":472,"extraStops":1},{"inputs":1816,"leaves":185,"extraStops":0}]}
+{"knownMovementTool":"passed","sourceNativeControlledInputs":96,"newNativeInputs":0,"value":94.08333333333333,"directMoneyControls":84,"maskedPassChoice":true,"rootAndRngRestored":true}
+{"knownPassCardPreserved":true,"unknownIncomeDrawMasked":true,"nativeCases":6,"hiddenWorldPairs":3,"sourceCardPoolConserved":true,"positiveKnownPurposeValueDelta":6.000000000000007,"rootAndRngUnchanged":true}
+{"priorGuard":"information-barrier","newStatus":"stable","knownDisplay":"amiba_9.webp","hiddenReplacement":true,"legal":["quick_trade","quick_trade","quick_trade","quick_trade","quick_trade","card_corner","card_corner","end_turn"]}
+{"knownPostdrawTail":"passed","nativeControlledBranches":2,"referenceNativeInputs":18,"anonymousCardUsed":false,"freeCardValue":125.25,"cancelValue":124.25,"hiddenDeckWorldsIndependent":6,"closedUnprovedBoundary":true,"rootAndRngUnchanged":true,"fixedPostdrawDataNativeInputs":4,"ordinaryDeckWorldsIndependent":6,"newAiSearches":0}
+{"knownSymbolCard":true,"nativeInputs":3,"netValue":2.5,"fullyRealizedModelValue":115.75,"dataCapacity":true,"sharedCostAndHandOpportunity":true,"pendingNativeAndNewlyHeldHistoricalTriggers":true,"stateFullCompactParity":true,"hiddenIdentityIndependent":true,"rootAndRngUnchanged":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"localPreviewCopy":"passed","NativePrefixCases":9,"mutableAndFrozenCases":114,"referenceWholePlayerClones":42,"candidateWholePlayerClones":0,"fullPlanResultsExact":true,"sourceAndRngUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+machine-player-coordinator.test.js ok
+{"missionDataContinuation":"passed","controlledRoots":80,"nativePlans":75,"nativeInputs":580,"fullMissionValue":68.16666666666667,"occupiedAndUnknownRewardsExcluded":true,"rootAndRngRestored":true}
+{"status":"passed","actual187Value":142,"analysisIncrement":3,"quotedAmibaNativeInputs":7,"anonymousCards":2,"ordinaryExtraNativeInputs":6,"foreignFirstOwnerPreserved":true,"globalB1Increment":8,"fullCompactNativeCountsEqual":true,"dataPreservedForNextMainAnalysis":true,"postMainInputs":0,"nextMainInputs":23,"postMainValue":142,"nextMainValue":144.5,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"openingMoneyCapacity":"passed","results":[{"cardId":null,"value":28.5,"raw":734,"capacityOnly":592,"pruned":506,"capacityPrunes":4},{"cardId":"dlc_27.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":1140,"capacityPrunes":8},{"cardId":"b_44.webp","value":33,"raw":3386,"capacityOnly":3042,"pruned":2312,"capacityPrunes":8},{"cardId":"b_23.webp","value":29.5,"raw":1744,"capacityOnly":1284,"pruned":1094,"capacityPrunes":8},{"cardId":"dlc_22.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":1140,"capacityPrunes":8},{"cardId":"b_48.webp","value":29.5,"raw":1600,"capacityOnly":1260,"pruned":1070,"capacityPrunes":8}]}
+{"requestedOwnerLandCost":"passed","differentCurrentActor":true,"viewerCacheIsolation":true,"nativePassControlInputs":9,"rootAndRngUnchanged":true}
+{"movementPreviewCopy":"passed","nativeTimingCases":12,"technologyVariants":36,"uncachedDirectoryControls":16,"nativeProjectionControls":4,"frozenRootsUnchanged":true,"geometryCacheInvalidation":true}
+{"nextIncomeProbe":"passed","sameNativeR3LaunchDelta":1,"probeReplacementCapital":2,"incomePrincipalUnchanged":true,"fullCompactNativeAgreement":true,"guardsAndOpportunityCost":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"rootAndRngRestored":true}
+{"openingPlan":"passed","results":[{"cardId":null,"value":41.5,"baseline":338,"pruned":338},{"cardId":"dlc_27.png","value":42.5,"baseline":782,"pruned":782},{"cardId":"b_44.webp","value":42.5,"baseline":1282,"pruned":1282},{"cardId":"b_23.webp","value":42.5,"baseline":730,"pruned":730},{"cardId":"dlc_22.png","value":42.5,"baseline":782,"pruned":782},{"cardId":"b_48.webp","value":42.5,"baseline":706,"pruned":706}],"passPaymentExits":20,"directPassValue":43.5,"directPassInputs":2,"publicityPassValue":44,"dataAuditInputs":332,"dataAuditLeaves":120,"fullHandBeforePassMacros":116,"fullHandAfterPassMacros":73,"fullHandCachedInputs":73,"passMacroCacheHits":2}
+{"openingMoney":"passed","rawInputs":325,"prunedInputs":264,"boundedInputs":264,"proofPrunes":5,"cardTradePrunes":0}
+outcome projection tests passed
+{"passOfferBarrier":"passed","hiddenWorldVariants":2,"actualOfferStillSelectable":true,"forcedDiscardPreserved":true,"emptyAndFinalRoundNoBarrier":true,"replayAndUndo":true}
+{"passReserveChoice":"passed","companies":11,"inertTaskModels":2,"physicalLeaves":65,"extraRewardRejected":true}
+plan-continuation.test.js ok
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+policy port protocol tests passed
+{"productionPostMainPlan":"passed","actualInputs":12,"reusedPrefixes":10,"freshNativeAtEveryPrefix":true,"changedDependenciesRejected":true}
+{"productionBorrowPolicy":"passed","nativeStartsDisabled":true,"mandatorySavedDecisionCompletable":true,"rows":[{"name":"no-energy","inputs":0,"value":32},{"name":"one-energy","inputs":2,"value":32},{"name":"two-energy","inputs":2,"value":33},{"name":"one-move-card","inputs":2,"value":32}]}
+{"postMainCornerChoice":"passed","results":[{"label":"data-pair-no-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":40,"pruned":40,"value":26.5,"excluded":0},{"label":"data-pair-no-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":40,"pruned":40,"value":19.04,"excluded":0},{"label":"data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":73,"pruned":73,"value":26.5,"excluded":0},{"label":"data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":73,"pruned":73,"value":19.04,"excluded":0},{"label":"data-triple","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":405,"pruned":405,"value":27.5,"excluded":0},{"label":"data-triple","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":405,"pruned":405,"value":19.439999999999998,"excluded":0},{"label":"income-ready-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":73,"pruned":73,"value":26.5,"excluded":0},{"label":"income-ready-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":73,"pruned":73,"value":19.04,"excluded":0},{"label":"unused-turing-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":841,"pruned":841,"value":26.5,"excluded":0},{"label":"unused-turing-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":841,"pruned":841,"value":19.04,"excluded":0},{"label":"unused-helios-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":101,"pruned":101,"value":27.5,"excluded":0},{"label":"unused-helios-data-pair","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":101,"pruned":101,"value":19.04,"excluded":0},{"label":"move-pair-062-one-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":127,"pruned":127,"value":34,"excluded":0},{"label":"move-pair-062-one-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":127,"pruned":127,"value":19.78,"excluded":0},{"label":"move-pair-152-one-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":105,"pruned":105,"value":19,"excluded":0},{"label":"move-pair-152-one-probe","modelKey":"{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":105,"pruned":105,"value":17.3,"excluded":0}],"incomeCounterexample":[17.1,17.2]}
+{"postMainIncome":"passed","prunedInputs":10,"value":47.5,"small":[{"rawInputs":4,"prunedInputs":4,"value":32.5},{"rawInputs":1,"prunedInputs":1,"value":7.5},{"rawInputs":3,"prunedInputs":3,"value":33.5},{"rawInputs":1,"prunedInputs":1,"value":8.5},{"rawInputs":3,"prunedInputs":3,"value":48}],"paymentCases":[{"tradeId":"cards-for-credit","rawInputs":1141,"prunedInputs":83,"exits":3},{"tradeId":"cards-for-energy","rawInputs":1304,"prunedInputs":83,"exits":3}]}
+{"postMainInertReservations":"passed","rows":[{"label":"cash-data-income","raw":145,"pruned":145,"value":21},{"label":"cash-move","raw":259,"pruned":259,"value":20},{"label":"consumed-visits","raw":259,"pruned":259,"value":20},{"label":"unreachable-launch-orbit-land","raw":259,"pruned":259,"value":20},{"label":"no-probe-visits","raw":28,"pruned":1,"value":19},{"label":"actual152-after-dlc39","nativeInputs":4,"value":27.5,"actionId":"move:060dbf6f","distance":18,"scope":"Current production fixed goals; legacy live-probe pruning refused."}]}
+{"postMainMovement":"passed","rawInputs":282,"prunedInputs":282,"payments":95,"arrivals":29,"twoPointPayments":16}
+{"postMainPlan":"passed","rawInputs":314,"prunedInputs":314,"excludedActions":0}
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":17,"value":17},{"name":"one-energy","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18},{"name":"two-energy","raw":81,"bounded":63,"prunes":9,"upper":19,"value":19},{"name":"cash-income","raw":405,"bounded":54,"prunes":18,"upper":20,"value":20},{"name":"neutral-data-visits","raw":18,"bounded":18,"prunes":0,"upper":18,"value":18}]}
+{"preMainDataPlan":"passed","rows":[{"label":"one-cash-round2","raw":32,"pruned":32,"value":null},{"label":"one-cash-round4-with-probe","raw":34,"pruned":34,"value":20},{"label":"one-cash-round4-without-probe","raw":34,"pruned":14,"value":20},{"label":"cash-and-move","raw":32,"pruned":32,"value":null},{"label":"main-return","raw":32,"pruned":32,"value":null},{"label":"alien-composed","raw":32,"pruned":32,"value":null}],"passRows":[{"round":2,"delta":1,"oldInputs":2,"replacementInputs":10},{"round":3,"delta":0,"oldInputs":2,"replacementInputs":10},{"round":4,"delta":-1,"oldInputs":2,"replacementInputs":10}]}
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"walletQuotes":378,"nativeGeometryMissionControls":5992,"dataCapacityIncludedInSharedCapitalKey":true,"sourceUnchanged":true}
+probe move greedy tests passed
+secondary company probe greedy contracts passed
+{"probeReplacementWitness":"passed","priorFullV52Inputs":580,"numericCases":616,"customWalletCases":36,"completeKnownWitnessChecks":20,"allNumericCapitalAndComponentsExact":true,"unsaturatedPlansExact":true,"cappedOneSourcePrices":1,"oldSaturatedPrices":3,"allUnsaturatedSourcePrices":3,"reference":{"supplierPrices":481},"candidate":{"supplierPrices":370},"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0,"sourceUnchanged":true}
+probe resource greedy tests passed
+probe source binding tests passed
+{"fundedTravelTail":true,"nativeProofControls":7,"movementModeGuard":true,"optimizedInputs":207,"fullNativeInputs":252,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+{"publicAlienOffer":"passed","hiddenWorlds":6,"reverseSiblingOrder":true,"publicDisplay9Retained":true,"blindAndRefillOpaque":true,"fullAndCompactAgree":true,"rootAndRngUnchanged":true,"newAutonomousRuns":0}
+{"publicAmibaIncomeSwap":"passed","rows":[{"branch":"DLC31","before":123.58333333333333,"after":123.58333333333333},{"branch":"ordinary","before":123.58333333333333,"after":123.58333333333333}],"nativeIncomeControlInputs":8,"newAutonomousRuns":0,"rootAndRngRestored":true}
+public card acquisition goal tests passed
+company acquisition policy and plan dependencies passed
+public card publicity preparation boundaries passed
+public card trade cost representative tests passed
+{"publicIncomeOption":"passed","nativeInputs":134,"endTailNativeInputs":13,"incomeOptionNativeInputs":121,"preparedInputs":13,"preparedActions":[{"family":"place_data","target":{"kind":"place-data"}},{"family":"choose_target","target":{"choiceId":"data:computer","target":"computer","blueSlot":null}},{"family":"place_data","target":{"kind":"place-data"}},{"family":"choose_target","target":{"choiceId":"data:computer","target":"computer","blueSlot":null}},{"family":"place_data","target":{"kind":"place-data"}},{"family":"choose_target","target":{"choiceId":"data:computer","target":"computer","blueSlot":null}},{"family":"place_data","target":{"kind":"place-data"}},{"family":"choose_target","target":{"choiceId":"data:computer","target":"computer","blueSlot":null}},{"family":"choose_card","target":{"choiceId":"income:card-41-0","cardInstanceId":"card-41-0"}},{"family":"play_card","target":{"cardInstanceId":"card-15-0"}},{"family":"choose_target","target":{"choiceId":"tech:purple4","tileId":"purple4","blueSlot":null}},{"family":"place_data","target":{"kind":"place-data"}},{"family":"choose_target","target":{"choiceId":"data:blueBonus:1","target":"blueBonus","blueSlot":1}}],"stablePrefixes":51,"prefixValues":[{"incomeCode":0,"useSwap":false,"inputs":4,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":false,"inputs":5,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":false,"inputs":7,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":false,"inputs":9,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":false,"inputs":11,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":false,"inputs":14,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":0,"useSwap":false,"inputs":16,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":0,"useSwap":false,"inputs":17,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":0,"useSwap":false,"inputs":19,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":0,"useSwap":false,"inputs":20,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":0,"useSwap":true,"inputs":4,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":true,"inputs":5,"known":69.16666666666667,"masked":68.50732600732601,"legacyKnown":65.5,"legacyMasked":64.84065934065934},{"incomeCode":0,"useSwap":true,"inputs":8,"known":69.16666666666667,"masked":60.416666666666664,"legacyKnown":65.5,"legacyMasked":59.5},{"incomeCode":0,"useSwap":true,"inputs":10,"known":69.16666666666667,"masked":60.416666666666664,"legacyKnown":65.5,"legacyMasked":59.5},{"incomeCode":0,"useSwap":true,"inputs":12,"known":69.16666666666667,"masked":61.333333333333336,"legacyKnown":65.5,"legacyMasked":59.5},{"incomeCode":0,"useSwap":true,"inputs":14,"known":69.16666666666667,"masked":61.75,"legacyKnown":65.5,"legacyMasked":59},{"incomeCode":0,"useSwap":true,"inputs":17,"known":69.16666666666667,"masked":69.16666666666667,"legacyKnown":65.5,"legacyMasked":65.5},{"incomeCode":0,"useSwap":true,"inputs":19,"known":69.16666666666667,"masked":69.16666666666667,"legacyKnown":65.5,"legacyMasked":65.5},{"incomeCode":0,"useSwap":true,"inputs":21,"known":69.16666666666667,"masked":69.16666666666667,"legacyKnown":65.5,"legacyMasked":65.5},{"incomeCode":0,"useSwap":true,"inputs":22,"known":69.16666666666667,"masked":69.16666666666667,"legacyKnown":65.5,"legacyMasked":65.5},{"incomeCode":1,"useSwap":false,"inputs":4,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":false,"inputs":5,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":false,"inputs":7,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":false,"inputs":9,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":false,"inputs":11,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":false,"inputs":14,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":false,"inputs":16,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":false,"inputs":17,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":false,"inputs":19,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":false,"inputs":20,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":true,"inputs":4,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":true,"inputs":5,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":1,"useSwap":true,"inputs":8,"known":68.16666666666667,"masked":60.416666666666664,"legacyKnown":64.5,"legacyMasked":59.5},{"incomeCode":1,"useSwap":true,"inputs":10,"known":68.16666666666667,"masked":60.416666666666664,"legacyKnown":64.5,"legacyMasked":59.5},{"incomeCode":1,"useSwap":true,"inputs":12,"known":68.16666666666667,"masked":61.333333333333336,"legacyKnown":64.5,"legacyMasked":59.5},{"incomeCode":1,"useSwap":true,"inputs":14,"known":68.16666666666667,"masked":61.75,"legacyKnown":64.5,"legacyMasked":59},{"incomeCode":1,"useSwap":true,"inputs":17,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":true,"inputs":19,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":true,"inputs":20,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":true,"inputs":22,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":1,"useSwap":true,"inputs":23,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":2,"useSwap":false,"inputs":4,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":2,"useSwap":false,"inputs":5,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":2,"useSwap":false,"inputs":7,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":2,"useSwap":false,"inputs":9,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":2,"useSwap":false,"inputs":11,"known":68.16666666666667,"masked":68.50732600732601,"legacyKnown":64.5,"legacyMasked":64.84065934065934},{"incomeCode":2,"useSwap":false,"inputs":14,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":2,"useSwap":false,"inputs":16,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":2,"useSwap":false,"inputs":17,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":2,"useSwap":false,"inputs":19,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5},{"incomeCode":2,"useSwap":false,"inputs":20,"known":68.16666666666667,"masked":68.16666666666667,"legacyKnown":64.5,"legacyMasked":64.5}],"searchControls":[{"incomeCode":0,"proofsOff":false,"nativeInputs":256,"value":68.50732600732601,"actionId":"orbit:44937d1f"},{"incomeCode":0,"proofsOff":true,"nativeInputs":360,"value":68.50732600732601,"actionId":"orbit:44937d1f"},{"incomeCode":1,"proofsOff":false,"nativeInputs":256,"value":68.50732600732601,"actionId":"orbit:44937d1f"},{"incomeCode":2,"proofsOff":false,"nativeInputs":256,"value":68.50732600732601,"actionId":"orbit:44937d1f"}],"committedSwapColdRecovery":3,"knownCreditValue":69.16666666666667,"unknownExpectedValue":68.50732600732601,"rootAndRngRestored":true}
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+quick timing phase observation contract passed
+TAP version 13
+# Subtest: 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+ok 1 - 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+  ---
+  duration_ms: 0.652459
+  type: 'test'
+  ...
+# Subtest: 主行动后已绑定的普通准备延至下一turn，保留原目标
+ok 2 - 主行动后已绑定的普通准备延至下一turn，保留原目标
+  ---
+  duration_ms: 0.644375
+  type: 'test'
+  ...
+# Subtest: 目标完成后的未绑定后继不能重新引入主行动后普通准备
+ok 3 - 目标完成后的未绑定后继不能重新引入主行动后普通准备
+  ---
+  duration_ms: 1.010292
+  type: 'test'
+  ...
+# Subtest: 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+ok 4 - 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+  ---
+  duration_ms: 0.165709
+  type: 'test'
+  ...
+# Subtest: 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+ok 5 - 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+  ---
+  duration_ms: 0.966166
+  type: 'test'
+  ...
+# Subtest: 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+ok 6 - 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+  ---
+  duration_ms: 0.537417
+  type: 'test'
+  ...
+# Subtest: 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+ok 7 - 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+  ---
+  duration_ms: 0.968792
+  type: 'test'
+  ...
+# Subtest: 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+ok 8 - 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+  ---
+  duration_ms: 0.430208
+  type: 'test'
+  ...
+# Subtest: 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+ok 9 - 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+  ---
+  duration_ms: 1.415042
+  type: 'test'
+  ...
+# Subtest: 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+ok 10 - 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+  ---
+  duration_ms: 5.232167
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17.302708
+{"quietBoundComposition":"passed","rows":[{"name":"no-hand","raw":7,"composed":7,"value":27.5,"distance":1},{"name":"unused-blind-card-and-task","raw":116,"composed":116,"value":37,"distance":1},{"name":"two-data-cards-and-task","raw":471,"composed":471,"value":37.5,"distance":1},{"name":"late-income","raw":540,"composed":540,"value":18.5,"distance":10}],"actualB114Continuation":true,"readyAndHistoricalRejected":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+{"endOnlyVisitInertness":true,"pendingHistoryNativeDrawGuard":true,"rootAndRngUnchanged":true}
+{"r4CompanyTail":"passed","fullRootActionsGoalsValuesCompletionsExact":true,"baselineNativeInputs":263,"actualNativeInputs":237,"provedTailCount":25,"materializedNativeInputs":167,"independentNativeInputsReused":67,"noNewCardOrNativeObservationFromProof":true,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"readOnlyRewards":"passed","catalogAndBoundaryCases":35,"centralMoves":8,"completeReferenceGraphCases":1536,"controlledWalletWeights":288,"comparisons":1824,"allPlansAndRuleMovementsExact":true,"defaultRewardCopiesIsolated":true,"readOnlyRewardsRecursivelyFrozen":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"nativeFundedControls":176,"unfunded":16,"nativeInputs":840,"moneyMonotone":true,"stateObservationParity":true,"rootAndRngUnchanged":true}
+ready analysis and research ordering share funded portfolio value with immutable native inputs
+{"researchComparisonLoop":"passed","jointCases":4093,"capitalCases":432,"fullPortfolios":1536,"referencePurposeGainCalls":108308,"candidatePurposeGainCalls":93860,"fullComponentsAndPlansExact":true,"mutableInputsAndCustomWeightsPreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":4896,"postMainFundingBounds":3,"stateObservationParity":true,"rootAndRngUnchanged":true}
+{"nativeResearchInputs":2,"claimedFinalMarkGain":7,"nativeNetValue":6.5,"jointD2OddEvenAndD1":true,"unfundedAndUnclaimedRejected":true,"stateObservationParity":true,"mutableQuoteInvalidation":true,"rootAndRngUnchanged":true}
+{"researchMarkPrefixMemo":"passed","completeHistoricalPortfolioInputs":1536,"controlledWalletThresholdDataWeights":288,"comparisons":1824,"reference":{"developmentCalls":101686,"outcomeCalls":12493},"candidate":{"developmentCalls":26084,"outcomeCalls":6905},"allComponentsAndPlansExact":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"heldFirstCompletionMark":4,"paidFirstMark":0,"nativeOrdersShareRoot":true,"noDoubleCompletionOrFutureFunding":true,"rootAndRngUnchanged":true}
+research potential tests passed
+{"researchScoreCeiling":"passed","completeHistoricalPortfolioInputs":1536,"controlledWalletThresholdDataWeights":288,"comparisons":1824,"boundCases":9072,"fallbackCases":7,"publicLayouts":6,"declinedContexts":6,"reference":{"developmentCalls":50782,"outcomeCalls":7325},"candidate":{"developmentCalls":26588,"outcomeCalls":7129},"allComponentsAndPlansExact":true,"sourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"researchSingleWindow":"passed","jointCases":4093,"capitalCases":432,"fullPortfolios":1536,"paymentWindows":3,"purposeGainCalls":93860,"referencePairKeys":39780,"candidatePairKeys":0,"referenceWindowArrays":39796,"candidateWindowArrays":8,"fullComponentsAndPlansExact":true,"mutableInputsAndCustomWeightsPreserved":true,"noNewCache":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"researchSymbolComposition":"passed","nativeSourceInputs":19,"nativeReplayInputs":26,"newNativeInputs":1,"unsupportedInputsDecline":14,"nativeAndCompactParity":true,"deferredPublicityPreservesBeneficiary":true,"beforeAndAfter":123.58333333333333,"plans":[{"tile":"purple1","linear":19.5,"afterCapital":14.083333333333334,"net":9.833333333333334},{"tile":"purple3","linear":19,"afterCapital":11.5,"net":6.75},{"tile":"purple2","linear":18.5,"afterCapital":11.5,"net":6.25},{"tile":"orange3","linear":19,"afterCapital":2.5,"net":-2.25},{"tile":"orange1","linear":16,"afterCapital":4.5,"net":-3.25},{"tile":"orange2","linear":16,"afterCapital":4.5,"net":-3.25},{"tile":"orange4","linear":16,"afterCapital":4.5,"net":-3.25}],"rootAndRngRestored":true}
+{"nativePurpleReward":4,"nativeBlindQuantity":1,"usedRulesAndMovedSymbolsPublic":true,"pendingTriggerDeclines":true,"twoColorMovementAndSameColorConsumption":true,"nativeObservationParity":true,"noHiddenDeckOrSpeciesLeak":true,"noRewardFunding":true,"onlyNecessaryHeldAndPaidQuotes":true,"siblingSignaturePreparedOnce":true,"rootAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"resourceDominance":"passed","rawInputs":318,"prunedInputs":150,"proofPrunes":6}
+resource value tests passed
+{"routeEndpointCompletion":"passed","actualFinalRoundRoots":2,"nativeControls":4,"completedNativeOrbitRetained":true,"stableCompletedEndpointNotRefunded":true,"rootAndRngRestored":true,"newAiQueries":0,"newAutonomousRuns":0}
+{"scalarCapitalCache":"passed","identicalMutableWrappers":12,"mutatedInputs":13,"shallowFrozenRekeyed":true,"recursiveImmutableReferenceReuse":true,"unsupportedInputsDecline":true,"accessorsNotReadByKey":true,"entriesBoundedAt":256,"customWeightsMatch":true,"customEnumerationOrderRetained":true,"noNativeExecution":true}
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+{"scanLaunchReserve":true,"normalPurposes":6,"launchPurposes":6,"nativeLaunchExecuted":true,"availabilityAndDisabledGuards":true,"alreadyFundedNotDuplicated":true,"interruptionAndRootRngRestored":true}
+score corner target tests passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":10,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"knownSectorAndAnalysis":"passed","nativeInputs":13,"stablePrefixes":5,"moneyControls":84,"value":82.5,"sectorCapital":8,"preparedAnalysisCapital":17.5,"duplicateClaimsPrevented":true,"hiddenAndDiscoveryGuards":true,"stateObservationParity":true,"rootAndRngRestored":true}
+{"sectorMissionComposition":"passed","nativeSourceInputs":21,"newNativeInputs":0,"sourcePrefixes":5,"value":94.08333333333333,"sectorCapital":14,"moneyControls":84,"sharedWallet":true,"noRefillOrSameTokenReuse":true,"rootAndRngUnchanged":true}
+{"settledTechFunding":"passed","complete":true,"nativeInputs":256,"distinctResearchInputs":16,"duplicatePaidResearchInputs":0,"rootAndRngUnchanged":true}
+{"sharedResourcePrefixes":"passed","goals":8,"preparationPrefix":7,"guaranteedRewardInputs":1,"uniqueInputs":16,"states":17,"sharedInputs":49,"nativeRootAndRecovery":true}
+{"singletonResourceRanking":"passed","nativeIncomeChoices":5,"boundIncome":"card-18-0","singleDataCard":"card-49-0","singleSource":"card_corner:ac30be37","unpricedLossIsNull":true,"publicNumericLossPreserved":true,"multiIncomeAndSourceRanked":true,"infeasibleCatalogSuppliersNotPriced":true,"unknownOwnedCardRejected":true,"feasibilityProtectionAndObserverPreserved":true,"newNativeInputs":0,"newAiQueries":0,"rootAndRngRestored":true,"newAutonomousRuns":0}
+{"sixGreedyPlans":"passed","stages":6,"globalBudgetPreserved":true}
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":46},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":46.5},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":46.5},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":48}],"strictAndTieAndWatchdog":true}
+independent state value accounting and strict inputs passed
+{"complete":true,"nativeInputs":256,"unchanged268InputGraphChoiceAndValue":true,"nativeTailControls":6,"fractionalBaseControls":6,"noInventedSuccessor":true,"rootAndRngUnchanged":true}
+同色额外位贪心、原生输入与任务/特殊边界通过
+虫族跨颜色纯分数贪心、正式奖励、任务与特殊奖励边界通过
+外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过
+strategic goal evaluator tests passed
+{"teacherDevelopment":"passed","knownFreeResearchPreserved":true,"nativePassAndIncomeInputs":13,"unknownDrawIdentitiesUnused":true,"nativeFundingContinuity":true,"rootAndRngRestored":true}
+terminal value tests passed
+{"tradeReservationBound":"passed","rows":[{"label":"062","trades":3,"manualInputs":149,"leaves":86},{"label":"105","trades":4,"manualInputs":224,"leaves":130},{"label":"152","trades":3,"manualInputs":220,"leaves":127},{"label":"ready-zero-resource-task","trades":2,"manualInputs":20,"leaves":12}],"completeWindows":[{"label":"062","noProbe":false,"raw":417,"pruned":417,"value":36,"prunes":0},{"label":"105","noProbe":false,"raw":477,"pruned":477,"value":28.5,"prunes":0},{"label":"152","noProbe":false,"raw":231,"pruned":231,"value":21,"prunes":0},{"label":"152","noProbe":true,"raw":42,"pruned":24,"value":21,"prunes":6}]}
+{"transientCapitalDirect":"passed","actualNativeWalletVariants":12,"exactOriginalFullPortfolio":true,"transientScalarKeyCalls":0,"immutableRepeatedQuotes":12,"immutableFullCalculations":1,"publicScalarCacheUnchanged":true,"sourceUnchanged":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+{"triggerDeltaMemo":"passed","cases":10465,"mutableInputsAndWeightsPreserved":true,"sameColorPairRepeatedArithmeticAvoided":20,"completeSourceAndRngPreserved":true,"newNativeInputs":0,"newAiQueries":0,"newAutonomousRuns":0}
+turing active tech pruning tests passed
+turing immediate expiry tests passed
+{"turnPreviewCases":1104,"outcomes":["game-ended","other-owner","round-advanced","same-owner"],"rootFrozen":true}
+{"winningDataPreparationNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":8}
+amiba.test.js: all tests passed
+aomomo.test.js: all tests passed
+aliens/banrenma.test.js ok
+chong.test.js: all tests passed
+fangzhou.test.js: all tests passed
+aliens/jiuzhe.test.js ok
+aliens/reveal-card-grants.test.js ok
+runezu.test.js: all tests passed
+aliens/trace-placement-legality.test.js ok
+aliens/yichangdian.test.js ok
+{"allMatchingNativeTeacher":true,"repeatWithinOneSector":true,"noDataGain":true,"settleOnce":true,"coldRestoreAndRng":true}
+card deck tests passed
+card effects tests passed
+PASS 普通牌按顶牌盲抽
+PASS 公共牌补充按同一牌堆顶牌
+PASS 耗尽不回洗弃牌
+PASS amiba盲抽按顶牌
+PASS amiba盲抽耗尽不重建
+PASS amiba领取最后展示牌后不重建
+PASS chong盲抽按顶牌
+PASS chong盲抽耗尽不重建
+PASS chong领取最后展示牌后不重建
+PASS aomomo盲抽按顶牌
+PASS aomomo盲抽耗尽不重建
+PASS aomomo领取最后展示牌后不重建
+PASS banrenma盲抽按顶牌
+PASS banrenma盲抽耗尽不重建
+PASS banrenma领取最后展示牌后不重建
+PASS runezu盲抽按顶牌
+PASS runezu盲抽耗尽不重建
+PASS runezu领取最后展示牌后不重建
+PASS yichangdian盲抽按顶牌
+PASS yichangdian盲抽耗尽不重建
+PASS yichangdian领取最后展示牌后不重建
+PASS amiba配置生成不执行揭示且同seed完整排列一致
+PASS chong配置生成不执行揭示且同seed完整排列一致
+PASS aomomo随机配置可独立生成且不冻结揭示时动态状态
+PASS banrenma随机配置可独立生成且不冻结揭示时动态状态
+PASS runezu随机配置可独立生成且不冻结揭示时动态状态
+PASS yichangdian随机配置可独立生成且不冻结揭示时动态状态
+PASS jiuzhe随机配置可独立生成且不冻结揭示时动态状态
+PASS 方舟配置固定九张奖励牌及各玩家三色解锁牌
+PASS amiba揭示读取预生成配置且不重抽
+PASS chong揭示读取预生成配置且不重抽
+PASS aomomo揭示读取预生成配置且不重抽
+PASS banrenma揭示读取预生成配置且不重抽
+PASS runezu揭示读取预生成配置且不重抽
+PASS yichangdian揭示读取预生成配置且不重抽
+PASS jiuzhe揭示读取预生成配置且不重抽
+PASS fangzhou揭示读取预生成配置且不重抽
+PASS 方舟缺少玩家配置时不得临时随机补牌或部分揭示
+PASS 方舟多次混洗与外部随机消耗隔离且非零检查点恢复一致
+PASS 正式内核隐藏配置差分与lifecycle恢复
+PASS 开局仅两个槽位分配互异物种且尚未揭示
+PASS 预定物种的揭示次序不改身份也不再抽随机数
+PASS 免电固定盘面只分配阿米巴与虫且不抽取其他身份
+PASS 未揭示身份差异不进入公共物种观察
+PASS 405分局四席起始公司与起始卡选项继承原局
+固定牌堆与物种契约：45/45通过
+card play domain production composition tests passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+task-state.test.js: all tests passed
+data.test.js: all tests passed
+nebula.test.js: all tests passed
+event-bonus-progress.test.js: 访问进度、阈值、领取、所有权和只读契约通过
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+runezu trace panel symbol rewards passed
+science scan and blue reward tests passed
+search budget tests passed
+search payment choice tests passed
+hidden payment boundaries passed
+search placement boundary tests passed
+search root attribution tests passed
+effect session journal stage 5 tests passed
+effect session runtime tests passed
+standard action Effect Session tests passed
+StateStore Effect Session stage 6 tests passed
+end-game-scoring tests passed
+final-scoring tests passed
+initial offer, settlement and income information boundaries, removal equivalence and recovery passed
+initial-setup mission startup final mark passed
+planet stats tests passed
+player tests passed
+probe directory borrowed-tech, owner cache and scan allowance tests passed
+rocket move tests passed
+rocket action tests passed
+high coupling state tests passed
+low coupling state tests passed
+state-store tests passed
+bonuses.test.js passed
+tech.test.js passed
+solar-system-core tests passed
+{"publicGeometryParity":true,"nebulaCases":10240,"wheelCases":6336,"mutableInputAndResultIsolation":true}
+heuristic turn report search trace tests passed
+self-play demo ingestion tests passed
+simulation rules-only composition tests passed
+simulation production Standard Action composition tests passed
+trajectory recorder tests passed
+amiba/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+amiba/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+aomomo/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+aomomo/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+banrenma/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+banrenma/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+runezu/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+runezu/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+yichangdian/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+yichangdian/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+jiuzhe/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+jiuzhe/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/rewards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/rewards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+alien reveal hidden information tests passed
+all eight hidden species yield the same search observation for an identical player-visible root
+fangzhou hypothesis resources fund a real subsequent launch; unfunded branch cannot launch
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fixed world identity tests passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"firstTwoRoundsScenario":true,"endBeforePassCardAndIncome":true,"nativeBeforeExecutionCallback":true,"sourceEndMoney":1,"nextStartMoney":5,"independentIdentityAndDuplicateGuard":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"autonomousFirstThreeRoundsHarness":"passed","original23FullNativeEnvelopeAndRng":true,"noTeacher112Prefix":true,"originalPassivePolicy":true,"noAiQueries":true,"noAutonomousRuns":true,"realNativePassBoundaryAndFault":true,"roundEndBeforeCardAndIncome":true,"normalAndFailedDuplicateGuard":true,"provisionalRegistryAndRenderedLabel":true,"excludedFromFullGameLeaderboardAndBaseline":true}
+fatal: not a git repository (or any of the parent directories): .git
+{"frozenV123Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR1":true}
+fatal: not a git repository (or any of the parent directories): .git
+{"frozenV189Continuation":"correctly-rejected-for-new-runtime","newStrategyCannotReuseOldR2":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"whiteOnlyScenario":"passed","controlledOpening":true,"passiveNativeDecisions":3,"scenarioIdentitySeparated":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"exactTeacher113NativeEnvelopeAndRng":true,"original23OpeningPreserved":true,"teacherFirstTwoRoundsExplicitlyControlled":true,"thirdRoundOnlyAutonomousScope":true,"blueBrownAlreadyPassedGreenPassOnly":true,"noPrefixReexecution":true,"noPolicyDecisionInTest":true,"independentIdentityAndDuplicateGuard":true,"endBeforePassCardAndNextIncome":true}
+research search statistics tests passed
+[搜索触限] 步42 p1 strategic #0 frontier={"enabled":true,"limit":256,"reached":true,"truncated":true,"trimCount":3} action=scan:<a>
+[搜索触限] 步42 p1 strategic #0 execution={"enabled":true,"limit":4096,"reached":true,"truncated":false} action=scan:<a>
+research world resume tests passed
+{"incompleteSearchAttempts":43,"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchCompleteGames":4,"templateQueries":3,"registrationRejects":2}
+{"compactReport":"passed","steps":167,"rounds":4,"richParity":true,"sourceSaveUnchanged":true}
+robot report record links passed
+robot report world comparison passed
+robot report replay failures and metadata preservation passed
+SUMMARY unit passed=230 failed=0 total=230 time=298.55s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.55s
+OWNER architecture/browser-host tests=7
+OWNER architecture/effect-session tests=10
+OWNER architecture/host-source-zero tests=1
+OWNER architecture/policy-host tests=14
+OWNER architecture/rule-composition tests=1
+OWNER architecture/simulation-host tests=7
+OWNER architecture/standard-action tests=2
+OWNER architecture/state-store tests=3
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=64
+OWNER policy/heuristic-evaluator tests=8
+OWNER policy/heuristic-policy tests=12
+OWNER policy/machine-player-coordinator tests=1
+OWNER policy/plan-continuation tests=1
+OWNER policy/state-value tests=48
+OWNER rules/actions tests=9
+OWNER rules/alien-runezu tests=1
+OWNER rules/aliens tests=10
+OWNER rules/card-event-bonus tests=1
+OWNER rules/card-play tests=2
+OWNER rules/cards tests=5
+OWNER rules/data tests=3
+OWNER rules/initial-setup tests=1
+OWNER rules/quick-trades tests=1
+OWNER rules/scoring tests=2
+OWNER rules/tech tests=2
+OWNER training/reporting tests=11
+OWNER training/research-statistics tests=1
+OWNER training/trajectory tests=2
