@@ -1,0 +1,41 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V509",
+  "searchVersion": "seti-complete-decision-search-v407",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "fddba2f25df8fa61b50c4dc6fcea3f4a6352fdff",
+  "snapshotTree": "84eed10313966d9d5d1fb317ea9d7e2afbc9f3db",
+  "runtimeSubtrees": {
+    "randomizer": "cbf60f2865957185788d690182e4aa605a77e7cf",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v509-public-chong-admission-v1/v509-source-manifest-20261108-v1.json",
+  "manifestSha256": "42be6298ddca910f42f9c2f031e8f5f5664d6c8465a8790344adec85b5a3e7f9",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "2127ca04bd15fc5532685837c53901ad256b600b3af4ba007724f16f9446458e",
+    "randomizer/game/ai/decision-search.js": "db2e5e6a55fdfcaeb70976becd8cf09c38e22719efca45b833f0be1875f3304c"
+  },
+  "evidenceSha256": {
+    "v509-source-manifest-20261108-v1.json": "42be6298ddca910f42f9c2f031e8f5f5664d6c8465a8790344adec85b5a3e7f9",
+    "v509-cold-gate-20261108-v1.json": "4aee88b2e74dd517f1022d9797742ee64a992f70e651d2c10691d2aa53e832bc",
+    "v509-public-chong-autonomy-evidence-20261108-v1.tar.gz": "7332d371007f7a77d174689b0e9467456a7440df7cb3a812958529199e1317bb",
+    "v506-node-regression-20261108-v1.log": "00a9b87d55806fc107e21984c5def99aa2f4f78f0d73c81bb6a372242c37693b",
+    "v509-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v509-browser-escalated-20261108-v1.log": "53d4c24f5ed7cda2149783484545e215bf5031e8e215be356021ff215d876db4"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 581.324791,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 894,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

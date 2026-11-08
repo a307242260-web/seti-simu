@@ -360,7 +360,7 @@
     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0;
-    let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
+    let rootObservation = null, knownChongDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
     // Each immutable Native envelope owns one immutable knowledge context.
     // Sharing a view of that envelope preserves knowledge; siblings never mutate it.
@@ -371,15 +371,16 @@
       if(!source)return;
       const inherited=envelopeKnowledge.get(source.envelope);
       if(inherited)envelopeKnowledge.set(envelope,inherited);
-      const target=action?.target, index=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
+      const target=action?.target,chong=target?.choiceId?.startsWith("chong:display:"),
+        species=chong?"chong":"amiba",index=chong?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
       if(action?.actorId!==seatId || action.family!=="choose_card" || target?.kind!=="residual-domain"
         ||target.source!=="display" || !Number.isSafeInteger(index) || target.cardIndex!==index
-        ||target.choiceId!==`amiba:display:${index}` || !knownRootAlienIds.has("阿米巴"))return;
+        ||target.choiceId!==`${species}:display:${index}` || !knownRootAlienIds.has(chong?"虫":"阿米巴"))return;
       const before=readIdentityState(source.envelope),after=readIdentityState(envelope);
-      if(before.aliens.amiba?.displayedCardIndex!==index)return;
+      if(before.aliens[species]?.displayedCardIndex!==index)return;
       const previous=new Set(before.players.players.find(p=>p.id===seatId).hand.map(c=>c.id));
       const acquired=after.players.players.find(p=>p.id===seatId).hand.filter(c=>!previous.has(c.id)
-        &&c.amibaCard===true&&c.alienCardId===index&&c.cardId===`amiba_${index}.webp`);
+        &&c[chong?"chongCard":"amibaCard"]===true&&c.alienCardId===index&&c.cardId===`${species}_${index}.webp`);
       if(acquired.length!==1)throw new Error("ANALYSIS_PUBLIC_ALIEN_ACQUISITION_UNPROVED");
       const ids=new Set(inherited?.ids||knownRootCardIds);ids.add(acquired[0].id);
       const added=[...ids].filter(id=>!knownRootCardIds.has(id)).sort();
@@ -594,6 +595,11 @@
       knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
       knownRootTechIndices = new Map(Object.values(state.tech.stacks).map(stack=>[stack.tileId,stack.bonusIndex]));
       knownRootAlienIds = new Set((rootObservation.publicState.board.aliens.slots||[]).filter(a=>a.revealed).map(a=>a.alienId));
+      const head=authoritative.session?.session?.queue?.[0];
+      const offered=head?.type==="residual_alien_card_decision"&&head.ownerId===seatId&&head.payload?.speciesId==="chong"
+        &&knownRootAlienIds.has("虫")&&actions.find(a=>a.family==="choose_card"&&a.target?.kind==="residual-domain"
+          &&a.target.source==="display"&&Number.isSafeInteger(a.target.cardIndex)&&a.target.choiceId===`chong:display:${a.target.cardIndex}`);
+      knownChongDisplayIndex=offered?offered.target.cardIndex:null;
       rootTurnKey = JSON.stringify([state.turn.roundNumber,state.turn.turnNumber,state.turn.actionCycleNumber]);
       publicSeed = JSON.stringify(["seti-turn-hypothesis-v1", state.meta.seed, state.meta.gameId, seatId,
         state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber, state.turn.activePlayerIds]);
@@ -655,10 +661,12 @@
       const amiba=state.aliens.amiba;
       const rootDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
       const hiddenDisplay=amiba&&(!knownRootAlienIds.has("阿米巴")||amiba.displayedCardIndex!==rootDisplay);
+      const chong=state.aliens.chong,hideChong=knownChongDisplayIndex!==null&&chong?.displayedCardIndex!==knownChongDisplayIndex;
       const result = { ...state,
-        ...(hiddenDisplay?{aliens:{...state.aliens,amiba:{...amiba,displayedCardIndex:null,
-          displayedCardHidden:amiba.displayedCardIndex!=null,
-          ...(!knownRootAlienIds.has("阿米巴")?{revealInitialized:false}:{})}}}:{}),
+        ...(hiddenDisplay||hideChong?{aliens:{...state.aliens,
+          ...(hiddenDisplay?{amiba:{...amiba,displayedCardIndex:null,displayedCardHidden:amiba.displayedCardIndex!=null,
+            ...(!knownRootAlienIds.has("阿米巴")?{revealInitialized:false}:{})}}:{}),
+          ...(hideChong?{chong:{...chong,displayedCardIndex:null}}:{})}}:{}),
         // Anonymous slots preserve the actual hand quantity for pure ledgers.
         // Their Native identities/models never enter planning or selections.
         players:{...state.players,players:state.players.players.map(p=>p.id===seatId?{...p,
@@ -1654,6 +1662,8 @@
         if(action.family==="choose_card"&&target.kind==="residual-domain"&&target.source==="display"
           &&target.choiceId?.startsWith("amiba:display:")
           &&target.cardIndex!==rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex)return false;
+        if(action.family==="choose_card"&&target.kind==="residual-domain"&&target.source==="display"
+          &&target.choiceId?.startsWith("chong:display:")&&target.cardIndex!==knownChongDisplayIndex)return false;
         if(Number.isInteger(target.publicSlotIndex)&&!knownCards(envelope).has(state.cards.publicCards[target.publicSlotIndex]?.id))return false;
         if(target.tileId&&state.tech.stacks[target.tileId]
           &&(action.family==="research_tech"||envelope.session?.session?.queue?.[0]?.type===scienceSession.EFFECT_TYPES.RESEARCH)
@@ -1685,7 +1695,7 @@
       // A refill does not end a root-known post-main plan. Unknown owned
       // identities, alien reveals, other owners and actual turn changes still close it.
       let knownRewardActions = [], postMainActions = [];
-      // The acquired displayed Amiba card is root-known; only the replacement
+      // A proved acquired displayed alien card is root-known; only the replacement
       // stays hidden. Carry this permission through the same turn, but a new
       // alien-card barrier must itself prove a new public acquisition.
       const acquired=cardKnowledgeKey(envelope);
@@ -4263,7 +4273,7 @@
       resourceGroups.clear();
       cache.clear();
       clearPrefixGraph();
-      rootObservation = null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();knownRootTechIndices=new Map();knownRootAlienIds=new Set();planningStates=new WeakMap();acquiredPlanningStates=new WeakMap();envelopeKnowledge=new WeakMap();
+      rootObservation = null;knownChongDisplayIndex=null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();knownRootTechIndices=new Map();knownRootAlienIds=new Set();planningStates=new WeakMap();acquiredPlanningStates=new WeakMap();envelopeKnowledge=new WeakMap();
       publicSeed = null;rootTurnKey=null;
     }
 

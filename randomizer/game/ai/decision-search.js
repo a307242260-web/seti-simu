@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v406";
+  const VERSION = "seti-complete-decision-search-v407";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -741,18 +741,26 @@
         }
       }
       const changed = nodes.flatMap((entry, index) => entry.value == null ? [] : [index]);
+      // An opaque blind draw can close sooner than the same free displayed
+      // Chong reward. Distance alone must not favor that information barrier.
+      const chongOffer = root.legalActions.some(a => a.target?.kind === "residual-domain"
+        && a.target.source === "display" && a.target.choiceId?.startsWith("chong:display:"))
+        && root.legalActions.find(a => a.target?.kind === "residual-domain" && a.target.choiceId === "chong:blind");
+      const chongBlindRank = (index, edge) => Number(index === 0 && Boolean(chongOffer) && edge?.actionId === chongOffer.actionId);
       for (let head = 0; head < changed.length; head += 1) {
         const target = nodes[changed[head]];
         for (const { index, edge } of parents[changed[head]]) {
           const parent = nodes[index];
           const distance = target.distance + edge.cost;
+          const blindRank = chongBlindRank(index,edge) - chongBlindRank(index,parent.best);
           if (parent.value == null || target.value > parent.value
             || (target.value === parent.value && (target.preparationDebt < parent.preparationDebt
               || (target.preparationDebt === parent.preparationDebt && (target.realization > parent.realization
                 || (target.realization === parent.realization && (target.landingCompanyRetained > parent.landingCompanyRetained
                   || (target.landingCompanyRetained === parent.landingCompanyRetained && (Number(Boolean(target.publicDataCard)) > Number(Boolean(parent.publicDataCard))
-                    || (Boolean(target.publicDataCard) === Boolean(parent.publicDataCard) && (distance < parent.distance
-                      || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))))) {
+                    || (Boolean(target.publicDataCard) === Boolean(parent.publicDataCard)
+                      && (blindRank < 0 || (blindRank === 0 && (distance < parent.distance
+                        || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))))))) {
             parent.value = target.value;
             parent.realization = target.realization;
             parent.preparationDebt = target.preparationDebt;
