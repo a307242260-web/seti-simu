@@ -361,6 +361,7 @@
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0;
     let rootObservation = null, knownChongDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
+    let knownRootFossilIds = new Set();
     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
     // Each immutable Native envelope owns one immutable knowledge context.
     // Sharing a view of that envelope preserves knowledge; siblings never mutate it.
@@ -595,6 +596,7 @@
       knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
       knownRootTechIndices = new Map(Object.values(state.tech.stacks).map(stack=>[stack.tileId,stack.bonusIndex]));
       knownRootAlienIds = new Set((rootObservation.publicState.board.aliens.slots||[]).filter(a=>a.revealed).map(a=>a.alienId));
+      knownRootFossilIds = new Set(actions.flatMap(action => action.target?.fossilId ? [action.target.fossilId] : []));
       const head=authoritative.session?.session?.queue?.[0];
       const offered=head?.type==="residual_alien_card_decision"&&head.ownerId===seatId&&head.payload?.speciesId==="chong"
         &&knownRootAlienIds.has("虫")&&actions.find(a=>a.family==="choose_card"&&a.target?.kind==="residual-domain"
@@ -1676,11 +1678,17 @@
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
       const nativeBarrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
-      const revealed = ruleComposition.isHiddenInformationBarrier(nativeBarrier)
-        && JSON.stringify(nativeBarrier) !== JSON.stringify(before.session?.irreversibleBarrier);
-      const barrier = revealed ? nativeBarrier : carriedBarrier || nativeBarrier;
-      const newBarrier = Boolean(carriedBarrier) || revealed;
       const envelope = snapshot(comp);
+      const head = envelope.session?.session?.queue?.[0], effect = head?.payload?.cardEffect;
+      // The landing resolves before Native presents the destination's
+      // previously hidden fossils. Search may value the settled landing,
+      // but cannot select from the newly disclosed IDs.
+      const fossilReveal = head?.ownerId===seatId && effect?.type==="chong_pickup_fossil" && effect.options?.cardIndex===3
+        && inspection.session?.decision?.choices.some(a=>a.target?.fossilId&&!knownRootFossilIds.has(a.target.fossilId));
+      const revealed = fossilReveal || ruleComposition.isHiddenInformationBarrier(nativeBarrier)
+        && JSON.stringify(nativeBarrier) !== JSON.stringify(before.session?.irreversibleBarrier);
+      const barrier = fossilReveal ? {code:"hidden_chong_fossil_offer"} : revealed ? nativeBarrier : carriedBarrier || nativeBarrier;
+      const newBarrier = Boolean(carriedBarrier) || revealed;
       inheritCardKnowledge(envelope,source,sourceAction);
       if(cardPickPlanning&&source&&sourceAction){
         const intent=envelopeCardSpecs.get(source.envelope)?.companySwap,head=envelope.session?.session?.queue?.[0],previous=source.envelope.session?.session?.queue?.[0];

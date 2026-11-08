@@ -1,0 +1,46 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V592",
+  "searchVersion": "seti-complete-decision-search-v410",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "179a5050e66e94554802a8d61c077559003a13d9",
+  "runtimeSubtrees": {
+    "randomizer": "f3f02d0126f27c053623ee882d339d3901e2a6bd",
+    "tools": "84ba4493bba6667b5c9122bd9a18ab8146ac3373",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261108/v592-early-chong-transport-v1/v592-source-manifest-20261108-v1.json",
+  "manifestSha256": "475264d5ecf3c21dc231bea6584af5e48ae60186836274c16c8c809e4c2cd949",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "0ee65752d019eb784e3b54f52b018b6a345fca8595572e7b67dba1eba687c45a",
+    "randomizer/game/ai/decision-search.js": "d10beba4d7b81bdbf223373138f8133f80e681f070fba0b3bc34b8e253eef796",
+    "randomizer/game/ai/resource-demand.js": "9724b8659e89b87be3d1baafbaa80b3958d80fe01fb9861f97079492008d7650"
+  },
+  "evidenceSha256": {
+    "v592-source-manifest-20261108-v1.json": "475264d5ecf3c21dc231bea6584af5e48ae60186836274c16c8c809e4c2cd949",
+    "v592-cold-gate-20261108-v1.json": "3b24ff63e78dac7a657616e17c6ee78689b3ecb510adf5bf4541377e17062894",
+    "v592-early-chong-transport-evidence-20261108-v1.tar.gz": "a61c5f153ec97d6495faa81980b74399e6a409ddebf639b6523d1806e281c80a",
+    "v592-full-node-20261108-v1.log": "da30f6ae8a306409515c092754952f20af9140473b1ddd57649e55aec22baed1",
+    "v592-input-audit-20261108-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v592-browser-20261108-v1.log": "80573d582022b6b22e40fb2ffa062c0049408ab28afaa1d7c7853d57b399e07e"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 576.646125,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 228,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "newColdInputs": [
+    70,
+    195
+  ],
+  "fixedTransportEvidence": "V592 used only Native accepted actions; hidden-fossil masks agree",
+  "baseline": "V41",
+  "newAutonomousRuns": 0,
+  "developmentAligned": false
+}

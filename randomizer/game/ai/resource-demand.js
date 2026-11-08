@@ -29,7 +29,7 @@
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),required={...(goal.required||{})};
     if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+movePoints(c),0));
-    if(goal.kind==='held-landing-route')required.energy=goal.movementPoints;
+    if(goal.kind==='held-landing-route')required.energy=goal.embeddedMove?(goal.path.length>1&&!goal.movementCardId?1:0):goal.movementPoints;
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
       publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
@@ -943,10 +943,54 @@
     if(p.resources.availableData>0)return find(a=>a.family==='place_data','start-known-landing-blue-reward');
     return find(a=>a.family==='card_corner'&&a.target?.cardInstanceId===goal.cornerId&&a.payload?.kind==='resource','fund-known-landing-blue-reward');
   }
+  // A known card can pay for the final step of a named landing. Keep the
+  // prerequisite to one exact external step paid with energy or one known corner.
+  // Cargo identity and landing rewards remain Native observations.
+  function heldTransportGoal({state,seatId,p,candidates}){
+    const turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
+    if(turn.roundNumber!==3||p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
+      ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id))
+      ||p.hand.some(c=>!c.id||!c.cardId||c.hidden))return null;
+    const suppliers=p.hand.filter(card=>{
+      const m=effects.getCardModel(card),list=m?.playEffects||[];
+      return m?.cardType===2&&!m.triggers?.length&&list.length===3
+        &&list[0].type==='card_move'&&list[0].options?.movementPoints===1
+        &&list[1].type==='chong_land_for_pickup'&&list[2].type==='chong_pickup_fossil'
+        &&!list[1].options?.allowSatellite&&!list[2].options?.allowSatellite
+        &&list[1].options?.cardIndex===list[2].options?.cardIndex;
+    });
+    if(suppliers.length!==1)return null;
+    const [card]=suppliers,cost=effects.getCardPlayCost(card);
+    if(Object.keys(cost).length!==1||!Number.isSafeInteger(cost.credits)||cost.credits<=0||p.resources.credits<cost.credits)return null;
+    const energyPayment=p.resources.energy>=1;
+    const payers=energyPayment?[]:p.hand.filter(c=>c.id!==card.id&&movePoints(c)===1);
+    if(!energyPayment&&payers.length!==1)return null;
+    const [payment]=payers,options=[];
+    for(const c of candidates()){
+      if(c.launchRequired||c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!['jupiter','saturn'].includes(c.planetId)
+        ||c.required.paidMovementPoints!==2||c.path.length!==2)continue;
+      const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);
+      if(!probe)continue;
+      let at=rockets.getRocketSectorCoordinate(probe);
+      const path=c.path.map(step=>{
+        const {deltaX,deltaY}=step,move=rockets.canMoveFromCoordinate(state.pieces,at,deltaX,deltaY,c.rocketId);
+        if(!move.ok)throw Error('HELD_TRANSPORT_ROUTE_INVALID');
+        const requiredMovePoints=rocketAbility.getRequiredMovePointsFromCoordinate({...state,state},p,at);
+        const result={from:at,to:move.to,deltaX,deltaY,requiredMovePoints};at=move.to;return result;
+      });
+      if(!path.every(s=>s.requiredMovePoints===1))continue;
+      const value=c.targetBenefit.grossEquivalentValue-cost.credits*weights.credits-weights.handSize-(energyPayment?weights.energy:weights.handSize);
+      if(value>0)options.push({id:c.requirementId+':held-transport:'+card.id+':'+(payment?.id||'energy'),kind:'held-landing-route',
+        rocketId:c.rocketId,planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:card.id,movementCardId:payment?.id||null,
+        coordinate:path[1].to,path,movementPoints:2,embeddedMove:path[1],required:cost,prefixOnly:false,value});
+    }
+    return options.sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id))[0]||null;
+  }
+
   function heldLandingGoal({state,seatId,candidates,compareTiming}){
     const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
     const supplier=probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber,passing:p.passCompletionPending},weights);
-    if(!supplier||p.resources.credits<supplier.cost.credits)return null;
+    if(!supplier||p.resources.credits<supplier.cost.credits)return heldTransportGoal({state,seatId,p,candidates});
     if(p.mainActionCompleted&&turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
     const options=[];
     for(const c of candidates()){
@@ -982,7 +1026,7 @@
         planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:supplier.card.id,coordinate:path[path.length-1].to,
         path,movementPoints:points,required:supplier.cost,prefixOnly:p.mainActionCompleted,value});
     }
-    return options.sort((a,b)=>b.value-a.value||a.movementPoints-b.movementPoints||(a.id<b.id?-1:1))[0]||null;
+    return options.sort((a,b)=>b.value-a.value||a.movementPoints-b.movementPoints||(a.id<b.id?-1:1))[0]||heldTransportGoal({state,seatId,p,candidates});
   }
 
   function heldLandingStep({state,seatId,goal,actions,status,operation}){
@@ -991,23 +1035,31 @@
     };
     if(operation.targetStarted){
       if(status==='stable')return{kind:'complete',reason:'held-landing-settled'};
+      if(goal.embeddedMove&&actions.some(a=>Number.isInteger(a.target?.deltaX)&&Number.isInteger(a.target?.rocketId))){
+        const s=goal.embeddedMove,rocket=state.pieces.rockets.find(r=>r.id===goal.rocketId),at=rocket&&rockets.getRocketSectorCoordinate(rocket);
+        if(!at||at.x!==s.from.x||at.y!==s.from.y)return{kind:'infeasible',reason:'held-transport-free-step-origin'};
+        return find(a=>a.target.rocketId===goal.rocketId&&a.target.deltaX===s.deltaX&&a.target.deltaY===s.deltaY,'held-transport-native-free-step');
+      }
       const land=actions.some(a=>a.target?.actionType==='land');
       if(land)return find(a=>a.target?.rocketId===goal.rocketId&&a.target?.planetId===goal.planetId
-        &&a.target?.landTarget?.type===goal.endpointTarget.type,'held-landing-native-target','target');
+        &&a.target?.landTarget?.type===goal.endpointTarget.type,'held-landing-native-target',goal.embeddedMove?'fixed':'target');
       return{kind:'fallback',reason:'held-landing-native-effect',actionIds:actions.map(a=>a.actionId)};
     }
     if(status==='decision'){
       if(actions.some(a=>a.target?.kind==='move-payment'))return find(a=>a.target?.kind==='move-payment'
-        &&a.target.choiceId==='energy'&&!a.target.cardIds?.length,'held-landing-pay-exact-energy');
+        &&(goal.embeddedMove&&goal.movementCardId?a.target.cardIds?.length===1&&a.target.cardIds[0]===goal.movementCardId
+          :a.target.choiceId==='energy'&&!a.target.cardIds?.length),goal.embeddedMove&&goal.movementCardId?'held-transport-pay-exact-corner':'held-landing-pay-exact-energy');
       return{kind:'fallback',reason:'held-landing-native-preparation-effect',actionIds:actions.map(a=>a.actionId)};
     }
     if(!p.hand.some(c=>c.id===goal.cardId)||p.resources.credits<goal.required.credits)
       return{kind:'infeasible',reason:'held-landing-card-or-fee-unavailable'};
-    if(!goal.path.length){
+    if(!goal.path.length||goal.embeddedMove&&goal.path.length===1){
       if(goal.prefixOnly)return{kind:'complete',reason:'held-landing-prefix-completed'};
       return find(a=>a.family==='play_card'&&a.target.cardInstanceId===goal.cardId,'held-landing-play-known-card','start-target');
     }
-    if(p.resources.energy<goal.movementPoints){
+    if(goal.embeddedMove&&(goal.movementCardId?!p.hand.some(c=>c.id===goal.movementCardId):p.resources.energy<1))
+      return{kind:'infeasible',reason:'held-transport-movement-payment-unavailable'};
+    if(!goal.embeddedMove&&p.resources.energy<goal.movementPoints){
       const funding=probeCapital.funding(p.resources,{...goal.required,energy:goal.movementPoints},stateValue.DEFAULT_WEIGHTS);
       if(!funding||funding.creditPurchases)return{kind:'infeasible',reason:'held-landing-currency-lower-bound'};
       return find(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy','held-landing-fund-energy');
