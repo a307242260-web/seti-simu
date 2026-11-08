@@ -241,6 +241,35 @@ try {
   // contents, including RNG and the pending reward, must otherwise agree.
   const sessionContents=e=>JSON.parse(JSON.stringify(e).replaceAll(e.session.session.sessionId,'effect-session-test'));
   assert.deepEqual(sessionContents(cursor),sessionContents(held.afterLanding));
+  const column=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/deferred-computer-blue-column-r3-20261109-v1.json.gz'))));
+  const keepData=decide(column['post-orange']);
+  assert.equal(keepData.action.family,'end_turn');
+  assert.equal(keepData.q.lines[0].resourcePolicy.deferredBlueColumn,true);
+  const hiddenRefill=structuredClone(column['post-orange']),refill=JSON.parse(hiddenRefill.committedState);
+  const columnPile=refill.cards.drawPileCardIds;[columnPile[0],columnPile[1]]=[columnPile[1],columnPile[0]];
+  hiddenRefill.committedState=JSON.stringify(refill);
+  assert.deepEqual(decide(hiddenRefill).q.roots,keepData.q.roots);
+  const noKnownDataCard=structuredClone(column['post-orange']),noSupply=JSON.parse(noKnownDataCard.committedState);
+  noSupply.cards.publicCards[1]=null;noKnownDataCard.committedState=JSON.stringify(noSupply);
+  assert(!decide(noKnownDataCard).q.lines[0].resourcePolicy?.deferredBlueColumn);
+  const blueBefore=decide(column['start-blue-turn']);
+  assert.equal(blueBefore.action.family,'move');
+  assert.equal(blueBefore.q.value,192.5);
+  assert.equal(decide(column['after-blue']).q.roots.find(x=>x.actionId==='place_data:8fd12fd3').goal.id,'data:computer6-blue1-cash');
+  let tailCursor=column['post-orange'],tailCheckpoint;
+  for(const expected of column.actions){
+    const {action,checkpoint}=decide(tailCursor,tailCheckpoint);
+    assert.deepEqual(action,expected);
+    const pending=c.inspect().session?.decision;
+    const result=pending?c.inputPort.submitDecision({decisionId:pending.decisionId,decisionVersion:pending.decisionVersion,ownerId:pending.ownerId,choice:action})
+      :action.phase==='quick'?c.inputPort.submitQuickAction(action):c.inputPort.submitAction(action);
+    assert(result.ok,JSON.stringify(result));
+    tailCursor=save();tailCheckpoint=checkpoint;
+  }
+  assert.deepEqual(tailCursor,column['after-cash']);
+  const columnPlayer=JSON.parse(tailCursor.committedState).players.players.find(p=>p.id===seatId);
+  assert.deepEqual([columnPlayer.resources.score,columnPlayer.resources.credits,columnPlayer.resources.availableData],[105,1,0]);
   console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,
-    privateCardsAndNextTechDoNotChangeRanking:true,knownHeldTransportAutonomousInputs:held.expectedNativeActions.length}));
+    privateCardsAndNextTechDoNotChangeRanking:true,knownHeldTransportAutonomousInputs:held.expectedNativeActions.length,
+    deferredColumnInputs:column.actions.length}));
 } finally {c.dispose();}

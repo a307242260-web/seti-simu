@@ -1,0 +1,52 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V655",
+  "searchVersion": "seti-complete-decision-search-v422",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "d5c55188d23d1f9f13782b3155ddbe177182e3ef",
+  "runtimeSubtrees": {
+    "randomizer": "a67c53176948f5d0ff3c7c0faf0c7f2f3513094f",
+    "tools": "97def1cc02034bb2e1f32fcf86cb48a77aed1d8f",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261109/v655-blue-column-timing-v1/v655-source-manifest-20261109-v1.json",
+  "manifestSha256": "bec81a589bf69f4383bda9be2afa6d999ef83c4c14dacc62d3d8547ecbce19ce",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "60d5a1b1a8cb6d934fb55a371677334ce5bbac44b92afca0dcfca8771ef7c65f",
+    "randomizer/game/ai/blue-transport-research.test.js": "9979080abdb1c0d55e77e5bf9f43b34d8fff890f5b4d0ef9664c8ae7dbb0e1ec",
+    "randomizer/game/ai/decision-search.js": "824a013f9ad725b1851eafa695066a7a4f2292796fed7bf9931f3573dc5e87e9",
+    "randomizer/game/ai/fixtures/deferred-computer-blue-column-r3-20261109-v1.json.gz": "6a4983e1f057f2c418d7c7d69e90991d4babe74ca352eabd780801ed14ec169e"
+  },
+  "evidenceSha256": {
+    "v655-source-manifest-20261109-v1.json": "bec81a589bf69f4383bda9be2afa6d999ef83c4c14dacc62d3d8547ecbce19ce",
+    "v655-cold-gate-20261109-v1.json": "06b7cdb07f4686505b86e012abd44f199b635004194b8553f614d900e85faae6",
+    "v655-blue-column-evidence-20261109-v1.tar.gz": "0e385528625d29dd9cc0fb3006f0e206e795be71571bc7faf04c3d7a20b47cfc",
+    "v655-node-tests-20261109-v1.log": "5b34e8ab00191d80768b34659cf8a6add9cb31beec708d1fcce0034b8cf2f44d",
+    "v655-state-input-audit-20261109-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v655-browser-20261109-v1.log": "c355eaa4f256fc1a4941b0efc85ef1ed114a4dfde094a3ea7a03e3db8e2f3735"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 583.036625,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 229,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "controlledSuffix": {
+    "boardScore": 118,
+    "establishedScore": 164,
+    "autonomousInputs": 43,
+    "maxNativeInputs": 103
+  },
+  "knownComparison": {
+    "boardGain": 2,
+    "unchangedOtherNativeFields": true
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

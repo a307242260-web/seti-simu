@@ -1,0 +1,2 @@
+PASS production-v655-deferred-blue-column http://127.0.0.1:52137/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1
