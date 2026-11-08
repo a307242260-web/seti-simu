@@ -1,0 +1,57 @@
+{
+  "status": "source-admitted",
+  "sourceAdmitted": true,
+  "runtime": "V661",
+  "searchVersion": "seti-complete-decision-search-v425",
+  "valueModel": "seti-purpose-capital-state-value-v58",
+  "baseCommit": "424fa59b8d6ffc23c7fbba6e30ed1acf281ac6be",
+  "runtimeSubtrees": {
+    "randomizer": "669286077c6d60fced0f63b690ea86fc755e11b9",
+    "tools": "234b6d413d6351502508457e2511e841dbe5f351",
+    "assets": "18b009d501d8f1eadd3edb36eb16160bc76c440e"
+  },
+  "manifest": "reports/ai-foundation-20261109/v661-early-transport-boundary-v1/v661-source-manifest-20261109-v1.json",
+  "manifestSha256": "8cd0d974539db5ceade8cd2ae485349cf891463bea38a1bdaead04dffc5666d7",
+  "sourceFiles": {
+    "randomizer/game/ai/analysis-port.js": "a72568a1a2720e83528ecc34b6f25d75a3fd87a9e2b37e6275752dfc832be4b8",
+    "randomizer/game/ai/chong-quiet-end.test.js": "9d35d2a027cda54a5be72ae7d4aa3a52ecc83842bcd3d91e418fa5f55c47bcc8",
+    "randomizer/game/ai/decision-search.js": "3a79f534555581886301f84c190f5813e2ec9870042744b5af5e40aa5cdb5eed",
+    "randomizer/game/ai/fixtures/chong-quiet-end-r3-20261109-v1.json.gz": "6efbabd86bae2327b15cc26c36588b816c7860c3e24cea08d90bf9711c99bd30",
+    "tools/node-test-inventory.js": "d5acda5980da596c8b0fff3f3a59e62b83991eb2858b295dfbe345c21c86e3a1"
+  },
+  "evidenceSha256": {
+    "v661-source-manifest-20261109-v1.json": "8cd0d974539db5ceade8cd2ae485349cf891463bea38a1bdaead04dffc5666d7",
+    "v661-cold-gate-20261109-v1.json": "697dbe497680ddc2c7c05eb22c5940b5a6d68a012aa60cf4247b29a285ae7333",
+    "v661-early-transport-evidence-20261109-v1.tar.gz": "4657b19a883c5ccd80e8c1f80ed6f31b7bc19956375c066233225ef234104ac9",
+    "v661-node-tests-20261109-v1.log": "0d9e043c4c09b359a50b6b79411b499792b70aa9ad9062a1dcfaff309a6e53b8",
+    "v661-state-input-audit-20261109-v1.log": "664509ad57b89690000b6bb96f131414946dac8f1f9193375b7939e45710b04e",
+    "v661-browser-20261109-v1.log": "9258a46913c0c6fb7344335453a35f86ebf925f5cf6a2a90f9b92b3a965f3485"
+  },
+  "completeNamedColdCases": 1336,
+  "uniqueNativeRoots": 895,
+  "maxNativeInputs": 256,
+  "maxMilliseconds": 585.0193340000001,
+  "firstTwoFullGraphsUnchanged": 304,
+  "allHistoricalNonTimingGraphsUnchanged": 895,
+  "fullNodeUnitPassed": 232,
+  "fullNodeFlowPassed": 1,
+  "browserRankingPassed": 1,
+  "inputAuditPassed": 66,
+  "newNamedChongRoots": {
+    "before": [
+      308,
+      308,
+      310,
+      306
+    ],
+    "after": [
+      224,
+      224,
+      233,
+      228
+    ]
+  },
+  "baseline": "V41",
+  "newStandardRuns": 0,
+  "developmentAligned": false
+}

@@ -1,0 +1,2 @@
+PASS production-v661-chong-quiet-end http://127.0.0.1:53092/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

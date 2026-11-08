@@ -3522,6 +3522,16 @@
         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id))
         &&owner.reservedCards.every(card=>!cardEffects.getCardModel(card)?.temporaryTasks?.length)
         &&!cardEffects.listPendingTriggerKeys({...owner,reservedCards:owner.hand},state.turn).length;
+      // A revealed Chong board without a live transport cannot settle
+      // an arrival on ordinary END. Keep the same trigger, task, mark and
+      // turn-flow proof as the known Amiba tail, with no new draw or probe move.
+      const publicChongPlainEnd=kind==="end-turn"&&state.turn.roundNumber===3
+        &&company?.activeAbilityId==="deepspace_swap_cards"&&knownRootAlienIds.has("虫")
+        &&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="虫")
+        &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+        &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id))
+        &&owner.reservedCards.every(card=>!cardEffects.getCardModel(card)?.temporaryTasks?.length)
+        &&!cardEffects.listPendingTriggerKeys({...owner,reservedCards:owner.hand},state.turn).length;
       const publicAmibaCurrencyTail=kind!=="end-turn"&&computerPolicy?.plans.length===1
         &&["blue-data","income"].includes(computerPolicy.plans[0].goal.kind)&&company?.activeAbilityId==="deepspace_swap_cards"
         &&state.aliens.amiba?.revealInitialized===true&&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="阿米巴")
@@ -3600,7 +3610,7 @@
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
         &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed
           ||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||fixedR4DeepSpace)&&slot.alienId==="阿米巴"
-          ||(fixedR4DeepSpace||state.turn.roundNumber===3
+          ||(fixedR4DeepSpace||publicChongPlainEnd||state.turn.roundNumber===3
             &&(publicAmibaPlainEnd||!hasOwnVisitSource(state)&&(publicAmibaCurrencyTail||quietR3Computer))
             &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)
             &&slot.alienId==="虫"&&owner.reservedCards.every(card=>card.set!=="alien:虫"))
@@ -3610,7 +3620,7 @@
         // visit-capable guard until their complete event set is proved.
         // Plain end never moves; compound previews below separately certify
         // that no movement policy starts at any intermediate goal boundary.
-        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer,deferredTask)
+        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicChongPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer,deferredTask)
         &&(deferredTask||!node.legalActions.some(a=>a.family==="complete_task"))){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
@@ -3619,7 +3629,8 @@
             if(!deferredTask?.compareClaim&&completion.available&&(!deferredTask||completion.markedTiles.length===0&&completion.netGain===0&&transition.nextPlayerId===seatId))
               spec={firstActionId:end.actionId,netGain:completion.netGain,requiredNativeInputs:completion.requiredNativeInputs+Number(Boolean(deferredTask)),markedTiles:completion.markedTiles,
                 ...(deferredTask?.fixedSkip?{quietDeferredTask:{cardId:deferredTask.cardId,taskId:deferredTask.taskId},...(deferredTask.forecast?{deferredPublicity:deferredTask.forecast}:{})}:deferredTask?{deferredPublicity:deferredTask}:{}),
-                ...(publicAmibaPlainEnd?{publicAmibaPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:{} )};
+                ...(publicAmibaPlainEnd?{publicAmibaPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:
+                  publicChongPlainEnd?{publicChongPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:{})};
             if(deferredTask?.compareClaim&&completion.available&&!completion.netGain&&!completion.markedTiles.length
               &&transition.nextPlayerId===seatId){
               const claimed=localPlans.previewCappedSectorClaim({state,seatId,task:deferredTask,allowPublicityGain:true});

@@ -67,6 +67,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/resource-demand.test.js", "policy/decision-search", "资源准备绑定真实目标和精确缺口，贪心付款保护目标牌，原生逐步输入及恢复一致", "无需求兑换、为付款丢掉目标牌、资金满足后继续兑换、身份敏感弃牌不显式回退或恢复重开兑换树"),
     entry("randomizer/game/ai/stationary-computer-tail.test.js", "policy/decision-search", "静止探测器固定电脑前缀的分数账本摘要与原生尾部逐输入一致，保留原完整搜索的值和动作", "分数值被半单位守卫拒绝导致重复模拟，或摘要漏掉新移动、选牌目的"),
     entry("randomizer/game/ai/computer-prefix-plan.test.js", "policy/decision-search", "主行动后电脑宣传及蓝列作为固定前缀，跨线待领取标记与实际领取价值连续，报价/原生逐步恢复一致", "只剩结束turn、为局部准备弃牌补数据、跨收入选牌、重复领取格位奖励或预算中断污染原根"),
+    entry("randomizer/game/ai/chong-quiet-end.test.js", "policy/decision-search", "已揭示虫族但无运输任务时，固定结束回合的估值与原生提交相同", "重复结算结束回合超出预算，或跳过原生化石菜单与运输状态"),
     entry("randomizer/game/ai/public-displayed-transport.test.js", "policy/decision-search", "公开展示运输牌的发射、蓝槽筹资与两张移动付款走同一可达目标，并在恢复时保留用途", "未公开牌改变估值、移动付款与运输费共用一张牌，或发射后倒回先分析"),
     entry("randomizer/game/ai/chong-pickup-information-boundary.test.js", "policy/decision-search", "虫族登陆痕迹只看公开收益，待拾取菜单实际出现才比较化石", "把未公开化石倒灌到登陆痕迹估值或把已公开拾取菜单错误挡住"),
     entry("randomizer/game/ai/blue-transport-research.test.js", "policy/decision-search", "已知土星路线给已筹资的蓝列研究计价，独立恢复方向支付并保留真实现金、数据及运输牌", "把牌堆或下一科技奖励倒灌为当前估值、把移动当无目标分支，或重复使用蓝槽现金和研究付款"),
