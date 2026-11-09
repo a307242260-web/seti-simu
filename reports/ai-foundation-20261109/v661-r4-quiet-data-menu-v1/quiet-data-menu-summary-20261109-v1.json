@@ -1,0 +1,92 @@
+{
+  "candidateRows": [
+    {
+      "input": 359,
+      "beforeNative": 424,
+      "afterNative": 385,
+      "beforeMs": 961.7908750000001,
+      "afterMs": 962.810375,
+      "actionId": "analyze:a5629aa3",
+      "menusWithAlternatives": 15,
+      "menusWithMovementIntent": 0,
+      "nativeMenuReplays": 39
+    },
+    {
+      "input": 355,
+      "beforeNative": 474,
+      "afterNative": 409,
+      "beforeMs": 1001.63375,
+      "afterMs": 972.8821250000001,
+      "actionId": "place_data:8fd12fd3",
+      "menusWithAlternatives": 39,
+      "menusWithMovementIntent": 0,
+      "nativeMenuReplays": 65
+    },
+    {
+      "input": "official-r4-start",
+      "beforeNative": 1212,
+      "afterNative": 959,
+      "beforeMs": 1946.9070000000002,
+      "afterMs": 1862.661042,
+      "actionId": "industry:e887dc52",
+      "menusWithAlternatives": 253,
+      "menusWithMovementIntent": 156,
+      "nativeMenuReplays": 253
+    }
+  ],
+  "planContinuation": {
+    "input": 355,
+    "first": "place_data:8fd12fd3",
+    "next": "choose_target:29b5215c",
+    "nextTarget": {
+      "choiceId": "data:computer",
+      "target": "computer",
+      "blueSlot": null
+    },
+    "provedMenusInRoot": 65,
+    "restoredPlanHit": true,
+    "nextNativeInputs": 0
+  },
+  "exactSyntheticCheckpointReuseAfterNativeInput": true,
+  "officialRemainingInputs": {
+    "launch|stable|—": 5,
+    "play_card|stable|—": 12,
+    "pass|stable|—": 5,
+    "industry|stable|—": 2,
+    "choose_card|residual_company_decision|industry": 4,
+    "card_corner|stable|—": 22,
+    "place_data|stable|—": 9,
+    "choose_target|science_domain_place_data|place_data": 113,
+    "analyze|stable|—": 2,
+    "quick_trade|stable|—": 8,
+    "move|stable|—": 40,
+    "choose_payment|probe_turn_move_payment|move": 40,
+    "land|stable|—": 5,
+    "scan|stable|—": 5,
+    "choose_target|science_domain_scan_step|scan": 15,
+    "choose_card|science_domain_scan_step|scan": 55,
+    "choose_target|science_domain_scan_action_4|scan": 28,
+    "choose_card|standard_action_session_decision|quick_trade": 3,
+    "choose_card|science_domain_pick_card|place_data": 107,
+    "choose_target|science_domain_alien_trace|analyze": 6,
+    "choose_target|science_domain_alien_trace|land": 30,
+    "choose_card|residual_alien_card_decision|land": 10,
+    "accept_optional_effect|residual_card_decision|land": 20,
+    "complete_task|stable|—": 74,
+    "end_turn|stable|—": 78,
+    "accept_optional_effect|residual_card_decision|end_turn": 148,
+    "choose_payment|standard_action_session_decision|quick_trade": 3,
+    "choose_target|science_domain_scan_step|play_card": 44,
+    "choose_card|science_domain_scan_step|play_card": 44,
+    "choose_target|science_domain_scan_action_4|play_card": 22
+  },
+  "officialRemainingPlacementGroups": {
+    "pre-main|others|computer5|score|no-card-trigger|no-turn-bonus": 2,
+    "pre-main|others|computer6|none|no-card-trigger|no-turn-bonus": 2,
+    "pre-main|others|blue1|energy|no-card-trigger|no-turn-bonus": 2,
+    "pre-main|others|blue2|choose_card|no-card-trigger|no-turn-bonus": 2,
+    "post-main|others|blue2|choose_card|no-card-trigger|no-turn-bonus": 105
+  },
+  "fullGameRerun": false,
+  "productionAdmission": false
+}
