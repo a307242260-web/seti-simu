@@ -1,0 +1,151 @@
+[
+  {
+    "version": "prod",
+    "which": "317",
+    "chosen": "2能量 → 1信用点",
+    "value": 239,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 713.015,
+    "native": 377,
+    "targets": [
+      {
+        "action": "chong_4.webp：弃牌角标",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "previous-candidate",
+    "which": "317",
+    "chosen": "2能量 → 1信用点",
+    "value": 239,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 461.6167499999999,
+    "native": 308,
+    "targets": [
+      {
+        "action": "chong_4.webp：弃牌角标",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "prod",
+    "which": "318",
+    "chosen": "结束移动",
+    "value": 239,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 703.954833,
+    "native": 357,
+    "targets": [
+      {
+        "action": "R6 向内",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      },
+      {
+        "action": "R8 向内",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "previous-candidate",
+    "which": "318",
+    "chosen": "结束移动",
+    "value": 239,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 455.12429199999997,
+    "native": 302,
+    "targets": [
+      {
+        "action": "R6 向内",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      },
+      {
+        "action": "R8 向内",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "prod",
+    "which": "351",
+    "chosen": "移动 9 向外",
+    "value": 250.5,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 65.763792,
+    "native": 3,
+    "targets": [
+      {
+        "action": "移动 6 向内",
+        "policy": "seti-goal-movement-policy-v4",
+        "status": "excluded-by-movement-policy",
+        "value": null
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "previous-candidate",
+    "which": "351",
+    "chosen": "移动 6 向内",
+    "value": 257.5,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 87.92824999999999,
+    "native": 9,
+    "targets": [
+      {
+        "action": "移动 6 向内",
+        "status": "complete",
+        "value": 257.5
+      }
+    ],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "prod",
+    "which": "official",
+    "chosen": "深空探测 1x 行动",
+    "value": 205.5,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 2037.7965419999998,
+    "native": 1361,
+    "targets": [],
+    "rootAndRngExact": true
+  },
+  {
+    "version": "previous-candidate",
+    "which": "official",
+    "chosen": "深空探测 1x 行动",
+    "value": 205.5,
+    "complete": true,
+    "unresolved": 0,
+    "ms": 816.043458,
+    "native": 221,
+    "targets": [],
+    "rootAndRngExact": true
+  }
+]

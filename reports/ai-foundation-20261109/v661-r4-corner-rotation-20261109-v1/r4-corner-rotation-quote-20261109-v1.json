@@ -1,0 +1,540 @@
+{
+  "conditionalOn": "same-turn legal standard research; one rotation before tech reward; no future free moves or random rewards credited",
+  "costsExclude": "benefits and costs of discarding the already-paid card and selecting a specific technology",
+  "currentEnergy": 2,
+  "selected": "R6 向内",
+  "quotes": [
+    {
+      "kind": "stage",
+      "action": "R6 向内",
+      "actionId": "choose_target:82996f81",
+      "paid": 2,
+      "affordableWithoutLaterRewards": true,
+      "paths": [
+        {
+          "fossilId": "fossil_07",
+          "route": {
+            "points": 1,
+            "path": [
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 1
+                }
+              }
+            ],
+            "settled": 5
+          }
+        },
+        {
+          "fossilId": "fossil_06",
+          "route": {
+            "points": 1,
+            "path": [
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 1
+                }
+              }
+            ],
+            "settled": 5
+          }
+        }
+      ],
+      "projected": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "deliver",
+      "action": "R8 向内",
+      "actionId": "choose_target:b2f5bd8d",
+      "paid": 3,
+      "affordableWithoutLaterRewards": false,
+      "paths": [
+        {
+          "fossilId": "fossil_07",
+          "route": {
+            "points": 3,
+            "path": [
+              {
+                "deltaX": -1,
+                "deltaY": 0,
+                "at": {
+                  "x": 2,
+                  "y": 3
+                }
+              },
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 2
+                }
+              },
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 1
+                }
+              }
+            ],
+            "settled": 20
+          }
+        },
+        {
+          "fossilId": "fossil_06",
+          "route": {
+            "points": 0,
+            "path": [],
+            "settled": 0
+          }
+        }
+      ],
+      "projected": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 3,
+              "y": 3
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "wait",
+      "action": "结束移动",
+      "actionId": "choose_target:7af26739",
+      "paid": 4,
+      "affordableWithoutLaterRewards": false,
+      "paths": [
+        {
+          "fossilId": "fossil_07",
+          "route": {
+            "points": 3,
+            "path": [
+              {
+                "deltaX": -1,
+                "deltaY": 0,
+                "at": {
+                  "x": 2,
+                  "y": 3
+                }
+              },
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 2
+                }
+              },
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 1
+                }
+              }
+            ],
+            "settled": 20
+          }
+        },
+        {
+          "fossilId": "fossil_06",
+          "route": {
+            "points": 1,
+            "path": [
+              {
+                "deltaX": 0,
+                "deltaY": -1,
+                "at": {
+                  "x": 2,
+                  "y": 1
+                }
+              }
+            ],
+            "settled": 5
+          }
+        }
+      ],
+      "projected": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 3,
+              "y": 3
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "native": [
+    {
+      "kind": "stage",
+      "actual": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          }
+        ]
+      },
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:82996f81",
+          "actorId": "player-white",
+          "stateVersion": 125,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "6:0:-1",
+            "rocketId": 6,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R6 向内"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:03fdb62d",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange1"
+        }
+      ],
+      "exact": true
+    },
+    {
+      "kind": "deliver",
+      "actual": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 3,
+              "y": 3
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 1
+            }
+          }
+        ]
+      },
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b2f5bd8d",
+          "actorId": "player-white",
+          "stateVersion": 125,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "8:0:-1",
+            "rocketId": 8,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R8 向内"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:03fdb62d",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange1"
+        }
+      ],
+      "exact": true
+    },
+    {
+      "kind": "wait",
+      "actual": {
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "cargo": [
+          {
+            "id": 6,
+            "fossilId": "fossil_07",
+            "at": {
+              "x": 3,
+              "y": 3
+            }
+          },
+          {
+            "id": 8,
+            "fossilId": "fossil_06",
+            "at": {
+              "x": 2,
+              "y": 2
+            }
+          }
+        ]
+      },
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:7af26739",
+          "actorId": "player-white",
+          "stateVersion": 125,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "结束移动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:03fdb62d",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange1"
+        }
+      ],
+      "exact": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "production": {
+    "randomizer/game/ai/analysis-port.js": "a72568a1a2720e83528ecc34b6f25d75a3fd87a9e2b37e6275752dfc832be4b8",
+    "randomizer/game/ai/decision-search.js": "3a79f534555581886301f84c190f5813e2ec9870042744b5af5e40aa5cdb5eed",
+    "randomizer/game/ai/search-agent.js": "e84c1997766d3dac00024878bc0edafb1a18effad0fd48f27923edc41bdc804e",
+    "randomizer/game/effects/residual-domain-session.js": "779f1c4114420a934c6177139c364ca72b783092338330633f1f8b06e92ce34a",
+    "randomizer/game/production-kernel.js": "719b784b77e2fe136528193077fceb7b3e14062d51de3f3748c409b22ce61504"
+  },
+  "previousCandidate": {
+    "randomizer/game/ai/analysis-port.js": "c1ad8dacd19f57132e4feb8f0f0e8cb629322256e18abeb564345486276373ec",
+    "randomizer/game/ai/decision-search.js": "3751bde30eccb76e65d23f049dca9e36db14317716b6d9936dfc2395ae4f415f",
+    "randomizer/game/ai/search-agent.js": "e84c1997766d3dac00024878bc0edafb1a18effad0fd48f27923edc41bdc804e",
+    "randomizer/game/effects/residual-domain-session.js": "7b853f4cdba9a958bbb795f7d6083615bec097a4962a584aff4008ea86e23005",
+    "randomizer/game/production-kernel.js": "719b784b77e2fe136528193077fceb7b3e14062d51de3f3748c409b22ce61504"
+  }
+}
