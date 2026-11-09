@@ -27,10 +27,11 @@
     common ? require("./funded-movement-tail") : root.SetiFundedMovementTail,
     common ? require("../end-game-scoring") : root.SetiEndGameScoring,
     common ? require("../aliens/jiuzhe") : root.SetiAlienJiuzhe,
-    common ? require("../aliens/chong") : root.SetiAlienChong);
+    common ? require("../aliens/chong") : root.SetiAlienChong,
+    common ? require("../effects/residual-domain-session") : root.SetiResidualDomainSession);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring, jiuzhe, chong) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring, jiuzhe, chong, residualSession) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -473,7 +474,7 @@
     let chongTraceMenuTemplate=null,provedChongEndMenus=0;
     const chongEndTemplates=new Map(),chongQueuedTemplates=new Map();
     let provedChongQueuedTasks=0;
-    let provedAmibaYellowLandingInputs=0;
+    let provedAmibaYellowLandingInputs=0,provedAlienDisplays=0;
     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
     let provedPinkRefills=0,provedPinkFossilMenus=0,provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
@@ -666,7 +667,7 @@
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
-      submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
+      submissionCount = 0; provedAlienDisplays=0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
       provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
@@ -1390,6 +1391,42 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
     }
 
+    function previewQuietAlienDisplay(node,stored,action){
+      if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
+        ||action.target?.source!=="display")return null;
+      const s=stored.envelope.session?.session,[head,refill]=s?.queue||[],species=head?.payload?.speciesId;
+      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length||s.queue.length>2
+        ||head?.type!=="residual_alien_card_decision"||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
+        ||!["chong","amiba"].includes(species)||refill&&(refill.type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL
+          ||refill.kind!=="effect"||refill.ownerId!==seatId||Object.keys(refill.payload).length))return null;
+      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      const knownIndex=species==="chong"?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
+      const known=knownCards(stored.envelope),deck=state.aliens[species];
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||t.passedPlayerIds.includes(seatId)
+        ||!Number.isSafeInteger(knownIndex)||knownIndex!==deck?.displayedCardIndex||knownIndex!==action.target.cardIndex
+        ||!knownRootAlienIds.has(species==="chong"?"虫":"阿米巴")
+        ||p.reservedCards.some(c=>!known.has(c.id))||localPlans.hasPendingFossilArrival(state))return null;
+      const pick=cardPickSpec(node);
+      if(!pick?.fixed||pick.selectedActionId!==action.actionId)return null;
+      // Production consumes the shown card and advances its real deck. Only
+      // the inherited public identity may enter the search after either refill.
+      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...quietSavedMeta(state.meta,s.baseVersion+1),sequences:{...state.meta.sequences}},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)},
+        aliens:{...state.aliens,[species]:{...deck,cardDeck:[...deck.cardDeck]}}};
+      let usedRandom=false;
+      const result=residualSession.resolveAlienCardSelection(next,head,action,()=>{usedRandom=true;return 0;});
+      if(!result.ok||usedRandom||result.irreversible?.code!=="hidden_alien_card"
+        ||result.events.length!==1||result.events[0].type!=="alien_card_gain")return null;
+      const augmented=residualSession.augmentEffectResult(next,result,head);
+      if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+      if(refill)return prepareQuietPublicRefill(stored,s,next);
+      const envelope=provedCommittedEnvelope(stored,next);
+      return {envelope,inspection:{phase:"idle",session:null},
+        barrier:{effectId:head.effectId,revision:s.revision+1,...result.irreversible}};
+    }
+
     function provedCommittedEnvelope(stored, state) {
       const captured=freeze(state);
       let bytes;
@@ -1422,7 +1459,7 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:s.irreversibleBarrier,decision:{choices:preview.choices}}}};
     }
 
-    function preparePinkTraceRefill(stored,session,state){
+    function prepareQuietPublicRefill(stored,session,state){
       const missing=state.cards.publicCards.filter(c=>!c).length;
       if(missing!==1)return null;
       const refill=session.queue[1];
@@ -1515,7 +1552,7 @@
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const pinkBeforeRefill=pinkTraceCards?localPlans.previewPinkTraceBeforeRefill(taskSession,requested,pinkTraceCards):null;
-      const pinkRefill=pinkBeforeRefill&&preparePinkTraceRefill(stored,taskSession,pinkBeforeRefill);
+      const pinkRefill=pinkBeforeRefill&&prepareQuietPublicRefill(stored,taskSession,pinkBeforeRefill);
       if(pinkRefill){
         restoreEnvelope(pinkRefill.envelope,true);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
@@ -1621,6 +1658,16 @@
         const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanMove.barrier},
           nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,prepared);
         provedScan4QuietMoves++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const alienDisplay=previewQuietAlienDisplay(node,stored,requested);
+      if(alienDisplay){
+        restoreEnvelope(alienDisplay.envelope);
+        const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
+          {irreversibleBarrier:alienDisplay.barrier},movementPlanning?nextMovementIntent(node,requested):null,
+          stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
+          stored.informationBarrier,requested,stored,alienDisplay);
+        provedAlienDisplays++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const researchPick=previewFixedResearchPick(node,stored,requested);
@@ -8077,7 +8124,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedAlienDisplays, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

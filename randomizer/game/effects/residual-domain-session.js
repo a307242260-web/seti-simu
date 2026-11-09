@@ -2185,6 +2185,48 @@
       }));
   }
 
+  function resolveAlienCardSelection(root, effect, selected, random = () => nextRandom(root)) {
+    const player = actor(root, effect.ownerId);
+    const speciesId = effect.payload?.speciesId;
+    const module = SPECIES_MODULES[speciesId];
+    if (!player || !module || typeof module.blindDrawCard !== "function") {
+      return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
+    }
+    const legal = alienCardChoices(root, effect.ownerId, speciesId)
+      .find((candidate) => candidate.actionId === selected?.actionId);
+    if (!legal) {
+      return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
+    }
+    if (legal.target.source === "cancel") {
+      return { ok: true, source: `alien:${speciesId}_card_cancel`, spawnedEffects: [], irreversible: null };
+    }
+    const gained = legal.target.source === "display"
+      ? module.takeDisplayedCard(
+        root.aliens,
+        random,
+        { sequence: stateSequences.take(root, "alienEntity") },
+      )
+      : module.blindDrawCard(
+        root.aliens,
+        random,
+        { sequence: stateSequences.take(root, "alienEntity") },
+      );
+    if (!gained.ok || !gained.card) return gained;
+    player.hand.push(gained.card);
+    player.resources.handSize = player.hand.length;
+    return {
+      ok: true, source: `alien:${speciesId}_card`,
+      irreversible: { code: "hidden_alien_card", reason: "外星人牌堆已翻开" },
+      events: [{
+        type: "alien_card_gain",
+        playerId: player.id,
+        alienId: module.ALIEN_ID,
+        cardInstanceId: gained.card.id,
+        source: legal.target.source,
+      }],
+    };
+  }
+
   function createResidualDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -2484,46 +2526,8 @@
       },
       resolveDecision(state, effect, selected, context) {
         const root = getRoot(state, context);
-        const player = actor(root, effect.ownerId);
-        const speciesId = effect.payload?.speciesId;
-        const module = SPECIES_MODULES[speciesId];
-        if (!player || !module || typeof module.blindDrawCard !== "function") {
-          return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
-        }
-        const legal = alienCardChoices(root, effect.ownerId, speciesId)
-          .find((candidate) => candidate.actionId === selected?.actionId);
-        if (!legal) {
-          return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
-        }
-        if (legal.target.source === "cancel") {
-          return result(state, root, `alien:${speciesId}_card_cancel`, {
-            spawnedEffects: [], irreversible: null,
-          });
-        }
-        const gained = legal.target.source === "display"
-          ? module.takeDisplayedCard(
-            root.aliens,
-            () => nextRandom(root),
-            { sequence: stateSequences.take(root, "alienEntity") },
-          )
-          : module.blindDrawCard(
-            root.aliens,
-            () => nextRandom(root),
-            { sequence: stateSequences.take(root, "alienEntity") },
-          );
-        if (!gained.ok || !gained.card) return gained;
-        player.hand.push(gained.card);
-        player.resources.handSize = player.hand.length;
-        return result(state, root, `alien:${speciesId}_card`, {
-          irreversible: { code: "hidden_alien_card", reason: "外星人牌堆已翻开" },
-          events: [{
-            type: "alien_card_gain",
-            playerId: player.id,
-            alienId: module.ALIEN_ID,
-            cardInstanceId: gained.card.id,
-            source: legal.target.source,
-          }],
-        });
+        const { source, ...resolved } = resolveAlienCardSelection(root, effect, selected);
+        return resolved.ok ? result(state, root, source, resolved) : resolved;
       },
     });
     const finalMarkChoices = (state, effect, context) => listFinalMarkChoices(getRoot(state,context),effect.ownerId);
@@ -2604,6 +2608,7 @@
     EFFECT_TYPES,
     SPECIES_IDS,
     queryCardSettlement: findCardSettlement,
+    resolveAlienCardSelection,
     previewQuietEndHandoffs,
     previewLastPlainPinkTrace,
     previewPinkTraceFossilMenu,

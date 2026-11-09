@@ -86,4 +86,27 @@ try {
   assert.equal(menu().find(a=>a.actionId===lateSearch.actionId).family,'analyze');
   assert.equal(lateSearch.value,266);
   assert.deepEqual(save(),late);
+
+  // Real landing and scan menus: the paid reward is already displayed;
+  // any replacements stay masked even though the rules fork advances both decks.
+  const picks=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'fixtures/display-reward-proofs-20261110-v1.fixture.json.gz'))));
+  for(const {root,action,end,barrier} of picks){
+    restore(root);
+    const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+    try{
+      port.setResourcePlanning(true);port.setCardPickPlanning(true);
+      const n=port.openRoot(),next=port.expand(n,action.actionId);
+      assert.equal(port.getDiagnostics().submissionCount,0);
+      assert.equal(port.getDiagnostics().provedAlienDisplays,1);
+      assert.equal(next.boundary,barrier);
+      const facts=port.valueObservation(next),recorded=JSON.parse(end.committedState);
+      const species=action.target.choiceId.split(':')[0];
+      const cardId=`${species}_${action.target.cardIndex}.webp`;
+      assert(facts.selfState.hand.some(card=>card.cardId===cardId&&!card.hidden));
+      const shown=species==='chong'?facts.publicState.board.aliens.chongOffer:facts.publicState.board.aliens.amibaTraces;
+      assert.notEqual(shown.displayedCardIndex,recorded.aliens[species].displayedCardIndex);
+      assert.deepEqual(save(),root);
+    }finally{port.close();}
+  }
 }finally{c.dispose();}

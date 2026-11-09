@@ -1,0 +1,223 @@
+{
+  "base": "b9a004e6ffe775425c21dba2d9a1d3ab109f06d3",
+  "satellite": {
+    "native": [
+      999,
+      939
+    ],
+    "fixedAlienPicks": [
+      252,
+      192
+    ],
+    "coldMsPairs": [
+      [
+        1972.9402910000001,
+        1904.766625
+      ],
+      [
+        1928.742959,
+        1999.309959
+      ],
+      [
+        1996.7176249999998,
+        1975.2892080000001
+      ]
+    ],
+    "medianMs": [
+      1972.9402910000001,
+      1975.2892080000001
+    ],
+    "rootCandidatesEqual": 32,
+    "remainingTraces": 445,
+    "remainingScanSteps": 212
+  },
+  "verifiedNativeInputs": {
+    "satellite": 60,
+    "teacher272": 10,
+    "late": 1,
+    "official": 0
+  },
+  "regression": [
+    {
+      "before": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 684,
+        "ms": 1119.140917,
+        "digest": "117aee6baf008971d56576aa1940d175c1e2986c0ce2f9d5baebbd3538f86d1b",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1303,
+        "identitySliceStores": 923
+      },
+      "after": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 188,
+        "graphNodes": 684,
+        "ms": 1109.0366250000002,
+        "digest": "9515fb8cce89da0e388b1bc41bcc50b90b5aa6fbb6ac17ee5f8929b1fc853c61",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1303,
+        "identitySliceStores": 923
+      }
+    },
+    {
+      "before": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 613.0103330000001,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      },
+      "after": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 607.929875,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      }
+    },
+    {
+      "before": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 999,
+        "graphNodes": 1596,
+        "ms": 1901.797166,
+        "digest": "541fe3d17d665ad93640be4c33d60797d9cb9bf1bf32c141f021335e1186394a",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2487,
+        "identitySliceStores": 2875
+      },
+      "after": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 939,
+        "graphNodes": 1596,
+        "ms": 1874.873417,
+        "digest": "ee96eb7a0a112b949f8c6117b9ca91ae3dfd413f7889a5ca35611208b802d2ce",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2487,
+        "identitySliceStores": 2875
+      }
+    },
+    {
+      "before": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 224.4745,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      },
+      "after": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 239.61083399999998,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      }
+    },
+    {
+      "before": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 261.005167,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      },
+      "after": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 260.554834,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      }
+    },
+    {
+      "before": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 234,
+        "graphNodes": 342,
+        "ms": 433.15695800000003,
+        "digest": "affd465ce036d57fb5d5c5b1d75d7a0d9e01c326a35dc87ad266c4c09b92de61",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 170,
+        "identitySliceStores": 502
+      },
+      "after": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 233,
+        "graphNodes": 342,
+        "ms": 430.881166,
+        "digest": "b763052fe9b9c1d9f8aaea2f3c4a7b173e6883b74cd257a333823618be769702",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 170,
+        "identitySliceStores": 502
+      }
+    }
+  ],
+  "newFullGames": 0
+}
