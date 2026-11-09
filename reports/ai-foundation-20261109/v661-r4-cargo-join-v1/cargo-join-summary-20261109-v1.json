@@ -1,0 +1,141 @@
+{
+  "productionAdmitted": false,
+  "gameRerun": false,
+  "threshold": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "roots": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "quietEnd": 6,
+      "prefixJoin": 6,
+      "optionalEnd": 6,
+      "optionalEndMs": 76.542542,
+      "guardedCompound": 6,
+      "guardedCompoundMs": 71.17575,
+      "unguardedCompound": 6,
+      "unguardedRankDiff": []
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "quietEnd": 10,
+      "prefixJoin": 10,
+      "optionalEnd": 10,
+      "optionalEndMs": 62.83525000000003,
+      "guardedCompound": 10,
+      "guardedCompoundMs": 63.734958000000006,
+      "unguardedCompound": 10,
+      "unguardedRankDiff": []
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "quietEnd": 2,
+      "prefixJoin": 2,
+      "optionalEnd": 2,
+      "optionalEndMs": 32.58891699999998,
+      "guardedCompound": 2,
+      "guardedCompoundMs": 34.32162499999998,
+      "unguardedCompound": 2,
+      "unguardedRankDiff": []
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "quietEnd": 1009,
+      "prefixJoin": 897,
+      "optionalEnd": 699,
+      "optionalEndMs": 1440.965416,
+      "guardedCompound": 685,
+      "guardedCompoundMs": 1418.37,
+      "unguardedCompound": 561,
+      "unguardedRankDiff": [
+        [
+          [
+            "complete_task:595f87d5",
+            280.5,
+            -19,
+            0
+          ],
+          [
+            "complete_task:595f87d5",
+            280,
+            -19,
+            0
+          ]
+        ]
+      ],
+      "replayedPrefixPairs": 4,
+      "exactGraphJoins": 4,
+      "optionalEndNativeInputs": {
+        "launch": 2,
+        "analyze": 2,
+        "play_card": 8,
+        "pass": 2,
+        "complete_task": 103,
+        "quick_trade": 7,
+        "choose_payment": 15,
+        "move": 6,
+        "land": 2,
+        "choose_target": 121,
+        "card_corner": 18,
+        "research_tech": 2,
+        "choose_card": 58,
+        "scan": 2,
+        "accept_optional_effect:confirm:trigger": 12,
+        "accept_optional_effect:skip:researchTech": 12,
+        "place_data": 113,
+        "choose_target:blueBonus": 69,
+        "end_turn": 24,
+        "accept_optional_effect:confirm:chong_task": 33,
+        "accept_optional_effect:skip:chong_task": 33,
+        "choose_target:computer": 44,
+        "choose_card:income": 11
+      },
+      "auditedOptionalOutcomeCount": 132
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "quietEnd": 1134,
+      "prefixJoin": 1058,
+      "optionalEnd": 860,
+      "optionalEndMs": 1546.7459579999997,
+      "guardedCompound": 822,
+      "guardedCompoundMs": 1498.791208,
+      "unguardedCompound": 735,
+      "unguardedRankDiff": [],
+      "replayedPrefixPairs": 4,
+      "exactGraphJoins": 0,
+      "optionalEndNativeInputs": {
+        "launch": 2,
+        "play_card": 8,
+        "pass": 2,
+        "complete_task": 107,
+        "place_data": 175,
+        "choose_target:computer": 88,
+        "analyze": 2,
+        "quick_trade": 7,
+        "choose_payment": 15,
+        "move": 6,
+        "land": 2,
+        "choose_target": 121,
+        "card_corner": 33,
+        "research_tech": 2,
+        "choose_card": 60,
+        "scan": 2,
+        "choose_card:income": 15,
+        "choose_target:blueBonus": 87,
+        "accept_optional_effect:confirm:trigger": 12,
+        "accept_optional_effect:skip:researchTech": 12,
+        "end_turn": 28,
+        "accept_optional_effect:confirm:chong_task": 37,
+        "accept_optional_effect:skip:chong_task": 37
+      },
+      "auditedOptionalOutcomeCount": 132
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -3610,10 +3610,6 @@
+         });
+       // Already reserved type-3 Chong scoring cards contribute to V, but
+       // cannot receive an END event. Remove them only from the trigger audit.
+-      const endGuard=quietR4ChongEnd?{...state,
+-        ...(cargoAtEnd?{aliens:{...state.aliens,chong:{...state.aliens.chong,transportTasksByRocketId:{}}}}:{}),
+-        players:{...state.players,players:state.players.players.map(p=>p===owner
+-        ?{...owner,reservedCards:owner.reservedCards.filter(c=>c.set!=="alien:虫")}:p)}}:state;
+       const publicChongPlainEnd=kind==="end-turn"&&state.turn.roundNumber===3
+         &&company?.activeAbilityId==="deepspace_swap_cards"&&knownRootAlienIds.has("虫")
+         &&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="虫")
+@@ -3639,6 +3635,19 @@
+         &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+         &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id));
++      const quietR4ChongData=fixedR4DeepSpace&&knownRootAlienIds.has("虫")
++        &&!owner.hand.some(c=>{const reward=cards.getDiscardActionRewardForCard(c);
++          return reward?.dataCount===1&&reward.gain?.score===1&&Object.keys(reward.gain).length===1;})
++        &&openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport")
++        &&owner.reservedCards.filter(c=>c.set==="alien:虫").every(c=>{
++          const model=cardEffects.getCardModel(c),rule=endScoring.resolveCardEndGameRule(c,cardEffects);
++          return model?.cardType===3&&rule?.kind==="chongTraceCount"
++            &&!model.triggers?.length&&!model.tasks?.length&&!model.temporaryTasks?.length&&!c.chongTask&&!chong.getCardTask(c);
++        });
++      const endGuard=quietR4ChongEnd||quietR4ChongData?{...state,
++        ...(cargoAtEnd?{aliens:{...state.aliens,chong:{...state.aliens.chong,transportTasksByRocketId:{}}}}:{}),
++        players:{...state.players,players:state.players.players.map(p=>p===owner
++        ?{...owner,reservedCards:owner.reservedCards.filter(c=>c.set!=="alien:虫")}:p)}}:state;
+       const quietR3Computer=state.turn.roundNumber===3&&knownAmibaTail&&company?.activeAbilityId==="deepspace_swap_cards"
+         &&!hasOwnVisitSource(state)&&!rootPublicLandingOffer&&owner.hand.every(c=>knownCards(stored.envelope).has(c.id))
+         &&owner.reservedCards.every(c=>knownCards(stored.envelope).has(c.id))
+@@ -3699,7 +3708,7 @@
+         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
+         &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed
+           ||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||fixedR4DeepSpace)&&slot.alienId==="阿米巴"
+-          ||quietR4ChongEnd&&slot.alienId==="虫"
++          ||(quietR4ChongEnd||quietR4ChongData)&&slot.alienId==="虫"
+           ||(fixedR4DeepSpace||publicChongPlainEnd||state.turn.roundNumber===3
+             &&(publicAmibaPlainEnd||!hasOwnVisitSource(state)&&(publicAmibaCurrencyTail||quietR3Computer))
+             &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)
+@@ -3710,7 +3719,7 @@
+         // visit-capable guard until their complete event set is proved.
+         // Plain end never moves; compound previews below separately certify
+         // that no movement policy starts at any intermediate goal boundary.
+-        &&hasPostMainInertReservations(endGuard,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicChongPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer,deferredTask)
++        &&hasPostMainInertReservations(endGuard,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||quietR4ChongData,publicAmibaPlainEnd||publicChongPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer||quietR4ChongData,deferredTask)
+         &&(deferredTask||quietR4ChongEnd&&cargoAtEnd||!node.legalActions.some(a=>a.family==="complete_task"))){
+         const transition=previewTurn(state);
+         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
