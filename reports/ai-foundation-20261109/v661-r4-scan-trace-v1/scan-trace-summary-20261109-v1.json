@@ -1,0 +1,582 @@
+{
+  "productionAdmitted": false,
+  "gameRerun": false,
+  "threshold": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "roots": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "oldNative": 6,
+      "native": 6,
+      "ms": 77.96308299999998,
+      "unchangedRoots": true
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "oldNative": 10,
+      "native": 10,
+      "ms": 64.18375000000003,
+      "unchangedRoots": true
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "oldNative": 2,
+      "native": 2,
+      "ms": 32.564750000000004,
+      "unchangedRoots": true
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "oldNative": 489,
+      "native": 459,
+      "ms": 1071.616833,
+      "unchangedRoots": true,
+      "scanningPrompts": [
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 257.5,
+              "valueRank": 247,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 256.5,
+              "valueRank": 246,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 255.5,
+              "valueRank": 245,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 254.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 254.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 253.5,
+              "valueRank": 243,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 239,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 239,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 257.5,
+              "valueRank": 245,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 256.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 255.5,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 254.5,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 254.5,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 253.5,
+              "valueRank": 241,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 239,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 237,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 239,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 237,
+              "realization": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "oldNative": 567,
+      "native": 537,
+      "ms": 1095.735667,
+      "unchangedRoots": true,
+      "scanningPrompts": [
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 257.5,
+              "valueRank": 247,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 256.5,
+              "valueRank": 246,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 255.5,
+              "valueRank": 245,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 254.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 254.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 253.5,
+              "valueRank": 243,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 239,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 239,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 257.5,
+              "valueRank": 245,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 256.5,
+              "valueRank": 244,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 255.5,
+              "valueRank": 243,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 254.5,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 254.5,
+              "valueRank": 242,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 253.5,
+              "valueRank": 241,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 239,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 237,
+              "realization": 0
+            }
+          ]
+        },
+        {
+          "selected": "外星人 2 粉2号位（5分）",
+          "separateNative": [
+            "外星人 1 粉3号位（外星人牌）"
+          ],
+          "scores": [
+            {
+              "label": "外星人 2 粉2号位（5分）",
+              "fullValue": 254,
+              "valueRank": 241,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 粉1号位（4分）",
+              "fullValue": 253,
+              "valueRank": 240,
+              "realization": 0
+            },
+            {
+              "label": "外星人 2 额外痕迹位（3分）",
+              "fullValue": 252,
+              "valueRank": 239,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 额外痕迹位（3分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉2号位（1分）",
+              "fullValue": 251,
+              "valueRank": 238,
+              "realization": 0
+            },
+            {
+              "label": "外星人 1 粉1号位",
+              "fullValue": 250,
+              "valueRank": 237,
+              "realization": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

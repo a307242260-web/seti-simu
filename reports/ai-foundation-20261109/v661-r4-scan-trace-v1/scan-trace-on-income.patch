@@ -1,0 +1,152 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -821,12 +821,76 @@
+     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
+
+     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
++    function quietScanTracePlan(node,stored,state){
++      const session=stored.envelope.session?.session,head=session?.queue?.[0];
++      if(!scanPlanning||!movementPlanning||!cardPickPlanning||stored.intent?.path.length||stored.informationBarrier
++        ||session?.journal?.actions?.[0]?.action?.family!=="scan"||session.queue.length!==2
++        ||head.type!==scienceSession.EFFECT_TYPES.ALIEN_TRACE||head.ownerId!==seatId
++        ||head.payload?.traceType!=="pink"||Object.keys(head.payload).length!==1
++        ||session.queue[1].type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL
++        ||!openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport"))return null;
++      const owner=state.players.players.find(p=>p.id===seatId);
++      if(state.turn.roundNumber!==4||!owner.mainActionCompleted||owner.resources.availableData!==6
++        ||owner.industryBorrowedTechTileId||state.turn.cardTurnEventBonuses?.length
++        ||!state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
++        ||Object.values(state.aliens.aliens).some(slot=>!slot.revealed||!knownRootAlienIds.has(slot.alienId)||alienState.isAlienReadyToReveal(slot))
++        ||!owner.hand.every(c=>knownCards(stored.envelope).has(c.id))
++        ||!owner.reservedCards.every(c=>knownRootCardIds.has(c.id))
++        ||data.listComputerPlacedTokens(owner).length<4||data.listBluePlacementRequirements(owner).length)return null;
++      const transition=previewTurn(state);
++      if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||transition.nextPlayerId!==seatId)return null;
++      const cargo=localPlans.knownDeliveredCargo({state,seatId,knownCards:knownRootCardIds,knownFossilIds:visibleRootCargo()});
++      if(Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length&&!cargo)return null;
++      const passiveChong=c=>c.id===cargo?.card.id||c.set==="alien:虫"&&cardEffects.getCardModel(c)?.cardType===3
++        &&endScoring.resolveCardEndGameRule(c,cardEffects)?.kind==="chongTraceCount"
++        &&!cardEffects.getCardModel(c)?.triggers?.length&&!cardEffects.getCardModel(c)?.tasks?.length
++        &&!c.chongTask&&!chong.getCardTask(c);
++      if(owner.reservedCards.some(c=>c.set==="alien:虫"&&!passiveChong(c)))return null;
++      const native=productionKernel||globalThis.SetiProductionKernel;
++      const noUse=(preview,p,capital)=>{
++        if(!quietTailHasNoAcquisition(preview,capital)||blueLandingGoalFor(preview))return false;
++        if(resourceDemand.catalog({state:preview,seatId,requirements:{bluePlacements:[]}}).some(goal=>{
++          if(goal.kind!=="computer-prefix")return true;
++          const q=localPlans.computerCompletion({state:preview,seatId,goal});
++          return q.available&&q.selected;
++        }))return false;
++        const objective=goalMovement.plan({state:preview,seatId,actions:[{family:"end_turn",actionId:"trace-proof-quiet-end"}],status:"stable",intent:stored.intent,objectiveOnly:true,routeCache:movementRouteCache,
++          endpoints:()=>native.getProbeRouteRequirements(preview,seatId)?.candidates||[],compareTiming:timingForOneGoalQuery(preview)});
++        goalMovementGeometryNodes+=objective?.routingNodes||0;
++        const guard={...preview,aliens:{...preview.aliens,chong:{...preview.aliens.chong,transportTasksByRocketId:{}}},
++          players:{...preview.players,players:preview.players.players.map(q=>q===p?{...p,reservedCards:p.reservedCards.filter(c=>!passiveChong(c))}:q)}};
++        return !objective?.intent?.path.length&&hasPostMainInertReservations(guard,false,true,true);
++      };
++      const ranks=[],open=[];
++      for(const a of node.legalActions){
++        const preview=localPlans.previewQuietPinkTrace({state,seatId,action:a});
++        if(!preview){open.push(a.actionId);continue;}
++        const {state:q,player:p}=preview,end=localPlans.quietEndCompletion({state:q,seatId});
++        if(!end.available||end.markedTiles.length||end.netGain)return null;
++        const capital=resourceDemand.planningCapital(q,p);
++        if(!noUse(q,p,capital))return null;
++        const quote=cargo&&quietCargoEndQuote(q,p,cargo,capital);
++        if(cargo&&(!quote||!noUse(quote.after,quote.after.players.players.find(x=>x.id===seatId),quote.afterCapital)))return null;
++        const established=endScoring.computePlayerFinalScore({...q,players:q.players.players,aliens:structuredClone(q.aliens),
++          finalScoring:structuredClone(q.finalScoring),cardEffects,
++          getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
++        const purpose=stateValue.sumValueParts([capital,quote?.claim?quote.capital:0]);
++        const value=stateValue.sumValueParts([established,purpose,quote?.claim?quote.gain-quote.capital:0]);
++        ranks.push({actionId:a.actionId,value,purpose});
++      }
++      ranks.sort((a,b)=>b.value-a.value||a.purpose-b.purpose||a.actionId.localeCompare(b.actionId));
++      if(ranks.length<2)return null;
++      return {policy:"seti-known-scan-trace-score-tail-v1",kind:"rank-automatic-scan-traces",fixed:false,isEquivalence:false,
++        retainedActionIds:[ranks[0].actionId,...open],excludedActionIds:ranks.slice(1).map(x=>x.actionId),scores:ranks};
++    }
++
+     function localDecisionSpec(node){
+       if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
+       if(localSpecs.has(node))return localSpecs.get(node);
+       const stored=nodes.get(node),state=readPlanningState(stored);
+       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
+       if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
++      if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
+       if(!result&&resourcePlanning){
+         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
+           ||resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
+@@ -3574,7 +3638,7 @@
+           endDelta:resource+delta,incomeNet:incomeTail.netGain}};
+     }
+
+-    function quietCargoEndQuote(state,owner,cargo){
++    function quietCargoEndQuote(state,owner,cargo,sourceCapital=null){
+       const applied=localPlans.previewKnownCargoClaim({state,seatId,cargo});
+       if(!applied)return null;
+       const debt=(s,p)=>{const m=resourceDemand.movementToolPlan(s,p);return m.value>0?m.selected.preparationDebt:0;};
+@@ -3583,11 +3647,12 @@
+         getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
+       const after=applied.state,p=applied.player;
+       if(debt(state,owner)!==debt(after,p))return null;
+-      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(after,p),-resourceDemand.planningCapital(state,owner)]);
++      const afterCapital=resourceDemand.planningCapital(after,p);
++      const capital=stateValue.sumValueParts([afterCapital,-(sourceCapital??resourceDemand.planningCapital(state,owner))]);
+       const weights=stateValue.DEFAULT_WEIGHTS;
+       const gain=stateValue.sumValueParts([score(after,p),-score(state,owner),capital,
+         applied.credits*weights.credits,applied.dataGain*weights.availableData]);
+-      return {claim:gain>0||gain===0&&capital<0,gain,capital,after};
++      return {claim:gain>0||gain===0&&capital<0,gain,capital,after,afterCapital};
+     }
+
+     function quietR4CargoBlue3({state,owner,node,stored,plan,cargo,transition}){
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1225,6 +1225,39 @@
+   const weights=stateValue.DEFAULT_WEIGHTS,value=stateValue.sumValueParts([total(q,copy)-total(state,p),capital,weights.availableData,-weights.handSize]);
+   return value>0?{actionId:a.actionId,cardId:c.id,value,capital}:null;
+  }
++ // Price only automatic trace rewards. Any real card/fossil selection
++ // remains a native branch. This uses the same alien placement primitives.
++ function previewQuietPinkTrace({state,seatId,action}){
++  const target=action.target,slot=aliens.getAlienSlot(state.aliens,target?.alienSlotId);
++  if(action.family!=='choose_target'||target?.traceType!=='pink'||!slot?.revealed
++    ||!['虫','阿米巴'].includes(slot.alienId)||target.fangzhouUnlock)return null;
++  const source=owner(state,seatId),p={...source,resources:{...source.resources},
++   scoreSources:{...source.scoreSources},reservedCards:structuredClone(source.reservedCards)};
++  const q={...state,aliens:structuredClone(state.aliens),
++   players:{...state.players,players:state.players.players.map(x=>x===source?p:x)}};
++  const placed=aliens.placeTraceForActor(players,q.aliens,p,target.alienSlotId,'pink',target.position,
++   {stateExtra:!!target.stateExtra,sequence:q.meta.sequences.alienEntity});
++  if(!placed.ok)throw new Error('KNOWN_SCAN_TRACE_PLACEMENT_FAILED:'+placed.code);
++  function pure(reward){
++   if(!reward||reward.pickCard||reward.pickAlienCard||reward.drawCards||reward.dataCount
++     ||reward.fossilPanel||reward.panelSymbol||reward.chooseFossilRewardOnly
++     ||Object.keys(reward.gain||{}).some(k=>k!=='score'))return false;
++   players.gainResources(p,reward.gain||{});
++   return true;
++  }
++  // The shared extra-slot placement already awards its score.
++  if(!target.stateExtra&&!pure(placed.reward))return null;
++  const region=placed.reward?.region||null;
++  const event={type:'alienTrace',playerId:seatId,traceType:'pink',alienSlotId:target.alienSlotId,alienId:slot.alienId,region};
++  if(effects.collectMatchingTriggers(p,event).length||effects.collectMatchingTriggers(p,{...event,alienId:undefined}).length)return null;
++  if(region){
++   if(slot.alienId!=='阿米巴')return null;
++   const symbols=aliens.amiba.listSymbolsInRegion(q.aliens,region);
++   if(!symbols.every(x=>!x.reward?.region&&pure(x.reward)))return null;
++   if(symbols.length&&!aliens.amiba.resolveRegionReward(q.aliens,region).ok)return null;
++  }
++  return {state:q,player:p};
++ }
+  function quoteAnalysisLaunchPick({state,seatId,knownCards,knownAlienDisplay,offers}){
+   const p=owner(state,seatId),independent=p.resources.availableData===4;
+   const analysis={seatId,knownCards,knownAlienDisplay,prepare:true,allowKnownTraceWithoutCard:independent};
+@@ -1961,5 +1994,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ });
