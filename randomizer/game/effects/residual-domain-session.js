@@ -1723,7 +1723,7 @@
     };
   }
 
-  function previewPlainPinkTrace(session, selected, knownCards) {
+  function previewPlainPinkTrace(session, selected, knownCards, allowRegion=false) {
     const source=session.workingState,head=session.queue[0],turn=source.turn;
     const owner=actor(source,head?.ownerId);
     if(session.phase!=="awaiting_input"||session.failure
@@ -1734,20 +1734,21 @@
       ||turn.currentPlayerId!==head.ownerId||!owner?.mainActionCompleted||owner.passCompletionPending
       ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
       ||owner.reservedCards.some(c=>!knownCards.has(c.id))
-      ||!science.isPlainPinkTrace(source,selected))return null;
+      ||!science.isPlainPinkTrace(source,selected,allowRegion))return null;
     const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:clone(owner.reservedCards)};
     const state={...source,meta:{...source.meta,sequences:{...source.meta.sequences}},aliens:clone(source.aliens),
       players:{...source.players,players:source.players.players.map(p=>p===owner?player:p)}};
-    const placed=science.applyPlainPinkTrace(state,head,selected);
+    const placed=science.applyPlainPinkTrace(state,head,selected,allowRegion);
     if(!placed)return null;
     const augmented=augmentEffectResult(state,placed,head);
     if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
-    return {state,player,events:augmented.events};
+    if(placed.regionEffect&&!previewQuietAmibaRegion(state,placed.regionEffect))return null;
+    return {state,player,events:augmented.events,regionSettled:Boolean(placed.regionEffect)};
   }
 
   function previewLastPlainPinkTrace(session, selected, knownCards) {
     if(session.queue.length!==1||session.journal.actions[0]?.action?.family!=="land")return null;
-    const trace=previewPlainPinkTrace(session,selected,knownCards);
+    const trace=previewPlainPinkTrace(session,selected,knownCards,true);
     if(!trace)return null;
     trace.state.meta.stateVersion=session.baseVersion+1;
     return trace.state;
@@ -1779,7 +1780,7 @@
     if(session.queue.length!==2||session.journal.actions[0]?.action?.family!=="scan"
       ||refill.type!==science.EFFECT_TYPES.PUBLIC_REFILL||refill.kind!=="effect"
       ||refill.ownerId!==head.ownerId||refill.allowQuickActions||Object.keys(refill.payload).length)return null;
-    return previewPlainPinkTrace(session,selected,knownCards)?.state||null;
+    return previewPlainPinkTrace(session,selected,knownCards,true);
   }
 
   function previewQuietAmibaYellowLanding(session, selected, knownCards) {
@@ -2183,6 +2184,22 @@
           },
         }];
       }));
+  }
+
+  function previewQuietAmibaRegion(root, effect) {
+    const card=effect.payload?.cardEffect, region=card?.options?.region, owner=actor(root,effect.ownerId);
+    if (!owner || card?.type!==amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD || !["orange","red","blue"].includes(region)
+      || Object.keys(card.options).length!==1) return false;
+    const symbols=amiba.listSymbolsInRegion(root.aliens,region,{readOnlyRewards:true});
+    if(symbols.some(({reward})=>!reward
+      ||Object.keys(reward).some(k=>k!=="gain"&&reward[k])
+      ||Object.entries(reward.gain||{}).some(([k,v])=>!["score","credits","energy","publicity"].includes(k)
+        ||!Number.isSafeInteger(v)||v<0)))return false;
+    const result=cardPlayDomain.settleAmibaRegionReward(root,owner,region);
+    if(!result.ok||result.irreversible)return false;
+    const events=[{type:"card_effect",effectId:card.id||null,effectType:card.type,playerId:owner.id},...result.events];
+    const settled=augmentEffectResult(root,{ok:true,events},effect);
+    return !settled.spawnedEffects.length&&settled.events.length===events.length;
   }
 
   function resolveAlienCardSelection(root, effect, selected, random = () => nextRandom(root)) {
@@ -2609,6 +2626,7 @@
     SPECIES_IDS,
     queryCardSettlement: findCardSettlement,
     resolveAlienCardSelection,
+    previewQuietAmibaRegion,
     previewQuietEndHandoffs,
     previewLastPlainPinkTrace,
     previewPinkTraceFossilMenu,

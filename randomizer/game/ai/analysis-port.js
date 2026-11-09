@@ -1394,11 +1394,16 @@
     function previewQuietAlienDisplay(node,stored,action){
       if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
         ||action.target?.source!=="display")return null;
-      const s=stored.envelope.session?.session,[head,refill]=s?.queue||[],species=head?.payload?.speciesId;
-      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length||s.queue.length>2
+      const s=stored.envelope.session?.session,head=s?.queue[0],species=head?.payload?.speciesId;
+      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length
         ||head?.type!=="residual_alien_card_decision"||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
-        ||!["chong","amiba"].includes(species)||refill&&(refill.type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL
-          ||refill.kind!=="effect"||refill.ownerId!==seatId||Object.keys(refill.payload).length))return null;
+        ||!["chong","amiba"].includes(species))return null;
+      const region=species==="amiba"&&s.queue[1]?.type==="card_play_domain_effect:effect:amiba_resolve_region_reward"?s.queue[1]:null;
+      const refillIndex=region?2:1,refill=s.queue[refillIndex];
+      if(s.queue.length>refillIndex+1||region&&(region.kind!=="effect"||region.ownerId!==seatId||region.allowQuickActions
+        ||region.payload?.cardInstanceId!==null)
+        ||refill&&(refill.type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL||refill.kind!=="effect"
+          ||refill.ownerId!==seatId||Object.keys(refill.payload).length))return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
       const knownIndex=species==="chong"?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
       const known=knownCards(stored.envelope),deck=state.aliens[species];
@@ -1411,17 +1416,19 @@
       if(!pick?.fixed||pick.selectedActionId!==action.actionId)return null;
       // Production consumes the shown card and advances its real deck. Only
       // the inherited public identity may enter the search after either refill.
-      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards),
+        ...(region?{scoreSources:{...p.scoreSources}}:{})};
       const next={...state,meta:{...quietSavedMeta(state.meta,s.baseVersion+1),sequences:{...state.meta.sequences}},
         players:{...state.players,players:state.players.players.map(q=>q===p?player:q)},
-        aliens:{...state.aliens,[species]:{...deck,cardDeck:[...deck.cardDeck]}}};
+        aliens:{...state.aliens,[species]:region?structuredClone(deck):{...deck,cardDeck:[...deck.cardDeck]}}};
       let usedRandom=false;
       const result=residualSession.resolveAlienCardSelection(next,head,action,()=>{usedRandom=true;return 0;});
       if(!result.ok||usedRandom||result.irreversible?.code!=="hidden_alien_card"
         ||result.events.length!==1||result.events[0].type!=="alien_card_gain")return null;
       const augmented=residualSession.augmentEffectResult(next,result,head);
       if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
-      if(refill)return prepareQuietPublicRefill(stored,s,next);
+      if(region&&!residualSession.previewQuietAmibaRegion(next,region))return null;
+      if(refill)return prepareQuietPublicRefill(stored,s,next,refillIndex);
       const envelope=provedCommittedEnvelope(stored,next);
       return {envelope,inspection:{phase:"idle",session:null},
         barrier:{effectId:head.effectId,revision:s.revision+1,...result.irreversible}};
@@ -1459,10 +1466,10 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:s.irreversibleBarrier,decision:{choices:preview.choices}}}};
     }
 
-    function prepareQuietPublicRefill(stored,session,state){
+    function prepareQuietPublicRefill(stored,session,state,refillIndex=1,extraEffects=0){
       const missing=state.cards.publicCards.filter(c=>!c).length;
       if(missing!==1)return null;
-      const refill=session.queue[1];
+      const refill=session.queue[refillIndex];
       state.cards={...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]};
       // The cached native refill declines reshuffles. The card drawn into the
       // public row remains masked; only root-known post-main plans may continue.
@@ -1473,7 +1480,7 @@
       state.meta.stateVersion=session.baseVersion+1;
       const envelope=provedCommittedEnvelope(stored,state);
       return {envelope,inspection:{phase:"idle",session:null},
-        barrier:{effectId:refill.effectId,revision:session.revision+2,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
+        barrier:{effectId:refill.effectId,revision:session.revision+refillIndex+1+extraEffects,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
     }
 
     function finishProvedCommittedState(node, stored, action, state) {
@@ -1552,7 +1559,8 @@
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const pinkBeforeRefill=pinkTraceCards?localPlans.previewPinkTraceBeforeRefill(taskSession,requested,pinkTraceCards):null;
-      const pinkRefill=pinkBeforeRefill&&prepareQuietPublicRefill(stored,taskSession,pinkBeforeRefill);
+      const pinkRefill=pinkBeforeRefill&&prepareQuietPublicRefill(stored,taskSession,pinkBeforeRefill.state,
+        1,Number(pinkBeforeRefill.regionSettled));
       if(pinkRefill){
         restoreEnvelope(pinkRefill.envelope,true);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},

@@ -648,12 +648,26 @@
     players.gainResources(actor, reward.gain, `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`);
   }
 
-  function scoreOnlyTraceReward(reward) {
-    return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key])
+  function scoreOnlyTraceReward(reward, allowRegion = false) {
+    return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key]
+        || allowRegion && key === "region" && reward.region === "red")
       && Object.keys(reward.gain || {}).every(key => key === "score"));
   }
 
-  function isPlainPinkTrace(root, choice) {
+  function amibaTraceRegionEffect(root, ownerId, region) {
+    if (!region || !aliens.amiba.listSymbolsInRegion(getWorkingSlice(root, "aliens"), region).length) return null;
+    return {
+      type: "card_play_domain_effect:effect:amiba_resolve_region_reward",
+      kind: "effect",
+      ownerId,
+      payload: {
+        cardEffect: { type: aliens.amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD, options: { region } },
+        cardInstanceId: null,
+      },
+    };
+  }
+
+  function isPlainPinkTrace(root, choice, allowRegion = false) {
     const target = choice?.target, slot = aliens.getAlienSlot(root.aliens, target?.alienSlotId);
     if (choice?.family !== "choose_target" || target?.kind !== "planet-reward-alien-trace"
       || target.traceType !== "pink" || target.fangzhouUnlock || !slot?.revealed
@@ -661,20 +675,21 @@
     if (target.stateExtra) return Boolean(slot.traces?.pink?.firstPlaced);
     const species = aliens.getSpeciesTraceApi(slot);
     return target.speciesId === species?.speciesId
-      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position));
+      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position), allowRegion);
   }
 
-  // The caller supplies isolated writable slices, and still runs the
-  // production event transform. A pending reward always stays in the runtime.
-  function applyPlainPinkTrace(root, effect, choice) {
-    if (!isPlainPinkTrace(root, choice)) return null;
+  // The caller owns the writable slices and must settle any reported region
+  // using the same formal reward before treating this as a closed input.
+  function applyPlainPinkTrace(root, effect, choice, allowRegion = false) {
+    if (!isPlainPinkTrace(root, choice, allowRegion)) return null;
     const placed = placeAlienTrace(root, effect, choice);
     if (!placed?.ok) return null;
-    if (placed.reward && !scoreOnlyTraceReward(placed.reward)) return null;
+    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion)) return null;
+    const region = placed.reward?.region || null;
     awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, "pink");
-    return { ok: true, events: [{
+    return { ok: true, regionEffect: amibaTraceRegionEffect(root, effect.ownerId, region), events: [{
       type: "alienTrace", playerId: effect.ownerId, traceType: "pink",
-      alienSlotId: choice.target.alienSlotId, region: null,
+      alienSlotId: choice.target.alienSlotId, region,
     }] };
   }
 
@@ -1821,26 +1836,8 @@
         }
         // 阿米巴区域奖励：锁定区域内全部符号领奖一次，再按固定方向移动。
         // 与移除痕迹共用play-domain的确定性Effect，不生成逐符号Decision。
-        if (result.reward?.region) {
-          const alienState = getWorkingSlice(root, "aliens");
-          if (aliens.amiba.listSymbolsInRegion(alienState, result.reward.region).length) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: {
-                type: "card_play_domain_effect:effect:amiba_resolve_region_reward",
-                kind: "effect",
-                ownerId: effect.ownerId,
-                payload: {
-                  cardEffect: {
-                    type: aliens.amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD,
-                    options: { region: result.reward.region },
-                  },
-                  cardInstanceId: null,
-                },
-              },
-            });
-          }
-        }
+        const regionEffect = amibaTraceRegionEffect(root, effect.ownerId, result.reward?.region);
+        if (regionEffect) spawnedEffects.push({ priority: "direct", effect: regionEffect });
         const afterTraceReward = effect.payload?.cardEffect?.options?.afterTraceReward;
         if (afterTraceReward) {
           // 本次位置领奖（含外星牌选择、区域奖励）全部完成后，再按所选颜色计数。

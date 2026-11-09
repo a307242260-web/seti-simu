@@ -257,6 +257,59 @@
         + adjacentAsteroidCount * Number(options.adjacentAsteroidData) };
   }
 
+  // 区域全部奖励与卡牌单选共用正式发奖入口；移动在奖励成功后统一执行。
+  function awardAmibaSymbols(root, actor, symbols) {
+    let irreversible = null;
+    const events = [];
+    for (const symbol of symbols) {
+      const reward = symbol.reward || {};
+      if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
+      const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+      for (let index = 0; index < dataCount; index += 1) {
+        const gained = data.gainData(actor, { source: "amiba_region_reward", root });
+        if (!gained.ok && !gained.discarded) return gained;
+        // 满池弃置已由正式数据原语记账，是奖励结果，不应中断其他奖励或移动。
+        if (gained.discarded) events.push({
+          type: "amiba_data_discarded", playerId: actor.id, symbolId: symbol.symbolId,
+        });
+      }
+      const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+      if (drawCount > 0) {
+        const drawCtx = cards.createCardDrawContext(
+          getWorkingSlice(root, "cards"), getWorkingSlice(root, "players"),
+          () => nextCommittedRandom(root), { root },
+        );
+        for (let index = 0; index < drawCount; index += 1) {
+          const drawn = drawCtx.blindDraw(actor);
+          if (!drawn.ok) return drawn;
+        }
+        irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
+      }
+    }
+    return { ok: true, irreversible, events };
+  }
+
+  function settleAmibaRegionReward(root, actor, region) {
+    if (!["orange", "red", "blue"].includes(region)) {
+      return fail("AMIBA_REGION_INVALID", "阿米巴区域奖励缺少有效颜色");
+    }
+    const alienState = getWorkingSlice(root, "aliens");
+    const symbols = aliens.amiba.listSymbolsInRegion(alienState, region);
+    const awarded = awardAmibaSymbols(root, actor, symbols);
+    if (!awarded.ok) return awarded;
+    const resolved = aliens.amiba.resolveRegionReward(alienState, region);
+    if (!resolved.ok) return resolved;
+    return {
+      ok: true,
+      irreversible: awarded.irreversible,
+      events: [...awarded.events, ...resolved.results.map((entry) => ({
+        type: "amiba_symbol_resolved", symbolId: entry.symbolId,
+        slotId: entry.slotId, region,
+      }))],
+      history: { region, symbolIds: symbols.map((entry) => entry.symbolId) },
+    };
+  }
+
   function getActor(root, actorId = null) {
     const playersState = getWorkingSlice(root, "players");
     const resolvedId = actorId || root?.turn?.currentPlayerId || null;
@@ -1647,38 +1700,6 @@
       );
     }
 
-    // 区域全部奖励与卡牌单选共用正式发奖入口；移动在奖励成功后统一执行。
-    function awardAmibaSymbols(root, actor, symbols) {
-      let irreversible = null;
-      const events = [];
-      for (const symbol of symbols) {
-        const reward = symbol.reward || {};
-        if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
-        const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-        for (let index = 0; index < dataCount; index += 1) {
-          const gained = data.gainData(actor, { source: "amiba_region_reward", root });
-          if (!gained.ok && !gained.discarded) return gained;
-          // 满池弃置已由正式数据原语记账，是奖励结果，不应中断其他奖励或移动。
-          if (gained.discarded) events.push({
-            type: "amiba_data_discarded", playerId: actor.id, symbolId: symbol.symbolId,
-          });
-        }
-        const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-        if (drawCount > 0) {
-          const drawCtx = cards.createCardDrawContext(
-            getWorkingSlice(root, "cards"), getWorkingSlice(root, "players"),
-            () => nextCommittedRandom(root), { root },
-          );
-          for (let index = 0; index < drawCount; index += 1) {
-            const drawn = drawCtx.blindDraw(actor);
-            if (!drawn.ok) return drawn;
-          }
-          irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
-        }
-      }
-      return { ok: true, irreversible, events };
-    }
-
     function genericExecute(state, sessionEffect, workingContext) {
       const root = getWorkingRoot(state, workingContext);
       const effect = sessionEffect.payload?.cardEffect;
@@ -1711,23 +1732,8 @@
         });
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.RESOLVE_REGION_REWARD) {
-        if (!["orange", "red", "blue"].includes(options.region)) {
-          return fail("AMIBA_REGION_INVALID", "阿米巴区域奖励缺少有效颜色");
-        }
-        const alienState = getWorkingSlice(root, "aliens");
-        const symbols = aliens.amiba.listSymbolsInRegion(alienState, options.region);
-        const awarded = awardAmibaSymbols(root, actor, symbols);
-        if (!awarded.ok) return awarded;
-        const resolved = aliens.amiba.resolveRegionReward(alienState, options.region);
-        if (!resolved.ok) return resolved;
-        return cardEffectResult(state, root, sessionEffect, {
-          irreversible: awarded.irreversible,
-          events: [...awarded.events, ...resolved.results.map((entry) => ({
-            type: "amiba_symbol_resolved", symbolId: entry.symbolId,
-            slotId: entry.slotId, region: options.region,
-          }))],
-          history: { region: options.region, symbolIds: symbols.map((entry) => entry.symbolId) },
-        });
+        const settled = settleAmibaRegionReward(root, actor, options.region);
+        return settled.ok ? cardEffectResult(state, root, sessionEffect, settled) : settled;
       }
       if (descriptor.decisionKind) {
         // 前序发射/奖励已结算；首次额度在创建Decision时冻结，后续仅扣remaining。
@@ -2912,6 +2918,7 @@
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
     getProbeLocationReward,
+    settleAmibaRegionReward,
     getMovementAllowance,
     createScienceScanEffect,
     chainScanFinalize,

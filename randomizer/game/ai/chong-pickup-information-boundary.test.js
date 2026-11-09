@@ -109,4 +109,30 @@ try {
       assert.deepEqual(save(),root);
     }finally{port.close();}
   }
+
+  // Both displayed-card and plain-trace rewards finish their deterministic
+  // region and symbol movements before a possible ordinary refill.
+  const regions=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'fixtures/amiba-region-proofs-20261110-v1.fixture.json.gz'))));
+  for(const {root,action,end,barrier} of regions){
+    restore(root);
+    const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+    try{
+      port.setResourcePlanning(true);port.setCardPickPlanning(true);
+      const n=port.openRoot(),next=port.expand(n,action.actionId);
+      assert.equal(port.getDiagnostics().submissionCount,0);
+      // A previously revealed card is known when this menu is opened as a
+      // fresh root. Only a new display/refill can add an information boundary.
+      const newBarrier=action.family==='choose_target'&&barrier==='hidden_alien_card'?null:barrier;
+      assert.equal(next.boundary,newBarrier);
+      const facts=port.valueObservation(next),recorded=JSON.parse(end.committedState);
+      const source=root.session.session.workingState.aliens.amiba.symbolSlots;
+      const finished=recorded.aliens.amiba.symbolSlots;
+      assert.notDeepEqual(source,finished,'the production region must actually move the symbols');
+      assert.deepEqual(facts.publicState.board.aliens.amiba.symbolSlots,finished);
+      assert.equal(facts.publicState.players.find(p=>p.playerId===seatId).score,
+        recorded.players.players.find(p=>p.id===seatId).resources.score);
+      assert.deepEqual(save(),root);
+    }finally{port.close();}
+  }
 }finally{c.dispose();}

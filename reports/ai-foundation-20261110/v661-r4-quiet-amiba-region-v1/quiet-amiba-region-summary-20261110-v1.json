@@ -1,0 +1,383 @@
+{
+  "sourceBase": "07e350eefa05a639291a9f9c27ed25704bc1a46a",
+  "nativeProgression": [
+    939,
+    835,
+    719
+  ],
+  "pressureColdMs": {
+    "before": [
+      1943.66275,
+      1919.6737500000002,
+      1912.7694170000002
+    ],
+    "after": [
+      1793.488083,
+      1781.568583,
+      1864.366875
+    ],
+    "medians": [
+      1919.6737500000002,
+      1793.488083
+    ]
+  },
+  "pressureRootCandidatesEqual": 32,
+  "pressureNativeGroups": [
+    {
+      "family": "play_card",
+      "queue": "stable",
+      "before": 11,
+      "after": 11
+    },
+    {
+      "family": "pass",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_card",
+      "queue": "probe_turn_pass_discard",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "quick_trade",
+      "queue": "stable",
+      "before": 7,
+      "after": 7
+    },
+    {
+      "family": "choose_card",
+      "queue": "standard_action_session_decision",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "place_data",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_place_data",
+      "before": 5,
+      "after": 5
+    },
+    {
+      "family": "analyze",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_payment",
+      "queue": "standard_action_session_decision",
+      "before": 3,
+      "after": 3
+    },
+    {
+      "family": "move",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_payment",
+      "queue": "probe_turn_move_payment",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "land",
+      "queue": "stable",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "probe_land_choice",
+      "before": 6,
+      "after": 6
+    },
+    {
+      "family": "scan",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_scan_step",
+      "before": 212,
+      "after": 212
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_scan_action_4",
+      "before": 10,
+      "after": 10
+    },
+    {
+      "family": "research_tech",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_alien_trace",
+      "before": 445,
+      "after": 329
+    },
+    {
+      "family": "choose_card",
+      "queue": "residual_alien_card_decision",
+      "before": 192,
+      "after": 88
+    },
+    {
+      "family": "choose_card",
+      "queue": "science_domain_pick_card",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "end_turn",
+      "queue": "stable",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "complete_task",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_land_for_pickup",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_probe_planet_fossil_reward",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "industry",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_card",
+      "queue": "residual_company_decision",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_card",
+      "queue": "science_domain_income",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup",
+      "before": 3,
+      "after": 3
+    }
+  ],
+  "nativeCheckedWithStateMenuRngExact": {
+    "satellite": 524,
+    "teacher272": 42,
+    "late": 16
+  },
+  "checks": [
+    {
+      "before": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 188,
+        "graphNodes": 684,
+        "ms": 1109.0366250000002,
+        "digest": "9515fb8cce89da0e388b1bc41bcc50b90b5aa6fbb6ac17ee5f8929b1fc853c61",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1303,
+        "identitySliceStores": 923
+      },
+      "after": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 172,
+        "graphNodes": 684,
+        "ms": 1054.627917,
+        "digest": "414718169ef4baed12ef11820f1692340b0618646eeb30d98927a72eefd73404",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1351,
+        "identitySliceStores": 875
+      }
+    },
+    {
+      "before": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 607.929875,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      },
+      "after": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 606.8855,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      }
+    },
+    {
+      "before": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 939,
+        "graphNodes": 1596,
+        "ms": 1874.873417,
+        "digest": "ee96eb7a0a112b949f8c6117b9ca91ae3dfd413f7889a5ca35611208b802d2ce",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2487,
+        "identitySliceStores": 2875
+      },
+      "after": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 719,
+        "graphNodes": 1596,
+        "ms": 1721.6115419999999,
+        "digest": "19441c849caed843ae9f51589f6608bd56d5736288c60a5eb5ad2f103b191a4b",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2897,
+        "identitySliceStores": 2465
+      }
+    },
+    {
+      "before": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 239.61083399999998,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      },
+      "after": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 228.34470800000003,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      }
+    },
+    {
+      "before": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 260.554834,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      },
+      "after": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 251.60054199999996,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      }
+    },
+    {
+      "before": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 233,
+        "graphNodes": 342,
+        "ms": 430.881166,
+        "digest": "b763052fe9b9c1d9f8aaea2f3c4a7b173e6883b74cd257a333823618be769702",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 170,
+        "identitySliceStores": 502
+      },
+      "after": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 226,
+        "graphNodes": 342,
+        "ms": 420.10858399999995,
+        "digest": "8e10fefc470ea329e255dfef4efe7751a2a0fce24e933ca95892092cb8e8df71",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 176,
+        "identitySliceStores": 496
+      }
+    }
+  ],
+  "newFullGames": 0
+}
