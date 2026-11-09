@@ -1,0 +1,149 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -419,6 +419,9 @@
+     let blueTwoPickTemplate = null, provedBlueTwoPickInputs = 0;
+     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+     let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0;
++    let provedScan4QuietMoves=0;
++    const scan4RefillCache=new Map();
++    let scan4RefillHits=0;
+     let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
+     let observationCount = 0;
+     const cache = new Map();
+@@ -592,7 +595,7 @@
+       nodeCount = 0;
+       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+       submissionCount = 0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0;
+-      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0;
++      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedScan4QuietMoves=0; scan4RefillHits=0; scan4RefillCache.clear();
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+       observationCount = 0; observationReleases = 0;
+       committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0;
+@@ -803,6 +806,98 @@
+       return {envelope:{...envelope,session},inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
++    function refillQuietScan4(state,missing){
++      const {cards:deck,players:owners,meta}=state;
++      const claimed=cards.collectClaimedCardIds(deck,owners);
++      const slots=deck.publicCards.map((card,i)=>card?null:i).filter(i=>i!==null);
++      // Deck sanitization only consults whether a pile entry is already
++      // claimed. Its order, empty slots and the entity counter stay exact.
++      const key=JSON.stringify([meta.sequences.card,slots,deck.drawPileCardIds,
++        deck.drawPileCardIds.filter(id=>claimed.has(String(id)))]);
++      const cached=scan4RefillCache.get(key);
++      if(cached){
++        scan4RefillHits++;
++        for(let i=0;i<slots.length;i++)deck.publicCards[slots[i]]=cached.cards[i];
++        deck.drawPileCardIds=cached.pile;
++        meta.sequences.card=cached.nextCard;
++        return true;
++      }
++      let random=false,filled=0;
++      for(const i of slots){
++        if(cards.replenishPublicSlot(deck,owners,i,()=>{random=true;return 0;},{root:state}))filled++;
++      }
++      if(random||filled!==missing)return false;
++      if(scan4RefillCache.size<32)scan4RefillCache.set(key,freeze({
++        cards:slots.map(i=>deck.publicCards[i]),pile:deck.drawPileCardIds,nextCard:meta.sequences.card,
++      }));
++      return true;
++    }
++
++    function previewQuietScan4Move(node,stored,action){
++      if(!resourcePlanning||!scanPlanning||!movementPlanning||node.status!=="decision"||stored.resourceControl
++        ||stored.informationBarrier||action.family!=="choose_target"||action.target?.mode!=="move"
++        ||action.payload?.requiredMovePoints!==1)return null;
++      const checkpoint=stored.envelope.session, s=checkpoint?.session;
++      const [head,finalize,extra,last]=s?.queue||[], types=scienceSession.EFFECT_TYPES;
++      if(s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
++        ||head.type!==types.SCAN_ACTION_4||head.kind!=="decision"||head.allowQuickActions||!head.payload?.skippable
++        ||!finalize||finalize.type!==types.SCAN_FINALIZE
++        ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
++      const source=s.journal.actions[0]?.action?.family;
++      if(source==="scan"&&s.queue.length!==2||source==="play_card"&&(s.queue.length!==4||extra.type!==types.SCAN_STEP
++        ||extra.kind!=="effect"||last.type!==types.SCAN_FINALIZE||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"
++        ||extra.payload?.options?.mode!=="any"||extra.payload.options.sameSectorRemaining!==1)
++        ||source!=="scan"&&source!=="play_card")return null;
++      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
++      const ship=state.pieces.rockets.find(r=>r.id===action.target.rocketId);
++      const known=knownCards(stored.envelope);
++      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
++        ||Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
++        ||!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"||p.reservedCards.some(c=>!known.has(c.id))
++        ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
++      const missing=state.cards.publicCards.filter(c=>!c).length;
++      if(!missing)return null;
++      const player={...p,resources:{...p.resources},reservedCards:structuredClone(p.reservedCards)};
++      const next={...state,meta:{...state.meta,sequences:{...state.meta.sequences}},
++        pieces:{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
++        cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
++        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
++      const move=rocketAbilities.moveProbe(scienceSession.createActionContext(next,seatId),{
++        ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
++      });
++      if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
++      if(!refillQuietScan4(next,missing))return null;
++      const events=[move.events[0],{type:"publicRefill",count:missing}];
++      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
++      const eid=n=>s.sessionId+":effect:"+(s.nextEffectSequence+n);
++      const gid=n=>s.sessionId+":group:"+(s.nextGroupSequence+n);
++      const barrier={effectId:eid(2),revision:s.revision+4,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
++      if(!extra){
++        next.meta.stateVersion=s.baseVersion+1;
++        return {next,barrier};
++      }
++
++      // The first scan has no sector reward. Refill remains before the
++      // unchanged second scan; its real menu is enumerated on the new state.
++      const choices=scienceSession.formalizeChoices(next,seatId,scienceSession.listScanStepChoices(next,player,extra.payload.options));
++      if(!choices.length)return null;
++      const row=(e,advance)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+advance});
++      const spawned=(n,type)=>({effectId:eid(n),groupId:gid(n),groupKind:"spawned",type});
++      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
++      const queueHead={...extra,...spawned(3,types.SCAN_STEP),kind:"decision",decisionKind:"choose_target",
++        payload:{options:extra.payload.options},source:{parentEffectId:extra.effectId,priority:"direct"}};
++      const j=s.journal,replayCursor=j.replay.length;
++      const session=freeze({...checkpoint,replayCursor:replayCursor+1,session:{...s,workingState:next,
++        queue:[queueHead,last],irreversibleBarrier:barrier,revision:s.revision+5,
++        nextEffectSequence:s.nextEffectSequence+3,nextGroupSequence:s.nextGroupSequence+3,
++        journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...events],
++          effects:[...j.effects,row(head,1),row(finalize,2),row(spawned(1,types.SETTLE),3),row(spawned(2,types.PUBLIC_REFILL),4),row(extra,5)],
++          rng:[...j.rng,{owner:"science",cursor:next.meta.rngState?.science?.cursor||0}],
++          replay:[...j.replay,{cursor:replayCursor,kind:"decision",confirmed:true,...decision}]}}});
++      return {prepared:{envelope:{...stored.envelope,session},inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
++    }
++
+     function previewFixedBluePickSettlement(node, stored, action) {
+       if (!resourcePlanning || !cardPickPlanning || node.status !== "decision" || stored.resourceControl
+         || action.family !== "choose_card" || !Number.isInteger(action.target?.publicSlotIndex)) return null;
+@@ -902,6 +997,19 @@
+         const child=finishChild({session:null},{},movementPlanning?nextMovementIntent(node,requested):null,
+           null,stored.informationBarrier,requested,stored,endMenu);
+         provedQuietEndMenus++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const scanMove=previewQuietScan4Move(node,stored,requested);
++      if(scanMove){
++        let prepared=scanMove.prepared;
++        if(!prepared){
++          const envelope=provedCommittedEnvelope(stored,scanMove.next);
++          restoreEnvelope(envelope);
++          prepared={envelope,inspection:{phase:"idle",session:null}};
++        }
++        const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanMove.barrier},
++          nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,prepared);
++        provedScan4QuietMoves++;
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const fixedBluePick=previewFixedBluePickSettlement(node,stored,requested);
+@@ -6651,7 +6759,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

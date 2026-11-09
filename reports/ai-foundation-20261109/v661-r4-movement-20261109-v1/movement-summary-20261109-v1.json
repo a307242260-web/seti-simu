@@ -1,0 +1,461 @@
+{
+  "source": "665afe1567360bdae99be8eb0be3d23c1d9386af",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 449,
+      "ms": 1462.644875,
+      "proofCount": 107
+    },
+    "scan4": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 399,
+      "ms": 1413.483166,
+      "proofCount": 50,
+      "refillHits": 45,
+      "refillEntries": 5
+    },
+    "candidate": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 320,
+      "ms": 1369.759875,
+      "proofCount": 50,
+      "refillHits": 45,
+      "refillEntries": 5,
+      "moveMenus": 39,
+      "movePayments": 40
+    },
+    "allRootRankingsEqual": true,
+    "rootAndRngUnchanged": true,
+    "nativeInputCategories": {
+      "launch|stable|—": 5,
+      "play_card|stable|—": 12,
+      "pass|stable|—": 5,
+      "industry|stable|—": 2,
+      "choose_card|residual_company_decision|industry": 4,
+      "card_corner|stable|—": 22,
+      "place_data|stable|—": 9,
+      "choose_target|science_domain_place_data|place_data": 9,
+      "analyze|stable|—": 2,
+      "quick_trade|stable|—": 8,
+      "move|stable|—": 1,
+      "land|stable|—": 5,
+      "scan|stable|—": 5,
+      "choose_target|science_domain_scan_step|scan": 15,
+      "choose_card|science_domain_scan_step|scan": 55,
+      "choose_card|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_alien_trace|analyze": 6,
+      "choose_target|science_domain_alien_trace|land": 30,
+      "choose_card|residual_alien_card_decision|land": 10,
+      "accept_optional_effect|residual_card_decision|land": 20,
+      "end_turn|stable|—": 1,
+      "choose_payment|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_scan_step|play_card": 44,
+      "choose_card|science_domain_scan_step|play_card": 44
+    },
+    "complexityUnchanged": {
+      "transitions": 1287,
+      "branchingStates": 185,
+      "singleAlternativeStates": 249,
+      "valueEvaluations": 309,
+      "logicalResourceInputs": 1027,
+      "nodeCount": 1489,
+      "identityMaterializations": 1166,
+      "observationCount": 520
+    },
+    "pairedColdScan4": [
+      {
+        "mode": "base",
+        "ms": 1439.637542,
+        "native": 449,
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "proof": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "msAnalysis": {
+          "restore": 37.656384000000656,
+          "execute": 160.36625700000118,
+          "observation": 143.24949599999798,
+          "checkpoint": 103.55573000000152,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0.9149199999990287,
+          "preMainDataPlan": 0
+        }
+      },
+      {
+        "mode": "base",
+        "ms": 1514.368458,
+        "native": 449,
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "proof": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "msAnalysis": {
+          "restore": 41.522064999998804,
+          "execute": 175.33617599999948,
+          "observation": 147.4690790000009,
+          "checkpoint": 119.26061899999831,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0.9134899999990012,
+          "preMainDataPlan": 0
+        }
+      },
+      {
+        "mode": "preview",
+        "ms": 1411.900375,
+        "native": 399,
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "proof": 50,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "msAnalysis": {
+          "restore": 35.32186299999819,
+          "execute": 147.8282480000006,
+          "observation": 138.84439199999954,
+          "checkpoint": 97.11808999999965,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0.85061900000062,
+          "preMainDataPlan": 0
+        }
+      },
+      {
+        "mode": "cache",
+        "ms": 1403.924042,
+        "native": 399,
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "proof": 50,
+        "refillHits": 45,
+        "refillEntries": 5,
+        "msAnalysis": {
+          "restore": 36.14188500000097,
+          "execute": 147.2644530000005,
+          "observation": 138.97728499999795,
+          "checkpoint": 89.67163600000012,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0.9571280000011484,
+          "preMainDataPlan": 0
+        }
+      },
+      {
+        "mode": "cache",
+        "ms": 1409.16075,
+        "native": 399,
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "proof": 50,
+        "refillHits": 45,
+        "refillEntries": 5,
+        "msAnalysis": {
+          "restore": 36.55535500000289,
+          "execute": 143.5971130000004,
+          "observation": 136.62662299999704,
+          "checkpoint": 91.2908770000005,
+          "resourceOrder": 0,
+          "valueBound": 0,
+          "postMainPlan": 0.9367480000001933,
+          "preMainDataPlan": 0
+        }
+      }
+    ]
+  },
+  "scan4": {
+    "nativeReplays": 50,
+    "counts": {
+      "scan|stable": 28,
+      "play_card|decision": 22
+    },
+    "negativeControls": [
+      "paid-or-two-move-points",
+      "unexpected-tail",
+      "active-turn-reward",
+      "transport-pending",
+      "foreign-probe",
+      "complete-sector"
+    ]
+  },
+  "paidMove": {
+    "nativeReplays": 79,
+    "counts": {
+      "choose_payment|1|0": 28,
+      "move": 39,
+      "choose_payment|2|0": 10,
+      "choose_payment|0|1": 2
+    }
+  },
+  "teacher": [
+    {
+      "before": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 41.21675000000005,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 41.54595899999981,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0
+      }
+    },
+    {
+      "before": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 50.38195800000017,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 48.12004100000013,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0
+      }
+    },
+    {
+      "before": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 31.398167000000058,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 31.434290999999803,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0
+      }
+    },
+    {
+      "before": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 369,
+        "ms": 904.1351249999998,
+        "proofCount": 16
+      },
+      "candidate": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 939.1837500000001,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6
+      }
+    },
+    {
+      "before": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 391,
+        "ms": 977.3505,
+        "proofCount": 18
+      },
+      "candidate": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 970.789166,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6
+      }
+    }
+  ],
+  "publicScanGroups": [
+    {
+      "count": 27,
+      "source": "scan",
+      "step": "consume-known-public-card",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    },
+    {
+      "count": 16,
+      "source": "scan",
+      "step": "consume-known-public-card",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    },
+    {
+      "count": 12,
+      "source": "scan",
+      "step": "done",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    },
+    {
+      "count": 22,
+      "source": "play_card",
+      "step": "consume-known-public-card",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    },
+    {
+      "count": 12,
+      "source": "play_card",
+      "step": "consume-known-public-card",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    },
+    {
+      "count": 10,
+      "source": "play_card",
+      "step": "done",
+      "queue": [
+        "science_domain_scan_step",
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "afterQueue": [
+        "science_domain_scan_action_4",
+        "science_domain_scan_finalize",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize"
+      ],
+      "status": "decision",
+      "barrier": null,
+      "rngExact": true,
+      "reservedKnown": true,
+      "turnBonuses": 0,
+      "transit": 0,
+      "priorBarrier": null,
+      "control": false
+    }
+  ]
+}
