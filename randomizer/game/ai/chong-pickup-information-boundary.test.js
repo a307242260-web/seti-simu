@@ -135,4 +135,23 @@ try {
       assert.deepEqual(save(),root);
     }finally{port.close();}
   }
+
+  // Recreating the paid trace menu must keep all real choices and must
+  // leave the card in the deck until a later legal input selects it.
+  const pinkMenus=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'fixtures/pink-card-menu-proofs-20261110-v1.fixture.json.gz'))));
+  for(const {root,action,menu:expected} of pinkMenus){
+    restore(root);
+    const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+    try{
+      port.setResourcePlanning(true);port.setCardPickPlanning(true);
+      const n=port.openRoot(),next=port.expand(n,action.actionId);
+      assert.equal(port.getDiagnostics().submissionCount,0);
+      assert.equal(port.getDiagnostics().provedPinkCardMenus,1);
+      assert.equal(next.status,'decision');
+      assert.deepEqual(next.legalActions,expected);
+      assert.deepEqual(port.valueObservation(next).selfState.hand,n.observation.selfState.hand);
+      assert.deepEqual(save(),root);
+    }finally{port.close();}
+  }
 }finally{c.dispose();}

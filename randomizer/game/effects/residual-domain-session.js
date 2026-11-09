@@ -1723,7 +1723,7 @@
     };
   }
 
-  function previewPlainPinkTrace(session, selected, knownCards, allowRegion=false) {
+  function previewPlainPinkTrace(session, selected, knownCards, allowRegion=false, allowCard=false) {
     const source=session.workingState,head=session.queue[0],turn=source.turn;
     const owner=actor(source,head?.ownerId);
     if(session.phase!=="awaiting_input"||session.failure
@@ -1734,14 +1734,16 @@
       ||turn.currentPlayerId!==head.ownerId||!owner?.mainActionCompleted||owner.passCompletionPending
       ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
       ||owner.reservedCards.some(c=>!knownCards.has(c.id))
-      ||!science.isPlainPinkTrace(source,selected,allowRegion))return null;
+      ||!science.isPlainPinkTrace(source,selected,allowRegion,allowCard))return null;
     const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:clone(owner.reservedCards)};
     const state={...source,meta:{...source.meta,sequences:{...source.meta.sequences}},aliens:clone(source.aliens),
       players:{...source.players,players:source.players.players.map(p=>p===owner?player:p)}};
-    const placed=science.applyPlainPinkTrace(state,head,selected,allowRegion);
+    const placed=science.applyPlainPinkTrace(state,head,selected,allowRegion,allowCard);
     if(!placed)return null;
     const augmented=augmentEffectResult(state,placed,head);
     if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+    if(allowCard)return placed.cardEffect?{state,events:augmented.events,
+      spawnedEffects:[placed.cardEffect,...(placed.regionEffect?[placed.regionEffect]:[])].map(effect=>({effect}))}:null;
     if(placed.regionEffect&&!previewQuietAmibaRegion(state,placed.regionEffect))return null;
     return {state,player,events:augmented.events,regionSettled:Boolean(placed.regionEffect)};
   }
@@ -2629,6 +2631,8 @@
     previewQuietAmibaRegion,
     previewQuietEndHandoffs,
     previewLastPlainPinkTrace,
+    previewPinkTraceCardMenu:(session,selected,knownCards)=>previewPlainPinkTrace(session,selected,knownCards,true,true),
+    alienCardChoices,
     previewPinkTraceFossilMenu,
     previewPinkTraceBeforeRefill,
     previewQuietAmibaYellowLanding,

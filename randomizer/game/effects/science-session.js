@@ -648,9 +648,10 @@
     players.gainResources(actor, reward.gain, `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`);
   }
 
-  function scoreOnlyTraceReward(reward, allowRegion = false) {
+  function scoreOnlyTraceReward(reward, allowRegion = false, allowCard = false) {
     return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key]
-        || allowRegion && key === "region" && reward.region === "red")
+        || allowRegion && key === "region" && reward.region === "red"
+        || allowCard && key === "pickAlienCard" && reward.pickAlienCard === true)
       && Object.keys(reward.gain || {}).every(key => key === "score"));
   }
 
@@ -667,7 +668,19 @@
     };
   }
 
-  function isPlainPinkTrace(root, choice, allowRegion = false) {
+  function traceAlienCardEffect(root, ownerId, alienSlotId) {
+    const slot = aliens.getAlienSlot(getWorkingSlice(root, "aliens"), alienSlotId);
+    const species = slot ? aliens.getSpeciesTraceApi(slot) : null;
+    return {
+      type: "residual_alien_card_decision",
+      kind: "decision",
+      decisionKind: "choose_card",
+      ownerId,
+      payload: { speciesId: species?.speciesId || "amiba", source: "trace_reward" },
+    };
+  }
+
+  function isPlainPinkTrace(root, choice, allowRegion = false, allowCard = false) {
     const target = choice?.target, slot = aliens.getAlienSlot(root.aliens, target?.alienSlotId);
     if (choice?.family !== "choose_target" || target?.kind !== "planet-reward-alien-trace"
       || target.traceType !== "pink" || target.fangzhouUnlock || !slot?.revealed
@@ -675,19 +688,21 @@
     if (target.stateExtra) return Boolean(slot.traces?.pink?.firstPlaced);
     const species = aliens.getSpeciesTraceApi(slot);
     return target.speciesId === species?.speciesId
-      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position), allowRegion);
+      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position), allowRegion, allowCard);
   }
 
   // The caller owns the writable slices and must settle any reported region
   // using the same formal reward before treating this as a closed input.
-  function applyPlainPinkTrace(root, effect, choice, allowRegion = false) {
-    if (!isPlainPinkTrace(root, choice, allowRegion)) return null;
+  function applyPlainPinkTrace(root, effect, choice, allowRegion = false, allowCard = false) {
+    if (!isPlainPinkTrace(root, choice, allowRegion, allowCard)) return null;
     const placed = placeAlienTrace(root, effect, choice);
     if (!placed?.ok) return null;
-    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion)) return null;
+    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion, allowCard)) return null;
     const region = placed.reward?.region || null;
     awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, "pink");
-    return { ok: true, regionEffect: amibaTraceRegionEffect(root, effect.ownerId, region), events: [{
+    return { ok: true, regionEffect: amibaTraceRegionEffect(root, effect.ownerId, region),
+      cardEffect: placed.reward?.pickAlienCard ? traceAlienCardEffect(root, effect.ownerId, choice.target.alienSlotId) : null,
+      events: [{
       type: "alienTrace", playerId: effect.ownerId, traceType: "pink",
       alienSlotId: choice.target.alienSlotId, region,
     }] };
@@ -1819,19 +1834,9 @@
         // 痕迹位置奖励：选一张当前外星人的牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）。
         // 从放置的槽位推断物种，不能写死阿米巴（虫族等同样有 pickAlienCard 奖励）。
         if (result.reward?.pickAlienCard) {
-          const alienSlotId = choice?.target?.alienSlotId;
-          const slot = aliens.getAlienSlot(getWorkingSlice(root, "aliens"), alienSlotId);
-          const species = slot ? aliens.getSpeciesTraceApi(slot) : null;
-          const speciesId = species?.speciesId || "amiba";
           spawnedEffects.push({
             priority: "direct",
-            effect: {
-              type: "residual_alien_card_decision",
-              kind: "decision",
-              decisionKind: "choose_card",
-              ownerId: effect.ownerId,
-              payload: { speciesId, source: "trace_reward" },
-            },
+            effect: traceAlienCardEffect(root, effect.ownerId, choice?.target?.alienSlotId),
           });
         }
         // 阿米巴区域奖励：锁定区域内全部符号领奖一次，再按固定方向移动。
