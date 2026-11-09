@@ -32,7 +32,7 @@
     if(goal.kind==='held-landing-route')required.energy=goal.directTransport?0:goal.embeddedMove?(goal.path.length>1&&!goal.movementCardId?1:0):goal.movementPoints;
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
-      publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
+      publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:target?Math.max(0,target-placed(p)):0)-p.resources.availableData)};
     return d;
   }
   const protectedCard=(c,g)=>!c.id||c.id===g.cardId||c.id===g.incomeCardId||c.id===g.continuationCardId||c.id===g.retainedResearchCardId;
@@ -46,11 +46,17 @@
         &&!(slots.length<4&&target>=4)&&p.resources.availableData===p.dataState.poolTokens.length
         &&p.resources.availableData>=Math.max(0,target-slots.length);
     }
-    const spare=p.hand.filter(c=>!protectedCard(c,goal)),d=needs(state,seatId,goal);
-    const multiplier=industry.shouldDoubleDiscardCornerRewards?.(p)?2:1;
-    const dataMax=p.resources.availableData+spare.reduce((n,c)=>n+cornerData(c)*multiplier,0);
-    const publicityMax=p.resources.publicity+spare.reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier,0)
-      +(placed(p)<2&&placed(p)+dataMax>=2?1:0);
+    const d=needs(state,seatId,goal);
+    // No source is needed once the current wallet funds every obligation.
+    // Otherwise calculate only the bounds that an actual deficit can use.
+    if(!d.credits&&!d.energy&&!d.publicity&&!d.data)return true;
+    const spare=p.hand.filter(c=>!protectedCard(c,goal));
+    const publicityComputer=d.publicity?placed(p):2;
+    const multiplier=d.publicity||d.data||state.turn.roundNumber===3
+      ?(industry.shouldDoubleDiscardCornerRewards?.(p)?2:1):1;
+    const cornerDataMax=d.data||publicityComputer<2?spare.reduce((n,c)=>n+cornerData(c)*multiplier,0):0;
+    const publicityMax=d.publicity?p.resources.publicity+spare.reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier,0)
+      +(publicityComputer<2&&publicityComputer+p.resources.availableData+cornerDataMax>=2?1:0):0;
     const required=goal.required||{},funding=goal.incomeFunding&&placed(p)<4&&p.hand.find(c=>c.id===goal.incomeCardId);
     const income=funding?cards.getIncomeGainForCard(funding)||{}:{};
     // Named scans reserve money and energy together. Conversion burns one
@@ -73,8 +79,7 @@
     const direct=(!d.credits||p.resources.credits+(income.credits||0)+Math.floor(p.resources.energy/2)+Math.floor(spare.length/2)>=(required.credits||0))
       &&(!d.energy||p.resources.energy+(income.energy||0)+Math.floor(p.resources.credits/2)+Math.floor(spare.length/2)+(goal.kind==='route'?spare.reduce((n,c)=>n+movePoints(c),0):0)>=(goal.kind==='route'?(goal.endpointCost.energy||0)+goal.movementPoints:required.energy||0))
       &&(!d.publicity||publicityMax+(income.publicity||0)>=required.publicity)
-      &&(goal.kind==='blue-data'||!targetSlot(p,goal)||placed(p)+dataMax>=targetSlot(p,goal))
-      &&(goal.kind!=='blue-data'||dataMax>=bluePrerequisites(p,goal.blueSlot)+1);
+      &&(!d.data||cornerDataMax>=d.data);
     return direct||allowBlue&&Boolean(blueFunding(state,seatId,goal));
   }
   function blueFunding(state,seatId,goal){
@@ -482,8 +487,11 @@
   function catalog({state,seatId,requirements,actions=[]}){
     const p=owner(state,seatId),goals=[],requested=[],add=g=>{
       requested.push(g);
-      const directPub=p.resources.publicity+p.hand.filter(c=>c.id!==g.cardId).reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*(industry.shouldDoubleDiscardCornerRewards?.(p)?2:1),0);
-      if(g.required?.publicity>directPub&&g.required.publicity<=directPub+1&&placed(p)<2)g={...g,publicityData:true,targetComputerSlot:2};
+      if(g.required?.publicity>p.resources.publicity){
+        const multiplier=industry.shouldDoubleDiscardCornerRewards?.(p)?2:1;
+        const directPub=p.hand.reduce((n,c)=>n+(c.id===g.cardId?0:(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier),p.resources.publicity);
+        if(g.required.publicity>directPub&&g.required.publicity<=directPub+1&&placed(p)<2)g={...g,publicityData:true,targetComputerSlot:2};
+      }
       if(capacity(state,seatId,g))goals.push(g);
       else{const funded=incomeFunding(state,seatId,g);if(funded&&capacity(state,seatId,funded))goals.push(funded);}
     };
@@ -588,6 +596,8 @@
   const localWeights={score:1,credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5};
   const resourceValue=p=>Object.entries(localWeights).reduce((n,[k,w])=>n+(p.resources[k]||0)*w,0)+p.hand.length;
   function analysisPublicityFunding({state,seatId,actions}){
+    // The analysis portfolio is closed in the final round.
+    if(state.turn.roundNumber===4)return null;
     const p=owner(state,seatId);
     if(!p.mainActionCompleted||p.resources.availableData<6-placed(p)||observes(state,seatId,'cardCorner'))return null;
     const sources=actions.filter(a=>{

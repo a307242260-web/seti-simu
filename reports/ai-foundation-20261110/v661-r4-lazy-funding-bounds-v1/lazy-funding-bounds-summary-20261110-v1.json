@@ -1,0 +1,143 @@
+{
+  "baselineCommit": "2c55c712855a7b60e96fe515c2165a8b61ea9702",
+  "comparisonCalls": 13859,
+  "byInput": {
+    "capacity/r4/research_tech": 174,
+    "capacity/r4/route": 321,
+    "capacity/r4/analyze": 105,
+    "capacity/r4/blue-data": 1878,
+    "incomePreparationCapital/r4": 3874,
+    "purposeCapital/r4": 702,
+    "capacity/r4/income": 4272,
+    "capacity/r4/computer-prefix": 921,
+    "capacity/r4/play_card": 250,
+    "capacity/r4/effect-purpose": 36,
+    "capacity/r4/undefined": 451,
+    "capacity/r4/scan": 37,
+    "purposeCapital/r3": 449,
+    "capacity/r3/scan": 175,
+    "capacity/r3/research_tech": 81,
+    "capacity/r3/analyze": 3,
+    "capacity/r3/analysis-publicity": 6,
+    "capacity/r3/blue-data": 6,
+    "capacity/r3/undefined": 2,
+    "capacity/r3/play_card": 18,
+    "capacity/r3/route": 78,
+    "capacity/r3/effect-purpose": 20
+  },
+  "fullGraphParity": {
+    "official": [
+      {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "digest": "b5cdb7c3b667e44823a128e2f4481ec4b93beedf3bb7c9fbbd98134f4da64a3c"
+      }
+    ],
+    "teacher272": [
+      {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 684,
+        "digest": "c47d03d047d35681183fc1310af7b622b8cce8a0195d8daf5f427b791c0d7d1f"
+      }
+    ],
+    "satellite": [
+      {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 999,
+        "graphNodes": 1596,
+        "digest": "1b4594ad77fbda0144f4a494c41bb3321e2bcecc5a0db712786b875eb40c2cce"
+      }
+    ],
+    "r3": [
+      {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "digest": "7c40daad74568e4a14e6bd744f2b3afa111ce067933a9243f7f602845fd322f0"
+      },
+      {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "digest": "3787cdeb7babb08a7d3a04b8b042bbbfb37eedd80ff407f7e2b19906e98eb64c"
+      }
+    ]
+  },
+  "pairedCold": {
+    "official": {
+      "baseline": {
+        "medianMilliseconds": 674.013625,
+        "samplesMilliseconds": [
+          676.6937919999999,
+          674.013625,
+          668.52875
+        ]
+      },
+      "candidate": {
+        "medianMilliseconds": 653.4600839999999,
+        "samplesMilliseconds": [
+          647.5667500000001,
+          653.4600839999999,
+          684.325917
+        ]
+      }
+    },
+    "teacher272": {
+      "baseline": {
+        "medianMilliseconds": 1152.720625,
+        "samplesMilliseconds": [
+          1161.2095,
+          1146.515041,
+          1152.720625
+        ]
+      },
+      "candidate": {
+        "medianMilliseconds": 1112.940167,
+        "samplesMilliseconds": [
+          1100.296542,
+          1112.940167,
+          1115.110792
+        ]
+      }
+    },
+    "satellite": {
+      "baseline": {
+        "medianMilliseconds": 2050.722625,
+        "samplesMilliseconds": [
+          2056.5807499999996,
+          2050.722625,
+          2028.416209
+        ]
+      },
+      "candidate": {
+        "medianMilliseconds": 2012.231791,
+        "samplesMilliseconds": [
+          2027.166791,
+          1977.6332499999999,
+          2012.231791
+        ]
+      }
+    }
+  },
+  "nodePassed": 5,
+  "browserPassed": 2,
+  "stateValueInputAuditPassed": true,
+  "gate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "admitted": false
+  },
+  "newAutonomousGames": 0
+}

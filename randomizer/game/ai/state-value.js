@@ -521,12 +521,18 @@
     return researchIncome.incomeOptions({facts,investment,baseCapital:base},weights);
   }
   function incomePreparationCapital(facts,weights=DEFAULT_WEIGHTS) {
+    if(facts.round===4)return 0;
     const allocation=incomeAllocationCapital(facts,weights);
     if(allocation.total)return allocation.total;
     return dataInvestmentFor(facts,weights)(facts.hand,facts.player.publicity,{resources:facts.player,income:facts.player.income,startingIncome:Number(facts.passing)});
   }
   const ZERO_JOINT_RESEARCH=Object.freeze({held:0,paid:0});
   function basePurposeCapital(facts, weights) {
+    if(facts.round===4){
+      const mission=probeCapital.quoteFinalRoundValue(facts,weights),finalMarkPotential=probeCapital.pendingFinalMarkCapital(facts);
+      return {handPotential:0,researchPotential:0,probePotential:mission,computerPotential:0,finalMarkPotential,
+        total:arithmetic.sum([mission,finalMarkPotential],weights)};
+    }
     const player=facts.player,round=facts.round,passing=facts.passing,supply=facts.supply;
     const prepared=Number.isFinite(player.score)&&Number.isFinite(player.publicity)?readyAnalysis.preparePrepaidCapital(facts,weights):undefined;
     const computer=prepared?prepared(player.score,player.publicity):readyAnalysis.prepaidCapital(facts,weights);

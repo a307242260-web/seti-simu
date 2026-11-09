@@ -346,6 +346,13 @@
   // The shared internal portfolio only reads the trace arrays. Custom callers
   // of quoteValue/quote still receive private deep copies as before.
   function quoteReadOnlyPortfolio(facts, weights) {return evaluateMission(facts,weights,true,weights===arithmetic.DEFAULT_WEIGHTS);}
+  function quoteFinalRoundValue(facts, weights) {
+    if(facts.round!==4)throw new TypeError('PROBE_FINAL_ROUND_INVALID');
+    // The last-round portfolio has neither research investment nor a later
+    // data mission. Skip each per-wallet cache key, not any payable mission.
+    return evaluateMission({...facts,initialInvestmentCapital:0,dataContinuation:undefined},
+      weights,true,weights===arithmetic.DEFAULT_WEIGHTS,{constantInvestment:true});
+  }
   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
 
   // Lower bound for one already reachable satellite in the final round.
@@ -756,5 +763,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, quoteFinalRoundValue, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });
