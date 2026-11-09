@@ -1,0 +1,256 @@
+{
+  "source": "a990000b648376de3c3d0b361cb60773cd30400d",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 526,
+      "ms": 1515.126958,
+      "proofCount": 107
+    },
+    "endPrelude": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 449,
+      "ms": 1504.349958,
+      "proofCount": 107
+    },
+    "candidate": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 449,
+      "ms": 1462.644875,
+      "proofCount": 107
+    },
+    "allRootRankingsEqual": true,
+    "rootAndRngUnchanged": true,
+    "nativeInputCategories": {
+      "launch|stable|—": 5,
+      "play_card|stable|—": 12,
+      "pass|stable|—": 5,
+      "industry|stable|—": 2,
+      "choose_card|residual_company_decision|industry": 4,
+      "card_corner|stable|—": 22,
+      "place_data|stable|—": 9,
+      "choose_target|science_domain_place_data|place_data": 9,
+      "analyze|stable|—": 2,
+      "quick_trade|stable|—": 8,
+      "move|stable|—": 40,
+      "choose_payment|probe_turn_move_payment|move": 40,
+      "land|stable|—": 5,
+      "scan|stable|—": 5,
+      "choose_target|science_domain_scan_step|scan": 15,
+      "choose_card|science_domain_scan_step|scan": 55,
+      "choose_target|science_domain_scan_action_4|scan": 28,
+      "choose_card|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_alien_trace|analyze": 6,
+      "choose_target|science_domain_alien_trace|land": 30,
+      "choose_card|residual_alien_card_decision|land": 10,
+      "accept_optional_effect|residual_card_decision|land": 20,
+      "end_turn|stable|—": 1,
+      "choose_payment|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_scan_step|play_card": 44,
+      "choose_card|science_domain_scan_step|play_card": 44,
+      "choose_target|science_domain_scan_action_4|play_card": 22
+    }
+  },
+  "quietEnd": {
+    "replays": 77,
+    "keptNativeAsTemplate": 1,
+    "groups": {
+      "b117-orbit-land-count-task": 67,
+      "b60-jupiter-task": 6,
+      "other-owner": 4
+    },
+    "negativeControls": [
+      "unknown-reserved-card",
+      "new-milestone",
+      "turn-bonus",
+      "three-seats",
+      "pass",
+      "no-foreign-seat"
+    ]
+  },
+  "identity": {
+    "total": 1166,
+    "statuses": {
+      "stable": 493,
+      "decision": 565,
+      "other-owner": 42,
+      "information-barrier": 66
+    },
+    "hits": 4825,
+    "stores": 3134,
+    "scopes": {
+      "aliens": "prefix-references-and-shallow-mutation",
+      "data": "prefix-references-and-shallow-mutation",
+      "finalScoring": "prefix-references-and-shallow-mutation",
+      "pieces": "prefix-references-and-shallow-mutation",
+      "planets": "prefix-references-and-shallow-mutation",
+      "solarSystem": "prefix-references-and-shallow-mutation",
+      "tech": "prefix-references-and-shallow-mutation"
+    },
+    "rejectedWholeTreeProbe": {
+      "ms": 1615.41325,
+      "priorMs": 1515.126958,
+      "cacheStores": 226394
+    }
+  },
+  "teacher": [
+    {
+      "before": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 43.77283299999999,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 41.21675000000005,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 48.856250000000045,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 50.38195800000017,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 35.74020799999994,
+        "proofCount": 0
+      },
+      "candidate": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 31.398167000000058,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 369,
+        "ms": 907.013375,
+        "proofCount": 16
+      },
+      "candidate": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 369,
+        "ms": 904.1351249999998,
+        "proofCount": 16
+      }
+    },
+    {
+      "before": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 391,
+        "ms": 985.3952079999999,
+        "proofCount": 18
+      },
+      "candidate": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 391,
+        "ms": 977.3505,
+        "proofCount": 18
+      }
+    }
+  ],
+  "scan": {
+    "actual": 208,
+    "groups": {
+      "scan|science_domain_scan_step|choose_target": {
+        "menus": 5,
+        "nativeInputs": 15,
+        "menusWithMultiple": 5,
+        "knownFixed": 0,
+        "types": {
+          "specified|—": 5
+        }
+      },
+      "scan|science_domain_scan_step|choose_card": {
+        "menus": 42,
+        "nativeInputs": 55,
+        "menusWithMultiple": 6,
+        "knownFixed": 0,
+        "types": {
+          "public|—": 42
+        }
+      },
+      "scan|science_domain_scan_action_4|choose_target": {
+        "menus": 28,
+        "nativeInputs": 28,
+        "menusWithMultiple": 0,
+        "knownFixed": 0,
+        "types": {
+          "—|—": 28
+        }
+      },
+      "play_card|science_domain_scan_step|choose_target": {
+        "menus": 26,
+        "nativeInputs": 44,
+        "menusWithMultiple": 8,
+        "knownFixed": 0,
+        "types": {
+          "specified|—": 4,
+          "any|—": 22
+        }
+      },
+      "play_card|science_domain_scan_step|choose_card": {
+        "menus": 34,
+        "nativeInputs": 44,
+        "menusWithMultiple": 4,
+        "knownFixed": 0,
+        "types": {
+          "public|—": 34
+        }
+      },
+      "play_card|science_domain_scan_action_4|choose_target": {
+        "menus": 22,
+        "nativeInputs": 22,
+        "menusWithMultiple": 0,
+        "knownFixed": 0,
+        "types": {
+          "—|—": 22
+        }
+      }
+    }
+  }
+}

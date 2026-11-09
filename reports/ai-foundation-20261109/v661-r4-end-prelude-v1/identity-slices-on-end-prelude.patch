@@ -1,0 +1,113 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -152,7 +152,8 @@
+   // 重建执行意图并加入搜索控制身份；不把整份历史日志或撤销帧当成规则差异。
+   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
+   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
+-  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null, subtreeCache = null) {
++  const STATIC_IDENTITY_SLICES = new Set(["aliens","data","finalScoring","pieces","planets","solarSystem","tech"]);
++  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null, subtreeCache = null, sliceCache = null) {
+     const session = envelope.session?.session;
+     const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);
+     function buildState() {
+@@ -203,11 +204,11 @@
+     const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
+     const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
+     const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g");
+-    let unstableSubtrees=0;
++    let unstableSubtrees=0, trackSlice=false;
+     function normalize(value, key = "") {
+       // Cached children must be independent of every Session prefix, including
+       // a different future prefix. Shallow freezing cannot protect a child.
+-      if(subtreeCache&&typeof value==="string"&&referenceKeys.has(key)&&/effect-session-[0-9]+:(?:effect|group):[0-9]+/.test(value))unstableSubtrees++;
++      if((subtreeCache||trackSlice)&&typeof value==="string"&&referenceKeys.has(key)&&/effect-session-[0-9]+:(?:effect|group):[0-9]+/.test(value))unstableSubtrees++;
+       if (typeof value === "string" && prefix && referenceKeys.has(key)) {
+         // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。
+         const parts = value.split(referencePattern);
+@@ -218,11 +219,11 @@
+         });
+       }
+       if (!value || typeof value !== "object") return value;
+-      const before=unstableSubtrees,immutable=subtreeCache&&Object.isFrozen(value);
+-      if(subtreeCache&&!immutable)unstableSubtrees++;
+-      if(immutable&&subtreeCache.values.has(value)){subtreeCache.hits++;return subtreeCache.values.get(value);}
++      const before=unstableSubtrees,immutable=(subtreeCache||trackSlice)&&Object.isFrozen(value);
++      if((subtreeCache||trackSlice)&&!immutable)unstableSubtrees++;
++      if(subtreeCache&&immutable&&subtreeCache.values.has(value)){subtreeCache.hits++;return subtreeCache.values.get(value);}
+       const result=normalizeObject(value);
+-      if(immutable&&unstableSubtrees===before){subtreeCache.values.set(value,result);subtreeCache.stores++;}
++      if(subtreeCache&&immutable&&unstableSubtrees===before){subtreeCache.values.set(value,result);subtreeCache.stores++;}
+       return result;
+     }
+     function normalizeObject(value) {
+@@ -254,6 +255,27 @@
+         if(result)result[name]=item;
+       }
+       return result||value;
++    }
++    function serializeState(state) {
++      if (!sliceCache || !Object.isFrozen(source)) return JSON.stringify(normalize(state));
++      const names=Object.keys(state).sort();
++      if(names.some(name=>/^\d+$/.test(name))||state.schemaVersion==="seti-standard-action-v1")
++        return JSON.stringify(normalize(state));
++      const fields=[];
++      for(const name of names){
++        const value=state[name],memoizable=value&&typeof value==="object"&&STATIC_IDENTITY_SLICES.has(name)&&Object.isFrozen(value);
++        let bytes=memoizable?sliceCache.values.get(value):undefined;
++        if(bytes!==undefined)sliceCache.hits++;
++        else{
++          const before=unstableSubtrees;
++          trackSlice=Boolean(memoizable);
++          bytes=JSON.stringify(normalize(value,name));
++          trackSlice=false;
++          if(memoizable&&before===unstableSubtrees&&bytes!==undefined){sliceCache.values.set(value,bytes);sliceCache.stores++;}
++        }
++        if(bytes!==undefined)fields.push(JSON.stringify(name)+":"+bytes);
++      }
++      return "{"+fields.join(",")+"}";
+     }
+     const pending = session ? {
+       phase: session.phase, queue: session.queue,
+@@ -272,7 +294,7 @@
+     let normalizedState;
+     if(variants?.has(key))normalizedState=variants.get(key);
+     else{
+-      normalizedState=JSON.stringify(normalize(buildState()));
++      normalizedState=serializeState(buildState());
+       if(stateCache&&Object.isFrozen(source)){
+         if(!variants){
+           if(stateCache.size>=64)stateCache.delete(stateCache.keys().next().value);
+@@ -311,6 +333,7 @@
+     let nodes = new WeakMap();
+     let observationReleasers = new WeakMap(), observationReleases = 0;
+     let normalizedIdentityStates = new Map();
++    const identitySlices={values:new WeakMap(),hits:0,stores:0};
+     const identitySubtrees={values:new WeakMap(),hits:0,stores:0};
+     const identities = new Map(), physicalIdentityKeys = new Map();
+     // Intern exact full-state bytes once. Search control keys need only the
+@@ -512,7 +535,7 @@
+       let physicalKey,identity;
+       nodes.set(node, { envelope, serial: nodeCount,
+         get physicalKey(){
+-          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates);identityMaterializations++;}
++          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates,null,identitySlices);identityMaterializations++;}
+           return physicalKey;
+         },
+         get identity(){
+@@ -5379,6 +5402,7 @@
+       observationReleasers = new WeakMap();
+       normalizedIdentityStates = new Map();
+       identitySubtrees.values=new WeakMap();
++      identitySlices.values=new WeakMap(); identitySlices.hits=0; identitySlices.stores=0;
+       movementPolicies = new WeakMap();
+       movementRouteCache.clear();
+       movementTimingCache.clear();
+@@ -6628,7 +6652,7 @@
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+         companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
++        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+         committedDecodeCount, committedDecodeHits, committedReferenceCount,
