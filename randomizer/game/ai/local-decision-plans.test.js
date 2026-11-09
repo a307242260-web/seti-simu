@@ -80,3 +80,43 @@ for(const [reason,budget] of [['transition-budget',{transitions:1}],['node-budge
  assert.deepEqual(normalized(c.lifecycle.save().envelope),normalized(cold.lifecycle.save().envelope));q.close();c.dispose();cold.dispose();
 }
 console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,retainedMarkOptions:1,scanPurposes:scans.length,nativeRecoveryAndRootIsolation:true,stableRestoreSkipped:true}));
+
+// A completed non-scoring task remains a fixed payout when the next actor
+// is the same seat and an existing fossil stays in transit.
+{
+ const envelope=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'final-own-b117-20261110-v1.fixture.json.gz'))));
+ const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+ k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+ const initial=c.lifecycle.save().envelope,port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+ const evaluate=createStateValueEvaluator(seatId),pending=(node)=>port.expand(node,node.legalActions.find(a=>a.family==='end_turn').actionId);
+ const trade=node=>node.legalActions.find(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy');
+ try{
+  const root=port.openRoot();port.setResourcePlanning(true);port.setDecisionPlanning({finalMarkPlanning:true});
+  for(const branch of [null,trade(root)]){
+   assert(branch===null||branch.actionId);
+   const start=branch?port.expand(root,branch.actionId):root;
+   const menu=pending(start),spec=port.localDecisionSpec(menu);
+   assert.equal(spec.reason,'greedy-final-end-task-no-overflow');
+   assert.equal(spec.excludedActionIds.length,1);
+   const after=port.expand(menu,spec.selectedActionId);
+   assert.equal(after.status,'turn-boundary');assert.deepEqual(after.legalActions,[]);
+   assert.deepEqual(c.lifecycle.save().envelope,initial);
+   if(branch)submit(c,branch.actionId);
+   submit(c,actions(c).find(a=>a.family==='end_turn').actionId);
+   assert(actions(c).some(a=>a.actionId===spec.selectedActionId));
+   const session=c.lifecycle.save().envelope.session.session,knownCards=new Set([session.queue[0].payload.cardInstanceId]);
+   assert.equal(plans.pureOptional({state:session.workingState,seatId,actions:actions(c),session,knownCards}),null,
+     'an unknown reserved card can still observe the task payout');
+   submit(c,spec.selectedActionId);
+   assert.equal(evaluate(port.valueObservation(after)),evaluate(c.projection({role:'player',playerId:seatId,valueOnly:true}).state));
+   const next=JSON.parse(c.lifecycle.save().envelope.committedState),old=JSON.parse(initial.committedState);
+   assert.equal(next.turn.currentPlayerId,seatId);assert.deepEqual(next.aliens.chong,old.aliens.chong);
+   assert.deepEqual(next.meta.rngState,old.meta.rngState);
+   assert(c.lifecycle.restore(initial).ok);
+  }
+  assert.equal(port.getDiagnostics().provedQuietEndMenus,1);
+  assert.equal(port.getDiagnostics().provedFinalEndTaskInputs,2);
+ }finally{port.close();c.dispose();}
+}

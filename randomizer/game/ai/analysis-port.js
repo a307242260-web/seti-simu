@@ -1398,12 +1398,14 @@
         null, stored.informationBarrier, action, stored);
     }
 
-    function finishProvedForeignTurn(stored, action, state) {
+    function finishProvedTurnBoundary(stored, action, state) {
       const envelope=provedCommittedEnvelope(stored,state), barrier=stored.informationBarrier;
       inheritCardKnowledge(envelope,stored,action);
-      // No session remains, the only next actor is a live foreign seat, and
-      // a carried information barrier closes our side without reading its menu.
-      return createNode(envelope,null,[],barrier?"information-barrier":"other-owner",barrier);
+      // The completed turn never reads the next menu, even when the same
+      // seat acts again. Keep a prior information barrier if one was carried.
+      const own=state.turn.currentPlayerId===seatId;
+      return createNode(envelope,null,[],barrier?"information-barrier":own?"turn-boundary":"other-owner",
+        barrier||(own?{code:"own-turn-complete"}:null));
     }
 
     function expand(node, actionId, previewOnly = false) {
@@ -1465,7 +1467,7 @@
           action:requested,knownCards:knownCards(stored.envelope)}):null;
       if(traceSkip){
         // The previous information barrier still closes the new turn.
-        const child=finishProvedForeignTurn(stored,requested,traceSkip);
+        const child=finishProvedTurnBoundary(stored,requested,traceSkip);
         provedChongTraceSkips++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
@@ -1482,7 +1484,7 @@
           session:taskSession,action:requested,knownCards:knownCards(stored.envelope)}):null;
       if(endClaim){
         provedFinalEndTaskInputs++;
-        const child=finishProvedForeignTurn(stored,requested,endClaim);
+        const child=finishProvedTurnBoundary(stored,requested,endClaim);
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const chongEndPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
@@ -1495,22 +1497,13 @@
         provedChongEndMenus++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
-      const sameSeatEnd=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
-        ?localPlans.previewFinalOwnQuietEnd({state:readIdentityState(stored.envelope),seatId,
-          action:requested,knownCards:knownCards(stored.envelope)}):null;
-      if(sameSeatEnd){
-        const envelope=provedCommittedEnvelope(stored,sameSeatEnd),barrier=stored.informationBarrier;
-        inheritCardKnowledge(envelope,stored,requested);
-        const child=createNode(envelope,null,[],barrier?"information-barrier":"turn-boundary",barrier||{code:"own-turn-complete"});
-        provedOwnEndHandovers++;
-        return rememberPrefix(key,node,actionId,remember(key,child));
-      }
       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
-        ?localPlans.previewFinalForeignEndPrelude({state:readIdentityState(stored.envelope),seatId,
-          action:requested,knownCards:knownCards(stored.envelope)}):null;
+        ?localPlans.previewFinalEndPrelude({state:readIdentityState(stored.envelope),seatId,
+          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true}):null;
       if(endPrelude?.finished){
-        const child=finishProvedForeignTurn(stored,requested,endPrelude.finished);
-        provedQuietEndHandovers++;
+        const child=finishProvedTurnBoundary(stored,requested,endPrelude.finished);
+        if(endPrelude.finished.turn.currentPlayerId===seatId)provedOwnEndHandovers++;
+        else provedQuietEndHandovers++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const endMenu=endPrelude?.task&&makeQuietEndPrelude(stored.envelope,requested,endPrelude);
@@ -5224,9 +5217,9 @@
 
     function sameFinalClaimEnd(source,claimed,action,lateEnd,earlyEnd){
       const original=nodes.get(source),paid=nodes.get(claimed),known=knownCards(original.envelope);
-      const late=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(original.envelope),seatId,action:lateEnd,knownCards:known});
+      const late=localPlans.previewFinalEndPrelude({state:readIdentityState(original.envelope),seatId,action:lateEnd,knownCards:known});
       if(!late?.task||late.task.cardInstanceId!==action.target.cardInstanceId||late.task.ruleId!==action.target.ruleId)return false;
-      const early=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(paid.envelope),seatId,action:earlyEnd,knownCards:known})?.finished;
+      const early=localPlans.previewFinalEndPrelude({state:readIdentityState(paid.envelope),seatId,action:earlyEnd,knownCards:known})?.finished;
       const menu=early&&makeQuietEndPrelude(original.envelope,lateEnd,late);
       const choices=menu?.inspection.session.decision.choices;
       const confirm=choices?.find(a=>a.target?.choiceId==="confirm:task:"+late.task.cardInstanceId+":"+late.task.ruleId);
