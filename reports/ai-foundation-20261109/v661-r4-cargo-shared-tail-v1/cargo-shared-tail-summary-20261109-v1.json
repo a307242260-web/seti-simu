@@ -1,0 +1,113 @@
+{
+  "productionAdmitted": false,
+  "thresholds": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "results": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "oldNative": 6,
+      "cornerPolicyNative": 6,
+      "quietEndNative": 6,
+      "milliseconds": 71.19762500000002,
+      "allRootValuesRealizationDebtEqualToCornerPolicy": true
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "oldNative": 10,
+      "cornerPolicyNative": 10,
+      "quietEndNative": 10,
+      "milliseconds": 66.66370799999999,
+      "allRootValuesRealizationDebtEqualToCornerPolicy": true
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "oldNative": 2,
+      "cornerPolicyNative": 2,
+      "quietEndNative": 2,
+      "milliseconds": 32.42650000000003,
+      "allRootValuesRealizationDebtEqualToCornerPolicy": true
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "oldNative": 1126,
+      "cornerPolicyNative": 1127,
+      "quietEndNative": 1009,
+      "milliseconds": 1835.352417,
+      "allRootValuesRealizationDebtEqualToCornerPolicy": true
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "oldNative": 1293,
+      "cornerPolicyNative": 1293,
+      "quietEndNative": 1134,
+      "milliseconds": 1970.1486249999998,
+      "allRootValuesRealizationDebtEqualToCornerPolicy": true
+    }
+  ],
+  "proofAudit": [
+    {
+      "input": 359,
+      "exactNativeChecks": 118
+    },
+    {
+      "input": 355,
+      "exactNativeChecks": 159
+    }
+  ],
+  "claimFirstValue": {
+    "old": 280,
+    "corrected": 280.5,
+    "analyzeFirst": 280.5
+  },
+  "prefixOrder": [
+    {
+      "target": "外星人 1 额外痕迹位（3分）",
+      "sameForwardRuleKey": true,
+      "hasBlindReward": false,
+      "hasPendingChoice": false
+    },
+    {
+      "target": "外星人 1 蓝1号位",
+      "sameForwardRuleKey": true,
+      "hasBlindReward": false,
+      "hasPendingChoice": false
+    },
+    {
+      "target": "外星人 1 蓝2号位（1分）",
+      "sameForwardRuleKey": true,
+      "hasBlindReward": false,
+      "hasPendingChoice": false
+    },
+    {
+      "target": "外星人 1 蓝3号位（外星人牌）",
+      "sameForwardRuleKey": false,
+      "hasBlindReward": false,
+      "hasPendingChoice": true
+    },
+    {
+      "target": "外星人 2 额外痕迹位（3分）",
+      "sameForwardRuleKey": true,
+      "hasBlindReward": false,
+      "hasPendingChoice": false
+    },
+    {
+      "target": "外星人 2 蓝7号位（盲抽2+化石奖励）",
+      "sameForwardRuleKey": true,
+      "hasBlindReward": true,
+      "hasPendingChoice": false
+    },
+    {
+      "target": "外星人 2 蓝8号位（3分+外星人牌）",
+      "sameForwardRuleKey": false,
+      "hasBlindReward": false,
+      "hasPendingChoice": true
+    }
+  ]
+}
