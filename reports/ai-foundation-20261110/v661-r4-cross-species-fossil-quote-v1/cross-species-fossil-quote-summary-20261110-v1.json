@@ -1,0 +1,157 @@
+{
+  "pairedCold": {
+    "teacher272": {
+      "samples": {
+        "baseline": {
+          "medianMilliseconds": 1174.065208,
+          "samplesMilliseconds": [
+            1174.065208,
+            1175.430166,
+            1160.182292
+          ],
+          "nativeInputs": 198,
+          "nodes": 684
+        },
+        "candidate": {
+          "medianMilliseconds": 1169.813,
+          "samplesMilliseconds": [
+            1199.147041,
+            1169.813,
+            1162.485084
+          ],
+          "nativeInputs": 198,
+          "nodes": 684
+        }
+      },
+      "identicalRootCandidates": 33,
+      "action": "place_data:8fd12fd3",
+      "value": 216.5
+    },
+    "official": {
+      "samples": {
+        "baseline": {
+          "medianMilliseconds": 667.601041,
+          "samplesMilliseconds": [
+            667.9814160000001,
+            667.601041,
+            665.439208
+          ],
+          "nativeInputs": 165,
+          "nodes": 535
+        },
+        "candidate": {
+          "medianMilliseconds": 676.510666,
+          "samplesMilliseconds": [
+            676.510666,
+            671.5266670000001,
+            796.830541
+          ],
+          "nativeInputs": 165,
+          "nodes": 535
+        }
+      },
+      "identicalRootCandidates": 22,
+      "action": "industry:e887dc52",
+      "value": 205.5
+    },
+    "satellite": {
+      "samples": {
+        "baseline": {
+          "medianMilliseconds": 2257.899542,
+          "samplesMilliseconds": [
+            2257.899542,
+            2230.073625,
+            2285.930584
+          ],
+          "nativeInputs": 1182,
+          "nodes": 1842
+        },
+        "candidate": {
+          "medianMilliseconds": 2044.8411250000001,
+          "samplesMilliseconds": [
+            2025.9971670000002,
+            2062.089792,
+            2044.8411250000001
+          ],
+          "nativeInputs": 999,
+          "nodes": 1596
+        }
+      },
+      "identicalRootCandidates": 32,
+      "action": "place_data:8fd12fd3",
+      "value": 222.5
+    }
+  },
+  "actualMenus": 57,
+  "nativeReplayInputs": 624,
+  "knownQuotesExact": 459,
+  "winners": {
+    "amiba:4": 33,
+    "chong:2": 24
+  },
+  "guardResults": {
+    "retainedUnknown": 12,
+    "unpricedProbeRetainsFallback": true,
+    "customEvaluatorKeepsOldRule": true,
+    "rootExact": true
+  },
+  "satelliteNativeInputsRemoved": {
+    "science_domain_alien_trace/choose_target": 120,
+    "residual_alien_card_decision/choose_card": 63
+  },
+  "satelliteNativeInputComposition": {
+    "stable/play_card": 11,
+    "stable/pass": 2,
+    "probe_turn_pass_discard/choose_card": 2,
+    "stable/quick_trade": 7,
+    "standard_action_session_decision/choose_card": 2,
+    "stable/place_data": 1,
+    "science_domain_place_data/choose_target": 5,
+    "stable/analyze": 1,
+    "standard_action_session_decision/choose_payment": 3,
+    "stable/move": 1,
+    "probe_turn_move_payment/choose_payment": 4,
+    "stable/land": 4,
+    "probe_land_choice/choose_target": 6,
+    "stable/scan": 2,
+    "science_domain_scan_step/choose_target": 212,
+    "science_domain_scan_action_4/choose_target": 10,
+    "stable/research_tech": 2,
+    "science_domain_alien_trace/choose_target": 445,
+    "residual_alien_card_decision/choose_card": 252,
+    "science_domain_pick_card/choose_card": 4,
+    "stable/end_turn": 4,
+    "stable/complete_task": 1,
+    "card_play_domain_effect:decision:chong_land_for_pickup/choose_target": 4,
+    "card_play_domain_effect:decision:chong_probe_planet_fossil_reward/choose_target": 4,
+    "stable/industry": 1,
+    "residual_company_decision/choose_card": 2,
+    "science_domain_income/choose_card": 4,
+    "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup/choose_target": 3
+  },
+  "thirdRoundPreserved": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214
+    }
+  ],
+  "nodePassed": 4,
+  "browserPassed": 2,
+  "stateValueInputAuditPassed": true,
+  "gate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "admitted": false
+  },
+  "newAutonomousGames": 0
+}

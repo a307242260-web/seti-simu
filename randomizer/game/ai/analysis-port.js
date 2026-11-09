@@ -314,7 +314,7 @@
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let movementPlanning = false;
     let cardPickPlanning = false;
-    let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false;
+    let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false, rankKnownFossilTraces = false;
     let localSpecs=new WeakMap();
     let resourceSpecs = new WeakMap();
     const resolvedPublicAnalysis = new WeakSet();
@@ -1899,7 +1899,7 @@
 
     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
 
-    function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
+    function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;rankKnownFossilTraces=options.rankKnownFossilTraces===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
     const chongTaskPeekBoundaries = new WeakMap(), chongDirectClaims = new Map();
     function chongClaimKey(stored, cardId) {
       // Queue identity still governs executable nodes. This key is only for
@@ -2018,6 +2018,7 @@
       if(!result&&resourcePlanning&&cardPickPlanning)result=localPlans.pinkScoreBeforeUnknownFossil({
         state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope),
         knownFossilIds:knownRootFossilIds,knownAmibaDisplay:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex,
+        knownChongDisplay:knownRootAlienIds.has("虫")?knownChongDisplayIndex:null,rankKnownFossilTraces,
       });
       if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
       if(!result&&resourcePlanning){

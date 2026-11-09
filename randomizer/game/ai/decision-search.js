@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v432";
+  const VERSION = "seti-complete-decision-search-v433";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -91,7 +91,7 @@
     port.setResourcePlanning?.(resourcePlanning);
     if(scanPlanning&&!resourcePlanning)throw new TypeError("SEARCH_SCAN_RESOURCE_PLANNING_REQUIRED");
     if((finalMarkPlanning||scanPlanning)&&typeof port.setDecisionPlanning!=="function")throw new TypeError("SEARCH_LOCAL_PLANNING_PORT_REQUIRED");
-    port.setDecisionPlanning?.({finalMarkPlanning,scanPlanning});
+    port.setDecisionPlanning?.({finalMarkPlanning,scanPlanning,rankKnownFossilTraces:realizationTies===true});
     if (openingPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.openingPlanSpec !== "function")) throw new TypeError("SEARCH_OPENING_MODEL_INVALID");

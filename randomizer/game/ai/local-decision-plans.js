@@ -3,11 +3,11 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens,common?require('../industry/catalog'):root.SetiIndustryCatalog,common?require('../abilities'):root.SetiAbilities,common?require('../turn-flow'):root.SetiTurnFlow);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens,common?require('../industry/catalog'):root.SetiIndustryCatalog,common?require('../abilities'):root.SetiAbilities,common?require('../turn-flow'):root.SetiTurnFlow,common?require('./probe-capital'):root.SetiProbeCapital);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow,probeCapital){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v11';
+ const VERSION='seti-local-mark-and-scan-purpose-v12';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -1232,9 +1232,57 @@
   const weights=stateValue.DEFAULT_WEIGHTS,value=stateValue.sumValueParts([total(q,copy)-total(state,p),capital,weights.availableData,-weights.handSize]);
   return value>0?{actionId:a.actionId,cardId:c.id,value,capital}:null;
  }
+ function knownFossilTraceQuotes({state,player,actions,symbols,knownAmibaDisplay,knownChongDisplay}){
+  if(probeCapital.ownedProbes(state.pieces.rockets,player).length)return [];
+  const weights=stateValue.DEFAULT_WEIGHTS,quotes=[];
+  const finalScoringBoard=structuredClone(state.finalScoring);
+  const context={...state,finalScoring:finalScoringBoard,players:state.players.players,cardEffects:effects,
+   getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const pureScore=r=>r&&Object.keys(r.gain||{}).every(k=>k==='score')
+   &&Object.keys(r).every(k=>['gain','region','pickAlienCard'].includes(k)||!r[k]);
+  for(const action of actions){
+   const a=action.target,slot=aliens.getAlienSlot(state.aliens,a?.alienSlotId);
+   if(action.actorId!==player.id||action.family!=='choose_target'||a?.kind!=='planet-reward-alien-trace'
+     ||a.traceType!=='pink'||a.fangzhouUnlock||!slot?.revealed||!slot.traces?.pink?.firstPlaced
+     ||!['阿米巴','虫'].includes(slot.alienId))continue;
+   const species=aliens.getSpeciesTraceApi(slot);
+   if(!a.stateExtra&&a.speciesId!==species?.speciesId)continue;
+   const region=!a.stateExtra&&species.speciesId==='amiba'?'red':null;
+   if(effects.hasMatchingTrigger(player,{type:'alienTrace',playerId:player.id,traceType:'pink',alienSlotId:a.alienSlotId,region}))continue;
+   const copy={...player,resources:{...player.resources},scoreSources:{...player.scoreSources}};
+   const board=structuredClone(state.aliens);
+   const placed=aliens.placeTraceForActor(players,board,copy,a.alienSlotId,'pink',a.position,
+    {stateExtra:!!a.stateExtra,sequence:state.meta.sequences.alienEntity});
+   if(!placed.ok)throw new Error('FOSSIL_TRACE_QUOTE_STALE: '+action.actionId);
+   let handGain=0;
+   if(!a.stateExtra){
+    const reward=placed.reward;
+    if(!pureScore(reward)||(reward.region||null)!==region)continue;
+    if(reward.pickAlienCard){
+     const index=species.speciesId==='amiba'?knownAmibaDisplay:knownChongDisplay;
+     if(!Number.isSafeInteger(index)||state.aliens[species.speciesId]?.displayedCardIndex!==index
+       ||!species.api.getCardDefinition(index)
+       ||effects.hasMatchingTrigger(player,{type:'alien_card_gain',playerId:player.id,alienId:slot.alienId,source:'display'}))continue;
+     // The window closes before any use of the card. Only hand count is
+     // needed; do not inspect or simulate the replacement display.
+     handGain=1;
+    }
+    players.gainResources(copy,reward.gain,'alienTracePinkScore');
+    if(region&&symbols.length){
+     for(const {reward:gain} of symbols)players.gainResources(copy,gain.gain,'alienEffectScore');
+     if(!aliens.amiba.resolveRegionReward(board,region).ok)throw new Error('FOSSIL_TRACE_REGION_INVALID');
+    }
+   }
+   const established=endScoring.computePlayerFinalScore({...context,aliens:board},copy).totalScore;
+   const resources=Object.entries(weights).reduce((n,[k,w])=>n+(k==='handSize'?0:copy.resources[k]*w),0);
+   quotes.push({actionId:action.actionId,established,handGain,
+    value:stateValue.sumValueParts([established,resources,(player.hand.length+handGain)*weights.handSize])});
+  }
+  return quotes;
+ }
  // Score dominance within this turn's visible window only. The Native
  // slots remain different; keep both when any later choice can use that fact.
- function pinkScoreBeforeUnknownFossil({state,seatId,actions,session,knownCards,knownFossilIds,knownAmibaDisplay}){
+ function pinkScoreBeforeUnknownFossil({state,seatId,actions,session,knownCards,knownFossilIds,knownAmibaDisplay,knownChongDisplay,rankKnownFossilTraces=false}){
   const [head,pickup]=session?.queue||[],origin=session?.journal?.actions?.[0]?.action;
   if(session?.queue.length!==2||session.interruptContext||head?.ownerId!==seatId||head.allowQuickActions
     ||head.type!==science.EFFECT_TYPES.ALIEN_TRACE||head.payload?.traceType!=='pink'||Object.keys(head.payload).length!==1
@@ -1265,6 +1313,15 @@
   const fossils=['jupiter','saturn'].includes(planet)&&aliens.chong.getAvailablePlanetFossils(state.aliens,planet);
   if(!fossils?.length||fossils.some(f=>knownFossilIds.has(f.fossilId)))return null;
   const omitted=[],proof=[];
+  const quotes=rankKnownFossilTraces
+   ?knownFossilTraceQuotes({state,player:p,actions,symbols,knownAmibaDisplay,knownChongDisplay}):[];
+  if(quotes.length>1){
+   const top=Math.max(...quotes.map(q=>q.value));
+   for(const q of quotes)if(q.value<top)omitted.push(q.actionId);
+   if(omitted.length)return {policy:'seti-ranked-pink-before-hidden-fossil-v1',kind:'rank-automatic-scan-traces',
+    fixed:false,isEquivalence:false,retainedActionIds:actions.filter(a=>!omitted.includes(a.actionId)).map(a=>a.actionId),
+    excludedActionIds:omitted,quotes};
+  }
   for(const n of [1,3]){
    const low=byPosition.get(n),high=byPosition.get(n+1);
    if(!low||!high)continue;
