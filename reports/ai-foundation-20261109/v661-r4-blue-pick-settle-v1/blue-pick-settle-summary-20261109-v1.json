@@ -1,0 +1,368 @@
+{
+  "source": "9609b1c73a66649303a1386a2ae862ef08eb297f",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 633,
+      "ms": 1605.296916
+    },
+    "candidate": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 526,
+      "ms": 1515.126958,
+      "proofCount": 107
+    },
+    "allRootRankingsEqual": true,
+    "rootAndRngUnchanged": true,
+    "nativeInputCategories": {
+      "launch|stable|—": 5,
+      "play_card|stable|—": 12,
+      "pass|stable|—": 5,
+      "industry|stable|—": 2,
+      "choose_card|residual_company_decision|industry": 4,
+      "card_corner|stable|—": 22,
+      "place_data|stable|—": 9,
+      "choose_target|science_domain_place_data|place_data": 9,
+      "analyze|stable|—": 2,
+      "quick_trade|stable|—": 8,
+      "move|stable|—": 40,
+      "choose_payment|probe_turn_move_payment|move": 40,
+      "land|stable|—": 5,
+      "scan|stable|—": 5,
+      "choose_target|science_domain_scan_step|scan": 15,
+      "choose_card|science_domain_scan_step|scan": 55,
+      "choose_target|science_domain_scan_action_4|scan": 28,
+      "choose_card|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_alien_trace|analyze": 6,
+      "choose_target|science_domain_alien_trace|land": 30,
+      "choose_card|residual_alien_card_decision|land": 10,
+      "accept_optional_effect|residual_card_decision|land": 20,
+      "end_turn|stable|—": 78,
+      "choose_payment|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_scan_step|play_card": 44,
+      "choose_card|science_domain_scan_step|play_card": 44,
+      "choose_target|science_domain_scan_action_4|play_card": 22
+    },
+    "analysisMilliseconds": {
+      "restore": 38.26977199999723,
+      "execute": 191.88583099999764,
+      "observation": 141.0061560000005,
+      "checkpoint": 104.48431900000008,
+      "resourceOrder": 0,
+      "valueBound": 0,
+      "postMainPlan": 0.8787539999995033,
+      "preMainDataPlan": 0
+    }
+  },
+  "bluePick": {
+    "nativeReplays": 107,
+    "bounds": {
+      "information-barrier": 2,
+      "stable": 105
+    },
+    "refillIdentityMasked": true
+  },
+  "teacherCheckpoints": [
+    {
+      "before": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 42.90566600000011
+      },
+      "candidate": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 43.77283299999999,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 47.60412500000007
+      },
+      "candidate": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 48.856250000000045,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 35.15604099999996
+      },
+      "candidate": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 35.74020799999994,
+        "proofCount": 0
+      }
+    },
+    {
+      "before": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 385,
+        "ms": 901.518333
+      },
+      "candidate": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 369,
+        "ms": 907.013375,
+        "proofCount": 16
+      }
+    },
+    {
+      "before": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 409,
+        "ms": 992.1515000000004
+      },
+      "candidate": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 391,
+        "ms": 985.3952079999999,
+        "proofCount": 18
+      }
+    }
+  ],
+  "nextEndPrelude": {
+    "inputs": 78,
+    "groups": [
+      {
+        "count": 68,
+        "round": 4,
+        "status": "decision",
+        "nextBarrier": null,
+        "nextSeat": "player-white",
+        "changes": [],
+        "bonusCount": 0,
+        "readyTasks": [
+          "b117-orbit-land-count-task"
+        ],
+        "taskKnown": true,
+        "handoffs": [
+          "probe_turn_execute",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff"
+        ],
+        "journalEvents": [
+          "end_turn_handoffs_started"
+        ],
+        "stable": false,
+        "queue": [
+          [
+            "residual_card_decision",
+            "player-white"
+          ],
+          [
+            "probe_turn_advance",
+            "player-white"
+          ]
+        ]
+      },
+      {
+        "count": 6,
+        "round": 4,
+        "status": "decision",
+        "nextBarrier": null,
+        "nextSeat": "player-white",
+        "changes": [
+          ".players.players.3.industryLastPlayedCardThisRound",
+          ".players.players.3.industryPlayedCardRound",
+          ".players.players.3.industryPlayedCardThisRound",
+          ".players.players.3.industryPlayedCardTurn"
+        ],
+        "bonusCount": 0,
+        "readyTasks": [
+          "b60-jupiter-task"
+        ],
+        "taskKnown": true,
+        "handoffs": [
+          "probe_turn_execute",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff",
+          "game_domain_handoff"
+        ],
+        "journalEvents": [
+          "end_turn_handoffs_started"
+        ],
+        "stable": false,
+        "queue": [
+          [
+            "residual_card_decision",
+            "player-white"
+          ],
+          [
+            "probe_turn_advance",
+            "player-white"
+          ]
+        ]
+      },
+      {
+        "count": 4,
+        "round": 4,
+        "status": "other-owner",
+        "nextBarrier": null,
+        "nextSeat": "player-green",
+        "changes": [
+          ".meta.stateVersion",
+          ".players.players.3.industryLastPlayedCardThisRound",
+          ".players.players.3.industryPlayedCardRound",
+          ".players.players.3.industryPlayedCardThisRound",
+          ".players.players.3.industryPlayedCardTurn",
+          ".players.players.3.mainActionCompleted",
+          ".turn.completedTurnPlayerIds.1",
+          ".turn.currentPlayerId",
+          ".turn.turnNumber"
+        ],
+        "bonusCount": 0,
+        "readyTasks": [],
+        "taskKnown": null,
+        "handoffs": [],
+        "journalEvents": [],
+        "stable": true,
+        "queue": []
+      }
+    ]
+  },
+  "cpuProfile": {
+    "samples": 1262,
+    "inclusive": [
+      {
+        "call": "decide@randomizer/game/ai/search-agent.js:34",
+        "ms": 1444.95
+      },
+      {
+        "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+        "ms": 1431.45
+      },
+      {
+        "call": "expandResourcePlan@randomizer/game/ai/analysis-port.js:2060",
+        "ms": 596.8
+      },
+      {
+        "call": "expand@randomizer/game/ai/analysis-port.js:808",
+        "ms": 586.04
+      },
+      {
+        "call": "add@randomizer/game/ai/decision-search.js:246",
+        "ms": 316.87
+      },
+      {
+        "call": "finishChild@randomizer/game/ai/analysis-port.js:2428",
+        "ms": 252.04
+      },
+      {
+        "call": "identity@randomizer/game/ai/analysis-port.js:6598",
+        "ms": 233.62
+      },
+      {
+        "call": "get identity@randomizer/game/ai/analysis-port.js:517",
+        "ms": 232.12
+      },
+      {
+        "call": "expandWithCardPick@randomizer/game/ai/analysis-port.js:1060",
+        "ms": 224.0
+      },
+      {
+        "call": "get physicalKey@randomizer/game/ai/analysis-port.js:513",
+        "ms": 221.58
+      },
+      {
+        "call": "forwardIdentity@randomizer/game/ai/analysis-port.js:155",
+        "ms": 220.13
+      },
+      {
+        "call": "executeCurrent@randomizer/game/ai/analysis-port.js:2351",
+        "ms": 186.29
+      },
+      {
+        "call": "resourceStateAdditions@randomizer/game/ai/decision-search.js:196",
+        "ms": 180.08
+      },
+      {
+        "call": "runWithWorkingState@randomizer/game/production-kernel.js:1679",
+        "ms": 179.58
+      },
+      {
+        "call": "runWithWorkingStateContext@randomizer/game/rule-composition.js:407",
+        "ms": 179.58
+      },
+      {
+        "call": "committedProjection@randomizer/game/rule-composition.js:595",
+        "ms": 147.21
+      },
+      {
+        "call": "projection@randomizer/game/rule-composition.js:613",
+        "ms": 140.12
+      },
+      {
+        "call": "observeEnvelope@randomizer/game/ai/analysis-port.js:463",
+        "ms": 140.12
+      },
+      {
+        "call": "valueObservation@randomizer/game/ai/analysis-port.js:6570",
+        "ms": 140.12
+      },
+      {
+        "call": "observationForValue@randomizer/game/ai/decision-search.js:38",
+        "ms": 140.12
+      },
+      {
+        "call": "projectionInner@randomizer/game/rule-composition.js:617",
+        "ms": 138.62
+      },
+      {
+        "call": "projectState@randomizer/game/production-kernel.js:1701",
+        "ms": 134.25
+      },
+      {
+        "call": "project@randomizer/game/ai/analysis-port.js:421",
+        "ms": 134.2
+      },
+      {
+        "call": "resourceSpec@randomizer/game/ai/analysis-port.js:1674",
+        "ms": 132.75
+      },
+      {
+        "call": "(anonymous)@randomizer/game/ai/decision-search.js:684",
+        "ms": 129.63
+      }
+    ]
+  }
+}
