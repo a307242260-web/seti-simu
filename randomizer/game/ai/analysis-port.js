@@ -350,8 +350,19 @@
         state.cards.publicCards.map(c=>c?.id),session?.queue.map(e=>[e.type,e.kind,e.ownerId])]);
     }
     function physicalCollisionKey(envelope){
-      const state=readIdentityState(envelope);
+      const state=readIdentityState(envelope), board=state.aliens;
+      // Equal canonical states have the same occupied positions and entity
+      // sequences. They are a discriminator only; compare the full key on a hit.
+      const traceGrids=[board.amiba,board.chong].map(species=>[1,2].map(id=>{
+        const grid=species?.traceSlotsByAlienSlotId?.[id];
+        return grid&&["blue","pink","yellow"].map(color=>[1,2,3,4].map(position=>{
+          const mark=grid[color]?.[position];
+          return mark&&[mark.sequence,mark.playerId];
+        }));
+      }));
+      const symbols=board.amiba?.symbolSlots;
       return JSON.stringify([
+        traceGrids,symbols&&Object.keys(symbols).sort().map(key=>[key,typeof symbols[key]==="string"?symbols[key]:null]),
         [1,2].map(id=>["blue","pink","yellow"].map(color=>{
           const t=state.aliens.aliens[id]?.traces?.[color];
           return t&&[t.firstPlaced,t.ownerPlayerColor,t.neutral,t.extraCount,t.extraMarkers?.length];

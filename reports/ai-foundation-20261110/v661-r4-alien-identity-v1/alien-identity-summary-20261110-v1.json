@@ -1,0 +1,174 @@
+{
+  "source": "046e0f8ed6241476f1a9dc52fb166db430e34c31",
+  "scope": "exact-forward-state-identity-secondary-discriminator",
+  "priorComparisonCounts": {
+    "total": 1731,
+    "equal": 559,
+    "unequal": 1172,
+    "fields": {
+      "aliens": 1157,
+      "players": 533,
+      "tech": 12,
+      "pending": 3,
+      "meta": 1
+    }
+  },
+  "matchedFullGraphs": [
+    {
+      "base": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 1660,
+        "graphNodes": 2504,
+        "ms": 2773.5800839999997,
+        "digest": "b40c92d12ad41a31973c39e168e680088787a6ef3751c5964c6a455ea6f45b68",
+        "bytes": 4658349,
+        "identityMaterializations": 1812,
+        "identityBucketCollisions": 2029,
+        "identitySliceHits": 5848,
+        "identitySliceStores": 6640
+      },
+      "candidate": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 1660,
+        "graphNodes": 2504,
+        "ms": 2614.300167,
+        "digest": "b40c92d12ad41a31973c39e168e680088787a6ef3751c5964c6a455ea6f45b68",
+        "bytes": 4658349,
+        "identityMaterializations": 1138,
+        "identityBucketCollisions": 2029,
+        "identitySliceHits": 3325,
+        "identitySliceStores": 4445
+      }
+    },
+    {
+      "base": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 710,
+        "ms": 1144.784084,
+        "digest": "84da3f5cfca60e4cee3a31787457d98c0fd146b9371672f3e9cc4072b36bd0c2",
+        "bytes": 2313321,
+        "identityMaterializations": 401,
+        "identityBucketCollisions": 399,
+        "identitySliceHits": 1440,
+        "identitySliceStores": 968
+      },
+      "candidate": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 710,
+        "ms": 1126.286917,
+        "digest": "84da3f5cfca60e4cee3a31787457d98c0fd146b9371672f3e9cc4072b36bd0c2",
+        "bytes": 2313321,
+        "identityMaterializations": 395,
+        "identityBucketCollisions": 399,
+        "identitySliceHits": 1426,
+        "identitySliceStores": 940
+      }
+    },
+    {
+      "base": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 636.6331660000001,
+        "digest": "14781960bb7459c1218ccb76b38e4ae0edc37e7581304dc2a3f38f8ca0b70d01",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      },
+      "candidate": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 646.620625,
+        "digest": "14781960bb7459c1218ccb76b38e4ae0edc37e7581304dc2a3f38f8ca0b70d01",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      }
+    },
+    {
+      "base": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 226.63324999999998,
+        "digest": "b14e7c3d1138e2f28d7dacc757da7ac119825efb0afed55a2b5d924cd4247df6",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      },
+      "candidate": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 223.32199999999997,
+        "digest": "b14e7c3d1138e2f28d7dacc757da7ac119825efb0afed55a2b5d924cd4247df6",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      }
+    },
+    {
+      "base": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 274.02391600000004,
+        "digest": "b5268cd3998e5df243f4b7ff7382410a1355568628de8ef8590fc775e6a56217",
+        "bytes": 373310,
+        "identityMaterializations": 74,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 462
+      },
+      "candidate": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 258.39849999999996,
+        "digest": "b5268cd3998e5df243f4b7ff7382410a1355568628de8ef8590fc775e6a56217",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      }
+    }
+  ],
+  "admission": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "passed": false
+  },
+  "wholeGameRerun": false
+}
