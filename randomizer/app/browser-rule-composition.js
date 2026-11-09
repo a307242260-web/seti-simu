@@ -44,6 +44,9 @@
         playerId: null,
         role: "spectator",
       };
+      if(resolvedViewer.valueOnly===true&&resolvedViewer.role==="player"){
+        return ruleObservation.buildRuleObservation(canonicalState,context.seed||null,resolvedViewer.playerId,[],{valueOnly:true});
+      }
       const visible = browserProjection.visibilityPolicy(
         canonicalState,
         resolvedViewer,

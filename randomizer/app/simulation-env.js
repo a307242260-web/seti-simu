@@ -406,7 +406,7 @@ function createSimulationEnv(options = {}) {
           seed,
           viewer?.playerId || null,
           [],
-          { cheap: viewer?.cheap === true },
+          { cheap: viewer?.cheap === true, valueOnly: viewer?.valueOnly === true },
         ),
       });
       composition = kernel.composition;

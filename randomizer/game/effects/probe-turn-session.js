@@ -494,6 +494,36 @@
         }];
       }));
   }
+  function settleMovePayment(root,ownerId,action,legal){
+    const player=actor(root,ownerId);
+    if(!player)return fail("PROBE_MOVE_PAYMENT_STALE","移动支付已失效");
+    const required = Math.max(1, Number(action.payload?.requiredMovePoints) || 1);
+    const cardIds = new Set(legal.target.cardIds || []);
+    let removedCardCount = 0;
+    for (let index = player.hand.length - 1; index >= 0; index -= 1) {
+      if (!cardIds.has(player.hand[index]?.id)) continue;
+      if (!isMovePaymentCard(player.hand[index])) {
+        return fail("PROBE_MOVE_PAYMENT_STALE", "移动支付牌已失效");
+      }
+      const discarded = cards.discardFromHandAtIndex(player, index);
+      if (!discarded.ok) return discarded;
+      cards.addToDiscardPile(slice(root, "cards", "cards"), discarded.card);
+      removedCardCount += 1;
+    }
+    if (removedCardCount !== cardIds.size) {
+      return fail("PROBE_MOVE_PAYMENT_STALE", "移动支付牌已失效");
+    }
+    const energyCost = Math.max(0, Number(legal.payload.energyCost) || 0);
+    const moved = abilities.executeAbility("moveProbe", actionContext(root, player.id), {
+      ...action.target,
+      movementPoints: required,
+      cost: energyCost ? { energy: energyCost } : {},
+      source: "move",
+    });
+    if (!moved.ok) return moved;
+    return {ok:true,events:clone(moved.events||[]),energyCost,cardIds:[...cardIds]};
+  }
+
   function createProbeTurnDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -755,38 +785,11 @@
         const action = effect.payload?.action;
         const player = actor(root, effect.ownerId);
         if (!legal || !player) return fail("PROBE_MOVE_PAYMENT_STALE", "移动支付已失效");
-        const required = Math.max(1, Number(action.payload?.requiredMovePoints) || 1);
-        const cardIds = new Set(legal.target.cardIds || []);
-        let removedCardCount = 0;
-        for (let index = player.hand.length - 1; index >= 0; index -= 1) {
-          if (!cardIds.has(player.hand[index]?.id)) continue;
-          if (!isMovePaymentCard(player.hand[index])) {
-            return fail("PROBE_MOVE_PAYMENT_STALE", "移动支付牌已失效");
-          }
-          const discarded = cards.discardFromHandAtIndex(player, index);
-          if (!discarded.ok) return discarded;
-          cards.addToDiscardPile(slice(root, "cards", "cards"), discarded.card);
-          removedCardCount += 1;
-        }
-        if (removedCardCount !== cardIds.size) {
-          return fail("PROBE_MOVE_PAYMENT_STALE", "移动支付牌已失效");
-        }
-        const energyCost = Math.max(0, Number(legal.payload.energyCost) || 0);
-        const moved = abilities.executeAbility("moveProbe", actionContext(root, player.id), {
-          ...action.target,
-          movementPoints: required,
-          cost: energyCost ? { energy: energyCost } : {},
-          source: "move",
-        });
-        if (!moved.ok) return moved;
-        return result(state, root, EFFECT_TYPES.MOVE_PAYMENT, {
-          events: clone(moved.events || []),
-          history: [{
-            type: "probe_turn_move_payment",
-            energy: energyCost,
-            cardIds: [...cardIds],
-            executorId: EXECUTOR_ID,
-          }],
+        const moved=settleMovePayment(root,effect.ownerId,action,legal);
+        if(!moved.ok)return moved;
+        return result(state,root,EFFECT_TYPES.MOVE_PAYMENT,{
+          events:moved.events,
+          history:[{type:"probe_turn_move_payment",energy:moved.energyCost,cardIds:moved.cardIds,executorId:EXECUTOR_ID}],
         });
       },
     });
@@ -989,6 +992,6 @@
   return Object.freeze({
     DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES, PASS_HAND_LIMIT,
     DOMAIN_HANDOFF_EFFECT_TYPE, DOMAIN_HANDOFF_SCHEMA_VERSION,
-    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds, getMovePaymentChoices,
+    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds, getMovePaymentChoices, settleMovePayment,
   });
 });

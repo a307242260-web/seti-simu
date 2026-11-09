@@ -3,10 +3,11 @@
   const common = typeof module === "object" && module.exports;
   const api = factory(common ? require("./simulation-contract") : root.SetiSimulationContract,
     common ? require("../game/end-game-scoring") : root.SetiEndGameScoring,
-    common ? require("../game/cards/effects") : root.SetiCardEffects);
+    common ? require("../game/cards/effects") : root.SetiCardEffects,
+    common ? require("../game/state/state-store") : root.SetiStateStore);
   if (common) module.exports = api;
   else root.SetiRuleObservation = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects, stateStore) {
 "use strict";
 
 // 共享规则观察构建器（Browser/Simulation 同源信息层）。
@@ -134,6 +135,16 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
   // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
   const cheap = options.cheap === true;
+  // The shared evaluator scores a single seat. Keep its complete value
+  // facts (including geometry and pending mark), without building public
+  // scores for other seats or the setup presentation.
+  const valueOnly=options.valueOnly===true&&Boolean(perspectivePlayerId);
+  // The fork's ordinary-data copier still owns all returned geometry and
+  // falls back to the platform clone for unsupported data.
+  const copyValueSlice=valueOnly?stateStore.copyForkData:clone;
+  // Scoring normalizes the same board for each seat. A private copy for the
+  // whole projection keeps those writes off the authoritative state.
+  const scoringBoard = copyValueSlice(state.finalScoring);
   const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
   const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
   if(selfState)selfState.traceCounts=endGameScoring.getPlayerTraceCounts(selfPlayer,state.aliens);
@@ -142,6 +153,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
 
   return {
     schemaVersion: OBSERVATION_SCHEMA_VERSION,
+    ...(valueOnly?{detachedValueProjection:true}:{}),
     seed: seed ?? null,
     perspectivePlayerId,
     publicState: {
@@ -153,10 +165,10 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
       passingPlayerIds: [...(state.passingPlayerIds || turn.passedPlayerIds || [])],
       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
       activePlayerIds: [...(turn.activePlayerIds || [])],
-      players: (playersState.players || []).map((player) => {
+      players: (valueOnly?(selfPlayer?[selfPlayer]:[]):(playersState.players||[])).map((player) => {
         const breakdown = endGameScoring.computePlayerFinalScore({
           ...state,
-          finalScoring: clone(state.finalScoring),
+          finalScoring: scoringBoard,
           players: playersState.players || [],
           currentPlayer: player,
           cardEffects,
@@ -173,16 +185,16 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
         return {
           ...publicPlayer,
           companyBaseIncome: clone(endGameScoring.getPlayerCompanyBaseIncome(player)),
-          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore
-            + pendingFinalMarkValue(state, player),
+          ...(!valueOnly?{securedEndGameBonus:breakdown.totalScore-breakdown.baseScore
+            +pendingFinalMarkValue(state,player)}:{}),
         };
       }),
       board: {
-        rockets: clone(state.pieces?.rockets || []),
+        rockets: copyValueSlice(state.pieces?.rockets || []),
         ...(cheap ? {} : {
-          planets: clone(state.planets || {}),
-          data: clone(state.data || {}),
-          solarSystem: clone(state.solarSystem || {}),
+          planets: copyValueSlice(state.planets || {}),
+          data: copyValueSlice(state.data || {}),
+          solarSystem: copyValueSlice(state.solarSystem || {}),
           finalScoring: sanitizeFinalScoringState(state.finalScoring),
         }),
         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
@@ -191,7 +203,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
         techSupply: sanitizeTechSupply(state.tech),
         aliens: sanitizeAlienPublicState(state.aliens),
       },
-      resident: {
+      ...(!valueOnly?{resident: {
         initialSetup: {
           active: setup?.phase === "selecting",
           interactive: setup?.phase === "selecting"
@@ -202,7 +214,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
             : null,
           confirmedPlayerIds: clone(setup?.confirmedPlayerIds || []),
         },
-      },
+      }}:{}),
       pending: decision,
     },
     selfState,

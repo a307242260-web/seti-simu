@@ -34,20 +34,37 @@
     return value == null ? value : structuredClone(value);
   }
 
+  const stringLiterals=new Map(),actionHashes=new Map();
+  function literal(value){
+    const hit=stringLiterals.get(value);if(hit!==undefined)return hit;
+    const result=JSON.stringify(value);
+    if(value.length<=128){if(stringLiterals.size>=512)stringLiterals.delete(stringLiterals.keys().next().value);stringLiterals.set(value,result);}
+    return result;
+  }
   function stableSerialize(value) {
-    if (value == null || typeof value !== "object") return JSON.stringify(value);
-    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
-    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(",")}}`;
+    if(typeof value==="string")return literal(value);
+    if(value==null||typeof value!=="object")return JSON.stringify(value);
+    if(Array.isArray(value)){
+      let out="[";
+      for(let i=0;i<value.length;i++){if(i)out+=",";if(i in value)out+=stableSerialize(value[i])??"";}
+      return out+"]";
+    }
+    let out="{",first=true;
+    for(const key of Object.keys(value).sort()){if(!first)out+=",";first=false;out+=literal(key)+":"+stableSerialize(value[key]);}
+    return out+"}";
   }
 
   function stableHash(value) {
-    const input = stableSerialize(value);
+    const input = stableSerialize(value), hit=actionHashes.get(input);
+    if(hit!==undefined)return hit;
     let hash = 0x811c9dc5;
     for (let index = 0; index < input.length; index += 1) {
       hash ^= input.charCodeAt(index);
       hash = Math.imul(hash, 0x01000193);
     }
-    return (hash >>> 0).toString(16).padStart(8, "0");
+    const result=(hash>>>0).toString(16).padStart(8,"0");
+    if(input.length<=512){if(actionHashes.size>=1024)actionHashes.delete(actionHashes.keys().next().value);actionHashes.set(input,result);}
+    return result;
   }
 
   function fail(code, message, details = {}) {
@@ -129,8 +146,14 @@
       if (request.actorId != null && request.actorId !== authority.actorId) return [];
       const familyFilter = request.family == null ? null : String(request.family);
       const result = [];
+      if(familyFilter){
+        const definition=definitions.get(familyFilter);
+        if(!definition)return result;
+        const descriptors=definition.enumerate(context,{authority,request})||[];
+        for(const descriptor of descriptors)result.push(normalizeDescriptor(definition,descriptor,authority));
+        return result;
+      }
       for (const definition of definitions.values()) {
-        if (familyFilter && definition.family !== familyFilter) continue;
         const descriptors = definition.enumerate(context, { authority, request }) || [];
         for (const descriptor of descriptors) result.push(normalizeDescriptor(definition, descriptor, authority));
       }
@@ -356,6 +379,7 @@
     CONDITIONAL_FAMILIES,
     ALL_FAMILIES,
     PHASE_BY_FAMILY,
+    stableActionHash: stableHash,
     createRegistry,
     createOptionDefinition,
     createQuickTradeProvider,

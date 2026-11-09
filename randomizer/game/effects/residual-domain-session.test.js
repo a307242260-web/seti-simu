@@ -90,6 +90,34 @@ function createRoot() {
   };
 }
 
+(function nativeTaskMenuUsesCurrentProbeAndDataFacts() {
+  const root = createRoot();
+  const player = root.players.players[0];
+  player.reservedCards = [
+    { id: "comet-task", cardId: "b_105.webp" },
+    { id: "data-task", cardId: "dlc_35.png" },
+  ];
+  player.resources.availableData = 5;
+  player.resources.placedData = 6;
+  const query = (cardInstanceId, ruleId) => residual.queryCardSettlement(root, player.id, { kind: "task", cardInstanceId, ruleId });
+  const cometTask = () => query("comet-task", "b105-comet-task");
+  const dataTask = () => query("data-task", "dlc35-data-total");
+  assert.equal(cometTask(), null);
+  assert.equal(dataTask(), null);
+
+  const comet = solar.collectVisibleCoordinateContents(root.solarSystem).find(c => c.content.kind === "comet" && c.y <= 4);
+  assert.ok(comet);
+  root.pieces.rockets.push({ id: 1, kind: "standard", surface: "solar-board",
+    playerId: player.id, color: player.color, sectorX: comet.x, sectorY: comet.y, slotIndex: 0 });
+  assert.equal(cometTask()?.ruleId, "b105-comet-task");
+  assert.equal(dataTask(), null);
+
+  root.pieces.rockets.length = 0;
+  player.resources.placedData = 7;
+  assert.equal(cometTask(), null);
+  assert.equal(dataTask()?.ruleId, "dlc35-data-total");
+})();
+
 (function roundIncomeCreatesUsableDataForEachOwner() {
   for (const existing of [0, 5, 6]) {
     for (const amount of [0, 2]) {

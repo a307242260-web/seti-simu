@@ -20,6 +20,13 @@ assert.equal(value.components.currentEndGameBonus, 4);
 assert.equal(value.components.income, 3, "第2/3/4轮各有一次未来收入");
 assert.equal(value.components.hand, 2, "未知牌只按数量，不读身份");
 assert.equal(evaluateStateValue(observation(4), "p1").components.income, 0);
+const earned = observation(4);
+earned.selfState.nextFinalMark = { playerId: "p1", threshold: 10, valuationSafe: true,
+  options: [{ tileId: "b", formulaId: "b1", multiplier: 3, currentValue: 9 }] };
+assert.equal(evaluateStateValue(earned, "p1").components.finalMarkPotential, 9,
+  "没有普通探测器时也保留已经赚到的终局标记");
+earned.selfState.nextFinalMark.threshold = 11;
+assert.equal(evaluateStateValue(earned, "p1").components.finalMarkPotential, 0);
 const end = { ...start, terminal: true };
 assert.equal(evaluateStateValue(end, "p1").total, 14, "正式最终分不叠资源或未来收入");
 assert.deepEqual(start, observation(), "估值不得修改来源");

@@ -821,32 +821,12 @@
       ownerId: PACK_ID,
       enumerate(context, request = {}) {
         if (request.family) return ownedRegistry.enumerate(context, request);
-        const quickActions = ownedRegistry.enumerate(context, { ...request, family: "quick_trade" });
-        const playActions = ownedRegistry.enumerate(context, { ...request, family: "play_card" });
-        const scienceActions = scienceSession.ACTION_FAMILIES.flatMap(
-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
-        );
-        const probeTurnActions = probeTurnSession.ACTION_FAMILIES.flatMap(
-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
-        );
-        const residualActions = residualDomainSession.ACTION_FAMILIES.flatMap(
-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
-        );
-        const conditionalActions = conditionalFamilies.flatMap(
-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
-        );
-        const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
-        for (const action of [
-          ...quickActions,
-          ...playActions,
-          ...scienceActions,
-          ...probeTurnActions,
-          ...residualActions,
-          ...conditionalActions,
-        ]) {
-          byFamily.get(action.family)?.push(action);
-        }
-        return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
+        // Production registrations are option definitions: they use the
+        // shared context, not a synthetic family request. Read one authority
+        // and restore the public family order after the single native pass.
+        const byFamily = new Map(standardAction.ALL_FAMILIES.map(family=>[family,[]]));
+        for(const action of ownedRegistry.enumerate(context,request))byFamily.get(action.family).push(action);
+        return standardAction.ALL_FAMILIES.flatMap(family=>byFamily.get(family));
       },
       validate(context, action) {
         return ownedRegistry.validate(context, action);

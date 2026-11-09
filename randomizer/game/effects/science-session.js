@@ -215,24 +215,6 @@
     };
   }
 
-  function stableSerialize(value) {
-    if (value == null || typeof value !== "object") return JSON.stringify(value);
-    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
-    return `{${Object.keys(value).sort().map((key) => (
-      `${JSON.stringify(key)}:${stableSerialize(value[key])}`
-    )).join(",")}}`;
-  }
-
-  function stableHash(value) {
-    const input = stableSerialize(value);
-    let hash = 0x811c9dc5;
-    for (let index = 0; index < input.length; index += 1) {
-      hash ^= input.charCodeAt(index);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    return (hash >>> 0).toString(16).padStart(8, "0");
-  }
-
   function formalizeChoices(root, actorId, choices) {
     return (choices || []).map((choice) => {
       // choices 由 makeChoice 等每次新建 fresh 对象；session runtime
@@ -244,7 +226,7 @@
         schemaVersion: standardAction.SCHEMA_VERSION,
         family: choice.family,
         phase: "conditional",
-        actionId: `${choice.family}:${stableHash(identity)}`,
+        actionId: `${choice.family}:${standardAction.stableActionHash(identity)}`,
         actorId,
         stateVersion: root?.meta?.stateVersion ?? 0,
         decisionVersion: root?.match?.decisionVersion ?? 0,
@@ -771,6 +753,18 @@
     });
   }
 
+  function consumePublicScanCard(root, actor, legal, opts) {
+    const deck=getWorkingSlice(root,"cards"),slot=legal.target.publicSlotIndex;
+    const card=deck.publicCards[slot];
+    deck.publicCards[slot]=null;
+    cards.addToDiscardPile(deck,card);
+    const selected=(Number(opts.selected)||0)+1;
+    if(selected>1&&opts.consumeMarkers)
+      actor.resources.additionalPublicScan=Math.max(0,(Number(actor.resources.additionalPublicScan)||0)-1);
+    // Leave empty slots until final settlement and refill.
+    return selected>=(Number(opts.max)||1)||!publicScanChoices(root).length?null:{...opts,selected};
+  }
+
   function handScanChoices(root, actorId) {
     const actor = getActor(root, actorId);
     if (!actor) return [];
@@ -911,6 +905,70 @@
     });
   }
 
+  function listPlaceDataChoices(root, actorId) {
+    const actor = getActor(root, actorId);
+    const result = abilities.data.listPlacementChoices(actor);
+    if (!result.ok) return [];
+    return result.choices.map((choice) => makeChoice(
+      "choose_target",
+      choice.blueSlot == null ? `data:${choice.target}` : `data:${choice.target}:${choice.blueSlot}`,
+      { target: choice.target, blueSlot: choice.blueSlot ?? null },
+      {},
+      choice.label || "放置数据",
+    ));
+  }
+
+  function listScanAction4Choices(root, actorId) {
+    const actor = getActor(root, actorId);
+    if (!actor) return [];
+    const choices = [];
+    // 紫4 发射选项需校验探测器上限：已达上限时不提供发射，只能移动/跳过
+    // （规则书：支付 1 能量发射一个探测器；发射行动本身受太空探测器上限约束）。
+    const piecesState = getWorkingSlice(root, "pieces");
+    const activeRocketCount = (piecesState?.rockets || []).filter((rocket) => (
+      rocket?.playerId === actor.id
+      && rocket?.surface === "solar-board"
+      && (rocket.kind || "standard") === "standard"
+    )).length;
+    const context = createActionContext(root, actor.id);
+    const rocketLimit = typeof abilities.rocket.getRocketLimitForPlayer === "function"
+      ? abilities.rocket.getRocketLimitForPlayer(actor, context)
+      : 1;
+    if (activeRocketCount < rocketLimit && players.canAfford(actor, { energy: 1 })) {
+      choices.push(makeChoice(
+        "choose_target",
+        "scan4:launch",
+        { mode: "launch" },
+        {},
+        "发射探测器",
+      ));
+    }
+    for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
+      maxPoints: scanEffects.SCAN_ACTION_4_MOVE_POINTS,
+      ignoreAsteroidRestriction: false,
+    })) {
+      choices.push(makeChoice(
+        "choose_target",
+        `scan4:move:${move.rocketId}:${move.directionId}`,
+        {
+          mode: "move",
+          rocketId: move.rocketId,
+          deltaX: move.deltaX,
+          deltaY: move.deltaY,
+        },
+        { requiredMovePoints: move.requiredMovePoints },
+        `移动 ${move.rocketId} ${move.label}`,
+      ));
+    }
+    return choices;
+  }
+
+  function scanAction4DecisionChoices(root, effect) {
+    const choices=listScanAction4Choices(root,effect.ownerId);
+    if(effect.payload?.skippable)choices.push(makeChoice("choose_target","scan4:skip",{mode:"skip"},{},"跳过"));
+    return formalizeChoices(root,effect.ownerId,choices);
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -1021,51 +1079,6 @@
       // 扫描等流内派生扫描发生在 FINALIZE 之前，同样被本次结算覆盖。
       mappedQueue.push(scanFinalizeEffect(actor.id));
       return mappedQueue;
-    }
-
-    function listScanAction4Choices(root, actorId) {
-      const actor = getActor(root, actorId);
-      if (!actor) return [];
-      const choices = [];
-      // 紫4 发射选项需校验探测器上限：已达上限时不提供发射，只能移动/跳过
-      // （规则书：支付 1 能量发射一个探测器；发射行动本身受太空探测器上限约束）。
-      const piecesState = getWorkingSlice(root, "pieces");
-      const activeRocketCount = (piecesState?.rockets || []).filter((rocket) => (
-        rocket?.playerId === actor.id
-        && rocket?.surface === "solar-board"
-        && (rocket.kind || "standard") === "standard"
-      )).length;
-      const context = createActionContext(root, actor.id);
-      const rocketLimit = typeof abilities.rocket.getRocketLimitForPlayer === "function"
-        ? abilities.rocket.getRocketLimitForPlayer(actor, context)
-        : 1;
-      if (activeRocketCount < rocketLimit && players.canAfford(actor, { energy: 1 })) {
-        choices.push(makeChoice(
-          "choose_target",
-          "scan4:launch",
-          { mode: "launch" },
-          {},
-          "发射探测器",
-        ));
-      }
-      for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
-        maxPoints: scanEffects.SCAN_ACTION_4_MOVE_POINTS,
-        ignoreAsteroidRestriction: false,
-      })) {
-        choices.push(makeChoice(
-          "choose_target",
-          `scan4:move:${move.rocketId}:${move.directionId}`,
-          {
-            mode: "move",
-            rocketId: move.rocketId,
-            deltaX: move.deltaX,
-            deltaY: move.deltaY,
-          },
-          { requiredMovePoints: move.requiredMovePoints },
-          `移动 ${move.rocketId} ${move.label}`,
-        ));
-      }
-      return choices;
     }
 
     runtime.registerExecutor(EFFECT_TYPES.EXECUTE, (state, effect, workingContext) => {
@@ -1198,25 +1211,8 @@
         if (!removed.ok) return removed;
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
       } else if (mode === "public") {
-        const cardsState = getWorkingSlice(root, "cards");
-        const card = cardsState.publicCards[legal.target.publicSlotIndex];
-        cardsState.publicCards[legal.target.publicSlotIndex] = null;
-        cards.addToDiscardPile(cardsState, card);
-        const selected = (Number(opts.selected) || 0) + 1;
-        if (selected > 1 && opts.consumeMarkers) {
-          actor.resources.additionalPublicScan = Math.max(
-            0,
-            (Number(actor.resources.additionalPublicScan) || 0) - 1,
-          );
-        }
-        // 公共牌扫描放置后空位保持空置，不立即补牌；补牌统一由扫描流串尾
-        // SCAN_FINALIZE 在 SETTLE（扇区结算痕迹/盲抽奖励）之后触发。
-        const scanFlowEnded = selected >= (Number(opts.max) || 1) || !publicScanChoices(root).length;
-        if (!scanFlowEnded) {
-          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP, actor.id, {
-            options: { ...clone(opts), selected },
-          }, "choose_card"));
-        }
+        const repeat=consumePublicScanCard(root,actor,legal,opts);
+        if(repeat)spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP,actor.id,{options:clone(repeat)},"choose_card"));
       }
       if (opts.probeFlow) {
         const flow = clone(opts.probeFlow);
@@ -1413,11 +1409,7 @@
     runtime.registerExecutor(EFFECT_TYPES.SCAN_ACTION_4, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const choices = listScanAction4Choices(root, effect.ownerId);
-        if (effect.payload?.skippable) {
-          choices.push(makeChoice("choose_target", "scan4:skip", { mode: "skip" }, {}, "跳过"));
-        }
-        return formalizeChoices(root, effect.ownerId, choices);
+        return scanAction4DecisionChoices(root,effect);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
@@ -1513,19 +1505,6 @@
       }
       return scienceResult(state, root, EFFECT_TYPES.SETTLE, { spawnedEffects, events });
     });
-
-    function listPlaceDataChoices(root, actorId) {
-      const actor = getActor(root, actorId);
-      const result = abilities.data.listPlacementChoices(actor);
-      if (!result.ok) return [];
-      return result.choices.map((choice) => makeChoice(
-        "choose_target",
-        choice.blueSlot == null ? `data:${choice.target}` : `data:${choice.target}:${choice.blueSlot}`,
-        { target: choice.target, blueSlot: choice.blueSlot ?? null },
-        {},
-        choice.label || "放置数据",
-      ));
-    }
 
     runtime.registerExecutor(EFFECT_TYPES.PLACE_DATA, {
       getLegalChoices(state, effect, workingContext) {
@@ -1972,11 +1951,14 @@
     getPlanetScanSource,
     listNebulaChoices,
     listPublicScanChoices: publicScanChoices,
+    consumePublicScanCard,
+    scanAction4DecisionChoices,
     listHandScanChoices: handScanChoices,
     listScanStepChoices: scanStepChoices,
     executeNebulaScan,
     settleAfterScan,
     scanFinalizeEffect,
+    listPlaceDataChoices,
     listIncomeChoices,
     listPickCardChoices,
     listResearchChoices,

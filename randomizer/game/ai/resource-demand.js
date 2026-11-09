@@ -174,7 +174,20 @@
     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
     return value;
   }
+  function noFinalRoundMarkCapital(state,p){
+    const board=state.finalScoring, score=p.resources.score;
+    if(state.turn.roundNumber!==4||!Number.isSafeInteger(score)||!Array.isArray(board?.thresholds)||!board.tiles)return false;
+    const tiles=Object.values(board.tiles);
+    return board.thresholds.every(threshold=>Number.isSafeInteger(threshold)&&(threshold>score
+      ||tiles.some(tile=>tile.marks?.some(mark=>mark.playerId===p.id&&Number(mark.threshold)===threshold))));
+  }
   function planningCapital(state,p){
+    // Round four keeps only current probe missions and earned final marks.
+    if(noFinalRoundMarkCapital(state,p)){
+      if(!probeCapital.ownedProbes(state.pieces?.rockets,p).length)return 0;
+      const mission=probeCapital.prepareFinalRoundSwapMission(state,p);
+      return mission.quote(p.hand,state.cards.publicCards);
+    }
     return Object.isFrozen(state)&&Object.isFrozen(p)?planningCapitalDetails(state,p).total
       :stateValue.purposeCapital(valueFacts(state,p)).total;
   }
@@ -224,7 +237,21 @@
       offered=offered.filter(card=>keepSwapPortfolioOffer(corner,card,settledIncome));
     }
     if(!offered.length)return[];
-    const p=owner(state,seatId),source=valueFacts(state,p),before=knownSourceCapital??planningCapital(state,p);
+    const p=owner(state,seatId);
+    if(noFinalRoundMarkCapital(state,p)){
+      const mission=probeCapital.prepareFinalRoundSwapMission(state,p);
+      const publicCards=state.cards.publicCards;
+      // Round four's only surviving purpose here is the current mission.
+      // If it cannot consume income, all exchanges have the same value.
+      if(!mission.sensitive){
+        const gain=knownSourceCapital===null?0:mission.quote(p.hand,publicCards)-knownSourceCapital;
+        return offered.map(card=>({card,gain}));
+      }
+      const before=knownSourceCapital??mission.quote(p.hand,publicCards);
+      return offered.map(card=>({card,gain:mission.quote(p.hand.map(c=>c.id===outgoing.id?card:c),
+        publicCards.map(c=>c?.id===card.id?outgoing:c))-before}));
+    }
+    const source=valueFacts(state,p),before=knownSourceCapital??planningCapital(state,p);
     // The fixed public exchange spends the company mark. Do not price
     // the replacement as if a second exchange were available this round.
     const companyState=source.companyState?.abilityId==='deepspace_swap_cards'
@@ -253,6 +280,9 @@
     return capital.dataPotential>0?capital.dataPlan:null;
   }
   function incomeSwapPlan(state,p,committed=false){
+    // The public income bridge stops in R4; the older typed fallback stops
+    // when an alien is revealed. A spent company mark cannot change either.
+    if(state.turn.roundNumber>=4&&Object.values(state.aliens?.aliens||{}).some(slot=>slot.revealed))return null;
     const exact=!committed&&planningCapitalQuotes.get(state)?.get(p);
     let facts=valueFacts(state,p);
     // In a native pending swap the mark is already spent by this very flow.

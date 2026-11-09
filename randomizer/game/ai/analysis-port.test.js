@@ -132,7 +132,7 @@ assert.equal(JSON.stringify(branch), branchBefore, "后继执行不能冻结或�
 assert.equal(port.getDiagnostics().observationCount, 1, "已物化观察不会因分支变化重复投影");
 assert.equal(port.getDiagnostics().committedDecodeCount, decodesBeforeCancel,
   "不同pending信封的已提交字节相同时，不重复解码，工作Session仍各自恢复");
-assert(port.getDiagnostics().committedDecodeHits >= 1);
+assert(port.getDiagnostics().committedReferenceHits >= 1, "已验证的 fork 使用只读提交态对象");
 assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真实根或RNG");
 const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
 assert.throws(() => other.openRoot(), /OWNER_MISMATCH/);

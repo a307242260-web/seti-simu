@@ -807,18 +807,23 @@
   }
 
   function buildCardTaskContext(root) {
-    const probeData = rockets.buildProbeLocationData(root);
+    // This context lives for one synchronous task enumeration. Most
+    // conditions only read one domain; unused board facts need no quote.
+    let probeData, dataTotals;
+    const getProbeData = () => probeData ??= rockets.buildProbeLocationData(root);
     return {
       data: root.data,
       aliens: root.aliens,
       planets: root.planets,
-      probeLocations: probeData.index,
-      probeLocationDetails: probeData.details,
-      dataTotals: Object.fromEntries((root.players.players || []).flatMap((player) => {
-        const available = Number(player.resources?.availableData) || 0;
-        const placed = Number(player.resources?.placedData) || 0;
-        return [[player.id, available + placed], [player.color, available + placed]];
-      })),
+      get probeLocations() { return getProbeData().index; },
+      get probeLocationDetails() { return getProbeData().details; },
+      get dataTotals() {
+        return dataTotals ??= Object.fromEntries((root.players.players || []).flatMap((player) => {
+          const available = Number(player.resources?.availableData) || 0;
+          const placed = Number(player.resources?.placedData) || 0;
+          return [[player.id, available + placed], [player.color, available + placed]];
+        }));
+      },
     };
   }
 
@@ -1338,17 +1343,18 @@
     if (!chong?.listTransportArrivalEvents || !solar) return [];
     // 性能：无运输任务时任何火箭都取不到 task（listTransportArrivalEvents 第 934 行
     // `if (!task ...) continue`），结果恒为 []。提前短路省去每 effect 执行都遍历
-    // aliens/rockets（含逐运输任务 createSolarSnapshot 坐标解析）——单决策 ~3552 次
+    // aliens/rockets（含逐运输任务坐标解析）——单决策 ~3552 次
     // 调用，实测 solar 盘面函数占采样 ~8%。chong 切片缺失时同为空态，不初始化。
     const tasks = root.aliens?.chong?.transportTasksByRocketId;
     if (!tasks || Object.keys(tasks).length === 0) return [];
+    let locations;
     return chong.listTransportArrivalEvents(
       root.aliens,
       root.pieces?.rockets || [],
       (planetId) => {
         try {
-          const snapshot = solar.createSolarSnapshot(root.solarSystem);
-          const planet = (snapshot.planetLocations || []).find((entry) => entry.planetId === planetId);
+          locations ??= solar.collectPlanetLocations(root.solarSystem);
+          const planet = locations.find((entry) => entry.planetId === planetId);
           return planet ? { x: planet.x, y: planet.y } : null;
         } catch (error) {
           // 容错（为何可忽略）：坐标解析失败 = 盘面结构异常，只影响"化石运输是否
@@ -1672,6 +1678,61 @@
     );
   }
 
+  function resolveCardSettlement(root, effect, selected) {
+    const settled = settleCardDecision(root, effect, selected);
+    if (!settled.ok) return settled;
+    return {
+      ...settled,
+      events: [{
+        type: "card_rule_settled",
+        playerId: effect.ownerId,
+        cardInstanceId: settled.cardInstanceId ?? effect.payload.cardInstanceId ?? null,
+        ruleId: settled.ruleId ?? effect.payload.ruleId ?? null,
+        ruleKind: effect.payload.kind,
+      }],
+    };
+  }
+
+  function previewQuietAmibaYellowLanding(session, selected, knownCards) {
+    const head = session.queue[0], payload = head?.payload, source = session.workingState;
+    const owner = actor(source, head?.ownerId), turn = source.turn;
+    const [match] = payload?.matches || [];
+    if (session.phase !== "awaiting_input" || session.queue.length !== 1 || session.failure
+      || session.interruptContext || session.irreversibleBarrier || session.undoFrames.length
+      || head?.type !== EFFECT_TYPES.CARD_DECISION || head.kind !== "decision" || head.allowQuickActions
+      || session.journal.actions[0]?.action?.family !== "land" || source.meta.stateVersion !== session.baseVersion
+      || selected?.family !== "accept_optional_effect" || selected.actorId !== head.ownerId
+      || turn.roundNumber !== 4 || turn.gameEnded || turn.currentPlayerId !== head.ownerId
+      || !owner?.mainActionCompleted || owner.passCompletionPending || turn.passedPlayerIds.includes(owner.id)
+      || turn.cardTurnEventBonuses?.length || listFossilArrivalEvents(source).length
+      || payload.kind !== "trigger" || payload.matches?.length !== 1 || payload.event?.type !== "alienTrace"
+      || payload.event.traceType !== "yellow" || payload.event.playerId !== owner.id
+      || match?.ruleId !== "amiba0-yellow-data" || owner.reservedCards.some(card => !knownCards.has(card.id))) return null;
+    const card = owner.reservedCards.find(card => card.id === match.cardInstanceId);
+    const model = cardEffects.getCardModel(card);
+    const reward = model?.triggers?.find(trigger => trigger.id === match.ruleId)?.effect;
+    if (card?.cardId !== "amiba_0.webp" || !cardEffects.hasMatchingTrigger({ reservedCards: [card] }, payload.event)
+      || reward?.type !== "gain_data" || reward.options?.count !== 1 || (reward.options.repeat ?? 1) !== 1) return null;
+    const skip = selected.target?.choiceId === "skip:alienTrace";
+    if (!skip && (selected.target?.cardInstanceId !== match.cardInstanceId || selected.target.ruleId !== match.ruleId
+      || selected.target.choiceId !== `confirm:trigger:${match.cardInstanceId}:${match.ruleId}`)) return null;
+
+    // Own only the slices the native settlement can write. Neither choice
+    // consumes randomness or leaves a pending effect on this path.
+    const player = { ...owner, reservedCards: clone(owner.reservedCards),
+      ...(skip ? {} : { resources: { ...owner.resources }, dataState: clone(owner.dataState) }) };
+    const state = { ...source, meta: { ...source.meta, sequences: { ...source.meta.sequences } },
+      cards: { ...source.cards, drawPileCardIds: [...source.cards.drawPileCardIds],
+        removedFromGameCardIds: [...(source.cards.removedFromGameCardIds || [])] },
+      players: { ...source.players, players: source.players.players.map(p => p === owner ? player : p) } };
+    const settled = resolveCardSettlement(state, head, selected);
+    if (!settled.ok || settled.irreversible || settled.spawnedEffects?.length) return null;
+    const augmented = augmentEffectResult(state, settled, head);
+    if (augmented.spawnedEffects.length) return null;
+    state.meta.stateVersion = session.baseVersion + 1;
+    return state;
+  }
+
   function settleFinalScores(root) {
     const scores = [];
     for (const player of root.players.players || []) {
@@ -1960,6 +2021,36 @@
     );
   }
 
+  function previewQuietEndHandoffs(root, ownerId, {stationaryCargo=false} = {}) {
+    const owner=actor(root,ownerId),turn=root.turn;
+    if (!owner || turn.activePlayerCount!==4 || turn.currentPlayerId!==ownerId || !owner.mainActionCompleted
+      || owner.passCompletionPending || turn.gameEnded || turn.passedPlayerIds.includes(ownerId)
+      || turn.cardTurnEventBonuses?.length
+      || (stationaryCargo ? listFossilArrivalEvents(root).length>0
+        : Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
+      || [1,2].some(id=>{
+        const slot=aliens.getAlienSlot(root.aliens,id);
+        return slot&&!slot.revealed&&aliens.isAlienReadyToReveal(slot);
+      })) return null;
+    const player={...owner,reservedCards:clone(owner.reservedCards)};
+    const state={...root,turn:{...turn},aliens:clone(root.aliens),finalScoring:clone(root.finalScoring),
+      players:{...root.players,players:root.players.players.map(p=>p===owner?player:p)}};
+    if (cardEffects.collectMatchingTriggers(player,{type:"end_turn_handoffs_started",playerId:ownerId}).length) return null;
+    const data={roundNumber:turn.roundNumber,turnNumber:turn.turnNumber,didPass:false};
+    let settlements=[];
+    // Invoke the same ordered handoffs as END_TURN. A non-inert handoff is
+    // unsupported here; the caller still has the unchanged native input.
+    for(const [domain,effectType] of [
+      ["final_scoring","milestone"],["alien","turn_end_neutral_milestone"],["alien","turn_end_reveal"],
+      ["company","turn_end"],["card_trigger","turn_end"],
+    ]){
+      const out=applyHandoff(state,{ownerId,payload:{schemaVersion:HANDOFF_SCHEMA,domain,effectType,data}});
+      if (!out.ok||out.spawnedEffects?.length||out.irreversible||out.events?.length) return null;
+      if(out.cardSettlements)settlements=out.cardSettlements;
+    }
+    return {state,settlements};
+  }
+
   function listFinalMarkChoices(root, ownerId) {
       const player = actor(root, ownerId);
       if (!player) return [];
@@ -2235,18 +2326,12 @@
       },
       resolveDecision(state, effect, selected, context) {
         const root = getRoot(state, context);
-        const settled = settleCardDecision(root, effect, selected);
+        const settled = resolveCardSettlement(root, effect, selected);
         if (!settled.ok) return settled;
         return result(state, root, `card:${effect.payload.kind}`, {
           spawnedEffects: settled.spawnedEffects || [],
           irreversible: settled.irreversible || null,
-          events: [{
-            type: "card_rule_settled",
-            playerId: effect.ownerId,
-            cardInstanceId: settled.cardInstanceId ?? effect.payload.cardInstanceId ?? null,
-            ruleId: settled.ruleId ?? effect.payload.ruleId ?? null,
-            ruleKind: effect.payload.kind,
-          }],
+          events: settled.events,
         });
       },
     });
@@ -2404,6 +2489,11 @@
     EFFECT_TYPES,
     SPECIES_IDS,
     queryCardSettlement: findCardSettlement,
+    previewQuietEndHandoffs,
+    previewQuietAmibaYellowLanding,
+    hasPendingFossilArrival:root=>listFossilArrivalEvents(root).length>0,
+    cardDecisionChoices,
+    chongTaskFossilChoices,
     settleReadyTaskDirect,
     listFinalMarkChoices,
     describeEventBonusProgress,

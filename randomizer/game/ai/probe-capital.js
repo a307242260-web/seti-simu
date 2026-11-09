@@ -257,13 +257,36 @@
     knownTraceSelections.set(key,result);return result;
   }
 
+  function prepareFinalRoundSwapMission(state, player) {
+    if(state.turn.roundNumber!==4)throw new TypeError('PROBE_FINAL_SWAP_ROUND_INVALID');
+    const inactive=state.turn.gameEnded||player.passCompletionPending||(state.passingPlayerIds||state.turn.passedPlayerIds).includes(player.id);
+    if(inactive||!ownedProbes(state.pieces?.rockets,player).length)return {sensitive:false,quote:()=>0};
+    const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
+    if(planetAbility.BASE_LAND_ENERGY_COST-1-planetAbility.ORANGE3_LAND_DISCOUNT>0
+      &&planetAbility.DEFAULT_ORBIT_COST.energy>0&&wallet.energy===0&&wallet.credits<cToE.cost.credits)return {sensitive:false,quote:()=>0};
+    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
+      ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
+      aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),traces:slot.traces}))}};
+    const shared={player:wallet,round:4,board,passing:false,terminal:false,
+      extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
+    const weights=arithmetic.DEFAULT_WEIGHTS;
+    const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
+    // Only income rewards can consume cards (including anonymous cards).
+    // With no investment or later data purpose, a public pick alone has a
+    // fixed hand-count value regardless of the identity it takes.
+    const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'));
+    const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
+      weights,true,true,{prepared,constantInvestment:true});
+    return {sensitive,quote};
+  }
+
   function quoteValue(facts, weights) {return evaluateMission(facts, weights, true);}
   // The shared internal portfolio only reads the trace arrays. Custom callers
   // of quoteValue/quote still receive private deep copies as before.
   function quoteReadOnlyPortfolio(facts, weights) {return evaluateMission(facts,weights,true,weights===arithmetic.DEFAULT_WEIGHTS);}
   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
 
-  function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false) {
+  function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
       || !(facts.board?.rockets || []).some(r => isOwnedProbe(r, seatId))) return scalarOnly ? 0 : zero();
@@ -278,11 +301,11 @@
     if (!cardRoute && planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
       && planetAbility.DEFAULT_ORBIT_COST.energy > 0
       && player.energy === 0 && player.credits < cToE.cost.credits) return scalarOnly ? 0 : zero();
-    const goals = loadRequirements(facts,scalarOnly);
-    if (!goals.length) return scalarOnly ? 0 : zero();
+    const goals = finalSwap?.prepared ? null : loadRequirements(facts,scalarOnly);
+    if (goals?.length===0) return scalarOnly ? 0 : zero();
     // A finite supplied baseline requires no investment callback. With no
     // affordable endpoint there is also no later mission portfolio to price.
-    const prepared=scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null;
+    const prepared=finalSwap?.prepared??(scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null);
     let portfolio=null;
     if(cardRoute){
       if(prepared)portfolio=preparedHeldLandings(goals,prepared,player,cardRoute.cost.credits,weights);
@@ -304,7 +327,7 @@
     }
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
     const capitalValues = new Map();
-    const capital = (hand, wallet, income, traceSlots = null, knownCurrentValue) => {
+    const capital = finalSwap?.constantInvestment ? () => 0 : (hand, wallet, income, traceSlots = null, knownCurrentValue) => {
       const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, wallet.availableData, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
       if (!capitalValues.has(key)) capitalValues.set(key, knownCurrentValue===undefined
         ? facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}) : knownCurrentValue);
@@ -626,5 +649,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

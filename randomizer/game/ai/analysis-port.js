@@ -152,7 +152,8 @@
   // 重建执行意图并加入搜索控制身份；不把整份历史日志或撤销帧当成规则差异。
   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
-  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null, subtreeCache = null) {
+  const STATIC_IDENTITY_SLICES = new Set(["aliens","data","finalScoring","pieces","planets","solarSystem","tech"]);
+  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null, subtreeCache = null, sliceCache = null) {
     const session = envelope.session?.session;
     const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);
     function buildState() {
@@ -203,11 +204,11 @@
     const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
     const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
     const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g");
-    let unstableSubtrees=0;
+    let unstableSubtrees=0, trackSlice=false;
     function normalize(value, key = "") {
       // Cached children must be independent of every Session prefix, including
       // a different future prefix. Shallow freezing cannot protect a child.
-      if(subtreeCache&&typeof value==="string"&&referenceKeys.has(key)&&/effect-session-[0-9]+:(?:effect|group):[0-9]+/.test(value))unstableSubtrees++;
+      if((subtreeCache||trackSlice)&&typeof value==="string"&&referenceKeys.has(key)&&/effect-session-[0-9]+:(?:effect|group):[0-9]+/.test(value))unstableSubtrees++;
       if (typeof value === "string" && prefix && referenceKeys.has(key)) {
         // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。
         const parts = value.split(referencePattern);
@@ -218,11 +219,11 @@
         });
       }
       if (!value || typeof value !== "object") return value;
-      const before=unstableSubtrees,immutable=subtreeCache&&Object.isFrozen(value);
-      if(subtreeCache&&!immutable)unstableSubtrees++;
-      if(immutable&&subtreeCache.values.has(value)){subtreeCache.hits++;return subtreeCache.values.get(value);}
+      const before=unstableSubtrees,immutable=(subtreeCache||trackSlice)&&Object.isFrozen(value);
+      if((subtreeCache||trackSlice)&&!immutable)unstableSubtrees++;
+      if(subtreeCache&&immutable&&subtreeCache.values.has(value)){subtreeCache.hits++;return subtreeCache.values.get(value);}
       const result=normalizeObject(value);
-      if(immutable&&unstableSubtrees===before){subtreeCache.values.set(value,result);subtreeCache.stores++;}
+      if(subtreeCache&&immutable&&unstableSubtrees===before){subtreeCache.values.set(value,result);subtreeCache.stores++;}
       return result;
     }
     function normalizeObject(value) {
@@ -255,6 +256,27 @@
       }
       return result||value;
     }
+    function serializeState(state) {
+      if (!sliceCache || !Object.isFrozen(source)) return JSON.stringify(normalize(state));
+      const names=Object.keys(state).sort();
+      if(names.some(name=>/^\d+$/.test(name))||state.schemaVersion==="seti-standard-action-v1")
+        return JSON.stringify(normalize(state));
+      const fields=[];
+      for(const name of names){
+        const value=state[name],memoizable=value&&typeof value==="object"&&STATIC_IDENTITY_SLICES.has(name)&&Object.isFrozen(value);
+        let bytes=memoizable?sliceCache.values.get(value):undefined;
+        if(bytes!==undefined)sliceCache.hits++;
+        else{
+          const before=unstableSubtrees;
+          trackSlice=Boolean(memoizable);
+          bytes=JSON.stringify(normalize(value,name));
+          trackSlice=false;
+          if(memoizable&&before===unstableSubtrees&&bytes!==undefined){sliceCache.values.set(value,bytes);sliceCache.stores++;}
+        }
+        if(bytes!==undefined)fields.push(JSON.stringify(name)+":"+bytes);
+      }
+      return "{"+fields.join(",")+"}";
+    }
     const pending = session ? {
       phase: session.phase, queue: session.queue,
       interruptContext: session.interruptContext,
@@ -272,7 +294,7 @@
     let normalizedState;
     if(variants?.has(key))normalizedState=variants.get(key);
     else{
-      normalizedState=JSON.stringify(normalize(buildState()));
+      normalizedState=serializeState(buildState());
       if(stateCache&&Object.isFrozen(source)){
         if(!variants){
           if(stateCache.size>=64)stateCache.delete(stateCache.keys().next().value);
@@ -295,6 +317,7 @@
     let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false;
     let localSpecs=new WeakMap();
     let resourceSpecs = new WeakMap();
+    const resolvedPublicAnalysis = new WeakSet();
     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
     let cardPickRootStats = cardPickPlanner.getDiagnostics();
     let cardPickSpecs = new WeakMap();
@@ -310,14 +333,53 @@
     let nodes = new WeakMap();
     let observationReleasers = new WeakMap(), observationReleases = 0;
     let normalizedIdentityStates = new Map();
+    const identitySlices={values:new WeakMap(),hits:0,stores:0};
     const identitySubtrees={values:new WeakMap(),hits:0,stores:0};
-    const identities = new Map(), physicalIdentityKeys = new Map();
-    // Intern exact full-state bytes once. Search control keys need only the
-    // collision-free local integer; durable plan dependencies retain the
-    // original complete serialized keys below.
-    function nodeIdentity(physicalKey,intent,cardControl,resourceControl,knowledge = null) {
-      if(!physicalIdentityKeys.has(physicalKey))physicalIdentityKeys.set(physicalKey,physicalIdentityKeys.size);
-      const parts=[physicalIdentityKeys.get(physicalKey),intent,cardControl,resourceControl];
+    const identities = new Map(), physicalIdentityBuckets = new Map();
+    let nextPhysicalIdentity=0, identityBucketCollisions=0;
+    function physicalBucket(envelope,status,boundary){
+      const state=readIdentityState(envelope),session=envelope.session?.session,turn=state.turn;
+      // Only raw scalar fields that survive forwardIdentity are allowed.
+      // A bucket hit is never accepted as equality; the full key decides it.
+      return JSON.stringify([status,boundary,turn.roundNumber,turn.turnNumber,turn.currentPlayerId,
+        state.meta.sequences.card,state.meta.sequences.nebulaReplacement,state.meta.sequences.rocket,
+        state.match?.cardPlayContext?.lastScanNebulaId,
+        state.players.players.map(p=>[p.id,p.resources.score,p.resources.credits,p.resources.energy,
+          p.resources.publicity,p.resources.availableData,p.resources.handSize,p.hand.map(c=>c.id),p.reservedCards.map(c=>c.id)]),
+        state.pieces.rockets.map(r=>[r.id,r.sectorX,r.sectorY,r.surface]),
+        state.cards.publicCards.map(c=>c?.id),session?.queue.map(e=>[e.type,e.kind,e.ownerId])]);
+    }
+    function physicalCollisionKey(envelope){
+      const state=readIdentityState(envelope);
+      return JSON.stringify([
+        [1,2].map(id=>["blue","pink","yellow"].map(color=>{
+          const t=state.aliens.aliens[id]?.traces?.[color];
+          return t&&[t.firstPlaced,t.ownerPlayerColor,t.neutral,t.extraCount,t.extraMarkers?.length];
+        })),
+        state.players.players.map(p=>[p.blueBonusResources?.credits,p.blueBonusResources?.energy]),
+        data.NEBULA_IDS.map(id=>state.data.nebulae[id]?.tokens.map(t=>[t.replacementOrder,t.replacedByPlayerId])),
+      ]);
+    }
+    function internPhysicalIdentity(stored,envelope,status,boundary){
+      const key=physicalBucket(envelope,status,boundary);
+      let bucket=physicalIdentityBuckets.get(key);
+      if(!bucket){bucket=[];physicalIdentityBuckets.set(key,bucket);}
+      else{
+        identityBucketCollisions++;
+        const collision=stored.collisionKey;
+        let exact;
+        for(const prior of bucket){
+          if(prior.stored.collisionKey!==collision)continue;
+          exact??=stored.physicalKey;
+          if(prior.stored.physicalKey===exact)return prior.id;
+        }
+      }
+      const id=nextPhysicalIdentity++;
+      bucket.push({id,stored});
+      return id;
+    }
+    function nodeIdentity(physicalId,intent,cardControl,resourceControl,knowledge = null) {
+      const parts=[physicalId,intent,cardControl,resourceControl];
       if(knowledge)parts.push(knowledge);
       const key=JSON.stringify(parts);
       if(!identities.has(key))identities.set(key,Object.freeze({}));
@@ -356,11 +418,13 @@
     let fork = null;
     let loadedEnvelope = null;
     const decodedStates = new Map();
+    let committedReferences=new WeakMap();
+    let lazyCommittedEnvelopes=0,lazyPreviewSerializations=0;
     const maxDecodedStateCacheEntries = 64, maxDecodedStateCacheBytes = 8 * 1024 * 1024;
     let decodedStateCacheBytes = 0;
     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
-    let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0;
+    let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0, committedReferenceHits=0;
     let rootObservation = null, knownChongDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
     let knownRootFossilIds = new Set();
     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
@@ -390,7 +454,20 @@
     }
     let publicSeed = null, rootTurnKey = null;
     let nodeCount = 0, identityMaterializations = 0;
-    let submissionCount = 0;
+    let submissionCount = 0, provedFinalDataPlacements = {}, provedFinalDataMenuInputs = 0;
+    let quietDataMenuTemplate = null;
+    let blueTwoPickTemplate = null, provedBlueTwoPickInputs = 0;
+    let provedChongTransportInputs=0, provedChongTraceSkips=0, provedChongTraceMenus=0;
+    let chongTraceMenuTemplate=null,provedChongEndMenus=0;
+    const chongEndTemplates=new Map(),chongQueuedTemplates=new Map();
+    let provedChongQueuedTasks=0;
+    let provedAmibaYellowLandingInputs=0;
+    let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+    let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
+    let provedScan4QuietMoves=0, provedPublicScanChoices=0;
+    const scan4RefillCache=new Map();
+    let scan4RefillHits=0;
+    let moveMenuTemplate=null, provedMoveMenus=0, provedMovePayments=0;
     let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
     let observationCount = 0;
     const cache = new Map();
@@ -431,14 +508,21 @@
 
     function snapshot(comp) {
       const startedAt = now();
-      const saved = comp.lifecycle.save({ trustedFork: true });
+      const saved = comp.lifecycle.save({ trustedFork: true, deferSerialization:true });
       milliseconds.checkpoint += now() - startedAt;
       if (!saved.ok) throw new Error(`ANALYSIS_SAVE_FAILED: ${saved.code || saved.message}`);
-      if (saved.trustedState && !decodedStates.has(saved.envelope.committedState)) {
-        cacheCommittedState(saved.envelope.committedState, saved.trustedState);
+      if (saved.trustedState) {
+        committedReferences.set(saved.envelope,saved.trustedState);
         committedReferenceCount++;
       }
       return saved.envelope;
+    }
+
+    function withEnvelopeSession(source,session){
+      const envelope=Object.freeze({schemaVersion:source.schemaVersion,get committedState(){return source.committedState;},session});
+      const state=committedReferences.get(source);
+      if(state)committedReferences.set(envelope,state);
+      return envelope;
     }
 
     function restoreEnvelope(envelope, forWrite = false) {
@@ -504,14 +588,19 @@
       // Fixed native prefixes may be charged only as certificate steps, never
       // compared by the graph. Delay their large exact key until identity or
       // durable plan evidence actually consumes it; no equality fields change.
-      let physicalKey,identity;
+      let physicalKey,physicalId,collisionKey,identity;
       nodes.set(node, { envelope, serial: nodeCount,
         get physicalKey(){
-          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates);identityMaterializations++;}
+          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates,null,identitySlices);identityMaterializations++;}
           return physicalKey;
         },
+        get collisionKey(){return collisionKey??=physicalCollisionKey(envelope);},
+        get physicalId(){
+          if(physicalId===undefined)physicalId=internPhysicalIdentity(this,envelope,status,boundary);
+          return physicalId;
+        },
         get identity(){
-          if(identity===undefined)identity=nodeIdentity(this.physicalKey,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope));
+          if(identity===undefined)identity=nodeIdentity(this.physicalId,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope));
           return identity;
         },
         set identity(value){identity=value;},
@@ -531,7 +620,9 @@
     }
 
     function readCommittedState(envelope) {
-      // Exact serialized bytes only; pending working copies remain separate and writable.
+      const captured=committedReferences.get(envelope);
+      if(captured){committedReferenceHits++;return captured;}
+      // External byte snapshots still decode by exact serialization.
       const key = envelope.committedState;
       if (decodedStates.has(key)) {
         const result = decodedStates.get(key);
@@ -563,10 +654,12 @@
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
-      submissionCount = 0;
+      submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0;
+      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+      moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
-      committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0;
+      committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0; committedReferenceHits=0; lazyCommittedEnvelopes=0; lazyPreviewSerializations=0;
       observationCacheHits = 0; resourceQueryHits = 0; resourceQueryMisses = 0; goalCatalogHits = 0; goalCatalogMisses = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
       rootObservation = project(composition);
@@ -589,7 +682,7 @@
       // 同一回合的已知输入不重抽未知世界；恢复仅依赖正式公开配置和回合身份。
       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
       const authoritative = snapshot(composition);
-      const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
+      const state = readIdentityState(authoritative);
       const player=state.players.players.find(p=>p.id===seatId);
       const supplier=state.turn.roundNumber===3&&player.mainActionCompleted&&player.industryRoundMarkRound!==3
         &&industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId==="deepspace_swap_cards"&&resourceDemand.publicLandingSupplier(state);
@@ -618,7 +711,536 @@
       return openedRoot;
     }
 
-    function expand(node, actionId) {
+    function quietDataMenuSource(stored, action) {
+      if (!resourcePlanning || stored.envelope.session || stored.resourceControl || action.family !== "place_data"
+        || action.phase !== "quick" || action.target?.kind !== "place-data" || Object.keys(action.payload).length) return null;
+      const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+        || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+        || localPlans.hasPendingFossilArrival(state)
+        || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
+      return state;
+    }
+
+    function rememberQuietDataMenu(action, child) {
+      const checkpoint = nodes.get(child).envelope.session;
+      const s = checkpoint?.session, effect = s?.queue?.[0];
+      if (child.status !== "decision" || s?.phase !== "awaiting_input" || s.queue.length !== 1
+        || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
+        || s.committedState || s.failure || s.irreversibleBarrier || s.interruptContext || s.undoFrames.length
+        || s.journal.actions.length !== 1 || s.journal.actions[0].action.actionId !== action.actionId
+        || s.journal.replay.length !== 1 || s.journal.replay[0].kind !== "action"
+        || s.journal.effects.length !== 1 || s.journal.events.length || s.journal.rng.length
+        || s.journal.decisions.length || s.journal.history.length || s.journal.logs.length
+        || JSON.stringify(s.baseState) !== JSON.stringify(s.workingState)) return;
+      quietDataMenuTemplate = { ...checkpoint, session:{...s, baseState:null, workingState:null} };
+    }
+
+    function makeQuietDataMenu(envelope, state, action) {
+      const template = quietDataMenuTemplate, s = template?.session;
+      if (s?.journal.actions[0].action.actionId !== action.actionId) return null;
+      const effect = s.queue[0];
+      return withEnvelopeSession(envelope,freeze({...template, session:{...s,
+        baseState:state, workingState:state, baseVersion:state.meta.stateVersion,
+        queue:[{...effect, payload:{...effect.payload, action}}],
+        journal:{...s.journal, actions:[{...s.journal.actions[0], action}], replay:[{...s.journal.replay[0], action}]},
+      }}));
+    }
+
+    function previewBlueTwoPick(stored, action) {
+      if (!resourcePlanning || stored.resourceControl || action.family !== "choose_target"
+        || action.target?.choiceId !== "data:blueBonus:2" || action.target?.target !== "blueBonus" || action.target?.blueSlot !== 2) return null;
+      const s = stored.envelope.session?.session, effect = s?.queue?.[0];
+      if (s?.phase !== "awaiting_input" || s.queue.length !== 1 || s.interruptContext || s.irreversibleBarrier
+        || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
+        || s.journal.actions.length !== 1 || s.journal.actions[0].action.family !== "place_data"
+        || s.journal.effects.length !== 1 || s.journal.events.length || s.journal.decisions.length
+        || s.journal.replay.length !== 1 || s.undoFrames.length) return null;
+      const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+        || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+        || localPlans.hasPendingFossilArrival(state)
+        || data.getBlueBonusPlacementReward(owner, 2)?.type !== "choose_card"
+        || !state.cards.publicCards.some(Boolean)) return null;
+      const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
+        reservedCards:structuredClone(owner.reservedCards)};
+      const placed = data.placeDataToComputer(player, {target:"blueBonus", blueSlot:2});
+      if (!placed.ok || placed.placementKind !== "blueBonus" || placed.blueSlot !== 2
+        || placed.slotBonuses.length !== 1 || placed.slotBonuses[0].type !== "choose_card") return null;
+      const event = {type:"placeData", playerId:seatId, placementKind:"blueBonus", blueSlot:2};
+      if (cardEffects.collectMatchingTriggers(player, event).length) return null;
+      return {...state, players:{...state.players, players:state.players.players.map(p => p === owner ? player : p)}};
+    }
+
+    function rememberBlueTwoPick(stored, action, preview, child) {
+      const before = stored.envelope.session.session, next = nodes.get(child).envelope.session?.session;
+      const q = next?.queue?.[0], j = next?.journal;
+      if (child.status !== "decision" || next?.phase !== "awaiting_input" || next.queue.length !== 1
+        || q.type !== scienceSession.EFFECT_TYPES.PICK_CARD || q.ownerId !== seatId || q.allowQuickActions
+        || q.payload?.blueBonusSource !== true || next.failure || next.irreversibleBarrier || next.undoFrames.length
+        || j.effects.length !== 2 || j.events.length !== 1 || j.decisions.length !== 1 || j.replay.length !== 2
+        || j.decisions[0].choice.actionId !== action.actionId || JSON.stringify(preview) !== JSON.stringify(next.workingState)) return;
+      blueTwoPickTemplate = {sessionId:before.sessionId, revision:before.revision,
+        effectSeq:before.nextEffectSequence, groupSeq:before.nextGroupSequence,
+        nextRevision:next.revision, nextEffectSeq:next.nextEffectSequence, nextGroupSeq:next.nextGroupSequence,
+        queue:q, effect:j.effects[1], event:j.events[0]};
+    }
+
+    function makeBlueTwoPick(envelope, action, workingState) {
+      const s = envelope.session.session, template = blueTwoPickTemplate;
+      if (!template || s.revision !== template.revision || s.nextEffectSequence !== template.effectSeq
+        || s.nextGroupSequence !== template.groupSeq) return null;
+      const rebase = id => id == null ? id : s.sessionId + id.slice(template.sessionId.length);
+      const remap = entry => Object.fromEntries(Object.entries(entry).map(([key,value]) => (
+        [key, ["effectId", "groupId", "parentEffectId"].includes(key) ? rebase(value) : value]
+      )));
+      const q = {...remap(template.queue), source:remap(template.queue.source)};
+      const decision = {decisionId:s.queue[0].effectId, decisionVersion:s.revision, ownerId:seatId, choice:action};
+      return withEnvelopeSession(envelope,freeze({...envelope.session, replayCursor:2, session:{...s, workingState, queue:[q],
+        revision:template.nextRevision, nextEffectSequence:template.nextEffectSeq, nextGroupSequence:template.nextGroupSeq,
+        journal:{...s.journal, effects:[...s.journal.effects, remap(template.effect)], events:[remap(template.event)],
+          decisions:[decision], replay:[...s.journal.replay, {cursor:1,kind:"decision",confirmed:true,...decision}]},
+      }}));
+    }
+
+    function previewQuietFinalDataPlacement(stored, action) {
+      const computer = action.target?.choiceId === "data:computer" && action.target?.target === "computer";
+      const blueSlot = action.target?.target === "blueBonus" && [1, 2, 3].includes(action.target?.blueSlot)
+        && action.target.choiceId === `data:blueBonus:${action.target.blueSlot}` ? action.target.blueSlot : null;
+      if (action.family !== "choose_target" || !computer && !blueSlot) return null;
+      const session = stored.envelope.session?.session, effect = session?.queue?.[0];
+      if (!resourcePlanning || stored.resourceControl || !session || session.phase !== "awaiting_input"
+        || session.queue.length !== 1 || session.interruptContext || session.irreversibleBarrier
+        || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
+        || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
+      const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+        || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+        || localPlans.hasPendingFossilArrival(state)
+        || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
+        || owner.resources.availableData !== owner.dataState.poolTokens.length
+        || state.meta.stateVersion !== session.baseVersion) return null;
+      const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
+        reservedCards:structuredClone(owner.reservedCards), scoreSources:{...owner.scoreSources}};
+      const placement = data.placeDataToComputer(player, blueSlot ? {target:"blueBonus", blueSlot} : undefined);
+      const placementKind = computer ? "computer" : "blueBonus";
+      if (!placement.ok || placement.placementKind !== placementKind || blueSlot&&placement.blueSlot!==blueSlot) return null;
+      const slot=computer?{placementSlot:placement.placementSlot}:{blueSlot};
+      const events=[{type:"placeData",playerId:seatId,placementKind,...slot}];
+      for(const bonus of placement.slotBonuses){
+        const resource=bonus.type;
+        if(!["credits","energy","publicity","score"].includes(resource)
+          ||!Number.isSafeInteger(bonus[resource])||bonus[resource]<=0
+          ||Object.keys(bonus).some(k=>k!=="type"&&k!==resource))return null;
+        const gain={[resource]:bonus[resource]};
+        players.gainResources(player,gain,"blueTechScore");
+        events.push({type:"science_resource_bonus",playerId:seatId,gain,sourceKey:"blueTechScore"});
+      }
+      if (events.some(event => cardEffects.collectMatchingTriggers(player, event).length)) return null;
+      return {kind:computer ? `computer${placement.placementSlot}` : `blue${blueSlot}:${placement.slotBonuses.map(b=>b.type).join("+")}`, state:{...state, meta:{...state.meta, stateVersion:session.baseVersion+1},
+        players:{...state.players, players:state.players.players.map(p => p === owner ? player : p)}}};
+    }
+
+    function rememberQuietEndPrelude(action,child,preview){
+      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal;
+      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.queue.length!==2||s.interruptContext
+        ||s.irreversibleBarrier||s.failure||s.undoFrames.length||s.queue[0].type!=="residual_card_decision"
+        ||s.queue[0].ownerId!==seatId||s.queue[0].payload?.cardInstanceId!==preview.task.cardInstanceId
+        ||s.queue[0].payload?.ruleId!==preview.task.ruleId||s.queue[1].type!=="probe_turn_advance"
+        ||s.queue[1].ownerId!==seatId||s.queue[1].payload?.didPass!==false||j.actions.length!==1
+        ||j.actions[0].action.actionId!==action.actionId||j.replay.length!==1||j.replay[0].kind!=="action"
+        ||j.effects.length!==6||j.decisions.length||j.rng.length||j.logs.length||j.history.length!==1
+        ||j.events.length!==1||j.events[0].type!=="end_turn_handoffs_started"
+        ||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
+      quietEndPreludeTemplate={...checkpoint,session:{...s,baseState:null,workingState:null}};
+    }
+
+    function makeQuietEndPrelude(envelope, action, preview){
+      const template=quietEndPreludeTemplate,s=template?.session;
+      if(s?.journal.actions[0].action.actionId!==action.actionId)return null;
+      const [head,advance]=s.queue,{source,working,task}=preview;
+      const prepared={...head,payload:task};
+      const choices=localPlans.finalEndTaskChoices(working,prepared);
+      if(choices.length!==2)return null;
+      const session=freeze({...template,session:{...s,baseState:working,workingState:working,baseVersion:source.meta.stateVersion,
+        queue:[prepared,{...advance,payload:{roundNumber:source.turn.roundNumber,turnNumber:source.turn.turnNumber,didPass:false}}],
+        journal:{...s.journal,actions:[{...s.journal.actions[0],action}],replay:[{...s.journal.replay[0],action}]}}});
+      return {envelope:withEnvelopeSession(envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function chongQueuedKey(stored,preview){
+      const s=stored.envelope.session.session;
+      return JSON.stringify([s.queue[0].payload.ruleId,s.revision,s.nextEffectSequence,s.nextGroupSequence,
+        s.journal.replay.length,Boolean(preview.opensFossils)]);
+    }
+
+    function rememberChongQueuedTask(stored,action,child,preview){
+      const prior=stored.envelope.session.session,before=prior.journal,head=prior.queue[0];
+      const after=nodes.get(child).envelope.session?.session,j=after?.journal;
+      if(child.status!=="decision"||after?.phase!=="awaiting_input"||after.interruptContext||after.irreversibleBarrier
+        ||after.failure||after.undoFrames.length||after.queue.length!==2||after.revision!==prior.revision+1
+        ||j.actions.length!==before.actions.length||j.history.length!==before.history.length||j.rng.length!==before.rng.length
+        ||j.logs.length!==before.logs.length||j.effects.length!==before.effects.length+1||j.events.length!==before.events.length+1
+        ||j.decisions.length!==before.decisions.length+1||j.replay.length!==before.replay.length+1
+        ||j.decisions.at(-1).choice.actionId!==action.actionId||JSON.stringify(j.events.at(-1))!==JSON.stringify(preview.event)
+        ||JSON.stringify(after.workingState)!==JSON.stringify(preview.working))return;
+      const opened=preview.opensFossils?after.queue[0]:null;
+      if(opened&&(opened.type!=="residual_chong_task_fossil"||opened.ownerId!==seatId||opened.allowQuickActions
+        ||Object.keys(opened.payload).length||opened.source?.parentEffectId!==head.effectId))return;
+      if(JSON.stringify(opened?after.queue.slice(1):after.queue)!==JSON.stringify(prior.queue.slice(1)))return;
+      chongQueuedTemplates.set(chongQueuedKey(stored,preview),{sessionId:prior.sessionId,effect:j.effects.at(-1),opened,
+        effectDelta:after.nextEffectSequence-prior.nextEffectSequence,groupDelta:after.nextGroupSequence-prior.nextGroupSequence});
+    }
+
+    function makeChongQueuedTask(stored,action,preview){
+      const template=chongQueuedTemplates.get(chongQueuedKey(stored,preview));
+      if(!template)return null;
+      const envelope=stored.envelope.session,s=envelope.session,j=s.journal,head=s.queue[0],queue=s.queue.slice(1);
+      if(template.opened){
+        const rebase=id=>s.sessionId+id.slice(template.sessionId.length),f=template.opened;
+        queue.unshift({...f,effectId:rebase(f.effectId),groupId:rebase(f.groupId),source:{...f.source,parentEffectId:head.effectId}});
+      }
+      const choices=template.opened?localPlans.chongTaskFossilChoices(preview.working,queue[0])
+        :localPlans.finalEndTaskChoices(preview.working,queue[0]);
+      if(!choices.length)return null;
+      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const session=freeze({...envelope,replayCursor:j.replay.length+1,session:{...s,workingState:preview.working,queue,
+        revision:s.revision+1,nextEffectSequence:s.nextEffectSequence+template.effectDelta,nextGroupSequence:s.nextGroupSequence+template.groupDelta,
+        journal:{...j,effects:[...j.effects,{...template.effect,effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision:s.revision+1}],
+          events:[...j.events,preview.event],decisions:[...j.decisions,decision],replay:[...j.replay,{cursor:j.replay.length,kind:"decision",confirmed:true,...decision}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function rememberChongEndMenu(action,child,preview){
+      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal;
+      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier
+        ||s.failure||s.undoFrames.length||s.queue.length!==preview.settlements.length+1
+        ||j.actions.length!==1||j.actions[0].action.actionId!==action.actionId||j.replay.length!==1||j.replay[0].kind!=="action"
+        ||j.effects.length!==6||j.decisions.length||j.rng.length||j.logs.length||j.history.length!==1
+        ||j.events.length!==1||j.events[0].type!=="end_turn_handoffs_started"
+        ||JSON.stringify(s.workingState)!==JSON.stringify(preview.working)||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
+      const advance=s.queue.at(-1);
+      if(advance.type!=="probe_turn_advance"||advance.ownerId!==seatId||advance.payload?.didPass!==false
+        ||!preview.settlements.every((task,i)=>s.queue[i].type==="residual_card_decision"&&s.queue[i].ownerId===seatId
+          &&!s.queue[i].allowQuickActions&&JSON.stringify(s.queue[i].payload)===JSON.stringify(task)))return;
+      chongEndTemplates.set(preview.shape,{...checkpoint,session:{...s,baseState:null,workingState:null}});
+    }
+
+    function makeChongEndMenu(stored,action,preview){
+      const template=chongEndTemplates.get(preview.shape),s=template?.session;
+      if(!s)return null;
+      const {source,working,settlements}=preview,j=s.journal;
+      const queue=settlements.map((task,i)=>({...s.queue[i],payload:task}));
+      queue.push({...s.queue.at(-1),payload:{roundNumber:source.turn.roundNumber,turnNumber:source.turn.turnNumber,didPass:false}});
+      const choices=localPlans.finalEndTaskChoices(working,queue[0]);
+      if(choices.length!==2)return null;
+      const session=freeze({...template,session:{...s,baseVersion:source.meta.stateVersion,baseState:working,workingState:working,queue,
+        journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function rememberChongTraceMenu(action,child,preview){
+      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal,head=s?.queue?.[0];
+      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext||s.irreversibleBarrier
+        ||s.failure||s.undoFrames.length||head.type!=="residual_chong_task_fossil"||head.ownerId!==seatId
+        ||head.kind!=="decision"||head.allowQuickActions||Object.keys(head.payload).length
+        ||j.actions.length!==1||j.actions[0].action.actionId!==action.actionId||j.effects.length!==1
+        ||j.replay.length!==1||j.decisions.length||j.events.length!==1||j.events[0].type!=="complete_task"
+        ||j.history.length!==1||j.history[0].type!=="complete_task"||j.rng.length||j.logs.length
+        ||JSON.stringify(s.workingState)!==JSON.stringify(preview.working)
+        ||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
+      chongTraceMenuTemplate={...checkpoint,session:{...s,baseState:null,workingState:null}};
+    }
+
+    function makeChongTraceMenu(stored,action,preview){
+      const template=chongTraceMenuTemplate,s=template?.session;
+      if(!s)return null;
+      const {source,working,event}=preview,j=s.journal;
+      const choices=localPlans.chongTaskFossilChoices(working,s.queue[0]);
+      if(!choices.length)return null;
+      const session=freeze({...template,session:{...s,baseVersion:source.meta.stateVersion,baseState:working,workingState:working,
+        journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}],events:[event],
+          history:[{...j.history[0],...event}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function quietPaidMoveSource(stored,action){
+      if(!resourcePlanning||!movementPlanning||stored.resourceControl||stored.informationBarrier
+        ||action?.family!=="move"||action.phase!=="quick"||![1,2].includes(action.payload?.requiredMovePoints))return null;
+      const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+        ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||!state.pieces.rockets.some(r=>r.id===action.target.rocketId&&r.playerId===seatId&&(r.kind||"standard")==="standard")
+        ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id)))return null;
+      const tasks=state.aliens.chong?.transportTasksByRocketId||{};
+      const stationaryCargo=Object.values(tasks).some(job=>!job.delivered);
+      // A standard probe does not move the fossil. Keep native settlement
+      // when there is already an arrival to record or the moved ID is bound.
+      if(stationaryCargo&&(tasks[String(action.target.rocketId)]||localPlans.hasPendingFossilArrival(state)))return null;
+      return {state,player:p,stationaryCargo};
+    }
+
+    function rememberMoveMenu(child,action){
+      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal,e=s?.queue[0];
+      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext
+        ||s.irreversibleBarrier||s.failure||s.undoFrames.length||e.type!==probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT
+        ||e.ownerId!==seatId||e.allowQuickActions||j.actions.length!==1||j.actions[0].action.actionId!==action.actionId
+        ||j.effects.length!==1||j.replay.length!==1||j.decisions.length||j.events.length!==1
+        ||j.events[0].type!=="move_payment_requested"||j.rng.length||j.logs.length||j.history.length!==1
+        ||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
+      moveMenuTemplate={...checkpoint,session:{...s,baseState:null,workingState:null}};
+    }
+
+    function makeMoveMenu(stored,action,state){
+      const s=moveMenuTemplate?.session;
+      if(!s)return null;
+      const e=s.queue[0],head={...e,payload:{action}};
+      const choices=probeTurnSession.getMovePaymentChoices(state,head);
+      if(!choices.length)return null;
+      const j=s.journal;
+      const session=freeze({...moveMenuTemplate,session:{...s,baseState:state,workingState:state,baseVersion:state.meta.stateVersion,
+        queue:[head],journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}],
+          events:[{...j.events[0],rocketId:action.target.rocketId}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function previewQuietMovePayment(stored,action){
+      const s=stored.envelope.session?.session,e=s?.queue[0],origin=e?.payload?.action;
+      if(action.family!=="choose_payment"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext
+        ||s.irreversibleBarrier||s.failure||s.undoFrames.length||e.type!==probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT
+        ||e.ownerId!==seatId||e.allowQuickActions||s.journal.actions[0]?.action?.family!=="move")return null;
+      const source=quietPaidMoveSource(stored,origin);
+      if(!source)return null;
+      const {state,player:p,stationaryCargo}=source,ship=state.pieces.rockets.find(r=>r.id===origin.target.rocketId);
+      const known=knownCards(stored.envelope);
+      if(action.target?.cardIds?.some(id=>!known.has(id)))return null;
+      const player={...p,resources:{...p.resources},blueBonusResources:{...p.blueBonusResources},
+        hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...state.meta,stateVersion:s.baseVersion+1},
+        cards:{...state.cards,discardPile:[...state.cards.discardPile]},
+        pieces:{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
+      const moved=probeTurnSession.settleMovePayment(next,seatId,origin,action);
+      if(!moved.ok||stationaryCargo&&moved.events.some(event=>event.type!=="move")
+        ||moved.events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+      return next;
+    }
+
+    function refillQuietScan4(state,missing){
+      const {cards:deck,players:owners,meta}=state;
+      const claimed=cards.collectClaimedCardIds(deck,owners);
+      const slots=deck.publicCards.map((card,i)=>card?null:i).filter(i=>i!==null);
+      // Deck sanitization only consults whether a pile entry is already
+      // claimed. Its order, empty slots and the entity counter stay exact.
+      const key=JSON.stringify([meta.sequences.card,slots,deck.drawPileCardIds,
+        deck.drawPileCardIds.filter(id=>claimed.has(String(id)))]);
+      const cached=scan4RefillCache.get(key);
+      if(cached){
+        scan4RefillHits++;
+        for(let i=0;i<slots.length;i++)deck.publicCards[slots[i]]=cached.cards[i];
+        deck.drawPileCardIds=cached.pile;
+        meta.sequences.card=cached.nextCard;
+        return true;
+      }
+      let random=false,filled=0;
+      for(const i of slots){
+        if(cards.replenishPublicSlot(deck,owners,i,()=>{random=true;return 0;},{root:state}))filled++;
+      }
+      if(random||filled!==missing)return false;
+      if(scan4RefillCache.size<32)scan4RefillCache.set(key,freeze({
+        cards:slots.map(i=>deck.publicCards[i]),pile:deck.drawPileCardIds,nextCard:meta.sequences.card,
+      }));
+      return true;
+    }
+
+    function previewQuietPublicScan(node,stored,action){
+      if(!resourcePlanning||!scanPlanning||node.status!=="decision"||stored.informationBarrier||stored.resourceControl
+        ||action.family!=="choose_card")return null;
+      const checkpoint=stored.envelope.session,s=checkpoint?.session,types=scienceSession.EFFECT_TYPES;
+      const [head,purple,finalize,extra,last]=s?.queue||[],opts=head?.payload?.options;
+      if(s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
+        ||head.type!==types.SCAN_STEP||head.kind!=="decision"||opts?.mode!=="public"
+        ||Object.keys(opts).some(k=>!["mode","max","selected","consumeMarkers"].includes(k))
+        ||!Number.isSafeInteger(opts.max)||!Number.isSafeInteger(opts.selected)||opts.selected>=opts.max
+        ||purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
+        ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
+      const source=s.journal.actions[0]?.action?.family;
+      if(source==="scan"&&s.queue.length!==3||source==="play_card"&&(s.queue.length!==5
+        ||extra.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
+        ||source!=="scan"&&source!=="play_card")return null;
+      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
+        ||p.reservedCards.some(c=>!known.has(c.id)))return null;
+      const done=action.target?.done===true;
+      const offered=root.cards.publicCards[action.target?.publicSlotIndex];
+      if(done?action.target.choiceId!=="public:done":!offered||!known.has(offered.id)||offered.id!==action.target.cardInstanceId
+        ||action.target.choiceId!==`public:${offered.id}:${action.target.nebulaId}`||action.payload.gainData!==true)return null;
+      const player={...p,resources:{...p.resources},dataState:structuredClone(p.dataState),scoreSources:{...p.scoreSources},
+        reservedCards:structuredClone(p.reservedCards)};
+      const state={...root,meta:{...root.meta,sequences:{...root.meta.sequences}},data:structuredClone(root.data),
+        match:{...root.match,cardPlayContext:{...root.match.cardPlayContext}},cards:{...root.cards,publicCards:[...root.cards.publicCards],discardPile:[...root.cards.discardPile]},
+        players:{...root.players,players:root.players.players.map(q=>q===p?player:q)}};
+      let repeat=null,events,history=[];
+      if(done)events=[{type:"publicScanCompleted",selected:opts.selected||0}];
+      else{
+        const id=action.target.nebulaId;
+        const result=scienceSession.executeNebulaScan(state,seatId,{target:{choiceId:"nebula:"+id,nebulaId:id}},
+          {nebulaIds:[id],source:"science"});
+        if(!result.ok)return null;
+        events=result.events||[];
+        history=[{type:"science_scan",nebulaId:id}];
+        repeat=scienceSession.consumePublicScanCard(state,player,action,opts);
+      }
+      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+      const offset=Number(Boolean(repeat)),revision=s.revision+1;
+      const nextEffectSequence=s.nextEffectSequence+offset,nextGroupSequence=s.nextGroupSequence+offset;
+      const queue=s.queue.slice(1);
+      if(repeat)queue.unshift({...head,effectId:s.sessionId+":effect:"+nextEffectSequence,
+        groupId:s.sessionId+":group:"+nextGroupSequence,groupKind:"spawned",payload:{options:repeat},
+        source:{parentEffectId:head.effectId,priority:"direct"},groupIndex:0});
+      const choices=repeat
+        ?scienceSession.formalizeChoices(state,seatId,scienceSession.listScanStepChoices(state,player,repeat))
+        :scienceSession.scanAction4DecisionChoices(state,purple);
+      if(!choices.length)return null;
+      const j=s.journal,cursor=j.replay.length;
+      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const effectRow={effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision};
+      const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:state,queue,revision,
+        nextEffectSequence,nextGroupSequence,journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...events],
+          history:[...j.history,...history],effects:[...j.effects,effectRow],
+          replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function previewQuietScan4Move(node,stored,action){
+      if(!resourcePlanning||!scanPlanning||!movementPlanning||node.status!=="decision"||stored.resourceControl
+        ||stored.informationBarrier||action.family!=="choose_target"||action.target?.mode!=="move"
+        ||action.payload?.requiredMovePoints!==1)return null;
+      const checkpoint=stored.envelope.session, s=checkpoint?.session;
+      const [head,finalize,extra,last]=s?.queue||[], types=scienceSession.EFFECT_TYPES;
+      if(s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
+        ||head.type!==types.SCAN_ACTION_4||head.kind!=="decision"||head.allowQuickActions||!head.payload?.skippable
+        ||!finalize||finalize.type!==types.SCAN_FINALIZE
+        ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
+      const source=s.journal.actions[0]?.action?.family;
+      if(source==="scan"&&s.queue.length!==2||source==="play_card"&&(s.queue.length!==4||extra.type!==types.SCAN_STEP
+        ||extra.kind!=="effect"||last.type!==types.SCAN_FINALIZE||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"
+        ||extra.payload?.options?.mode!=="any"||extra.payload.options.sameSectorRemaining!==1)
+        ||source!=="scan"&&source!=="play_card")return null;
+      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      const ship=state.pieces.rockets.find(r=>r.id===action.target.rocketId);
+      const known=knownCards(stored.envelope);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
+        ||!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"||p.reservedCards.some(c=>!known.has(c.id))
+        ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
+      const missing=state.cards.publicCards.filter(c=>!c).length;
+      if(!missing)return null;
+      const player={...p,resources:{...p.resources},reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...state.meta,sequences:{...state.meta.sequences}},
+        pieces:{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
+        cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
+      const move=rocketAbilities.moveProbe(scienceSession.createActionContext(next,seatId),{
+        ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
+      });
+      if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
+      if(!refillQuietScan4(next,missing))return null;
+      const events=[move.events[0],{type:"publicRefill",count:missing}];
+      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
+      const eid=n=>s.sessionId+":effect:"+(s.nextEffectSequence+n);
+      const gid=n=>s.sessionId+":group:"+(s.nextGroupSequence+n);
+      const barrier={effectId:eid(2),revision:s.revision+4,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
+      if(!extra){
+        next.meta.stateVersion=s.baseVersion+1;
+        return {next,barrier};
+      }
+
+      // The first scan has no sector reward. Refill remains before the
+      // unchanged second scan; its real menu is enumerated on the new state.
+      const choices=scienceSession.formalizeChoices(next,seatId,scienceSession.listScanStepChoices(next,player,extra.payload.options));
+      if(!choices.length)return null;
+      const row=(e,advance)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+advance});
+      const spawned=(n,type)=>({effectId:eid(n),groupId:gid(n),groupKind:"spawned",type});
+      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const queueHead={...extra,...spawned(3,types.SCAN_STEP),kind:"decision",decisionKind:"choose_target",
+        payload:{options:extra.payload.options},source:{parentEffectId:extra.effectId,priority:"direct"}};
+      const j=s.journal,replayCursor=j.replay.length;
+      const session=freeze({...checkpoint,replayCursor:replayCursor+1,session:{...s,workingState:next,
+        queue:[queueHead,last],irreversibleBarrier:barrier,revision:s.revision+5,
+        nextEffectSequence:s.nextEffectSequence+3,nextGroupSequence:s.nextGroupSequence+3,
+        journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...events],
+          effects:[...j.effects,row(head,1),row(finalize,2),row(spawned(1,types.SETTLE),3),row(spawned(2,types.PUBLIC_REFILL),4),row(extra,5)],
+          rng:[...j.rng,{owner:"science",cursor:next.meta.rngState?.science?.cursor||0}],
+          replay:[...j.replay,{cursor:replayCursor,kind:"decision",confirmed:true,...decision}]}}});
+      return {prepared:{envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
+    }
+
+    function previewFixedBluePickSettlement(node, stored, action) {
+      if (!resourcePlanning || !cardPickPlanning || node.status !== "decision" || stored.resourceControl
+        || action.family !== "choose_card" || !Number.isInteger(action.target?.publicSlotIndex)) return null;
+      const session=stored.envelope.session?.session, head=session?.queue?.[0];
+      if (session?.phase !== "awaiting_input" || session.queue.length !== 1 || session.interruptContext
+        || session.irreversibleBarrier || head.type !== scienceSession.EFFECT_TYPES.PICK_CARD
+        || head.kind !== "decision" || head.allowQuickActions || head.ownerId !== seatId || head.payload?.blueBonusSource !== true
+        || session.journal.actions[0]?.action?.family !== "place_data") return null;
+      const state=session.workingState, t=state.turn, p=state.players.players.find(p=>p.id===seatId);
+      const i=action.target.publicSlotIndex, offered=state.cards.publicCards[i], known=knownCards(stored.envelope);
+      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || p.passCompletionPending
+        || t.passedPlayerIds.includes(seatId) || t.cardTurnEventBonuses?.length
+        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job=>!job.delivered)
+        || !offered || !known.has(offered.id) || offered.id !== action.target.cardInstanceId
+        || action.target.choiceId !== `pick:${offered.id}` || !cards.getCatalogEntryForCard(offered)
+        || p.reservedCards.some(c=>!known.has(c.id))) return null;
+      const policy=cardPickSpec(node);
+      if (!policy?.fixed || policy.selectedActionId !== action.actionId) return null;
+
+      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...state.meta,stateVersion:session.baseVersion+1,sequences:{...state.meta.sequences}},
+        cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
+      next.cards.publicCards[i]={...offered};
+      let usedRandom=false;
+      const picked=cards.pickFromPublic(next.cards,next.players,player,i,()=>{usedRandom=true;return 0;},{root:next});
+      if (!picked.ok || usedRandom || !picked.replenished) return null;
+      picked.card.blueBonusOwnerId=seatId;
+      if (cardEffects.collectMatchingTriggers(player,{type:"place_data_pick_card",playerId:seatId,cardInstanceId:offered.id}).length) return null;
+      // The replacement card stays private to the rules fork. finishChild
+      // applies the original information mask before any search continuation.
+      return next;
+    }
+
+    function provedCommittedEnvelope(stored, state) {
+      const captured=freeze(state);
+      let bytes;
+      const envelope=Object.freeze({schemaVersion:stored.envelope.schemaVersion,
+        get committedState(){
+          if(bytes===undefined){lazyPreviewSerializations++;bytes=JSON.stringify(captured);}
+          return bytes;
+        },session:null});
+      committedReferences.set(envelope,captured);
+      lazyCommittedEnvelopes++;
+      return envelope;
+    }
+
+    function finishProvedCommittedState(node, stored, action, state) {
+      restoreEnvelope(provedCommittedEnvelope(stored, state), true);
+      return finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, action) : null,
+        null, stored.informationBarrier, action, stored);
+    }
+
+    function finishProvedForeignTurn(stored, action, state) {
+      const envelope=provedCommittedEnvelope(stored,state), barrier=stored.informationBarrier;
+      inheritCardKnowledge(envelope,stored,action);
+      // No session remains, the only next actor is a live foreign seat, and
+      // a carried information barrier closes our side without reading its menu.
+      return createNode(envelope,null,[],barrier?"information-barrier":"other-owner",barrier);
+    }
+
+    function expand(node, actionId, previewOnly = false) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary","income-plan-value","turn-tail-value"].includes(node.status)) {
@@ -633,9 +1255,202 @@
         cacheHits += 1;
         return rememberPrefix(key,node,actionId,cache.get(key));
       }
+      const activeClaim = resourcePlanning && node.status === "stable" && !stored.resourceControl && requested.family === "complete_task"
+        ? localPlans.previewFinalPositiveTaskClaim({state:readIdentityState(stored.envelope),seatId,
+          action:requested,knownCards:knownCards(stored.envelope)}) : null;
+      if (activeClaim) {
+        provedActiveFinalTaskInputs++;
+        const child = finishProvedCommittedState(node, stored, requested, activeClaim);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const cargoClaim=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
+        &&requested.family==="complete_task"&&requested.target?.ruleId==="transport"
+        ?localPlans.previewChongTransportQuick({state:readIdentityState(stored.envelope),seatId,action:requested,
+          knownCards:knownCards(stored.envelope),knownFossilIds:visibleRootCargo()}):null;
+      if(cargoClaim){
+        const child=finishProvedCommittedState(node,stored,requested,cargoClaim);
+        provedChongTransportInputs++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const tracePreview=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
+        &&stored.informationBarrier&&requested.family==="complete_task"&&requested.target?.ruleId==="trace"
+        ?localPlans.previewChongTraceMenu({state:readIdentityState(stored.envelope),seatId,action:requested,
+          knownCards:knownCards(stored.envelope)}):null;
+      const traceMenu=tracePreview&&makeChongTraceMenu(stored,requested,tracePreview);
+      if(traceMenu){
+        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,traceMenu);
+        provedChongTraceMenus++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const taskSession=stored.envelope.session?.session;
+      const queuedPreview=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
+        &&stored.informationBarrier&&taskSession?.queue[0]?.payload?.kind==="chong_task"&&requested.family==="accept_optional_effect"
+        ?localPlans.previewQuietQueuedChongTask({state:taskSession.workingState,seatId,session:taskSession,action:requested,
+          knownCards:knownCards(stored.envelope),knownFossilIds:visibleRootCargo()}):null;
+      const queuedTask=queuedPreview&&makeChongQueuedTask(stored,requested,queuedPreview);
+      if(queuedTask){
+        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,queuedTask);
+        provedChongQueuedTasks++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const traceSkip=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
+        &&stored.informationBarrier&&taskSession&&requested.family==="accept_optional_effect"
+        ?localPlans.previewQuietChongTraceSkip({state:taskSession.workingState,seatId,session:taskSession,
+          action:requested,knownCards:knownCards(stored.envelope)}):null;
+      if(traceSkip){
+        // The previous information barrier still closes the new turn.
+        const child=finishProvedForeignTurn(stored,requested,traceSkip);
+        provedChongTraceSkips++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const amibaYellow=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.informationBarrier
+        &&taskSession&&requested.family==="accept_optional_effect"
+        ?localPlans.previewQuietAmibaYellowLanding(taskSession,requested,knownCards(stored.envelope)):null;
+      if(amibaYellow){
+        provedAmibaYellowLandingInputs++;
+        const child=finishProvedCommittedState(node,stored,requested,amibaYellow);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const endClaim=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession&&requested.family==="accept_optional_effect"
+        ?localPlans.previewFinalPositiveEndTask({state:taskSession.workingState,seatId,actions:node.legalActions,
+          session:taskSession,action:requested,knownCards:knownCards(stored.envelope)}):null;
+      if(endClaim){
+        provedFinalEndTaskInputs++;
+        const child=finishProvedForeignTurn(stored,requested,endClaim);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const chongEndPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
+        &&stored.informationBarrier&&requested.family==="end_turn"&&knownRootAlienIds.has("虫")
+        ?localPlans.previewQuietChongEndPrelude({state:readIdentityState(stored.envelope),seatId,action:requested,
+          knownCards:knownCards(stored.envelope)}):null;
+      const chongEndMenu=chongEndPrelude&&makeChongEndMenu(stored,requested,chongEndPrelude);
+      if(chongEndMenu){
+        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,chongEndMenu);
+        provedChongEndMenus++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const sameSeatEnd=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
+        ?localPlans.previewFinalOwnQuietEnd({state:readIdentityState(stored.envelope),seatId,
+          action:requested,knownCards:knownCards(stored.envelope)}):null;
+      if(sameSeatEnd){
+        const envelope=provedCommittedEnvelope(stored,sameSeatEnd),barrier=stored.informationBarrier;
+        inheritCardKnowledge(envelope,stored,requested);
+        const child=createNode(envelope,null,[],barrier?"information-barrier":"turn-boundary",barrier||{code:"own-turn-complete"});
+        provedOwnEndHandovers++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
+        ?localPlans.previewFinalForeignEndPrelude({state:readIdentityState(stored.envelope),seatId,
+          action:requested,knownCards:knownCards(stored.envelope)}):null;
+      if(endPrelude?.finished){
+        const child=finishProvedForeignTurn(stored,requested,endPrelude.finished);
+        provedQuietEndHandovers++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const endMenu=endPrelude?.task&&makeQuietEndPrelude(stored.envelope,requested,endPrelude);
+      if(endMenu){
+        const child=finishChild({session:null},{},movementPlanning?nextMovementIntent(node,requested):null,
+          null,stored.informationBarrier,requested,stored,endMenu);
+        provedQuietEndMenus++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const moveSource=node.status==="stable"&&quietPaidMoveSource(stored,requested);
+      const moveEvent={type:"move_payment_requested",playerId:seatId,rocketId:requested.target?.rocketId};
+      const quietMoveMenu=moveSource&&!cardEffects.hasMatchingTrigger(moveSource.player,moveEvent);
+      const moveMenu=quietMoveMenu&&makeMoveMenu(stored,requested,moveSource.state);
+      if(moveMenu){
+        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,moveMenu);
+        provedMoveMenus++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const paidMove=previewQuietMovePayment(stored,requested);
+      if(paidMove){
+        const envelope=provedCommittedEnvelope(stored,paidMove);
+        restoreEnvelope(envelope);
+        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,
+          {envelope,inspection:{phase:"idle",session:null}});
+        provedMovePayments++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const publicScan=previewQuietPublicScan(node,stored,requested);
+      if(publicScan){
+        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
+        provedPublicScanChoices++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const scanMove=previewQuietScan4Move(node,stored,requested);
+      if(scanMove){
+        let prepared=scanMove.prepared;
+        if(!prepared){
+          const envelope=provedCommittedEnvelope(stored,scanMove.next);
+          restoreEnvelope(envelope);
+          prepared={envelope,inspection:{phase:"idle",session:null}};
+        }
+        const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanMove.barrier},
+          nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,prepared);
+        provedScan4QuietMoves++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const fixedBluePick=previewFixedBluePickSettlement(node,stored,requested);
+      if(fixedBluePick){
+        const boundary={effectId:taskSession.queue[0].effectId,revision:taskSession.revision+1,
+          code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
+        const envelope=provedCommittedEnvelope(stored,fixedBluePick);
+        restoreEnvelope(envelope);
+        const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:boundary},
+          movementPlanning?nextMovementIntent(node,requested):null,null,stored.informationBarrier,requested,stored,
+          {envelope,inspection:{phase:"idle",session:null}});
+        provedBluePickSettlements++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const quietSource = quietDataMenuSource(stored, requested);
+      const menuPreview = quietSource && makeQuietDataMenu(stored.envelope, quietSource, requested);
+      if (menuPreview) {
+        // Native still enumerates the exact legal menu on this isolated
+        // session. Only its already witnessed, inert opening is reused.
+        const choices = scienceSession.formalizeChoices(quietSource, seatId, scienceSession.listPlaceDataChoices(quietSource, seatId));
+        if (!choices.length) throw new Error("ANALYSIS_FIXED_DATA_MENU_EMPTY");
+        const inspection = {phase:"awaiting_input", session:{decision:{choices}}};
+        provedFinalDataMenuInputs++;
+        const child = finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, requested) : null,
+          null, stored.informationBarrier, requested, stored, {envelope:menuPreview, inspection});
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const blueTwoState = previewBlueTwoPick(stored, requested);
+      const pickPreview = blueTwoState && makeBlueTwoPick(stored.envelope, requested, blueTwoState);
+      if (pickPreview) {
+        const choices = scienceSession.formalizeChoices(blueTwoState, seatId, scienceSession.listPickCardChoices(blueTwoState));
+        if (!choices.length) throw new Error("ANALYSIS_BLUE2_PICK_MENU_EMPTY");
+        const inspection = {phase:"awaiting_input", session:{decision:{choices}}};
+        provedBlueTwoPickInputs++;
+        const child = finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, requested) : null,
+          null, stored.informationBarrier, requested, stored, {envelope:pickPreview, inspection});
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const fixedData = previewQuietFinalDataPlacement(stored, requested);
+      if (fixedData) {
+        const {kind, state} = fixedData;
+        // The stored menu already owns the precise legal decision. Only the
+        // placement with no unresolved effect is reconstructed in this isolated fork.
+        // Prefix accounting still charges the exact logical input for the witness.
+        provedFinalDataPlacements[kind] = (provedFinalDataPlacements[kind] || 0) + 1;
+        const child = finishProvedCommittedState(node, stored, requested, state);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      if(previewOnly)return null;
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(requested);
-      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null, stored.informationBarrier, requested, stored)));
+      const child = finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null,
+        stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
+        stored.informationBarrier, requested, stored);
+      if(queuedPreview&&!chongQueuedTemplates.has(chongQueuedKey(stored,queuedPreview)))rememberChongQueuedTask(stored,requested,child,queuedPreview);
+      if(chongEndPrelude&&!chongEndTemplates.has(chongEndPrelude.shape))rememberChongEndMenu(requested,child,chongEndPrelude);
+      if(tracePreview&&!chongTraceMenuTemplate)rememberChongTraceMenu(requested,child,tracePreview);
+      if(quietMoveMenu&&!moveMenuTemplate)rememberMoveMenu(child,requested);
+      if(endPrelude?.task&&!quietEndPreludeTemplate)rememberQuietEndPrelude(requested,child,endPrelude);
+      if (quietSource && !quietDataMenuTemplate) rememberQuietDataMenu(requested, child);
+      if (blueTwoState && !blueTwoPickTemplate) rememberBlueTwoPick(stored, requested, blueTwoState, child);
+      return rememberPrefix(key,node,actionId,remember(key,child));
     }
 
     function setMovementPlanning(enabled) {
@@ -646,7 +1461,7 @@
           stored.intent = recoverMovementIntent(stored.envelope);
           if (stored.intent) {
             stored.policyKey=undefined;
-            stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+            stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
           }
         }
       }
@@ -797,7 +1612,7 @@
         if(pick?.fixed&&!stored.cardControl){
           stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
           stored.policyKey=undefined;
-          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
         }
       }
     }
@@ -820,12 +1635,122 @@
     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
 
     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
+    const chongTaskPeekBoundaries = new WeakMap(), chongDirectClaims = new Map();
+    function chongClaimKey(stored, cardId) {
+      // Queue identity still governs executable nodes. This key is only for
+      // the closed value after the shared task settlement and before a peek.
+      const state = readIdentityState(stored.envelope);
+      const physical = forwardIdentity({},
+        "chong-claim-value", null, state, normalizedIdentityStates, identitySubtrees);
+      return JSON.stringify([cardId, stored.informationBarrier?.code || null, cardKnowledgeKey(stored.envelope), physical]);
+    }
+
+    function pairedChongClaimBoundary(node, actionId) {
+      const stored = nodes.get(node), session = stored?.envelope.session?.session, head = session?.queue?.[0];
+      if (!fork || !chongDirectClaims.size || node.status !== "decision" || stored.intent || stored.resourceControl
+        || head?.type !== "residual_card_decision" || head.ownerId !== seatId || head.allowQuickActions || session.interruptContext
+        || session.journal?.actions?.[0]?.action?.family !== "end_turn") return null;
+      const task = head.payload;
+      if (task?.kind !== "chong_task" || task.ruleId !== "trace" || task.chooseFossilRewardOnly !== true) return null;
+      if (!node.legalActions.some(a => a.actionId === actionId && a.actorId === seatId && a.family === "accept_optional_effect"
+        && a.target.choiceId === `confirm:chong_task:${task.cardInstanceId}:trace`)) return null;
+      return chongDirectClaims.get(chongClaimKey(stored, task.cardInstanceId)) || null;
+    }
+
+    function chongTaskPeekBoundary(node, actionId) {
+      const stored = nodes.get(node), session = stored?.envelope.session?.session;
+      const head = session?.queue?.[0];
+      if (!fork || node.status !== "decision" || stored.intent || stored.resourceControl
+        || stored.informationBarrier && !["tech_bonus_reveal", "hidden_card_reveal"].includes(stored.informationBarrier.code)
+        || head?.type !== "residual_chong_task_fossil" || head.ownerId !== seatId || head.payload?.planetId
+        || head.allowQuickActions || session.interruptContext) return null;
+      const action = node.legalActions.find(a => a.actionId === actionId);
+      const planetId = action?.target?.planetId;
+      if (action?.family !== "choose_target" || action.actorId !== seatId
+        || !["jupiter", "saturn"].includes(planetId) || action.target.choiceId !== `chong-task-planet:${planetId}`) return null;
+      const state = readIdentityState(stored.envelope);
+      const fossils = chong.getAvailablePlanetFossils(state.aliens, planetId);
+      if (!fossils.length || fossils.some(f => f.visibleToPlayerIds?.includes(seatId))) return null;
+      let boundary = chongTaskPeekBoundaries.get(node);
+      if (!boundary) {
+        // Selecting an unseen planet writes private knowledge only. The
+        // public ledger is the existing checkpoint; this leaf cannot expand.
+        boundary = createNode(stored.envelope, null, [], "information-barrier", { code: "hidden_chong_task_fossils" });
+        chongTaskPeekBoundaries.set(node, boundary);
+      }
+      return boundary;
+    }
+
+    function quietScanTracePlan(node,stored,state){
+      const session=stored.envelope.session?.session,head=session?.queue?.[0];
+      if(!scanPlanning||!movementPlanning||!cardPickPlanning||stored.intent?.path.length||stored.informationBarrier
+        ||session?.journal?.actions?.[0]?.action?.family!=="scan"||session.queue.length!==2
+        ||head.type!==scienceSession.EFFECT_TYPES.ALIEN_TRACE||head.ownerId!==seatId
+        ||head.payload?.traceType!=="pink"||Object.keys(head.payload).length!==1
+        ||session.queue[1].type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL
+        ||!openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport"))return null;
+      const owner=state.players.players.find(p=>p.id===seatId);
+      if(state.turn.roundNumber!==4||!owner.mainActionCompleted||owner.resources.availableData!==6
+        ||owner.industryBorrowedTechTileId||state.turn.cardTurnEventBonuses?.length
+        ||!state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+        ||Object.values(state.aliens.aliens).some(slot=>!slot.revealed||!knownRootAlienIds.has(slot.alienId)||alienState.isAlienReadyToReveal(slot))
+        ||!owner.hand.every(c=>knownCards(stored.envelope).has(c.id))
+        ||!owner.reservedCards.every(c=>knownRootCardIds.has(c.id))
+        ||data.listComputerPlacedTokens(owner).length<4||data.listBluePlacementRequirements(owner).length)return null;
+      const transition=previewTurn(state);
+      if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||transition.nextPlayerId!==seatId)return null;
+      const cargo=localPlans.knownDeliveredCargo({state,seatId,knownCards:knownRootCardIds,knownFossilIds:visibleRootCargo()});
+      if(Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length&&!cargo)return null;
+      const passiveChong=c=>c.id===cargo?.card.id||c.set==="alien:虫"&&cardEffects.getCardModel(c)?.cardType===3
+        &&endScoring.resolveCardEndGameRule(c,cardEffects)?.kind==="chongTraceCount"
+        &&!cardEffects.getCardModel(c)?.triggers?.length&&!cardEffects.getCardModel(c)?.tasks?.length
+        &&!c.chongTask&&!chong.getCardTask(c);
+      if(owner.reservedCards.some(c=>c.set==="alien:虫"&&!passiveChong(c)))return null;
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      const noUse=(preview,p,capital)=>{
+        if(!quietTailHasNoAcquisition(preview,capital)||blueLandingGoalFor(preview))return false;
+        if(resourceDemand.catalog({state:preview,seatId,requirements:{bluePlacements:[]}}).some(goal=>{
+          if(goal.kind!=="computer-prefix")return true;
+          const q=localPlans.computerCompletion({state:preview,seatId,goal});
+          return q.available&&q.selected;
+        }))return false;
+        const objective=goalMovement.plan({state:preview,seatId,actions:[{family:"end_turn",actionId:"trace-proof-quiet-end"}],status:"stable",intent:stored.intent,objectiveOnly:true,routeCache:movementRouteCache,
+          endpoints:()=>native.getProbeRouteRequirements(preview,seatId)?.candidates||[],compareTiming:timingForOneGoalQuery(preview)});
+        goalMovementGeometryNodes+=objective?.routingNodes||0;
+        const guard={...preview,aliens:{...preview.aliens,chong:{...preview.aliens.chong,transportTasksByRocketId:{}}},
+          players:{...preview.players,players:preview.players.players.map(q=>q===p?{...p,reservedCards:p.reservedCards.filter(c=>!passiveChong(c))}:q)}};
+        return !objective?.intent?.path.length&&hasPostMainInertReservations(guard,false,true,true);
+      };
+      const ranks=[],open=[];
+      for(const a of node.legalActions){
+        const preview=localPlans.previewQuietPinkTrace({state,seatId,action:a});
+        if(!preview){open.push(a.actionId);continue;}
+        const {state:q,player:p}=preview,end=localPlans.quietEndCompletion({state:q,seatId});
+        if(!end.available||end.markedTiles.length||end.netGain)return null;
+        const capital=resourceDemand.planningCapital(q,p);
+        if(!noUse(q,p,capital))return null;
+        const quote=cargo&&quietCargoEndQuote(q,p,cargo,capital);
+        if(cargo&&(!quote||!noUse(quote.after,quote.after.players.players.find(x=>x.id===seatId),quote.afterCapital)))return null;
+        const established=endScoring.computePlayerFinalScore({...q,players:q.players.players,aliens:structuredClone(q.aliens),
+          finalScoring:structuredClone(q.finalScoring),cardEffects,
+          getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
+        const purpose=stateValue.sumValueParts([capital,quote?.claim?quote.capital:0]);
+        const value=stateValue.sumValueParts([established,purpose,quote?.claim?quote.gain-quote.capital:0]);
+        ranks.push({actionId:a.actionId,value,purpose});
+      }
+      ranks.sort((a,b)=>b.value-a.value||a.purpose-b.purpose||a.actionId.localeCompare(b.actionId));
+      if(ranks.length<2)return null;
+      return {policy:"seti-known-scan-trace-score-tail-v1",kind:"rank-automatic-scan-traces",fixed:false,isEquivalence:false,
+        retainedActionIds:[ranks[0].actionId,...open],excludedActionIds:ranks.slice(1).map(x=>x.actionId),scores:ranks};
+    }
+
     function localDecisionSpec(node){
       if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
       if(localSpecs.has(node))return localSpecs.get(node);
       const stored=nodes.get(node),state=readPlanningState(stored);
       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
-      if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
+      if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope)});
+      if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
       if(!result&&resourcePlanning){
         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
           ||resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
@@ -850,7 +1775,11 @@
       const key = Object.isFrozen(actions) ? actions : null;
       if (key&&variants?.has(key)) { goalCatalogHits++; return variants.get(key); }
       goalCatalogMisses++;
-      const result = freeze(resourceDemand.catalog({state,seatId,requirements:resourceQuery(state),actions}));
+      const owner=state.players.players.find(p=>p.id===seatId);
+      // Completed main actions cannot consume the pre-main launch, route,
+      // research or scan quotes. The catalog reads only blue placements.
+      const requirements=owner?.mainActionCompleted?{bluePlacements:data.listBluePlacementRequirements(owner)}:resourceQuery(state);
+      const result = freeze(resourceDemand.catalog({state,seatId,requirements,actions}));
       if(key){
         if (!variants) { variants = new WeakMap(); goalCatalogs.set(state,variants); }
         variants.set(key,result);
@@ -1152,8 +2081,201 @@
         movementFunding:{cardId:payment[0].id,publicityPayerId:payer.id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity}};
     }
 
+    function visibleEarthCargo(state,p,job) {
+      const card=p.reservedCards.find(c=>c.id===job.cardId&&knownRootCardIds.has(c.id));
+      const ship=state.pieces.rockets.find(r=>r.playerId===seatId&&r.kind==="chong-fossil"&&r.fossilId===job.fossilId);
+      if(!card||chong.getCardTask(card)?.kind!=="transport"||!ship||job.destinationPlanetId!=="earth"
+        ||!rootObservation.publicState.board.rockets.some(r=>r.id===ship.id&&r.fossilId===ship.fossilId))return null;
+      return ship;
+    }
+
+    function adjacentEarthCargo(state,p,ship,earth) {
+      const from=rockets.getRocketSectorCoordinate(ship);
+      if(!from||rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,from)!==1)return null;
+      const canMove=rockets.createStaticCoordinateMoveQuery(state.pieces,ship.id);
+      const step=rocketAbilities.MOVE_DIRECTIONS.find(({deltaX,deltaY})=>{
+        const next=canMove(from,deltaX,deltaY);
+        return next.ok&&next.to.x===earth.x&&next.to.y===earth.y;
+      });
+      return step?{rocketId:ship.id,fossilId:ship.fossilId,from,to:{x:earth.x,y:earth.y},...step}:null;
+    }
+
+    // After a genuine research reveal the old certificate may have a
+    // different menu. Start from the new public facts, not a relaxed key.
+    function resumeKnownCargo(node,stored,state) {
+      if(node!==openedRoot||stored.intent||stored.resourceControl||stored.informationBarrier
+        ||state.turn.roundNumber!==4||state.turn.currentPlayerId!==seatId||!knownRootAlienIds.has("虫"))return null;
+      const p=state.players.players.find(q=>q.id===seatId),session=stored.envelope.session?.session;
+      if(!p.mainActionCompleted||p.passCompletionPending||p.industryBorrowedTechTileId||state.turn.cardTurnEventBonuses?.length)return null;
+      const source=session?.journal?.actions[0]?.action;
+      const paid=source?.family==="quick_trade"&&source.target?.tradeId==="energy-for-move"
+        &&session.queue[0]?.payload?.decisionContext?.kind==="move";
+      if(node.status==="decision"){
+        if(source?.family!=="research_tech"&&!paid)return null;
+      }else if(node.status!=="stable")return null;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{}),pending=jobs.filter(t=>!t.delivered);
+      if(jobs.length!==2||!pending.length||p.resources.energy+(paid?1:0)<pending.length)return null;
+      const earth=solar.collectPlanetLocations(state.solarSystem).find(v=>v.planetId==="earth"),projected=[];
+      for(const job of jobs){
+        const ship=visibleEarthCargo(state,p,job);
+        if(!ship)return null;
+        if(!job.delivered){
+          const step=adjacentEarthCargo(state,p,ship,earth);
+          if(!step)return null;
+          projected.push(step);
+        }
+      }
+      return {id:"cargo:known-adjacent-after-main",kind:"cargo-research-corner",required:{},projected,cards:jobs.map(t=>t.cardId),paid};
+    }
+
+    // One named corner prefix for two visible cargo jobs, conditional on
+    // actually starting standard research. No simulated reward or future
+    // free move enters the lower bound, and no direction is a search root.
+    function cargoResearchCorner(node,stored,state) {
+      if(node!==openedRoot||stored.intent||stored.resourceControl||stored.informationBarrier
+        ||state.turn.roundNumber!==4||state.turn.currentPlayerId!==seatId||!knownRootAlienIds.has("虫"))return null;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+      if(jobs.length!==2||jobs.some(t=>t.delivered||t.destinationPlanetId!=="earth"))return null;
+      const p=state.players.players.find(q=>q.id===seatId),session=stored.envelope.session?.session;
+      if(p.mainActionCompleted||p.passCompletionPending||p.industryBorrowedTechTileId||state.turn.cardTurnEventBonuses?.length
+        ||p.resources.energy<2||p.resources.publicity<techResolver.getResearchPublicityCost(p)
+        ||!techResolver.listTakeableTiles(state.tech,p.techState).length)return null;
+      const research=a=>a.family==="research_tech"&&!a.payload?.skipRotate&&!a.payload?.skipCost;
+      const corner=a=>a?.family==="card_corner"&&a.payload?.kind==="move"&&a.payload.multiplier===1;
+      let payer;
+      if(node.status==="stable"){
+        if(!node.legalActions.some(research))return null;
+        const payments=node.legalActions.filter(a=>corner(a)&&p.hand.some(c=>c.id===a.target.cardInstanceId&&knownRootCardIds.has(c.id)
+          &&cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1));
+        if(payments.length!==1)return null;
+        payer=payments[0];
+      }else{
+        payer=session?.journal?.actions?.[0]?.action;
+        if(node.status!=="decision"||!corner(payer)||session.queue.length!==1||session.queue[0].ownerId!==seatId
+          ||session.queue[0].payload?.remaining!==1||session.queue[0].payload?.cardEffect?.type!=="card_move"
+          ||session.queue[0].payload.cardEffect.options?.movementPoints!==1)return null;
+      }
+      const earth=s=>solar.collectPlanetLocations(s.solarSystem).find(v=>v.planetId==="earth");
+      const equal=(a,b)=>a?.x===b?.x&&a?.y===b?.y,position=(s,id)=>rockets.getRocketSectorCoordinate(s.pieces.rockets.find(r=>r.id===id));
+      const dest=earth(state),targets=[];
+      for(const job of jobs){
+        const ship=visibleEarthCargo(state,p,job);
+        if(!ship)return null;
+        const from=position(state,ship.id),deltaY=Math.sign(dest.y-from?.y);
+        if(from?.x!==dest.x||!deltaY||rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,from)!==1)return null;
+        const move=rockets.canMoveFromCoordinate(state.pieces,from,0,deltaY,ship.id);
+        if(!move.ok)return null;
+        targets.push({rocketId:ship.id,fossilId:ship.fossilId,from,to:move.to,deltaX:0,deltaY,delivers:equal(move.to,dest)});
+      }
+      const direct=targets.find(t=>t.delivers),stage=targets.find(t=>!t.delivers);
+      if(!direct||!stage)return null;
+      // Three projections of the same board. Distance in the ring supplies
+      // an optimistic lower bound on the two rejected alternatives.
+      const rotate=move=>{
+        const next=structuredClone(state);
+        if(move&&!rockets.moveRocket(next.pieces,move.rocketId,0,move.deltaY).ok)throw Error("CARGO_RESEARCH_MOVE_PROJECTION_FAILED");
+        const r=turnFlow.rotateSolarSystem(next,1,seatId,{captureSnapshots:false});
+        if(!r.ok)throw Error("CARGO_RESEARCH_ROTATION_PROJECTION_FAILED");
+        return next;
+      };
+      const lowerBound=(next,job)=>{
+        const at=position(next,job.rocketId),to=earth(next),dx=Math.abs(at.x-to.x);
+        return Math.min(dx,8-dx)+Math.abs(at.y-to.y);
+      };
+      const staged=rotate(stage),after=earth(staged);
+      const projected=targets.map(t=>{
+        if(lowerBound(staged,t)!==1)return null;
+        return adjacentEarthCargo(staged,p,staged.pieces.rockets.find(r=>r.id===t.rocketId),after);
+      });
+      if(projected.some(t=>!t))return null;
+      const directLower=lowerBound(rotate(direct),stage),waiting=rotate(null),waitLower=targets.reduce((n,t)=>n+lowerBound(waiting,t),0);
+      if(directLower<=2||waitLower<=2)return null;
+      return {id:"cargo:research-corner:"+payer.target.cardInstanceId,kind:"cargo-research-corner",required:{},
+        payerId:payer.target.cardInstanceId,cornerActionId:payer.actionId,stage,projected,cards:jobs.map(t=>t.cardId),
+        timing:{paid:2,directLower,waitLower}};
+    }
+
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
+      if(goal.kind==="cargo-research-corner"){
+        const p=state.players.players.find(q=>q.id===seatId),stage=goal.stage,head=session?.queue?.[0];
+        if(operation.targetStarted){
+          const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+          const next=[...goal.projected].reverse().find(t=>jobs.some(j=>j.fossilId===t.fossilId&&!j.delivered));
+          const find=f=>node.legalActions.find(f);
+          const fixed=(a,reason)=>a?{kind:"fixed",actionId:a.actionId,reason}:{kind:"infeasible",reason};
+          if(node.status==="decision"){
+            const source=session?.journal?.actions?.[0]?.action;
+            if(source?.family==="quick_trade"&&source.target?.tradeId==="energy-for-move"
+              &&head?.payload?.decisionContext?.kind==="move"){
+              return fixed(next&&find(a=>a.family==="choose_target"&&a.target?.rocketId===next.rocketId
+                &&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY),"known-research-delivery-direction");
+            }
+            if(source?.family==="place_data"&&head?.type===scienceSession.EFFECT_TYPES.PLACE_DATA){
+              const slots=data.listPlaceDataChoices(p);
+              return fixed(slots.length===1&&find(a=>a.family==="choose_target"&&a.target?.target===slots[0].target
+                &&(a.target.blueSlot??null)===(slots[0].blueSlot??null)),"make-room-in-data-pool-before-known-cargo-claim");
+            }
+            if(head?.payload?.kind==="chong_task"){
+              const local=localDecisionSpec(node);
+              return fixed(find(a=>a.actionId===local?.selectedActionId)
+                ||find(a=>a.family==="accept_optional_effect"&&a.target?.choiceId?.startsWith("skip:chong_task:")),
+                "known-research-delivery-optional");
+            }
+            const choices=source?.family==="research_tech"?node.legalActions.filter(a=>a.target?.tileId):[];
+            if(choices.length){
+              const tiles=resourceDemand.greedyTechPlans({state,seatId,plans:choices.map(a=>({...a.target,blueSlot:a.target.blueSlot??null,actionId:a.actionId}))});
+              return {kind:"fallback",reason:"known-cargo-research-tile",actionIds:tiles.map(t=>t.actionId)};
+            }
+            const local=localDecisionSpec(node);
+            return local?.selectedActionId?fixed(find(a=>a.actionId===local.selectedActionId),"known-research-delivery-local")
+              :{kind:"fallback",reason:"known-cargo-research-native-choice",actionIds:node.legalActions.map(a=>a.actionId)};
+          }
+          if(!next){
+            const first=chong.listDeliveredFossilsForDestination(state.aliens,"earth")[0];
+            if(first){
+              const fossil=chong.getFossilReward(first.fossilId);
+              if(!fossil||fossil.pickCard||fossil.pickAlienCard||fossil.drawCards||fossil.chooseFossilRewardOnly)
+                return {kind:"infeasible",reason:"unknown-research-cargo-reward"};
+              const options=node.legalActions.flatMap(a=>{
+                if(a.family!=="complete_task"||a.target.ruleId!=="transport"||!goal.cards.includes(a.target.cardInstanceId))return [];
+                const card=p.reservedCards.find(c=>c.id===a.target.cardInstanceId),task=card&&(card.chongTask||chong.getCardTask(card));
+                if(task?.kind!=="transport"||task.destinationPlanetId!=="earth"||task.effects||task.rewards
+                  ||task.drawCards||task.pickCard||task.pickAlienCard||task.fossilRewardRepeat!==1)return [];
+                const total=(task.dataCount||0)+(fossil.dataCount||0);
+                return [{a,overflow:Math.max(0,p.resources.availableData+total-players.RESOURCE_LIMITS.availableData)}];
+              }).sort((a,b)=>a.overflow-b.overflow||a.a.actionId.localeCompare(b.a.actionId));
+              const claim=options[0];
+              if(!claim)return {kind:"infeasible",reason:"known-research-cargo-claim-unavailable"};
+              const slots=claim.overflow?data.listPlaceDataChoices(p):[];
+              if(slots.length===1&&(slots[0].target==="computer"||data.getBlueBonusPlacementReward(p,slots[0].blueSlot)?.type!=="choose_card")){
+                return fixed(find(a=>a.family==="place_data"),"make-room-in-data-pool-before-known-cargo-claim");
+              }
+              if(slots.length>1)return {kind:"complete",reason:"distinct-data-sinks-require-existing-policy"};
+              return fixed(claim.a,"claim-known-research-cargo");
+            }
+            return fixed(find(a=>a.family==="end_turn"),"finish-funded-research-and-cargo-turn");
+          }
+          const at=rockets.getRocketSectorCoordinate(state.pieces.rockets.find(r=>r.id===next.rocketId));
+          const dest=solar.collectPlanetLocations(state.solarSystem).find(v=>v.planetId==="earth");
+          const legal=at?.x===next.from.x&&at.y===next.from.y&&dest.x===next.to.x&&dest.y===next.to.y
+            &&rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,at)===1
+            &&rockets.canMoveFromCoordinate(state.pieces,at,next.deltaX,next.deltaY,next.rocketId).ok;
+          return fixed(legal&&p.mainActionCompleted&&find(a=>a.family==="quick_trade"&&a.target?.tradeId==="energy-for-move"),
+            "pay-one-point-for-known-research-delivery");
+        }
+        const a=node.legalActions.find(a=>{
+          if(node.status==="decision")return head?.payload?.cardEffect?.type==="card_move"&&head.payload.remaining===1
+            &&session.journal.actions[0]?.action.actionId===goal.cornerActionId&&a.family==="choose_target"
+            &&a.target?.rocketId===stage.rocketId&&a.target.deltaX===stage.deltaX&&a.target.deltaY===stage.deltaY
+            &&a.payload?.requiredMovePoints===1;
+          if(p.hand.some(c=>c.id===goal.payerId))return a.actionId===goal.cornerActionId;
+          const at=rockets.getRocketSectorCoordinate(state.pieces.rockets.find(r=>r.id===stage.rocketId));
+          return at?.x===stage.to.x&&at.y===stage.to.y&&a.family==="research_tech"&&!a.payload?.skipRotate&&!a.payload?.skipCost;
+        });
+        return a?{kind:a.family==="research_tech"?"start-target":"fixed",actionId:a.actionId,reason:"advance-known-fossil-before-funded-research"}
+          :{kind:"infeasible",reason:"known-cargo-research-prefix-changed"};
+      }
       if(goal.kind==="blue-cash-analysis-tail"){
         const p=state.players.players.find(q=>q.id===seatId),count=data.listComputerPlacedTokens(p).length;
         if(node.status==="stable"&&data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===3))
@@ -1534,6 +2656,13 @@
           else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:goal.id+":"+id,goal,operation:op,firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
         }
       }
+      const adjacentCargo=resumeKnownCargo(node,stored,state),cargoCorner=adjacentCargo||cargoResearchCorner(node,stored,state);
+      if(cargoCorner){
+        const op={targetStarted:Boolean(adjacentCargo)},step=resourceStep(node,cargoCorner,op);
+        if(step.actionId)plans.push({id:cargoCorner.id,goal:cargoCorner,operation:op,firstActionId:step.actionId,mode:"greedy",reason:step.reason});
+        else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:cargoCorner.id+":"+id,goal:cargoCorner,operation:op,
+          firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
+      }
       if(preparation)plans.push(preparation.plan);
       if(competingCash){
         const i=plans.findIndex(x=>x.goal.id===competingCash.goal.id&&x.firstActionId===competingCash.firstActionId);
@@ -1575,8 +2704,15 @@
           }
         }
       }
+      const rootCargo=openedRoot?.legalActions.find(a=>a.family==="complete_task"&&a.target?.ruleId==="transport");
+      const rootCargoCard=rootCargo&&readIdentityState(nodes.get(openedRoot).envelope).players.players
+        .find(p=>p.id===seatId)?.reservedCards.find(c=>c.id===rootCargo.target.cardInstanceId);
+      const scoredCorner=node.status==="stable"&&rootCargoCard&&knownRootAlienIds.has("虫")
+        &&state.cards.removedFromGameCardIds.includes(rootCargoCard.cardId)
+        &&node.legalActions.some(a=>a.family==="end_turn")&&!node.legalActions.some(a=>a.family==="complete_task")
+        ?localPlans.scoredEndCorner({state,seatId,actions:node.legalActions,knownCards:knownCards(stored.envelope)}):null;
       const deferredCappedTask=cappedSectorTaskToKeep(state,owner,node);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.actionId===deferredCappedTask?.actionId||a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.actionId===deferredCappedTask?.actionId||scoredCorner&&a.family==="end_turn"||a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)&&a.actionId!==scoredCorner?.actionId||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):adjacentCargo?.paid||plans.some(p=>p.goal.kind!=="cargo-research-corner")?node.legalActions:[];
       const company=industryCatalog.getPlayerIndustryDefinition(owner),bluePlan=plans.find(p=>p.goal.kind==="blue-data");
       let recoveredDataOrder=null;
       // A cold snapshot can be taken between the shared place-data action
@@ -1628,10 +2764,33 @@
       // Preserve the existing fixed tail, adding only the single known
       // supplier. Its arrival must not reopen other data/corner purposes.
       const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
-      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn);
+      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner);
+      // A known ready transport that fits in the pool commutes with the
+      // already funded computer-income prefix after a public analysis. Join
+      // the collected state before replaying those same four placements.
+      if(resolvedPublicAnalysis.has(node)&&forcedKind==="income"&&!swapAction&&!compareFixedPurposes
+        &&incomeTail.placements===4&&state.turn.roundNumber===4&&rootCargoCard&&knownRootAlienIds.has("虫")
+        &&!stored.intent&&!stored.informationBarrier&&!owner.industryBorrowedTechTileId
+        &&!state.turn.cardTurnEventBonuses?.length
+        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+        &&owner.resources.availableData===4&&owner.dataState.poolTokens.length===4
+        &&owner.reservedCards.every(c=>knownRootCardIds.has(c.id))){
+        const ready=node.legalActions.filter(a=>a.family==="complete_task");
+        const cargo=ready.length===1&&ready[0].target.cardInstanceId===rootCargoCard.id
+          &&ready[0].target.ruleId==="transport"
+          &&localPlans.knownDeliveredCargo({state,seatId,knownCards:knownRootCardIds,knownFossilIds:visibleRootCargo()});
+        if(cargo?.card?.id===rootCargoCard.id){
+          const fossil=cargo.job.fossilId;
+          const id=ready[0].actionId,spec=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+            plans:[],retainedActionIds:[id],excludedActionIds:node.legalActions.filter(a=>a.actionId!==id).map(a=>a.actionId),
+            fundedCargoJoin:{cardId:rootCargoCard.id,fossilId:fossil,incomeCardId:plans.find(p=>p.goal.kind==="income").goal.incomeCardId}});
+          resourceSpecs.set(node,spec);return spec;
+        }
+      }
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+        ...(adjacentCargo?.paid&&plans.some(p=>p.goal===adjacentCargo)?{cargoCommittedMovement:true}:{}),
         plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation):plans,
-        ...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
+        ...(scoredCorner?{scoredCorner}:{}),...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
         ...(sharedDataFunding?{sharedDataFunding}:{}),...(deferColumn?{deferredBlueColumn:true}:{}),
@@ -1804,6 +2963,35 @@
       return index < 0 ? null : { ...intent, path: intent.path.slice(index) };
     }
 
+    // A scan can pay the last move of a known delivery. Offer exactly
+    // that native direction alongside the existing ordinary-probe plan.
+    function knownFreeScanDelivery(node,stored,state) {
+      const head=stored.envelope.session?.session?.queue?.[0];
+      if(node.status!=="decision"||stored.intent||state.turn.roundNumber!==4
+        ||head?.type!==scienceSession.EFFECT_TYPES.SCAN_ACTION_4||head.ownerId!==seatId
+        ||!knownRootAlienIds.has("虫"))return null;
+      const tasks=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+      if(tasks.length!==1)return null;
+      const task=tasks[0],owner=state.players.players.find(p=>p.id===seatId);
+      const card=owner.reservedCards.find(c=>c.id===task.cardId&&knownRootCardIds.has(c.id));
+      const ship=state.pieces.rockets.find(r=>r.playerId===seatId&&r.kind==="chong-fossil"&&r.fossilId===task.fossilId);
+      if(!card||!ship||task.delivered||task.destinationPlanetId!=="earth"
+        ||!rootObservation.publicState.board.rockets.some(r=>r.id===ship.id&&r.fossilId===ship.fossilId))return null;
+      const fossil=state.aliens.chong.fossilsById?.[task.fossilId],job=chong.getCardTask(card);
+      const reward=chong.getFossilReward(task.fossilId);
+      if(!job||job.kind!=="transport"||job.destinationPlanetId!=="earth"||!reward||job.pickCard
+        ||reward.pickCard||reward.pickAlienCard||reward.drawCards||fossil?.status!=="transported"||fossil.taskCompleted)return null;
+      const at=rockets.getRocketSectorCoordinate(ship),dest=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId==="earth");
+      if(!at||!dest||at.x===dest.x&&at.y===dest.y)return null;
+      const canMove=rockets.createStaticCoordinateMoveQuery(state.pieces,ship.id);
+      const moves=node.legalActions.filter(a=>{
+        if(a.family!=="choose_target"||a.target?.mode!=="move"||a.target.rocketId!==ship.id||a.payload?.requiredMovePoints!==1)return false;
+        const next=canMove(at,a.target.deltaX,a.target.deltaY);
+        return next.ok&&next.to.x===dest.x&&next.to.y===dest.y;
+      });
+      return moves.length===1?{actionId:moves[0].actionId,rocketId:ship.id,fossilId:task.fossilId,cardId:card.id}:null;
+    }
+
     function goalMovementSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1827,7 +3015,12 @@
         intent: stored.intent, routeCache: movementRouteCache,
         compareTiming: timingForOneGoalQuery(state), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state, seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
       goalMovementGeometryNodes += result?.routingNodes || 0;
-      const frozen = result && freeze(result);
+      const delivery=result&&knownFreeScanDelivery(node,stored,state);
+      const frozen=result&&freeze(!delivery?result:{...result,
+        knownFreeScanDelivery:delivery,
+        retainedActionIds:[...new Set([...result.retainedActionIds,delivery.actionId])],
+        excludedActionIds:result.excludedActionIds.filter(id=>id!==delivery.actionId),
+        excludedDirectionCount:result.excludedDirectionCount-Number(result.excludedActionIds.includes(delivery.actionId))});
       movementPolicies.set(node, frozen);
       return frozen;
     }
@@ -1925,7 +3118,13 @@
       // The immutable node/menu already supplied this descriptor. The native
       // submit port still validates it against the restored authority and
       // decision version; do not enumerate the same full menu a second time.
-      const before = comp.inspect(true);
+      const session=loadedEnvelope?.session?.session,head=session?.queue?.[0];
+      // restoreEnvelope loaded this exact private checkpoint. The formal
+      // submit port below still checks identity and enumerates native legality.
+      const before=loadedEnvelope&&(session?.phase!=="awaiting_input"||head?.kind==="decision")
+        ?{phase:session?.phase||"idle",session:session?{irreversibleBarrier:session.irreversibleBarrier,
+          decision:head?.kind==="decision"?{decisionId:head.effectId,decisionVersion:session.revision,ownerId:head.ownerId}:null}:null}
+        :comp.inspect(true);
       if (!current || current.actorId !== seatId) throw new Error("ANALYSIS_ACTION_STALE");
       loadedEnvelope = null;
       const executeAt = now();
@@ -1934,9 +3133,9 @@
           decisionId: before.session.decision.decisionId,
           decisionVersion: before.session.decision.decisionVersion,
           ownerId: before.session.decision.ownerId, choice: current,
-        }, { skipProjection: true })
-        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current, { skipProjection: true })
-          : comp.inputPort.submitAction(current, { skipProjection: true });
+        }, { skipProjection: true, omitTrustedResult: true })
+        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current, { skipProjection: true, omitTrustedResult: true })
+          : comp.inputPort.submitAction(current, { skipProjection: true, omitTrustedResult: true });
       milliseconds.execute += now() - executeAt;
       if (!result?.ok) {
         const failure = result?.failure || result;
@@ -1988,11 +3187,11 @@
       });
     }
 
-    function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null, sourceAction = null, source = null) {
+    function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null, sourceAction = null, source = null, prepared = null) {
       const comp = fork.composition || fork;
-      const inspection = comp.inspect();
+      const inspection = prepared?.inspection || comp.inspect();
       const nativeBarrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
-      const envelope = snapshot(comp);
+      const envelope = prepared?.envelope || snapshot(comp);
       const head = envelope.session?.session?.queue?.[0], effect = head?.payload?.cardEffect;
       // The landing resolves before Native presents the destination's
       // previously hidden fossils. Search may value the settled landing,
@@ -2012,7 +3211,7 @@
               &&sourceAction.target?.cardInstanceId===intent.discardIds[0]&&head.payload?.step==='swap_public'
               &&head.payload.handCardInstanceId===intent.discardIds[0]))envelopeCompanyIntents.set(envelope,intent);
       }
-      loadedEnvelope = envelope;
+      if (!prepared) loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
       // A refill does not end a root-known post-main plan. Unknown owned
       // identities, alien reveals, other owners and actual turn changes still close it.
@@ -2046,6 +3245,7 @@
             : turnChanged ? "turn-boundary"
               : inspection.phase === "awaiting_input" ? "decision" : "stable";
       if(status==="information-barrier"&&!turnChanged){
+        if (prepared) restoreEnvelope(envelope);
         const knownTail=knownPostdrawTailView(envelope,inspection,barrier,intent,resourceControl,sourceAction);
         if(knownTail)return knownTail;
         const knownData=knownPostdrawDataView(envelope,inspection,barrier,intent,resourceControl);
@@ -2062,6 +3262,19 @@
       const child = createNode(envelope, observation,
         ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
         newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
+      if (resourcePlanning && status === "decision" && source && !source.envelope.session && !source.intent && !source.resourceControl
+        && sourceAction?.family === "complete_task" && sourceAction.target?.ruleId === "trace"
+        && head?.type === "residual_chong_task_fossil" && child.legalActions.length) {
+        const leaves = child.legalActions.map(a => chongTaskPeekBoundary(child, a.actionId));
+        if (leaves.every(leaf => leaf && leaf === leaves[0])) {
+          const key = chongClaimKey(source, sourceAction.target.cardInstanceId);
+          if (!chongDirectClaims.has(key) && chongDirectClaims.size >= 64)
+            chongDirectClaims.delete(chongDirectClaims.keys().next().value);
+          chongDirectClaims.set(key, leaves[0]);
+        }
+      }
+      if(status==="stable"&&!newBarrier&&!turnChanged&&sourceAction?.family==="choose_target"
+        &&source?.envelope.session?.session?.journal?.actions?.[0]?.action?.family==="analyze")resolvedPublicAnalysis.add(child);
       return child;
     }
 
@@ -2249,10 +3462,10 @@
       const session = envelope.session.session;
       const head = session.queue[0];
       // 只剥离已证明纯点击会改变的选中列表和由它生成的 choices；余下队列原样保留。
-      const neutral = { ...envelope, session: { ...envelope.session, session: { ...session,
+      const neutral = withEnvelopeSession(envelope,{ ...envelope.session, session: { ...session,
         queue: [{ ...head, payload: { ...head.payload, choices: [],
           decisionContext: { ...head.payload.decisionContext, selected: [] } } }, ...session.queue.slice(1)],
-      } } };
+      } });
       return JSON.stringify([node.legalActions[0].stateVersion, node.legalActions[0].decisionVersion,
         forwardIdentity(neutral, "selection-component", null),cardKnowledgeKey(envelope)]);
     }
@@ -2373,7 +3586,7 @@
         });
         if(row){
           stored.intent=freeze(structuredClone(row.movementIntent));stored.policyKey=undefined;
-          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
           movementPolicies.delete(node);movementValueBounds.delete(node);turnTailSpecs.delete(node);turnTailNodes.delete(node);resourceSpecs.delete(node);movementIntentRecoveries++;
           if(!stored.intent.path.length)completedMovementRecoveries++;
         }
@@ -2494,24 +3707,21 @@
     function checkPostMainInertReservations(state, hasOwnRockets, allowAmiba, plainEnd, deferredTask) {
       if (!hasTradeInertReservations(state,allowAmiba)) return false;
       const owner = state.players.players.find(player => player.id === seatId);
-      const reserved = owner.reservedCards.map(card => {
-        const copy = structuredClone(card);
-        // 旧modelCardId下的消耗记录在正式流程中会重置，不能据此证明触发器已用完。
-        cardEffects.ensureCardEffectState(copy);
-        return copy;
-      });
-      // turn_end还会重新收集历史事件；没有新事件不等于没有待结算触发。
-      if ((state.turn.type1TriggerEvents || []).some(event => cardEffects.collectMatchingTriggers(
-        { ...owner, reservedCards: reserved }, event).length)) return false;
+      // turn_end replays historical events. The read-only check already
+      // normalizes stale consumption records just like Native collection.
+      if((state.turn.type1TriggerEvents||[]).some(event=>cardEffects.hasMatchingTrigger(owner,event)))return false;
       const unreachableEvents = new Set(["launch", "orbit", "land", "researchTech", "signalMarked", "playCard"]);
       if(allowAmiba)unreachableEvents.add("alienTrace");
       if (!hasOwnRockets) for (const type of ["move", "visitPlanet", "visitAsteroid", "visitComet"]) unreachableEvents.add(type);
-      return reserved.every(card => {
+      return owner.reservedCards.every(card => {
         const model = cardEffects.getCardModel(card), scoring = model.endGameScoring;
+        // Only the container can be assigned by normalization; the arrays
+        // are read below and are never consumed by this proof.
+        const effectState=cardEffects.ensureCardEffectState({...card,cardEffectState:card.cardEffectState&&{...card.cardEffectState}});
         if (scoring && !["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand",
           "unmarkedFinalRightmost", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
           || model.tasks != null && !Array.isArray(model.tasks)) return false;
-        if ((model.triggers || []).some(trigger => !card.cardEffectState.consumedTriggerIds.includes(trigger.id)
+        if ((model.triggers || []).some(trigger => !effectState.consumedTriggerIds.includes(trigger.id)
           && !(trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).every(type => unreachableEvents.has(type)))) return false;
         return (model.tasks || []).every(task => {
           const condition = task.condition, fields = { traceCount: ["traceType", "count"], completedSectors: ["count"],
@@ -2522,7 +3732,7 @@
             || !Number.isSafeInteger(amount) || amount < 1
             || condition.type === "traceCount" && !["blue", "pink", "yellow"].includes(condition.traceType)) return false;
           return deferredTask?.cardId===card.id&&deferredTask.taskId===task.id
-            || card.cardEffectState.completedTaskIds.includes(task.id)
+            || effectState.completedTaskIds.includes(task.id)
             || !cardEffects.taskConditionMet(task, owner, { data: state.data, aliens: state.aliens, planets:state.planets,
               ...(condition.type==="probeDistanceFromEarth"?{probeLocationDetails:rockets.buildProbeLocationData({...state,state}).details}:{}) });
         });
@@ -2951,30 +4161,33 @@
     // A known card pick may finish with one previously held data remaining.
     // Reuse the existing compound currency/income proof for that exact stock.
     // The public refill is always anonymous and cannot create a new purpose.
-    function quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask,firstFamily="place_data",paidDrawCount=null,quoteAfterPick=null,finalRoundQuiet=false}) {
+    function quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask,firstFamily="place_data",paidDrawCount=null,quoteAfterPick=null,finalRoundQuiet=false,blue3=false,foreignFive=false}) {
       const hasProbe=hasOwnVisitSource(state);
       const noMovementAllowance=p=>p.resources.energy===0&&p.hand.every(c=>!c.hidden&&!cards.getDiscardActionMoveRewardForCard(c)?.movementPoints);
       const singleIncomeWindow=owner.resources.availableData===2&&data.listComputerPlacedTokens(owner).length===3
         &&(!hasProbe||owner.resources.credits===0&&owner.resources.energy===0);
       if(hasProbe&&(!movementPlanning||!finalRoundQuiet&&!noMovementAllowance(owner)||deferredTask&&!deferredTask.requiresIncome&&!deferredTask.stationaryCapped))return null;
+      const boundRoute=foreignFive&&stored.intent?.path.length===0&&goalMovementSpec(node)?.reason==="objective-reached";
       const stationary=current=>{
         const p=current.players.players.find(q=>q.id===seatId);
-        if(noMovementAllowance(p))return true;
+        if(boundRoute||noMovementAllowance(p))return true;
         if(!finalRoundQuiet&&!singleIncomeWindow&&paidDrawCount==null)return false;
         const objective=goalMovement.plan({state:current,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
           compareTiming:timingForOneGoalQuery(current),endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(current,seatId)?.candidates||[]});
         goalMovementGeometryNodes+=objective?.routingNodes||0;
         return !objective?.intent?.path.length;
       };
-      if(stored.intent||stored.resourceControl||state.turn.roundNumber!==(finalRoundQuiet?4:3)||transition.nextPlayerId!==seatId
-        ||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
+      const anotherSeat=state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id));
+      if(stored.intent&&!boundRoute||stored.resourceControl||state.turn.roundNumber!==(finalRoundQuiet?4:3)
+        ||(foreignFive?transition.nextPlayerId===seatId||!anotherSeat:transition.nextPlayerId!==seatId||anotherSeat)
         ||rootPublicLandingOffer
-        ||!(finalRoundQuiet?[1,2,3]:[1,2]).includes(owner.resources.availableData)||plan.goal.id!=="data:blue:2"||plan.goal.blueSlot!==2
-        ||!data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(2))
+        ||!(blue3?[1,2,3,4,5,6]:finalRoundQuiet?[1,2,3]:[1,2]).includes(owner.resources.availableData)
+        ||plan.goal.id!==(blue3?"data:blue:3":"data:blue:2")||plan.goal.blueSlot!==(blue3?3:2)
+        ||!data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(plan.goal.blueSlot))
         ||!state.cards.publicCards.some(Boolean)||state.cards.publicCards.some(c=>c&&!knownCards(stored.envelope).has(c.id))
         ||!node.legalActions.some(a=>a.family===firstFamily&&a.actionId===plan.firstActionId))return null;
       const p={...owner,resources:{...owner.resources},dataState:structuredClone(owner.dataState),hand:[...owner.hand]};
-      const placed=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:2});
+      const placed=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:plan.goal.blueSlot});
       if(!placed.ok||placed.slotBonuses.length!==1||placed.slotBonuses[0].type!=="choose_card")return null;
       const working={...state,players:{...state.players,players:state.players.players.map(x=>x===owner?p:x)}};
       const actions=scienceSession.formalizeChoices(working,seatId,scienceSession.listPickCardChoices(working));
@@ -2982,6 +4195,7 @@
       const choice=actions.find(a=>a.actionId===menu?.selectedActionId),index=choice?.target.publicSlotIndex;
       if(!Number.isInteger(index)||menu.selection.blind)return null;
       const card=state.cards.publicCards[index],drawCount=state.cards.drawPileCardIds.length;
+      if(foreignFive&&cardEffects.hasMatchingTrigger(owner,{type:"place_data_pick_card",playerId:seatId,cardInstanceId:card.id}))return null;
       if(!drawCount||(paidDrawCount==null?cards.getAvailablePool({...state.cards},state.players).length!==drawCount
         :drawCount!==paidDrawCount||state.cards.drawPileCardIds.some(Boolean)))return null;
       p.hand.push({...card,blueBonusOwnerId:seatId});p.resources.handSize=p.hand.length;
@@ -2989,7 +4203,8 @@
       // completion query below confirms it opens no additional plan.
       if(p.hand.some(c=>c.hidden)||!finalRoundQuiet&&cards.getDiscardActionRewardForCard(card)?.dataCount>0
         ||hasProbe&&!singleIncomeWindow&&!stationary(working))return null;
-      const debt=(s,v)=>{const tool=resourceDemand.movementToolPlan(s,v);return tool.value>0?tool.selected.preparationDebt:0;};
+      // The shared movement tool has no forecast in the final round.
+      const debt=finalRoundQuiet?()=>0:(s,v)=>{const tool=resourceDemand.movementToolPlan(s,v);return tool.value>0?tool.selected.preparationDebt:0;};
       const retainedDataCorner=p.hand.some(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0);
       const preview={...working,cards:{...state.cards,publicCards:state.cards.publicCards.map((c,i)=>i===index?null:c),
         unknownPublicSlotIndices:[...(state.cards.unknownPublicSlotIndices||[]),index],drawPileCardIds:new Array(drawCount-1).fill(null)}};
@@ -3059,6 +4274,14 @@
           canLeaveProbeStationary:current=>hasProbe&&stationary(current)});
       }
       const nextPlan=completion.plans?.length===1&&completion.plans[0];
+      if(foreignFive&&completion.plans?.length){
+        const reward=data.getBlueBonusPlacementReward(p,3);
+        if(!nextPlan||nextPlan.goal.id!=="data:blue:3"||reward?.type!=="credits"||reward.credits!==1
+          ||Object.keys(reward).some(k=>k!=="type"&&k!=="credits")
+          ||nextPlan.requiredNativeInputs!==2||nextPlan.immediateScoreGain!==0||nextPlan.dataCornerIds?.length
+          ||cardEffects.hasMatchingTrigger(p,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:3})
+          ||cardEffects.hasMatchingTrigger(p,{type:"science_resource_bonus",playerId:seatId,gain:{credits:reward.credits},sourceKey:"blueTechScore"}))return null;
+      }
       const singleIncome=Boolean(singleIncomeWindow&&nextPlan?.goal?.kind==="income"&&nextPlan.requiredNativeInputs===3);
       if(!completion.available||completion.primaryOnly||completion.markedTiles.length
         ||!finalRoundQuiet&&retainedDataCorner&&completion.plans?.length&&!singleIncome)return null;
@@ -3078,6 +4301,56 @@
         unrealizedPurposeDelta:stateValue.sumValueParts([capital,completion.purposeDelta]),bluePublicPick:{cardId:card.id,cardActionId:choice.actionId,publicSlotIndex:index,
           ordinaryDrawCountBefore:drawCount,ordinaryDrawCountAfter:drawCount-1,...(hasProbe?{stationaryProbe:true}:{}),...(singleIncome?{singleCurrencyIncome:true}:{}),
           ...(completion.plans?.length?{continuingDataPlans:completion.plans}:{})}};
+    }
+
+    function quietR4ComputerFiveBlue({state,owner,node,stored,plan,transition}){
+      const placements=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot).sort((a,b)=>a-b);
+      if(stored.resourceControl||transition.nextPlayerId===seatId
+        ||goalMovementSpec(node)?.reason!=="objective-reached"
+        ||placements.length!==5||placements.some((slot,i)=>slot!==i+1)
+        ||data.getBlueBonusPlacementReward(owner,2)?.type!=="choose_card"
+        ||Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
+        ||!hasPostMainInertReservations(state,false,true,true)
+        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:2}))return null;
+      const end=turnTailSummary(node,"end-turn");
+      if(!end||end.netGain!==0||end.requiredNativeInputs!==1||end.markedTiles.length||end.deferredPublicity)return null;
+      const result=quietBluePublicPick({state,owner,node,stored,plan,transition,finalRoundQuiet:true,foreignFive:true});
+      return result&&{...result,computerFiveForeignBlue:true};
+    }
+
+    function quietR4Blue3Pick({state,owner,node,stored,plan,transition}){
+      const goal=plan.goal;
+      if(goal.id!=="data:blue:3"||data.getBlueBonusPlacementReward(owner,3)?.type!=="choose_card"
+        ||owner.hand.some(c=>{const reward=cards.getDiscardActionRewardForCard(c);
+          return reward?.dataCount===1&&reward.gain?.score===1;})
+        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:3}))return null;
+      const placed=data.listComputerPlacedTokens(owner).length;
+      if(placed>=5){
+        const pick=quietBluePublicPick({state,owner,node,stored,plan,transition,finalRoundQuiet:true,blue3:true});
+        return pick&&{...pick,blue3PublicProof:true};
+      }
+      if(placed!==4||owner.resources.availableData<2||!quietTailHasNoAcquisition(state)
+        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"computer",placementSlot:5}))return null;
+      const p={...owner,resources:{...owner.resources},dataState:structuredClone(owner.dataState),hand:[...owner.hand]};
+      const fill=data.placeDataToComputer(p);
+      if(!fill.ok||fill.placementSlot!==5||fill.slotBonuses.length)return null;
+      const next={...state,players:{...state.players,players:state.players.players.map(q=>q===owner?p:q)}};
+      if(!quietTailHasNoAcquisition(next))return null;
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      const objective=goalMovement.plan({state:next,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+        endpoints:()=>native.getProbeRouteRequirements(next,seatId)?.candidates||[],compareTiming:timingForOneGoalQuery(next)});
+      goalMovementGeometryNodes+=objective?.routingNodes||0;
+      if(objective?.intent?.path.length)return null;
+      const pick=quietBluePublicPick({state:next,owner:p,node,stored,plan,transition,finalRoundQuiet:true,blue3:true});
+      if(!pick)return null;
+      const value=(s,p)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
+      const delta=stateValue.sumValueParts([resourceDemand.planningCapital(next,p),-resourceDemand.planningCapital(state,owner)]);
+      return {...pick,netGain:stateValue.sumValueParts([pick.netGain,delta,value(next,p),-value(state,owner),-stateValue.DEFAULT_WEIGHTS.availableData]),
+        requiredNativeInputs:pick.requiredNativeInputs+2,
+        unrealizedPurposeDelta:stateValue.sumValueParts([pick.unrealizedPurposeDelta,delta]),
+        blue3PublicProof:true,bluePublicPick:{...pick.bluePublicPick,fundedComputerPlacement:5}};
     }
 
     // Same fixed blue goal, but its public pick sits behind funded computer
@@ -3470,6 +4743,171 @@
           endDelta:resource+delta,incomeNet:incomeTail.netGain}};
     }
 
+    function quietCargoEndQuote(state,owner,cargo,sourceCapital=null){
+      const applied=localPlans.previewKnownCargoClaim({state,seatId,cargo});
+      if(!applied)return null;
+      const debt=(s,p)=>{const m=resourceDemand.movementToolPlan(s,p);return m.value>0?m.selected.preparationDebt:0;};
+      const score=(s,p)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,
+        aliens:structuredClone(s.aliens),finalScoring:structuredClone(s.finalScoring),cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
+      const after=applied.state,p=applied.player;
+      if(debt(state,owner)!==debt(after,p))return null;
+      const afterCapital=resourceDemand.planningCapital(after,p);
+      const capital=stateValue.sumValueParts([afterCapital,-(sourceCapital??resourceDemand.planningCapital(state,owner))]);
+      const weights=stateValue.DEFAULT_WEIGHTS;
+      const gain=stateValue.sumValueParts([score(after,p),-score(state,owner),capital,
+        applied.credits*weights.credits,applied.dataGain*weights.availableData]);
+      return {claim:gain>0||gain===0&&capital<0,gain,capital,after,afterCapital};
+    }
+
+    function quietR4CargoBlue3({state,owner,node,stored,plan,cargo,transition}){
+      if(stored.intent||stored.resourceControl||transition.nextPlayerId!==seatId
+        ||plan?.goal.id!=="data:blue:3"||data.getBlueBonusPlacementReward(owner,3)?.type!=="publicity"
+        ||owner.resources.availableData<4||!quietTailHasNoAcquisition(state))return null;
+      const observed=e=>cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,...e});
+      if(observed({placementKind:"blueBonus",blueSlot:3}))return null;
+      const prep=localPlans.previewBlueCompletion({state,seatId,goal:plan.goal});
+      if(!prep.available||prep.incomeCardId||prep.dataCornerIds.length||prep.computerPlacements>1||prep.immediateScoreGain
+        ||prep.computerPlacements&&observed({placementKind:"computer",placementSlot:5}))return null;
+      const p=prep.player,after={...state,players:{...state.players,players:state.players.players.map(v=>v===owner?p:v)}};
+      const end=localPlans.quietEndCompletion({state:after,seatId});
+      if(!end.available||end.netGain||end.markedTiles.length)return null;
+      const quote=quietCargoEndQuote(after,p,cargo);
+      if(!quote)return null;
+      const noPlan=preview=>{
+        if(!quietTailHasNoAcquisition(preview)||blueLandingGoalFor(preview))return false;
+        if(resourceCatalog(preview,[]).some(goal=>{
+          if(goal.kind!=="computer-prefix")return true;
+          const completion=localPlans.computerCompletion({state:preview,seatId,goal});
+          return completion.available&&completion.selected;
+        }))return false;
+        const native=productionKernel||globalThis.SetiProductionKernel;
+        const objective=goalMovement.plan({state:preview,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+          endpoints:()=>native.getProbeRouteRequirements(preview,seatId)?.candidates||[],compareTiming:timingForOneGoalQuery(preview)});
+        goalMovementGeometryNodes+=objective?.routingNodes||0;
+        return !objective?.intent?.path.length;
+      };
+      if(!noPlan(after)||!noPlan(quote.after))return null;
+      const {player,capital,...dataPlan}=prep;
+      const {claim,gain,capital:claimCapital}=quote;
+      return {firstActionId:plan.firstActionId,netGain:stateValue.sumValueParts([prep.netGain,claim?gain:0]),
+        unrealizedPurposeDelta:stateValue.sumValueParts([capital.afterCapital,-capital.beforeCapital,claim?claimCapital:0]),
+        requiredNativeInputs:prep.requiredNativeInputs+2,markedTiles:[],dataPlans:[{goal:plan.goal,...dataPlan}],
+        quietCargoChoice:{cardId:cargo.card.id,ruleId:cargo.ruleId,claim,gain,capital:claimCapital},cargoAfterBlue3:true};
+    }
+
+    function stableFinalClaimPolicy(node){
+      const stored=nodes.get(node);
+      if(node.status!=="stable"||stored.intent||stored.resourceControl||stored.envelope.session)return null;
+      const res=resourceSpec(node),pick=cardPickSpec(node);
+      if(res?.bound||pick?.fixed)return null;
+      const move=movementPlanning&&node.legalActions.some(a=>Number.isInteger(a.target?.deltaX)
+        ||a.target?.kind==="move-payment"||a.target?.tradeId==="energy-for-move"
+        ||a.family==="card_corner"&&a.payload?.kind==="move")?goalMovementSpec(node):null;
+      if(move?.selectedActionId&&move.chosenGoal?.timing==="advance-before-rotation")return null;
+      return {plans:res?.plans||[], actions:node.legalActions.filter(a=>(!res||res.retainedActionIds.includes(a.actionId))
+        &&(!pick||pick.retainedActionIds.includes(a.actionId))&&(!move||move.retainedActionIds.includes(a.actionId)))};
+    }
+
+    function exactClaimState(left,right){
+      if(Object.is(left,right))return true;
+      if(!left||!right||typeof left!=="object"||typeof right!=="object"||Array.isArray(left)!==Array.isArray(right))return false;
+      if(Array.isArray(left)&&left.length!==right.length)return false;
+      const keys=Object.keys(left);
+      return keys.length===Object.keys(right).length&&keys.every(k=>Object.hasOwn(right,k)&&exactClaimState(left[k],right[k]));
+    }
+
+    function sameFinalClaimEnd(source,claimed,action,lateEnd,earlyEnd){
+      const original=nodes.get(source),paid=nodes.get(claimed),known=knownCards(original.envelope);
+      const late=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(original.envelope),seatId,action:lateEnd,knownCards:known});
+      if(!late?.task||late.task.cardInstanceId!==action.target.cardInstanceId||late.task.ruleId!==action.target.ruleId)return false;
+      const early=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(paid.envelope),seatId,action:earlyEnd,knownCards:known})?.finished;
+      const menu=early&&makeQuietEndPrelude(original.envelope,lateEnd,late);
+      const choices=menu?.inspection.session.decision.choices;
+      const confirm=choices?.find(a=>a.target?.choiceId==="confirm:task:"+late.task.cardInstanceId+":"+late.task.ruleId);
+      const delayed=confirm&&localPlans.previewFinalPositiveEndTask({state:late.working,seatId,actions:choices,
+        session:menu.envelope.session.session,action:confirm,knownCards:known});
+      if(!delayed)return false;
+      // The late claim is inside END_TURN's transaction; the early one
+      // commits separately. This version difference does not govern a
+      // subsequent own action across the proved foreign-seat boundary.
+      return early.meta.stateVersion===delayed.meta.stateVersion+1
+        &&exactClaimState({...early,meta:{...early.meta,stateVersion:delayed.meta.stateVersion}},delayed);
+    }
+
+    function proveDeferredFinalDataClaim(node, actionId, endId, witness, hasTime){
+      const stored=nodes.get(node),action=node.legalActions.find(a=>a.actionId===actionId);
+      if(node===openedRoot||node.status!=="stable"||stored.intent||stored.resourceControl||stored.envelope.session
+        ||action?.family!=="complete_task"||action.target?.ruleId!=="b117-orbit-land-count-task")return null;
+      const {plan,execution}=witness,steps=execution.prefixes.map(x=>x.action);
+      if(!execution.complete||execution.goalStatus!=="completed"||![2,3].includes(steps.length)
+        ||steps[0].family!=="place_data"||steps[1].family!=="choose_target"||steps[1].target?.blueSlot!==plan.goal.blueSlot
+        ||steps.length===3&&steps[2].family!=="choose_card"||!hasTime())return null;
+      const dataNode=execution.node;
+      if(dataNode.status!=="stable")return null;
+      const delayedPolicy=stableFinalClaimPolicy(dataNode);
+      if(!delayedPolicy?.actions.some(a=>a.actionId===actionId))return null;
+      const claimed=expand(node,actionId,true);
+      if(claimed?.status!=="stable")return null;
+      const earlyPolicy=stableFinalClaimPolicy(claimed);
+      if(!earlyPolicy||earlyPolicy.plans.length!==1||JSON.stringify(earlyPolicy.plans[0])!==JSON.stringify(plan)
+        ||earlyPolicy.actions.some(a=>a.family!=="end_turn")||earlyPolicy.actions.length>1||!hasTime())return null;
+      // Exact blue completion, not a broader scalar tail that has no
+      // executable data-first witness.
+      if(turnTailSummary(claimed,"blue-end-turn"))return null;
+      const earlyEnd=earlyPolicy.actions[0],lateEnd=node.legalActions.find(a=>a.actionId===endId);
+      if(earlyEnd&&(!lateEnd||!sameFinalClaimEnd(node,claimed,action,lateEnd,earlyEnd)))return null;
+      let current=claimed;
+      for(const [index,step] of steps.entries()){
+        if(!hasTime()||!current.legalActions.some(a=>a.actionId===step.actionId))return null;
+        if(index===1&&resourceStep(current,plan.goal,{...plan.operation,placing:true,finalPlacement:true}).actionId!==step.actionId)return null;
+        if(index===2){const pick=cardPickSpec(current);if(!pick?.fixed||pick.selectedActionId!==step.actionId||pick.selection?.blind)return null;}
+        current=expand(current,step.actionId,true);
+        if(!current)return null;
+      }
+      if(current.status!=="stable"||!hasTime())return null;
+      const delayed=expand(dataNode,actionId,true);
+      if(delayed?.status!=="stable"||current.boundary!==delayed.boundary)return null;
+      const a=nodes.get(current),b=nodes.get(delayed);
+      if(a.intent||b.intent||a.resourceControl||b.resourceControl||a.cardControl||b.cardControl
+        ||a.envelope.session||b.envelope.session||cardKnowledgeKey(a.envelope)!==cardKnowledgeKey(b.envelope)
+        ||!exactClaimState(readIdentityState(a.envelope),readIdentityState(b.envelope)))return null;
+      return {proof:"seti-final-claim-blue-order-v1",goal:plan.goal.id,steps:steps.map(a=>a.actionId),
+        equivalentTo:plan.firstActionId,...(earlyEnd?{equivalentEnd:endId}:{})};
+    }
+
+    function redundantCargoClaim(node, actionId) {
+      const stored=nodes.get(node);
+      if(node===openedRoot||!resourcePlanning||!movementPlanning||node.status!=="stable"
+        ||stored.resourceControl||stored.envelope.session)return null;
+      const action=node.legalActions.find(a=>a.actionId===actionId);
+      if(action?.family!=="complete_task"||action.target?.ruleId!=="transport")return null;
+      const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
+      if(stored.intent?.path.length)return null;
+      if(state.turn.roundNumber!==4||!owner.mainActionCompleted
+        ||data.listComputerPlacedTokens(owner).length<4||data.listBluePlacementRequirements(owner).length)return null;
+      const tail=turnTailSummary(node,"end-turn");
+      if(!tail?.quietCargoChoice?.claim||tail.quietCargoChoice.cardId!==action.target.cardInstanceId)return null;
+      const cargo=localPlans.knownDeliveredCargo({state,seatId,knownCards:knownRootCardIds,knownFossilIds:visibleRootCargo()});
+      const applied=cargo&&localPlans.previewKnownCargoClaim({state,seatId,cargo});
+      if(!applied)return null;
+      const after=applied.state;
+      const moreData=resourceCatalog(after,[]).some(goal=>{
+        if(goal.kind!=="computer-prefix")return true;
+        const completion=localPlans.computerCompletion({state:after,seatId,goal});
+        return completion.available&&completion.selected;
+      });
+      if(moreData||!quietTailHasNoAcquisition(after)||blueLandingGoalFor(after))return null;
+      const native=productionKernel||globalThis.SetiProductionKernel;
+      const end=node.legalActions.find(a=>a.actionId===tail.firstActionId);
+      const objective=goalMovement.plan({state:after,seatId,actions:[end],status:"stable",intent:stored.intent,objectiveOnly:true,
+        routeCache:movementRouteCache,endpoints:()=>native.getProbeRouteRequirements(after,seatId)?.candidates||[],compareTiming:timingForOneGoalQuery(after)});
+      goalMovementGeometryNodes+=objective?.routingNodes||0;
+      if(objective?.intent?.path.length)return null;
+      return {proof:"seti-cargo-claim-and-quiet-end-equivalence-v1",equivalentTo:tail.firstActionId,
+        valueDelta:tail.netGain,cardId:tail.quietCargoChoice.cardId};
+    }
+
     function turnTailSummary(node,kind="end-turn") {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
@@ -3517,14 +4955,36 @@
         &&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="阿米巴");
       const knownOrOpaque=card=>knownCards(stored.envelope).has(card.id)
         ||Boolean(stored.informationBarrier&&card.hidden&&!card.id&&!card.cardId);
-      const publicAmibaPlainEnd=kind==="end-turn"&&company?.activeAbilityId==="deepspace_swap_cards"
+      const publicAmibaQuiet=company?.activeAbilityId==="deepspace_swap_cards"
         &&state.aliens.amiba?.revealInitialized===true&&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="阿米巴")
         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id))
         &&owner.reservedCards.every(card=>!cardEffects.getCardModel(card)?.temporaryTasks?.length)
         &&!cardEffects.listPendingTriggerKeys({...owner,reservedCards:owner.hand},state.turn).length;
+      const publicAmibaPlainEnd=kind==="end-turn"&&publicAmibaQuiet;
+      const cargoBlue3=kind==="blue-end-turn"&&computerPolicy?.plans.length===1&&computerPolicy.plans[0].goal.id==="data:blue:3"
+        &&data.getBlueBonusPlacementReward(owner,3)?.type==="publicity";
       // A revealed Chong board without a live transport cannot settle
       // an arrival on ordinary END. Keep the same trigger, task, mark and
       // turn-flow proof as the known Amiba tail, with no new draw or probe move.
+      const cargoTasks=(kind==="end-turn"||cargoBlue3)&&state.turn.roundNumber===4&&publicAmibaQuiet&&knownRootAlienIds.has("虫")
+        &&openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport")
+        ?node.legalActions.filter(a=>a.family==="complete_task"):null;
+      const cargoAtEnd=cargoTasks?.length===1&&cargoTasks[0].target.ruleId==="transport"
+        ?localPlans.knownDeliveredCargo({state,seatId,knownCards:knownRootCardIds,
+          knownFossilIds:visibleRootCargo()}):null;
+      const quietR4ChongEnd=(kind==="end-turn"||cargoBlue3&&cargoAtEnd)&&state.turn.roundNumber===4
+        &&openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport")
+        &&knownRootAlienIds.has("虫")&&publicAmibaQuiet
+        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+        &&(!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+          ||cargoAtEnd?.card.id===cargoTasks?.[0]?.target.cardInstanceId)
+        &&owner.reservedCards.filter(c=>c.set==="alien:虫"&&c.id!==cargoAtEnd?.card.id).every(c=>{
+          const model=cardEffects.getCardModel(c),rule=endScoring.resolveCardEndGameRule(c,cardEffects);
+          return model?.cardType===3&&rule?.kind==="chongTraceCount"
+            &&!model.triggers?.length&&!model.tasks?.length&&!model.temporaryTasks?.length&&!c.chongTask&&!chong.getCardTask(c);
+        });
+      // Already reserved type-3 Chong scoring cards contribute to V, but
+      // cannot receive an END event. Remove them only from the trigger audit.
       const publicChongPlainEnd=kind==="end-turn"&&state.turn.roundNumber===3
         &&company?.activeAbilityId==="deepspace_swap_cards"&&knownRootAlienIds.has("虫")
         &&Object.values(state.aliens.aliens).some(slot=>slot.revealed&&slot.alienId==="虫")
@@ -3550,6 +5010,17 @@
         &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
         &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
         &&owner.hand.every(knownOrOpaque)&&owner.reservedCards.every(card=>knownCards(stored.envelope).has(card.id));
+      const quietR4ChongData=fixedR4DeepSpace&&knownRootAlienIds.has("虫")
+        &&openedRoot.legalActions.some(a=>a.family==="complete_task"&&a.target?.ruleId==="transport")
+        &&owner.reservedCards.filter(c=>c.set==="alien:虫").every(c=>{
+          const model=cardEffects.getCardModel(c),rule=endScoring.resolveCardEndGameRule(c,cardEffects);
+          return model?.cardType===3&&rule?.kind==="chongTraceCount"
+            &&!model.triggers?.length&&!model.tasks?.length&&!model.temporaryTasks?.length&&!c.chongTask&&!chong.getCardTask(c);
+        });
+      const endGuard=quietR4ChongEnd||quietR4ChongData?{...state,
+        ...(cargoAtEnd?{aliens:{...state.aliens,chong:{...state.aliens.chong,transportTasksByRocketId:{}}}}:{}),
+        players:{...state.players,players:state.players.players.map(p=>p===owner
+        ?{...owner,reservedCards:owner.reservedCards.filter(c=>c.set!=="alien:虫")}:p)}}:state;
       const quietR3Computer=state.turn.roundNumber===3&&knownAmibaTail&&company?.activeAbilityId==="deepspace_swap_cards"
         &&!hasOwnVisitSource(state)&&!rootPublicLandingOffer&&owner.hand.every(c=>knownCards(stored.envelope).has(c.id))
         &&owner.reservedCards.every(c=>knownCards(stored.envelope).has(c.id))
@@ -3609,7 +5080,8 @@
         &&!state.match.initialSetup&&!state.turn.gameEnded&&!state.turn.passedPlayerIds.includes(seatId)
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
         &&Object.values(state.aliens.aliens).every(slot=>(!slot.revealed
-          ||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||fixedR4DeepSpace)&&slot.alienId==="阿米巴"
+          ||(knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||fixedR4DeepSpace||quietR4ChongEnd)&&slot.alienId==="阿米巴"
+          ||(quietR4ChongEnd||quietR4ChongData)&&slot.alienId==="虫"
           ||(fixedR4DeepSpace||publicChongPlainEnd||state.turn.roundNumber===3
             &&(publicAmibaPlainEnd||!hasOwnVisitSource(state)&&(publicAmibaCurrencyTail||quietR3Computer))
             &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)
@@ -3620,13 +5092,23 @@
         // visit-capable guard until their complete event set is proved.
         // Plain end never moves; compound previews below separately certify
         // that no movement policy starts at any intermediate goal boundary.
-        &&hasPostMainInertReservations(state,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail,publicAmibaPlainEnd||publicChongPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer,deferredTask)
-        &&(deferredTask||!node.legalActions.some(a=>a.family==="complete_task"))){
+        &&hasPostMainInertReservations(endGuard,false,knownAmibaTail||publicAmibaPlainEnd||publicAmibaCurrencyTail||quietR4ChongData||quietR4ChongEnd,publicAmibaPlainEnd||publicChongPlainEnd||publicAmibaCurrencyTail||stationaryAmibaPrefix||quietR3Computer||fixedProbeComputer||quietR4ChongData||quietR4ChongEnd,deferredTask)
+        &&(deferredTask||quietR4ChongEnd&&cargoAtEnd||!node.legalActions.some(a=>a.family==="complete_task"))){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
             const completion=localPlans.quietEndCompletion({state,seatId});
-            if(!deferredTask?.compareClaim&&completion.available&&(!deferredTask||completion.markedTiles.length===0&&completion.netGain===0&&transition.nextPlayerId===seatId))
+            if(quietR4ChongEnd&&cargoAtEnd&&completion.available&&!completion.netGain&&!completion.markedTiles.length
+              &&transition.nextPlayerId===seatId){
+              const quote=quietCargoEndQuote(state,owner,cargoAtEnd);
+              if(quote){
+                const {claim,gain,capital}=quote;
+                spec={firstActionId:end.actionId,netGain:claim?gain:0,requiredNativeInputs:2,markedTiles:[],
+                  unrealizedPurposeDelta:claim?capital:0,
+                  quietCargoChoice:{cardId:cargoAtEnd.card.id,ruleId:cargoAtEnd.ruleId,claim,gain,capital}};
+              }
+            }
+            if(!cargoAtEnd&&!deferredTask?.compareClaim&&completion.available&&(!deferredTask||completion.markedTiles.length===0&&completion.netGain===0&&transition.nextPlayerId===seatId))
               spec={firstActionId:end.actionId,netGain:completion.netGain,requiredNativeInputs:completion.requiredNativeInputs+Number(Boolean(deferredTask)),markedTiles:completion.markedTiles,
                 ...(deferredTask?.fixedSkip?{quietDeferredTask:{cardId:deferredTask.cardId,taskId:deferredTask.taskId},...(deferredTask.forecast?{deferredPublicity:deferredTask.forecast}:{})}:deferredTask?{deferredPublicity:deferredTask}:{}),
                 ...(publicAmibaPlainEnd?{publicAmibaPlainEnd:true,unrealizedPurposeDelta:completion.purposeDelta}:
@@ -3653,7 +5135,9 @@
               }
             }
           }
-          else{
+          else if(cargoAtEnd){
+            spec=quietR4CargoBlue3({state,owner,node,stored,plan:computerPolicy.plans[0],cargo:cargoAtEnd,transition});
+          }else{
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail
               ||(publicAmibaCurrencyTail||inertVisitBonus)&&plan?.goal.kind==="blue-data"&&localPlans.blueCompletion({state,seatId,goal:plan.goal});
             if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.id==="data:blue:1")
@@ -3662,6 +5146,12 @@
             if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&plan.goal.blueSlot===2)
               spec=owner.resources.availableData===0&&!deferredTask?quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition}):
                 quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask});
+            if(!spec&&kind==="blue-end-turn"&&publicAmibaCurrencyTail&&!deferredTask
+              &&state.turn.roundNumber===4&&stored.informationBarrier?.code==="hidden_card_reveal"
+              &&stored.intent?.path.length===0&&plan?.goal.id==="data:blue:2")
+              spec=quietR4ComputerFiveBlue({state,owner,node,stored,plan,transition});
+            if(!spec&&kind==="blue-end-turn"&&quietR4ChongData&&!deferredTask&&plan)
+              spec=quietR4Blue3Pick({state,owner,node,stored,plan,transition});
             if(!spec&&kind==="blue-end-turn"&&fixedR4DeepSpace&&!deferredTask&&plan)
               spec=quietR4FundedPublicBlue({state,owner,node,stored,plan,transition});
             if(kind==="data-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="income"){
@@ -3728,6 +5218,20 @@
               const compound=localPlans.dataTailCompletion({state,seatId,trackPurposeDelta:publicAmibaCurrencyTail||stationaryAmibaPrefix||inertVisitBonus||exactFixedBlueTie||fixedR4DeepSpace,
                 publicBlue:fixedR4DeepSpace?publicBlue:null,
                 fixedDataOrdering,stationaryFinalData:stationaryAmibaPrefix,exactFixedBlueTie,
+                scoredFinish:quietR4ChongData?preview=>localPlans.scoredEndCorner({state:preview,seatId,
+                  actions:openedRoot.legalActions,knownCards:knownCards(stored.envelope)}):null,
+                cornerPolicy:quietR4ChongData&&plan.goal.kind==="income"?(preview,goal)=>{
+                  const p=preview.players.players.find(q=>q.id===seatId);
+                  const actions=node.legalActions.filter(a=>a.family==="card_corner"&&a.payload?.kind==="resource"
+                    &&p.hand.some(c=>c.id===a.target.cardInstanceId));
+                  const prep=resourceDemand.preparations({state:preview,seatId,goal,actions,selectionOnly:true}).find(x=>!x.observer);
+                  const action=actions.find(a=>a.actionId===prep?.actionId);
+                  const card=action&&p.hand.find(c=>c.id===action.target.cardInstanceId&&knownCards(stored.envelope).has(c.id));
+                  const reward=card&&cards.getDiscardActionRewardForCard(card);
+                  if(!card||action.payload.multiplier!==1||reward?.dataCount!==1
+                    ||Object.keys(reward.gain||{}).some(k=>k!=="score"))return null;
+                  return {card,score:reward.gain?.score||0};
+                }:null,
                 initialIncomeGoal:plan.goal.kind==="income"?plan.goal:null,initialIncomeTail:policy.incomeTail,
                 firstBlueGoal:(publicAmibaCurrencyTail||fixedDataOrdering)&&plan.goal.kind==="blue-data"?plan.goal:null,
                 canContinue:publicAmibaCurrencyTail||stationaryAmibaPrefix||fixedDataOrdering?(preview,knownSourceCapital)=>{
@@ -3811,7 +5315,7 @@
               // shortcut never substitutes a primary-only upper bound.
               if(compound.available&&(!(checkedNewAcquisition||fixedR4DeepSpace)||!compound.primaryOnly)&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
-                spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,...(compound.primaryOnly?{primaryOnly:true}:{}),
+                spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles,...(compound.scoredFinish?{scoredFinish:compound.scoredFinish}:{}),...(compound.skippedFundedBlue?{skippedFundedBlue:compound.skippedFundedBlue}:{}),...(compound.primaryOnly?{primaryOnly:true}:{}),
                   ...(publicAmibaCurrencyTail||stationaryAmibaPrefix?{publicAmibaCurrencyTail:true,unrealizedPurposeDelta:compound.purposeDelta}:inertVisitBonus||exactFixedBlueTie||fixedR4DeepSpace?{inertVisitBonus,exactFixedBlueTie,unrealizedPurposeDelta:compound.purposeDelta}:{})};
               else if(!deferredTask&&!hasUnprovedProbeCapital(state)&&plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
@@ -3824,6 +5328,8 @@
       }
       spec=spec&&freeze({proof:spec.computerThenKnownBluePick?"seti-forced-computer-and-visible-blue-pick-v1":spec.cappedTaskBlueCurrency?"seti-fixed-blue-currency-and-deferred-task-v1":spec.computerThenQuietEnd?"seti-funded-computer-quiet-end-v1":spec.incomeThenQuietEnd?"seti-fixed-currency-income-quiet-end-v1":spec.computerThenScoredBlue?"seti-computer-prefix-and-scored-blue-v1":spec.incomeThenKnownBlue?"seti-fixed-income-then-public-blue-v1":spec.incomeThenBlueCurrency?"seti-fixed-income-then-blue-currency-v1":spec.bluePublicPick?.taskChoice?"seti-capped-task-and-public-blue-pick-v1":spec.bluePublicPick?"seti-quiet-public-blue-pick-value-v1":"seti-audited-company-quiet-turn-tail-value-v2",kind,...spec,
         scope:kind==="end-turn"?"exact-native-end-turn-and-greedy-final-marks-value":"exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+        ...(quietR4ChongEnd?{quietR4ChongEnd:true}:{}),
+        ...(quietR4ChongData?{quietR4ChongData:true}:{}),
         ...(fixedR4DeepSpace&&spec.dataPlans?.length?{r4DeepSpaceDataTail:true}:{}),
         observationAvailable:false,successorEnvelopeAvailable:false});
       if(!variants){variants=new Map();turnTailSpecs.set(node,variants);}variants.set(kind,spec);return spec;
@@ -4692,13 +6198,14 @@
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       loadedEnvelope = null;
-      decodedStates.clear(); decodedStateCacheBytes = 0;
+      decodedStates.clear(); decodedStateCacheBytes = 0; committedReferences=new WeakMap();
       envelopeObservations = new WeakMap();valueObservations=new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
       nodes = new WeakMap();
       movementValueBounds=new WeakMap();movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       observationReleasers = new WeakMap();
       normalizedIdentityStates = new Map();
       identitySubtrees.values=new WeakMap();
+      identitySlices.values=new WeakMap(); identitySlices.hits=0; identitySlices.stores=0;
       movementPolicies = new WeakMap();
       movementRouteCache.clear();
       movementTimingCache.clear();
@@ -4711,7 +6218,10 @@
       envelopeCardSpecs = new WeakMap();
       envelopeCompanyIntents = new WeakMap();
       openedRoot = null;
-      identities.clear();physicalIdentityKeys.clear();
+      chongDirectClaims.clear();
+      quietDataMenuTemplate = null;
+      blueTwoPickTemplate = null;
+      identities.clear();physicalIdentityBuckets.clear();nextPhysicalIdentity=0;identityBucketCollisions=0;
       resourceOrders = new WeakMap();
       knownMoneyOrders = new WeakMap();
       openingOrders = new WeakMap();
@@ -4755,6 +6265,28 @@
       const player=state.players.players.find(p=>p.id===seatId);
       return industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId==="deepspace_swap_cards"
         &&player.reservedCards.some(c=>knownRootCardIds.has(c.id)&&localPlans.sectorPublicityReward(c)!==null);
+    }
+
+    function visibleRootCargo(){
+      return new Set(rootObservation.publicState.board.rockets.filter(r=>r.fossilId).map(r=>r.fossilId));
+    }
+
+    function deferredCargoEnabled(){
+      if(!resourcePlanning||rootObservation?.publicState.roundNumber!==4||!knownRootAlienIds.has("虫"))return false;
+      const head=nodes.get(openedRoot)?.envelope.session?.session?.queue?.[0];
+      return head?.ownerId===seatId&&(head.type===scienceSession.EFFECT_TYPES.SCAN_ACTION_4
+        ||head.payload?.kind==="chong_task");
+    }
+
+    function quoteDeferredCargo(node){
+      if(!["turn-boundary","information-barrier"].includes(node.status))return null;
+      const stored=nodes.get(node);
+      if(!stored?.envelope||stored.envelope.session)return null;
+      const t=readIdentityState(stored.envelope).turn;
+      if(t.currentPlayerId!==seatId||JSON.stringify([t.roundNumber,t.turnNumber,t.actionCycleNumber])===rootTurnKey)return null;
+      const knownFossilIds=visibleRootCargo();
+      const state=planningState(readIdentityState(stored.envelope),stored.informationBarrier,knownRootCardIds);
+      return localPlans.quoteDeferredCargo({state,seatId,knownCards:knownRootCardIds,knownFossilIds});
     }
 
     function deferredSectorPublicityQuote(node) {
@@ -5922,11 +7454,11 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
-        committedDecodeCount, committedDecodeHits, committedReferenceCount,
+        committedDecodeCount, committedDecodeHits, committedReferenceCount, committedReferenceHits, lazyCommittedEnvelopes,lazyPreviewSerializations,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
         milliseconds: { ...milliseconds } });
@@ -5944,9 +7476,9 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

@@ -447,6 +447,7 @@
     }
 
     function publish(event) {
+      if (!listeners.size) return;
       const frozen = deepFreeze(clone(event));
       for (const listener of [...listeners]) {
         try { listener(frozen); } catch (_error) { /* 已成立的规则状态不受宿主监听器影响。 */ }
@@ -619,16 +620,18 @@
       // 全部小事实（不跨步骤持有观察、不读 decision），因此同样跳过选择枚举与整棵
       // clone+deepFreeze；遮蔽路径不使用本标记，仍走冻结完整观测（sanitizer 与其共享未改字段）。
       const transientObservation = viewer?.cheap === true || viewer?.planEvidence === true;
+      const valueProjection = options.allowTrustedForkLifecycle===true&&viewer?.valueOnly===true&&viewer.role==="player";
       const observed = {
         ...runtime.observe(activeSession, clone(viewer), {
           // 搜索中间观测不消费 decision 字段（选择枚举见后提交 inspect），跳过重复枚举。
-          skipDecisionChoices: transientObservation,
+          skipDecisionChoices: transientObservation || valueProjection,
         }),
         stateVersion: readStoreSnapshot().meta.stateVersion,
       };
       // 同上：cheap 中间观测跳过 deepFreeze，叶/根/宿主仍走冻结完整观测。
       // 完整快照先隔离working state引用，不能把仍待执行的规则状态一起冻结。
-      return transientObservation ? observed : deepFreeze(clone(observed));
+      return transientObservation ? observed
+        : deepFreeze(valueProjection&&observed.state?.detachedValueProjection===true?observed:clone(observed));
     }
 
     function inspect(skipChoices = false) {
@@ -661,16 +664,17 @@
       });
     }
 
-    function finishIfTerminal() {
+    function finishIfTerminal(omitTrustedResult = false) {
       if (!activeSession || !TERMINAL_PHASES.has(activeSession.phase)) return null;
+      const compact = omitTrustedResult && listeners.size === 0;
       const terminal = deepFreeze({
-        ...clone(lastActionResult || {}),
+        ...(compact ? {} : clone(lastActionResult || {})),
         ok: activeSession.phase === "completed",
         phase: activeSession.phase,
         family: activeFamily,
         stateVersion: readStoreSnapshot().meta.stateVersion,
         failure: clone(activeSession.failure),
-        journal: clone(activeSession.journal),
+        ...(compact ? {} : { journal: clone(activeSession.journal) }),
         irreversibleBarrier: clone(activeSession.irreversibleBarrier),
       });
       activeSession = null;
@@ -681,15 +685,17 @@
     }
 
     function advanceSession(result, autoDrain = true, responseOptions = {}) {
-      if (!result?.ok) return finishIfTerminal() || deepFreeze(clone(result));
+      const omitTrustedResult = options.allowTrustedForkLifecycle === true
+        && responseOptions.skipProjection === true && responseOptions.omitTrustedResult === true;
+      if (!result?.ok) return finishIfTerminal(omitTrustedResult) || deepFreeze(clone(result));
       if (activeSession && autoDrain && !TERMINAL_PHASES.has(activeSession.phase)) {
         const drained = runtime.drain(activeSession, { skipInspection: options.allowTrustedForkLifecycle === true });
-        if (!drained?.ok) return finishIfTerminal() || deepFreeze(clone(drained));
+        if (!drained?.ok) return finishIfTerminal(omitTrustedResult) || deepFreeze(clone(drained));
       }
-      return finishIfTerminal() || deepFreeze({
+      return finishIfTerminal(omitTrustedResult) || deepFreeze({
         ok: true,
         ...(responseOptions.skipProjection === true ? {} : { projection: projection() }),
-        journal: clone(activeSession?.journal || null),
+        ...(omitTrustedResult && listeners.size === 0 ? {} : { journal: clone(activeSession?.journal || null) }),
       });
     }
 
@@ -729,6 +735,7 @@
       publish({ source: "session", event: { type: "opened", family: activeFamily } });
       const result = advanceSession(dispatched, submitOptions.autoDrain !== false, {
         skipProjection: submitOptions.skipProjection === true,
+        omitTrustedResult: submitOptions.omitTrustedResult === true,
       });
       return result;
     }
@@ -785,6 +792,7 @@
       );
       return advanceSession(result, submitOptions.autoDrain !== false, {
         skipProjection: submitOptions.skipProjection === true,
+        omitTrustedResult: submitOptions.omitTrustedResult === true,
       });
     }
 
@@ -793,6 +801,7 @@
       const resolved = runtime.resolveDecision(activeSession, clone(submission));
       return advanceSession(resolved, submitOptions.autoDrain !== false, {
         skipProjection: submitOptions.skipProjection === true,
+        omitTrustedResult: submitOptions.omitTrustedResult === true,
       });
     }
 
@@ -836,6 +845,17 @@
     }
 
     function save(saveOptions = {}) {
+      const trustedCheckpoint = saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true;
+      if (trustedCheckpoint && saveOptions.deferSerialization === true) {
+        const trustedState=readStoreSnapshot();
+        const session=activeSession?runtime.createCheckpoint(activeSession,{trustedReference:true}):null;
+        if(session?.ok===false)return deepFreeze(clone(session));
+        let committedBytes;
+        const envelope=Object.freeze({schemaVersion:SAVE_SCHEMA_VERSION,
+          get committedState(){return committedBytes??=stableSerialize(trustedState);},
+          session:deepFreeze(session?.checkpoint||null)});
+        return Object.freeze({ok:true,trustedState,envelope});
+      }
       let serialized;
       if (saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true) {
         serialized = store.serializeForkSnapshot();
@@ -846,8 +866,6 @@
         serialized = store.serialize(saveState);
       }
       if (!serialized.ok) return deepFreeze(clone(serialized));
-      const trustedCheckpoint = saveOptions.trustedFork === true
-        && options.allowTrustedForkLifecycle === true;
       const session = activeSession
         ? runtime.createCheckpoint(activeSession, { trustedReference: trustedCheckpoint })
         : null;

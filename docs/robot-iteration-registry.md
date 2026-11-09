@@ -59,6 +59,13 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 `robot_iterate run --name ai-search-v661-white-full-20261109 --full --config agentType=search,scenario=human405-white-v661-full-v1,compactReplay=true`
 复用已独立复放的 V661 前 259 次输入及第三轮结算后的原生状态、随机数和 AI 检查点，白席从第四轮开始继续。前三轮轮末照原记录，后续轮末继续取选牌及收入前。按终局测试保留全部单点超标证据，沿用 V661 原搜索策略和预算；仅白席结果不参与四 AI 榜和基线。
 
+## 第四轮候选接续（2026-11-10）
+
+`robot_iterate run --name ai-search-v661-r4-candidate-20261110 --full --config agentType=search,scenario=human405-white-v661-r4-candidate-v1,compactReplay=true`
+单独登记第四轮候选。旧 V661 入口仍校验原策略文件。候选入口核对相同的 259 次已提交输入、前三轮轮末记录和原生状态／会话／RNG，并核对候选源码及 12 个存档的单点验收证据。仅丢弃跨版本的白席 AI 计划，其余三席继续使用已登记的 PASS 和强制选择规则。
+
+每个新白席决策提交前执行 256 原生输入／600 毫秒门槛；超出即留存失败根与尝试，不提交该动作、不替代为 PASS，也不重跑同版本实验。180 秒计入原 13.028 秒前三轮和本次接续实际用时。只有合法自然终局可记终局分；不改变 V41 及原 V661 记录。
+
 ## 仅白席整局续跑（2026-11-04）
 
 `robot_iterate run --full --config agentType=search,scenario=human405-white-full-v1,compactReplay=true`从已验证的v123首轮存档继续：前64次输入、原生状态/RNG和AI证书原样恢复，不重跑第一轮。原23输入开局SHA及首轮记录、存档、轨迹、源码证明的SHA进入独立实验身份；当前Production策略源码必须与v123证明逐文件一致。其余三席保持原PASS与强制选择策略。原首轮入口继续拒绝full，不改变其256次/600ms强制门槛。

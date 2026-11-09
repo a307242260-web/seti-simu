@@ -1700,7 +1700,8 @@ function createProductionHostComposition(options = {}) {
     },
     projectState(state, viewer, _session, projectionContext = {}) {
       const requirements = projectedRequirements(state, viewer, _session);
-      const projectionState = options.trustedProjectionReader === true ? state : clone(state);
+      const detachedValue = viewer?.valueOnly===true&&viewer.role==="player"&&options.trustedForkLifecycle===true&&hostKind==="browser";
+      const projectionState = options.trustedProjectionReader === true || detachedValue ? state : clone(state);
       const projectedState = {
         ...projectionState,
         passingPlayerIds: probeTurnSession.getPassingPlayerIds(state, { queue: projectionContext.pendingEffects }),

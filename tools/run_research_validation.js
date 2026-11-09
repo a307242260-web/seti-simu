@@ -421,6 +421,7 @@ function runValidation(options) {
   const scenario = identity.scenario?.id === random20.ID ? random20 : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const fullWhite = scenario === whiteFull || scenario === random20;
   const pinnedContinuation = scenario === whiteFull;
+  const guardedR4 = identity.scenario?.id === whiteFull.R4_ID;
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
   let nextRoundToRecord = 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
@@ -450,7 +451,7 @@ function runValidation(options) {
           ownedSlots: bucket.tokens.filter(t => t.replacedByPlayerId === owner.id).map(t => t.slotIndex),
           capacity: bucket.tokens.length })).filter(p => p.ownedSlots.length),
         alienTraceSlots: observation.publicState.board.aliens.slots,
-        ...((identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID || identity.scenario.id === whiteFull.V661_ID || scenario === random20) ? {
+        ...((identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID || identity.scenario.id === whiteFull.V661_ID || guardedR4 || scenario === random20) ? {
           aliens: observation.publicState.board.aliens, finalScoring: state.finalScoring,
           projectedFinalScore: observation.publicState.players.find(p => p.playerId === owner.id).finalScore,
         } : {}) };
@@ -547,6 +548,9 @@ function runValidation(options) {
       if (identity.scenario && scenario.settled(obsBefore, identity.scenario)) break;
       const seat = obsBefore?.decision?.actorPlayerId || null;
       decisionStartSteps = steps;
+      if (guardedR4 && Date.now() - startedAt + identity.scenario.continuation.sourceGameWallMs >= identity.scenario.gameMillisecondsTarget) {
+        throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
+      }
       if (scenario === random20 && Date.now() - startedAt >= identity.scenario.gameMillisecondsTarget) {
         throw Object.assign(new Error("RANDOM20_GAME_TIME_LIMIT"), {code:"RANDOM20_GAME_TIME_LIMIT"});
       }
@@ -594,6 +598,9 @@ function runValidation(options) {
     const terminalFull = fullWhite && terminal;
     const summary = summaryOf(terminalFull ? finalObs : (lastRoundEndObservation || finalObs), { boardOnly: !terminalFull && Boolean(lastRoundEndObservation) });
     const wallMs = Date.now() - startedAt;
+    if (guardedR4 && wallMs + identity.scenario.continuation.sourceGameWallMs > identity.scenario.gameMillisecondsTarget) {
+      throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
+    }
 
     // ---- 存档（快速验证存档供全盘续跑；全盘存档供复盘/快进）----
     if (!options.noSave) {
@@ -666,14 +673,15 @@ function runValidation(options) {
         fs.mkdirSync(SAVES_DIR, { recursive: true });
         fs.writeFileSync(path.join(__dirname, "..", savePath), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
       }
-      if (error.search) {
-        collectBudgetHits(collector, steps + 1, { policyDecision: { seatId: failedTrace?.context?.seatId || "player-white", actionId: null }, searches: [error.search] });
+      const rejectedSearch = error.search || (guardedR4 ? failedTrace?.search : null);
+      if (rejectedSearch) {
+        collectBudgetHits(collector, steps + 1, { policyDecision: { seatId: failedTrace?.context?.seatId || "player-white", actionId: null }, searches: [rejectedSearch] });
         collector.searches.at(-1).committed = false;
       }
       const record = { schemaVersion: RECORD_SCHEMA_VERSION, name: options.name || null, fingerprint, mode,
         seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
         aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
-        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
+        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: rejectedSearch?.complete ? "complete" : "incomplete",
         flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: whiteRound1.settled(env.observe()), openingInputs: identity.scenario.openingInputs ?? (scenario === random20 ? random20OpeningInputs : null), ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(env.observe(), identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: checkpointSteps - identity.scenario.openingInputs } : {}), ...(identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID ? { firstThreeRoundsSettled: whiteRound1.settled(env.observe(), identity.scenario), newInputsAfterOpening: checkpointSteps - identity.scenario.openingInputs, completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
         createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpointSteps, stepsLimit: options.steps,
         terminal: false, status: "failed", scoreSemantics: identity.scenario.scoreSemantics, wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
@@ -683,10 +691,10 @@ function runValidation(options) {
         metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
           whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,
           revealEvents: collector.revealEvents, budgetHits: collector.budgetHits, searches: collector.searches },
-        failure: { code: error.code || "SCENARIO_FAILED", message: error.message,
+        failure: { code: error.code || (guardedR4 ? failedTrace?.reasonCode : null) || "SCENARIO_FAILED", message: error.message,
           checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
           attemptTracePath: fs.existsSync(failedAttemptsPath) ? path.relative(path.join(__dirname, ".."), failedAttemptsPath) : null,
-          searchGraphClosed: error.search?.complete === true,
+          searchGraphClosed: rejectedSearch?.complete === true,
           decisionAdmitted: failedDecisionCommitted,
           failedDecisionCommitted } };
       fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");

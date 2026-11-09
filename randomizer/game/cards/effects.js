@@ -3772,12 +3772,16 @@
     return nodes;
   }
 
+  function getEffectBuildRepeat(item) {
+    return shouldPreserveRepeatInBuildEffects(item)
+      ? 1
+      : Math.max(1, Math.round(Number(item.options?.repeat || 1)));
+  }
+
   function expandEffects(effects) {
     const result = [];
     for (const item of effects || []) {
-      const repeat = shouldPreserveRepeatInBuildEffects(item)
-        ? 1
-        : Math.max(1, Math.round(Number(item.options?.repeat || 1)));
+      const repeat = getEffectBuildRepeat(item);
       for (let index = 0; index < repeat; index += 1) {
         result.push(...expandEffectNode(item, index, repeat));
       }
@@ -3936,6 +3940,21 @@
       return true;
     }
     return true;
+  }
+
+  // Analysis only needs to know if an effect can open a new decision.
+  // Match against the same normalized consumption state without initializing
+  // a card or copying the whole player and effect payloads.
+  function hasMatchingTrigger(player, event) {
+    for (const card of player?.reservedCards || []) {
+      const model = getCardModel(card);
+      if (!model?.triggers?.length || event.sourceCardInstanceId != null && card.id === event.sourceCardInstanceId) continue;
+      const state = card.cardEffectState;
+      const consumed = state?.modelCardId === getCardId(card) && Array.isArray(state.consumedTriggerIds)
+        ? state.consumedTriggerIds : null;
+      if (model.triggers.some(trigger => !consumed?.includes(trigger.id) && eventMatchesTrigger(event, trigger))) return true;
+    }
+    return false;
   }
 
   function collectMatchingTriggers(player, event) {
@@ -4692,11 +4711,13 @@
     getCardPrice,
     getCardPlayCost,
     buildPlayEffects,
+    getEffectBuildRepeat,
     getTemporaryTasks,
     ensureCardEffectState,
     consumeTrigger,
     completeTask,
     collectMatchingTriggers,
+    hasMatchingTrigger,
     listPendingTriggerKeys,
     collectReadyTasks,
     collectTemporaryTaskRewards,

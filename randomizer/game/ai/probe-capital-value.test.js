@@ -60,6 +60,27 @@ try {
     'the native mission matches its base quote; the independently verified research-income alternative is separate');
   assert.equal(quote(next.observation).value, 0, 'consumed probe must not retain a mission');
   assert.equal(quote({ ...obs, terminal: true }).value, 0);
+  {
+    const finalState=structuredClone(state);finalState.turn.roundNumber=4;
+    const owner=finalState.players.players.find(p=>p.id===seatId),hand=owner.hand,
+      market=finalState.cards.publicCards,offered=market.filter(Boolean);
+    const mission=probe.prepareFinalRoundSwapMission(finalState,owner);
+    assert(mission.sensitive,'this funded native route can take income and must still price the actual cards');
+    const originalMission=(nextHand,nextMarket)=>{
+      const facts=probe.factsFromState({...finalState,cards:{...finalState.cards,publicCards:nextMarket}},{...owner,hand:nextHand});
+      return probe.quoteReadOnlyPortfolio({...facts,initialInvestmentCapital:0,investment:()=>0},values.DEFAULT_WEIGHTS);
+    };
+    assert(mission.quote(hand,market)>0);
+    assert.equal(mission.quote(hand,market),originalMission(hand,market));
+    assert(hand.length&&offered.length);
+    for(const incoming of offered){
+      const nextHand=[incoming,...hand.slice(1)],nextMarket=market.map(c=>c===incoming?hand[0]:c);
+      assert.equal(mission.quote(nextHand,nextMarket),originalMission(nextHand,nextMarket));
+    }
+    const poor={...owner,resources:{...owner.resources,credits:0,energy:0}};
+    assert.equal(probe.prepareFinalRoundSwapMission(finalState,poor).sensitive,false);
+    assert.equal(probe.prepareFinalRoundSwapMission(finalState,poor).quote(hand,market),0);
+  }
   const round4 = structuredClone(obs); round4.publicState.roundNumber = 4;
   assert(quote(round4).value > 0, 'an unpassed final-round probe retains a currently funded mission');
   delete round4.publicState.board.data;

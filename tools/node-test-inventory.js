@@ -143,6 +143,7 @@ module.exports = Object.freeze({
     entry("tools/alien-reveal-hidden.test.js", "architecture/policy-host", "正式回合末揭示的隐藏牌序差分不改变搜索可见观察", "新物种身份或新外星牌宣传准备进入反事实观察"),
     entry("tools/research-world-resume.test.js", "training/reporting", "研究续跑保留权威世界、行动快照与全部历史", "重建牌序、丢历史或改写未知RNG标签后续跑"),
     entry("tools/research-human405-full.test.js", "training/reporting", "白席整局复用v123首轮状态/RNG/AI证书和64输入，逐轮落盘、失败不重跑且人数及对手独立指纹", "续跑重复第一轮、历史输入漏计、已完成轮次丢失或失败后绕过去重"),
+    entry("tools/research-human405-r4.test.js", "training/reporting", "固定候选源码和前三轮原生存档，第四轮决策过线前不提交", "跨策略误用旧计划、失败改变盘面、丢失前三轮或重复同一实验"),
     entry("tools/research-human405-first2.test.js", "training/reporting", "白席前两轮独立实验身份，PASS提交前记录原生轮末状态，轮末选牌和下一轮收入严格分开", "把下一轮收入或选牌计入轮末，第二轮提前停止、污染原根或重复同指纹"),
     entry("tools/research-human405-first3.test.js", "training/reporting", "原23输入完整Native信封/RNG开局、独立自主前三轮身份、轮末选牌收入前资产及正常失败去重", "teacher112冒充自主开局、R4收入污染R3分数和资产、失败重复或临时成绩进入终局榜"),
     entry("tools/research-human405-third.test.js", "training/reporting", "教师同一第三轮完整原生根及RNG恢复，前两轮固定前缀明示，第三轮独立指纹与轮末选牌收入前口径", "重放112输入、修改开局或携带旧AI证书、受控前缀冒充自主前三轮或重复实验"),

@@ -14,14 +14,26 @@
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
     ||Number.isInteger(a.target?.publicSlotIndex)&&a.target?.choiceId?.startsWith('pick:'));
+  const incomeSupplierEffects=new Set(['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income']);
   function facts(card){
     const move=cards.getDiscardActionMoveRewardForCard(card),corner=cards.getDiscardActionRewardForCard(card);
-    const model=effects.getCardModel(card),play=effects.buildPlayEffects(card),cost=effects.getCardPlayCost(card);
-    // This is a deliberately narrow, known unconditional payoff; unknown effects never qualify as an exceptional buy.
-    const certain=play.length&&play.every(e=>e.type==='gain_resources'&&Object.keys(e.options?.gain||{}).every(k=>k==='score'));
-    const net=certain?play.reduce((n,e)=>n+(e.options.gain.score||0),0)-Object.values(cost).reduce((n,v)=>n+v,0)-1:0;
+    const model=effects.getCardModel(card),cost=effects.getCardPlayCost(card);
+    // Quote the printed payoff without creating pending execution nodes.
+    // Repeat counts follow the same rules as Native expansion.
+    let score=0,hasPlay=false,certain=true,preparesIncome=false;
+    for(const effect of model?.playEffects||[]){
+      const repeat=effects.getEffectBuildRepeat(effect);
+      if(!(repeat>0))continue;
+      hasPlay=true;
+      if(incomeSupplierEffects.has(effect.type))preparesIncome=true;
+      if(certain){
+        if(effect.type!=='gain_resources'||Object.keys(effect.options?.gain||{}).some(k=>k!=='score'))certain=false;
+        else for(let i=0;i<repeat;i++)score+=effect.options.gain.score||0;
+      }
+    }
+    const net=hasPlay&&certain?score-Object.values(cost).reduce((n,v)=>n+v,0)-1:0;
     return{id:card.id,cardId:card.cardId,price:card.price,income:cards.getIncomeCodeForCard(card),
-      move:move?.movementPoints||0,data:corner?.dataCount||0,net,cost,model};
+      move:move?.movementPoints||0,data:corner?.dataCount||0,net,cost,model,hasPlay,preparesIncome};
   }
   const creditTrade=trades.TRADE_ACTIONS.find(a=>a.id==='energy-for-credit'),energyTrade=trades.TRADE_ACTIONS.find(a=>a.id==='credits-for-energy');
   function moneyFundingGap(resources,required){
@@ -77,15 +89,14 @@
     function goals(state,seatId,endpoints){
       const p=state.players.players.find(p=>p.id===seatId),hand=p.hand.map(facts),out=[];
       const placed=data.listComputerPlacedTokens(p).length,pool=p.resources.availableData;
-      const protectedMain=!p.mainActionCompleted&&hand.length===1&&effects.buildPlayEffects(p.hand[0]).length
+      const protectedMain=!p.mainActionCompleted&&hand.length===1&&hand[0].hasPlay
         &&Object.entries(hand[0].cost).every(([k,v])=>p.resources[k]>=v)?hand[0].id:null;
       if(placed<4&&pool>=4-placed&&p.hand.length-(protectedMain?1:0)===0)
         out.push({kind:'income',id:'income:computer:4',amount:1,priority:5,protectedCardId:protectedMain});
       if(!p.mainActionCompleted){
-        for(const card of p.hand){
-          const types=effects.buildPlayEffects(card).map(e=>e.type);
-          if(!types.some(t=>['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(t)))continue;
-          const target={kind:'play_card',cardId:card.id,required:effects.getCardPlayCost(card)};
+        for(const card of hand){
+          if(!card.preparesIncome)continue;
+          const target={kind:'play_card',cardId:card.id,required:card.cost};
           if(demand.capacity(state,seatId,target)||demand.incomeFunding(state,seatId,target))continue;
           for(const offer of state.cards.publicCards.filter(Boolean)){
             const withOffer={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,hand:[...p.hand,offer]}:v)}};
@@ -109,7 +120,8 @@
       return out.sort((a,b)=>b.priority-a.priority||(b.net||0)-(a.net||0)||(a.id<b.id?-1:a.id>b.id?1:0));
     }
     function paid(state,seatId,actions,endpoints){
-      const p=state.players.players.find(p=>p.id===seatId),offers=state.cards.publicCards.filter(Boolean),trades=actions.filter(isTrade);
+      const trades=actions.filter(isTrade);if(!trades.length)return null;
+      const p=state.players.players.find(p=>p.id===seatId),offers=state.cards.publicCards.filter(Boolean);
       for(const goal of goals(state,seatId,endpoints)){
         const selection=goal.cardId?{cardId:goal.cardId,blind:false,cache:'goal-fixed'}:select(state,seatId,goal,offers,false);
         if(!selection.cardId)continue;
@@ -158,7 +170,7 @@
     function queuedIncomeGoal(session,seatId,state){
       if(session?.queue?.[0]?.type!=='science_domain_pick_card'||session.queue[0].ownerId!==seatId)return null;
       const p=state.players.players.find(p=>p.id===seatId);
-      const future=p.hand.filter(card=>effects.buildPlayEffects(card).some(e=>['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(e.type))
+      const future=p.hand.filter(card=>facts(card).preparesIncome
         &&Object.entries(effects.getCardPlayCost(card)).some(([k,v])=>p.resources[k]<v)).sort((a,b)=>a.id<b.id?-1:1)[0];
       const goal={kind:'queued-income',id:'committed-own-income',...(future?{fundsCardId:future.id,required:effects.getCardPlayCost(future)}:{})};
       // Only this native, unconditional reward sequence is audited. Do not

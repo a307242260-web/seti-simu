@@ -795,10 +795,24 @@
       income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
     }
     const hand = observation.selfState.hand.length * weights.handSize;
-    const facts={...probeCapital.factsFromObservation(observation,seatId),supply:observation.publicState.board?.techSupply,
-      researchCost:player.researchPublicityCost,computerSlots:player.dataProgress?.computerSlots,
-      analyzeEnergyCost:readyAnalysis.energyCost(player.industryAbilityId),reservedCards:observation.selfState.reservedCards};
-    const capital=purposeCapital(facts,weights);
+    let capital;
+    if(round===4&&!probeCapital.ownedProbes(observation.publicState.board?.rockets,{id:seatId}).length){
+      // In the last round, all salary, research, analysis and other future
+      // purposes are closed. Without an ordinary probe, only an already
+      // earned final mark can retain purpose value. Its native forecast can
+      // still depend on which known income card is immediately fundable.
+      const finalMarkPotential=probeCapital.pendingFinalMarkCapital({
+        nextFinalMark:observation.selfState.nextFinalMark,player:{...player,id:seatId},
+        computerSlots:player.dataProgress?.computerSlots,hand:observation.selfState.hand,
+      });
+      capital={handPotential:0,researchPotential:0,probePotential:0,analysisPotential:0,
+        researchIncomePotential:0,dataPotential:0,finalMarkPotential,toolPlan:{value:0}};
+    }else{
+      const facts={...probeCapital.factsFromObservation(observation,seatId),supply:observation.publicState.board?.techSupply,
+        researchCost:player.researchPublicityCost,computerSlots:player.dataProgress?.computerSlots,
+        analyzeEnergyCost:readyAnalysis.energyCost(player.industryAbilityId),reservedCards:observation.selfState.reservedCards};
+      capital=purposeCapital(facts,weights);
+    }
     const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
       handPotential:capital.handPotential,researchPotential:capital.researchPotential,

@@ -45,8 +45,8 @@
   // 卡牌条件与终局计分共用的位置事实；只读，不缓存跨状态位置或分配实体。
   function buildProbeLocationData(root) {
     const solarSystemState = root?.solarSystem || {};
-    const earth = solar.createSolarSnapshot(solarSystemState)
-      .planetLocations.find((planet) => planet.planetId === "earth");
+    const earth = solar.collectPlanetLocations(solarSystemState)
+      .find((planet) => planet.planetId === "earth");
     if (!earth) throw new TypeError("探测器位置读取缺少地球位置");
     const details = [];
     const index = {};
