@@ -1,0 +1,504 @@
+{
+  "base": "78d1d08750005c253b16fdddefc864b8a18a5e8e",
+  "reductions": {
+    "candidate-task": [
+      {
+        "label": "teacher-265",
+        "before": 493,
+        "after": 493,
+        "milliseconds": 1065.149917,
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "allRootRanksExact": true
+      },
+      {
+        "label": "official-r4-first",
+        "before": 1361,
+        "after": 1361,
+        "milliseconds": 1929.155875,
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "allRootRanksExact": true
+      }
+    ],
+    "candidate-task-v2": [
+      {
+        "label": "teacher-265",
+        "before": 493,
+        "after": 493,
+        "milliseconds": 1041.37175,
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "allRootRanksExact": true
+      },
+      {
+        "label": "official-r4-first",
+        "before": 1361,
+        "after": 1293,
+        "milliseconds": 1816.52725,
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "allRootRanksExact": true
+      }
+    ],
+    "candidate-cargo-end": [
+      {
+        "label": "teacher-265",
+        "before": 493,
+        "after": 430,
+        "milliseconds": 946.465541,
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "allRootRanksExact": true
+      },
+      {
+        "label": "official-r4-first",
+        "before": 1361,
+        "after": 1361,
+        "milliseconds": 1952.6060830000001,
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "allRootRanksExact": true
+      }
+    ],
+    "candidate-data-partial": [
+      {
+        "label": "teacher-265",
+        "before": 493,
+        "after": 493,
+        "milliseconds": 1040.2430000000002,
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "allRootRanksExact": true
+      },
+      {
+        "label": "official-r4-first",
+        "before": 1361,
+        "after": 1285,
+        "milliseconds": 1809.6659999999997,
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "allRootRanksExact": true
+      }
+    ]
+  },
+  "scan4": {
+    "prior": [
+      {
+        "label": "final-step",
+        "delivery": null,
+        "action": "移动 9 向外",
+        "id": "choose_target:402fa10f",
+        "value": 250.5,
+        "native": 3,
+        "ms": 57.94691700000001,
+        "roots": [
+          [
+            "choose_target:5bb27a70",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:43d1120f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:402fa10f",
+            250.5,
+            -6,
+            "complete"
+          ],
+          [
+            "choose_target:a7688c45",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:e1dbac27",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:f042ebe0",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ]
+        ]
+      },
+      {
+        "label": "not-arriving",
+        "delivery": null,
+        "action": "跳过",
+        "id": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 48.30850000000001,
+        "roots": [
+          [
+            "choose_target:5bb27a70",
+            226.5,
+            0,
+            "complete"
+          ],
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:43d1120f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:abe44a33",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:9451edcb",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:3ac5e295",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:ded93c0b",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:f042ebe0",
+            227.5,
+            0,
+            "complete"
+          ]
+        ]
+      }
+    ],
+    "next": [
+      {
+        "label": "final-step",
+        "delivery": {
+          "actionId": "choose_target:43d1120f",
+          "rocketId": 6,
+          "fossilId": "fossil_07",
+          "cardId": "alien-chong-3-10"
+        },
+        "action": "移动 6 向内",
+        "id": "choose_target:43d1120f",
+        "value": 256.5,
+        "native": 10,
+        "ms": 86.603916,
+        "roots": [
+          [
+            "choose_target:5bb27a70",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:43d1120f",
+            256.5,
+            -6,
+            "complete"
+          ],
+          [
+            "choose_target:402fa10f",
+            250.5,
+            -6,
+            "complete"
+          ],
+          [
+            "choose_target:a7688c45",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:e1dbac27",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:f042ebe0",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ]
+        ]
+      },
+      {
+        "label": "not-arriving",
+        "delivery": null,
+        "action": "跳过",
+        "id": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 50.44516599999997,
+        "roots": [
+          [
+            "choose_target:5bb27a70",
+            226.5,
+            0,
+            "complete"
+          ],
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:43d1120f",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:abe44a33",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:9451edcb",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:3ac5e295",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:ded93c0b",
+            null,
+            null,
+            "excluded-by-movement-policy"
+          ],
+          [
+            "choose_target:f042ebe0",
+            227.5,
+            0,
+            "complete"
+          ]
+        ]
+      }
+    ]
+  },
+  "cargoAt359": [
+    {
+      "mode": "matched",
+      "assets": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 158
+      },
+      "established": 235,
+      "changes": []
+    },
+    {
+      "mode": "skip",
+      "assets": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 158
+      },
+      "established": 235,
+      "changes": [
+        {
+          "i": 318,
+          "from": "R6 向内",
+          "to": "结束移动"
+        },
+        {
+          "i": 351,
+          "from": "移动 6 向内",
+          "to": "跳过"
+        },
+        {
+          "i": 354,
+          "from": "跳过 chong_3.webp",
+          "to": "already delivered"
+        },
+        {
+          "i": 359,
+          "from": "完成 chong_3.webp",
+          "to": "already delivered"
+        }
+      ]
+    },
+    {
+      "mode": "move8",
+      "assets": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 158
+      },
+      "established": 235,
+      "changes": [
+        {
+          "i": 318,
+          "from": "R6 向内",
+          "to": "R8 向内"
+        },
+        {
+          "i": 323,
+          "from": "1能量 → 移动1步",
+          "to": "结算 chong_6.webp"
+        },
+        {
+          "i": 324,
+          "from": "移动探测器 8 向内",
+          "to": "already delivered by previous free move"
+        },
+        {
+          "i": 325,
+          "from": "完成 chong_6.webp",
+          "to": "already delivered by previous free move"
+        },
+        {
+          "i": 351,
+          "from": "移动 6 向内",
+          "to": "跳过"
+        },
+        {
+          "i": 354,
+          "from": "跳过 chong_3.webp",
+          "to": "already delivered"
+        },
+        {
+          "i": 359,
+          "from": "完成 chong_3.webp",
+          "to": "already delivered"
+        }
+      ]
+    }
+  ],
+  "claimAt359": [
+    {
+      "mode": "claim-at-end",
+      "assets": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 158
+      },
+      "established": 235
+    },
+    {
+      "mode": "teacher-wait",
+      "assets": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 158
+      },
+      "established": 235
+    }
+  ],
+  "admitted": false,
+  "newAutonomousGames": 0
+}
