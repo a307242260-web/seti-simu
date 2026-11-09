@@ -1,0 +1,251 @@
+diff --git a/randomizer/game/ai/card-pick-planning.js b/randomizer/game/ai/card-pick-planning.js
+--- a/randomizer/game/ai/card-pick-planning.js
++++ b/randomizer/game/ai/card-pick-planning.js
+@@ -14,14 +14,26 @@
+   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
+   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
+     ||Number.isInteger(a.target?.publicSlotIndex)&&a.target?.choiceId?.startsWith('pick:'));
++  const incomeSupplierEffects=new Set(['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income']);
+   function facts(card){
+     const move=cards.getDiscardActionMoveRewardForCard(card),corner=cards.getDiscardActionRewardForCard(card);
+-    const model=effects.getCardModel(card),play=effects.buildPlayEffects(card),cost=effects.getCardPlayCost(card);
+-    // This is a deliberately narrow, known unconditional payoff; unknown effects never qualify as an exceptional buy.
+-    const certain=play.length&&play.every(e=>e.type==='gain_resources'&&Object.keys(e.options?.gain||{}).every(k=>k==='score'));
+-    const net=certain?play.reduce((n,e)=>n+(e.options.gain.score||0),0)-Object.values(cost).reduce((n,v)=>n+v,0)-1:0;
++    const model=effects.getCardModel(card),cost=effects.getCardPlayCost(card);
++    // Quote the printed payoff without creating pending execution nodes.
++    // Repeat counts follow the same rules as Native expansion.
++    let score=0,hasPlay=false,certain=true,preparesIncome=false;
++    for(const effect of model?.playEffects||[]){
++      const repeat=effects.getEffectBuildRepeat(effect);
++      if(!(repeat>0))continue;
++      hasPlay=true;
++      if(incomeSupplierEffects.has(effect.type))preparesIncome=true;
++      if(certain){
++        if(effect.type!=='gain_resources'||Object.keys(effect.options?.gain||{}).some(k=>k!=='score'))certain=false;
++        else for(let i=0;i<repeat;i++)score+=effect.options.gain.score||0;
++      }
++    }
++    const net=hasPlay&&certain?score-Object.values(cost).reduce((n,v)=>n+v,0)-1:0;
+     return{id:card.id,cardId:card.cardId,price:card.price,income:cards.getIncomeCodeForCard(card),
+-      move:move?.movementPoints||0,data:corner?.dataCount||0,net,cost,model};
++      move:move?.movementPoints||0,data:corner?.dataCount||0,net,cost,model,hasPlay,preparesIncome};
+   }
+   const creditTrade=trades.TRADE_ACTIONS.find(a=>a.id==='energy-for-credit'),energyTrade=trades.TRADE_ACTIONS.find(a=>a.id==='credits-for-energy');
+   function moneyFundingGap(resources,required){
+@@ -77,15 +89,14 @@
+     function goals(state,seatId,endpoints){
+       const p=state.players.players.find(p=>p.id===seatId),hand=p.hand.map(facts),out=[];
+       const placed=data.listComputerPlacedTokens(p).length,pool=p.resources.availableData;
+-      const protectedMain=!p.mainActionCompleted&&hand.length===1&&effects.buildPlayEffects(p.hand[0]).length
++      const protectedMain=!p.mainActionCompleted&&hand.length===1&&hand[0].hasPlay
+         &&Object.entries(hand[0].cost).every(([k,v])=>p.resources[k]>=v)?hand[0].id:null;
+       if(placed<4&&pool>=4-placed&&p.hand.length-(protectedMain?1:0)===0)
+         out.push({kind:'income',id:'income:computer:4',amount:1,priority:5,protectedCardId:protectedMain});
+       if(!p.mainActionCompleted){
+-        for(const card of p.hand){
+-          const types=effects.buildPlayEffects(card).map(e=>e.type);
+-          if(!types.some(t=>['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(t)))continue;
+-          const target={kind:'play_card',cardId:card.id,required:effects.getCardPlayCost(card)};
++        for(const card of hand){
++          if(!card.preparesIncome)continue;
++          const target={kind:'play_card',cardId:card.id,required:card.cost};
+           if(demand.capacity(state,seatId,target)||demand.incomeFunding(state,seatId,target))continue;
+           for(const offer of state.cards.publicCards.filter(Boolean)){
+             const withOffer={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,hand:[...p.hand,offer]}:v)}};
+@@ -109,7 +120,8 @@
+       return out.sort((a,b)=>b.priority-a.priority||(b.net||0)-(a.net||0)||(a.id<b.id?-1:a.id>b.id?1:0));
+     }
+     function paid(state,seatId,actions,endpoints){
+-      const p=state.players.players.find(p=>p.id===seatId),offers=state.cards.publicCards.filter(Boolean),trades=actions.filter(isTrade);
++      const trades=actions.filter(isTrade);if(!trades.length)return null;
++      const p=state.players.players.find(p=>p.id===seatId),offers=state.cards.publicCards.filter(Boolean);
+       for(const goal of goals(state,seatId,endpoints)){
+         const selection=goal.cardId?{cardId:goal.cardId,blind:false,cache:'goal-fixed'}:select(state,seatId,goal,offers,false);
+         if(!selection.cardId)continue;
+@@ -158,7 +170,7 @@
+     function queuedIncomeGoal(session,seatId,state){
+       if(session?.queue?.[0]?.type!=='science_domain_pick_card'||session.queue[0].ownerId!==seatId)return null;
+       const p=state.players.players.find(p=>p.id===seatId);
+-      const future=p.hand.filter(card=>effects.buildPlayEffects(card).some(e=>['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(e.type))
++      const future=p.hand.filter(card=>facts(card).preparesIncome
+         &&Object.entries(effects.getCardPlayCost(card)).some(([k,v])=>p.resources[k]<v)).sort((a,b)=>a.id<b.id?-1:1)[0];
+       const goal={kind:'queued-income',id:'committed-own-income',...(future?{fundsCardId:future.id,required:effects.getCardPlayCost(future)}:{})};
+       // Only this native, unconditional reward sequence is audited. Do not
+diff --git a/randomizer/game/ai/probe-capital.js b/randomizer/game/ai/probe-capital.js
+--- a/randomizer/game/ai/probe-capital.js
++++ b/randomizer/game/ai/probe-capital.js
+@@ -257,13 +257,36 @@
+     knownTraceSelections.set(key,result);return result;
+   }
+
++  function prepareFinalRoundSwapMission(state, player) {
++    if(state.turn.roundNumber!==4)throw new TypeError('PROBE_FINAL_SWAP_ROUND_INVALID');
++    const inactive=state.turn.gameEnded||player.passCompletionPending||(state.passingPlayerIds||state.turn.passedPlayerIds).includes(player.id);
++    if(inactive||!ownedProbes(state.pieces?.rockets,player).length)return {sensitive:false,quote:()=>0};
++    const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
++    if(planetAbility.BASE_LAND_ENERGY_COST-1-planetAbility.ORANGE3_LAND_DISCOUNT>0
++      &&planetAbility.DEFAULT_ORBIT_COST.energy>0&&wallet.energy===0&&wallet.credits<cToE.cost.credits)return {sensitive:false,quote:()=>0};
++    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
++      ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
++      aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),traces:slot.traces}))}};
++    const shared={player:wallet,round:4,board,passing:false,terminal:false,
++      extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
++    const weights=arithmetic.DEFAULT_WEIGHTS;
++    const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
++    // Only income rewards can consume cards (including anonymous cards).
++    // With no investment or later data purpose, a public pick alone has a
++    // fixed hand-count value regardless of the identity it takes.
++    const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'));
++    const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
++      weights,true,true,{prepared,constantInvestment:true});
++    return {sensitive,quote};
++  }
++
+   function quoteValue(facts, weights) {return evaluateMission(facts, weights, true);}
+   // The shared internal portfolio only reads the trace arrays. Custom callers
+   // of quoteValue/quote still receive private deep copies as before.
+   function quoteReadOnlyPortfolio(facts, weights) {return evaluateMission(facts,weights,true,weights===arithmetic.DEFAULT_WEIGHTS);}
+   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
+
+-  function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false) {
++  function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
+     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
+     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
+       || !(facts.board?.rockets || []).some(r => isOwnedProbe(r, seatId))) return scalarOnly ? 0 : zero();
+@@ -278,11 +301,11 @@
+     if (!cardRoute && planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
+       && planetAbility.DEFAULT_ORBIT_COST.energy > 0
+       && player.energy === 0 && player.credits < cToE.cost.credits) return scalarOnly ? 0 : zero();
+-    const goals = loadRequirements(facts,scalarOnly);
+-    if (!goals.length) return scalarOnly ? 0 : zero();
++    const goals = finalSwap?.prepared ? null : loadRequirements(facts,scalarOnly);
++    if (goals?.length===0) return scalarOnly ? 0 : zero();
+     // A finite supplied baseline requires no investment callback. With no
+     // affordable endpoint there is also no later mission portfolio to price.
+-    const prepared=scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null;
++    const prepared=finalSwap?.prepared??(scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null);
+     let portfolio=null;
+     if(cardRoute){
+       if(prepared)portfolio=preparedHeldLandings(goals,prepared,player,cardRoute.cost.credits,weights);
+@@ -304,7 +327,7 @@
+     }
+     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
+     const capitalValues = new Map();
+-    const capital = (hand, wallet, income, traceSlots = null, knownCurrentValue) => {
++    const capital = finalSwap?.constantInvestment ? () => 0 : (hand, wallet, income, traceSlots = null, knownCurrentValue) => {
+       const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, wallet.availableData, income.credits, income.energy, hand.map(card => card.id), traceSlots?.map(s=>[s.slotId,s.revealed,...["blue","pink","yellow"].map(t=>s.traces[t].firstPlaced)])]);
+       if (!capitalValues.has(key)) capitalValues.set(key, knownCurrentValue===undefined
+         ? facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) },{traceSlots}) : knownCurrentValue);
+@@ -626,5 +649,5 @@
+
+   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
+   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
+-  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
++  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+ });
+diff --git a/randomizer/game/ai/probe-capital-value.test.js b/randomizer/game/ai/probe-capital-value.test.js
+--- a/randomizer/game/ai/probe-capital-value.test.js
++++ b/randomizer/game/ai/probe-capital-value.test.js
+@@ -60,6 +60,27 @@
+     'the native mission matches its base quote; the independently verified research-income alternative is separate');
+   assert.equal(quote(next.observation).value, 0, 'consumed probe must not retain a mission');
+   assert.equal(quote({ ...obs, terminal: true }).value, 0);
++  {
++    const finalState=structuredClone(state);finalState.turn.roundNumber=4;
++    const owner=finalState.players.players.find(p=>p.id===seatId),hand=owner.hand,
++      market=finalState.cards.publicCards,offered=market.filter(Boolean);
++    const mission=probe.prepareFinalRoundSwapMission(finalState,owner);
++    assert(mission.sensitive,'this funded native route can take income and must still price the actual cards');
++    const originalMission=(nextHand,nextMarket)=>{
++      const facts=probe.factsFromState({...finalState,cards:{...finalState.cards,publicCards:nextMarket}},{...owner,hand:nextHand});
++      return probe.quoteReadOnlyPortfolio({...facts,initialInvestmentCapital:0,investment:()=>0},values.DEFAULT_WEIGHTS);
++    };
++    assert(mission.quote(hand,market)>0);
++    assert.equal(mission.quote(hand,market),originalMission(hand,market));
++    assert(hand.length&&offered.length);
++    for(const incoming of offered){
++      const nextHand=[incoming,...hand.slice(1)],nextMarket=market.map(c=>c===incoming?hand[0]:c);
++      assert.equal(mission.quote(nextHand,nextMarket),originalMission(nextHand,nextMarket));
++    }
++    const poor={...owner,resources:{...owner.resources,credits:0,energy:0}};
++    assert.equal(probe.prepareFinalRoundSwapMission(finalState,poor).sensitive,false);
++    assert.equal(probe.prepareFinalRoundSwapMission(finalState,poor).quote(hand,market),0);
++  }
+   const round4 = structuredClone(obs); round4.publicState.roundNumber = 4;
+   assert(quote(round4).value > 0, 'an unpassed final-round probe retains a currently funded mission');
+   delete round4.publicState.board.data;
+diff --git a/randomizer/game/ai/resource-demand.js b/randomizer/game/ai/resource-demand.js
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -174,7 +174,16 @@
+     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
+     return value;
+   }
++  function noFinalRoundMarkCapital(state,p){
++    const board=state.finalScoring, score=p.resources.score;
++    if(state.turn.roundNumber!==4||!Number.isSafeInteger(score)||!Array.isArray(board?.thresholds)||!board.tiles)return false;
++    const tiles=Object.values(board.tiles);
++    return board.thresholds.every(threshold=>Number.isSafeInteger(threshold)&&(threshold>score
++      ||tiles.some(tile=>tile.marks?.some(mark=>mark.playerId===p.id&&Number(mark.threshold)===threshold))));
++  }
+   function planningCapital(state,p){
++    // Round four keeps only current probe missions and earned final marks.
++    if(state.turn.roundNumber===4&&!probeCapital.ownedProbes(state.pieces?.rockets,p).length&&noFinalRoundMarkCapital(state,p))return 0;
+     return Object.isFrozen(state)&&Object.isFrozen(p)?planningCapitalDetails(state,p).total
+       :stateValue.purposeCapital(valueFacts(state,p)).total;
+   }
+@@ -224,7 +233,21 @@
+       offered=offered.filter(card=>keepSwapPortfolioOffer(corner,card,settledIncome));
+     }
+     if(!offered.length)return[];
+-    const p=owner(state,seatId),source=valueFacts(state,p),before=knownSourceCapital??planningCapital(state,p);
++    const p=owner(state,seatId);
++    if(noFinalRoundMarkCapital(state,p)){
++      const mission=probeCapital.prepareFinalRoundSwapMission(state,p);
++      const publicCards=state.cards.publicCards;
++      // Round four's only surviving purpose here is the current mission.
++      // If it cannot consume income, all exchanges have the same value.
++      if(!mission.sensitive){
++        const gain=knownSourceCapital===null?0:mission.quote(p.hand,publicCards)-knownSourceCapital;
++        return offered.map(card=>({card,gain}));
++      }
++      const before=knownSourceCapital??mission.quote(p.hand,publicCards);
++      return offered.map(card=>({card,gain:mission.quote(p.hand.map(c=>c.id===outgoing.id?card:c),
++        publicCards.map(c=>c?.id===card.id?outgoing:c))-before}));
++    }
++    const source=valueFacts(state,p),before=knownSourceCapital??planningCapital(state,p);
+     // The fixed public exchange spends the company mark. Do not price
+     // the replacement as if a second exchange were available this round.
+     const companyState=source.companyState?.abilityId==='deepspace_swap_cards'
+diff --git a/randomizer/game/cards/effects.js b/randomizer/game/cards/effects.js
+--- a/randomizer/game/cards/effects.js
++++ b/randomizer/game/cards/effects.js
+@@ -3772,12 +3772,16 @@
+     return nodes;
+   }
+
++  function getEffectBuildRepeat(item) {
++    return shouldPreserveRepeatInBuildEffects(item)
++      ? 1
++      : Math.max(1, Math.round(Number(item.options?.repeat || 1)));
++  }
++
+   function expandEffects(effects) {
+     const result = [];
+     for (const item of effects || []) {
+-      const repeat = shouldPreserveRepeatInBuildEffects(item)
+-        ? 1
+-        : Math.max(1, Math.round(Number(item.options?.repeat || 1)));
++      const repeat = getEffectBuildRepeat(item);
+       for (let index = 0; index < repeat; index += 1) {
+         result.push(...expandEffectNode(item, index, repeat));
+       }
+@@ -4707,6 +4711,7 @@
+     getCardPrice,
+     getCardPlayCost,
+     buildPlayEffects,
++    getEffectBuildRepeat,
+     getTemporaryTasks,
+     ensureCardEffectState,
+     consumeTrigger,

@@ -1,0 +1,678 @@
+{
+  "previousProductionCommit": "db84241ddc55c31ce975a2b8d395ccdcdedc9b49",
+  "candidateOnly": true,
+  "newFullGames": 0,
+  "singleDecisionGate": {
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 600
+  },
+  "sameSearchGraphsAndOfferValues": [
+    {
+      "which": "136",
+      "graph": "fa261dd9b0cb4556b7c473d43c09f08ee08533bcd442d187617344ea11afc447",
+      "counters": {
+        "printed": 1230,
+        "swaps": 49,
+        "offers": 73,
+        "positive": 0,
+        "negative": 0,
+        "shortcut": 0,
+        "missionQuotes": 0,
+        "handSensitive": 0,
+        "sourceQuotes": 77
+      },
+      "native": 224,
+      "logical": 224,
+      "eval": 103,
+      "nodes": 214,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "172",
+      "graph": "f54de3c35e27e308716ab8a47de092643b8b185c18f617a9bc250443bb0145fb",
+      "counters": {
+        "printed": 709,
+        "swaps": 45,
+        "offers": 58,
+        "positive": 0,
+        "negative": 7,
+        "shortcut": 0,
+        "missionQuotes": 0,
+        "handSensitive": 0,
+        "sourceQuotes": 117
+      },
+      "native": 99,
+      "logical": 99,
+      "eval": 52,
+      "nodes": 110,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "317",
+      "graph": "6873d5b301bf0552a4a1b2808f2f3c6bd69b4e0a7591c6d8405067b44ca93626",
+      "counters": {
+        "printed": 3183,
+        "swaps": 149,
+        "offers": 374,
+        "positive": 0,
+        "negative": 0,
+        "shortcut": 147,
+        "missionQuotes": 3,
+        "handSensitive": 1,
+        "sourceQuotes": 218
+      },
+      "native": 232,
+      "logical": 405,
+      "eval": 100,
+      "nodes": 235,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "318",
+      "graph": "196dd13f81151a6eeef8fb990c90c81cd14bf5ff7f2ab50fdb6e26e11ce8ce93",
+      "counters": {
+        "printed": 2788,
+        "swaps": 147,
+        "offers": 369,
+        "positive": 0,
+        "negative": 0,
+        "shortcut": 145,
+        "missionQuotes": 3,
+        "handSensitive": 1,
+        "sourceQuotes": 190
+      },
+      "native": 225,
+      "logical": 394,
+      "eval": 96,
+      "nodes": 225,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "359",
+      "graph": "432f2d136059ad77bfc0d4466518506892557f054e39f0b59a692d6b0489a727",
+      "counters": {
+        "printed": 5058,
+        "swaps": 298,
+        "offers": 731,
+        "positive": 0,
+        "negative": 0,
+        "shortcut": 290,
+        "missionQuotes": 686,
+        "handSensitive": 176,
+        "sourceQuotes": 533
+      },
+      "native": 229,
+      "logical": 433,
+      "eval": 155,
+      "nodes": 398,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "official",
+      "graph": "455d7adc6fe07a9879c38f9ea028ccd5fd2a167a7ccdd72c79ab05433db65677",
+      "counters": {
+        "printed": 5443,
+        "swaps": 220,
+        "offers": 424,
+        "positive": 0,
+        "negative": 0,
+        "shortcut": 206,
+        "missionQuotes": 357,
+        "handSensitive": 130,
+        "sourceQuotes": 700
+      },
+      "native": 221,
+      "logical": 1183,
+      "eval": 289,
+      "nodes": 695,
+      "rootAndRngExact": true
+    }
+  ],
+  "totalAuditCounts": {
+    "printed": 18411,
+    "swaps": 908,
+    "offers": 2029,
+    "positive": 0,
+    "negative": 7,
+    "shortcut": 788,
+    "missionQuotes": 1049,
+    "handSensitive": 308,
+    "sourceQuotes": 1835
+  },
+  "priorFullQuoteProfile": {
+    "official": {
+      "which": "official",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "counts": {
+        "swap": {
+          "calls": 236,
+          "ms": 58.46050699999884
+        },
+        "before": {
+          "calls": 177,
+          "ms": 15.91061900000119
+        },
+        "offer": {
+          "calls": 424,
+          "ms": 21.48633099999833
+        },
+        "scope": {
+          "calls": 220,
+          "ms": 51.47866099999797
+        }
+      },
+      "unique": {
+        "before": 169,
+        "offer": 363
+      },
+      "native": 221,
+      "selectedPurposes": {
+        "null": 220,
+        "move": 9,
+        "data": 7
+      }
+    },
+    "359": {
+      "which": "359",
+      "action": "analyze:a5629aa3",
+      "value": 280.5,
+      "counts": {
+        "before": {
+          "calls": 197,
+          "ms": 21.88379699999919
+        },
+        "offer": {
+          "calls": 731,
+          "ms": 40.14506200000059
+        },
+        "scope": {
+          "calls": 298,
+          "ms": 91.26138400000039
+        },
+        "swap": {
+          "calls": 299,
+          "ms": 98.34117700000206
+        }
+      },
+      "unique": {
+        "before": 160,
+        "offer": 564
+      },
+      "native": 229,
+      "selectedPurposes": {
+        "null": 299,
+        "move": 0,
+        "data": 0
+      }
+    },
+    "317": {
+      "which": "317",
+      "action": "card_corner:cb6e4492",
+      "value": 251.5,
+      "counts": {
+        "before": {
+          "calls": 147,
+          "ms": 9.163365000000141
+        },
+        "offer": {
+          "calls": 374,
+          "ms": 6.06224700000044
+        },
+        "scope": {
+          "calls": 149,
+          "ms": 39.10607199999811
+        },
+        "swap": {
+          "calls": 149,
+          "ms": 44.22422199999829
+        }
+      },
+      "unique": {
+        "before": 147,
+        "offer": 374
+      },
+      "native": 232,
+      "selectedPurposes": {
+        "null": 149,
+        "move": 0,
+        "data": 0
+      }
+    },
+    "318": {
+      "which": "318",
+      "action": "choose_target:82996f81",
+      "value": 251.5,
+      "counts": {
+        "before": {
+          "calls": 145,
+          "ms": 10.058539000000394
+        },
+        "offer": {
+          "calls": 369,
+          "ms": 5.506293999999741
+        },
+        "scope": {
+          "calls": 147,
+          "ms": 38.25499199999902
+        },
+        "swap": {
+          "calls": 147,
+          "ms": 42.53588599999907
+        }
+      },
+      "unique": {
+        "before": 145,
+        "offer": 369
+      },
+      "native": 225,
+      "selectedPurposes": {
+        "null": 147,
+        "move": 0,
+        "data": 0
+      }
+    }
+  },
+  "finalCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 458.5,
+        "minMs": 456.9,
+        "maxMs": 460.2,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 426.1,
+        "minMs": 425.2,
+        "maxMs": 428.6,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 449.9,
+        "minMs": 449.7,
+        "maxMs": 460.0,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 424.5,
+        "minMs": 423.9,
+        "maxMs": 424.7,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 705.5,
+        "minMs": 700.0,
+        "maxMs": 731.0,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 679.4,
+        "minMs": 674.6,
+        "maxMs": 684.9,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 769.4,
+        "minMs": 768.5,
+        "maxMs": 790.2,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 755.5,
+        "minMs": 753.4,
+        "maxMs": 761.2,
+        "samples": 3
+      }
+    }
+  },
+  "printedCardFactsOnlyCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 453.4,
+        "minMs": 447.8,
+        "maxMs": 458.5,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 453.3,
+        "minMs": 450.2,
+        "maxMs": 481.3,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 457.6,
+        "minMs": 449.0,
+        "maxMs": 468.4,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 455.8,
+        "minMs": 453.4,
+        "maxMs": 461.3,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 701.9,
+        "minMs": 699.1,
+        "maxMs": 729.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 700.2,
+        "minMs": 687.6,
+        "maxMs": 706.1,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 782.8,
+        "minMs": 775.6,
+        "maxMs": 784.1,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 771.7,
+        "minMs": 769.6,
+        "maxMs": 774.1,
+        "samples": 3
+      }
+    }
+  },
+  "diagnosticsCpuProfile": {
+    "samples": 729,
+    "totalMs": 999.5,
+    "repoSelf": [
+      {
+        "call": "immutableCapitalInput@randomizer/game/ai/resource-demand.js:147",
+        "ms": 25.58
+      },
+      {
+        "call": "copy@randomizer/game/state/state-store.js:46",
+        "ms": 23.08
+      },
+      {
+        "call": "freeze@randomizer/game/ai/analysis-port.js:127",
+        "ms": 13.54
+      },
+      {
+        "call": "deepFreeze@randomizer/game/rule-composition.js:42",
+        "ms": 12.12
+      },
+      {
+        "call": "stableHash@randomizer/game/actions/standard-action.js:57",
+        "ms": 11.88
+      },
+      {
+        "call": "visit@randomizer/game/state/low-coupling-slices.js:110",
+        "ms": 11.04
+      },
+      {
+        "call": "resourceSpec@randomizer/game/ai/analysis-port.js:2417",
+        "ms": 10.46
+      },
+      {
+        "call": "evaluateMission@randomizer/game/ai/probe-capital.js:289",
+        "ms": 9.88
+      },
+      {
+        "call": "expand@randomizer/game/ai/analysis-port.js:1237",
+        "ms": 9.0
+      },
+      {
+        "call": "stableSerialize@randomizer/game/actions/standard-action.js:44",
+        "ms": 8.71
+      },
+      {
+        "call": "validateSerializableGraph@randomizer/game/state/state-store.js:118",
+        "ms": 7.54
+      },
+      {
+        "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+        "ms": 7.5
+      },
+      {
+        "call": "normalize@randomizer/game/ai/analysis-port.js:208",
+        "ms": 6.83
+      },
+      {
+        "call": "capital@randomizer/game/ai/probe-capital.js:330",
+        "ms": 6.25
+      },
+      {
+        "call": "compactObject@randomizer/app/simulation-contract.js:45",
+        "ms": 6.04
+      },
+      {
+        "call": "quoteReadOnlyPortfolio@randomizer/game/ai/probe-capital.js:286",
+        "ms": 6.0
+      },
+      {
+        "call": "(anonymous)@randomizer/game/production-kernel.js:1264",
+        "ms": 5.96
+      },
+      {
+        "call": "buildProbeRouteRequirements@randomizer/game/production-kernel.js:637",
+        "ms": 5.96
+      }
+    ],
+    "repoInclusive": [
+      {
+        "call": "decide@randomizer/game/ai/search-agent.js:34",
+        "ms": 785.38
+      },
+      {
+        "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+        "ms": 768.84
+      },
+      {
+        "call": "expand@randomizer/game/ai/analysis-port.js:1237",
+        "ms": 307.08
+      },
+      {
+        "call": "add@randomizer/game/ai/decision-search.js:246",
+        "ms": 284.96
+      },
+      {
+        "call": "expandResourcePlan@randomizer/game/ai/analysis-port.js:2811",
+        "ms": 225.25
+      },
+      {
+        "call": "resourceSpec@randomizer/game/ai/analysis-port.js:2417",
+        "ms": 170.51
+      },
+      {
+        "call": "expandWithCardPick@randomizer/game/ai/analysis-port.js:1606",
+        "ms": 126.08
+      },
+      {
+        "call": "runWithWorkingState@randomizer/game/production-kernel.js:1679",
+        "ms": 117.46
+      },
+      {
+        "call": "runWithWorkingStateContext@randomizer/game/rule-composition.js:407",
+        "ms": 117.46
+      },
+      {
+        "call": "finishChild@randomizer/game/ai/analysis-port.js:3176",
+        "ms": 106.87
+      },
+      {
+        "call": "executeCurrent@randomizer/game/ai/analysis-port.js:3102",
+        "ms": 98.71
+      },
+      {
+        "call": "valueForNode@randomizer/game/ai/decision-search.js:49",
+        "ms": 92.42
+      },
+      {
+        "call": "committedProjection@randomizer/game/rule-composition.js:595",
+        "ms": 89.83
+      },
+      {
+        "call": "projectState@randomizer/game/production-kernel.js:1701",
+        "ms": 83.83
+      },
+      {
+        "call": "projectionInner@randomizer/game/rule-composition.js:617",
+        "ms": 79.42
+      },
+      {
+        "call": "projection@randomizer/game/rule-composition.js:613",
+        "ms": 79.42
+      },
+      {
+        "call": "observeEnvelope@randomizer/game/ai/analysis-port.js:542",
+        "ms": 78.0
+      },
+      {
+        "call": "valueObservation@randomizer/game/ai/analysis-port.js:7394",
+        "ms": 78.0
+      },
+      {
+        "call": "observationForValue@randomizer/game/ai/decision-search.js:38",
+        "ms": 78.0
+      },
+      {
+        "call": "enumerateActions@randomizer/game/rule-composition.js:808",
+        "ms": 77.17
+      },
+      {
+        "call": "(anonymous)@randomizer/game/rule-composition.js:815",
+        "ms": 75.67
+      },
+      {
+        "call": "enumerate@randomizer/game/production-composition.js:822",
+        "ms": 74.17
+      },
+      {
+        "call": "project@randomizer/game/ai/analysis-port.js:493",
+        "ms": 73.46
+      },
+      {
+        "call": "legalActions@randomizer/game/ai/analysis-port.js:133",
+        "ms": 73.12
+      },
+      {
+        "call": "enumerate@randomizer/game/actions/standard-action.js:143",
+        "ms": 72.83
+      }
+    ],
+    "allSelf": [
+      {
+        "call": "structuredClone@node:internal/worker/js_transferable:112",
+        "ms": 116.3
+      },
+      {
+        "call": "(garbage collector)@:0",
+        "ms": 46.54
+      },
+      {
+        "call": "immutableCapitalInput@randomizer/game/ai/resource-demand.js:147",
+        "ms": 25.58
+      },
+      {
+        "call": "wrapSafe@node:internal/modules/cjs/loader:1596",
+        "ms": 23.96
+      },
+      {
+        "call": "compileForInternalLoader@node:internal/bootstrap/realm:385",
+        "ms": 23.71
+      },
+      {
+        "call": "copy@randomizer/game/state/state-store.js:46",
+        "ms": 23.08
+      },
+      {
+        "call": "freeze@randomizer/game/ai/analysis-port.js:127",
+        "ms": 13.54
+      },
+      {
+        "call": "deepFreeze@randomizer/game/rule-composition.js:42",
+        "ms": 12.12
+      },
+      {
+        "call": "stableHash@randomizer/game/actions/standard-action.js:57",
+        "ms": 11.88
+      },
+      {
+        "call": "(anonymous)@verify-cargo-research-corner-20261109-v1.cjs:1",
+        "ms": 11.08
+      },
+      {
+        "call": "visit@randomizer/game/state/low-coupling-slices.js:110",
+        "ms": 11.04
+      },
+      {
+        "call": "resourceSpec@randomizer/game/ai/analysis-port.js:2417",
+        "ms": 10.46
+      },
+      {
+        "call": "findParentPackageJSON@node:internal/modules/package_json_reader:142",
+        "ms": 10.38
+      },
+      {
+        "call": "evaluateMission@randomizer/game/ai/probe-capital.js:289",
+        "ms": 9.88
+      }
+    ]
+  }
+}
