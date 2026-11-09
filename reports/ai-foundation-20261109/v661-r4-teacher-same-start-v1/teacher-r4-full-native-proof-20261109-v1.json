@@ -1,0 +1,38 @@
+{
+  "source": "teacher-round3-before-pass-current-20261105-v2.checkpoint.json",
+  "sourceSha256": "e43328241e8d6cc9877151aac4e09fa7b4fc8a426c75296b296fc86bbf33c436",
+  "phases": [
+    {
+      "file": "v457-teacher-r4-first-two-20261108-v1.json",
+      "nativeInputs": 20,
+      "sha256": "2977a36a37ef1200d3f2d816f30460bf5bab42bd66c3d294cefd5fd44842db36"
+    },
+    {
+      "file": "v457-teacher-r4-fossils-20261108-v1.json",
+      "nativeInputs": 33,
+      "sha256": "1a5b39e3bc911255cccfdd1abb4f6be333d316f3b789c1a8ffc326dbfd22b608"
+    },
+    {
+      "file": "v457-teacher-r4-fossils-adapted-20261108-v1.json",
+      "nativeInputs": 59,
+      "sha256": "391ee7a352040896d68edd6ac33e2325463bb239bd9fb2cff3ffa9ff9f5ef5de"
+    },
+    {
+      "file": "teacher-r4-after-359-20261109-v10.json",
+      "nativeInputs": 123,
+      "sha256": "1fe17a9c07bade3f448d3de07f61a899ab91549e7c2414fe29f0b4c2e30eac02"
+    }
+  ],
+  "terminal": true,
+  "white": {
+    "board": 246,
+    "tiles": 118,
+    "cards": 24,
+    "total": 388
+  },
+  "nativeInputs": 235,
+  "rootAndRngRestored": true,
+  "intermediateEnvelopeDifferenceOnlyVolatileEffectSessionInstanceIds": true,
+  "finalEnvelopeExact": true,
+  "scope": "Historical actions where legal; explicitly adapted rule effects, data and card payments, then an explicit controlled final PASS. No autonomous decisions."
+}
