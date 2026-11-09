@@ -1,0 +1,1218 @@
+{
+  "profileOfficial": {
+    "actual": 221,
+    "exactSourceAndAction": 221,
+    "scanningAndCards": 68,
+    "landing": 65
+  },
+  "amibaYellow": {
+    "nativePairs": 10,
+    "replayedInputs": 20,
+    "fallbackGuardChecks": 120,
+    "greedyPolicyGroups": 10,
+    "gainCounts": {
+      "0.5": 6,
+      "1": 4
+    },
+    "logicalBefore": 1087,
+    "logicalAfter": 907,
+    "graphNodesBefore": 663,
+    "graphNodesAfter": 535,
+    "winningCertificateRows": 24
+  },
+  "stationaryCargo": {
+    "step": 265,
+    "nativeCompared": 11,
+    "inputsByKind": {
+      "move": 9,
+      "choose_payment|0|1": 2
+    }
+  },
+  "gate": {
+    "nativeMax": 256,
+    "msMax": 600,
+    "repetitionsPerCaseAndVersion": 3,
+    "checks": {
+      "root-249": {
+        "base": {
+          "native": 156,
+          "medianMs": 230.54225000000002,
+          "rangeMs": [
+            230.440875,
+            234.13095799999996
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 154,
+          "medianMs": 236.078917,
+          "rangeMs": [
+            228.94300000000004,
+            236.18375000000003
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-255": {
+        "base": {
+          "native": 124,
+          "medianMs": 281.088291,
+          "rangeMs": [
+            280.810625,
+            281.94891600000005
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 119,
+          "medianMs": 280.73075,
+          "rangeMs": [
+            278.50100000000003,
+            283.648417
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-259": {
+        "base": {
+          "native": 120,
+          "medianMs": 274.36983399999997,
+          "rangeMs": [
+            273.479834,
+            275.916958
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 115,
+          "medianMs": 274.193625,
+          "rangeMs": [
+            271.05708400000003,
+            274.580542
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-265": {
+        "base": {
+          "native": 258,
+          "medianMs": 479.32220800000005,
+          "rangeMs": [
+            468.591542,
+            479.867375
+          ],
+          "passedSamples": 0,
+          "completeRootRankingMatched": true,
+          "allPass": false
+        },
+        "candidate": {
+          "native": 247,
+          "medianMs": 468.045416,
+          "rangeMs": [
+            464.78599999999994,
+            472.38754200000005
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-314": {
+        "base": {
+          "native": 4,
+          "medianMs": 56.325834000000015,
+          "rangeMs": [
+            55.856875,
+            57.129625000000004
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 4,
+          "medianMs": 56.284790999999984,
+          "rangeMs": [
+            56.055375,
+            56.896083000000004
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-317": {
+        "base": {
+          "native": 232,
+          "medianMs": 368.696958,
+          "rangeMs": [
+            367.424625,
+            372.629375
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 232,
+          "medianMs": 370.626917,
+          "rangeMs": [
+            369.891542,
+            403.849292
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-318": {
+        "base": {
+          "native": 225,
+          "medianMs": 373.78208400000005,
+          "rangeMs": [
+            370.094625,
+            405.76662500000003
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 225,
+          "medianMs": 374.85675000000003,
+          "rangeMs": [
+            370.344209,
+            386.23908400000005
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-351": {
+        "base": {
+          "native": 7,
+          "medianMs": 72.917,
+          "rangeMs": [
+            72.30479200000002,
+            75.31716700000001
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 7,
+          "medianMs": 71.91125,
+          "rangeMs": [
+            71.49104200000002,
+            76.82458300000002
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-354": {
+        "base": {
+          "native": 2,
+          "medianMs": 46.91904199999999,
+          "rangeMs": [
+            46.552333000000004,
+            47.072374999999994
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 2,
+          "medianMs": 47.10633300000001,
+          "rangeMs": [
+            46.96591599999999,
+            47.789499999999975
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      },
+      "root-355": {
+        "base": {
+          "native": 239,
+          "medianMs": 649.6296669999999,
+          "rangeMs": [
+            645.245416,
+            658.161917
+          ],
+          "passedSamples": 0,
+          "completeRootRankingMatched": true,
+          "allPass": false
+        },
+        "candidate": {
+          "native": 239,
+          "medianMs": 648.2323329999999,
+          "rangeMs": [
+            647.418791,
+            648.436417
+          ],
+          "passedSamples": 0,
+          "completeRootRankingMatched": true,
+          "allPass": false
+        }
+      },
+      "root-359": {
+        "base": {
+          "native": 229,
+          "medianMs": 584.739375,
+          "rangeMs": [
+            584.258792,
+            585.756084
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        },
+        "candidate": {
+          "native": 229,
+          "medianMs": 588.063167,
+          "rangeMs": [
+            583.247458,
+            605.937625
+          ],
+          "passedSamples": 2,
+          "completeRootRankingMatched": true,
+          "allPass": false
+        }
+      },
+      "root-official": {
+        "base": {
+          "native": 221,
+          "medianMs": 664.2459160000001,
+          "rangeMs": [
+            658.391083,
+            665.1730829999999
+          ],
+          "passedSamples": 0,
+          "completeRootRankingMatched": true,
+          "allPass": false
+        },
+        "candidate": {
+          "native": 197,
+          "medianMs": 588.3952079999999,
+          "rangeMs": [
+            587.3810410000001,
+            592.713709
+          ],
+          "passedSamples": 3,
+          "completeRootRankingMatched": true,
+          "allPass": true
+        }
+      }
+    },
+    "failedCases": [
+      "root-355",
+      "root-359"
+    ]
+  },
+  "teacher355": {
+    "native": 239,
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 173,
+      "valueCacheHits": 469,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 158,
+      "movementDirectionsExcluded": 704,
+      "routeGeometryNodes": 320,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 117,
+      "provedTurnTailInputs": 357,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 239,
+      "logicalResourceInputs": 348,
+      "sharedResourceInputHits": 45,
+      "sharedResourceInternalStates": 206,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 192,
+      "singleAlternativeStates": 81,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 10,
+      "resourceGoalPlans": 123,
+      "resourcePreparationInputs": 348,
+      "resourceFallbacks": 20,
+      "resourceExcludedActions": 1805,
+      "transitions": 507,
+      "nodes": 678,
+      "graphNodes": 464,
+      "certificateNodes": 214,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 65,
+      "selectionMacros": 0,
+      "peakFrontier": 32,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 1239.003667,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    },
+    "categories": [
+      [
+        "card_corner|stable||stable",
+        {
+          "count": 10,
+          "ms": 8.514665000000036,
+          "goals": {
+            "none": 10
+          },
+          "targets": {
+            "amiba_9.webp：弃牌角标": 2,
+            "chong_8.webp：弃牌角标": 2,
+            "chong_1.webp：弃牌角标": 3,
+            "dlc_15.png：弃牌角标": 3
+          }
+        }
+      ],
+      [
+        "quick_trade|stable||stable",
+        {
+          "count": 4,
+          "ms": 7.6016670000001625,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "2能量 → 1信用点": 1,
+            "2信用点 → 1能量": 3
+          }
+        }
+      ],
+      [
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|stable",
+        {
+          "count": 12,
+          "ms": 6.8768740000000435,
+          "goals": {
+            "effect-purpose": 8,
+            "none": 4
+          },
+          "targets": {
+            "blue_1（4分）": 8,
+            "orange_2（1数据）": 2,
+            "orange_3（1宣传）": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|stable",
+        {
+          "count": 9,
+          "ms": 6.642500999999925,
+          "goals": {
+            "none": 9
+          },
+          "targets": {
+            "外星人 1 额外痕迹位（3分）": 2,
+            "外星人 1 蓝1号位": 2,
+            "外星人 1 蓝2号位（1分）": 2,
+            "外星人 2 额外痕迹位（3分）": 2,
+            "外星人 2 蓝2号位（2信用点）": 1
+          }
+        }
+      ],
+      [
+        "launch|stable||stable",
+        {
+          "count": 2,
+          "ms": 5.722333999999989,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "发射": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|stable",
+        {
+          "count": 4,
+          "ms": 5.621667000000116,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "研究 orange3": 2,
+            "研究 purple1": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|science_domain_pick_card",
+        {
+          "count": 4,
+          "ms": 4.457333000000062,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "研究 blue3（蓝槽 3）": 2,
+            "研究 purple3": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|stable",
+        {
+          "count": 4,
+          "ms": 4.29645899999997,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "研究 orange3": 2,
+            "研究 purple1": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|scan|stable",
+        {
+          "count": 6,
+          "ms": 4.205207999999743,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "外星人 2 粉2号位（5分）": 6
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|play_card|stable",
+        {
+          "count": 8,
+          "ms": 4.08216700000014,
+          "goals": {
+            "effect-purpose": 8
+          },
+          "targets": {
+            "跳过": 8
+          }
+        }
+      ],
+      [
+        "quick_trade|stable||standard_action_session_decision",
+        {
+          "count": 3,
+          "ms": 3.7471249999999827,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "2张牌 → 1能量": 3
+          }
+        }
+      ],
+      [
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|stable",
+        {
+          "count": 4,
+          "ms": 3.7215430000001106,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "blue_1（4分）": 4
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|scan|stable",
+        {
+          "count": 6,
+          "ms": 3.676748999999859,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "获得展示的生物特征筛选": 6
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|analyze|stable",
+        {
+          "count": 6,
+          "ms": 3.2333730000001424,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "获得展示的生物特征筛选": 2,
+            "获得展示的虫": 2,
+            "取消": 2
+          }
+        }
+      ],
+      [
+        "play_card|stable||card_play_domain_effect:decision:chong_pickup_fossil",
+        {
+          "count": 2,
+          "ms": 3.2085819999999785,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "chong_8.webp": 2
+          }
+        }
+      ],
+      [
+        "play_card|stable||card_play_domain_effect:decision:amiba_choose_symbol_reward",
+        {
+          "count": 2,
+          "ms": 2.742333000000002,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "amiba_9.webp": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_place_data|place_data|science_domain_pick_card",
+        {
+          "count": 18,
+          "ms": 2.7262099999996963,
+          "goals": {
+            "none": 18
+          },
+          "targets": {
+            "blue3 下方": 18
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_place_data|place_data|stable",
+        {
+          "count": 4,
+          "ms": 2.5356659999999636,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "第一排放置位 5": 2,
+            "第一排放置位 6": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|science_domain_pick_card",
+        {
+          "count": 6,
+          "ms": 2.5253330000001597,
+          "goals": {
+            "effect-purpose": 6
+          },
+          "targets": {
+            "研究 blue3（蓝槽 3）": 4,
+            "研究 purple3": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|stable",
+        {
+          "count": 4,
+          "ms": 2.303457999999921,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "跳过": 4
+          }
+        }
+      ],
+      [
+        "choose_payment|standard_action_session_decision|quick_trade|stable",
+        {
+          "count": 3,
+          "ms": 2.2515820000000133,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "确认弃牌（2/2）": 3
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|research_tech|stable",
+        {
+          "count": 4,
+          "ms": 2.129790999999841,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "跳过": 4
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_scan_step|scan|science_domain_scan_action_4",
+        {
+          "count": 8,
+          "ms": 2.1189190000000053,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "dlc_6.png → 南河三": 2,
+            "dlc_1.png → 比邻星": 2,
+            "dlc_6.png → 天狼星A": 2,
+            "dlc_1.png → 巴纳德": 2
+          }
+        }
+      ],
+      [
+        "play_card|stable||science_domain_research",
+        {
+          "count": 4,
+          "ms": 2.0901259999999695,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "chong_1.webp": 2,
+            "dlc_15.png": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_action_4|scan|science_domain_scan_step",
+        {
+          "count": 8,
+          "ms": 1.9600829999997131,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "移动 9 向外": 8
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|information-barrier",
+        {
+          "count": 2,
+          "ms": 1.8856659999998442,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "外星人 2 蓝7号位（盲抽2+化石奖励）": 2
+          }
+        }
+      ],
+      [
+        "choose_target|probe_land_choice|land|stable",
+        {
+          "count": 2,
+          "ms": 1.823041000000046,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "登陆海卫一（海王星）｜奖励：获得 26 分": 2
+          }
+        }
+      ],
+      [
+        "choose_payment|standard_action_session_decision|quick_trade|standard_action_session_decision",
+        {
+          "count": 6,
+          "ms": 1.8038329999999405,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "amiba_9.webp": 2,
+            "chong_8.webp": 2,
+            "chong_1.webp": 1,
+            "dlc_15.png": 1
+          }
+        }
+      ],
+      [
+        "place_data|stable||science_domain_place_data",
+        {
+          "count": 5,
+          "ms": 1.7925830000000076,
+          "goals": {
+            "none": 5
+          },
+          "targets": {
+            "放置数据": 5
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|science_domain_alien_trace",
+        {
+          "count": 6,
+          "ms": 1.7845829999998273,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "扫描 织女一": 2,
+            "跳过": 4
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|play_card|card_play_domain_effect:decision:amiba_choose_symbol_reward",
+        {
+          "count": 8,
+          "ms": 1.7407930000000533,
+          "goals": {
+            "effect-purpose": 8
+          },
+          "targets": {
+            "结算 amiba_1.webp": 8
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 1.5480410000002394,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "研究 blue4（蓝槽 3）": 4
+          }
+        }
+      ],
+      [
+        "pass|stable||residual_card_decision",
+        {
+          "count": 1,
+          "ms": 1.5477089999999976,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "PASS": 1
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|pass|terminal",
+        {
+          "count": 2,
+          "ms": 1.4738749999999072,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "结算 chong_3.webp": 1,
+            "跳过 chong_3.webp": 1
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_income|place_data|stable",
+        {
+          "count": 3,
+          "ms": 1.4624160000000188,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "收入 amiba_9.webp": 2,
+            "收入 amiba_5.webp": 1
+          }
+        }
+      ],
+      [
+        "analyze|stable||science_domain_alien_trace",
+        {
+          "count": 2,
+          "ms": 1.4091250000000457,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "分析": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|scan|residual_alien_card_decision",
+        {
+          "count": 6,
+          "ms": 1.4061250000000882,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "外星人 1 粉3号位（外星人牌）": 6
+          }
+        }
+      ],
+      [
+        "complete_task|stable||stable",
+        {
+          "count": 1,
+          "ms": 1.3361670000000174,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "完成 chong_3.webp": 1
+          }
+        }
+      ],
+      [
+        "scan|stable||science_domain_scan_step",
+        {
+          "count": 2,
+          "ms": 1.1763750000000073,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "扫描": 2
+          }
+        }
+      ],
+      [
+        "pass|stable||terminal",
+        {
+          "count": 1,
+          "ms": 1.0891249999999673,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "PASS": 1
+          }
+        }
+      ],
+      [
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|information-barrier",
+        {
+          "count": 2,
+          "ms": 1.0366670000000795,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "orange_1（1盲抽）": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|residual_alien_card_decision",
+        {
+          "count": 4,
+          "ms": 0.999834000000078,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "外星人 1 蓝3号位（外星人牌）": 2,
+            "外星人 2 蓝8号位（3分+外星人牌）": 2
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|research_tech|stable",
+        {
+          "count": 2,
+          "ms": 0.9988330000000474,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "dlc_6.png": 2
+          }
+        }
+      ],
+      [
+        "end_turn|stable||residual_card_decision",
+        {
+          "count": 2,
+          "ms": 0.9935420000000477,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "结束回合": 2
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|research_tech|card_play_domain_effect:decision:amiba_choose_symbol_reward",
+        {
+          "count": 4,
+          "ms": 0.9827910000001339,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "结算 amiba_1.webp": 4
+          }
+        }
+      ],
+      [
+        "complete_task|stable||residual_chong_task_fossil",
+        {
+          "count": 1,
+          "ms": 0.9510420000000295,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "完成 chong_1.webp": 1
+          }
+        }
+      ],
+      [
+        "move|stable||probe_turn_move_payment",
+        {
+          "count": 1,
+          "ms": 0.9259170000000267,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "移动探测器 9 向外": 1
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|residual_card_decision",
+        {
+          "count": 2,
+          "ms": 0.901333999999963,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "研究 blue4（蓝槽 3）": 2
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|analyze|information-barrier",
+        {
+          "count": 2,
+          "ms": 0.8966249999998581,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "盲抽虫牌": 2
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|stable",
+        {
+          "count": 2,
+          "ms": 0.84150000000011,
+          "goals": {
+            "effect-purpose": 2
+          },
+          "targets": {
+            "dlc_2.png": 2
+          }
+        }
+      ],
+      [
+        "land|stable||probe_land_choice",
+        {
+          "count": 2,
+          "ms": 0.7907930000000647,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "登陆": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|science_domain_scan_step",
+        {
+          "count": 2,
+          "ms": 0.7224989999999138,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "扫描 巴纳德": 2
+          }
+        }
+      ],
+      [
+        "research_tech|stable||science_domain_research",
+        {
+          "count": 2,
+          "ms": 0.6942080000000033,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "研究科技": 2
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 0.5729570000002013,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "dlc_2.png": 2,
+            "dlc_6.png": 2
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_place_data|place_data|science_domain_income",
+        {
+          "count": 3,
+          "ms": 0.5604999999999905,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "第一排放置位 4": 3
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|science_domain_pick_card",
+        {
+          "count": 4,
+          "ms": 0.5315839999998389,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "dlc_6.png": 4
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|research_tech|residual_card_decision",
+        {
+          "count": 2,
+          "ms": 0.5288750000000277,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "dlc_6.png": 2
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|end_turn|residual_card_decision",
+        {
+          "count": 1,
+          "ms": 0.218166999999994,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "结算 chong_3.webp": 1
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|end_turn|residual_chong_task_fossil",
+        {
+          "count": 1,
+          "ms": 0.16629100000000108,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "结算 chong_1.webp": 1
+          }
+        }
+      ]
+    ]
+  },
+  "productionUnchanged": true,
+  "newWholeGame": false
+}
