@@ -1,0 +1,979 @@
+{
+  "source": "637ad3e1d1ce56824eb1cea81fe121b7514e90f9",
+  "limits": {
+    "native": 256,
+    "ms": 600
+  },
+  "gates": {
+    "root-249": {
+      "base": {
+        "native": 154,
+        "medianMs": 229.80708299999998,
+        "rangeMs": [
+          228.07208299999996,
+          234.00683300000003
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 154,
+        "medianMs": 229.251625,
+        "rangeMs": [
+          227.457458,
+          229.99958300000003
+        ],
+        "passed": 3
+      }
+    },
+    "root-255": {
+      "base": {
+        "native": 119,
+        "medianMs": 276.95016699999996,
+        "rangeMs": [
+          276.01237499999996,
+          282.770292
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 119,
+        "medianMs": 278.95500000000004,
+        "rangeMs": [
+          277.902416,
+          284.053042
+        ],
+        "passed": 3
+      }
+    },
+    "root-259": {
+      "base": {
+        "native": 115,
+        "medianMs": 269.7065,
+        "rangeMs": [
+          269.25075000000004,
+          270.656334
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 115,
+        "medianMs": 269.626541,
+        "rangeMs": [
+          269.423208,
+          270.3195
+        ],
+        "passed": 3
+      }
+    },
+    "root-265": {
+      "base": {
+        "native": 247,
+        "medianMs": 467.46279100000004,
+        "rangeMs": [
+          466.366791,
+          470.57337499999994
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 247,
+        "medianMs": 466.73512500000004,
+        "rangeMs": [
+          463.16787500000004,
+          482.425458
+        ],
+        "passed": 3
+      }
+    },
+    "root-314": {
+      "base": {
+        "native": 4,
+        "medianMs": 56.10079099999999,
+        "rangeMs": [
+          55.53675000000001,
+          56.24966699999999
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 4,
+        "medianMs": 56.67891700000001,
+        "rangeMs": [
+          56.12716599999999,
+          61.486209
+        ],
+        "passed": 3
+      }
+    },
+    "root-317": {
+      "base": {
+        "native": 232,
+        "medianMs": 366.248,
+        "rangeMs": [
+          364.949708,
+          367.355708
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 198,
+        "medianMs": 315.50870799999996,
+        "rangeMs": [
+          312.88829200000004,
+          317.94683399999997
+        ],
+        "passed": 3
+      }
+    },
+    "root-318": {
+      "base": {
+        "native": 225,
+        "medianMs": 367.73762500000004,
+        "rangeMs": [
+          366.37800000000004,
+          369.478333
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 191,
+        "medianMs": 315.058208,
+        "rangeMs": [
+          313.759834,
+          318.439709
+        ],
+        "passed": 3
+      }
+    },
+    "root-351": {
+      "base": {
+        "native": 7,
+        "medianMs": 71.23737500000001,
+        "rangeMs": [
+          70.919792,
+          77.50049999999999
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 7,
+        "medianMs": 72.67083299999999,
+        "rangeMs": [
+          72.370125,
+          73.00691700000002
+        ],
+        "passed": 3
+      }
+    },
+    "root-354": {
+      "base": {
+        "native": 2,
+        "medianMs": 46.44508299999998,
+        "rangeMs": [
+          46.104333,
+          49.50370799999999
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 2,
+        "medianMs": 46.28970800000002,
+        "rangeMs": [
+          46.08541600000001,
+          46.339
+        ],
+        "passed": 3
+      }
+    },
+    "root-355": {
+      "base": {
+        "native": 239,
+        "medianMs": 645.1096660000001,
+        "rangeMs": [
+          639.0465839999999,
+          645.250916
+        ],
+        "passed": 0
+      },
+      "candidate": {
+        "native": 218,
+        "medianMs": 537.43375,
+        "rangeMs": [
+          533.229833,
+          539.2600419999999
+        ],
+        "passed": 3
+      }
+    },
+    "root-359": {
+      "base": {
+        "native": 229,
+        "medianMs": 595.0383330000001,
+        "rangeMs": [
+          580.6008750000001,
+          603.145375
+        ],
+        "passed": 2
+      },
+      "candidate": {
+        "native": 209,
+        "medianMs": 534.6007079999999,
+        "rangeMs": [
+          503.77849999999995,
+          560.0917919999999
+        ],
+        "passed": 3
+      }
+    },
+    "root-official": {
+      "base": {
+        "native": 197,
+        "medianMs": 586.247208,
+        "rangeMs": [
+          584.548584,
+          587.673542
+        ],
+        "passed": 3
+      },
+      "candidate": {
+        "native": 197,
+        "medianMs": 585.044,
+        "rangeMs": [
+          584.222875,
+          591.23175
+        ],
+        "passed": 3
+      }
+    }
+  },
+  "proof": {
+    "nativePairs": 12,
+    "replayedInputs": 36,
+    "negativeControls": 72,
+    "baseScoreGain": 4,
+    "establishedGain": 8,
+    "closedBranchValueGains": {
+      "8.0": 12
+    },
+    "realizationAndDebtIdentical": true
+  },
+  "earlyTurnComparisons": {
+    "teacher": {
+      "decisions": 11,
+      "maxNative": 174,
+      "maxMs": 309.176792,
+      "turns": [
+        {
+          "score": 107,
+          "established": 164,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 5,
+            "publicity": 1,
+            "score": 107
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "traces": {
+            "blue": 3,
+            "pink": 3,
+            "yellow": 3
+          },
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "pendingAlien": {
+            "5": {
+              "cardId": "alien-chong-3-10",
+              "cardLabel": null,
+              "destinationPlanetId": "earth",
+              "fossilId": "fossil_07"
+            }
+          }
+        },
+        {
+          "score": 119,
+          "established": 187,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 4,
+            "publicity": 2,
+            "score": 119
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange3": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "traces": {
+            "blue": 3,
+            "pink": 3,
+            "yellow": 3
+          },
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": -9.9,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 1,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "pendingAlien": {
+            "5": {
+              "cardId": "alien-chong-3-10",
+              "cardLabel": null,
+              "destinationPlanetId": "earth",
+              "fossilId": "fossil_07"
+            }
+          }
+        }
+      ],
+      "actions": [
+        "chong_8.webp：弃牌角标",
+        "研究科技",
+        "研究 orange1",
+        "dlc_27.png",
+        "结束回合",
+        "chong_4.webp",
+        "研究 orange3",
+        "完成 chong_4.webp",
+        "查看木星的化石",
+        "领取化石奖励：7分",
+        "结束回合"
+      ]
+    },
+    "official": {
+      "decisions": 31,
+      "maxNative": 197,
+      "maxMs": 575.842125,
+      "turns": [
+        {
+          "score": 138,
+          "established": 192,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 9,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 3,
+            "score": 138
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-69-0",
+              "b_9.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 3,
+              "blue2": 1,
+              "blue3": 2
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "orange1": true,
+              "purple1": true,
+              "purple4": true
+            }
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 2
+          },
+          "probes": [],
+          "pendingAlien": {}
+        },
+        {
+          "score": 143,
+          "established": 197,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 9,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 3,
+            "score": 143
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-69-0",
+              "b_9.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 3,
+              "blue2": 1,
+              "blue3": 2
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "orange1": true,
+              "purple1": true,
+              "purple4": true
+            }
+          },
+          "computer": [],
+          "blue": [],
+          "traces": {
+            "blue": 5,
+            "pink": 3,
+            "yellow": 2
+          },
+          "probes": [],
+          "pendingAlien": {}
+        }
+      ],
+      "actions": [
+        "深空探测 1x 行动",
+        "b_111.webp",
+        "dlc_16.png",
+        "b_60.webp：弃牌角标",
+        "放置数据",
+        "blue2 下方",
+        "移动探测器 6 顺时针",
+        "消耗 1 能量",
+        "移动探测器 6 顺时针",
+        "消耗 1 能量",
+        "移动探测器 6 顺时针",
+        "消耗 1 能量",
+        "移动探测器 6 向内",
+        "弃 1 张移动牌",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 2 黄色痕迹",
+        "结算 amiba_0.webp",
+        "放置数据",
+        "第一排放置位 5",
+        "放置数据",
+        "blue3 下方",
+        "b_111.webp",
+        "完成 b_117.webp",
+        "放置数据",
+        "blue1 下方",
+        "结束回合",
+        "放置数据",
+        "第一排放置位 6",
+        "分析",
+        "外星人 1 蓝2号位（1分）",
+        "结束回合"
+      ]
+    },
+    "teacherNativeWithSamePassivePolicy": {
+      "turns": [
+        {
+          "score": 105,
+          "established": 162,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 5,
+            "publicity": 5,
+            "score": 105
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "traces": {
+            "blue": 3,
+            "pink": 3,
+            "yellow": 3
+          },
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 80.1,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 3,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 3,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "pendingAlien": null
+        },
+        {
+          "score": 112,
+          "established": 169,
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 6,
+            "publicity": 5,
+            "score": 112
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "technology": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "computer": [
+            1
+          ],
+          "blue": [],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 80.1,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 3,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 3,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "pendingAlien": null
+        }
+      ],
+      "actions": [
+        "发射",
+        "结束回合",
+        "PASS",
+        "弃置 b_87.webp、b_24.webp、dlc_14.png、b_9.webp",
+        "PASS",
+        "弃置 dlc_23.png、b_15.webp、chong_0.webp、b_17.webp",
+        "放置数据",
+        "第一排放置位 5",
+        "放置数据",
+        "第一排放置位 6",
+        "分析",
+        "外星人 2 蓝9号位（5分+外星人牌）",
+        "盲抽虫牌",
+        "放置数据",
+        "第一排放置位 1",
+        "结束回合"
+      ],
+      "historicalPassiveActionMatches": [
+        true,
+        false,
+        true,
+        false
+      ]
+    }
+  },
+  "admissionRuntimeChangedPaths": 24,
+  "fullGameStarted": false,
+  "productionSourceChanged": false,
+  "admissionSmokeInventoryChanged": true,
+  "verification": {
+    "unit": 233,
+    "unitMissingFixtureRetest": 1,
+    "standardFlow": 1,
+    "browser": 4,
+    "inputAuditPassed": true,
+    "companyTailNative": {
+      "roots": 1,
+      "value": 154.5,
+      "inputsInSearch": 98,
+      "tails": 25,
+      "independentReplayInputs": 167
+    }
+  }
+}
