@@ -120,3 +120,42 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
   assert.equal(port.getDiagnostics().provedFinalEndTaskInputs,2);
  }finally{port.close();c.dispose();}
 }
+
+// Closing a land session with a score-only pink trace must not change RNG,
+// scoring attribution or placement. The region reward still opens its real menu.
+{
+ const envelope=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'last-plain-pink-20261110-v1.fixture.json.gz'))));
+ const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+ k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+ const initial=c.lifecycle.save().envelope,s=initial.session.session;
+ const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+ const nativePort=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+ try{
+  const root=port.openRoot(),nativeRoot=nativePort.openRoot();port.setResourcePlanning(true);
+  const menu=actions(c),extra=menu.find(a=>a.target.stateExtra),printed=menu.find(a=>a.target.speciesId==='chong'&&a.target.position===1);
+  const region=menu.find(a=>a.target.speciesId==='amiba'&&a.target.position===3);
+  assert(extra&&printed&&region);
+  const known=new Set(s.workingState.players.players.find(p=>p.id===seatId).reservedCards.map(c=>c.id));
+  assert(known.size);
+  assert.equal(plans.previewLastPlainPinkTrace(s,printed,new Set()),null);
+  assert.equal(plans.previewLastPlainPinkTrace(s,region,known),null);
+  for(const a of [extra,printed,region]){
+   const child=port.expand(root,a.actionId);
+   assert.deepEqual(c.lifecycle.save().envelope,initial);
+   submit(c,a.actionId);
+   const native=c.lifecycle.save().envelope;
+   if(a!==region){
+    assert.equal(native.session,null);
+    assert.deepEqual(plans.previewLastPlainPinkTrace(s,a,known),JSON.parse(native.committedState));
+    assert.deepEqual(child.observation,nativePort.expand(nativeRoot,a.actionId).observation);
+   }else{
+    assert(native.session,'region reward must still be resolved');
+    assert.deepEqual(child.legalActions,actions(c));
+   }
+   assert(c.lifecycle.restore(initial).ok);
+  }
+  assert.equal(port.getDiagnostics().provedLastPlainPinkInputs,2);
+ }finally{nativePort.close();port.close();c.dispose();}
+}

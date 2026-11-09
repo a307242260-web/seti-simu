@@ -464,7 +464,7 @@
     let provedChongQueuedTasks=0;
     let provedAmibaYellowLandingInputs=0;
     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
-    let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
+    let provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
     const scan4RefillCache=new Map();
     let scan4RefillHits=0;
@@ -656,7 +656,7 @@
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
-      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+      provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
@@ -1451,6 +1451,14 @@
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const taskSession=stored.envelope.session?.session;
+      const plainPink=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession
+        &&requested.family==="choose_target"&&requested.target?.traceType==="pink"
+        ?localPlans.previewLastPlainPinkTrace(taskSession,requested,knownCards(stored.envelope)):null;
+      if(plainPink){
+        const child=finishProvedCommittedState(node,stored,requested,plainPink);
+        provedLastPlainPinkInputs++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
       const queuedPreview=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
         &&stored.informationBarrier&&taskSession?.queue[0]?.payload?.kind==="chong_task"&&requested.family==="accept_optional_effect"
         ?localPlans.previewQuietQueuedChongTask({state:taskSession.workingState,seatId,session:taskSession,action:requested,
@@ -7868,7 +7876,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedLastPlainPinkInputs, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

@@ -1723,6 +1723,30 @@
     };
   }
 
+  function previewLastPlainPinkTrace(session, selected, knownCards) {
+    const source=session.workingState,head=session.queue[0],turn=source.turn;
+    const owner=actor(source,head?.ownerId);
+    if(session.phase!=="awaiting_input"||session.queue.length!==1||session.failure
+      ||session.interruptContext||session.undoFrames.length||source.meta.stateVersion!==session.baseVersion
+      ||session.journal.actions[0]?.action?.family!=="land"
+      ||head?.type!==science.EFFECT_TYPES.ALIEN_TRACE||head.kind!=="decision"||head.allowQuickActions
+      ||head.payload?.traceType!=="pink"||Object.keys(head.payload).length!==1
+      ||selected?.actorId!==head.ownerId||turn.roundNumber!==4||turn.gameEnded
+      ||turn.currentPlayerId!==head.ownerId||!owner?.mainActionCompleted||owner.passCompletionPending
+      ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
+      ||owner.reservedCards.some(c=>!knownCards.has(c.id))
+      ||!science.isPlainPinkTrace(source,selected))return null;
+    const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:clone(owner.reservedCards)};
+    const state={...source,meta:{...source.meta,sequences:{...source.meta.sequences}},aliens:clone(source.aliens),
+      players:{...source.players,players:source.players.players.map(p=>p===owner?player:p)}};
+    const placed=science.applyPlainPinkTrace(state,head,selected);
+    if(!placed)return null;
+    const augmented=augmentEffectResult(state,placed,head);
+    if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+    state.meta.stateVersion=session.baseVersion+1;
+    return state;
+  }
+
   function previewQuietAmibaYellowLanding(session, selected, knownCards) {
     const head = session.queue[0], payload = head?.payload, source = session.workingState;
     const owner = actor(source, head?.ownerId), turn = source.turn;
@@ -2546,6 +2570,7 @@
     SPECIES_IDS,
     queryCardSettlement: findCardSettlement,
     previewQuietEndHandoffs,
+    previewLastPlainPinkTrace,
     previewQuietAmibaYellowLanding,
     previewEmptyAmibaResearchTrigger,
     previewQuietResourceCorner,

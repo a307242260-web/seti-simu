@@ -643,6 +643,41 @@
     );
   }
 
+  function awardPrintedTraceResources(actor, reward, traceType) {
+    if (!reward?.gain || !Object.keys(reward.gain).some(key => Number(reward.gain[key]) !== 0)) return;
+    players.gainResources(actor, reward.gain, `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`);
+  }
+
+  function scoreOnlyTraceReward(reward) {
+    return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key])
+      && Object.keys(reward.gain || {}).every(key => key === "score"));
+  }
+
+  function isPlainPinkTrace(root, choice) {
+    const target = choice?.target, slot = aliens.getAlienSlot(root.aliens, target?.alienSlotId);
+    if (choice?.family !== "choose_target" || target?.kind !== "planet-reward-alien-trace"
+      || target.traceType !== "pink" || target.fangzhouUnlock || !slot?.revealed
+      || !["阿米巴", "虫"].includes(slot.alienId)) return false;
+    if (target.stateExtra) return Boolean(slot.traces?.pink?.firstPlaced);
+    const species = aliens.getSpeciesTraceApi(slot);
+    return target.speciesId === species?.speciesId
+      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position));
+  }
+
+  // The caller supplies isolated writable slices, and still runs the
+  // production event transform. A pending reward always stays in the runtime.
+  function applyPlainPinkTrace(root, effect, choice) {
+    if (!isPlainPinkTrace(root, choice)) return null;
+    const placed = placeAlienTrace(root, effect, choice);
+    if (!placed?.ok) return null;
+    if (placed.reward && !scoreOnlyTraceReward(placed.reward)) return null;
+    awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, "pink");
+    return { ok: true, events: [{
+      type: "alienTrace", playerId: effect.ownerId, traceType: "pink",
+      alienSlotId: choice.target.alienSlotId, region: null,
+    }] };
+  }
+
   function createActionDefinitions() {
     const sessionRequired = () => fail(
       "SCIENCE_SESSION_REQUIRED",
@@ -1746,14 +1781,7 @@
           }
         }
         // 物种位置奖励（含虫族面板化石）→ 计入对应颜色踪迹得分来源。
-        if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
-          const traceType = String(choice?.target?.traceType || "yellow");
-          players.gainResources(
-            actor,
-            result.reward.gain,
-            `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`,
-          );
-        }
+        awardPrintedTraceResources(actor, result.reward, String(choice?.target?.traceType || "yellow"));
         for (let index = 0; index < (result.reward?.dataCount || 0); index += 1) {
           const gained = data.gainData(actor, { source: "alien_trace_reward", root });
           // 正式数据原语在池满时记录弃置；只有该正常溢出可继续领奖。
@@ -1952,6 +1980,8 @@
     createActionDefinitions,
     createScienceDomain,
     createAlienTraceEffect,
+    isPlainPinkTrace,
+    applyPlainPinkTrace,
     createActionContext,
     getPlanetScanSource,
     listNebulaChoices,

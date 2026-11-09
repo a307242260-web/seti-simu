@@ -1,0 +1,70 @@
+{
+  "source": "f80a7a6ab7b4ed317b92529f9597ee7d2aca0330",
+  "scope": "fourth-round-same-seat-score-only-pink-land",
+  "nativeParity": {
+    "observed": 346,
+    "exact": 160,
+    "count": {
+      "extra": 84,
+      "chong:1": 38,
+      "chong:2": 38
+    }
+  },
+  "roots": [
+    {
+      "name": "satellite",
+      "before": {
+        "inputs": 2168,
+        "milliseconds": 3036.8599169999998
+      },
+      "after": {
+        "inputs": 2008,
+        "milliseconds": 2894.786208
+      },
+      "rootsExact": 32,
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5
+    },
+    {
+      "name": "teacher272",
+      "before": {
+        "inputs": 214,
+        "milliseconds": 1134.210916
+      },
+      "after": {
+        "inputs": 214,
+        "milliseconds": 1139.8252089999999
+      },
+      "rootsExact": 33,
+      "selected": "place_data:8fd12fd3",
+      "value": 216.5
+    },
+    {
+      "name": "official",
+      "before": {
+        "inputs": 165,
+        "milliseconds": 639.8180420000001
+      },
+      "after": {
+        "inputs": 165,
+        "milliseconds": 640.986209
+      },
+      "rootsExact": 22,
+      "selected": "industry:e887dc52",
+      "value": 205.5
+    }
+  ],
+  "followup": {
+    "pinkTraceWithQueuedFossil": 519,
+    "pinkTraceWithQueuedRefill": 236,
+    "sampledQueuedFossilOffers": 18,
+    "sampledFossilMenus": 12,
+    "sampledRewardBeforeFossil": 6
+  },
+  "admission": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "passed": false
+  },
+  "wholeGameRerun": false
+}
