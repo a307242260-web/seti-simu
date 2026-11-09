@@ -1,0 +1,2817 @@
+{
+  "base": "7bd3db4994403353936e6fc50fcdeefd770e169d",
+  "searchVersion": "seti-complete-decision-search-v428",
+  "publicWindowBefore": [
+    {
+      "kind": "card",
+      "steps": [
+        {
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              4,
+              1,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          },
+          "action": null
+        },
+        {
+          "action": "chong_6.webp",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 198,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              3,
+              1,
+              3,
+              5,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，0）",
+              "登陆土星 - 奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记（主星，R7，0）",
+              "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）"
+            ]
+          }
+        },
+        {
+          "action": "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 199.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              3,
+              1,
+              3,
+              5,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "扫描 巴纳德",
+              "扫描 比邻星"
+            ]
+          }
+        },
+        {
+          "action": "扫描 比邻星",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 200.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              3,
+              1,
+              4,
+              5,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "外星人 1 额外痕迹位（3分）",
+              "外星人 1 粉1号位",
+              "外星人 1 粉2号位（1分）",
+              "外星人 1 粉3号位（外星人牌）",
+              "外星人 1 粉4号位（1分+外星人牌）",
+              "外星人 2 额外痕迹位（3分）",
+              "外星人 2 粉1号位（4分）",
+              "外星人 2 粉2号位（5分）",
+              "外星人 2 粉3号位（3分+外星人牌）"
+            ]
+          }
+        },
+        {
+          "action": "外星人 2 粉3号位（3分+外星人牌）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 203.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              4,
+              5,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "获得展示的虫",
+              "盲抽虫牌",
+              "取消"
+            ]
+          }
+        },
+        {
+          "action": "盲抽虫牌",
+          "state": {
+            "status": "information-barrier",
+            "boundary": "hidden_alien_card",
+            "v": 204.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "hidden"
+            ],
+            "choices": []
+          }
+        }
+      ],
+      "reason": "information-barrier",
+      "native": 5
+    },
+    {
+      "kind": "standard",
+      "steps": [
+        {
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              4,
+              1,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          },
+          "action": null
+        },
+        {
+          "action": "2信用点 → 1能量",
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 12.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              2,
+              2,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "登陆",
+              "扫描",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "b_111.webp",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "2能量 → 1张牌",
+              "2能量 → 1信用点",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          }
+        },
+        {
+          "action": "登陆",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 12.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              2,
+              2,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "登陆土星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记",
+              "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描"
+            ]
+          }
+        },
+        {
+          "action": "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 198.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 6.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              2,
+              0,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "扫描 巴纳德",
+              "扫描 比邻星"
+            ]
+          }
+        },
+        {
+          "action": "扫描 比邻星",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 199.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              2,
+              0,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "外星人 1 额外痕迹位（3分）",
+              "外星人 1 粉1号位",
+              "外星人 1 粉2号位（1分）",
+              "外星人 1 粉3号位（外星人牌）",
+              "外星人 1 粉4号位（1分+外星人牌）",
+              "外星人 2 额外痕迹位（3分）",
+              "外星人 2 粉1号位（4分）",
+              "外星人 2 粉2号位（5分）",
+              "外星人 2 粉3号位（3分+外星人牌）"
+            ]
+          }
+        },
+        {
+          "action": "外星人 2 粉3号位（3分+外星人牌）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 202.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "获得展示的虫",
+              "盲抽虫牌",
+              "取消"
+            ]
+          }
+        },
+        {
+          "action": "盲抽虫牌",
+          "state": {
+            "status": "information-barrier",
+            "boundary": "hidden_alien_card",
+            "v": 203.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              4,
+              7,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "hidden"
+            ],
+            "choices": []
+          }
+        }
+      ],
+      "reason": "information-barrier",
+      "native": 6
+    }
+  ],
+  "publicWindowAfter": [
+    {
+      "kind": "card",
+      "steps": [
+        {
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              4,
+              1,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          },
+          "action": null
+        },
+        {
+          "action": "chong_6.webp",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 198,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              3,
+              1,
+              3,
+              5,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，0）",
+              "登陆土星 - 奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记（主星，R7，0）",
+              "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）"
+            ]
+          }
+        },
+        {
+          "action": "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 199.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              3,
+              1,
+              3,
+              5,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "扫描 巴纳德",
+              "扫描 比邻星"
+            ]
+          }
+        },
+        {
+          "action": "扫描 比邻星",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 200.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              3,
+              1,
+              4,
+              5,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "外星人 1 额外痕迹位（3分）",
+              "外星人 1 粉1号位",
+              "外星人 1 粉2号位（1分）",
+              "外星人 1 粉3号位（外星人牌）",
+              "外星人 1 粉4号位（1分+外星人牌）",
+              "外星人 2 额外痕迹位（3分）",
+              "外星人 2 粉1号位（4分）",
+              "外星人 2 粉2号位（5分）",
+              "外星人 2 粉3号位（3分+外星人牌）"
+            ]
+          }
+        },
+        {
+          "action": "外星人 2 粉3号位（3分+外星人牌）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 203.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 5,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              4,
+              5,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png"
+            ],
+            "choices": [
+              "获得展示的虫",
+              "盲抽虫牌",
+              "取消"
+            ]
+          }
+        },
+        {
+          "action": "盲抽虫牌",
+          "state": {
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "v": 204.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "hidden"
+            ],
+            "choices": [
+              "扫描 天狼星A",
+              "扫描 南河三"
+            ]
+          }
+        },
+        {
+          "action": "扫描 天狼星A",
+          "state": {
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "v": 205,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 10,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              5,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "hidden"
+            ],
+            "choices": [
+              "扫描 室女座61",
+              "扫描 开普勒22"
+            ]
+          }
+        },
+        {
+          "action": "扫描 室女座61",
+          "state": {
+            "status": "information-barrier",
+            "boundary": "hidden_alien_card",
+            "v": 206,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 11,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              3,
+              1,
+              6,
+              6,
+              8
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "hidden"
+            ],
+            "choices": []
+          }
+        }
+      ],
+      "reason": "information-barrier",
+      "native": 7
+    },
+    {
+      "kind": "standard",
+      "steps": [
+        {
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 9.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 11.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              4,
+              1,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          },
+          "action": null
+        },
+        {
+          "action": "2信用点 → 1能量",
+          "state": {
+            "status": "stable",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 12.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              2,
+              2,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）",
+              "登陆",
+              "扫描",
+              "研究科技",
+              "chong_2.webp",
+              "chong_8.webp",
+              "b_111.webp",
+              "chong_6.webp",
+              "PASS",
+              "移动探测器 6 向外",
+              "移动探测器 6 顺时针",
+              "移动探测器 6 逆时针",
+              "移动探测器 6 向内",
+              "移动探测器 7 向外",
+              "移动探测器 7 顺时针",
+              "移动探测器 7 逆时针",
+              "移动探测器 7 向内",
+              "2信用点 → 1能量",
+              "2信用点 → 1张牌",
+              "2张牌 → 1信用点",
+              "2张牌 → 1能量",
+              "2张牌 → 精选1张牌",
+              "2能量 → 1张牌",
+              "2能量 → 1信用点",
+              "3宣传 → 精选1张牌",
+              "1能量 → 移动1步",
+              "深空探测 1x 行动",
+              "chong_2.webp：弃牌角标",
+              "chong_8.webp：弃牌角标",
+              "chong_4.webp：弃牌角标",
+              "b_111.webp：弃牌角标",
+              "dlc_15.png：弃牌角标",
+              "chong_6.webp：弃牌角标",
+              "放置数据"
+            ]
+          }
+        },
+        {
+          "action": "登陆",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 200,
+            "components": {
+              "realizedScore": 116,
+              "currentEndGameBonus": 57,
+              "resources": 8.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 12.5,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 116,
+            "wallet": [
+              2,
+              2,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "登陆土星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记",
+              "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描"
+            ]
+          }
+        },
+        {
+          "action": "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 198.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 6.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              2,
+              0,
+              3,
+              6,
+              6
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "扫描 巴纳德",
+              "扫描 比邻星"
+            ]
+          }
+        },
+        {
+          "action": "扫描 比邻星",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 199.5,
+            "components": {
+              "realizedScore": 129,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 129,
+            "wallet": [
+              2,
+              0,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "外星人 1 额外痕迹位（3分）",
+              "外星人 1 粉1号位",
+              "外星人 1 粉2号位（1分）",
+              "外星人 1 粉3号位（外星人牌）",
+              "外星人 1 粉4号位（1分+外星人牌）",
+              "外星人 2 额外痕迹位（3分）",
+              "外星人 2 粉1号位（4分）",
+              "外星人 2 粉2号位（5分）",
+              "外星人 2 粉3号位（3分+外星人牌）"
+            ]
+          }
+        },
+        {
+          "action": "外星人 2 粉3号位（3分+外星人牌）",
+          "state": {
+            "status": "decision",
+            "boundary": null,
+            "v": 202.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              4,
+              6,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp"
+            ],
+            "choices": [
+              "获得展示的虫",
+              "盲抽虫牌",
+              "取消"
+            ]
+          }
+        },
+        {
+          "action": "盲抽虫牌",
+          "state": {
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "v": 203.5,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 7.5,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              4,
+              7,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "hidden"
+            ],
+            "choices": [
+              "扫描 天狼星A",
+              "扫描 南河三"
+            ]
+          }
+        },
+        {
+          "action": "扫描 天狼星A",
+          "state": {
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "v": 204,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 8,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              5,
+              7,
+              7
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "hidden"
+            ],
+            "choices": [
+              "扫描 室女座61",
+              "扫描 开普勒22"
+            ]
+          }
+        },
+        {
+          "action": "扫描 室女座61",
+          "state": {
+            "status": "information-barrier",
+            "boundary": "hidden_alien_card",
+            "v": 205,
+            "components": {
+              "realizedScore": 132,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "score": 132,
+            "wallet": [
+              2,
+              0,
+              6,
+              7,
+              8
+            ],
+            "hand": [
+              "chong_2.webp",
+              "chong_8.webp",
+              "chong_4.webp",
+              "b_111.webp",
+              "dlc_15.png",
+              "chong_6.webp",
+              "hidden"
+            ],
+            "choices": []
+          }
+        }
+      ],
+      "reason": "information-barrier",
+      "native": 8
+    }
+  ],
+  "differentNativeDrawIdentities": [
+    "chong_1.webp",
+    "chong_5.webp"
+  ],
+  "thirdTurnCaveat": "enceladus window stops at new fossil disclosure; its known draw is subsequent actual information",
+  "twoTurn": [
+    {
+      "label": "triton",
+      "facts": {
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 10,
+          "score": 152
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-18",
+            "amiba_9.webp"
+          ]
+        ],
+        "turn": 9,
+        "final": 213,
+        "traces": {
+          "blue": 4,
+          "pink": 4,
+          "yellow": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        }
+      },
+      "value": {
+        "value": 221.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      }
+    },
+    {
+      "label": "enceladus",
+      "facts": {
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 6,
+          "publicity": 8,
+          "score": 142
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-1-18",
+            "chong_1.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ],
+        "turn": 9,
+        "final": 203,
+        "traces": {
+          "blue": 4,
+          "pink": 5,
+          "yellow": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        }
+      },
+      "value": {
+        "value": 220.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      }
+    }
+  ],
+  "threeTurn": [
+    {
+      "label": "triton",
+      "facts": {
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 4,
+          "score": 160
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-18",
+            "amiba_9.webp"
+          ]
+        ],
+        "turn": 10,
+        "final": 225,
+        "traces": {
+          "blue": 4,
+          "pink": 4,
+          "yellow": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        }
+      },
+      "value": {
+        "value": 231,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "closed": true,
+      "inputs": 26
+    },
+    {
+      "label": "enceladus",
+      "facts": {
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 1,
+          "energy": 2,
+          "handSize": 7,
+          "publicity": 9,
+          "score": 148
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ],
+          [
+            "card-74-0",
+            "dlc_8.png"
+          ]
+        ],
+        "turn": 9,
+        "final": 217,
+        "traces": {
+          "blue": 4,
+          "pink": 5,
+          "yellow": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue3": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true,
+            "blue3": true
+          }
+        }
+      },
+      "value": {
+        "value": 232.5,
+        "purposePreparationDebt": 0,
+        "unrealizedPurposeValue": 0
+      },
+      "closed": false,
+      "inputs": 80
+    }
+  ],
+  "overflow": [
+    {
+      "label": "original",
+      "before": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "after": [],
+      "postScanData": 3,
+      "suffixData": 3,
+      "suffixDifferentSlices": []
+    },
+    {
+      "label": "computer-two-only-before-scan",
+      "before": [
+        0,
+        1
+      ],
+      "after": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "postScanData": 3,
+      "suffixData": 3,
+      "suffixDifferentSlices": [
+        "players"
+      ]
+    },
+    {
+      "label": "defer-all",
+      "before": [],
+      "after": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "postScanData": 2,
+      "suffixData": 2,
+      "suffixDifferentSlices": [
+        "players"
+      ]
+    }
+  ],
+  "diagnosticNativeFamilies": {
+    "native": 3423,
+    "value": 222.5,
+    "family": {
+      "play_card": 11,
+      "pass": 2,
+      "choose_card": 630,
+      "quick_trade": 7,
+      "place_data": 1,
+      "choose_target": 1495,
+      "analyze": 1,
+      "choose_payment": 7,
+      "move": 1,
+      "land": 4,
+      "scan": 2,
+      "research_tech": 2,
+      "complete_task": 315,
+      "end_turn": 317,
+      "accept_optional_effect": 628
+    },
+    "kind": {
+      "play_card/stable": 11,
+      "pass/stable": 2,
+      "choose_card/probe_turn_pass_discard": 2,
+      "quick_trade/stable": 7,
+      "choose_card/standard_action_session_decision": 2,
+      "place_data/stable": 1,
+      "choose_target/science_domain_place_data": 5,
+      "analyze/stable": 1,
+      "choose_payment/standard_action_session_decision": 3,
+      "move/stable": 1,
+      "choose_payment/probe_turn_move_payment": 4,
+      "land/stable": 4,
+      "choose_target/probe_land_choice": 6,
+      "scan/stable": 2,
+      "choose_target/science_domain_scan_step": 252,
+      "choose_target/science_domain_scan_action_4": 10,
+      "research_tech/stable": 2,
+      "choose_target/science_domain_alien_trace": 1211,
+      "choose_card/residual_alien_card_decision": 618,
+      "choose_card/science_domain_pick_card": 4,
+      "complete_task/stable": 315,
+      "end_turn/stable": 317,
+      "accept_optional_effect/residual_card_decision": 628,
+      "choose_target/card_play_domain_effect:decision:chong_land_for_pickup": 4,
+      "choose_target/card_play_domain_effect:decision:chong_probe_planet_fossil_reward": 4,
+      "choose_card/science_domain_income": 4,
+      "choose_target/card_play_domain_effect:decision:chong_orbit_or_land_for_pickup": 3
+    },
+    "top": {
+      "play_card/play_card": 11,
+      "pass/pass": 2,
+      "pass/choose_card": 2,
+      "quick_trade/quick_trade": 7,
+      "quick_trade/choose_card": 2,
+      "place_data/place_data": 1,
+      "place_data/choose_target": 5,
+      "analyze/analyze": 1,
+      "quick_trade/choose_payment": 3,
+      "move/move": 1,
+      "move/choose_payment": 4,
+      "land/land": 4,
+      "land/choose_target": 482,
+      "scan/scan": 2,
+      "scan/choose_target": 276,
+      "research_tech/research_tech": 2,
+      "analyze/choose_target": 7,
+      "analyze/choose_card": 4,
+      "scan/choose_card": 134,
+      "place_data/choose_card": 8,
+      "land/choose_card": 192,
+      "complete_task/complete_task": 315,
+      "end_turn/end_turn": 317,
+      "end_turn/accept_optional_effect": 628,
+      "play_card/choose_target": 725,
+      "play_card/choose_card": 288
+    }
+  },
+  "cold": {
+    "official-r4-candidate": {
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "ms": 645.981458,
+      "roots": [
+        [
+          "launch:c94cda79",
+          185.5,
+          -10,
+          0
+        ],
+        [
+          "scan:2d21a323",
+          192,
+          -9.5,
+          0
+        ],
+        [
+          "play_card:1d27665c",
+          186,
+          -8.5,
+          0
+        ],
+        [
+          "play_card:8c65d747",
+          194.5,
+          -10.5,
+          0
+        ],
+        [
+          "play_card:c93b59a4",
+          193,
+          -10,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          180,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          204,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:122c43fc",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:df811f99",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          205.5,
+          0,
+          0
+        ],
+        [
+          "card_corner:bf0cc13d",
+          204.5,
+          0,
+          0
+        ],
+        [
+          "card_corner:0c840bb2",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:f0c6e7b8",
+          null,
+          null,
+          null
+        ]
+      ],
+      "nativeExecutions": 165,
+      "graphNodes": 535,
+      "valueEvaluations": 203
+    },
+    "pre-blind-base": {
+      "action": "choose_card:6d03126f",
+      "value": 214,
+      "ms": 167.25566600000002,
+      "roots": [
+        [
+          "choose_card:6d03126f",
+          214,
+          0,
+          0
+        ],
+        [
+          "choose_card:aef646a1",
+          204.5,
+          0,
+          0
+        ],
+        [
+          "choose_card:e9e03c9f",
+          213,
+          0,
+          0
+        ]
+      ],
+      "nativeExecutions": 51,
+      "graphNodes": 40,
+      "valueEvaluations": 33
+    },
+    "pre-blind-candidate": {
+      "action": "choose_card:6d03126f",
+      "value": 214,
+      "ms": 176.437375,
+      "roots": [
+        [
+          "choose_card:6d03126f",
+          214,
+          0,
+          0
+        ],
+        [
+          "choose_card:aef646a1",
+          206,
+          0,
+          0
+        ],
+        [
+          "choose_card:e9e03c9f",
+          213,
+          0,
+          0
+        ]
+      ],
+      "nativeExecutions": 55,
+      "graphNodes": 42,
+      "valueEvaluations": 34
+    },
+    "satellite-base": {
+      "action": "place_data:8fd12fd3",
+      "value": 222.5,
+      "ms": 3737.3815419999996,
+      "roots": [
+        [
+          "orbit:5ccd6a69",
+          null,
+          null,
+          null
+        ],
+        [
+          "research_tech:806ccfc8",
+          206.5,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:f1918668",
+          207,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:1da9864f",
+          214,
+          0,
+          0
+        ],
+        [
+          "play_card:88ec7135",
+          207.5,
+          -13.5,
+          0
+        ],
+        [
+          "play_card:1a1c19d3",
+          198,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:ddbaa2ce",
+          206.5,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:5eb1b0e8",
+          215,
+          0,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          173,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2df2f24d",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2a7c4819",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:90134ba1",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:0febc073",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          222,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:71814d67",
+          199.5,
+          -11.5,
+          0
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:730579d5",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:367a82a7",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:cb6e4492",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:bf0cc13d",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:c4357b44",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:40cda505",
+          null,
+          null,
+          null
+        ],
+        [
+          "place_data:8fd12fd3",
+          222.5,
+          0,
+          0
+        ]
+      ],
+      "nativeExecutions": 3403,
+      "graphNodes": 3122,
+      "valueEvaluations": 1543
+    },
+    "satellite-candidate": {
+      "action": "place_data:8fd12fd3",
+      "value": 222.5,
+      "ms": 3730.553333,
+      "roots": [
+        [
+          "orbit:5ccd6a69",
+          null,
+          null,
+          null
+        ],
+        [
+          "research_tech:806ccfc8",
+          206.5,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:f1918668",
+          207,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:1da9864f",
+          214,
+          0,
+          0
+        ],
+        [
+          "play_card:88ec7135",
+          207.5,
+          -13.5,
+          0
+        ],
+        [
+          "play_card:1a1c19d3",
+          198,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:ddbaa2ce",
+          206.5,
+          -12.5,
+          0
+        ],
+        [
+          "play_card:5eb1b0e8",
+          215,
+          0,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          173,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2df2f24d",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2a7c4819",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:90134ba1",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:0febc073",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          222,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:71814d67",
+          199.5,
+          -11.5,
+          0
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:730579d5",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:367a82a7",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:cb6e4492",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:bf0cc13d",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:c4357b44",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:40cda505",
+          null,
+          null,
+          null
+        ],
+        [
+          "place_data:8fd12fd3",
+          222.5,
+          0,
+          0
+        ]
+      ],
+      "nativeExecutions": 3423,
+      "graphNodes": 3132,
+      "valueEvaluations": 1548
+    },
+    "teacher272-candidate": {
+      "action": "place_data:8fd12fd3",
+      "value": 216.5,
+      "ms": 1185.749958,
+      "roots": [
+        [
+          "scan:2d21a323",
+          206.5,
+          -10.5,
+          0
+        ],
+        [
+          "play_card:f1918668",
+          204.5,
+          -11.5,
+          0
+        ],
+        [
+          "play_card:1da9864f",
+          194.5,
+          -10,
+          0
+        ],
+        [
+          "play_card:88ec7135",
+          214.5,
+          -20,
+          0
+        ],
+        [
+          "play_card:1a1c19d3",
+          198,
+          -11.5,
+          0
+        ],
+        [
+          "play_card:ddbaa2ce",
+          213,
+          -20,
+          0
+        ],
+        [
+          "play_card:5eb1b0e8",
+          195.5,
+          -10,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          171,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2df2f24d",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2a7c4819",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:90134ba1",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:0febc073",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          215.5,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:122c43fc",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:df811f99",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:71814d67",
+          197,
+          -10,
+          0
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:730579d5",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:367a82a7",
+          213,
+          -19,
+          0
+        ],
+        [
+          "card_corner:cb6e4492",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:bf0cc13d",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:c4357b44",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:40cda505",
+          205.5,
+          -11.5,
+          0
+        ],
+        [
+          "place_data:8fd12fd3",
+          216.5,
+          0,
+          0
+        ]
+      ],
+      "nativeExecutions": 253,
+      "graphNodes": 730,
+      "valueEvaluations": 296
+    }
+  },
+  "newFullRuns": 0,
+  "centerChanged": false
+}

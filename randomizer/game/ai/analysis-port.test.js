@@ -613,3 +613,54 @@ console.log("trusted analysis fork isolation and exact reuse passed");
     assert.deepEqual(c.lifecycle.save().envelope, root);
   } finally { port.close(); c.dispose(); }
 }
+
+// A new blind alien identity cannot suppress already queued public satellite scans.
+{
+  const fs=require("node:fs"),path=require("node:path"),zlib=require("node:zlib");
+  const fixture=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,"known-satellite-scans-20261110-v1.fixture.json.gz"))));
+  const seatId="player-white",visible=[],drawn=[];
+  const steps=[...fixture.cardChoices,
+    ["choose_target",{choiceId:"nebula:sector-2-a",nebulaId:"sector-2-a",sectorX:null}],
+    ["choose_target",{choiceId:"nebula:sector-4-a",nebulaId:"sector-4-a",sectorX:null}]];
+  for(const cardIndex of [1,5]){
+    const source=JSON.parse(fixture.envelope.committedState),seed=source.meta.seed;
+    source.aliens.chong.cardDeck=[cardIndex];
+    const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+      projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+    k.newGame({seed});const c=k.composition;
+    assert(c.lifecycle.restore({...fixture.envelope,committedState:JSON.stringify(source)}).ok);
+    const p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),before=c.lifecycle.save().envelope;
+    const match=([family,target])=>a=>a.family===family&&require("node:util").isDeepStrictEqual(a.target,target);
+    try{
+      let n=p.openRoot();p.setResourcePlanning(true);p.setCardPickPlanning(true);
+      const quotes=[];
+      for(const [i,step] of steps.entries()){
+        const action=n.legalActions.find(match(step));assert(action);
+        n=p.expand(n,action.actionId);
+        if(i<4)continue;
+        const obs=n.observation,v=evaluateStateValue(obs,seatId),hidden=obs.selfState.hand.filter(card=>card.hidden);
+        assert.equal(hidden.length,1);assert.equal(hidden[0].cardId,undefined);
+        assert.equal(n.boundary,"hidden_alien_card");
+        assert.equal(n.status,i===6?"information-barrier":"decision");
+        assert(n.legalActions.every(a=>a.family==="choose_target"&&a.target.nebulaId&&!a.target.cardInstanceId));
+        quotes.push([v.total,obs.publicState.players.find(a=>a.playerId===seatId).availableData,n.legalActions.map(a=>a.target)]);
+      }
+      assert.deepEqual(n.legalActions,[]);
+      assert.deepEqual(c.lifecycle.save().envelope,before);
+      visible.push(quotes);
+      // Independent formal replay proves these roots really yield distinct draws.
+      for(const step of steps){
+        const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(match(step));assert(a);
+        const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+          :c.inputPort.submitAction(a);
+        assert(r.ok);
+      }
+      const s=c.lifecycle.save().envelope.session.session.workingState,hand=s.players.players.find(a=>a.id===seatId).hand;
+      const startingIds=new Set(source.players.players.find(a=>a.id===seatId).hand.map(a=>a.id));
+      const reward=hand.filter(a=>!startingIds.has(a.id)).map(a=>a.cardId);
+      assert.deepEqual(reward,[`chong_${cardIndex}.webp`]);drawn.push(reward[0]);
+    }finally{p.close();c.dispose();}
+  }
+  assert.notEqual(drawn[0],drawn[1]);assert.deepEqual(visible[0],visible[1]);
+  assert.deepEqual(visible[0].map(row=>row.slice(0,2)),[[204.5,4],[205,5],[206,6]]);
+}

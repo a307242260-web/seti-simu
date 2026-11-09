@@ -3517,10 +3517,39 @@
       return { before, result };
     }
 
-    function knownRewardChoices(envelope,actions) {
+    function isKnownSatelliteScanAfterBlindDraw(envelope,barrier) {
+      if(!resourcePlanning||barrier?.code!=="hidden_alien_card"||!barrier.effectId)return false;
+      const session=envelope.session?.session,head=session?.queue?.[0],opts=head?.payload?.options;
+      if(head?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP||head.ownerId!==seatId
+        ||head.kind!=="decision"||head.groupKind!=="spawned"||head.allowQuickActions||session.interruptContext
+        ||opts?.mode!=="specified"||opts.sectorX!==null||opts.gainData!==true
+        ||!Array.isArray(opts.nebulaIds)||!opts.nebulaIds.length||opts.nebulaIds.length>2
+        ||opts.nebulaIds.some(id=>!knownRootNebulaIds.has(id))
+        ||Object.keys(opts).some(k=>!["mode","sectorX","nebulaIds","gainData","label"].includes(k)))return false;
+      const state=session.workingState,turn=state.turn,owner=state.players.players.find(p=>p.id===seatId);
+      if(turn.roundNumber!==4||turn.gameEnded||turn.currentPlayerId!==seatId||!owner.mainActionCompleted
+        ||owner.passCompletionPending||turn.passedPlayerIds.includes(seatId)
+        ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||[...owner.reservedCards,...(owner.privateAlienCards||[])].some(c=>!knownCards(envelope).has(c.id)))return false;
+      // The blind reward adds an anonymous hand card, not a new reserved
+      // trigger. Continue only the public, card-free steps of that landing.
+      const replay=session.journal.replay,draw=replay.findIndex(e=>e.kind==="decision"&&e.decisionId===barrier.effectId
+        &&e.ownerId===seatId&&e.choice?.family==="choose_card"&&e.choice.target?.choiceId==="chong:blind");
+      const ordinary=session.journal.actions[0]?.action?.family==="land";
+      return draw>0&&replay.slice(0,draw).some(e=>e.kind==="decision"&&e.ownerId===seatId
+        &&e.choice?.target?.landTarget?.type==="satellite"&&(ordinary||e.choice.target.actionType==="land"));
+    }
+
+    function knownRewardChoices(envelope,actions,anonymousSatelliteScan=false) {
       const session=envelope.session?.session,head=session?.queue?.[0],state=readIdentityState(envelope);
       const owner=state.players.players.find(p=>p.id===seatId);
-      if(head?.ownerId!==seatId || [...owner.hand,...owner.reservedCards].some(c=>!knownCards(envelope).has(c.id)))return [];
+      if(head?.ownerId!==seatId)return [];
+      if(anonymousSatelliteScan){
+        return actions.length&&actions.every(a=>a.actorId===seatId&&a.family==="choose_target"
+          &&!a.target?.cardInstanceId&&head.payload.options.nebulaIds.includes(a.target?.nebulaId)
+          &&a.payload?.gainData===true)?actions:[];
+      }
+      if([...owner.hand,...owner.reservedCards].some(c=>!knownCards(envelope).has(c.id)))return [];
       if(head.type===scienceSession.EFFECT_TYPES.PICK_CARD)return actions.filter(a=>a.actorId===seatId&&cardPickPlanningApi.isOffer(a)
         &&a.target?.source!=="blind"&&knownCards(envelope).has(a.target.cardInstanceId||a.payload?.cardInstanceId||state.cards.publicCards[a.target.publicSlotIndex]?.id));
       if(head.type===scienceSession.EFFECT_TYPES.INCOME)return actions.filter(a=>a.actorId===seatId&&a.family==="choose_card"
@@ -3594,11 +3623,15 @@
       const acquired=cardKnowledgeKey(envelope);
       const knownAlienAcquisition=barrier?.code==="hidden_alien_card"&&acquired
         &&(!revealed||acquired!==cardKnowledgeKey(source?.envelope));
-      if (newBarrier && cardPickPlanning && (knownAlienAcquisition||["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code))
+      if (newBarrier && cardPickPlanning
         && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
-        const nativeActions=legalActions(comp,inspection);
-        postMainActions=knownPostMainActions(envelope,nativeActions);
-        if(inspection.phase==="awaiting_input")knownRewardActions=knownRewardChoices(envelope,nativeActions);
+        const satelliteScan=inspection.phase==="awaiting_input"&&isKnownSatelliteScanAfterBlindDraw(envelope,barrier);
+        const known=knownAlienAcquisition||["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code);
+        if(known||satelliteScan){
+          const nativeActions=legalActions(comp,inspection);
+          if(known)postMainActions=knownPostMainActions(envelope,nativeActions);
+          if(inspection.phase==="awaiting_input")knownRewardActions=knownRewardChoices(envelope,nativeActions,satelliteScan);
+        }
       }
       const continueKnown = postMainActions.length > 0 || knownRewardActions.length > 0;
       const actions = postMainActions.length ? postMainActions : knownRewardActions.length ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
