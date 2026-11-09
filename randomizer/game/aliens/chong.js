@@ -1028,6 +1028,7 @@
     placeChongTrace,
     getTraceReward,
     getFossilReward,
+    formatFossilRewardLabel,
     listTraceEntries,
     getTraceEntries,
     getPositionsForTraceType,

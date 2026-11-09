@@ -341,7 +341,9 @@
     function observe(session, viewer = null, options = {}) {
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       const state = session.phase === "completed" ? session.committedState : session.workingState;
-      const skipDecisionChoices = options.skipDecisionChoices === true;
+      const effect = currentEffect(session);
+      const skipDecisionChoices = options.skipDecisionChoices === true
+        || (effect?.payload?.privateChoices === true && viewer?.playerId !== effect.ownerId);
       const inspection = inspect(session, { skipChoices: skipDecisionChoices });
       // 同一次观察只枚举一次；投影与返回决策各持独立副本，不跨调用缓存。
       const decision = session.phase === "awaiting_input" && !skipDecisionChoices

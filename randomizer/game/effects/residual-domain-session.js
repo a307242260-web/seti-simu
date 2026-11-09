@@ -84,6 +84,7 @@
     EXECUTE: "residual_company_execute",
     COMPANY_DECISION: "residual_company_decision",
     CARD_DECISION: "residual_card_decision",
+    CHONG_TASK_FOSSIL: "residual_chong_task_fossil",
     ALIEN_CARD_DECISION: "residual_alien_card_decision",
     FINAL_MARK: "residual_final_mark",
   });
@@ -859,6 +860,7 @@
             ? task.effects
             : rewardEffects(task.rewards || task, `chong:${card.id}`)),
           label: task.label || cards.getCardLabel(card),
+          ...(task.kind === "trace" && task.chooseFossilRewardOnly ? { chooseFossilRewardOnly: true } : {}),
           ...(deliveredFossils[0] ? {
             rocketId: deliveredFossils[0].rocketId,
             destinationPlanetId: deliveredFossils[0].task?.destinationPlanetId || task.destinationPlanetId,
@@ -1488,13 +1490,32 @@
 
   // 发放 1 枚化石奖励（交虫族搬运任务时，按任务卡 fossilRewardRepeat 重复）。
   // gain 直接入资源；data 池满弃置不中断；盲抽/精选走统一抽牌上下文。
-  function applyChongFossilReward(root, player, fossilId, repeat = 1) {
+  const CHONG_FOSSIL_PLANETS = Object.freeze({ jupiter: "木星", saturn: "土星" });
+
+  function listChongTaskFossilPlanets(root) {
+    return Object.keys(CHONG_FOSSIL_PLANETS).filter(planetId => (
+      chong.getRemainingPlanetFossilCount(root.aliens, planetId) > 0
+    ));
+  }
+
+  function chongTaskFossilChoices(root, effect) {
+    const planetId = effect.payload?.planetId;
+    if (!planetId) return formalize(root, effect.ownerId, listChongTaskFossilPlanets(root).map(id => (
+      choice("choose_target", `chong-task-planet:${id}`, { planetId: id }, {}, `查看${CHONG_FOSSIL_PLANETS[id]}的化石`)
+    )));
+    return formalize(root, effect.ownerId, chong.getAvailablePlanetFossils(root.aliens, planetId)
+      .filter(fossil => fossil.visibleToPlayerIds?.includes(effect.ownerId))
+      .map(({ fossilId }) => choice("choose_target", `chong-task-fossil:${fossilId}`, { planetId, fossilId },
+        {}, `领取化石奖励：${chong.formatFossilRewardLabel(fossilId)}`)));
+  }
+
+  function applyChongFossilReward(root, player, fossilId, repeat = 1, sourceKey) {
     const spawnedEffects = [];
     let irreversible = null;
     for (let index = 0; index < Math.max(1, repeat); index += 1) {
       const applied = chong.applyFossilRewardOnly(root.aliens, player, fossilId, {
         gainResources(gain) {
-          players.gainResources(player, gain);
+          players.gainResources(player, gain, sourceKey);
         },
         gainData() {
           const result = data.gainData(player, { source: "chong_fossil_reward", root });
@@ -1581,6 +1602,8 @@
       spawnedEffects: [
         ...(applied.spawnedEffects || []),
         ...(fossilReward.spawnedEffects || []),
+        ...(settlement.chooseFossilRewardOnly && listChongTaskFossilPlanets(root).length
+          ? [decision(EFFECT_TYPES.CHONG_TASK_FOSSIL, player.id, {})] : []),
       ],
       irreversible: applied.irreversible || fossilReward.irreversible || null,
     };
@@ -2224,6 +2247,33 @@
             ruleId: settled.ruleId ?? effect.payload.ruleId ?? null,
             ruleKind: effect.payload.kind,
           }],
+        });
+      },
+    });
+    runtime.registerExecutor(EFFECT_TYPES.CHONG_TASK_FOSSIL, {
+      getLegalChoices(state, effect, context) {
+        return chongTaskFossilChoices(getRoot(state, context), effect);
+      },
+      resolveDecision(state, effect, selected, context) {
+        const root = getRoot(state, context);
+        const player = actor(root, effect.ownerId);
+        const legal = chongTaskFossilChoices(root, effect).find(candidate => candidate.actionId === selected?.actionId);
+        if (!player || !legal) return fail("CHONG_TASK_FOSSIL_STALE", "虫族痕迹任务的化石选择已失效");
+        const { planetId, fossilId } = legal.target;
+        if (!fossilId) {
+          const hidden = chong.getAvailablePlanetFossils(root.aliens, planetId)
+            .some(fossil => !fossil.visibleToPlayerIds?.includes(player.id));
+          chong.revealPlanetFossilsToPlayer(root.aliens, planetId, player);
+          return result(state, root, "chong_task_fossil_peek", {
+            spawnedEffects: [decision(EFFECT_TYPES.CHONG_TASK_FOSSIL, player.id, { planetId, privateChoices: true })],
+            irreversible: hidden ? { code: "hidden_chong_task_fossils", reason: "已查看该星球的背面化石" } : null,
+          });
+        }
+        const reward = applyChongFossilReward(root, player, fossilId, 1, "taskCardScore");
+        if (!reward.ok) return reward;
+        return result(state, root, "chong_task_fossil_reward", {
+          ...reward,
+          events: [{ type: "chong_task_fossil_reward", playerId: player.id, planetId, fossilId }],
         });
       },
     });

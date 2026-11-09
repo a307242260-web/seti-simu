@@ -657,7 +657,7 @@
           phase: inspection?.phase || "idle",
         },
         state: clone(projectedState),
-        decision: clone(observation?.decision || inspection?.decision || null),
+        decision: clone(observation?.decision || null),
       });
     }
 

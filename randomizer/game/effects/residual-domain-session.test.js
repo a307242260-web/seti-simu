@@ -381,6 +381,79 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(root.players.players[0].scoreSources.taskCardScore, 4);
 })();
 
+(function chongTraceTasksChoosePlanetAndReturnFossilAfterReward() {
+  for (const [index, color, positions] of [[1, "blue", [8, 9]], [4, "yellow", [1, 2]], [7, "pink", [1, 2]]]) {
+    for (const method of ["direct", "confirm", "skip", "empty"]) {
+      const root = createRoot();
+      const player = root.players.players[0];
+      const cardId = `chong_${index}.webp`;
+      player.reservedCards = [{ id: "chong-trace-task", cardId, set: "alien:虫" }];
+      const fossils = method === "empty" ? { jupiter: [], saturn: [] }
+        : { jupiter: ["fossil_02", "fossil_03"], saturn: ["fossil_07"] };
+      root.aliens.chong = {
+        revealedSlotId: 1,
+        traceSlotsByAlienSlotId: { 1: { [color]: Object.fromEntries(positions.map(position => [position, {
+          playerId: player.id, position, traceType: color,
+        }])) } },
+        planetFossilIds: fossils,
+        fossilsById: Object.fromEntries(Object.entries(fossils).flatMap(([planetId, ids]) => ids.map(fossilId => [fossilId,
+          { fossilId, planetId, status: "available", location: "planet", visibleToPlayerIds: [] }]))),
+      };
+      const owner = createHarness(residual, "createResidualDomain");
+      const context = { state: root };
+      let completed;
+      if (method === "direct" || method === "empty") {
+        completed = residual.settleReadyTaskDirect(root, player.id, "chong-trace-task", "trace");
+      } else {
+        const turnEnd = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
+          ownerId: player.id, payload: { schemaVersion: residual.HANDOFF_SCHEMA, domain: "card_trigger", effectType: "turn_end" },
+        });
+        assert(turnEnd.ok && turnEnd.spawnedEffects.length === 1);
+        const effect = turnEnd.spawnedEffects[0].effect;
+        const executor = owner.executors.get(effect.type);
+        const legal = executor.getLegalChoices(root, effect, context);
+        completed = executor.resolveDecision(root, effect, legal.find(a => a.target.choiceId.startsWith(`${method}:`)), context);
+      }
+      assert(completed.ok);
+      if (method === "skip") {
+        assert.equal(player.reservedCards.length, 1);
+        assert.equal(completed.spawnedEffects.length, 0);
+        continue;
+      }
+      assert.equal(player.reservedCards.length, 0);
+      assert.equal(player.completedTaskCount, 1);
+      assert(root.cards.removedFromGameCardIds.includes(cardId));
+      if (method === "empty") {
+        assert.equal(completed.spawnedEffects.length, 0);
+        continue;
+      }
+      assert.equal(completed.spawnedEffects.length, 1, "完成痕迹任务必须先选星球");
+      const planetEffect = completed.spawnedEffects[0].effect;
+      const executor = owner.executors.get(planetEffect.type);
+      const planets = executor.getLegalChoices(root, planetEffect, context);
+      assert.deepEqual(planets.map(a => a.target.planetId), ["jupiter", "saturn"]);
+      assert(planets.every(a => !JSON.stringify(a).includes("fossil_0")));
+      const peek = executor.resolveDecision(root, planetEffect, planets[0], context);
+      assert(peek.ok);
+      assert.equal(peek.irreversible.code, "hidden_chong_task_fossils");
+      const fossilEffect = peek.spawnedEffects[0].effect;
+      const choices = executor.getLegalChoices(root, fossilEffect, context);
+      assert.deepEqual(choices.map(a => a.target.fossilId), ["fossil_02", "fossil_03"]);
+      const stale = executor.resolveDecision(root, fossilEffect, planets[1], context);
+      assert.equal(stale.ok, false);
+      const rng = structuredClone(root.meta.rngState);
+      const reward = executor.resolveDecision(root, fossilEffect, choices[0], context);
+      assert(reward.ok);
+      assert.equal(player.resources.score, 37);
+      assert.equal(player.scoreSources.taskCardScore, 7);
+      assert.deepEqual(root.aliens.chong.planetFossilIds, fossils);
+      assert.equal(root.aliens.chong.fossilsById.fossil_02.status, "available");
+      assert.deepEqual(root.aliens.chong.fossilsById.fossil_07.visibleToPlayerIds, []);
+      assert.deepEqual(root.meta.rngState, rng);
+    }
+  }
+})();
+
 (function proofGameEndWritesEveryPlayerFinalContract() {
   const root = createRoot();
   root.solarSystem = solar.createBaselineState();

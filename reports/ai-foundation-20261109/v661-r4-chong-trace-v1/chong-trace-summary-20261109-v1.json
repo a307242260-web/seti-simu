@@ -1,0 +1,246 @@
+{
+  "productionProof": [
+    {
+      "kind": "direct",
+      "beforeScore": 160,
+      "fixedScore": 167,
+      "publicPickScore": 163,
+      "planetChoice": {
+        "chosen": "choose_target:3cf7f2a7",
+        "value": 253,
+        "native": 2,
+        "roots": [
+          [
+            "choose_target:3cf7f2a7",
+            253,
+            0,
+            0
+          ],
+          [
+            "choose_target:4f860337",
+            253,
+            0,
+            0
+          ]
+        ]
+      },
+      "noHiddenPeekInSearch": true,
+      "privateChoiceOnlyOwner": true,
+      "restoredResultExact": true,
+      "noFossilRemoved": true,
+      "rngExact": true
+    },
+    {
+      "kind": "confirm",
+      "beforeScore": 160,
+      "fixedScore": 167,
+      "publicPickScore": 163,
+      "planetChoice": {
+        "chosen": "choose_target:3cf7f2a7",
+        "value": 253.5,
+        "native": 2,
+        "roots": [
+          [
+            "choose_target:3cf7f2a7",
+            253.5,
+            0,
+            0
+          ],
+          [
+            "choose_target:4f860337",
+            253.5,
+            0,
+            0
+          ]
+        ]
+      },
+      "noHiddenPeekInSearch": true,
+      "privateChoiceOnlyOwner": true,
+      "restoredResultExact": true,
+      "noFossilRemoved": true,
+      "rngExact": true
+    }
+  ],
+  "coldCandidateRoots": [
+    {
+      "input": 314,
+      "actionId": "choose_target:f042ebe0",
+      "value": 227.5,
+      "beforeNative": 6,
+      "afterNative": 6,
+      "beforeMs": 77.487875,
+      "afterMs": 70.38020800000001,
+      "rankingEqual": true
+    },
+    {
+      "input": 351,
+      "actionId": "choose_target:43d1120f",
+      "value": 257.5,
+      "beforeNative": 10,
+      "afterNative": 10,
+      "beforeMs": 67.68587500000001,
+      "afterMs": 64.00537500000002,
+      "rankingEqual": true
+    },
+    {
+      "input": 354,
+      "actionId": "accept_optional_effect:564fb7e2",
+      "value": 257.5,
+      "beforeNative": 2,
+      "afterNative": 2,
+      "beforeMs": 31.735041999999964,
+      "afterMs": 32.67470800000001,
+      "rankingEqual": true
+    },
+    {
+      "input": 359,
+      "actionId": "analyze:a5629aa3",
+      "value": 280.5,
+      "beforeNative": 459,
+      "afterNative": 545,
+      "beforeMs": 1038.2656670000001,
+      "afterMs": 1043.374041,
+      "rankingEqual": true
+    },
+    {
+      "input": 355,
+      "actionId": "place_data:8fd12fd3",
+      "value": 280.5,
+      "beforeNative": 537,
+      "afterNative": 639,
+      "beforeMs": 1082.595083,
+      "afterMs": 1099.983125,
+      "rankingEqual": true
+    }
+  ],
+  "officialV661": {
+    "prior": {
+      "actionId": "industry:e887dc52",
+      "native": 1361,
+      "ms": 2098.8155829999996,
+      "source": "de3eb34e2"
+    },
+    "corrected": {
+      "action": "深空探测 1x 行动",
+      "actionId": "industry:e887dc52",
+      "value": 205.5,
+      "native": 1361,
+      "ms": 2198.703667,
+      "complete": true
+    },
+    "rootUnchanged": true
+  },
+  "fullGameRerun": false,
+  "productionSearchChanged": false,
+  "candidateInputDistribution": [
+    {
+      "input": 359,
+      "counts": {
+        "launch|stable|—|—": 2,
+        "analyze|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 51,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 10,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|scan|—": 12,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "place_data|stable|—|—": 40,
+        "choose_target|science_domain_place_data|place_data|—": 40,
+        "choose_card|science_domain_pick_card|place_data|—": 16,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 24,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 64,
+        "choose_target|residual_chong_task_fossil|end_turn|—": 48,
+        "choose_target|residual_chong_task_fossil|complete_task|—": 48,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2,
+        "choose_card|science_domain_income|place_data|—": 3
+      },
+      "slots": {
+        "blue 3|post-main|4": 8,
+        "blue 3|post-main|6": 14,
+        "第一排放置位 1|post-main|4": 3,
+        "第一排放置位 2|post-main|3": 3,
+        "第一排放置位 3|post-main|2": 3,
+        "第一排放置位 4|post-main|1": 3,
+        "blue 1|post-main|1": 3,
+        "blue 2|post-main|1": 3
+      }
+    },
+    {
+      "input": 355,
+      "counts": {
+        "launch|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 55,
+        "place_data|stable|—|—": 70,
+        "choose_target|science_domain_place_data|place_data|—": 70,
+        "analyze|stable|—|—": 2,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 10,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "choose_card|science_domain_income|place_data|—": 3,
+        "choose_target|science_domain_alien_trace|scan|—": 12,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "choose_card|science_domain_pick_card|place_data|—": 18,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 28,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 72,
+        "choose_target|residual_chong_task_fossil|end_turn|—": 56,
+        "choose_target|residual_chong_task_fossil|complete_task|—": 56,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2
+      },
+      "slots": {
+        "第一排放置位 5|pre-main|6": 2,
+        "第一排放置位 6|pre-main|5": 2,
+        "第一排放置位 1|post-main|4": 3,
+        "第一排放置位 2|post-main|3": 3,
+        "第一排放置位 3|post-main|2": 3,
+        "第一排放置位 4|post-main|1": 3,
+        "blue 1|post-main|1": 3,
+        "blue 2|post-main|1": 3,
+        "第一排放置位 5|post-main|6": 24,
+        "blue 3|post-main|5": 16,
+        "blue 3|post-main|6": 8
+      }
+    }
+  ]
+}
