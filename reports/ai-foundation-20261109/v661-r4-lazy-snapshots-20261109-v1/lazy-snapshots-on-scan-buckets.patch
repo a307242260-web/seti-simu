@@ -1,0 +1,246 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -418,11 +418,13 @@
+     let fork = null;
+     let loadedEnvelope = null;
+     const decodedStates = new Map();
++    let committedReferences=new WeakMap();
++    let lazyCommittedEnvelopes=0,lazyPreviewSerializations=0;
+     const maxDecodedStateCacheEntries = 64, maxDecodedStateCacheBytes = 8 * 1024 * 1024;
+     let decodedStateCacheBytes = 0;
+     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
+     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
+-    let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0;
++    let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0, committedReferenceHits=0;
+     let rootObservation = null, knownChongDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
+     let knownRootFossilIds = new Set();
+     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
+@@ -501,14 +503,21 @@
+
+     function snapshot(comp) {
+       const startedAt = now();
+-      const saved = comp.lifecycle.save({ trustedFork: true });
++      const saved = comp.lifecycle.save({ trustedFork: true, deferSerialization:true });
+       milliseconds.checkpoint += now() - startedAt;
+       if (!saved.ok) throw new Error(`ANALYSIS_SAVE_FAILED: ${saved.code || saved.message}`);
+-      if (saved.trustedState && !decodedStates.has(saved.envelope.committedState)) {
+-        cacheCommittedState(saved.envelope.committedState, saved.trustedState);
++      if (saved.trustedState) {
++        committedReferences.set(saved.envelope,saved.trustedState);
+         committedReferenceCount++;
+       }
+       return saved.envelope;
++    }
++
++    function withEnvelopeSession(source,session){
++      const envelope=Object.freeze({schemaVersion:source.schemaVersion,get committedState(){return source.committedState;},session});
++      const state=committedReferences.get(source);
++      if(state)committedReferences.set(envelope,state);
++      return envelope;
+     }
+
+     function restoreEnvelope(envelope, forWrite = false) {
+@@ -606,7 +615,9 @@
+     }
+
+     function readCommittedState(envelope) {
+-      // Exact serialized bytes only; pending working copies remain separate and writable.
++      const captured=committedReferences.get(envelope);
++      if(captured){committedReferenceHits++;return captured;}
++      // External byte snapshots still decode by exact serialization.
+       const key = envelope.committedState;
+       if (decodedStates.has(key)) {
+         const result = decodedStates.get(key);
+@@ -643,7 +654,7 @@
+       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+       observationCount = 0; observationReleases = 0;
+-      committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0;
++      committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0; committedReferenceHits=0; lazyCommittedEnvelopes=0; lazyPreviewSerializations=0;
+       observationCacheHits = 0; resourceQueryHits = 0; resourceQueryMisses = 0; goalCatalogHits = 0; goalCatalogMisses = 0;
+       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
+       rootObservation = project(composition);
+@@ -666,7 +677,7 @@
+       // 同一回合的已知输入不重抽未知世界；恢复仅依赖正式公开配置和回合身份。
+       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
+       const authoritative = snapshot(composition);
+-      const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
++      const state = readIdentityState(authoritative);
+       const player=state.players.players.find(p=>p.id===seatId);
+       const supplier=state.turn.roundNumber===3&&player.mainActionCompleted&&player.industryRoundMarkRound!==3
+         &&industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId==="deepspace_swap_cards"&&resourceDemand.publicLandingSupplier(state);
+@@ -724,11 +735,11 @@
+       const template = quietDataMenuTemplate, s = template?.session;
+       if (s?.journal.actions[0].action.actionId !== action.actionId) return null;
+       const effect = s.queue[0];
+-      return {...envelope, session:freeze({...template, session:{...s,
++      return withEnvelopeSession(envelope,freeze({...template, session:{...s,
+         baseState:state, workingState:state, baseVersion:state.meta.stateVersion,
+         queue:[{...effect, payload:{...effect.payload, action}}],
+         journal:{...s.journal, actions:[{...s.journal.actions[0], action}], replay:[{...s.journal.replay[0], action}]},
+-      }})};
++      }}));
+     }
+
+     function previewBlueTwoPick(stored, action) {
+@@ -780,11 +791,11 @@
+       )));
+       const q = {...remap(template.queue), source:remap(template.queue.source)};
+       const decision = {decisionId:s.queue[0].effectId, decisionVersion:s.revision, ownerId:seatId, choice:action};
+-      return {...envelope, session:freeze({...envelope.session, replayCursor:2, session:{...s, workingState, queue:[q],
++      return withEnvelopeSession(envelope,freeze({...envelope.session, replayCursor:2, session:{...s, workingState, queue:[q],
+         revision:template.nextRevision, nextEffectSequence:template.nextEffectSeq, nextGroupSequence:template.nextGroupSeq,
+         journal:{...s.journal, effects:[...s.journal.effects, remap(template.effect)], events:[remap(template.event)],
+           decisions:[decision], replay:[...s.journal.replay, {cursor:1,kind:"decision",confirmed:true,...decision}]},
+-      }})};
++      }}));
+     }
+
+     function previewQuietFinalDataPlacement(stored, action) {
+@@ -848,7 +859,7 @@
+       const session=freeze({...template,session:{...s,baseState:working,workingState:working,baseVersion:source.meta.stateVersion,
+         queue:[prepared,{...advance,payload:{roundNumber:source.turn.roundNumber,turnNumber:source.turn.turnNumber,didPass:false}}],
+         journal:{...s.journal,actions:[{...s.journal.actions[0],action}],replay:[{...s.journal.replay[0],action}]}}});
+-      return {envelope:{...envelope,session},inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++      return {envelope:withEnvelopeSession(envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
+     function quietPaidMoveSource(stored,action){
+@@ -884,7 +895,7 @@
+       const session=freeze({...moveMenuTemplate,session:{...s,baseState:state,workingState:state,baseVersion:state.meta.stateVersion,
+         queue:[head],journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}],
+           events:[{...j.events[0],rocketId:action.target.rocketId}]}}});
+-      return {envelope:{...stored.envelope,session},inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
+     function previewQuietMovePayment(stored,action){
+@@ -993,7 +1004,7 @@
+         nextEffectSequence,nextGroupSequence,journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...events],
+           history:[...j.history,...history],effects:[...j.effects,effectRow],
+           replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
+-      return {envelope:{...stored.envelope,session},inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
+     function previewQuietScan4Move(node,stored,action){
+@@ -1058,7 +1069,7 @@
+           effects:[...j.effects,row(head,1),row(finalize,2),row(spawned(1,types.SETTLE),3),row(spawned(2,types.PUBLIC_REFILL),4),row(extra,5)],
+           rng:[...j.rng,{owner:"science",cursor:next.meta.rngState?.science?.cursor||0}],
+           replay:[...j.replay,{cursor:replayCursor,kind:"decision",confirmed:true,...decision}]}}});
+-      return {prepared:{envelope:{...stored.envelope,session},inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
++      return {prepared:{envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
+     }
+
+     function previewFixedBluePickSettlement(node, stored, action) {
+@@ -1096,9 +1107,16 @@
+     }
+
+     function provedCommittedEnvelope(stored, state) {
+-      const preview = {schemaVersion:stored.envelope.schemaVersion, committedState:JSON.stringify(state), session:null};
+-      if (!decodedStates.has(preview.committedState)) cacheCommittedState(preview.committedState, freeze(state));
+-      return preview;
++      const captured=freeze(state);
++      let bytes;
++      const envelope=Object.freeze({schemaVersion:stored.envelope.schemaVersion,
++        get committedState(){
++          if(bytes===undefined){lazyPreviewSerializations++;bytes=JSON.stringify(captured);}
++          return bytes;
++        },session:null});
++      committedReferences.set(envelope,captured);
++      lazyCommittedEnvelopes++;
++      return envelope;
+     }
+
+     function finishProvedCommittedState(node, stored, action, state) {
+@@ -1444,7 +1462,7 @@
+       // Queue identity still governs executable nodes. This key is only for
+       // the closed value after the shared task settlement and before a peek.
+       const state = readIdentityState(stored.envelope);
+-      const physical = forwardIdentity({committedState: stored.envelope.committedState},
++      const physical = forwardIdentity({},
+         "chong-claim-value", null, state, normalizedIdentityStates, identitySubtrees);
+       return JSON.stringify([cardId, stored.informationBarrier?.code || null, cardKnowledgeKey(stored.envelope), physical]);
+     }
+@@ -3061,10 +3079,10 @@
+       const session = envelope.session.session;
+       const head = session.queue[0];
+       // 只剥离已证明纯点击会改变的选中列表和由它生成的 choices；余下队列原样保留。
+-      const neutral = { ...envelope, session: { ...envelope.session, session: { ...session,
++      const neutral = withEnvelopeSession(envelope,{ ...envelope.session, session: { ...session,
+         queue: [{ ...head, payload: { ...head.payload, choices: [],
+           decisionContext: { ...head.payload.decisionContext, selected: [] } } }, ...session.queue.slice(1)],
+-      } } };
++      } });
+       return JSON.stringify([node.legalActions[0].stateVersion, node.legalActions[0].decisionVersion,
+         forwardIdentity(neutral, "selection-component", null),cardKnowledgeKey(envelope)]);
+     }
+@@ -5691,7 +5709,7 @@
+       (fork?.composition || fork)?.dispose?.();
+       fork = null;
+       loadedEnvelope = null;
+-      decodedStates.clear(); decodedStateCacheBytes = 0;
++      decodedStates.clear(); decodedStateCacheBytes = 0; committedReferences=new WeakMap();
+       envelopeObservations = new WeakMap();valueObservations=new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
+       nodes = new WeakMap();
+       movementValueBounds=new WeakMap();movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+@@ -6951,7 +6969,7 @@
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+-        committedDecodeCount, committedDecodeHits, committedReferenceCount,
++        committedDecodeCount, committedDecodeHits, committedReferenceCount, committedReferenceHits, lazyCommittedEnvelopes,lazyPreviewSerializations,
+         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
+         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
+         milliseconds: { ...milliseconds } });
+--- a/randomizer/game/ai/analysis-port.test.js
++++ b/randomizer/game/ai/analysis-port.test.js
+@@ -132,7 +132,7 @@
+ assert.equal(port.getDiagnostics().observationCount, 1, "已物化观察不会因分支变化重复投影");
+ assert.equal(port.getDiagnostics().committedDecodeCount, decodesBeforeCancel,
+   "不同pending信封的已提交字节相同时，不重复解码，工作Session仍各自恢复");
+-assert(port.getDiagnostics().committedDecodeHits >= 1);
++assert(port.getDiagnostics().committedReferenceHits >= 1, "已验证的 fork 使用只读提交态对象");
+ assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真实根或RNG");
+ const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
+ assert.throws(() => other.openRoot(), /OWNER_MISMATCH/);
+--- a/randomizer/game/ai/known-card-money.test.js
++++ b/randomizer/game/ai/known-card-money.test.js
+@@ -46,7 +46,7 @@
+  assert.equal(port.knownCardMoneyOrder(root).group,port.knownCardMoneyOrder(poor).group);
+  const pairBefore=comp.lifecycle.save().envelope;
+  paired.push(compareSingleActions(port,root,poor,f.seatId));assert.deepEqual(comp.lifecycle.save().envelope,pairBefore);
+- const cacheStats=port.getDiagnostics();assert(cacheStats.decodedStateCacheEntries<=cacheStats.maxDecodedStateCacheEntries);assert(cacheStats.decodedStateCacheBytes<=cacheStats.maxDecodedStateCacheBytes);assert(cacheStats.committedDecodeHits>0);port.close();assert.equal(port.getDiagnostics().decodedStateCacheEntries,0);
++ const cacheStats=port.getDiagnostics();assert(cacheStats.decodedStateCacheEntries<=cacheStats.maxDecodedStateCacheEntries);assert(cacheStats.decodedStateCacheBytes<=cacheStats.maxDecodedStateCacheBytes);assert(cacheStats.committedReferenceHits>0);port.close();assert.equal(port.getDiagnostics().decodedStateCacheEntries,0);
+  const s=JSON.parse(f.compositionEnvelope.committedState),owner=s.players.players.find(p=>p.id===f.seatId);
+  s.cards.discardPile.push(...owner.hand.slice(1));owner.hand=owner.hand.slice(0,1);
+  owner.mainActionCompleted=true;owner.resources={...owner.resources,credits:2,energy:1,publicity:0,availableData:0,handSize:1};
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -843,6 +843,17 @@
+     }
+
+     function save(saveOptions = {}) {
++      const trustedCheckpoint = saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true;
++      if (trustedCheckpoint && saveOptions.deferSerialization === true) {
++        const trustedState=readStoreSnapshot();
++        const session=activeSession?runtime.createCheckpoint(activeSession,{trustedReference:true}):null;
++        if(session?.ok===false)return deepFreeze(clone(session));
++        let committedBytes;
++        const envelope=Object.freeze({schemaVersion:SAVE_SCHEMA_VERSION,
++          get committedState(){return committedBytes??=stableSerialize(trustedState);},
++          session:deepFreeze(session?.checkpoint||null)});
++        return Object.freeze({ok:true,trustedState,envelope});
++      }
+       let serialized;
+       if (saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true) {
+         serialized = store.serializeForkSnapshot();
+@@ -853,8 +864,6 @@
+         serialized = store.serialize(saveState);
+       }
+       if (!serialized.ok) return deepFreeze(clone(serialized));
+-      const trustedCheckpoint = saveOptions.trustedFork === true
+-        && options.allowTrustedForkLifecycle === true;
+       const session = activeSession
+         ? runtime.createCheckpoint(activeSession, { trustedReference: trustedCheckpoint })
+         : null;

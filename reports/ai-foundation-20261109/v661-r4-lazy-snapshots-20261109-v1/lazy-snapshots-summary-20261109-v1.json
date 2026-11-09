@@ -1,0 +1,596 @@
+{
+  "source": "067e13aef21f8eba016154d8cdcd159aea720c64",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 221,
+      "ms": 1124.4317500000002,
+      "proofCount": 50,
+      "refillHits": 45,
+      "refillEntries": 5,
+      "moveMenus": 39,
+      "movePayments": 40,
+      "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+    },
+    "candidate": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 221,
+      "ms": 920.860166,
+      "proofCount": 50,
+      "refillHits": 45,
+      "refillEntries": 5,
+      "moveMenus": 39,
+      "movePayments": 40,
+      "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+    },
+    "rankingsEqual": true,
+    "graphEqualExcludingGeometryWorkCounter": true,
+    "rootAndRngUnchanged": true,
+    "earlierColdMs": 1200.673875
+  },
+  "checkpointProof": {
+    "committed": 337,
+    "pending": 107,
+    "external": 1,
+    "openRootExternalGetter": false,
+    "comparedBytesAfterClose": 444,
+    "lazyPreviews": 476,
+    "previewBytesRead": 0,
+    "graph": "65bbd1559945bb4358d40e25f751af50ea564a5469ec254dc269ada668a92880"
+  },
+  "teacher": [
+    {
+      "before": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 65.55620899999985,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      "candidate": {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 36.792417000000114,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      "geometryBefore": 32,
+      "geometryAfter": 32
+    },
+    {
+      "before": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 54.65583400000014,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      "candidate": {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 46.390666999999894,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      "geometryBefore": 96,
+      "geometryAfter": 96
+    },
+    {
+      "before": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 30.967041999999992,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      "candidate": {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 28.932999999999993,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 0,
+        "movePayments": 0,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      "geometryBefore": 0,
+      "geometryAfter": 0
+    },
+    {
+      "before": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 837.3626669999999,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      "candidate": {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 711.9681250000001,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      "geometryBefore": 480,
+      "geometryAfter": 352
+    },
+    {
+      "before": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 801.9172920000001,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      },
+      "candidate": {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 738.5043340000002,
+        "proofCount": 0,
+        "refillHits": 0,
+        "refillEntries": 0,
+        "moveMenus": 5,
+        "movePayments": 6,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      },
+      "geometryBefore": 448,
+      "geometryAfter": 320
+    }
+  ],
+  "mainRoutes": [
+    {
+      "actionId": "industry:e887dc52",
+      "summary": "深空探测 1x 行动",
+      "target": 6,
+      "payload": {},
+      "steps": [
+        "industry:e887dc52",
+        "choose_card:0625c2a2",
+        "choose_card:d017719b"
+      ],
+      "goal": "industry",
+      "value": 205.5,
+      "nodes": 307,
+      "edges": 320,
+      "byStatus": {
+        "stable": 174,
+        "turn-tail-value": 83,
+        "other-owner": 17,
+        "decision": 8,
+        "information-barrier": 25
+      },
+      "groups": [
+        [
+          "data:blue:2",
+          {
+            "edges": 44,
+            "steps": 134,
+            "min": 189.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "data:computer-prefix:5",
+          {
+            "edges": 37,
+            "steps": 74,
+            "min": 189.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "blue-end-turn",
+          {
+            "edges": 22,
+            "steps": 66,
+            "min": 190.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "end-turn",
+          {
+            "edges": 61,
+            "steps": 61,
+            "min": 185.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "end_turn",
+          {
+            "edges": 31,
+            "steps": 60,
+            "min": 187.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "data:blue:1",
+          {
+            "edges": 23,
+            "steps": 47,
+            "min": 189.5,
+            "max": 205.5
+          }
+        ],
+        [
+          "complete_task",
+          {
+            "edges": 29,
+            "steps": 29,
+            "min": 193,
+            "max": 205.5
+          }
+        ],
+        [
+          "scan:sector:sector-1-a",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 192,
+            "max": 195
+          }
+        ],
+        [
+          "scan:sector:sector-2-a",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 192,
+            "max": 193
+          }
+        ],
+        [
+          "scan:sector:sector-2-b",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 194,
+            "max": 195
+          }
+        ],
+        [
+          "scan:sector:sector-3-a",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 191.5,
+            "max": 192.5
+          }
+        ],
+        [
+          "scan:sector:sector-3-b",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 192,
+            "max": 193
+          }
+        ],
+        [
+          "scan:sector:sector-4-a",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 189.5,
+            "max": 190.5
+          }
+        ],
+        [
+          "scan:sector:sector-4-b",
+          {
+            "edges": 4,
+            "steps": 20,
+            "min": 191.5,
+            "max": 192.5
+          }
+        ],
+        [
+          "rocket:6:land:mercury:planet:",
+          {
+            "edges": 2,
+            "steps": 19,
+            "min": 205,
+            "max": 205.5
+          }
+        ],
+        [
+          "data:blue:3",
+          {
+            "edges": 8,
+            "steps": 18,
+            "min": 204,
+            "max": 205.5
+          }
+        ],
+        [
+          "choose_target",
+          {
+            "edges": 12,
+            "steps": 16,
+            "min": 198,
+            "max": 205.5
+          }
+        ],
+        [
+          "move",
+          {
+            "edges": 3,
+            "steps": 12,
+            "min": 185.5,
+            "max": 193
+          }
+        ]
+      ]
+    },
+    {
+      "actionId": "card_corner:bf0cc13d",
+      "summary": "b_111.webp：弃牌角标",
+      "target": 8,
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "steps": [
+        "card_corner:bf0cc13d",
+        "place_data:8fd12fd3",
+        "choose_target:44b74627"
+      ],
+      "goal": "data:blue:1",
+      "value": 204.5,
+      "nodes": 260,
+      "edges": 269,
+      "byStatus": {
+        "stable": 137,
+        "turn-tail-value": 74,
+        "decision": 8,
+        "other-owner": 12,
+        "information-barrier": 29
+      },
+      "groups": [
+        [
+          "data:blue:2",
+          {
+            "edges": 42,
+            "steps": 133,
+            "min": 185.5,
+            "max": 204.5
+          }
+        ],
+        [
+          "blue-end-turn",
+          {
+            "edges": 22,
+            "steps": 66,
+            "min": 190,
+            "max": 204.5
+          }
+        ],
+        [
+          "data:computer-prefix:5",
+          {
+            "edges": 29,
+            "steps": 58,
+            "min": 189.5,
+            "max": 204.5
+          }
+        ],
+        [
+          "end_turn",
+          {
+            "edges": 27,
+            "steps": 54,
+            "min": 193,
+            "max": 204.5
+          }
+        ],
+        [
+          "end-turn",
+          {
+            "edges": 52,
+            "steps": 52,
+            "min": 185.5,
+            "max": 204.5
+          }
+        ],
+        [
+          "complete_task",
+          {
+            "edges": 27,
+            "steps": 27,
+            "min": 193,
+            "max": 204.5
+          }
+        ],
+        [
+          "rocket:6:land:mercury:planet:",
+          {
+            "edges": 2,
+            "steps": 20,
+            "min": 204.5,
+            "max": 204.5
+          }
+        ],
+        [
+          "move",
+          {
+            "edges": 5,
+            "steps": 20,
+            "min": 185.5,
+            "max": 193
+          }
+        ],
+        [
+          "choose_target",
+          {
+            "edges": 15,
+            "steps": 19,
+            "min": 191.5,
+            "max": 204.5
+          }
+        ],
+        [
+          "data:blue:3",
+          {
+            "edges": 8,
+            "steps": 16,
+            "min": 204,
+            "max": 204.5
+          }
+        ],
+        [
+          "scan:sector:sector-1-a",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 192,
+            "max": 192.5
+          }
+        ],
+        [
+          "scan:sector:sector-2-a",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 190,
+            "max": 192
+          }
+        ],
+        [
+          "scan:sector:sector-2-b",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 191.5,
+            "max": 194.5
+          }
+        ],
+        [
+          "scan:sector:sector-3-a",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 191.5,
+            "max": 192.5
+          }
+        ],
+        [
+          "scan:sector:sector-4-a",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 189.5,
+            "max": 190.5
+          }
+        ],
+        [
+          "scan:sector:sector-4-b",
+          {
+            "edges": 3,
+            "steps": 15,
+            "min": 191.5,
+            "max": 192.5
+          }
+        ],
+        [
+          "accept_optional_effect",
+          {
+            "edges": 8,
+            "steps": 8,
+            "min": 204,
+            "max": 204.5
+          }
+        ],
+        [
+          "quick_trade",
+          {
+            "edges": 2,
+            "steps": 7,
+            "min": 187,
+            "max": 187.5
+          }
+        ]
+      ]
+    }
+  ],
+  "orderControl": {
+    "mode": "all",
+    "complete": true,
+    "unresolved": 0,
+    "action": "industry:e887dc52",
+    "value": 205.5,
+    "priorAction": "industry:e887dc52",
+    "priorValue": 205.5,
+    "native": 221,
+    "priorNative": 221,
+    "ms": 885.753709,
+    "changed": [],
+    "nodes": 1276,
+    "transitions": 1138,
+    "values": 245,
+    "excluded": 73,
+    "priorNodes": 1489,
+    "priorValues": 309,
+    "priorTransitions": 1287
+  }
+}
