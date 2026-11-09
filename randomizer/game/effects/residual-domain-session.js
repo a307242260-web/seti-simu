@@ -1723,12 +1723,11 @@
     };
   }
 
-  function previewLastPlainPinkTrace(session, selected, knownCards) {
+  function previewPlainPinkTrace(session, selected, knownCards) {
     const source=session.workingState,head=session.queue[0],turn=source.turn;
     const owner=actor(source,head?.ownerId);
-    if(session.phase!=="awaiting_input"||session.queue.length!==1||session.failure
+    if(session.phase!=="awaiting_input"||session.failure
       ||session.interruptContext||session.undoFrames.length||source.meta.stateVersion!==session.baseVersion
-      ||session.journal.actions[0]?.action?.family!=="land"
       ||head?.type!==science.EFFECT_TYPES.ALIEN_TRACE||head.kind!=="decision"||head.allowQuickActions
       ||head.payload?.traceType!=="pink"||Object.keys(head.payload).length!==1
       ||selected?.actorId!==head.ownerId||turn.roundNumber!==4||turn.gameEnded
@@ -1743,8 +1742,44 @@
     if(!placed)return null;
     const augmented=augmentEffectResult(state,placed,head);
     if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
-    state.meta.stateVersion=session.baseVersion+1;
-    return state;
+    return {state,player,events:augmented.events};
+  }
+
+  function previewLastPlainPinkTrace(session, selected, knownCards) {
+    if(session.queue.length!==1||session.journal.actions[0]?.action?.family!=="land")return null;
+    const trace=previewPlainPinkTrace(session,selected,knownCards);
+    if(!trace)return null;
+    trace.state.meta.stateVersion=session.baseVersion+1;
+    return trace.state;
+  }
+
+  function previewPinkTraceFossilMenu(session, selected, knownCards) {
+    const [head,pickup]=session.queue,card=pickup?.payload?.cardEffect;
+    const source=session.journal.actions[0]?.action;
+    const cardInstanceId=pickup?.payload?.cardInstanceId;
+    if(session.queue.length!==2||source?.family!=="play_card"||source.target.cardInstanceId!==cardInstanceId
+      ||pickup.type!=="card_play_domain_effect:effect:chong_pickup_fossil"||pickup.kind!=="effect"
+      ||pickup.ownerId!==head.ownerId||pickup.allowQuickActions||card?.type!==chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL
+      ||!knownCards.has(cardInstanceId))return null;
+    const trace=previewPlainPinkTrace(session,selected,knownCards);
+    if(!trace)return null;
+    const {state,player,events}=trace;
+    const choices=science.formalizeChoices(state,player.id,chong.listPickupChoices(state,card,player));
+    if(!choices.length)return null;
+    const effect={effectId:card.id||null,effectType:card.type};
+    const event={type:"card_effect",...effect,playerId:player.id,awaitingDecision:true,legalChoiceCount:choices.length};
+    const augmented=augmentEffectResult(state,{ok:true,events:[event]},pickup);
+    if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+    return {state,choices,events:[...events,...augmented.events],
+      history:{type:"card_effect",...effect,executorId:"card_play:executor:v1"}};
+  }
+
+  function previewPinkTraceBeforeRefill(session, selected, knownCards) {
+    const [head,refill]=session.queue;
+    if(session.queue.length!==2||session.journal.actions[0]?.action?.family!=="scan"
+      ||refill.type!==science.EFFECT_TYPES.PUBLIC_REFILL||refill.kind!=="effect"
+      ||refill.ownerId!==head.ownerId||refill.allowQuickActions||Object.keys(refill.payload).length)return null;
+    return previewPlainPinkTrace(session,selected,knownCards)?.state||null;
   }
 
   function previewQuietAmibaYellowLanding(session, selected, knownCards) {
@@ -2571,6 +2606,8 @@
     queryCardSettlement: findCardSettlement,
     previewQuietEndHandoffs,
     previewLastPlainPinkTrace,
+    previewPinkTraceFossilMenu,
+    previewPinkTraceBeforeRefill,
     previewQuietAmibaYellowLanding,
     previewEmptyAmibaResearchTrigger,
     previewQuietResourceCorner,

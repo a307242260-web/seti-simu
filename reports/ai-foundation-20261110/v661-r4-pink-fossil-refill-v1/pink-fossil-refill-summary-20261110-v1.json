@@ -1,0 +1,74 @@
+{
+  "source": "4b711a29275ba70a14a0ddc533bd46e4cfd9166c",
+  "scope": "fourth-round-pink-before-chong-pickup-or-public-refill",
+  "nativeParity": {
+    "fossil": {
+      "native": 1660,
+      "exact": 240,
+      "count": {
+        "extra": 126,
+        "chong:1": 57,
+        "chong:2": 57
+      }
+    },
+    "refill": {
+      "native": 1660,
+      "exact": 108,
+      "count": {
+        "extra": 56,
+        "chong:1": 26,
+        "chong:2": 26
+      }
+    }
+  },
+  "roots": [
+    {
+      "name": "satellite",
+      "before": {
+        "inputs": 2008,
+        "milliseconds": 2894.786208
+      },
+      "after": {
+        "inputs": 1660,
+        "milliseconds": 2824.259
+      },
+      "rootsExact": 32,
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5
+    },
+    {
+      "name": "teacher272",
+      "before": {
+        "inputs": 214,
+        "milliseconds": 1139.8252089999999
+      },
+      "after": {
+        "inputs": 198,
+        "milliseconds": 1125.11175
+      },
+      "rootsExact": 33,
+      "selected": "place_data:8fd12fd3",
+      "value": 216.5
+    },
+    {
+      "name": "official",
+      "before": {
+        "inputs": 165,
+        "milliseconds": 640.986209
+      },
+      "after": {
+        "inputs": 165,
+        "milliseconds": 640.2964579999999
+      },
+      "rootsExact": 22,
+      "selected": "industry:e887dc52",
+      "value": 205.5
+    }
+  ],
+  "admission": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "passed": false
+  },
+  "wholeGameRerun": false
+}

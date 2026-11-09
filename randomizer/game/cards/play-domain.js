@@ -1921,22 +1921,7 @@
         return options.branches.map(branch => makeChoice("choose_target", branch.id, {}, {}, branch.label || branch.id));
       }
       if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL) {
-        // 虫族拾取化石：列出上一步登陆/环绕落点（木星/土星）的可拾取化石
-        const resolved = aliens.chong.resolvePlayEffect(
-          aliens.chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL,
-          root,
-          effect,
-          actor,
-          { aliens: getWorkingSlice(root, "aliens") },
-        );
-        if (!resolved.ok || resolved.skipped || !resolved.awaitingFossilPick) return [];
-        return resolved.fossils.map((fossil) => makeChoice(
-          "choose_target",
-          `chong-fossil:${fossil.fossilId}`,
-          { fossilId: fossil.fossilId, planetId: resolved.planetId },
-          {},
-          fossil.label,
-        ));
+        return aliens.chong.listPickupChoices(root, effect, actor);
       }
       if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
         // 生态系统研究：列出当前探测器所在星球（木星/土星）的可查看化石

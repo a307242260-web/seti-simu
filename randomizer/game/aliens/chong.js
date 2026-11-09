@@ -176,6 +176,17 @@
     return { ok: true };
   }
 
+  function listPickupChoices(root, effect, player) {
+    const resolved = resolvePlayEffect(EFFECT_TYPES.CHONG_PICKUP_FOSSIL, root, effect, player);
+    if (!resolved.ok || resolved.skipped || !resolved.awaitingFossilPick) return [];
+    return resolved.fossils.map(fossil => ({
+      family: "choose_target",
+      target: { choiceId: `chong-fossil:${fossil.fossilId}`, fossilId: fossil.fossilId, planetId: resolved.planetId },
+      payload: {},
+      summary: fossil.label,
+    }));
+  }
+
   function formatFossilRewardLabel(fossilId) {
     const reward = getFossilReward(fossilId) || {};
     const parts = [];
@@ -1042,6 +1053,7 @@
     drawDisplayedCardIndex,
     getCardDefinition,
     resolvePlayEffect,
+    listPickupChoices,
     applyFossilRewardOnly,
     pickupPlanetFossil,
     isChongCard,

@@ -159,3 +159,29 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
   assert.equal(port.getDiagnostics().provedLastPlainPinkInputs,2);
  }finally{nativePort.close();port.close();c.dispose();}
 }
+
+// A real hidden fossil or public refill remains a boundary after the exact
+// trace settlement. Search cannot act on the newly exposed identities.
+{
+ const witnesses=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'pink-fossil-refill-20261110-v1.fixture.json.gz'))));
+ for(const [index,{envelope,actionId}] of witnesses.entries()){
+  const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+    projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+  k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+  const initial=c.lifecycle.save().envelope;
+  const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),native=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{
+   const root=port.openRoot(),nativeRoot=native.openRoot();port.setResourcePlanning(true);
+   const actual=port.expand(root,actionId),control=native.expand(nativeRoot,actionId);
+   const boundary=index===0?'hidden_chong_fossil_offer':'hidden_card_reveal';
+   assert.equal(actual.status,'information-barrier');
+   assert.equal(actual.boundary,boundary);
+   assert.deepEqual(actual.legalActions,[]);
+   assert.deepEqual(actual.observation,control.observation);
+   assert.deepEqual(actual.boundary,control.boundary);
+   assert.deepEqual(c.lifecycle.save().envelope,initial);
+   assert.equal(port.getDiagnostics()[index===0?'provedPinkFossilMenus':'provedPinkRefills'],1);
+  }finally{native.close();port.close();c.dispose();}
+ }
+}

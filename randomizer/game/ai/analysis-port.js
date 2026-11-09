@@ -464,7 +464,7 @@
     let provedChongQueuedTasks=0;
     let provedAmibaYellowLandingInputs=0;
     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
-    let provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
+    let provedPinkRefills=0,provedPinkFossilMenus=0,provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
     const scan4RefillCache=new Map();
     let scan4RefillHits=0;
@@ -656,7 +656,7 @@
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
-      provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+      provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
@@ -1345,7 +1345,7 @@
       if(!result.ok||result.events.length!==1||result.events[0].type!=="researchTech"
         ||JSON.stringify(next.meta.rngState)!==JSON.stringify(state.meta.rngState)
         ||localPlans.hasPendingFossilArrival(next))return null;
-      const augmented=localPlans.augmentResearchSelection(next,result,head);
+      const augmented=localPlans.augmentEffectResult(next,result,head);
       if(augmented.events.length!==1||augmented.spawnedEffects.length>3||augmented.spawnedEffects.some(x=>
         (x.priority??"direct")!=="direct"||x.effect?.ownerId!==seatId||x.effect.kind!=="decision"
         ||x.effect.allowQuickActions||![scienceSession.EFFECT_TYPES.PICK_CARD,"residual_card_decision"].includes(x.effect.type)))return null;
@@ -1390,6 +1390,42 @@
       committedReferences.set(envelope,captured);
       lazyCommittedEnvelopes++;
       return envelope;
+    }
+
+    function preparePinkTraceFossilMenu(stored,action,preview){
+      const checkpoint=stored.envelope.session,s=checkpoint.session,[head,pickup]=s.queue,j=s.journal;
+      const nextEffectSequence=s.nextEffectSequence+1,nextGroupSequence=s.nextGroupSequence+1,revision=s.revision+2;
+      const pending={...pickup,type:"card_play_domain_effect:decision:chong_pickup_fossil",
+        effectId:s.sessionId+":effect:"+nextEffectSequence,groupId:s.sessionId+":group:"+nextGroupSequence,
+        kind:"decision",decisionKind:"choose_target",groupKind:"spawned",groupIndex:0,
+        source:{parentEffectId:pickup.effectId,priority:"direct"}};
+      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const row=(e,rev)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:rev});
+      const cursor=j.replay.length;
+      const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:preview.state,queue:[pending],
+        nextEffectSequence,nextGroupSequence,revision,journal:{...j,decisions:[...j.decisions,decision],
+          events:[...j.events,...preview.events],history:[...j.history,preview.history],
+          effects:[...j.effects,row(head,revision-1),row(pickup,revision)],
+          replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),
+        inspection:{phase:"awaiting_input",session:{irreversibleBarrier:s.irreversibleBarrier,decision:{choices:preview.choices}}}};
+    }
+
+    function preparePinkTraceRefill(stored,session,state){
+      const missing=state.cards.publicCards.filter(c=>!c).length;
+      if(missing!==1)return null;
+      const refill=session.queue[1];
+      state.cards={...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]};
+      // The cached native refill declines reshuffles. The card drawn into the
+      // public row remains masked; only root-known post-main plans may continue.
+      if(!refillQuietScan4(state,missing))return null;
+      const event={type:"publicRefill",count:missing};
+      const augmented=localPlans.augmentEffectResult(state,{ok:true,events:[event]},refill);
+      if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+      state.meta.stateVersion=session.baseVersion+1;
+      const envelope=provedCommittedEnvelope(stored,state);
+      return {envelope,inspection:{phase:"idle",session:null},
+        barrier:{effectId:refill.effectId,revision:session.revision+2,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
     }
 
     function finishProvedCommittedState(node, stored, action, state) {
@@ -1451,12 +1487,30 @@
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const taskSession=stored.envelope.session?.session;
-      const plainPink=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession
-        &&requested.family==="choose_target"&&requested.target?.traceType==="pink"
-        ?localPlans.previewLastPlainPinkTrace(taskSession,requested,knownCards(stored.envelope)):null;
+      const pinkTraceCards=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession
+        &&requested.family==="choose_target"&&requested.target?.traceType==="pink"&&knownCards(stored.envelope);
+      const plainPink=pinkTraceCards?localPlans.previewLastPlainPinkTrace(taskSession,requested,pinkTraceCards):null;
       if(plainPink){
         const child=finishProvedCommittedState(node,stored,requested,plainPink);
         provedLastPlainPinkInputs++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const pinkFossil=pinkTraceCards?localPlans.previewPinkTraceFossilMenu(taskSession,requested,pinkTraceCards):null;
+      if(pinkFossil){
+        const prepared=preparePinkTraceFossilMenu(stored,requested,pinkFossil);
+        const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},{},
+          movementPlanning?nextMovementIntent(node,requested):null,null,stored.informationBarrier,requested,stored,prepared);
+        provedPinkFossilMenus++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const pinkBeforeRefill=pinkTraceCards?localPlans.previewPinkTraceBeforeRefill(taskSession,requested,pinkTraceCards):null;
+      const pinkRefill=pinkBeforeRefill&&preparePinkTraceRefill(stored,taskSession,pinkBeforeRefill);
+      if(pinkRefill){
+        restoreEnvelope(pinkRefill.envelope,true);
+        const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
+          {irreversibleBarrier:pinkRefill.barrier},movementPlanning?nextMovementIntent(node,requested):null,
+          null,stored.informationBarrier,requested,stored,pinkRefill);
+        provedPinkRefills++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const queuedPreview=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
@@ -7876,7 +7930,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedLastPlainPinkInputs, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
