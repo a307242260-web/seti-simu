@@ -1,0 +1,97 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -821,7 +821,28 @@
+     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
+
+     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
+-    const chongTaskPeekBoundaries = new WeakMap();
++    const chongTaskPeekBoundaries = new WeakMap(), chongDirectClaims = new Map();
++    function chongClaimKey(stored, cardId) {
++      // Queue identity still governs executable nodes. This key is only for
++      // the closed value after the shared task settlement and before a peek.
++      const state = readIdentityState(stored.envelope);
++      const physical = forwardIdentity({committedState: stored.envelope.committedState},
++        "chong-claim-value", null, state, normalizedIdentityStates, identitySubtrees);
++      return JSON.stringify([cardId, stored.informationBarrier?.code || null, cardKnowledgeKey(stored.envelope), physical]);
++    }
++
++    function pairedChongClaimBoundary(node, actionId) {
++      const stored = nodes.get(node), session = stored?.envelope.session?.session, head = session?.queue?.[0];
++      if (!fork || !chongDirectClaims.size || node.status !== "decision" || stored.intent || stored.resourceControl
++        || head?.type !== "residual_card_decision" || head.ownerId !== seatId || head.allowQuickActions || session.interruptContext
++        || session.journal?.actions?.[0]?.action?.family !== "end_turn") return null;
++      const task = head.payload;
++      if (task?.kind !== "chong_task" || task.ruleId !== "trace" || task.chooseFossilRewardOnly !== true) return null;
++      if (!node.legalActions.some(a => a.actionId === actionId && a.actorId === seatId && a.family === "accept_optional_effect"
++        && a.target.choiceId === `confirm:chong_task:${task.cardInstanceId}:trace`)) return null;
++      return chongDirectClaims.get(chongClaimKey(stored, task.cardInstanceId)) || null;
++    }
++
+     function chongTaskPeekBoundary(node, actionId) {
+       const stored = nodes.get(node), session = stored?.envelope.session?.session;
+       const head = session?.queue?.[0];
+@@ -2221,6 +2242,17 @@
+       const child = createNode(envelope, observation,
+         ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
+         newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
++      if (resourcePlanning && status === "decision" && source && !source.envelope.session && !source.intent && !source.resourceControl
++        && sourceAction?.family === "complete_task" && sourceAction.target?.ruleId === "trace"
++        && head?.type === "residual_chong_task_fossil" && child.legalActions.length) {
++        const leaves = child.legalActions.map(a => chongTaskPeekBoundary(child, a.actionId));
++        if (leaves.every(leaf => leaf && leaf === leaves[0])) {
++          const key = chongClaimKey(source, sourceAction.target.cardInstanceId);
++          if (!chongDirectClaims.has(key) && chongDirectClaims.size >= 64)
++            chongDirectClaims.delete(chongDirectClaims.keys().next().value);
++          chongDirectClaims.set(key, leaves[0]);
++        }
++      }
+       if(status==="stable"&&!newBarrier&&!turnChanged&&sourceAction?.family==="choose_target"
+         &&source?.envelope.session?.session?.journal?.actions?.[0]?.action?.family==="analyze")resolvedPublicAnalysis.add(child);
+       return child;
+@@ -5059,6 +5091,7 @@
+       envelopeCardSpecs = new WeakMap();
+       envelopeCompanyIntents = new WeakMap();
+       openedRoot = null;
++      chongDirectClaims.clear();
+       identities.clear();physicalIdentityKeys.clear();
+       resourceOrders = new WeakMap();
+       knownMoneyOrders = new WeakMap();
+@@ -6316,7 +6349,7 @@
+
+     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
++      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+
+   return Object.freeze({ createAnalysisPort });
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -660,16 +660,19 @@
+             }
+           }
+         }
+-        const fossilPeek = resourcePlanning && realizationTies && !alternative.resourcePlan && !alternative.goalPlan
+-          ? port.chongTaskPeekBoundary?.(entry.node, alternative.firstActionId) : null;
+-        if (fossilPeek) {
+-          if (nodes.length + certificateNodes >= limits.nodes) { stopReason = "node-budget"; break outer; }
++        const mayCloseFossil = resourcePlanning && realizationTies && !alternative.resourcePlan && !alternative.goalPlan;
++        const pairedClaim = mayCloseFossil ? port.pairedChongClaimBoundary?.(entry.node, alternative.firstActionId) : null;
++        const fossilBoundary = pairedClaim || (mayCloseFossil ? port.chongTaskPeekBoundary?.(entry.node, alternative.firstActionId) : null);
++        if (fossilBoundary) {
+           if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break outer; }
+-          const added = add(fossilPeek);
++          if (nodes.length + certificateNodes >= limits.nodes && !known.has(port.identity(fossilBoundary))) {
++            stopReason = "node-budget"; break outer;
++          }
++          const added = add(fossilBoundary), proved = pairedClaim ? 2 : 1;
+           if (added.equivalent) equivalents += 1;
+-          entry.edges.push({actionId: alternative.firstActionId, target: added.index, cost: 1,
+-            equivalent: added.equivalent, actualNativeInputs: 0, provedNativeInputs: 1,
+-            proof: "seti-unseen-chong-task-peek-boundary-v1"});
++          entry.edges.push({actionId: alternative.firstActionId, target: added.index, cost: proved,
++            equivalent: added.equivalent, actualNativeInputs: 0, provedNativeInputs: proved,
++            proof: pairedClaim ? "seti-shared-chong-trace-claim-value-v1" : "seti-unseen-chong-task-peek-boundary-v1"});
+           continue;
+         }
+         if (!alternative.resourcePlan && !alternative.goalPlan && transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";

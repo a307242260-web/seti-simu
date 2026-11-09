@@ -1,0 +1,64 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -821,6 +821,31 @@
+     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
+
+     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
++    const chongTaskPeekBoundaries = new WeakMap();
++    function chongTaskPeekBoundary(node, actionId) {
++      const stored = nodes.get(node), session = stored?.envelope.session?.session;
++      const head = session?.queue?.[0];
++      if (!fork || node.status !== "decision" || stored.intent || stored.resourceControl
++        || stored.informationBarrier && !["tech_bonus_reveal", "hidden_card_reveal"].includes(stored.informationBarrier.code)
++        || head?.type !== "residual_chong_task_fossil" || head.ownerId !== seatId || head.payload?.planetId
++        || head.allowQuickActions || session.interruptContext) return null;
++      const action = node.legalActions.find(a => a.actionId === actionId);
++      const planetId = action?.target?.planetId;
++      if (action?.family !== "choose_target" || action.actorId !== seatId
++        || !["jupiter", "saturn"].includes(planetId) || action.target.choiceId !== `chong-task-planet:${planetId}`) return null;
++      const state = readIdentityState(stored.envelope);
++      const fossils = chong.getAvailablePlanetFossils(state.aliens, planetId);
++      if (!fossils.length || fossils.some(f => f.visibleToPlayerIds?.includes(seatId))) return null;
++      let boundary = chongTaskPeekBoundaries.get(node);
++      if (!boundary) {
++        // Selecting an unseen planet writes private knowledge only. The
++        // public ledger is the existing checkpoint; this leaf cannot expand.
++        boundary = createNode(stored.envelope, null, [], "information-barrier", { code: "hidden_chong_task_fossils" });
++        chongTaskPeekBoundaries.set(node, boundary);
++      }
++      return boundary;
++    }
++
+     function quietScanTracePlan(node,stored,state){
+       const session=stored.envelope.session?.session,head=session?.queue?.[0];
+       if(!scanPlanning||!movementPlanning||!cardPickPlanning||stored.intent?.path.length||stored.informationBarrier
+@@ -6291,7 +6316,7 @@
+
+     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
++      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+
+   return Object.freeze({ createAnalysisPort });
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -660,6 +660,18 @@
+             }
+           }
+         }
++        const fossilPeek = resourcePlanning && realizationTies && !alternative.resourcePlan && !alternative.goalPlan
++          ? port.chongTaskPeekBoundary?.(entry.node, alternative.firstActionId) : null;
++        if (fossilPeek) {
++          if (nodes.length + certificateNodes >= limits.nodes) { stopReason = "node-budget"; break outer; }
++          if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break outer; }
++          const added = add(fossilPeek);
++          if (added.equivalent) equivalents += 1;
++          entry.edges.push({actionId: alternative.firstActionId, target: added.index, cost: 1,
++            equivalent: added.equivalent, actualNativeInputs: 0, provedNativeInputs: 1,
++            proof: "seti-unseen-chong-task-peek-boundary-v1"});
++          continue;
++        }
+         if (!alternative.resourcePlan && !alternative.goalPlan && transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
+         else if (!alternative.resourcePlan && !alternative.goalPlan && nodes.length+certificateNodes >= limits.nodes) stopReason = "node-budget";
+         else if (!alternative.resourcePlan && !alternative.goalPlan && pendingFrontier > limits.frontier) stopReason = "frontier-budget";
