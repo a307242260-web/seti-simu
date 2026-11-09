@@ -1,0 +1,114 @@
+{
+  "productionAdmitted": false,
+  "gameRerun": false,
+  "threshold": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "roots": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "oldNative": 6,
+      "native": 6,
+      "ms": 77.792708,
+      "unchangedRoots": true
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "oldNative": 10,
+      "native": 10,
+      "ms": 63.24366599999996,
+      "unchangedRoots": true
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "oldNative": 2,
+      "native": 2,
+      "ms": 32.75691699999999,
+      "unchangedRoots": true
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "oldNative": 699,
+      "native": 561,
+      "ms": 1220.214584,
+      "unchangedRoots": true,
+      "compoundNativeProofs": 24,
+      "withScoredCorner": 11,
+      "replayedNativeInputs": 177,
+      "nativeInputGroups": {
+        "launch": 2,
+        "analyze": 2,
+        "play_card": 8,
+        "pass": 2,
+        "complete_task": 103,
+        "quick_trade": 7,
+        "choose_payment": 15,
+        "move": 6,
+        "land": 2,
+        "choose_target": 121,
+        "card_corner": 10,
+        "research_tech": 2,
+        "choose_card": 58,
+        "scan": 2,
+        "accept_optional_effect:confirm:trigger": 12,
+        "accept_optional_effect:skip:researchTech": 12,
+        "place_data": 52,
+        "choose_target:blueBonus": 40,
+        "end_turn": 24,
+        "accept_optional_effect:confirm:chong_task": 33,
+        "accept_optional_effect:skip:chong_task": 33,
+        "choose_target:computer": 12,
+        "choose_card:income": 3
+      },
+      "endConfirmByCause": {
+        "traceTaskReady": 32,
+        "pass": 1
+      }
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "oldNative": 860,
+      "native": 735,
+      "ms": 1393.064209,
+      "unchangedRoots": true,
+      "compoundNativeProofs": 30,
+      "withScoredCorner": 7,
+      "replayedNativeInputs": 155,
+      "nativeInputGroups": {
+        "launch": 2,
+        "play_card": 8,
+        "pass": 2,
+        "complete_task": 107,
+        "place_data": 122,
+        "choose_target:computer": 72,
+        "analyze": 2,
+        "quick_trade": 7,
+        "choose_payment": 15,
+        "move": 6,
+        "land": 2,
+        "choose_target": 121,
+        "card_corner": 18,
+        "research_tech": 2,
+        "choose_card": 60,
+        "scan": 2,
+        "choose_card:income": 11,
+        "choose_target:blueBonus": 50,
+        "accept_optional_effect:confirm:trigger": 12,
+        "accept_optional_effect:skip:researchTech": 12,
+        "end_turn": 28,
+        "accept_optional_effect:confirm:chong_task": 37,
+        "accept_optional_effect:skip:chong_task": 37
+      },
+      "endConfirmByCause": {
+        "traceTaskReady": 36,
+        "pass": 1
+      }
+    }
+  ]
+}
