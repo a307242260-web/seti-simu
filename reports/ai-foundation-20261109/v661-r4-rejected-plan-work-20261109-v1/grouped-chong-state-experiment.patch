@@ -1,0 +1,95 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -337,8 +337,8 @@
+     const identitySubtrees={values:new WeakMap(),hits:0,stores:0};
+     const identities = new Map(), physicalIdentityBuckets = new Map();
+     let nextPhysicalIdentity=0, identityBucketCollisions=0;
+-    function physicalBucket(envelope,status,boundary){
+-      const state=readIdentityState(envelope),session=envelope.session?.session,turn=state.turn;
++    function physicalBucket(envelope,status,boundary,stateOnly=null){
++      const state=stateOnly||readIdentityState(envelope),session=envelope.session?.session,turn=state.turn;
+       // Only raw scalar fields that survive forwardIdentity are allowed.
+       // A bucket hit is never accepted as equality; the full key decides it.
+       return JSON.stringify([status,boundary,turn.roundNumber,turn.turnNumber,turn.currentPlayerId,
+@@ -349,8 +349,8 @@
+         state.pieces.rockets.map(r=>[r.id,r.sectorX,r.sectorY,r.surface]),
+         state.cards.publicCards.map(c=>c?.id),session?.queue.map(e=>[e.type,e.kind,e.ownerId])]);
+     }
+-    function physicalCollisionKey(envelope){
+-      const state=readIdentityState(envelope);
++    function physicalCollisionKey(envelope,stateOnly=null){
++      const state=stateOnly||readIdentityState(envelope);
+       return JSON.stringify([
+         [1,2].map(id=>["blue","pink","yellow"].map(color=>{
+           const t=state.aliens.aliens[id]?.traces?.[color];
+@@ -360,10 +360,10 @@
+         data.NEBULA_IDS.map(id=>state.data.nebulae[id]?.tokens.map(t=>[t.replacementOrder,t.replacedByPlayerId])),
+       ]);
+     }
+-    function internPhysicalIdentity(stored,envelope,status,boundary){
+-      const key=physicalBucket(envelope,status,boundary);
+-      let bucket=physicalIdentityBuckets.get(key);
+-      if(!bucket){bucket=[];physicalIdentityBuckets.set(key,bucket);}
++    function internPhysicalIdentity(stored,envelope,status,boundary,stateOnly=null,buckets=physicalIdentityBuckets){
++      const key=physicalBucket(envelope,status,boundary,stateOnly);
++      let bucket=buckets.get(key);
++      if(!bucket){bucket=[];buckets.set(key,bucket);}
+       else{
+         identityBucketCollisions++;
+         const collision=stored.collisionKey;
+@@ -1609,14 +1609,29 @@
+     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
+
+     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
+-    const chongTaskPeekBoundaries = new WeakMap(), chongDirectClaims = new Map();
+-    function chongClaimKey(stored, cardId) {
+-      // Queue identity still governs executable nodes. This key is only for
+-      // the closed value after the shared task settlement and before a peek.
+-      const state = readIdentityState(stored.envelope);
+-      const physical = forwardIdentity({},
+-        "chong-claim-value", null, state, normalizedIdentityStates, identitySubtrees);
+-      return JSON.stringify([cardId, stored.informationBarrier?.code || null, cardKnowledgeKey(stored.envelope), physical]);
++    const chongTaskPeekBoundaries=new WeakMap(),chongDirectClaims=new Map(),chongClaimBuckets=new Map();
++    let chongClaimRefs=new WeakMap(),chongClaimKeyMaterializations=0;
++    const noSession=Object.freeze({});
++    function chongClaimKey(stored,cardId){
++      // This compares the ledger before claiming, not the executable
++      // end-turn queue. Grouping never substitutes for the original key.
++      const state=readIdentityState(stored.envelope),status="chong-claim-value";
++      let physical=chongClaimRefs.get(state);
++      if(physical===undefined){
++        let exact,collision;
++        physical=internPhysicalIdentity({
++          get collisionKey(){return collision??=physicalCollisionKey(noSession,state);},
++          get physicalKey(){
++            if(exact===undefined){
++              exact=forwardIdentity(noSession,status,null,state,normalizedIdentityStates,identitySubtrees);
++              chongClaimKeyMaterializations++;
++            }
++            return exact;
++          },
++        },noSession,status,null,state,chongClaimBuckets);
++        chongClaimRefs.set(state,physical);
++      }
++      return JSON.stringify([cardId,stored.informationBarrier?.code||null,cardKnowledgeKey(stored.envelope),physical]);
+     }
+
+     function pairedChongClaimBoundary(node, actionId) {
+@@ -5881,7 +5896,7 @@
+       envelopeCardSpecs = new WeakMap();
+       envelopeCompanyIntents = new WeakMap();
+       openedRoot = null;
+-      chongDirectClaims.clear();
++      chongDirectClaims.clear();chongClaimBuckets.clear();chongClaimRefs=new WeakMap();chongClaimKeyMaterializations=0;
+       quietDataMenuTemplate = null;
+       blueTwoPickTemplate = null;
+       identities.clear();physicalIdentityBuckets.clear();nextPhysicalIdentity=0;identityBucketCollisions=0;
+@@ -7117,7 +7132,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, chongClaimKeyMaterializations, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

@@ -1,0 +1,149 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1331,7 +1331,7 @@
+       }
+       const moveSource=node.status==="stable"&&quietPaidMoveSource(stored,requested);
+       const moveEvent={type:"move_payment_requested",playerId:seatId,rocketId:requested.target?.rocketId};
+-      const quietMoveMenu=moveSource&&!cardEffects.collectMatchingTriggers(structuredClone(moveSource.player),moveEvent).length;
++      const quietMoveMenu=moveSource&&!cardEffects.hasMatchingTrigger(moveSource.player,moveEvent);
+       const moveMenu=quietMoveMenu&&makeMoveMenu(stored,requested,moveSource.state);
+       if(moveMenu){
+         const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,moveMenu);
+@@ -4068,16 +4068,14 @@
+       if(goal.id!=="data:blue:3"||data.getBlueBonusPlacementReward(owner,3)?.type!=="choose_card"
+         ||owner.hand.some(c=>{const reward=cards.getDiscardActionRewardForCard(c);
+           return reward?.dataCount===1&&reward.gain?.score===1;})
+-        ||cardEffects.collectMatchingTriggers(structuredClone(owner),
+-          {type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:3}).length)return null;
++        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:3}))return null;
+       const placed=data.listComputerPlacedTokens(owner).length;
+       if(placed>=5){
+         const pick=quietBluePublicPick({state,owner,node,stored,plan,transition,finalRoundQuiet:true,blue3:true});
+         return pick&&{...pick,blue3PublicProof:true};
+       }
+       if(placed!==4||owner.resources.availableData<2||!quietTailHasNoAcquisition(state)
+-        ||cardEffects.collectMatchingTriggers(structuredClone(owner),
+-          {type:"placeData",playerId:seatId,placementKind:"computer",placementSlot:5}).length)return null;
++        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"computer",placementSlot:5}))return null;
+       const p={...owner,resources:{...owner.resources},dataState:structuredClone(owner.dataState),hand:[...owner.hand]};
+       const fill=data.placeDataToComputer(p);
+       if(!fill.ok||fill.placementSlot!==5||fill.slotBonuses.length)return null;
+@@ -4511,7 +4509,7 @@
+       if(stored.intent||stored.resourceControl||transition.nextPlayerId!==seatId
+         ||plan?.goal.id!=="data:blue:3"||data.getBlueBonusPlacementReward(owner,3)?.type!=="publicity"
+         ||owner.resources.availableData<4||!quietTailHasNoAcquisition(state))return null;
+-      const observed=e=>cardEffects.collectMatchingTriggers(structuredClone(owner),{type:"placeData",playerId:seatId,...e}).length;
++      const observed=e=>cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,...e});
+       if(observed({placementKind:"blueBonus",blueSlot:3}))return null;
+       const prep=localPlans.previewBlueCompletion({state,seatId,goal:plan.goal});
+       if(!prep.available||prep.incomeCardId||prep.dataCornerIds.length||prep.computerPlacements>1||prep.immediateScoreGain
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1153,7 +1153,14 @@
+  }
+  function previewKnownCargoClaim({state,seatId,cargo}){
+   const {card,rule,ruleId,reward,job}=cargo;
+-  const p=owner(state,seatId),claim=structuredClone(state),r=owner(claim,seatId);
++  // The audited delivery only changes the task owner, the data sequence,
++  // cards, the fossil panel and its transport piece. Frozen board geometry
++  // and other players can be shared by subsequent read-only quotes.
++  const p=owner(state,seatId);
++  const claim=Object.isFrozen(state)?{...state,...structuredClone({
++    meta:state.meta,pieces:state.pieces,aliens:state.aliens,cards:state.cards
++  }),players:{...state.players,players:state.players.players.map(q=>q===p?structuredClone(q):q)}}:structuredClone(state);
++  const r=owner(claim,seatId);
+   const settlement=residual.queryCardSettlement(claim,seatId,{kind:'chong_task',cardInstanceId:card.id,ruleId});
+   if(settlement?.fossilId!==job.fossilId)return null;
+   const applied=residual.settleReadyTaskDirect(claim,seatId,card.id,ruleId);
+@@ -1479,7 +1486,7 @@
+     ||p.resources[currency]+gain[currency]>(players.RESOURCE_LIMITS[currency]??Infinity))return null;
+   const event={type:eventType,playerId:seatId,cardInstanceId:card.id,ruleId:task.id,
+     ...(eventType==='card_rule_settled'?{ruleKind:'task'}:{})};
+-  return effects.collectMatchingTriggers(structuredClone(p),event).length?null:{card,task,gain,event};
++  return effects.hasMatchingTrigger(p,event)?null:{card,task,gain,event};
+  }
+  function fixedFinalForeignEndTask({state,seatId,actions,session,payload,knownCards}){
+   const advance=session.queue[1];
+@@ -1579,7 +1586,7 @@
+   if(task.ruleId!=='transport'||session.queue.length!==3||!ordinaryAdvance(advance)
+     ||next.type!=='residual_card_decision'||next.ownerId!==seatId||next.allowQuickActions
+     ||next.payload?.kind!=='chong_task'||next.payload.ruleId!=='trace')return null;
+-  if(!confirm)return effects.collectMatchingTriggers(structuredClone(p),event).length?null:{working:state,event};
++  if(!confirm)return effects.hasMatchingTrigger(p,event)?null:{working:state,event};
+   const cargo=knownDeliveredCargo({state,seatId,knownCards,knownFossilIds});
+   if(cargo?.card.id!==task.cardInstanceId||cargo.ruleId!==task.ruleId||cargo.job.fossilId!==task.fossilId)return null;
+   const result=previewKnownCargoClaim({state,seatId,cargo});
+@@ -1597,8 +1604,8 @@
+     ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||t.passedPlayerIds.includes(seatId)
+     ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))||!p.mainActionCompleted
+     ||p.passCompletionPending||p.reservedCards.some(c=>!knownCards.has(c.id))
+-    ||effects.collectMatchingTriggers(structuredClone(p),{type:'card_rule_settled',playerId:seatId,
+-      cardInstanceId:payload.cardInstanceId,ruleId:payload.ruleId,ruleKind:payload.kind}).length)return null;
++    ||effects.hasMatchingTrigger(p,{type:'card_rule_settled',playerId:seatId,
++      cardInstanceId:payload.cardInstanceId,ruleId:payload.ruleId,ruleKind:payload.kind}))return null;
+   return previewForeignTurnAfterQuietHandoffs(state,seatId,session.baseVersion+1,true);
+  }
+  function previewForeignTurnAfterQuietHandoffs(state,seatId,version,allowSameSeat=false){
+@@ -1926,8 +1933,16 @@
+       end:{netGain:0,requiredNativeInputs:1},blue:{netGain:gain,unrealizedPurposeDelta:purposeDelta,requiredNativeInputs:4}}};
+  }
+  function quietEndCompletion({state,seatId}){
+-  const p=owner(state,seatId),minimum=Math.min(...state.finalScoring.thresholds);
+-  if(Number.isSafeInteger(minimum)&&minimum>p.resources.score)return{available:true,netGain:0,purposeDelta:0,requiredNativeInputs:1,markedTiles:[]};
++  const p=owner(state,seatId),board=state.finalScoring,minimum=Math.min(...board.thresholds);
++  const reached=board.thresholds.filter(n=>Number.isSafeInteger(n)&&n<=p.resources.score);
++  // A normal quiet end with no pending mark cannot change the board or its
++  // purpose value. Use the original normalization path for nonstandard data.
++  const tiles=Object.values(board.tiles||{});
++  const alreadyClaimed=p.id&&Number.isSafeInteger(p.resources.score)&&board.thresholds.every(Number.isSafeInteger)
++    &&tiles.length&&tiles.every(t=>Array.isArray(t?.marks))
++    &&reached.every(n=>tiles.some(t=>t.marks.some(m=>m.playerId===p.id&&Number(m.threshold)===n)));
++  if(Number.isSafeInteger(minimum)&&minimum>p.resources.score||alreadyClaimed)
++   return{available:true,netGain:0,purposeDelta:0,requiredNativeInputs:1,markedTiles:[]};
+   const preview={...state,meta:structuredClone(state.meta),finalScoring:structuredClone(state.finalScoring)};
+   const total=s=>endScoring.computePlayerFinalScore({...s,players:s.players.players,cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)},p).totalScore;
+   const before=total(preview),markedTiles=[];
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -253,6 +253,9 @@
+     return capital.dataPotential>0?capital.dataPlan:null;
+   }
+   function incomeSwapPlan(state,p,committed=false){
++    // The public income bridge stops in R4; the older typed fallback stops
++    // when an alien is revealed. A spent company mark cannot change either.
++    if(state.turn.roundNumber>=4&&Object.values(state.aliens?.aliens||{}).some(slot=>slot.revealed))return null;
+     const exact=!committed&&planningCapitalQuotes.get(state)?.get(p);
+     let facts=valueFacts(state,p);
+     // In a native pending swap the mark is already spent by this very flow.
+--- a/randomizer/game/cards/effects.js
++++ b/randomizer/game/cards/effects.js
+@@ -3938,6 +3938,21 @@
+     return true;
+   }
+
++  // Analysis only needs to know if an effect can open a new decision.
++  // Match against the same normalized consumption state without initializing
++  // a card or copying the whole player and effect payloads.
++  function hasMatchingTrigger(player, event) {
++    for (const card of player?.reservedCards || []) {
++      const model = getCardModel(card);
++      if (!model?.triggers?.length || event.sourceCardInstanceId != null && card.id === event.sourceCardInstanceId) continue;
++      const state = card.cardEffectState;
++      const consumed = state?.modelCardId === getCardId(card) && Array.isArray(state.consumedTriggerIds)
++        ? state.consumedTriggerIds : null;
++      if (model.triggers.some(trigger => !consumed?.includes(trigger.id) && eventMatchesTrigger(event, trigger))) return true;
++    }
++    return false;
++  }
++
+   function collectMatchingTriggers(player, event) {
+     const matches = [];
+     for (const card of player?.reservedCards || []) {
+@@ -4697,6 +4712,7 @@
+     consumeTrigger,
+     completeTask,
+     collectMatchingTriggers,
++    hasMatchingTrigger,
+     listPendingTriggerKeys,
+     collectReadyTasks,
+     collectTemporaryTaskRewards,
