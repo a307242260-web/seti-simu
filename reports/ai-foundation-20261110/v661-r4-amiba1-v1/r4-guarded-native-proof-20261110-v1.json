@@ -1,0 +1,31 @@
+{
+  "scenario": "human405-white-v661-r4-candidate-v1",
+  "sourcePrefix": 259,
+  "suffix": 69,
+  "rootAndRoundEndExact": true,
+  "terminalStateSessionRngExact": true,
+  "totalInputs": 328,
+  "whiteSearches": 63,
+  "maxNative": 197,
+  "maxMs": 546.96675,
+  "resumedWallMs": 3516,
+  "totalWallMs": 16544,
+  "roundEndScores": [
+    15,
+    48,
+    118,
+    151
+  ],
+  "whiteFinal": {
+    "total": 216,
+    "board": 151,
+    "tile": 59,
+    "card": 6
+  },
+  "recordPath": "reports/research/e871fddd.9f2cbc45.full.json",
+  "recordSha256": "3b4f8dabbfb20f5732ec43d1ce70ce6afbcb91997bb9af2d0db74539253b69cb",
+  "savePath": "seti-saves/seti-save-research-ai-search-v661-r4-candidate-20261110-9f2cbc45-full-v151.json",
+  "saveSha256": "8534b3dd748fd173944d4ee1e8abb603f6dd167477a7e5ddaea4f1c7ba7852e6",
+  "tracePath": "reports/research/e871fddd.9f2cbc45.full.json.decisions.jsonl",
+  "traceSha256": "a4be762fce52c533ce2edf27141345abb0599987a45019ab42cd9b60175600e8"
+}
