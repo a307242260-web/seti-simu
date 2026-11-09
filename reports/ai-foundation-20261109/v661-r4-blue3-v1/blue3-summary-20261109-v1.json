@@ -1,0 +1,395 @@
+{
+  "productionAdmitted": false,
+  "gameRerun": false,
+  "threshold": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "roots": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "oldNative": 6,
+      "native": 6,
+      "ms": 71.21704199999999,
+      "unchangedRoots": true
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "oldNative": 10,
+      "native": 10,
+      "ms": 67.822833,
+      "unchangedRoots": true
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "oldNative": 2,
+      "native": 2,
+      "ms": 32.34304199999997,
+      "unchangedRoots": true
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "oldNative": 513,
+      "native": 489,
+      "ms": 1126.1635,
+      "unchangedRoots": true,
+      "nativeProofs": 10,
+      "publicPickProofs": 4,
+      "cargoOrdering": [
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 257,
+              "unrealized": 6,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 265.5,
+              "unrealized": 7.5,
+              "pool": 5
+            }
+          }
+        },
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 265,
+              "unrealized": 6,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 273.5,
+              "unrealized": 7.5,
+              "pool": 5
+            }
+          }
+        },
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 250,
+              "unrealized": 0,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 263,
+              "unrealized": 6,
+              "pool": 5
+            }
+          }
+        },
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 258,
+              "unrealized": 0,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 271,
+              "unrealized": 6,
+              "pool": 5
+            }
+          }
+        },
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 253.5,
+              "unrealized": 0,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 266.5,
+              "unrealized": 6,
+              "pool": 5
+            }
+          }
+        },
+        {
+          "startPool": 4,
+          "earlyPool": 5,
+          "latePool": 5,
+          "options": {
+            "skip": {
+              "value": 261.5,
+              "unrealized": 0,
+              "pool": 3
+            },
+            "confirm": {
+              "value": 274.5,
+              "unrealized": 6,
+              "pool": 5
+            }
+          }
+        }
+      ],
+      "oldBlue3Profile": {
+        "blue 3|post|publicity|delivered|no-trace|no-observer": 6,
+        "blue 3|post|choose_card|delivered|no-trace|no-observer": 6,
+        "blue 3|post|choose_card|no-job|no-trace|no-observer": 10,
+        "blue 3|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|no-job|trace-ready|no-observer": 4,
+        "blue 3|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|no-job|trace-ready|no-observer": 4
+      },
+      "newDataProfile": {
+        "blue 3|post|choose_card|delivered|no-trace|no-observer": 6,
+        "blue 3|post|choose_card|no-job|no-trace|no-observer": 6,
+        "blue 3|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|no-job|trace-ready|no-observer": 4,
+        "blue 3|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|no-job|trace-ready|no-observer": 4,
+        "第一排放置位 1|post|none|delivered|no-trace|no-observer": 3
+      },
+      "remainingGroups": {
+        "launch|stable|—|—": 2,
+        "analyze|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 55,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 10,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|scan|—": 42,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "place_data|stable|—|—": 42,
+        "choose_target|science_domain_place_data|place_data|—": 42,
+        "choose_card|science_domain_pick_card|place_data|—": 18,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 24,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 64,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2,
+        "choose_card|science_domain_income|place_data|—": 3
+      }
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "oldNative": 687,
+      "native": 663,
+      "ms": 1313.160416,
+      "unchangedRoots": true,
+      "nativeProofs": 10,
+      "publicPickProofs": 4,
+      "cargoOrdering": [
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 259.5,
+              "unrealized": 6,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 267.5,
+              "unrealized": 7,
+              "pool": 6
+            }
+          }
+        },
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 267.5,
+              "unrealized": 6,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 275.5,
+              "unrealized": 7,
+              "pool": 6
+            }
+          }
+        },
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 252.5,
+              "unrealized": 0,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 265.5,
+              "unrealized": 6,
+              "pool": 6
+            }
+          }
+        },
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 260.5,
+              "unrealized": 0,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 273.5,
+              "unrealized": 6,
+              "pool": 6
+            }
+          }
+        },
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 256,
+              "unrealized": 0,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 269,
+              "unrealized": 6,
+              "pool": 6
+            }
+          }
+        },
+        {
+          "startPool": 5,
+          "earlyPool": 5,
+          "latePool": 6,
+          "options": {
+            "skip": {
+              "value": 264,
+              "unrealized": 0,
+              "pool": 4
+            },
+            "confirm": {
+              "value": 277,
+              "unrealized": 6,
+              "pool": 6
+            }
+          }
+        }
+      ],
+      "oldBlue3Profile": {
+        "第一排放置位 5|pre|none|delivered|no-trace|no-observer": 1,
+        "第一排放置位 5|post|publicity|delivered|no-trace|no-observer": 4,
+        "blue 3|post|publicity|delivered|no-trace|no-observer": 6,
+        "第一排放置位 5|post|choose_card|delivered|no-trace|no-observer": 4,
+        "blue 3|post|choose_card|delivered|no-trace|no-observer": 6,
+        "blue 3|post|choose_card|no-job|no-trace|no-observer": 12,
+        "第一排放置位 5|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|no-job|trace-ready|no-observer": 4,
+        "第一排放置位 5|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|no-job|trace-ready|no-observer": 4,
+        "第一排放置位 5|pre|none|no-job|no-trace|no-observer": 1,
+        "第一排放置位 5|post|publicity|no-job|no-trace|no-observer": 4,
+        "第一排放置位 5|post|choose_card|no-job|no-trace|no-observer": 4,
+        "第一排放置位 5|post|publicity|no-job|trace-ready|no-observer": 2,
+        "第一排放置位 5|post|choose_card|no-job|trace-ready|no-observer": 2
+      },
+      "newDataProfile": {
+        "第一排放置位 5|pre|none|delivered|no-trace|no-observer": 1,
+        "第一排放置位 1|post|none|delivered|no-trace|no-observer": 3,
+        "第一排放置位 5|post|publicity|delivered|no-trace|no-observer": 4,
+        "第一排放置位 5|post|choose_card|delivered|no-trace|no-observer": 4,
+        "blue 3|post|choose_card|delivered|no-trace|no-observer": 6,
+        "blue 3|post|choose_card|no-job|no-trace|no-observer": 8,
+        "第一排放置位 5|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|publicity|no-job|trace-ready|no-observer": 4,
+        "第一排放置位 5|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|delivered|trace-ready|no-observer": 2,
+        "blue 3|post|choose_card|no-job|trace-ready|no-observer": 4,
+        "第一排放置位 5|pre|none|no-job|no-trace|no-observer": 1,
+        "第一排放置位 1|post|none|no-job|no-trace|no-observer": 8,
+        "第一排放置位 5|post|publicity|no-job|no-trace|no-observer": 4,
+        "第一排放置位 5|post|choose_card|no-job|no-trace|no-observer": 4,
+        "第一排放置位 5|post|publicity|no-job|trace-ready|no-observer": 2,
+        "第一排放置位 5|post|choose_card|no-job|trace-ready|no-observer": 2
+      },
+      "remainingGroups": {
+        "launch|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 59,
+        "place_data|stable|—|—": 112,
+        "choose_target|science_domain_place_data|place_data|—": 112,
+        "analyze|stable|—|—": 2,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 18,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "choose_card|science_domain_income|place_data|—": 11,
+        "choose_target|science_domain_alien_trace|scan|—": 42,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "choose_card|science_domain_pick_card|place_data|—": 20,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 28,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 72,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2
+      }
+    }
+  ]
+}
