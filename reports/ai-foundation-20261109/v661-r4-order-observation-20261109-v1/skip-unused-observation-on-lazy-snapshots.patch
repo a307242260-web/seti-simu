@@ -1,0 +1,39 @@
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -518,10 +518,13 @@
+         if(entry.queued){entry.queued=false;pendingFrontier--;}
+         continue;
+       }
+-      const optimal = usePostMainValueBound && !entry.resourcePolicy?.bound && entry.node.status === "stable" && legacyProof(entry.node) ? port.postMainOptimalPlanSpec?.(entry.node) : null;
++      // A rejected or out-of-budget plan cannot use the legacy proof. Avoid
++      // projecting its full value observation just to reject it again.
++      const optimal = usePostMainValueBound && !entry.resourcePolicy?.bound && entry.node.status === "stable"
++        ? port.postMainOptimalPlanSpec?.(entry.node) : null;
+       if (optimal && transitions+optimal.submissions <= limits.transitions
+         && nodes.length+certificateNodes+optimal.submissions <= limits.nodes
+-        && pendingFrontier+optimal.submissions-1 <= limits.frontier) {
++        && pendingFrontier+optimal.submissions-1 <= limits.frontier && legacyProof(entry.node)) {
+         const currentValue = valueForNode(entry.node), increase = optimal.bound.maximumValueIncrease;
+         const safe = [currentValue,increase].every(value => Number.isSafeInteger(value*2) && value >= 0 && value < Number.MAX_SAFE_INTEGER/64);
+         if (safe) {
+--- a/randomizer/app/rule-observation.js
++++ b/randomizer/app/rule-observation.js
+@@ -134,6 +134,9 @@
+   // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
+   // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
+   const cheap = options.cheap === true;
++  // Scoring normalizes the same board for each seat. A private copy for the
++  // whole projection keeps those writes off the authoritative state.
++  const scoringBoard = clone(state.finalScoring);
+   const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
+   const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
+   if(selfState)selfState.traceCounts=endGameScoring.getPlayerTraceCounts(selfPlayer,state.aliens);
+@@ -156,7 +159,7 @@
+       players: (playersState.players || []).map((player) => {
+         const breakdown = endGameScoring.computePlayerFinalScore({
+           ...state,
+-          finalScoring: clone(state.finalScoring),
++          finalScoring: scoringBoard,
+           players: playersState.players || [],
+           currentPlayer: player,
+           cardEffects,

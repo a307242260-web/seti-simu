@@ -1,0 +1,1197 @@
+{
+  "sourceCommit": "00bc59cd7651f1063578d8d57004813b34380aff",
+  "strategy": "V661 candidate; no Production admission",
+  "acceptance": {
+    "nativeMax": 256,
+    "millisecondsMax": 600
+  },
+  "taskOrder": {
+    "verifiedNative": {
+      "observed": [
+        {
+          "index": 68,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 80,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 94,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 106,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 170,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 182,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 196,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 208,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 218,
+          "cardId": "card-70-0",
+          "rule": "b60-jupiter-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 232,
+          "cardId": "card-70-0",
+          "rule": "b60-jupiter-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 319,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 322,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 337,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 351,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 354,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 369,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 438,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 450,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 464,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 476,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 569,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 572,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 587,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 601,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 604,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 619,
+          "cardId": "card-13-0",
+          "rule": "b117-orbit-land-count-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 626,
+          "cardId": "card-70-0",
+          "rule": "b60-jupiter-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 682,
+          "cardId": "card-70-0",
+          "rule": "b60-jupiter-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        },
+        {
+          "index": 685,
+          "cardId": "card-70-0",
+          "rule": "b60-jupiter-task",
+          "earlyInputs": 2,
+          "lateInputs": 2,
+          "fullStateAndRngEqual": true
+        }
+      ],
+      "proofs": 29,
+      "native": 221,
+      "transitions": 1258,
+      "nodes": 1465,
+      "values": 285,
+      "otherUnproven": [
+        62,
+        65,
+        74,
+        77,
+        88,
+        91,
+        100,
+        103,
+        164,
+        167,
+        176,
+        179,
+        190,
+        193,
+        202,
+        205,
+        215,
+        313,
+        316,
+        328,
+        331,
+        334,
+        345,
+        348,
+        360,
+        363,
+        366,
+        432,
+        435,
+        444,
+        447,
+        458,
+        461,
+        470,
+        473,
+        563,
+        566,
+        578,
+        581,
+        584,
+        595,
+        598,
+        610,
+        613,
+        616
+      ]
+    },
+    "comparisonMs": {
+      "lazy-snapshots": {
+        "samples": [
+          922.684458,
+          921.021666,
+          919.6794590000001
+        ],
+        "min": 919.6794590000001,
+        "median": 921.021666,
+        "max": 922.684458
+      },
+      "end-claim-order": {
+        "samples": [
+          945.6452499999999,
+          938.289,
+          935.535875
+        ],
+        "min": 935.535875,
+        "median": 938.289,
+        "max": 945.6452499999999
+      }
+    },
+    "adopted": false
+  },
+  "observation": {
+    "comparisonMs": {
+      "lazy-snapshots": {
+        "samples": [
+          931.4097909999999,
+          937.51,
+          920.553584
+        ],
+        "min": 920.553584,
+        "median": 931.4097909999999,
+        "max": 937.51
+      },
+      "optimal-before-observation": {
+        "samples": [
+          863.9472920000001,
+          865.688292,
+          869.32925
+        ],
+        "min": 863.9472920000001,
+        "median": 865.688292,
+        "max": 869.32925
+      },
+      "shared-scoring-projection": {
+        "samples": [
+          859.842667,
+          862.034791,
+          867.3555
+        ],
+        "min": 859.842667,
+        "median": 862.034791,
+        "max": 867.3555
+      }
+    },
+    "baseline": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 920.860166,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022",
+        "observations": 520,
+        "projectionMs": 138.09774600000028
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 36.792417000000114,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb",
+        "observations": 4,
+        "projectionMs": 1.2701260000001184
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 46.390666999999894,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951",
+        "observations": 6,
+        "projectionMs": 1.9848759999997583
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 28.932999999999993,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032",
+        "observations": 2,
+        "projectionMs": 0.5847089999997479
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 711.9681250000001,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8",
+        "observations": 190,
+        "projectionMs": 62.67816900000025
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 738.5043340000002,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945",
+        "observations": 236,
+        "projectionMs": 74.4957489999997
+      }
+    ],
+    "optimalGateFirst": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 881.481667,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022",
+        "observations": 309,
+        "projectionMs": 87.453244000001
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 36.817999999999984,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb",
+        "observations": 2,
+        "projectionMs": 0.7560410000000957
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 50.36070799999993,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951",
+        "observations": 3,
+        "projectionMs": 1.026832000000013
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 30.637833,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032",
+        "observations": 2,
+        "projectionMs": 0.7035419999999704
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 706.513459,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8",
+        "observations": 158,
+        "projectionMs": 50.4167089999994
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 698.0230419999998,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945",
+        "observations": 176,
+        "projectionMs": 54.20433500000058
+      }
+    ],
+    "sharedScoringBoard": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 878.5712920000001,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022",
+        "observations": 309,
+        "projectionMs": 86.35021899999981
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 38.013582999999926,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb",
+        "observations": 2,
+        "projectionMs": 0.7261660000001484
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 48.260749999999916,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951",
+        "observations": 3,
+        "projectionMs": 1.0040820000003805
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 29.415416999999934,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032",
+        "observations": 2,
+        "projectionMs": 0.5516669999999522
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 701.3272920000002,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8",
+        "observations": 158,
+        "projectionMs": 48.58574200000044
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 702.6127919999999,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945",
+        "observations": 176,
+        "projectionMs": 55.57429800000068
+      }
+    ],
+    "parity": {
+      "count": {
+        "total": 674,
+        "frozenBoards": 653,
+        "full": 674,
+        "cheap": 674
+      },
+      "results": [
+        {
+          "input": "official-r4",
+          "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022",
+          "projections": 311,
+          "native": 221
+        },
+        {
+          "input": 314,
+          "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb",
+          "projections": 4,
+          "native": 6
+        },
+        {
+          "input": 351,
+          "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951",
+          "projections": 5,
+          "native": 10
+        },
+        {
+          "input": 354,
+          "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032",
+          "projections": 4,
+          "native": 2
+        },
+        {
+          "input": 359,
+          "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8",
+          "projections": 160,
+          "native": 358
+        },
+        {
+          "input": 355,
+          "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945",
+          "projections": 178,
+          "native": 380
+        }
+      ]
+    }
+  },
+  "nativeInputsRemaining": [
+    {
+      "label": "official-r4",
+      "native": 221,
+      "source": [
+        [
+          "choose_target",
+          104
+        ],
+        [
+          "card_corner",
+          22
+        ],
+        [
+          "accept_optional_effect",
+          20
+        ],
+        [
+          "choose_card",
+          17
+        ],
+        [
+          "play_card",
+          12
+        ],
+        [
+          "place_data",
+          9
+        ],
+        [
+          "quick_trade",
+          8
+        ],
+        [
+          "land",
+          5
+        ],
+        [
+          "launch",
+          5
+        ],
+        [
+          "pass",
+          5
+        ],
+        [
+          "scan",
+          5
+        ],
+        [
+          "choose_payment",
+          3
+        ],
+        [
+          "analyze",
+          2
+        ],
+        [
+          "industry",
+          2
+        ],
+        [
+          "end_turn",
+          1
+        ],
+        [
+          "move",
+          1
+        ]
+      ],
+      "categories": [
+        [
+          "choose_target|science_domain_scan_step|-",
+          59
+        ],
+        [
+          "choose_target|science_domain_alien_trace|planet-reward-alien-trace",
+          36
+        ],
+        [
+          "card_corner|-|-",
+          22
+        ],
+        [
+          "accept_optional_effect|residual_card_decision|residual-domain",
+          20
+        ],
+        [
+          "play_card|-|-",
+          12
+        ],
+        [
+          "choose_card|residual_alien_card_decision|residual-domain",
+          10
+        ],
+        [
+          "choose_target|science_domain_place_data|-",
+          9
+        ],
+        [
+          "place_data|-|place-data",
+          9
+        ],
+        [
+          "quick_trade|-|-",
+          8
+        ],
+        [
+          "land|-|-",
+          5
+        ],
+        [
+          "launch|-|-",
+          5
+        ],
+        [
+          "pass|-|pass",
+          5
+        ],
+        [
+          "scan|-|standard-scan",
+          5
+        ],
+        [
+          "choose_card|residual_company_decision|residual-domain",
+          4
+        ],
+        [
+          "choose_card|standard_action_session_decision|trade-card-selection",
+          3
+        ],
+        [
+          "analyze|-|computer",
+          2
+        ],
+        [
+          "choose_payment|standard_action_session_decision|discard-hand-card",
+          2
+        ],
+        [
+          "industry|-|-",
+          2
+        ],
+        [
+          "choose_payment|standard_action_session_decision|confirm",
+          1
+        ],
+        [
+          "end_turn|-|end-turn",
+          1
+        ],
+        [
+          "move|-|-",
+          1
+        ]
+      ],
+      "claims": [
+        [
+          "confirm|trigger|-|-",
+          10
+        ],
+        [
+          "skip|trigger|-|-",
+          10
+        ]
+      ]
+    },
+    {
+      "label": 359,
+      "native": 358,
+      "source": [
+        [
+          "choose_target",
+          122
+        ],
+        [
+          "accept_optional_effect",
+          74
+        ],
+        [
+          "complete_task",
+          51
+        ],
+        [
+          "choose_card",
+          39
+        ],
+        [
+          "end_turn",
+          24
+        ],
+        [
+          "card_corner",
+          10
+        ],
+        [
+          "choose_payment",
+          9
+        ],
+        [
+          "play_card",
+          8
+        ],
+        [
+          "quick_trade",
+          7
+        ],
+        [
+          "analyze",
+          2
+        ],
+        [
+          "land",
+          2
+        ],
+        [
+          "launch",
+          2
+        ],
+        [
+          "pass",
+          2
+        ],
+        [
+          "research_tech",
+          2
+        ],
+        [
+          "scan",
+          2
+        ],
+        [
+          "move",
+          1
+        ],
+        [
+          "place_data",
+          1
+        ]
+      ],
+      "categories": [
+        [
+          "accept_optional_effect|residual_card_decision|residual-domain",
+          74
+        ],
+        [
+          "complete_task|-|-",
+          51
+        ],
+        [
+          "choose_target|science_domain_place_data|-",
+          31
+        ],
+        [
+          "choose_target|science_domain_alien_trace|planet-reward-alien-trace",
+          27
+        ],
+        [
+          "choose_target|science_domain_research|-",
+          24
+        ],
+        [
+          "end_turn|-|end-turn",
+          24
+        ],
+        [
+          "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|-",
+          18
+        ],
+        [
+          "choose_card|residual_alien_card_decision|residual-domain",
+          14
+        ],
+        [
+          "choose_card|science_domain_pick_card|-",
+          14
+        ],
+        [
+          "choose_target|science_domain_scan_step|-",
+          12
+        ],
+        [
+          "card_corner|-|-",
+          10
+        ],
+        [
+          "choose_card|science_domain_scan_step|-",
+          8
+        ],
+        [
+          "choose_target|science_domain_scan_action_4|-",
+          8
+        ],
+        [
+          "play_card|-|-",
+          8
+        ],
+        [
+          "quick_trade|-|-",
+          7
+        ],
+        [
+          "choose_payment|standard_action_session_decision|discard-hand-card",
+          6
+        ],
+        [
+          "choose_card|science_domain_income|-",
+          3
+        ],
+        [
+          "choose_payment|standard_action_session_decision|confirm",
+          3
+        ],
+        [
+          "analyze|-|computer",
+          2
+        ],
+        [
+          "choose_target|probe_land_choice|-",
+          2
+        ],
+        [
+          "land|-|-",
+          2
+        ],
+        [
+          "launch|-|-",
+          2
+        ],
+        [
+          "pass|-|pass",
+          2
+        ],
+        [
+          "research_tech|-|research-tech",
+          2
+        ],
+        [
+          "scan|-|standard-scan",
+          2
+        ],
+        [
+          "move|-|-",
+          1
+        ],
+        [
+          "place_data|-|place-data",
+          1
+        ]
+      ],
+      "claims": [
+        [
+          "active|task|transport|alien-chong-3-10",
+          27
+        ],
+        [
+          "active|task|trace|alien-chong-1-18",
+          24
+        ],
+        [
+          "skip|chong_task|trace|alien-chong-1-18",
+          24
+        ],
+        [
+          "confirm|trigger|-|-",
+          12
+        ],
+        [
+          "skip|trigger|-|-",
+          12
+        ],
+        [
+          "confirm|chong_task|transport|alien-chong-3-10",
+          9
+        ],
+        [
+          "skip|chong_task|transport|alien-chong-3-10",
+          9
+        ],
+        [
+          "confirm|chong_task|trace|alien-chong-1-18",
+          8
+        ]
+      ]
+    },
+    {
+      "label": 355,
+      "native": 380,
+      "source": [
+        [
+          "choose_target",
+          128
+        ],
+        [
+          "accept_optional_effect",
+          78
+        ],
+        [
+          "complete_task",
+          55
+        ],
+        [
+          "choose_card",
+          39
+        ],
+        [
+          "end_turn",
+          28
+        ],
+        [
+          "card_corner",
+          10
+        ],
+        [
+          "choose_payment",
+          9
+        ],
+        [
+          "play_card",
+          8
+        ],
+        [
+          "quick_trade",
+          7
+        ],
+        [
+          "place_data",
+          5
+        ],
+        [
+          "analyze",
+          2
+        ],
+        [
+          "land",
+          2
+        ],
+        [
+          "launch",
+          2
+        ],
+        [
+          "pass",
+          2
+        ],
+        [
+          "research_tech",
+          2
+        ],
+        [
+          "scan",
+          2
+        ],
+        [
+          "move",
+          1
+        ]
+      ],
+      "categories": [
+        [
+          "accept_optional_effect|residual_card_decision|residual-domain",
+          78
+        ],
+        [
+          "complete_task|-|-",
+          55
+        ],
+        [
+          "choose_target|science_domain_place_data|-",
+          37
+        ],
+        [
+          "end_turn|-|end-turn",
+          28
+        ],
+        [
+          "choose_target|science_domain_alien_trace|planet-reward-alien-trace",
+          27
+        ],
+        [
+          "choose_target|science_domain_research|-",
+          24
+        ],
+        [
+          "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|-",
+          18
+        ],
+        [
+          "choose_card|residual_alien_card_decision|residual-domain",
+          14
+        ],
+        [
+          "choose_card|science_domain_pick_card|-",
+          14
+        ],
+        [
+          "choose_target|science_domain_scan_step|-",
+          12
+        ],
+        [
+          "card_corner|-|-",
+          10
+        ],
+        [
+          "choose_card|science_domain_scan_step|-",
+          8
+        ],
+        [
+          "choose_target|science_domain_scan_action_4|-",
+          8
+        ],
+        [
+          "play_card|-|-",
+          8
+        ],
+        [
+          "quick_trade|-|-",
+          7
+        ],
+        [
+          "choose_payment|standard_action_session_decision|discard-hand-card",
+          6
+        ],
+        [
+          "place_data|-|place-data",
+          5
+        ],
+        [
+          "choose_card|science_domain_income|-",
+          3
+        ],
+        [
+          "choose_payment|standard_action_session_decision|confirm",
+          3
+        ],
+        [
+          "analyze|-|computer",
+          2
+        ],
+        [
+          "choose_target|probe_land_choice|-",
+          2
+        ],
+        [
+          "land|-|-",
+          2
+        ],
+        [
+          "launch|-|-",
+          2
+        ],
+        [
+          "pass|-|pass",
+          2
+        ],
+        [
+          "research_tech|-|research-tech",
+          2
+        ],
+        [
+          "scan|-|standard-scan",
+          2
+        ],
+        [
+          "move|-|-",
+          1
+        ]
+      ],
+      "claims": [
+        [
+          "active|task|trace|alien-chong-1-18",
+          28
+        ],
+        [
+          "skip|chong_task|trace|alien-chong-1-18",
+          28
+        ],
+        [
+          "active|task|transport|alien-chong-3-10",
+          27
+        ],
+        [
+          "confirm|trigger|-|-",
+          12
+        ],
+        [
+          "skip|trigger|-|-",
+          12
+        ],
+        [
+          "confirm|chong_task|transport|alien-chong-3-10",
+          9
+        ],
+        [
+          "skip|chong_task|transport|alien-chong-3-10",
+          9
+        ],
+        [
+          "confirm|chong_task|trace|alien-chong-1-18",
+          8
+        ]
+      ]
+    }
+  ],
+  "tests": {
+    "node": 7,
+    "browser": 2,
+    "stateInputAudit": "pass"
+  },
+  "completeStandardRunExecuted": false
+}

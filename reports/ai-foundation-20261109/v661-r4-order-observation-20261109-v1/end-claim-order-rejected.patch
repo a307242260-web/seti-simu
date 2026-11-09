@@ -1,0 +1,105 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1133,7 +1133,7 @@
+       return createNode(envelope,null,[],barrier?"information-barrier":"other-owner",barrier);
+     }
+
+-    function expand(node, actionId) {
++    function expand(node, actionId, previewClaimOnly = false) {
+       const stored = nodes.get(node);
+       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+       if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary","income-plan-value","turn-tail-value"].includes(node.status)) {
+@@ -1156,6 +1156,7 @@
+         const child = finishProvedCommittedState(node, stored, requested, activeClaim);
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
++      if(previewClaimOnly)return null;
+       const taskSession=stored.envelope.session?.session;
+       const endClaim=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession&&requested.family==="accept_optional_effect"
+         ?localPlans.previewFinalPositiveEndTask({state:taskSession.workingState,seatId,actions:node.legalActions,
+@@ -4389,6 +4390,51 @@
+         unrealizedPurposeDelta:stateValue.sumValueParts([capital.afterCapital,-capital.beforeCapital,claim?claimCapital:0]),
+         requiredNativeInputs:prep.requiredNativeInputs+2,markedTiles:[],dataPlans:[{goal:plan.goal,...dataPlan}],
+         quietCargoChoice:{cardId:cargo.card.id,ruleId:cargo.ruleId,claim,gain,capital:claimCapital},cargoAfterBlue3:true};
++    }
++
++    function redundantFinalEndClaim(node, actionId, endId) {
++      const stored=nodes.get(node);
++      if(node===openedRoot||node.status!=="stable"||stored.resourceControl||stored.envelope.session
++        ||stored.intent?.path.length||!quietEndPreludeTemplate)return null;
++      const action=node.legalActions.find(a=>a.actionId===actionId);
++      const end=node.legalActions.find(a=>a.actionId===endId);
++      if(action?.family!=="complete_task"||end?.family!=="end_turn"
++        ||!["b117-orbit-land-count-task","b60-jupiter-task"].includes(action.target?.ruleId))return null;
++      const state=readIdentityState(stored.envelope),knowledge=knownCards(stored.envelope);
++      if(state.turn.roundNumber!==4||resourceSpec(node)?.plans.some(p=>p.firstActionId.startsWith("place_data:")))return null;
++      const late=localPlans.previewFinalForeignEndPrelude({state,seatId,action:end,knownCards:knowledge});
++      if(late?.task?.ruleId!==action.target.ruleId||late.task.cardInstanceId!==action.target.cardInstanceId)return null;
++
++      // No native fallback is permitted while testing the order. Reuse the
++      // same preview and policy cache if the claim branch must be expanded.
++      const child=expand(node,actionId,true);
++      if(child?.status!=="stable")return null;
++      const childStored=nodes.get(child),pick=cardPickSpec(child),resource=resourceSpec(child);
++      const earlyEnd=child.legalActions.find(a=>a.family==="end_turn"&&a.actorId===seatId);
++      if(!earlyEnd||pick?.goal||resource?.bound||resource?.plans.length)return null;
++      const route=movementPlanning&&child.legalActions.some(a=>Number.isInteger(a.target?.deltaX)
++        ||a.target?.kind==="move-payment"||a.target?.tradeId==="energy-for-move"
++        ||a.family==="card_corner"&&a.payload?.kind==="move")?goalMovementSpec(child):null;
++      // Forced urgent movement can supersede the resource filter.
++      if(route?.selectedActionId&&route.chosenGoal?.timing==="advance-before-rotation")return null;
++      const kept=child.legalActions.filter(a=>(!resource||resource.retainedActionIds.includes(a.actionId))
++        &&(!pick||pick.retainedActionIds.includes(a.actionId))&&(!route||route.retainedActionIds.includes(a.actionId)));
++      if(kept.length!==1||kept[0]!==earlyEnd)return null;
++      const early=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(childStored.envelope),
++        seatId,action:earlyEnd,knownCards:knowledge})?.finished;
++      if(!early)return null;
++      const menu=makeQuietEndPrelude(stored.envelope,end,late);
++      const choices=menu?.inspection.session.decision.choices;
++      const confirm=choices?.find(a=>a.target?.choiceId===`confirm:task:${late.task.cardInstanceId}:${late.task.ruleId}`);
++      const delayed=confirm&&localPlans.previewFinalPositiveEndTask({state:late.working,seatId,actions:choices,
++        session:menu.envelope.session.session,action:confirm,knownCards:knowledge});
++      if(!delayed)return null;
++      const status=stored.informationBarrier?"information-barrier":"other-owner",boundary=stored.informationBarrier?.code||null;
++      const same=forwardIdentity(stored.envelope,status,boundary,early,null,null,identitySlices)
++        ===forwardIdentity(stored.envelope,status,boundary,delayed,null,null,identitySlices);
++      if(!same)return null;
++      return {proof:"seti-final-positive-task-quiet-end-order-v1",equivalentTo:endId,
++        cardId:late.task.cardInstanceId,ruleId:late.task.ruleId,inputs:2};
+     }
+
+     function redundantCargoClaim(node, actionId) {
+@@ -6989,7 +7035,7 @@
+
+     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
++      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantFinalEndClaim,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+
+   return Object.freeze({ createAnalysisPort });
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -614,6 +614,14 @@
+         if(!tailNeedsNative&&resourcePlanning&&realizationTies
+           &&entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="complete_task")
+           &&entry.alternatives.some(x=>entry.node.legalActions.some(a=>a.actionId===x.firstActionId&&a.family==="end_turn"))){
++          const end=entry.alternatives.find(x=>!x.resourcePlan&&!x.goalPlan&&!x.cardPickPlan
++            &&entry.node.legalActions.some(a=>a.actionId===x.firstActionId&&a.family==="end_turn"));
++          const endProof=end&&nodes.length+certificateNodes<limits.nodes&&now()-startedAt<limits.milliseconds
++            &&port.redundantFinalEndClaim?.(entry.node,alternative.firstActionId,end.firstActionId);
++          if(endProof){
++            (entry.finalEndClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...endProof});
++            continue;
++          }
+           const proof=port.redundantCargoClaim?.(entry.node,alternative.firstActionId);
+           if(proof){
+             (entry.cargoClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...proof});
+@@ -883,6 +891,7 @@
+       distance: Number.isFinite(entry.distance) ? entry.distance : null,
+       ...(entry.deferredPublicity?{deferredSectorPublicity:entry.deferredPublicity}:{}),
+       ...(entry.deferredCargo?{deferredCargo:entry.deferredCargo}:{}),
++      ...(entry.finalEndClaimEquivalences?{finalEndClaimEquivalences:entry.finalEndClaimEquivalences}:{}),
+       ...(entry.cargoClaimEquivalences?{cargoClaimEquivalences:entry.cargoClaimEquivalences}:{}),
+       ...(entry.researchData?{researchData:entry.researchData}:{}),
+       ...(entry.researchScan?{researchScan:entry.researchScan}:{}),
