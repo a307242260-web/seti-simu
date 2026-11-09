@@ -1,0 +1,177 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1233,7 +1233,7 @@
+       return createNode(envelope,null,[],barrier?"information-barrier":"other-owner",barrier);
+     }
+
+-    function expand(node, actionId) {
++    function expand(node, actionId, previewOnly = false) {
+       const stored = nodes.get(node);
+       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+       if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary","income-plan-value","turn-tail-value"].includes(node.status)) {
+@@ -1412,6 +1412,7 @@
+         const child = finishProvedCommittedState(node, stored, requested, state);
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
++      if(previewOnly)return null;
+       restoreEnvelope(stored.envelope, true);
+       const { before, result } = executeCurrent(requested);
+       const child = finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null,
+@@ -4539,6 +4540,86 @@
+         unrealizedPurposeDelta:stateValue.sumValueParts([capital.afterCapital,-capital.beforeCapital,claim?claimCapital:0]),
+         requiredNativeInputs:prep.requiredNativeInputs+2,markedTiles:[],dataPlans:[{goal:plan.goal,...dataPlan}],
+         quietCargoChoice:{cardId:cargo.card.id,ruleId:cargo.ruleId,claim,gain,capital:claimCapital},cargoAfterBlue3:true};
++    }
++
++    function stableFinalClaimPolicy(node){
++      const stored=nodes.get(node);
++      if(node.status!=="stable"||stored.intent||stored.resourceControl||stored.envelope.session)return null;
++      const res=resourceSpec(node),pick=cardPickSpec(node);
++      if(res?.bound||pick?.fixed)return null;
++      const move=movementPlanning&&node.legalActions.some(a=>Number.isInteger(a.target?.deltaX)
++        ||a.target?.kind==="move-payment"||a.target?.tradeId==="energy-for-move"
++        ||a.family==="card_corner"&&a.payload?.kind==="move")?goalMovementSpec(node):null;
++      if(move?.selectedActionId&&move.chosenGoal?.timing==="advance-before-rotation")return null;
++      return {plans:res?.plans||[], actions:node.legalActions.filter(a=>(!res||res.retainedActionIds.includes(a.actionId))
++        &&(!pick||pick.retainedActionIds.includes(a.actionId))&&(!move||move.retainedActionIds.includes(a.actionId)))};
++    }
++
++    function exactClaimState(left,right){
++      if(Object.is(left,right))return true;
++      if(!left||!right||typeof left!=="object"||typeof right!=="object"||Array.isArray(left)!==Array.isArray(right))return false;
++      if(Array.isArray(left)&&left.length!==right.length)return false;
++      const keys=Object.keys(left);
++      return keys.length===Object.keys(right).length&&keys.every(k=>Object.hasOwn(right,k)&&exactClaimState(left[k],right[k]));
++    }
++
++    function sameFinalClaimEnd(source,claimed,action,lateEnd,earlyEnd){
++      const original=nodes.get(source),paid=nodes.get(claimed),known=knownCards(original.envelope);
++      const late=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(original.envelope),seatId,action:lateEnd,knownCards:known});
++      if(!late?.task||late.task.cardInstanceId!==action.target.cardInstanceId||late.task.ruleId!==action.target.ruleId)return false;
++      const early=localPlans.previewFinalForeignEndPrelude({state:readIdentityState(paid.envelope),seatId,action:earlyEnd,knownCards:known})?.finished;
++      const menu=early&&makeQuietEndPrelude(original.envelope,lateEnd,late);
++      const choices=menu?.inspection.session.decision.choices;
++      const confirm=choices?.find(a=>a.target?.choiceId==="confirm:task:"+late.task.cardInstanceId+":"+late.task.ruleId);
++      const delayed=confirm&&localPlans.previewFinalPositiveEndTask({state:late.working,seatId,actions:choices,
++        session:menu.envelope.session.session,action:confirm,knownCards:known});
++      if(!delayed)return false;
++      // The late claim is inside END_TURN's transaction; the early one
++      // commits separately. This version difference does not govern a
++      // subsequent own action across the proved foreign-seat boundary.
++      return early.meta.stateVersion===delayed.meta.stateVersion+1
++        &&exactClaimState({...early,meta:{...early.meta,stateVersion:delayed.meta.stateVersion}},delayed);
++    }
++
++    function proveDeferredFinalDataClaim(node, actionId, endId, witness, hasTime){
++      const stored=nodes.get(node),action=node.legalActions.find(a=>a.actionId===actionId);
++      if(node===openedRoot||node.status!=="stable"||stored.intent||stored.resourceControl||stored.envelope.session
++        ||action?.family!=="complete_task"||action.target?.ruleId!=="b117-orbit-land-count-task")return null;
++      const {plan,execution}=witness,steps=execution.prefixes.map(x=>x.action);
++      if(!execution.complete||execution.goalStatus!=="completed"||![2,3].includes(steps.length)
++        ||steps[0].family!=="place_data"||steps[1].family!=="choose_target"||steps[1].target?.blueSlot!==plan.goal.blueSlot
++        ||steps.length===3&&steps[2].family!=="choose_card"||!hasTime())return null;
++      const dataNode=execution.node;
++      if(dataNode.status!=="stable")return null;
++      const delayedPolicy=stableFinalClaimPolicy(dataNode);
++      if(!delayedPolicy?.actions.some(a=>a.actionId===actionId))return null;
++      const claimed=expand(node,actionId,true);
++      if(claimed?.status!=="stable")return null;
++      const earlyPolicy=stableFinalClaimPolicy(claimed);
++      if(!earlyPolicy||earlyPolicy.plans.length!==1||JSON.stringify(earlyPolicy.plans[0])!==JSON.stringify(plan)
++        ||earlyPolicy.actions.some(a=>a.family!=="end_turn")||earlyPolicy.actions.length>1||!hasTime())return null;
++      // Exact blue completion, not a broader scalar tail that has no
++      // executable data-first witness.
++      if(turnTailSummary(claimed,"blue-end-turn"))return null;
++      const earlyEnd=earlyPolicy.actions[0],lateEnd=node.legalActions.find(a=>a.actionId===endId);
++      if(earlyEnd&&(!lateEnd||!sameFinalClaimEnd(node,claimed,action,lateEnd,earlyEnd)))return null;
++      let current=claimed;
++      for(const [index,step] of steps.entries()){
++        if(!hasTime()||!current.legalActions.some(a=>a.actionId===step.actionId))return null;
++        if(index===1&&resourceStep(current,plan.goal,{...plan.operation,placing:true,finalPlacement:true}).actionId!==step.actionId)return null;
++        if(index===2){const pick=cardPickSpec(current);if(!pick?.fixed||pick.selectedActionId!==step.actionId||pick.selection?.blind)return null;}
++        current=expand(current,step.actionId,true);
++        if(!current)return null;
++      }
++      if(current.status!=="stable"||!hasTime())return null;
++      const delayed=expand(dataNode,actionId,true);
++      if(delayed?.status!=="stable"||current.boundary!==delayed.boundary)return null;
++      const a=nodes.get(current),b=nodes.get(delayed);
++      if(a.intent||b.intent||a.resourceControl||b.resourceControl||a.cardControl||b.cardControl
++        ||a.envelope.session||b.envelope.session||cardKnowledgeKey(a.envelope)!==cardKnowledgeKey(b.envelope)
++        ||!exactClaimState(readIdentityState(a.envelope),readIdentityState(b.envelope)))return null;
++      return {proof:"seti-final-claim-blue-order-v1",goal:plan.goal.id,steps:steps.map(a=>a.actionId),
++        equivalentTo:plan.firstActionId,...(earlyEnd?{equivalentEnd:endId}:{})};
+     }
+
+     function redundantCargoClaim(node, actionId) {
+@@ -7139,7 +7220,7 @@
+
+     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
++      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+
+   return Object.freeze({ createAnalysisPort });
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -593,6 +593,12 @@
+         }
+       }
+       const tailNeedsNative=coreExtendedPurpose||displayedTransport&&port.displayedTransportTailRelevant(entry.node,displayedTransport);
++      const orderClaim=!tailNeedsNative&&currentIndex!==0&&resourcePlanning&&realizationTies&&port.proveDeferredFinalDataClaim
++        &&entry.alternatives.some(x=>x.resourcePlan?.goal.kind==="blue-data"&&[1,2].includes(x.resourcePlan.goal.blueSlot))
++        &&entry.node.legalActions.find(a=>a.family==="complete_task"&&a.target?.ruleId==="b117-orbit-land-count-task"
++          &&entry.alternatives.some(x=>x.firstActionId===a.actionId));
++      if(orderClaim)entry.alternatives=[...entry.alternatives.filter(x=>x.firstActionId!==orderClaim.actionId),
++        ...entry.alternatives.filter(x=>x.firstActionId===orderClaim.actionId)];
+       for (const alternative of entry.alternatives) {
+         if (entry.prunedBy) break;
+         if(!extendedPurpose&&alternative.goalPlan&&incumbent&&resourcePlanning&&movementPlanning&&cardPickPlanning&&finalMarkPlanning
+@@ -617,6 +623,17 @@
+         if(!tailNeedsNative&&resourcePlanning&&realizationTies
+           &&entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="complete_task")
+           &&entry.alternatives.some(x=>entry.node.legalActions.some(a=>a.actionId===x.firstActionId&&a.family==="end_turn"))){
++          if(orderClaim&&alternative.firstActionId===orderClaim.actionId
++            &&nodes.length+certificateNodes+5<limits.nodes&&transitions+5<=limits.transitions
++            &&pendingFrontier+5<=limits.frontier){
++            const blue=entry.edges.find(x=>x.resourcePlan?.goal.kind==="blue-data"
++              &&[1,2].includes(x.resourcePlan.goal.blueSlot)&&x.goalStatus==="completed");
++            const execution=blue&&resourceExecutions.get(blue);
++            const end=entry.alternatives.find(x=>entry.node.legalActions.some(a=>a.actionId===x.firstActionId&&a.family==="end_turn"));
++            const deferred=execution&&port.proveDeferredFinalDataClaim(entry.node,alternative.firstActionId,end.firstActionId,
++              {plan:blue.resourcePlan,execution},()=>now()-startedAt<limits.milliseconds);
++            if(deferred){(entry.blueClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...deferred});continue;}
++          }
+           const proof=port.redundantCargoClaim?.(entry.node,alternative.firstActionId);
+           if(proof){
+             (entry.cargoClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...proof});
+@@ -852,8 +869,8 @@
+     }
+     if (!stopReason && now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
+     const unresolved = nodes.flatMap((entry, index) => entry.expanded || entry.prunedBy || entry.prunedByBound ? [] : [{
+-      node: index, ...(entry.deferredPolicy?{policyPending:true}:{}), ...(entry.resourcePolicy?{resourceGoals:entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).filter(a=>a.resourcePlan).map(a=>({goalId:a.resourcePlan.goal.id,mode:a.resourcePlan.mode,firstActionId:a.firstActionId,fallbackReason:a.resourcePlan.fallbackReason||null}))}:{}), actionIds: (entry.selection || entry.deferredPolicy ? entry.node.legalActions
+-        : entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).map(alternative => ({ actionId: alternative.firstActionId })))
++      node: index, ...(entry.deferredPolicy?{policyPending:true}:{}), ...(entry.resourcePolicy?{resourceGoals:entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)+(entry.blueClaimEquivalences?.length||0)).filter(a=>a.resourcePlan).map(a=>({goalId:a.resourcePlan.goal.id,mode:a.resourcePlan.mode,firstActionId:a.firstActionId,fallbackReason:a.resourcePlan.fallbackReason||null}))}:{}), actionIds: (entry.selection || entry.deferredPolicy ? entry.node.legalActions
++        : entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)+(entry.blueClaimEquivalences?.length||0)).map(alternative => ({ actionId: alternative.firstActionId })))
+         .map(action => action.actionId),
+       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
+       ...(entry.goalAttempt ? { goalAttempt: entry.goalAttempt } : {}),
+@@ -886,6 +903,7 @@
+       distance: Number.isFinite(entry.distance) ? entry.distance : null,
+       ...(entry.deferredPublicity?{deferredSectorPublicity:entry.deferredPublicity}:{}),
+       ...(entry.deferredCargo?{deferredCargo:entry.deferredCargo}:{}),
++      ...(entry.blueClaimEquivalences?{blueClaimEquivalences:entry.blueClaimEquivalences}:{}),
+       ...(entry.cargoClaimEquivalences?{cargoClaimEquivalences:entry.cargoClaimEquivalences}:{}),
+       ...(entry.researchData?{researchData:entry.researchData}:{}),
+       ...(entry.researchScan?{researchScan:entry.researchScan}:{}),
+@@ -985,7 +1003,8 @@
+           const policyExclusion = edge?.resourcePlan?.goal.kind==="transport-data-prep"?null:
+             entry.decisionPolicy?.excludedActionIds.includes(action.actionId)?entry.decisionPolicy.policy:entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
+             :entry.movementPolicy?.excludedActionIds.includes(action.actionId) ? entry.movementPolicy.policy : null;
+-          const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null);
++          const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof
++            ||entry.blueClaimEquivalences?.find(bound=>bound.actionId===action.actionId)?.proof||null);
+           return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,
+             valueType: exclusion ? "not-executed" : "attained-lower-bound", completion: "covered-by-prior-complete-window",
+             sourceNode: current, ...(exclusion ? policyExclusion ? { policy: exclusion, isEquivalence: false } : { proof: exclusion } : {}),

@@ -1,0 +1,59 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4598,9 +4598,15 @@
+       const earlyPolicy=stableFinalClaimPolicy(claimed);
+       if(!earlyPolicy||earlyPolicy.plans.length!==1||JSON.stringify(earlyPolicy.plans[0])!==JSON.stringify(plan)
+         ||earlyPolicy.actions.some(a=>a.family!=="end_turn")||earlyPolicy.actions.length>1||!hasTime())return null;
+-      // Exact blue completion, not a broader scalar tail that has no
+-      // executable data-first witness.
+-      if(turnTailSummary(claimed,"blue-end-turn"))return null;
++      const scalar=turnTailSummary(claimed,"blue-end-turn"),quoted=scalar?.dataPlans?.[0];
++      // The sole typed currency slot and one ordinary end also have an
++      // executable witness. Broader quotes may hide another real purpose.
++      if(scalar&&(plan.goal.blueSlot!==3||earlyPolicy.actions.length||steps.length!==2
++        ||scalar.proof!=="seti-audited-company-quiet-turn-tail-value-v2"||scalar.publicAmibaCurrencyTail!==true
++        ||scalar.markedTiles?.length||scalar.dataPlans?.length!==1||scalar.requiredNativeInputs!==3
++        ||scalar.primaryOnly||scalar.netGain!==.5||scalar.unrealizedPurposeDelta!==0
++        ||quoted.goal.id!==plan.goal.id||quoted.requiredNativeInputs!==2||quoted.computerPlacements!==0
++        ||quoted.dataCornerIds?.length||quoted.incomeCardId))return null;
+       const earlyEnd=earlyPolicy.actions[0],lateEnd=node.legalActions.find(a=>a.actionId===endId);
+       if(earlyEnd&&(!lateEnd||!sameFinalClaimEnd(node,claimed,action,lateEnd,earlyEnd)))return null;
+       let current=claimed;
+@@ -4618,6 +4624,17 @@
+       if(a.intent||b.intent||a.resourceControl||b.resourceControl||a.cardControl||b.cardControl
+         ||a.envelope.session||b.envelope.session||cardKnowledgeKey(a.envelope)!==cardKnowledgeKey(b.envelope)
+         ||!exactClaimState(readIdentityState(a.envelope),readIdentityState(b.envelope)))return null;
++      if(scalar){
++        const policy=stableFinalClaimPolicy(delayed),end=policy?.actions[0];
++        if(policy?.plans.length||policy?.actions.length!==1||end.family!=="end_turn"||!hasTime())return null;
++        const tail=turnTailSummary(delayed,"end-turn");
++        if(tail&&(tail.requiredNativeInputs!==1||tail.netGain!==0||tail.unrealizedPurposeDelta||tail.markedTiles?.length))return null;
++        const before=readIdentityState(nodes.get(claimed).envelope),after=readIdentityState(b.envelope);
++        const p=before.players.players.find(p=>p.id===seatId),q=after.players.players.find(p=>p.id===seatId);
++        if(q.resources.credits-p.resources.credits!==1||q.resources.availableData-p.resources.availableData!==-1
++          ||Object.keys(p.resources).some(k=>!["credits","availableData"].includes(k)&&p.resources[k]!==q.resources[k])
++          ||!localPlans.previewFinalForeignEndPrelude({state:after,seatId,action:end,knownCards:knownCards(b.envelope)})?.finished)return null;
++      }
+       return {proof:"seti-final-claim-blue-order-v1",goal:plan.goal.id,steps:steps.map(a=>a.actionId),
+         equivalentTo:plan.firstActionId,...(earlyEnd?{equivalentEnd:endId}:{})};
+     }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -594,7 +594,7 @@
+       }
+       const tailNeedsNative=coreExtendedPurpose||displayedTransport&&port.displayedTransportTailRelevant(entry.node,displayedTransport);
+       const orderClaim=!tailNeedsNative&&currentIndex!==0&&resourcePlanning&&realizationTies&&port.proveDeferredFinalDataClaim
+-        &&entry.alternatives.some(x=>x.resourcePlan?.goal.kind==="blue-data"&&[1,2].includes(x.resourcePlan.goal.blueSlot))
++        &&entry.alternatives.some(x=>x.resourcePlan?.goal.kind==="blue-data"&&[1,2,3].includes(x.resourcePlan.goal.blueSlot))
+         &&entry.node.legalActions.find(a=>a.family==="complete_task"&&a.target?.ruleId==="b117-orbit-land-count-task"
+           &&entry.alternatives.some(x=>x.firstActionId===a.actionId));
+       if(orderClaim)entry.alternatives=[...entry.alternatives.filter(x=>x.firstActionId!==orderClaim.actionId),
+@@ -627,7 +627,7 @@
+             &&nodes.length+certificateNodes+5<limits.nodes&&transitions+5<=limits.transitions
+             &&pendingFrontier+5<=limits.frontier){
+             const blue=entry.edges.find(x=>x.resourcePlan?.goal.kind==="blue-data"
+-              &&[1,2].includes(x.resourcePlan.goal.blueSlot)&&x.goalStatus==="completed");
++              &&[1,2,3].includes(x.resourcePlan.goal.blueSlot)&&x.goalStatus==="completed");
+             const execution=blue&&resourceExecutions.get(blue);
+             const end=entry.alternatives.find(x=>entry.node.legalActions.some(a=>a.actionId===x.firstActionId&&a.family==="end_turn"));
+             const deferred=execution&&port.proveDeferredFinalDataClaim(entry.node,alternative.firstActionId,end.firstActionId,

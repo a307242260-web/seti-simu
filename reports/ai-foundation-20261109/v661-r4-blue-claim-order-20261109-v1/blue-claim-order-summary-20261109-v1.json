@@ -1,0 +1,669 @@
+{
+  "base": "64fc46f3d246003442a0d519fb5aad1fbee0791c",
+  "admission": {
+    "native": 256,
+    "ms": 600,
+    "pass": false
+  },
+  "rollout": [
+    {
+      "id": "industry:e887dc52",
+      "searchValue": 205.5,
+      "inputs": 26,
+      "start": {
+        "score": 118,
+        "established": 164,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 3,
+          "publicity": 1,
+          "score": 118
+        },
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-70-0",
+            "b_60.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [],
+        "reserved": [
+          "b_117.webp",
+          "dlc_31.png",
+          "amiba_0.webp",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 1
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 6,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ],
+        "turn": 2,
+        "actor": "player-white"
+      },
+      "end": {
+        "score": 138,
+        "established": 192,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 9,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 138
+        },
+        "hand": [
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ],
+        "reserved": [
+          "dlc_31.png",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 2
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ],
+          [
+            "card-77-0",
+            "dlc_6.png"
+          ]
+        ],
+        "turn": 3,
+        "actor": "player-green"
+      },
+      "endpointSha": "c141b83368f9233a7eba1c737954266c687d949682253c4ffa03b1f47e554b72",
+      "nativeReplayExact": true
+    },
+    {
+      "id": "card_corner:bf0cc13d",
+      "searchValue": 204.5,
+      "inputs": 24,
+      "start": {
+        "score": 118,
+        "established": 164,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 3,
+          "publicity": 1,
+          "score": 118
+        },
+        "hand": [
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-70-0",
+            "b_60.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [],
+        "reserved": [
+          "b_117.webp",
+          "dlc_31.png",
+          "amiba_0.webp",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 1
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 112.5,
+            "color": "white",
+            "id": 6,
+            "launchGrid": {
+              "x": 5,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 5,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 4,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ],
+        "turn": 2,
+        "actor": "player-white"
+      },
+      "end": {
+        "score": 138,
+        "established": 192,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 7,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 138
+        },
+        "hand": [
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-70-0",
+            "b_60.webp"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ],
+        "reserved": [
+          "dlc_31.png",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 2
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-77-0",
+            "dlc_6.png"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ],
+        "turn": 3,
+        "actor": "player-green"
+      },
+      "endpointSha": "d3ccd1308ff8dea91c600b8164264364eaefed874044d507a17e1ffa1ff60093",
+      "nativeReplayExact": true
+    }
+  ],
+  "rolloutEndpointsExactAfterPruning": true,
+  "rawPairs": {
+    "data:blue:2": {
+      "samples": 20,
+      "earlyUnlocks": {},
+      "lateUnlocks": {},
+      "earlyRemoves": {
+        "complete_task:card-13-0": 20
+      },
+      "dataPayment": {
+        "{\"availableData\":-1,\"handSize\":1}": 20
+      },
+      "knownPick": {
+        "card-64-0": 12,
+        "card-30-pass-3-1": 8
+      },
+      "rngChanges": 0
+    },
+    "data:blue:3": {
+      "samples": 16,
+      "earlyUnlocks": {},
+      "lateUnlocks": {},
+      "earlyRemoves": {
+        "complete_task:card-13-0": 16
+      },
+      "dataPayment": {
+        "{\"availableData\":-1,\"credits\":1}": 16
+      },
+      "knownPick": {},
+      "rngChanges": 0
+    },
+    "data:blue:1": {
+      "samples": 8,
+      "earlyUnlocks": {},
+      "lateUnlocks": {},
+      "earlyRemoves": {
+        "complete_task:card-13-0": 8
+      },
+      "dataPayment": {
+        "{\"availableData\":-1,\"energy\":1}": 8
+      },
+      "knownPick": {},
+      "rngChanges": 0
+    }
+  },
+  "pruning": {
+    "rejected": {},
+    "accepted": 28,
+    "native": 221,
+    "transitions": 1183,
+    "nodes": 1469,
+    "valueEvaluations": 289
+  },
+  "broaderTrial": {
+    "rejected": {
+      "2": 4
+    },
+    "accepted": 44,
+    "native": 221,
+    "transitions": 1167,
+    "nodes": 1485,
+    "valueEvaluations": 273
+  },
+  "freshProcesses": {
+    "rejected-plan-work": {
+      "samples": [
+        846.5192079999999,
+        875.8020829999999,
+        849.647458
+      ],
+      "median": 849.647458,
+      "min": 846.5192079999999,
+      "max": 875.8020829999999
+    },
+    "blue-claim-version-guard": {
+      "samples": [
+        833.098292,
+        829.78325,
+        830.718041
+      ],
+      "median": 830.718041,
+      "min": 829.78325,
+      "max": 833.098292
+    },
+    "blue-claim-scalar": {
+      "samples": [
+        834.0951249999999,
+        828.113833,
+        829.166458
+      ],
+      "median": 829.166458,
+      "min": 828.113833,
+      "max": 834.0951249999999
+    }
+  },
+  "hardBudgetStops": [
+    {
+      "mode": "transition",
+      "cap": 220,
+      "native": 83,
+      "proofsBeforeStop": 4,
+      "logical": 220,
+      "unresolved": 20,
+      "stopReason": "transition-budget"
+    },
+    {
+      "mode": "transition",
+      "cap": 1110,
+      "native": 215,
+      "proofsBeforeStop": 28,
+      "logical": 1110,
+      "unresolved": 7,
+      "stopReason": "transition-budget"
+    },
+    {
+      "mode": "node",
+      "cap": 320,
+      "native": 98,
+      "proofsBeforeStop": 4,
+      "logical": 283,
+      "unresolved": 20,
+      "stopReason": "node-budget"
+    },
+    {
+      "mode": "frontier",
+      "cap": 12,
+      "native": 20,
+      "proofsBeforeStop": 0,
+      "logical": 22,
+      "unresolved": 8,
+      "stopReason": "frontier-budget"
+    }
+  ],
+  "tests": {
+    "node": 6,
+    "browser": 2,
+    "vInput": "pass",
+    "allRootRankingsMatch": true
+  },
+  "wholeGameRun": false,
+  "productionReplaced": false
+}
