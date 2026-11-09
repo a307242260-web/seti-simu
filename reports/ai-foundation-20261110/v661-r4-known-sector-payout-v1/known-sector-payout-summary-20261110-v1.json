@@ -1,0 +1,411 @@
+{
+  "base": "35ceb9378de55eb52adf6e2acad7ba8f91579e1f",
+  "valueModel": "v59",
+  "basis": "same-next-own-turn-closed-where-possible-visible-original-identities-only",
+  "nativeControls": [
+    {
+      "kind": "triton-scan",
+      "turnClosed": true,
+      "before": 216.5,
+      "after": 221.5,
+      "knownNetGain": 5.0,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 10,
+        "score": 152
+      },
+      "actions": [
+        "2信用点 → 1能量",
+        "2张牌 → 1能量",
+        "chong_8.webp",
+        "b_111.webp",
+        "确认弃牌（2/2）",
+        "扫描",
+        "扫描 室女座61",
+        "dlc_8.png → 室女座61",
+        "跳过",
+        "跳过",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "获得展示的低重力研究",
+        "放置数据",
+        "blue1 下方",
+        "结束回合"
+      ]
+    },
+    {
+      "kind": "enceladus-standard",
+      "turnClosed": true,
+      "before": 200,
+      "after": 219.5,
+      "knownNetGain": 19.5,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 7,
+        "publicity": 8,
+        "score": 142
+      },
+      "actions": [
+        "2信用点 → 1能量",
+        "登陆",
+        "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+        "扫描 比邻星",
+        "外星人 2 粉3号位（3分+外星人牌）",
+        "获得展示的虫",
+        "扫描 天狼星A",
+        "扫描 室女座61",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "获得展示的低重力研究",
+        "放置数据",
+        "第一排放置位 4",
+        "收入 b_111.webp",
+        "放置数据",
+        "第一排放置位 5",
+        "放置数据",
+        "第一排放置位 6",
+        "结束回合",
+        "结算 b_117.webp"
+      ]
+    },
+    {
+      "kind": "enceladus-card",
+      "turnClosed": false,
+      "before": 200,
+      "after": 214,
+      "knownNetGain": 14,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 7,
+        "publicity": 8,
+        "score": 139
+      },
+      "actions": [
+        "chong_6.webp",
+        "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）",
+        "扫描 比邻星",
+        "外星人 2 粉3号位（3分+外星人牌）",
+        "获得展示的虫",
+        "扫描 天狼星A",
+        "扫描 室女座61",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "获得展示的低重力研究"
+      ]
+    }
+  ],
+  "payoutProof": {
+    "quote": {
+      "id": "7:land:saturn:enceladus",
+      "family": "land",
+      "planet": "saturn",
+      "funded": true,
+      "supported": true,
+      "payment": {
+        "spend": {
+          "credits": 2,
+          "energy": 1
+        },
+        "energyPurchases": 1,
+        "creditPurchases": 0,
+        "value": 3
+      },
+      "route": {
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "cost": 0,
+        "path": []
+      },
+      "ledger": [
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 13
+          },
+          "value": 13
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-3-b",
+            "tokenId": "nebula-data-31",
+            "value": 4,
+            "score": 3,
+            "data": 1,
+            "sectorClosure": {
+              "score": 3,
+              "publicity": 1
+            }
+          },
+          "value": 4,
+          "excluded": "special trace positions, triggered rewards and new identities"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-1-a",
+            "tokenId": "nebula-data-52",
+            "value": 0.5,
+            "score": 0,
+            "data": 1
+          },
+          "value": 0.5,
+          "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-4-a",
+            "tokenId": "nebula-data-37",
+            "value": 4,
+            "score": 3,
+            "data": 1,
+            "sectorClosure": {
+              "score": 3,
+              "publicity": 1
+            }
+          },
+          "value": 4,
+          "excluded": "special trace positions, triggered rewards and new identities"
+        }
+      ],
+      "capitalDelta": 0,
+      "dataContinuation": null,
+      "value": 18.5
+    },
+    "control": {
+      "id": "7:land:saturn:enceladus",
+      "family": "land",
+      "planet": "saturn",
+      "funded": true,
+      "supported": true,
+      "payment": {
+        "spend": {
+          "credits": 2,
+          "energy": 1
+        },
+        "energyPurchases": 1,
+        "creditPurchases": 0,
+        "value": 3
+      },
+      "route": {
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "cost": 0,
+        "path": []
+      },
+      "ledger": [
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 13
+          },
+          "value": 13
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-2-b",
+            "tokenId": "nebula-data-16",
+            "value": 0.5,
+            "score": 0,
+            "data": 1
+          },
+          "value": 0.5,
+          "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-1-a",
+            "tokenId": "nebula-data-52",
+            "value": 0.5,
+            "score": 0,
+            "data": 1
+          },
+          "value": 0.5,
+          "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "selected": {
+            "id": "sector-3-a",
+            "tokenId": "nebula-data-60",
+            "value": 0.5,
+            "score": 0,
+            "data": 1
+          },
+          "value": 0.5,
+          "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+        }
+      ],
+      "capitalDelta": 0,
+      "dataContinuation": null,
+      "value": 11.5
+    },
+    "increment": 7,
+    "before": {
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 6,
+        "publicity": 6,
+        "score": 116
+      },
+      "components": {
+        "realizedScore": 116,
+        "currentEndGameBonus": 57,
+        "resources": 9.5,
+        "hand": 6,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 18.5,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    },
+    "after": {
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 2,
+        "energy": 0,
+        "handSize": 6,
+        "publicity": 8,
+        "score": 135
+      },
+      "components": {
+        "realizedScore": 135,
+        "currentEndGameBonus": 57,
+        "resources": 9,
+        "hand": 6,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    },
+    "replayedExact": true,
+    "rootAndRngUnchanged": true
+  },
+  "decisionControls": [
+    {
+      "label": "teacher272",
+      "base": {
+        "native": 202,
+        "ms": 1147.753083,
+        "graphNodes": 711,
+        "action": "place_data:8fd12fd3",
+        "value": 216.5
+      },
+      "candidate": {
+        "native": 202,
+        "ms": 1157.2930410000001,
+        "graphNodes": 711,
+        "action": "place_data:8fd12fd3",
+        "value": 216.5
+      }
+    },
+    {
+      "label": "official",
+      "base": {
+        "native": 165,
+        "ms": 645.3507920000001,
+        "graphNodes": 535,
+        "action": "industry:e887dc52",
+        "value": 205.5
+      },
+      "candidate": {
+        "native": 165,
+        "ms": 746.9626659999999,
+        "graphNodes": 535,
+        "action": "industry:e887dc52",
+        "value": 205.5
+      }
+    },
+    {
+      "label": "satellite",
+      "base": {
+        "native": 1660,
+        "ms": 2721.05725,
+        "graphNodes": 2504,
+        "action": "place_data:8fd12fd3",
+        "value": 222.5
+      },
+      "candidate": {
+        "native": 1660,
+        "ms": 2664.6295410000002,
+        "graphNodes": 2504,
+        "action": "place_data:8fd12fd3",
+        "value": 222.5
+      }
+    },
+    {
+      "label": "r3-172",
+      "base": {
+        "native": 99,
+        "ms": 230.25804100000002,
+        "graphNodes": 110,
+        "action": "play_card:38489727",
+        "value": 151
+      },
+      "candidate": {
+        "native": 99,
+        "ms": 220.278875,
+        "graphNodes": 110,
+        "action": "play_card:38489727",
+        "value": 151
+      }
+    },
+    {
+      "label": "r3-136",
+      "base": {
+        "native": 224,
+        "ms": 263.80441700000006,
+        "graphNodes": 214,
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5
+      },
+      "candidate": {
+        "native": 224,
+        "ms": 258.08608399999997,
+        "graphNodes": 214,
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5
+      }
+    }
+  ],
+  "gate": {
+    "native": 256,
+    "ms": 600,
+    "teacherRootAdmitted": false
+  },
+  "wholeGameRerun": false
+}

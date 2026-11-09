@@ -215,7 +215,7 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
   assert.deepEqual(proof.actions.map(a=>a.actionId),expected.map(a=>a.actionId));
   assert.equal(proof.status,'information-barrier');
   assert.equal(proof.boundary,'hidden_card_reveal');
-  assert.equal(proof.value,200);
+  assert.equal(proof.value,207);
   for(let i=0;i<expected.length;i++){
    if(i===1||i===2){
     const cold=planFromCurrent();

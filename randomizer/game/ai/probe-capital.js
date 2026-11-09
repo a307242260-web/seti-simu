@@ -267,7 +267,10 @@
     const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
       ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
       aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),traces:slot.traces}))}};
+    const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
     const shared={player:wallet,round:4,board,passing:false,terminal:false,
+      uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),
+      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),turnCardBonusCount:state.turn.cardTurnEventBonuses?.length,
       extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
     const weights=arithmetic.DEFAULT_WEIGHTS;
     const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
@@ -285,6 +288,34 @@
   // of quoteValue/quote still receive private deep copies as before.
   function quoteReadOnlyPortfolio(facts, weights) {return evaluateMission(facts,weights,true,weights===arithmetic.DEFAULT_WEIGHTS);}
   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
+
+  // Lower bound for one already reachable satellite in the final round.
+  // Use the native payout table, and take a guaranteed ordinary extra trace.
+  // A tie, a replacement token, or an unknown reward cannot raise the quote.
+  function certainSectorPayout(board, actor, id, token, slots) {
+    if(id===data.AOMOMO_NEBULA_ID||!board.sectorSettlements?.sectors)return null;
+    const tokens=data.listNebulaTokens(board,id);
+    if(tokens.length!==data.getNebulaCapacity(id)
+      ||tokens.filter(t=>!t.replacedByPlayerColor&&!t.playerColor).length!==1
+      ||token.replacedByPlayerColor||token.playerColor)return null;
+    const own=r=>r.playerId===actor.id||r.playerColor===actor.color;
+    const ranking=data.getSectorRanking(board,id),mine=ranking.find(own)?.count||0;
+    if(ranking.some(row=>!own(row)&&row.count>=mine+1))return null;
+    const count=board.sectorSettlements?.sectors?.[id]?.settlementCount??0;
+    if(!Number.isSafeInteger(count)||count<0)return null;
+    const owner={playerId:actor.id,playerColor:actor.color},gain={score:0,publicity:0};
+    for(const reward of data.buildSectorRewardDescriptors({ok:true,sectorId:id,settlementNumber:count+1,
+      winner:owner,participants:[owner]})){
+      if(reward.kind==='resource'&&Object.keys(reward.gain).every(key=>key==='score'||key==='publicity')){
+        gain.score+=reward.gain.score||0;gain.publicity+=reward.gain.publicity||0;
+      }else if(reward.kind==='alien_trace'&&slots.some(slot=>slot.revealed&&slot.traces?.[reward.traceType]?.firstPlaced)){
+        const extra=alienState.getExtraTraceReward().gain;
+        if(Object.keys(extra).some(key=>key!=='score'))return null;
+        gain.score+=extra.score||0;
+      }else return null;
+    }
+    return gain;
+  }
 
   function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
@@ -355,6 +386,11 @@
       let delta = -payment.value - (card ? weights.handSize : 0), unknownCount = facts.hand.length - knownHand.length + facts.extraUnknownCount, supported = true;
       let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = scalarOnly ? null : [];
+      const closingSectors=weights===arithmetic.DEFAULT_WEIGHTS&&facts.round===4&&facts.uncontestedRound&&!facts.pendingNativeEffects&&!facts.turnCardBonusCount
+        &&goal.endpointFamily==='land'&&!goal.requirementId.endsWith(':planet')&&goal.route.cost===0
+        &&effects.filter(effect=>effect.type==='choose_colored_nebula_scan').length>=2
+        &&effects.every(effect=>['gain_resources','choose_colored_nebula_scan'].includes(effect.type))
+        ?new Set():null;
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
       const incomePurpose = (card, availableHand, projectedData=0, commonCapital) => {
         const gain=cards.getIncomeGainForCard(card),immediate={...gain},nextWallet={...wallet,availableData:Math.min(players.RESOURCE_LIMITS.availableData,wallet.availableData+projectedData)},nextIncome={...income};
@@ -434,15 +470,22 @@
             const available = { ...root.data, nebulae: { ...root.data.nebulae,
               [id]: { ...bucket, tokens: bucket.tokens.filter(t => !usedTokens.has(t.id)) } } };
             const token = data.getNextReplaceableNebulaToken(available, id);
-            if (!token) return []; // No forecast of refilled/hidden replacement tokens.
-            const score = data.getNebulaSlotScoreReward(id, token.slotIndex) || 0;
-            return [{ id, tokenId: token.id, value: score + Number(wallet.availableData < players.RESOURCE_LIMITS.availableData) * weights.availableData,
-              score, data: Number(wallet.availableData < players.RESOURCE_LIMITS.availableData) }];
+            if (!token||closingSectors?.has(id)) return []; // No forecast of refilled/hidden replacement tokens.
+            const payout=closingSectors&&certainSectorPayout(root.data,actor,id,token,facts.board.aliens.slots);
+            const publicity=payout?Math.min(payout.publicity,players.RESOURCE_LIMITS.publicity-wallet.publicity):0;
+            const score=(data.getNebulaSlotScoreReward(id,token.slotIndex)||0)+(payout?.score||0);
+            const gainedData=Number(wallet.availableData<players.RESOURCE_LIMITS.availableData);
+            return [{id,tokenId:token.id,value:score+gainedData*weights.availableData+publicity*(weights.publicity||0),
+              score,data:gainedData,...(payout?{sectorClosure:{score:payout.score,publicity}}:{})}];
           }).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
           const selected = quotes[0];
-          if (selected) { usedTokens.add(selected.tokenId); wallet.availableData += selected.data; delta += selected.value; }
+          if (selected) {
+            usedTokens.add(selected.tokenId);wallet.availableData+=selected.data;delta+=selected.value;
+            if(selected.sectorClosure){closingSectors.add(selected.id);wallet.publicity+=selected.sectorClosure.publicity;}
+          }
           ledger?.push({ type: effect.type, selected, value: selected?.value || 0,
-            excluded: 'sector completion, triggered rewards, new identities and additional technology movement' });
+            excluded: selected?.sectorClosure?'special trace positions, triggered rewards and new identities'
+              :'sector completion, triggered rewards, new identities and additional technology movement' });
         } else if (effect.type === 'alien_trace') {
           if(readOnlyTraces&&!traceSlots&&(options.count||1)===1){
             const source=facts.board.aliens.slots,shape=originalTraceShape??=traceShape(source);

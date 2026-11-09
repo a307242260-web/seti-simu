@@ -204,3 +204,44 @@ for (const weights of [values.DEFAULT_WEIGHTS, { ...values.DEFAULT_WEIGHTS, cred
 }
 console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true, hiddenIdentityIsolation: true,
   firstAndExtraTraces: true, dataAndPublicityCaps: true, fundingControls: controls, originalAndRngUnchanged: true }));
+
+// A stationary satellite can complete two known sectors. The quote covers
+// only the ordinary traces and participant payout, and vanishes on landing.
+{
+  const e=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'satellite-scan-setup-20261110-v1.fixture.json.gz')))).end;
+  const seed=JSON.parse(e.committedState).meta.seed,seatId='player-white';
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+    projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+  k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(e).ok);
+  const before=c.lifecycle.save().envelope,viewer={role:'player',playerId:seatId};
+  const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  const observed=c.projection(viewer).state,observedFacts=probe.factsFromObservation(observed,seatId);
+  const state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seatId);
+  const quote=facts=>probe.quote({...facts,investment:()=>0},values.DEFAULT_WEIGHTS);
+  const q=quote(observedFacts);
+  assert.equal(q.selected.id,'7:land:saturn:enceladus');
+  assert.equal(q.value,18.5);
+  assert.equal(quote({...observedFacts,uncontestedRound:false}).value,11.5);
+  assert.equal(quote({...observedFacts,pendingNativeEffects:true}).value,11.5);
+  assert.deepEqual(q,quote(probe.factsFromState(state,owner)));
+  assert.equal(probe.prepareFinalRoundSwapMission(state,owner).quote(owner.hand,state.cards.publicCards),q.value);
+  const chosen=q.selected.ledger.filter(r=>r.selected?.sectorClosure);
+  assert.deepEqual(chosen.map(r=>[r.selected.id,r.selected.sectorClosure]),[
+    ['sector-3-b',{score:3,publicity:1}],['sector-4-a',{score:3,publicity:1}]]);
+  try{
+    let n=port.openRoot();
+    const evaluate=()=>values.evaluateStateValue(port.valueObservation(n),seatId);
+    const v=evaluate();assert.equal(v.total,207);assert.equal(v.components.probePotential,18.5);
+    const next=predicate=>{const a=n.legalActions.find(predicate);assert(a);n=port.expand(n,a.actionId);};
+    next(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy');
+    next(a=>a.family==='land');
+    next(a=>a.target.landTarget?.satelliteId==='enceladus');
+    for(const r of q.selected.ledger.filter(x=>x.selected)){
+      next(a=>a.target.nebulaId===r.selected.id);
+      if(r.selected.sectorClosure)next(a=>a.target.stateExtra&&a.target.alienSlotId===1);
+    }
+    assert.equal(n.status,'stable');assert.equal(evaluate().total,207);
+    assert.equal(evaluate().components.probePotential,0);
+    assert.deepEqual(c.lifecycle.save().envelope,before);
+  }finally{port.close();c.dispose();}
+}
