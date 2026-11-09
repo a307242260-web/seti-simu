@@ -75,4 +75,15 @@ try {
   assert(menu().some(a=>a.target.fossilId==='fossil_02'));
   assert(!menu().some(a=>a.target.fossilId==='fossil_07'));
   assert(menu().find(a=>a.actionId===search().actionId).target.fossilId);
+
+  // The late scan/research root can acquire a publicly displayed alien
+  // card before it is offered a private planet peek. The peek does not
+  // claim a reward; the decision still closes under the input gate.
+  const {root:late}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'paid-landing-from-hand-20261110-v1.fixture.json.gz'))));
+  restore(late);
+  const lateSearch=search();
+  assert.equal(menu().find(a=>a.actionId===lateSearch.actionId).family,'analyze');
+  assert.equal(lateSearch.value,266);
+  assert.deepEqual(save(),late);
 }finally{c.dispose();}

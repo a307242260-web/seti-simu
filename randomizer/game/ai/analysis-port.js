@@ -1926,7 +1926,7 @@
       const stored = nodes.get(node), session = stored?.envelope.session?.session;
       const head = session?.queue?.[0];
       if (!fork || node.status !== "decision" || stored.intent || stored.resourceControl
-        || stored.informationBarrier && !["tech_bonus_reveal", "hidden_card_reveal"].includes(stored.informationBarrier.code)
+        || stored.informationBarrier && !["tech_bonus_reveal", "hidden_card_reveal", "hidden_alien_card"].includes(stored.informationBarrier.code)
         || head?.type !== "residual_chong_task_fossil" || head.ownerId !== seatId || head.payload?.planetId
         || head.allowQuickActions || session.interruptContext) return null;
       const action = node.legalActions.find(a => a.actionId === actionId);
@@ -1940,6 +1940,8 @@
       if (!boundary) {
         // Selecting an unseen planet writes private knowledge only. The
         // public ledger is the existing checkpoint; this leaf cannot expand.
+        // A prior alien-card refill does not change that ledger. Use the
+        // same inherited card knowledge when projecting this closed leaf.
         boundary = createNode(stored.envelope, null, [], "information-barrier", { code: "hidden_chong_task_fossils" });
         chongTaskPeekBoundaries.set(node, boundary);
       }

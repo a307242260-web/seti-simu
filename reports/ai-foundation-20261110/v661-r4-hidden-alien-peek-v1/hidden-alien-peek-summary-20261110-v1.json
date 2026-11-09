@@ -1,0 +1,194 @@
+{
+  "base": "b99f6b27d814b836b4df2f6b4485e998457e92d7",
+  "search": "v434",
+  "late": {
+    "choice": "analyze:a5629aa3",
+    "value": 266,
+    "rootScores": 25,
+    "native": [
+      258,
+      234
+    ],
+    "peekNative": [
+      62,
+      38
+    ],
+    "ms": [
+      [
+        524.362875,
+        484.50741600000003,
+        480.475917
+      ],
+      [
+        499.980875,
+        459.055875,
+        463.66266600000006
+      ]
+    ],
+    "medianMs": [
+      484.50741600000003,
+      463.66266600000006
+    ]
+  },
+  "nativeAudited": 24,
+  "alternateHiddenFossilsEqual": true,
+  "rootAndRngExact": true,
+  "regression": [
+    {
+      "point": "teacher272",
+      "before": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 684,
+        "ms": 1117.392458,
+        "digest": "7a689c1f5d797f86dd506b9db342483e227acfb9ac7148447cc61e9e9d897dd6",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1303,
+        "identitySliceStores": 923
+      },
+      "after": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 198,
+        "graphNodes": 684,
+        "ms": 1090.605583,
+        "digest": "7a689c1f5d797f86dd506b9db342483e227acfb9ac7148447cc61e9e9d897dd6",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1303,
+        "identitySliceStores": 923
+      }
+    },
+    {
+      "point": "official",
+      "before": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 623.9896249999999,
+        "digest": "b5cdb7c3b667e44823a128e2f4481ec4b93beedf3bb7c9fbbd98134f4da64a3c",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      },
+      "after": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 633.578292,
+        "digest": "b5cdb7c3b667e44823a128e2f4481ec4b93beedf3bb7c9fbbd98134f4da64a3c",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      }
+    },
+    {
+      "point": "satellite",
+      "before": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 999,
+        "graphNodes": 1596,
+        "ms": 1968.533083,
+        "digest": "1b4594ad77fbda0144f4a494c41bb3321e2bcecc5a0db712786b875eb40c2cce",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2487,
+        "identitySliceStores": 2875
+      },
+      "after": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 999,
+        "graphNodes": 1596,
+        "ms": 2000.805792,
+        "digest": "1b4594ad77fbda0144f4a494c41bb3321e2bcecc5a0db712786b875eb40c2cce",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 2487,
+        "identitySliceStores": 2875
+      }
+    },
+    {
+      "point": "r3",
+      "before": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 229.86237500000001,
+        "digest": "7c40daad74568e4a14e6bd744f2b3afa111ce067933a9243f7f602845fd322f0",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      },
+      "after": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 239.416666,
+        "digest": "7c40daad74568e4a14e6bd744f2b3afa111ce067933a9243f7f602845fd322f0",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      }
+    },
+    {
+      "point": "r3",
+      "before": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 268.286583,
+        "digest": "3787cdeb7babb08a7d3a04b8b042bbbfb37eedd80ff407f7e2b19906e98eb64c",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      },
+      "after": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 269.71625,
+        "digest": "3787cdeb7babb08a7d3a04b8b042bbbfb37eedd80ff407f7e2b19906e98eb64c",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      }
+    }
+  ],
+  "newFullGames": 0
+}
