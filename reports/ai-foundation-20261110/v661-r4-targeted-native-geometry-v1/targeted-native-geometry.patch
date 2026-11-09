@@ -1,0 +1,148 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -2101,7 +2101,7 @@
+       }else if(node.status!=="stable")return null;
+       const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{}),pending=jobs.filter(t=>!t.delivered);
+       if(jobs.length!==2||!pending.length||p.resources.energy+(paid?1:0)<pending.length)return null;
+-      const earth=solar.createSolarSnapshot(state.solarSystem).planetLocations.find(v=>v.planetId==="earth"),projected=[];
++      const earth=solar.collectPlanetLocations(state.solarSystem).find(v=>v.planetId==="earth"),projected=[];
+       for(const job of jobs){
+         const ship=visibleEarthCargo(state,p,job);
+         if(!ship)return null;
+@@ -2141,7 +2141,7 @@
+           ||session.queue[0].payload?.remaining!==1||session.queue[0].payload?.cardEffect?.type!=="card_move"
+           ||session.queue[0].payload.cardEffect.options?.movementPoints!==1)return null;
+       }
+-      const earth=s=>solar.createSolarSnapshot(s.solarSystem).planetLocations.find(v=>v.planetId==="earth");
++      const earth=s=>solar.collectPlanetLocations(s.solarSystem).find(v=>v.planetId==="earth");
+       const equal=(a,b)=>a?.x===b?.x&&a?.y===b?.y,position=(s,id)=>rockets.getRocketSectorCoordinate(s.pieces.rockets.find(r=>r.id===id));
+       const dest=earth(state),targets=[];
+       for(const job of jobs){
+@@ -2243,7 +2243,7 @@
+             return fixed(find(a=>a.family==="end_turn"),"finish-funded-research-and-cargo-turn");
+           }
+           const at=rockets.getRocketSectorCoordinate(state.pieces.rockets.find(r=>r.id===next.rocketId));
+-          const dest=solar.createSolarSnapshot(state.solarSystem).planetLocations.find(v=>v.planetId==="earth");
++          const dest=solar.collectPlanetLocations(state.solarSystem).find(v=>v.planetId==="earth");
+           const legal=at?.x===next.from.x&&at.y===next.from.y&&dest.x===next.to.x&&dest.y===next.to.y
+             &&rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,at)===1
+             &&rockets.canMoveFromCoordinate(state.pieces,at,next.deltaX,next.deltaY,next.rocketId).ok;
+@@ -2967,7 +2967,7 @@
+       const reward=chong.getFossilReward(task.fossilId);
+       if(!job||job.kind!=="transport"||job.destinationPlanetId!=="earth"||!reward||job.pickCard
+         ||reward.pickCard||reward.pickAlienCard||reward.drawCards||fossil?.status!=="transported"||fossil.taskCompleted)return null;
+-      const at=rockets.getRocketSectorCoordinate(ship),dest=solar.createSolarSnapshot(state.solarSystem).planetLocations.find(p=>p.planetId==="earth");
++      const at=rockets.getRocketSectorCoordinate(ship),dest=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId==="earth");
+       if(!at||!dest||at.x===dest.x&&at.y===dest.y)return null;
+       const canMove=rockets.createStaticCoordinateMoveQuery(state.pieces,ship.id);
+       const moves=node.legalActions.filter(a=>{
+diff --git a/randomizer/game/effects/residual-domain-session.js b/randomizer/game/effects/residual-domain-session.js
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -807,18 +807,23 @@
+   }
+
+   function buildCardTaskContext(root) {
+-    const probeData = rockets.buildProbeLocationData(root);
++    // This context lives for one synchronous task enumeration. Most
++    // conditions only read one domain; unused board facts need no quote.
++    let probeData, dataTotals;
++    const getProbeData = () => probeData ??= rockets.buildProbeLocationData(root);
+     return {
+       data: root.data,
+       aliens: root.aliens,
+       planets: root.planets,
+-      probeLocations: probeData.index,
+-      probeLocationDetails: probeData.details,
+-      dataTotals: Object.fromEntries((root.players.players || []).flatMap((player) => {
+-        const available = Number(player.resources?.availableData) || 0;
+-        const placed = Number(player.resources?.placedData) || 0;
+-        return [[player.id, available + placed], [player.color, available + placed]];
+-      })),
++      get probeLocations() { return getProbeData().index; },
++      get probeLocationDetails() { return getProbeData().details; },
++      get dataTotals() {
++        return dataTotals ??= Object.fromEntries((root.players.players || []).flatMap((player) => {
++          const available = Number(player.resources?.availableData) || 0;
++          const placed = Number(player.resources?.placedData) || 0;
++          return [[player.id, available + placed], [player.color, available + placed]];
++        }));
++      },
+     };
+   }
+
+@@ -1338,17 +1343,18 @@
+     if (!chong?.listTransportArrivalEvents || !solar) return [];
+     // 性能：无运输任务时任何火箭都取不到 task（listTransportArrivalEvents 第 934 行
+     // `if (!task ...) continue`），结果恒为 []。提前短路省去每 effect 执行都遍历
+-    // aliens/rockets（含逐运输任务 createSolarSnapshot 坐标解析）——单决策 ~3552 次
++    // aliens/rockets（含逐运输任务坐标解析）——单决策 ~3552 次
+     // 调用，实测 solar 盘面函数占采样 ~8%。chong 切片缺失时同为空态，不初始化。
+     const tasks = root.aliens?.chong?.transportTasksByRocketId;
+     if (!tasks || Object.keys(tasks).length === 0) return [];
++    let locations;
+     return chong.listTransportArrivalEvents(
+       root.aliens,
+       root.pieces?.rockets || [],
+       (planetId) => {
+         try {
+-          const snapshot = solar.createSolarSnapshot(root.solarSystem);
+-          const planet = (snapshot.planetLocations || []).find((entry) => entry.planetId === planetId);
++          locations ??= solar.collectPlanetLocations(root.solarSystem);
++          const planet = locations.find((entry) => entry.planetId === planetId);
+           return planet ? { x: planet.x, y: planet.y } : null;
+         } catch (error) {
+           // 容错（为何可忽略）：坐标解析失败 = 盘面结构异常，只影响"化石运输是否
+diff --git a/randomizer/game/effects/residual-domain-session.test.js b/randomizer/game/effects/residual-domain-session.test.js
+--- a/randomizer/game/effects/residual-domain-session.test.js
++++ b/randomizer/game/effects/residual-domain-session.test.js
+@@ -89,6 +89,34 @@
+     techGameState: { board: { stacks: {} }, ui: {} },
+   };
+ }
++
++(function nativeTaskMenuUsesCurrentProbeAndDataFacts() {
++  const root = createRoot();
++  const player = root.players.players[0];
++  player.reservedCards = [
++    { id: "comet-task", cardId: "b_105.webp" },
++    { id: "data-task", cardId: "dlc_35.png" },
++  ];
++  player.resources.availableData = 5;
++  player.resources.placedData = 6;
++  const query = (cardInstanceId, ruleId) => residual.queryCardSettlement(root, player.id, { kind: "task", cardInstanceId, ruleId });
++  const cometTask = () => query("comet-task", "b105-comet-task");
++  const dataTask = () => query("data-task", "dlc35-data-total");
++  assert.equal(cometTask(), null);
++  assert.equal(dataTask(), null);
++
++  const comet = solar.collectVisibleCoordinateContents(root.solarSystem).find(c => c.content.kind === "comet" && c.y <= 4);
++  assert.ok(comet);
++  root.pieces.rockets.push({ id: 1, kind: "standard", surface: "solar-board",
++    playerId: player.id, color: player.color, sectorX: comet.x, sectorY: comet.y, slotIndex: 0 });
++  assert.equal(cometTask()?.ruleId, "b105-comet-task");
++  assert.equal(dataTask(), null);
++
++  root.pieces.rockets.length = 0;
++  player.resources.placedData = 7;
++  assert.equal(cometTask(), null);
++  assert.equal(dataTask()?.ruleId, "dlc35-data-total");
++})();
+
+ (function roundIncomeCreatesUsableDataForEachOwner() {
+   for (const existing of [0, 5, 6]) {
+diff --git a/randomizer/game/rockets.js b/randomizer/game/rockets.js
+--- a/randomizer/game/rockets.js
++++ b/randomizer/game/rockets.js
+@@ -45,8 +45,8 @@
+   // 卡牌条件与终局计分共用的位置事实；只读，不缓存跨状态位置或分配实体。
+   function buildProbeLocationData(root) {
+     const solarSystemState = root?.solarSystem || {};
+-    const earth = solar.createSolarSnapshot(solarSystemState)
+-      .planetLocations.find((planet) => planet.planetId === "earth");
++    const earth = solar.collectPlanetLocations(solarSystemState)
++      .find((planet) => planet.planetId === "earth");
+     if (!earth) throw new TypeError("探测器位置读取缺少地球位置");
+     const details = [];
+     const index = {};

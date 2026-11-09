@@ -1,0 +1,754 @@
+{
+  "previousProductionCommit": "29b420511a355b2764b81a1c1b1bfc534756f7aa",
+  "candidateOnly": true,
+  "newFullGames": 0,
+  "singleDecisionGate": {
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 600
+  },
+  "openingJoinAudit": {
+    "routes": [
+      {
+        "id": "industry:e887dc52",
+        "nodes": 287,
+        "exclusive": 287,
+        "byKind": {
+          "stable|-|-": 123,
+          "turn-tail-value|-|-": 75,
+          "stable|-|b117-orbit-land-count-task": 36,
+          "other-owner|-|-": 17,
+          "information-barrier|-|-": 17,
+          "information-barrier|residual_card_decision|-": 8,
+          "decision|residual_card_decision|-": 4,
+          "stable|-|b60-jupiter-task": 3,
+          "decision|science_domain_scan_step|-": 2,
+          "decision|science_domain_alien_trace|-": 2
+        }
+      },
+      {
+        "id": "card_corner:bf0cc13d",
+        "nodes": 251,
+        "exclusive": 251,
+        "byKind": {
+          "stable|-|-": 93,
+          "turn-tail-value|-|-": 69,
+          "stable|-|b117-orbit-land-count-task": 32,
+          "information-barrier|-|-": 21,
+          "other-owner|-|-": 12,
+          "information-barrier|residual_card_decision|-": 8,
+          "stable|-|b60-jupiter-task": 7,
+          "decision|science_domain_alien_trace|-": 4,
+          "decision|residual_card_decision|-": 4,
+          "decision|science_domain_scan_step|-": 1
+        }
+      }
+    ],
+    "shared": 0,
+    "exactShared": [],
+    "sameBoard": {
+      "first": 24,
+      "second": 28,
+      "intersection": 18
+    },
+    "sameBoardSameMenu": {
+      "first": 209,
+      "second": 177,
+      "intersection": 36
+    },
+    "profile": {
+      "cardPickSpec": {
+        "calls": 3239,
+        "ms": 67.99814299999974
+      },
+      "resourceSpec": {
+        "calls": 967,
+        "ms": 113.21803800000004
+      },
+      "goalMovementSpec": {
+        "calls": 410,
+        "ms": 47.72242300000178
+      },
+      "finishChild": {
+        "calls": 1209,
+        "ms": 97.50259599999984
+      },
+      "expand": {
+        "calls": 1424,
+        "ms": 264.8302599999996
+      },
+      "turnTailSummary": {
+        "calls": 708,
+        "ms": 28.89661799999945
+      },
+      "stableFinalClaimPolicy": {
+        "calls": 56,
+        "ms": 7.618836999999587
+      },
+      "sameFinalClaimEnd": {
+        "calls": 20,
+        "ms": 8.294583000000046
+      },
+      "proveDeferredFinalDataClaim": {
+        "calls": 28,
+        "ms": 35.25358600000027
+      }
+    },
+    "native": 221,
+    "logical": 1183
+  },
+  "nativeOpeningReplay": [
+    {
+      "id": "industry:e887dc52",
+      "searchValue": 205.5,
+      "inputs": 26,
+      "end": {
+        "score": 138,
+        "established": 192,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 9,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 138
+        },
+        "hand": [
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ],
+        "reserved": [
+          "dlc_31.png",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 2
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ],
+          [
+            "card-77-0",
+            "dlc_6.png"
+          ]
+        ],
+        "turn": 3,
+        "actor": "player-green"
+      },
+      "endpointSha": "c141b83368f9233a7eba1c737954266c687d949682253c4ffa03b1f47e554b72",
+      "nativeReplayExact": true
+    },
+    {
+      "id": "card_corner:bf0cc13d",
+      "searchValue": 204.5,
+      "inputs": 24,
+      "end": {
+        "score": 138,
+        "established": 192,
+        "wallet": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 7,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 138
+        },
+        "hand": [
+          [
+            "card-69-0",
+            "b_9.webp"
+          ],
+          [
+            "card-70-0",
+            "b_60.webp"
+          ],
+          [
+            "card-64-0",
+            "b_16.webp"
+          ]
+        ],
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ],
+        "reserved": [
+          "dlc_31.png",
+          "amiba_5.webp"
+        ],
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue3",
+          "orange1",
+          "purple1",
+          "purple4"
+        ],
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "traces": {
+          "blue": 4,
+          "pink": 3,
+          "yellow": 2
+        },
+        "finalMarks": {
+          "a": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ],
+          "b": [
+            {
+              "id": "final-mark-3",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 70,
+              "tileId": "b"
+            }
+          ],
+          "c": [],
+          "d": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        },
+        "probes": [],
+        "market": [
+          [
+            "card-68-0",
+            "dlc_14.png"
+          ],
+          [
+            "card-77-0",
+            "dlc_6.png"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ],
+        "turn": 3,
+        "actor": "player-green"
+      },
+      "endpointSha": "d3ccd1308ff8dea91c600b8164264364eaefed874044d507a17e1ffa1ff60093",
+      "nativeReplayExact": true
+    }
+  ],
+  "sameSearchGraphsAndNativeSettlements": [
+    {
+      "which": "136",
+      "graph": "fa261dd9b0cb4556b7c473d43c09f08ee08533bcd442d187617344ea11afc447",
+      "counters": {
+        "contexts": 208,
+        "probeContexts": 0,
+        "dataContexts": 0,
+        "menus": 208,
+        "settlements": 94
+      },
+      "native": 224,
+      "logical": 224,
+      "eval": 103,
+      "nodes": 214,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "172",
+      "graph": "f54de3c35e27e308716ab8a47de092643b8b185c18f617a9bc250443bb0145fb",
+      "counters": {
+        "contexts": 59,
+        "probeContexts": 0,
+        "dataContexts": 0,
+        "menus": 59,
+        "settlements": 0
+      },
+      "native": 99,
+      "logical": 99,
+      "eval": 52,
+      "nodes": 110,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "317",
+      "graph": "6873d5b301bf0552a4a1b2808f2f3c6bd69b4e0a7591c6d8405067b44ca93626",
+      "counters": {
+        "contexts": 347,
+        "probeContexts": 347,
+        "dataContexts": 0,
+        "menus": 347,
+        "settlements": 189
+      },
+      "native": 232,
+      "logical": 405,
+      "eval": 100,
+      "nodes": 235,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "318",
+      "graph": "196dd13f81151a6eeef8fb990c90c81cd14bf5ff7f2ab50fdb6e26e11ce8ce93",
+      "counters": {
+        "contexts": 332,
+        "probeContexts": 332,
+        "dataContexts": 0,
+        "menus": 332,
+        "settlements": 175
+      },
+      "native": 225,
+      "logical": 394,
+      "eval": 96,
+      "nodes": 225,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "359",
+      "graph": "432f2d136059ad77bfc0d4466518506892557f054e39f0b59a692d6b0489a727",
+      "counters": {
+        "contexts": 580,
+        "probeContexts": 580,
+        "dataContexts": 0,
+        "menus": 580,
+        "settlements": 597
+      },
+      "native": 229,
+      "logical": 433,
+      "eval": 155,
+      "nodes": 398,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "official",
+      "graph": "455d7adc6fe07a9879c38f9ea028ccd5fd2a167a7ccdd72c79ab05433db65677",
+      "counters": {
+        "contexts": 911,
+        "probeContexts": 0,
+        "dataContexts": 0,
+        "menus": 911,
+        "settlements": 480
+      },
+      "native": 221,
+      "logical": 1183,
+      "eval": 289,
+      "nodes": 695,
+      "rootAndRngExact": true
+    }
+  ],
+  "settlementCounts": {
+    "contexts": 2437,
+    "probeContexts": 1259,
+    "dataContexts": 0,
+    "menus": 2437,
+    "settlements": 1535
+  },
+  "movementKeyAudit": [
+    {
+      "which": "136",
+      "counters": {
+        "calls": 61,
+        "previousMisses": 11,
+        "currentMisses": 5,
+        "coordinates": 1952
+      }
+    },
+    {
+      "which": "172",
+      "counters": {
+        "calls": 2,
+        "previousMisses": 2,
+        "currentMisses": 2,
+        "coordinates": 64
+      }
+    },
+    {
+      "which": "317",
+      "counters": {
+        "calls": 7,
+        "previousMisses": 4,
+        "currentMisses": 4,
+        "coordinates": 224
+      }
+    },
+    {
+      "which": "318",
+      "counters": {
+        "calls": 6,
+        "previousMisses": 4,
+        "currentMisses": 4,
+        "coordinates": 192
+      }
+    },
+    {
+      "which": "359",
+      "counters": {
+        "calls": 202,
+        "previousMisses": 18,
+        "currentMisses": 8,
+        "coordinates": 6464
+      }
+    },
+    {
+      "which": "official",
+      "counters": {
+        "calls": 89,
+        "previousMisses": 3,
+        "currentMisses": 3,
+        "coordinates": 2848
+      }
+    }
+  ],
+  "finalCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 402.5,
+        "minMs": 401.2,
+        "maxMs": 406.5,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 389.6,
+        "minMs": 387.6,
+        "maxMs": 395.3,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 409.6,
+        "minMs": 406.0,
+        "maxMs": 419.0,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 390.2,
+        "minMs": 389.7,
+        "maxMs": 395.3,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 620.4,
+        "minMs": 619.1,
+        "maxMs": 625.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 609.3,
+        "minMs": 607.2,
+        "maxMs": 631.5,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 698.4,
+        "minMs": 691.7,
+        "maxMs": 706.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 684.3,
+        "minMs": 678.7,
+        "maxMs": 689.2,
+        "samples": 3
+      }
+    }
+  },
+  "lazyTaskContextOnlyCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 406.2,
+        "minMs": 401.7,
+        "maxMs": 408.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 407.7,
+        "minMs": 405.2,
+        "maxMs": 416.3,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 408.3,
+        "minMs": 406.0,
+        "maxMs": 412.7,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 408.8,
+        "minMs": 403.6,
+        "maxMs": 410.6,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 620.1,
+        "minMs": 617.4,
+        "maxMs": 622.1,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 617.6,
+        "minMs": 616.5,
+        "maxMs": 625.0,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 699.9,
+        "minMs": 694.5,
+        "maxMs": 700.4,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 684.1,
+        "minMs": 682.2,
+        "maxMs": 692.1,
+        "samples": 3
+      }
+    }
+  },
+  "notAdoptedMovementKeyCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 405.4,
+        "minMs": 404.8,
+        "maxMs": 407.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 403.7,
+        "minMs": 402.0,
+        "maxMs": 404.4,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 402.6,
+        "minMs": 402.2,
+        "maxMs": 405.2,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 403.8,
+        "minMs": 401.2,
+        "maxMs": 404.4,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 617.0,
+        "minMs": 616.8,
+        "maxMs": 643.1,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 618.9,
+        "minMs": 614.6,
+        "maxMs": 622.9,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 691.8,
+        "minMs": 689.8,
+        "maxMs": 700.8,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 690.5,
+        "minMs": 689.3,
+        "maxMs": 694.6,
+        "samples": 3
+      }
+    }
+  }
+}
