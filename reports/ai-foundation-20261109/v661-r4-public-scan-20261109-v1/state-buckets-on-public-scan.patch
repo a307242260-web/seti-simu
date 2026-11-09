@@ -1,0 +1,128 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -335,13 +335,51 @@
+     let normalizedIdentityStates = new Map();
+     const identitySlices={values:new WeakMap(),hits:0,stores:0};
+     const identitySubtrees={values:new WeakMap(),hits:0,stores:0};
+-    const identities = new Map(), physicalIdentityKeys = new Map();
+-    // Intern exact full-state bytes once. Search control keys need only the
+-    // collision-free local integer; durable plan dependencies retain the
+-    // original complete serialized keys below.
+-    function nodeIdentity(physicalKey,intent,cardControl,resourceControl,knowledge = null) {
+-      if(!physicalIdentityKeys.has(physicalKey))physicalIdentityKeys.set(physicalKey,physicalIdentityKeys.size);
+-      const parts=[physicalIdentityKeys.get(physicalKey),intent,cardControl,resourceControl];
++    const identities = new Map(), physicalIdentityBuckets = new Map();
++    let nextPhysicalIdentity=0, identityBucketCollisions=0;
++    function physicalBucket(envelope,status,boundary){
++      const state=readIdentityState(envelope),session=envelope.session?.session,turn=state.turn;
++      // Only raw scalar fields that survive forwardIdentity are allowed.
++      // A bucket hit is never accepted as equality; the full key decides it.
++      return JSON.stringify([status,boundary,turn.roundNumber,turn.turnNumber,turn.currentPlayerId,
++        state.meta.sequences.card,state.meta.sequences.nebulaReplacement,state.meta.sequences.rocket,
++        state.match?.cardPlayContext?.lastScanNebulaId,
++        state.players.players.map(p=>[p.id,p.resources.score,p.resources.credits,p.resources.energy,
++          p.resources.publicity,p.resources.availableData,p.resources.handSize,p.hand.map(c=>c.id),p.reservedCards.map(c=>c.id)]),
++        state.pieces.rockets.map(r=>[r.id,r.sectorX,r.sectorY,r.surface]),
++        state.cards.publicCards.map(c=>c?.id),session?.queue.map(e=>[e.type,e.kind,e.ownerId])]);
++    }
++    function physicalCollisionKey(envelope){
++      const state=readIdentityState(envelope);
++      return JSON.stringify([
++        [1,2].map(id=>["blue","pink","yellow"].map(color=>{
++          const t=state.aliens.aliens[id]?.traces?.[color];
++          return t&&[t.firstPlaced,t.ownerPlayerColor,t.neutral,t.extraCount,t.extraMarkers?.length];
++        })),
++        state.players.players.map(p=>[p.blueBonusResources?.credits,p.blueBonusResources?.energy]),
++        data.NEBULA_IDS.map(id=>state.data.nebulae[id]?.tokens.map(t=>[t.replacementOrder,t.replacedByPlayerId])),
++      ]);
++    }
++    function internPhysicalIdentity(stored,envelope,status,boundary){
++      const key=physicalBucket(envelope,status,boundary);
++      let bucket=physicalIdentityBuckets.get(key);
++      if(!bucket){bucket=[];physicalIdentityBuckets.set(key,bucket);}
++      else{
++        identityBucketCollisions++;
++        const collision=stored.collisionKey;
++        let exact;
++        for(const prior of bucket){
++          if(prior.stored.collisionKey!==collision)continue;
++          exact??=stored.physicalKey;
++          if(prior.stored.physicalKey===exact)return prior.id;
++        }
++      }
++      const id=nextPhysicalIdentity++;
++      bucket.push({id,stored});
++      return id;
++    }
++    function nodeIdentity(physicalId,intent,cardControl,resourceControl,knowledge = null) {
++      const parts=[physicalId,intent,cardControl,resourceControl];
+       if(knowledge)parts.push(knowledge);
+       const key=JSON.stringify(parts);
+       if(!identities.has(key))identities.set(key,Object.freeze({}));
+@@ -536,14 +574,19 @@
+       // Fixed native prefixes may be charged only as certificate steps, never
+       // compared by the graph. Delay their large exact key until identity or
+       // durable plan evidence actually consumes it; no equality fields change.
+-      let physicalKey,identity;
++      let physicalKey,physicalId,collisionKey,identity;
+       nodes.set(node, { envelope, serial: nodeCount,
+         get physicalKey(){
+           if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates,null,identitySlices);identityMaterializations++;}
+           return physicalKey;
+         },
++        get collisionKey(){return collisionKey??=physicalCollisionKey(envelope);},
++        get physicalId(){
++          if(physicalId===undefined)physicalId=internPhysicalIdentity(this,envelope,status,boundary);
++          return physicalId;
++        },
+         get identity(){
+-          if(identity===undefined)identity=nodeIdentity(this.physicalKey,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope));
++          if(identity===undefined)identity=nodeIdentity(this.physicalId,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope));
+           return identity;
+         },
+         set identity(value){identity=value;},
+@@ -1222,7 +1265,7 @@
+           stored.intent = recoverMovementIntent(stored.envelope);
+           if (stored.intent) {
+             stored.policyKey=undefined;
+-            stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++            stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+           }
+         }
+       }
+@@ -1373,7 +1416,7 @@
+         if(pick?.fixed&&!stored.cardControl){
+           stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
+           stored.policyKey=undefined;
+-          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+         }
+       }
+     }
+@@ -3142,7 +3185,7 @@
+         });
+         if(row){
+           stored.intent=freeze(structuredClone(row.movementIntent));stored.policyKey=undefined;
+-          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
+           movementPolicies.delete(node);movementValueBounds.delete(node);turnTailSpecs.delete(node);turnTailNodes.delete(node);resourceSpecs.delete(node);movementIntentRecoveries++;
+           if(!stored.intent.path.length)completedMovementRecoveries++;
+         }
+@@ -5671,7 +5714,7 @@
+       chongDirectClaims.clear();
+       quietDataMenuTemplate = null;
+       blueTwoPickTemplate = null;
+-      identities.clear();physicalIdentityKeys.clear();
++      identities.clear();physicalIdentityBuckets.clear();nextPhysicalIdentity=0;identityBucketCollisions=0;
+       resourceOrders = new WeakMap();
+       knownMoneyOrders = new WeakMap();
+       openingOrders = new WeakMap();
+@@ -6905,7 +6948,7 @@
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+         companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
++        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+         committedDecodeCount, committedDecodeHits, committedReferenceCount,

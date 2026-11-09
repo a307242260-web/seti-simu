@@ -1,0 +1,291 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -419,7 +419,7 @@
+     let blueTwoPickTemplate = null, provedBlueTwoPickInputs = 0;
+     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+     let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0;
+-    let provedScan4QuietMoves=0;
++    let provedScan4QuietMoves=0, provedPublicScanChoices=0;
+     const scan4RefillCache=new Map();
+     let scan4RefillHits=0;
+     let moveMenuTemplate=null, provedMoveMenus=0, provedMovePayments=0;
+@@ -596,7 +596,7 @@
+       nodeCount = 0;
+       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+       submissionCount = 0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0;
+-      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedScan4QuietMoves=0; scan4RefillHits=0; scan4RefillCache.clear();
++      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+       observationCount = 0; observationReleases = 0;
+@@ -890,6 +890,67 @@
+         cards:slots.map(i=>deck.publicCards[i]),pile:deck.drawPileCardIds,nextCard:meta.sequences.card,
+       }));
+       return true;
++    }
++
++    function previewQuietPublicScan(node,stored,action){
++      if(!resourcePlanning||!scanPlanning||node.status!=="decision"||stored.informationBarrier||stored.resourceControl
++        ||action.family!=="choose_card")return null;
++      const checkpoint=stored.envelope.session,s=checkpoint?.session,types=scienceSession.EFFECT_TYPES;
++      const [head,purple,finalize,extra,last]=s?.queue||[],opts=head?.payload?.options;
++      if(s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
++        ||head.type!==types.SCAN_STEP||head.kind!=="decision"||opts?.mode!=="public"
++        ||Object.keys(opts).some(k=>!["mode","max","selected","consumeMarkers"].includes(k))
++        ||!Number.isSafeInteger(opts.max)||!Number.isSafeInteger(opts.selected)||opts.selected>=opts.max
++        ||purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
++        ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
++      const source=s.journal.actions[0]?.action?.family;
++      if(source==="scan"&&s.queue.length!==3||source==="play_card"&&(s.queue.length!==5
++        ||extra.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
++        ||source!=="scan"&&source!=="play_card")return null;
++      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
++      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
++        ||Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
++        ||p.reservedCards.some(c=>!known.has(c.id)))return null;
++      const done=action.target?.done===true;
++      const offered=root.cards.publicCards[action.target?.publicSlotIndex];
++      if(done?action.target.choiceId!=="public:done":!offered||!known.has(offered.id)||offered.id!==action.target.cardInstanceId
++        ||action.target.choiceId!==`public:${offered.id}:${action.target.nebulaId}`||action.payload.gainData!==true)return null;
++      const player={...p,resources:{...p.resources},dataState:structuredClone(p.dataState),scoreSources:{...p.scoreSources},
++        reservedCards:structuredClone(p.reservedCards)};
++      const state={...root,meta:{...root.meta,sequences:{...root.meta.sequences}},data:structuredClone(root.data),
++        match:{...root.match,cardPlayContext:{...root.match.cardPlayContext}},cards:{...root.cards,publicCards:[...root.cards.publicCards],discardPile:[...root.cards.discardPile]},
++        players:{...root.players,players:root.players.players.map(q=>q===p?player:q)}};
++      let repeat=null,events,history=[];
++      if(done)events=[{type:"publicScanCompleted",selected:opts.selected||0}];
++      else{
++        const id=action.target.nebulaId;
++        const result=scienceSession.executeNebulaScan(state,seatId,{target:{choiceId:"nebula:"+id,nebulaId:id}},
++          {nebulaIds:[id],source:"science"});
++        if(!result.ok)return null;
++        events=result.events||[];
++        history=[{type:"science_scan",nebulaId:id}];
++        repeat=scienceSession.consumePublicScanCard(state,player,action,opts);
++      }
++      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
++      const offset=Number(Boolean(repeat)),revision=s.revision+1;
++      const nextEffectSequence=s.nextEffectSequence+offset,nextGroupSequence=s.nextGroupSequence+offset;
++      const queue=s.queue.slice(1);
++      if(repeat)queue.unshift({...head,effectId:s.sessionId+":effect:"+nextEffectSequence,
++        groupId:s.sessionId+":group:"+nextGroupSequence,groupKind:"spawned",payload:{options:repeat},
++        source:{parentEffectId:head.effectId,priority:"direct"},groupIndex:0});
++      const choices=repeat
++        ?scienceSession.formalizeChoices(state,seatId,scienceSession.listScanStepChoices(state,player,repeat))
++        :scienceSession.scanAction4DecisionChoices(state,purple);
++      if(!choices.length)return null;
++      const j=s.journal,cursor=j.replay.length;
++      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
++      const effectRow={effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision};
++      const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:state,queue,revision,
++        nextEffectSequence,nextGroupSequence,journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...events],
++          history:[...j.history,...history],effects:[...j.effects,effectRow],
++          replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
++      return {envelope:{...stored.envelope,session},inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
+     function previewQuietScan4Move(node,stored,action){
+@@ -1074,6 +1135,12 @@
+         const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,
+           {envelope,inspection:{phase:"idle",session:null}});
+         provedMovePayments++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const publicScan=previewQuietPublicScan(node,stored,requested);
++      if(publicScan){
++        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
++        provedPublicScanChoices++;
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const scanMove=previewQuietScan4Move(node,stored,requested);
+@@ -6837,7 +6904,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+--- a/randomizer/game/effects/science-session.js
++++ b/randomizer/game/effects/science-session.js
+@@ -771,6 +771,18 @@
+     });
+   }
+
++  function consumePublicScanCard(root, actor, legal, opts) {
++    const deck=getWorkingSlice(root,"cards"),slot=legal.target.publicSlotIndex;
++    const card=deck.publicCards[slot];
++    deck.publicCards[slot]=null;
++    cards.addToDiscardPile(deck,card);
++    const selected=(Number(opts.selected)||0)+1;
++    if(selected>1&&opts.consumeMarkers)
++      actor.resources.additionalPublicScan=Math.max(0,(Number(actor.resources.additionalPublicScan)||0)-1);
++    // Leave empty slots until final settlement and refill.
++    return selected>=(Number(opts.max)||1)||!publicScanChoices(root).length?null:{...opts,selected};
++  }
++
+   function handScanChoices(root, actorId) {
+     const actor = getActor(root, actorId);
+     if (!actor) return [];
+@@ -922,6 +934,57 @@
+       {},
+       choice.label || "放置数据",
+     ));
++  }
++
++  function listScanAction4Choices(root, actorId) {
++    const actor = getActor(root, actorId);
++    if (!actor) return [];
++    const choices = [];
++    // 紫4 发射选项需校验探测器上限：已达上限时不提供发射，只能移动/跳过
++    // （规则书：支付 1 能量发射一个探测器；发射行动本身受太空探测器上限约束）。
++    const piecesState = getWorkingSlice(root, "pieces");
++    const activeRocketCount = (piecesState?.rockets || []).filter((rocket) => (
++      rocket?.playerId === actor.id
++      && rocket?.surface === "solar-board"
++      && (rocket.kind || "standard") === "standard"
++    )).length;
++    const context = createActionContext(root, actor.id);
++    const rocketLimit = typeof abilities.rocket.getRocketLimitForPlayer === "function"
++      ? abilities.rocket.getRocketLimitForPlayer(actor, context)
++      : 1;
++    if (activeRocketCount < rocketLimit && players.canAfford(actor, { energy: 1 })) {
++      choices.push(makeChoice(
++        "choose_target",
++        "scan4:launch",
++        { mode: "launch" },
++        {},
++        "发射探测器",
++      ));
++    }
++    for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
++      maxPoints: scanEffects.SCAN_ACTION_4_MOVE_POINTS,
++      ignoreAsteroidRestriction: false,
++    })) {
++      choices.push(makeChoice(
++        "choose_target",
++        `scan4:move:${move.rocketId}:${move.directionId}`,
++        {
++          mode: "move",
++          rocketId: move.rocketId,
++          deltaX: move.deltaX,
++          deltaY: move.deltaY,
++        },
++        { requiredMovePoints: move.requiredMovePoints },
++        `移动 ${move.rocketId} ${move.label}`,
++      ));
++    }
++    return choices;
++  }
++
++  function scanAction4DecisionChoices(root, effect) {
++    const choices=listScanAction4Choices(root,effect.ownerId);
++    if(effect.payload?.skippable)choices.push(makeChoice("choose_target","scan4:skip",{mode:"skip"},{},"跳过"));
++    return formalizeChoices(root,effect.ownerId,choices);
+   }
+
+   function createScienceDomain(options = {}) {
+@@ -1036,51 +1099,6 @@
+       return mappedQueue;
+     }
+
+-    function listScanAction4Choices(root, actorId) {
+-      const actor = getActor(root, actorId);
+-      if (!actor) return [];
+-      const choices = [];
+-      // 紫4 发射选项需校验探测器上限：已达上限时不提供发射，只能移动/跳过
+-      // （规则书：支付 1 能量发射一个探测器；发射行动本身受太空探测器上限约束）。
+-      const piecesState = getWorkingSlice(root, "pieces");
+-      const activeRocketCount = (piecesState?.rockets || []).filter((rocket) => (
+-        rocket?.playerId === actor.id
+-        && rocket?.surface === "solar-board"
+-        && (rocket.kind || "standard") === "standard"
+-      )).length;
+-      const context = createActionContext(root, actor.id);
+-      const rocketLimit = typeof abilities.rocket.getRocketLimitForPlayer === "function"
+-        ? abilities.rocket.getRocketLimitForPlayer(actor, context)
+-        : 1;
+-      if (activeRocketCount < rocketLimit && players.canAfford(actor, { energy: 1 })) {
+-        choices.push(makeChoice(
+-          "choose_target",
+-          "scan4:launch",
+-          { mode: "launch" },
+-          {},
+-          "发射探测器",
+-        ));
+-      }
+-      for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
+-        maxPoints: scanEffects.SCAN_ACTION_4_MOVE_POINTS,
+-        ignoreAsteroidRestriction: false,
+-      })) {
+-        choices.push(makeChoice(
+-          "choose_target",
+-          `scan4:move:${move.rocketId}:${move.directionId}`,
+-          {
+-            mode: "move",
+-            rocketId: move.rocketId,
+-            deltaX: move.deltaX,
+-            deltaY: move.deltaY,
+-          },
+-          { requiredMovePoints: move.requiredMovePoints },
+-          `移动 ${move.rocketId} ${move.label}`,
+-        ));
+-      }
+-      return choices;
+-    }
+-
+     runtime.registerExecutor(EFFECT_TYPES.EXECUTE, (state, effect, workingContext) => {
+       const root = getWorkingRoot(state, workingContext);
+       const action = effect.payload?.action;
+@@ -1211,25 +1229,8 @@
+         if (!removed.ok) return removed;
+         cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
+       } else if (mode === "public") {
+-        const cardsState = getWorkingSlice(root, "cards");
+-        const card = cardsState.publicCards[legal.target.publicSlotIndex];
+-        cardsState.publicCards[legal.target.publicSlotIndex] = null;
+-        cards.addToDiscardPile(cardsState, card);
+-        const selected = (Number(opts.selected) || 0) + 1;
+-        if (selected > 1 && opts.consumeMarkers) {
+-          actor.resources.additionalPublicScan = Math.max(
+-            0,
+-            (Number(actor.resources.additionalPublicScan) || 0) - 1,
+-          );
+-        }
+-        // 公共牌扫描放置后空位保持空置，不立即补牌；补牌统一由扫描流串尾
+-        // SCAN_FINALIZE 在 SETTLE（扇区结算痕迹/盲抽奖励）之后触发。
+-        const scanFlowEnded = selected >= (Number(opts.max) || 1) || !publicScanChoices(root).length;
+-        if (!scanFlowEnded) {
+-          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP, actor.id, {
+-            options: { ...clone(opts), selected },
+-          }, "choose_card"));
+-        }
++        const repeat=consumePublicScanCard(root,actor,legal,opts);
++        if(repeat)spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP,actor.id,{options:clone(repeat)},"choose_card"));
+       }
+       if (opts.probeFlow) {
+         const flow = clone(opts.probeFlow);
+@@ -1426,11 +1427,7 @@
+     runtime.registerExecutor(EFFECT_TYPES.SCAN_ACTION_4, {
+       getLegalChoices(state, effect, workingContext) {
+         const root = getWorkingRoot(state, workingContext);
+-        const choices = listScanAction4Choices(root, effect.ownerId);
+-        if (effect.payload?.skippable) {
+-          choices.push(makeChoice("choose_target", "scan4:skip", { mode: "skip" }, {}, "跳过"));
+-        }
+-        return formalizeChoices(root, effect.ownerId, choices);
++        return scanAction4DecisionChoices(root,effect);
+       },
+       resolveDecision(state, effect, choice, workingContext) {
+         const root = getWorkingRoot(state, workingContext);
+@@ -1972,6 +1969,8 @@
+     getPlanetScanSource,
+     listNebulaChoices,
+     listPublicScanChoices: publicScanChoices,
++    consumePublicScanCard,
++    scanAction4DecisionChoices,
+     listHandScanChoices: handScanChoices,
+     listScanStepChoices: scanStepChoices,
+     executeNebulaScan,
