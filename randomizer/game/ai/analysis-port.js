@@ -1856,6 +1856,7 @@
         &&["swap_hand","swap_public"].includes(head.payload?.step)?policySession.baseState:null;
       const supply=swapSource&&swapSource.turn.roundNumber===3&&previewAnalysisSwapSupply(swapSource,envelope);
       const result=cardPickPlanner.plan({state,seatId,actions,status,session:policySession,
+        knownChongDisplayIndex:knownRootAlienIds.has("虫")?knownChongDisplayIndex:null,
         committedCompanySwap:envelopeCompanyIntents.get(envelope)||supply||null,
         endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
       const frozen=result&&freeze(result);envelopeCardSpecs.set(envelope,frozen);return frozen;

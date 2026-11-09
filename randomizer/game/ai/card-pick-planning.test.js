@@ -21,6 +21,34 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
  const changed=structuredClone(s);changed.aliens.amiba.cardDeck.reverse();assert.equal(plan(changed,actions,planner,{status:'decision',session}).selectedActionId,r.selectedActionId);
  assert.equal(plan(s,actions,planner,{status:'decision',session:{queue:[{type:'residual_alien_card_decision',payload:{speciesId:'runezu'}}]}}),null);
 }
+// The same visible free Chong offer is a fixed final-round acquisition,
+// but a future refill or another active seat cannot use that policy.
+{
+ const s=state(),p=own(s),planner=api.createCardPickPlanner(),index=5;
+ s.turn.roundNumber=4;s.turn.currentPlayerId=seatId;
+ s.turn.passedPlayerIds=s.turn.activePlayerIds.filter(id=>id!==seatId);
+ s.aliens.chong={...s.aliens.chong,displayedCardIndex:index};
+ const head={type:'residual_alien_card_decision',ownerId:seatId,payload:{speciesId:'chong'}};
+ const actions=['display:5','blind','cancel'].map((source,i)=>({actorId:seatId,actionId:'free-chong:'+i,family:'choose_card',
+  target:{kind:'residual-domain',choiceId:'chong:'+source,source:source.split(':')[0],...(i===0?{cardIndex:index}:{})}}));
+ const test=(state=s,knownChongDisplayIndex=index,queue=[head],choices=actions)=>plan(state,choices,planner,
+  {status:'decision',session:{queue},knownChongDisplayIndex});
+ const result=test();
+ assert(result?.fixed);assert.equal(result.isEquivalence,false);assert.equal(result.selectedActionId,actions[0].actionId);
+ assert.equal(result.reason,'fixed-known-chong-reward');
+ assert.deepEqual(result.excludedActionIds,actions.slice(1).map(a=>a.actionId));
+ const changed=structuredClone(s);
+ changed.aliens.chong.cardDeck=[8,7,3];assert.deepEqual(test(changed),result);
+ assert.notEqual(test(s,null)?.reason,result.reason);
+ assert.notEqual(test(s,8)?.reason,result.reason);
+ assert.notEqual(test(s,index,[head],actions.slice(1))?.reason,result.reason);
+ changed.aliens.chong.displayedCardIndex=8;assert.notEqual(test(changed)?.reason,result.reason);
+ changed.aliens.chong.displayedCardIndex=index;
+ changed.turn.passedPlayerIds=[];assert.notEqual(test(changed)?.reason,result.reason);
+ changed.turn.passedPlayerIds=s.turn.passedPlayerIds;
+ changed.turn.roundNumber=3;assert.notEqual(test(changed)?.reason,result.reason);
+ assert(p.mainActionCompleted);
+}
 // One purpose gets one greedy acquisition method. A same-card company swap
 // that discards a subset of the paid payment takes precedence over paying more.
 {

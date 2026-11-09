@@ -9,7 +9,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe,scan){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v16';
+  const VERSION='seti-purpose-card-pick-policy-v17';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -303,9 +303,23 @@
       }
       return same(current,before)?base:null;
     }
-    function plan({state,seatId,actions,status,session,endpoints=()=>[],committedCompanySwap=null,knownSourceCapital=null}){
+    function plan({state,seatId,actions,status,session,endpoints=()=>[],committedCompanySwap=null,knownSourceCapital=null,knownChongDisplayIndex=null}){
       const source=session?.journal?.actions?.[0]?.action,head=session?.queue?.[0],pending=head?.payload?.decisionContext;
       const tradePending=pending?.type==='trade'&&TRADE_IDS.has(pending.tradeId)&&['discard','card_selection'].includes(pending.kind);
+      if(status==='decision'&&head?.type==='residual_alien_card_decision'&&head.ownerId===seatId
+        &&head.payload?.speciesId==='chong'&&!head.allowQuickActions&&!session.interruptContext
+        &&state.turn.roundNumber===4&&state.turn.currentPlayerId===seatId
+        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
+        &&state.players.players.find(p=>p.id===seatId)?.mainActionCompleted&&Number.isSafeInteger(knownChongDisplayIndex)
+        &&state.aliens.chong?.displayedCardIndex===knownChongDisplayIndex
+        &&actions.every(a=>a.actorId===seatId&&a.family==='choose_card'&&a.target?.kind==='residual-domain'
+          &&/^chong:(display:\d+|blind|cancel)$/.test(a.target.choiceId))){
+        // A free visible reward needs one fixed acquisition. Leave changed
+        // displays and hidden-only menus with the original decision policy.
+        const action=actions.find(a=>a.target.source==='display'&&a.target.cardIndex===knownChongDisplayIndex
+          &&a.target.choiceId===`chong:display:${knownChongDisplayIndex}`);
+        if(action)return fixed(action,{kind:'free-reward',id:'free-known-chong-card'},null,[],actions,'fixed-known-chong-reward');
+      }
       if(status==='decision'&&head?.type==='residual_alien_card_decision'&&head.payload?.speciesId==='amiba'
         &&actions.length&&actions.every(a=>a.family==='choose_card'&&a.target?.kind==='residual-domain'
           &&/^amiba:(display:\d+|blind|cancel)$/.test(a.target.choiceId))){

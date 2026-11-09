@@ -1,0 +1,137 @@
+{
+  "cold": {
+    "teacher272": {
+      "before": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "milliseconds": 1285.232959,
+        "nativeInputs": 212,
+        "graphNodes": 721,
+        "valueEvaluations": 295
+      },
+      "after": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "milliseconds": 1181.129125,
+        "nativeInputs": 198,
+        "graphNodes": 684,
+        "valueEvaluations": 278
+      },
+      "identicalRootCandidates": 33
+    },
+    "official": {
+      "before": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "milliseconds": 665.721958,
+        "nativeInputs": 165,
+        "graphNodes": 535,
+        "valueEvaluations": 203
+      },
+      "after": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "milliseconds": 661.1286670000001,
+        "nativeInputs": 165,
+        "graphNodes": 535,
+        "valueEvaluations": 203
+      },
+      "identicalRootCandidates": 22
+    },
+    "satellite": {
+      "before": {
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "milliseconds": 2823.003792,
+        "nativeInputs": 1663,
+        "graphNodes": 2506,
+        "valueEvaluations": 1235
+      },
+      "after": {
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "milliseconds": 2319.384042,
+        "nativeInputs": 1317,
+        "graphNodes": 1908,
+        "valueEvaluations": 930
+      },
+      "identicalRootCandidates": 32
+    }
+  },
+  "teacherV59ToV60Added": {
+    "science_domain_place_data/choose_target": 2,
+    "science_domain_pick_card/choose_card": 2,
+    "stable/industry": 3,
+    "residual_company_decision/choose_card": 6
+  },
+  "teacherV59ToV60Removed": {
+    "science_domain_income/choose_card": 1,
+    "stable/end_turn": 2
+  },
+  "satelliteNativeInputsRemoved": {
+    "science_domain_scan_step/choose_target": 40,
+    "science_domain_alien_trace/choose_target": 48,
+    "residual_alien_card_decision/choose_card": 258
+  },
+  "satelliteNativeInputComposition": {
+    "stable/play_card": 11,
+    "stable/pass": 2,
+    "probe_turn_pass_discard/choose_card": 2,
+    "stable/quick_trade": 7,
+    "standard_action_session_decision/choose_card": 2,
+    "stable/place_data": 1,
+    "science_domain_place_data/choose_target": 5,
+    "stable/analyze": 1,
+    "standard_action_session_decision/choose_payment": 3,
+    "stable/move": 1,
+    "probe_turn_move_payment/choose_payment": 4,
+    "stable/land": 4,
+    "probe_land_choice/choose_target": 6,
+    "stable/scan": 2,
+    "science_domain_scan_step/choose_target": 212,
+    "science_domain_scan_action_4/choose_target": 10,
+    "stable/research_tech": 2,
+    "science_domain_alien_trace/choose_target": 655,
+    "residual_alien_card_decision/choose_card": 360,
+    "science_domain_pick_card/choose_card": 4,
+    "stable/end_turn": 4,
+    "stable/complete_task": 1,
+    "card_play_domain_effect:decision:chong_land_for_pickup/choose_target": 4,
+    "card_play_domain_effect:decision:chong_probe_planet_fossil_reward/choose_target": 4,
+    "stable/industry": 1,
+    "residual_company_decision/choose_card": 2,
+    "science_domain_income/choose_card": 4,
+    "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup/choose_target": 3
+  },
+  "thirdRoundPreserved": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214
+    }
+  ],
+  "proof": {
+    "sourceMenus": 6,
+    "hiddenDeckWorlds": 12,
+    "nodePassed": 4,
+    "browserPassed": 2,
+    "stateValueInputAuditPassed": true,
+    "rootAndRngExact": true
+  },
+  "searchBudgetUnchanged": true,
+  "gate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "admitted": false
+  },
+  "newAutonomousGames": 0
+}
