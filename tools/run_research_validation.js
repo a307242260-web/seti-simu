@@ -130,7 +130,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = ([whiteFull.ID,whiteFull.V189_ID].includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
+    identity.scenario = (whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -417,7 +417,7 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const scenario = [whiteFull.ID,whiteFull.V189_ID].includes(identity.scenario?.id) ? whiteFull : whiteRound1;
+  const scenario = whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const fullWhite = scenario === whiteFull;
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
   let nextRoundToRecord = 1;
@@ -447,7 +447,7 @@ function runValidation(options) {
           ownedSlots: bucket.tokens.filter(t => t.replacedByPlayerId === owner.id).map(t => t.slotIndex),
           capacity: bucket.tokens.length })).filter(p => p.ownedSlots.length),
         alienTraceSlots: observation.publicState.board.aliens.slots,
-        ...(identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID ? {
+        ...((identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID || identity.scenario.id === whiteFull.V661_ID) ? {
           aliens: observation.publicState.board.aliens, finalScoring: state.finalScoring,
           projectedFinalScore: observation.publicState.players.find(p => p.playerId === owner.id).finalScore,
         } : {}) };
@@ -519,15 +519,15 @@ function runValidation(options) {
       row.checkpointSha256 = sha256(fs.readFileSync(checkpointPath));
       row.cumulativeWallMsIncludingSourcePrefix = row.elapsedMs + identity.scenario.continuation.sourceRoundWallMs;
       if (!identity.scenario.continuation.sourceCompletedRounds) row.cumulativeWallMsIncludingSourceRound1 = row.cumulativeWallMsIncludingSourcePrefix;
-      if (identity.scenario.continuation.sourceCompletedRounds === 2) row.phase = 'after-settlement-and-next-income';
+      if (identity.scenario.continuation.sourceCompletedRounds >= 2) row.phase = 'after-settlement-and-next-income';
       roundSummaries.push(row); fs.appendFileSync(roundSummariesPath, `${JSON.stringify(row)}\n`);
       console.log(`[轮末] ${JSON.stringify(row)}`);
     }
     if (fullWhite) {
-      if (identity.scenario.continuation.sourceCompletedRounds === 2) {
+      if (identity.scenario.continuation.sourceCompletedRounds >= 2) {
         roundEnds.push(...continuationSource.record.roundEnds);
         for (const row of roundEnds) fs.appendFileSync(`${recordPath}.round-ends.jsonl`, `${JSON.stringify(row)}\n`);
-        nextRoundToRecord = 3;
+        nextRoundToRecord = identity.scenario.continuation.sourceCompletedRounds + 1;
       } else { recordRound(1); nextRoundToRecord = 2; }
     }
 
@@ -610,7 +610,7 @@ function runValidation(options) {
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       ...(identity.scenario ? { scenario: identity.scenario,
-        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(finalObs, identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: steps - identity.scenario.openingInputs } : {}), ...(identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID ? { firstThreeRoundsSettled: whiteRound1.settled(finalObs, identity.scenario), newInputsAfterOpening: steps - identity.scenario.openingInputs, completedRoundEnds: roundEnds.map(r => r.round) } : {}), ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(identity.scenario.continuation.sourceCompletedRounds === 2 ? [1,2] : []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs, ...(identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? { thirdRoundSettled: whiteRound1.settled(finalObs, identity.scenario), controlledTeacherPrefix: true, newInputsAfterControlledPrefix: steps - identity.scenario.openingInputs } : {}), ...(identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID ? { firstThreeRoundsSettled: whiteRound1.settled(finalObs, identity.scenario), newInputsAfterOpening: steps - identity.scenario.openingInputs, completedRoundEnds: roundEnds.map(r => r.round) } : {}), ...(fullWhite ? { fullGameCompleted: terminal, completedRounds: [...(continuationSource.record.roundEnds?.map(row => row.round) || []), ...roundSummaries.map(r => r.round)] } : {}), ...(roundEnds.length ? { completedRoundEnds: roundEnds.map(r => r.round) } : {}) },
         stopReason: fullWhite ? (terminal ? "terminal" : "step-limit") : (scenario.settled(finalObs, identity.scenario) ? (identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID ? "first-three-rounds-settled" : identity.scenario.id === whiteRound1.THIRD_ROUND_ID ? "third-round-settled" : identity.scenario.id === whiteRound1.TWO_ROUND_ID ? "first-two-rounds-settled" : "first-round-settled") : "step-limit"),
         scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
@@ -620,7 +620,7 @@ function runValidation(options) {
       terminal,
       wallMs,
       ...(roundEnds.length ? { roundEnds, roundEndsPath: path.relative(path.join(__dirname, ".."), `${recordPath}.round-ends.jsonl`) } : {}),
-      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), ...(identity.scenario.continuation.sourceCompletedRounds === 2 ? {wallMsIncludingSourcePrefix:wallMs+identity.scenario.continuation.sourceGameWallMs} : {wallMsIncludingSourceRound1:wallMs+identity.scenario.continuation.sourceRoundWallMs}) } : {}),
+      ...(fullWhite ? { rounds: roundSummaries, roundSummariesPath: path.relative(path.join(__dirname, ".."), roundSummariesPath), ...(identity.scenario.continuation.sourceCompletedRounds >= 2 ? {wallMsIncludingSourcePrefix:wallMs+identity.scenario.continuation.sourceGameWallMs} : {wallMsIncludingSourceRound1:wallMs+identity.scenario.continuation.sourceRoundWallMs}) } : {}),
       resumedFrom,
       resumeStep,
       savePath,
