@@ -1,0 +1,227 @@
+{
+  "rows": [
+    {
+      "path": "analyze",
+      "nativeInputs": 18,
+      "pending": 8,
+      "terminal": 10,
+      "barriers": 0,
+      "staleRejected": 8,
+      "publishedEvents": 20,
+      "identicalEnvelopesAndOriginalRoot": true
+    },
+    {
+      "path": "complete_task",
+      "nativeInputs": 17,
+      "pending": 8,
+      "terminal": 9,
+      "barriers": 0,
+      "staleRejected": 8,
+      "publishedEvents": 18,
+      "identicalEnvelopesAndOriginalRoot": true
+    },
+    {
+      "path": "teacher-314",
+      "nativeInputs": 1,
+      "pending": 1,
+      "terminal": 0,
+      "barriers": 0,
+      "staleRejected": 1,
+      "publishedEvents": 0,
+      "identicalEnvelopesAndOriginalRoot": true
+    },
+    {
+      "path": "teacher-351",
+      "nativeInputs": 1,
+      "pending": 1,
+      "terminal": 0,
+      "barriers": 0,
+      "staleRejected": 1,
+      "publishedEvents": 0,
+      "identicalEnvelopesAndOriginalRoot": true
+    },
+    {
+      "path": "teacher-354",
+      "nativeInputs": 1,
+      "pending": 0,
+      "terminal": 1,
+      "barriers": 0,
+      "staleRejected": 1,
+      "publishedEvents": 1,
+      "identicalEnvelopesAndOriginalRoot": true
+    },
+    {
+      "path": "initial-offer-information-barrier",
+      "nativeInputs": 1,
+      "pending": 1,
+      "terminal": 0,
+      "barriers": 1,
+      "staleRejected": 1,
+      "publishedEvents": 0,
+      "identicalEnvelopesAndOriginalRoot": true
+    }
+  ],
+  "coldRoots": [
+    {
+      "input": 314,
+      "actionId": "choose_target:f042ebe0",
+      "native": 6,
+      "oldMs": 77.96308299999998,
+      "newMs": 77.487875,
+      "equalRankingValueAndRoot": true
+    },
+    {
+      "input": 351,
+      "actionId": "choose_target:43d1120f",
+      "native": 10,
+      "oldMs": 64.18375000000003,
+      "newMs": 67.68587500000001,
+      "equalRankingValueAndRoot": true
+    },
+    {
+      "input": 354,
+      "actionId": "accept_optional_effect:564fb7e2",
+      "native": 2,
+      "oldMs": 32.564750000000004,
+      "newMs": 31.735041999999964,
+      "equalRankingValueAndRoot": true
+    },
+    {
+      "input": 359,
+      "actionId": "analyze:a5629aa3",
+      "native": 459,
+      "oldMs": 1071.616833,
+      "newMs": 1038.2656670000001,
+      "equalRankingValueAndRoot": true
+    },
+    {
+      "input": 355,
+      "actionId": "place_data:8fd12fd3",
+      "native": 537,
+      "oldMs": 1095.735667,
+      "newMs": 1082.595083,
+      "equalRankingValueAndRoot": true
+    }
+  ],
+  "coldInputDistribution": [
+    {
+      "input": 359,
+      "counts": {
+        "launch|stable|—|—": 2,
+        "analyze|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 55,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 10,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|scan|—": 12,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "place_data|stable|—|—": 42,
+        "choose_target|science_domain_place_data|place_data|—": 42,
+        "choose_card|science_domain_pick_card|place_data|—": 18,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 24,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 64,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2,
+        "choose_card|science_domain_income|place_data|—": 3
+      },
+      "slots": {
+        "blue 3|post-main|4": 10,
+        "blue 3|post-main|6": 14,
+        "第一排放置位 1|post-main|4": 3,
+        "第一排放置位 2|post-main|3": 3,
+        "第一排放置位 3|post-main|2": 3,
+        "第一排放置位 4|post-main|1": 3,
+        "blue 1|post-main|1": 3,
+        "blue 2|post-main|1": 3
+      }
+    },
+    {
+      "input": 355,
+      "counts": {
+        "launch|stable|—|—": 2,
+        "play_card|stable|—|—": 8,
+        "pass|stable|—|—": 2,
+        "complete_task|stable|—|—": 59,
+        "place_data|stable|—|—": 72,
+        "choose_target|science_domain_place_data|place_data|—": 72,
+        "analyze|stable|—|—": 2,
+        "quick_trade|stable|—|—": 7,
+        "choose_payment|standard_action_session_decision|quick_trade|—": 9,
+        "move|stable|—|—": 6,
+        "choose_payment|probe_turn_move_payment|move|—": 6,
+        "land|stable|—|—": 2,
+        "choose_target|probe_land_choice|land|—": 2,
+        "card_corner|stable|—|—": 10,
+        "research_tech|stable|—|—": 2,
+        "choose_target|science_domain_research|research_tech|—": 10,
+        "choose_card|science_domain_pick_card|research_tech|—": 4,
+        "scan|stable|—|—": 2,
+        "choose_target|science_domain_scan_step|scan|—": 12,
+        "choose_card|science_domain_scan_step|scan|—": 8,
+        "choose_target|science_domain_scan_action_4|scan|—": 8,
+        "choose_target|science_domain_alien_trace|analyze|—": 15,
+        "choose_card|residual_alien_card_decision|analyze|—": 8,
+        "choose_card|science_domain_income|place_data|—": 3,
+        "choose_target|science_domain_alien_trace|scan|—": 12,
+        "choose_card|residual_alien_card_decision|scan|—": 6,
+        "accept_optional_effect|residual_card_decision|research_tech|trigger": 8,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|research_tech|amiba_choose_symbol_reward": 4,
+        "choose_card|science_domain_pick_card|place_data|—": 20,
+        "choose_target|science_domain_research|play_card|card_research_tech": 14,
+        "choose_card|science_domain_pick_card|play_card|—": 10,
+        "accept_optional_effect|residual_card_decision|play_card|trigger": 16,
+        "choose_target|card_play_domain_effect:decision:amiba_choose_symbol_reward|play_card|amiba_choose_symbol_reward": 14,
+        "end_turn|stable|—|—": 28,
+        "accept_optional_effect|residual_card_decision|end_turn|chong_task": 72,
+        "accept_optional_effect|residual_card_decision|pass|chong_task": 2
+      },
+      "slots": {
+        "第一排放置位 5|pre-main|6": 2,
+        "第一排放置位 6|pre-main|5": 2,
+        "第一排放置位 1|post-main|4": 3,
+        "第一排放置位 2|post-main|3": 3,
+        "第一排放置位 3|post-main|2": 3,
+        "第一排放置位 4|post-main|1": 3,
+        "blue 1|post-main|1": 3,
+        "blue 2|post-main|1": 3,
+        "第一排放置位 5|post-main|6": 24,
+        "blue 3|post-main|5": 18,
+        "blue 3|post-main|6": 8
+      }
+    }
+  ],
+  "productionAdmission": false,
+  "admissionGate": {
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 600
+  },
+  "candidateBase": "reports/ai-foundation-20261109/v661-r4-scan-trace-v1/candidate-cargo-scan-trace-v4.patch",
+  "checks": [
+    "rule composition",
+    "effect session runtime",
+    "StateStore effect session",
+    "simulation rule composition",
+    "analysis port isolation and exact reuse",
+    "V input audit"
+  ]
+}

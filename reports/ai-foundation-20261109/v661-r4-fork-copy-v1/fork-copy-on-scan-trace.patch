@@ -1,0 +1,108 @@
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -447,6 +447,7 @@
+     }
+
+     function publish(event) {
++      if (!listeners.size) return;
+       const frozen = deepFreeze(clone(event));
+       for (const listener of [...listeners]) {
+         try { listener(frozen); } catch (_error) { /* 已成立的规则状态不受宿主监听器影响。 */ }
+@@ -661,16 +662,17 @@
+       });
+     }
+
+-    function finishIfTerminal() {
++    function finishIfTerminal(omitTrustedResult = false) {
+       if (!activeSession || !TERMINAL_PHASES.has(activeSession.phase)) return null;
++      const compact = omitTrustedResult && listeners.size === 0;
+       const terminal = deepFreeze({
+-        ...clone(lastActionResult || {}),
++        ...(compact ? {} : clone(lastActionResult || {})),
+         ok: activeSession.phase === "completed",
+         phase: activeSession.phase,
+         family: activeFamily,
+         stateVersion: readStoreSnapshot().meta.stateVersion,
+         failure: clone(activeSession.failure),
+-        journal: clone(activeSession.journal),
++        ...(compact ? {} : { journal: clone(activeSession.journal) }),
+         irreversibleBarrier: clone(activeSession.irreversibleBarrier),
+       });
+       activeSession = null;
+@@ -681,15 +683,17 @@
+     }
+
+     function advanceSession(result, autoDrain = true, responseOptions = {}) {
+-      if (!result?.ok) return finishIfTerminal() || deepFreeze(clone(result));
++      const omitTrustedResult = options.allowTrustedForkLifecycle === true
++        && responseOptions.skipProjection === true && responseOptions.omitTrustedResult === true;
++      if (!result?.ok) return finishIfTerminal(omitTrustedResult) || deepFreeze(clone(result));
+       if (activeSession && autoDrain && !TERMINAL_PHASES.has(activeSession.phase)) {
+         const drained = runtime.drain(activeSession, { skipInspection: options.allowTrustedForkLifecycle === true });
+-        if (!drained?.ok) return finishIfTerminal() || deepFreeze(clone(drained));
+-      }
+-      return finishIfTerminal() || deepFreeze({
++        if (!drained?.ok) return finishIfTerminal(omitTrustedResult) || deepFreeze(clone(drained));
++      }
++      return finishIfTerminal(omitTrustedResult) || deepFreeze({
+         ok: true,
+         ...(responseOptions.skipProjection === true ? {} : { projection: projection() }),
+-        journal: clone(activeSession?.journal || null),
++        ...(omitTrustedResult && listeners.size === 0 ? {} : { journal: clone(activeSession?.journal || null) }),
+       });
+     }
+
+@@ -729,6 +733,7 @@
+       publish({ source: "session", event: { type: "opened", family: activeFamily } });
+       const result = advanceSession(dispatched, submitOptions.autoDrain !== false, {
+         skipProjection: submitOptions.skipProjection === true,
++        omitTrustedResult: submitOptions.omitTrustedResult === true,
+       });
+       return result;
+     }
+@@ -785,6 +790,7 @@
+       );
+       return advanceSession(result, submitOptions.autoDrain !== false, {
+         skipProjection: submitOptions.skipProjection === true,
++        omitTrustedResult: submitOptions.omitTrustedResult === true,
+       });
+     }
+
+@@ -793,6 +799,7 @@
+       const resolved = runtime.resolveDecision(activeSession, clone(submission));
+       return advanceSession(resolved, submitOptions.autoDrain !== false, {
+         skipProjection: submitOptions.skipProjection === true,
++        omitTrustedResult: submitOptions.omitTrustedResult === true,
+       });
+     }
+
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -2053,7 +2053,13 @@
+       // The immutable node/menu already supplied this descriptor. The native
+       // submit port still validates it against the restored authority and
+       // decision version; do not enumerate the same full menu a second time.
+-      const before = comp.inspect(true);
++      const session=loadedEnvelope?.session?.session,head=session?.queue?.[0];
++      // restoreEnvelope loaded this exact private checkpoint. The formal
++      // submit port below still checks identity and enumerates native legality.
++      const before=loadedEnvelope&&(session?.phase!=="awaiting_input"||head?.kind==="decision")
++        ?{phase:session?.phase||"idle",session:session?{irreversibleBarrier:session.irreversibleBarrier,
++          decision:head?.kind==="decision"?{decisionId:head.effectId,decisionVersion:session.revision,ownerId:head.ownerId}:null}:null}
++        :comp.inspect(true);
+       if (!current || current.actorId !== seatId) throw new Error("ANALYSIS_ACTION_STALE");
+       loadedEnvelope = null;
+       const executeAt = now();
+@@ -2062,9 +2068,9 @@
+           decisionId: before.session.decision.decisionId,
+           decisionVersion: before.session.decision.decisionVersion,
+           ownerId: before.session.decision.ownerId, choice: current,
+-        }, { skipProjection: true })
+-        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current, { skipProjection: true })
+-          : comp.inputPort.submitAction(current, { skipProjection: true });
++        }, { skipProjection: true, omitTrustedResult: true })
++        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current, { skipProjection: true, omitTrustedResult: true })
++          : comp.inputPort.submitAction(current, { skipProjection: true, omitTrustedResult: true });
+       milliseconds.execute += now() - executeAt;
+       if (!result?.ok) {
+         const failure = result?.failure || result;
