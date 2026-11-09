@@ -1,0 +1,285 @@
+{
+  "source": "17fd8f313eb85ef1f973a4af9e02deff8913887d",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "action": "深空探测 1x 行动",
+      "actionId": "industry:e887dc52",
+      "value": 205.5,
+      "native": 707,
+      "ms": 1677.562791,
+      "complete": true
+    },
+    "candidate": {
+      "label": "official-r4",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 633,
+      "ms": 1605.296916
+    },
+    "allRootRankingsEqual": true,
+    "rootAndRngUnchanged": true,
+    "nativeInputCategories": {
+      "launch|stable|—": 5,
+      "play_card|stable|—": 12,
+      "pass|stable|—": 5,
+      "industry|stable|—": 2,
+      "choose_card|residual_company_decision|industry": 4,
+      "card_corner|stable|—": 22,
+      "place_data|stable|—": 9,
+      "choose_target|science_domain_place_data|place_data": 9,
+      "analyze|stable|—": 2,
+      "quick_trade|stable|—": 8,
+      "move|stable|—": 40,
+      "choose_payment|probe_turn_move_payment|move": 40,
+      "land|stable|—": 5,
+      "scan|stable|—": 5,
+      "choose_target|science_domain_scan_step|scan": 15,
+      "choose_card|science_domain_scan_step|scan": 55,
+      "choose_target|science_domain_scan_action_4|scan": 28,
+      "choose_card|standard_action_session_decision|quick_trade": 3,
+      "choose_card|science_domain_pick_card|place_data": 107,
+      "choose_target|science_domain_alien_trace|analyze": 6,
+      "choose_target|science_domain_alien_trace|land": 30,
+      "choose_card|residual_alien_card_decision|land": 10,
+      "accept_optional_effect|residual_card_decision|land": 20,
+      "end_turn|stable|—": 78,
+      "choose_payment|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_scan_step|play_card": 44,
+      "choose_card|science_domain_scan_step|play_card": 44,
+      "choose_target|science_domain_scan_action_4|play_card": 22
+    }
+  },
+  "fixedEndTasks": {
+    "nativeReplays": 74,
+    "negativeControls": [
+      "skip",
+      "unknown-task",
+      "additional-effect",
+      "pass-transition",
+      "irreversible-barrier"
+    ]
+  },
+  "exactOrderExperiments": [
+    {
+      "mode": "all",
+      "complete": true,
+      "unresolved": 0,
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "priorAction": "industry:e887dc52",
+      "priorValue": 205.5,
+      "native": 613,
+      "priorNative": 633,
+      "ms": 1465.498125,
+      "changed": [],
+      "exclusions": 73
+    },
+    {
+      "mode": "data-first",
+      "complete": true,
+      "unresolved": 0,
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "priorAction": "industry:e887dc52",
+      "priorValue": 205.5,
+      "native": 613,
+      "priorNative": 633,
+      "ms": 1499.069209,
+      "changed": [],
+      "exclusions": 44
+    },
+    {
+      "mode": "end-claim",
+      "complete": true,
+      "unresolved": 0,
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "priorAction": "industry:e887dc52",
+      "priorValue": 205.5,
+      "native": 633,
+      "priorNative": 633,
+      "ms": 1585.390958,
+      "changed": [],
+      "exclusions": 29
+    }
+  ],
+  "teacherCheckpoints": [
+    {
+      "label": 314,
+      "action": "choose_target:f042ebe0",
+      "value": 227.5,
+      "native": 6,
+      "ms": 42.90566600000011
+    },
+    {
+      "label": 351,
+      "action": "choose_target:43d1120f",
+      "value": 257.5,
+      "native": 10,
+      "ms": 47.60412500000007
+    },
+    {
+      "label": 354,
+      "action": "accept_optional_effect:564fb7e2",
+      "value": 257.5,
+      "native": 2,
+      "ms": 35.15604099999996
+    },
+    {
+      "label": 359,
+      "action": "analyze:a5629aa3",
+      "value": 280.5,
+      "native": 385,
+      "ms": 901.518333
+    },
+    {
+      "label": 355,
+      "action": "place_data:8fd12fd3",
+      "value": 280.5,
+      "native": 409,
+      "ms": 992.1515000000004
+    }
+  ],
+  "publicPick": {
+    "inputs": 107,
+    "menus": 107,
+    "markets": 10,
+    "menusWithMultipleSubmissions": 0,
+    "groups": [
+      {
+        "market": [
+          "dlc_14.png",
+          "b_16.webp",
+          "dlc_16.png"
+        ],
+        "menus": 18,
+        "submissions": 18,
+        "offers": {
+          "1": 17,
+          "2": 1
+        },
+        "distinctResources": 10
+      },
+      {
+        "market": [
+          "dlc_14.png",
+          "opaque",
+          "dlc_16.png"
+        ],
+        "menus": 18,
+        "submissions": 18,
+        "offers": {
+          "2": 18
+        },
+        "distinctResources": 3
+      },
+      {
+        "market": [
+          "dlc_14.png",
+          "b_16.webp",
+          "b_111.webp"
+        ],
+        "menus": 16,
+        "submissions": 16,
+        "offers": {
+          "2": 16
+        },
+        "distinctResources": 8
+      },
+      {
+        "market": [
+          "b_9.webp",
+          "b_16.webp",
+          "dlc_16.png"
+        ],
+        "menus": 13,
+        "submissions": 13,
+        "offers": {
+          "1": 12,
+          "2": 1
+        },
+        "distinctResources": 9
+      },
+      {
+        "market": [
+          "dlc_14.png",
+          "opaque",
+          "b_111.webp"
+        ],
+        "menus": 12,
+        "submissions": 12,
+        "offers": {
+          "2": 12
+        },
+        "distinctResources": 3
+      },
+      {
+        "market": [
+          "opaque",
+          "b_16.webp",
+          "opaque"
+        ],
+        "menus": 10,
+        "submissions": 10,
+        "offers": {
+          "1": 10
+        },
+        "distinctResources": 4
+      },
+      {
+        "market": [
+          "dlc_14.png",
+          "opaque",
+          "opaque"
+        ],
+        "menus": 8,
+        "submissions": 8,
+        "offers": {
+          "0": 8
+        },
+        "distinctResources": 4
+      },
+      {
+        "market": [
+          "opaque",
+          "opaque",
+          "b_111.webp"
+        ],
+        "menus": 8,
+        "submissions": 8,
+        "offers": {
+          "2": 8
+        },
+        "distinctResources": 4
+      },
+      {
+        "market": [
+          "opaque",
+          "b_16.webp",
+          "dlc_16.png"
+        ],
+        "menus": 2,
+        "submissions": 2,
+        "offers": {
+          "1": 2
+        },
+        "distinctResources": 1
+      },
+      {
+        "market": [
+          "opaque",
+          "opaque",
+          "dlc_16.png"
+        ],
+        "menus": 2,
+        "submissions": 2,
+        "offers": {
+          "2": 2
+        },
+        "distinctResources": 1
+      }
+    ]
+  }
+}
