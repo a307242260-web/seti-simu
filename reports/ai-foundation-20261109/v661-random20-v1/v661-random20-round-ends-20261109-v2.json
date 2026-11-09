@@ -1,0 +1,2573 @@
+{
+  "phase": "before-pass-card-and-income",
+  "verified": "reports/ai-foundation-20261109/v661-random20-v1/v661-random20-verified-20261109-v1.json",
+  "repaired": "reports/ai-foundation-20261109/v661-random20-repair-v1/repaired-terminals-20261109-v1.json",
+  "rows": [
+    {
+      "number": 1,
+      "seed": "seti-analyze-a2d78cbc07cf",
+      "record": "reports/research/e8f869ee.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 134,
+      "wallMs": 8401,
+      "rounds": [
+        [
+          1,
+          30
+        ],
+        [
+          2,
+          46
+        ],
+        [
+          3,
+          73
+        ],
+        [
+          4,
+          102
+        ]
+      ],
+      "steps": 192,
+      "searches": 137,
+      "overBudget": 0,
+      "maxNative": 191,
+      "maxMs": 401.53341699999964,
+      "failure": null,
+      "boardScore": 102,
+      "tileScore": 32,
+      "cardScore": 0,
+      "recordSha256": "f5de0dda8608284e19cc2ff4733faaead266743c6ef827ed7a94bb34447341bc",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-01-d39dd7a2-full-v88.json",
+      "saveSha256": "19e540aa776fbe58477fb37049245f562a91bc142c40a99303f73dd02be6aa2d",
+      "trace": "reports/research/e8f869ee.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "ac313bfff07305003bf4ec35ce62ed15a5abdb79c23e2607df94304a5292f66b",
+      "replayed": 192,
+      "openingInputs": 25,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 30,
+          "tech": 1,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 4
+          }
+        },
+        {
+          "round": 2,
+          "score": 46,
+          "tech": 3,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 3,
+          "score": 73,
+          "tech": 5,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 4,
+          "score": 102,
+          "tech": 6,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "seed": "seti-analyze-9a90ce3372d6",
+      "record": "reports/research/812d8168.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 128,
+      "wallMs": 12776,
+      "rounds": [
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          39
+        ],
+        [
+          3,
+          64
+        ],
+        [
+          4,
+          82
+        ]
+      ],
+      "steps": 234,
+      "searches": 176,
+      "overBudget": 3,
+      "maxNative": 322,
+      "maxMs": 509.985584,
+      "failure": null,
+      "boardScore": 82,
+      "tileScore": 46,
+      "cardScore": 0,
+      "recordSha256": "f18de87ea1c1c3726fad8a759b8318e05dd7626d57e533485a57706128ee64af",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-02-d39dd7a2-full-v98.json",
+      "saveSha256": "47b6c00da6678fd3169c6cdf8db111bf996244569b14d512105ae0571e3f4ed8",
+      "trace": "reports/research/812d8168.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "ba9dad6a23c5fcfe070db918cb4027cb3debf164e70d5b3ff3b9aa43a10ec1fa",
+      "replayed": 234,
+      "openingInputs": 26,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 11,
+          "tech": 2,
+          "income": {
+            "credits": 4,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 39,
+          "tech": 5,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 64,
+          "tech": 6,
+          "income": {
+            "credits": 6,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 4,
+          "score": 82,
+          "tech": 7,
+          "income": {
+            "credits": 6,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "seed": "seti-analyze-702b3104145a",
+      "record": "reports/research/53f9180c.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 138,
+      "wallMs": 9081,
+      "rounds": [
+        [
+          1,
+          15
+        ],
+        [
+          2,
+          43
+        ],
+        [
+          3,
+          78
+        ],
+        [
+          4,
+          108
+        ]
+      ],
+      "steps": 181,
+      "searches": 127,
+      "overBudget": 1,
+      "maxNative": 281,
+      "maxMs": 374.1065829999998,
+      "failure": null,
+      "boardScore": 108,
+      "tileScore": 30,
+      "cardScore": 0,
+      "recordSha256": "f0729d58ff668f41031dfb851d3f2907ba29cdc110692abae69d365f07202a79",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-03-d39dd7a2-full-v83.json",
+      "saveSha256": "2e2c75faba65f5d8b56f53ca92bb5a45be5fc8ee3dc4fb2a0d7fa6ac03f7c437",
+      "trace": "reports/research/53f9180c.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "0042e4483fed29752257d3a3414bf0026ac0284fadf846deda7031859134cd0f",
+      "replayed": 181,
+      "openingInputs": 24,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 15,
+          "tech": 1,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 1,
+            "handSize": 2,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 43,
+          "tech": 2,
+          "income": {
+            "credits": 5,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 3,
+          "score": 78,
+          "tech": 3,
+          "income": {
+            "credits": 6,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 4,
+          "score": 108,
+          "tech": 4,
+          "income": {
+            "credits": 6,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "seed": "seti-analyze-bef76f5fe6ae",
+      "record": "reports/research/2f9eb996.d39dd7a2.full.json",
+      "exit": 1,
+      "terminal": false,
+      "score": null,
+      "wallMs": 8826,
+      "rounds": [
+        [
+          1,
+          12
+        ],
+        [
+          2,
+          34
+        ],
+        [
+          3,
+          75
+        ]
+      ],
+      "steps": 165,
+      "searches": 110,
+      "overBudget": 0,
+      "maxNative": 212,
+      "maxMs": 385.4407920000001,
+      "failure": {
+        "code": "SCENARIO_FAILED",
+        "message": "MACHINE_PLAYER_DECISION_FAILED: 座位 player-white 决策函数抛错: ANALYSIS_EXECUTION_FAILED: EFFECT_EXECUTOR_NOT_REGISTERED",
+        "checkpointPath": "reports/research/2f9eb996.d39dd7a2.full.json.failed-checkpoint.json",
+        "attemptTracePath": "reports/research/2f9eb996.d39dd7a2.full.json.attempts.jsonl",
+        "searchGraphClosed": false,
+        "decisionAdmitted": false,
+        "failedDecisionCommitted": false
+      },
+      "failedRound": 4,
+      "failedAfterInput": 165,
+      "recordSha256": "59e959c2e4814f70f16e687b9c4af55b525d92c5da0b32ceae3ef428356c7c29",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-04-d39dd7a2-full-failed-v71.json",
+      "saveSha256": "844f6f4155bd5ef2851008dd9860ddab70d481ce4c088ed62bbb75f5a592194b",
+      "trace": "reports/research/2f9eb996.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "a008b3e04753e6a2d6a33db32b042210b32e32dceacde86bfca82d5be1af5a15",
+      "replayed": 165,
+      "openingInputs": 23,
+      "nativeStateSessionRngExact": true,
+      "repair": {
+        "board": 4,
+        "terminal": true,
+        "score": 141,
+        "base": 105,
+        "tiles": 36,
+        "cards": 0,
+        "sourceInputs": 165,
+        "newInputs": 35,
+        "wallMs": 12356.375583000001,
+        "peakNative": 451,
+        "peakMs": 687.1855839999998,
+        "over": 2,
+        "nativeStateAndRngExact": true
+      },
+      "ends": [
+        {
+          "round": 1,
+          "score": 12,
+          "tech": 1,
+          "income": {
+            "credits": 2,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 3,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 34,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 75,
+          "tech": 4,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 4,
+          "score": 105,
+          "tech": 6,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 0
+          }
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "seed": "seti-analyze-5001578c1141",
+      "record": "reports/research/6c4f1f97.d39dd7a2.full.json",
+      "exit": 1,
+      "terminal": false,
+      "score": null,
+      "wallMs": 7134,
+      "rounds": [
+        [
+          1,
+          32
+        ],
+        [
+          2,
+          34
+        ]
+      ],
+      "steps": 142,
+      "searches": 95,
+      "overBudget": 1,
+      "maxNative": 257,
+      "maxMs": 361.52308300000004,
+      "failure": {
+        "code": "SCENARIO_FAILED",
+        "message": "MACHINE_PLAYER_DECISION_FAILED: 座位 player-white 决策函数抛错: ANALYSIS_EXECUTION_FAILED: EFFECT_EXECUTOR_NOT_REGISTERED",
+        "checkpointPath": "reports/research/6c4f1f97.d39dd7a2.full.json.failed-checkpoint.json",
+        "attemptTracePath": "reports/research/6c4f1f97.d39dd7a2.full.json.attempts.jsonl",
+        "searchGraphClosed": false,
+        "decisionAdmitted": false,
+        "failedDecisionCommitted": false
+      },
+      "failedRound": 3,
+      "failedAfterInput": 142,
+      "recordSha256": "53eb50ac3401862d06bb4c8f821f25d711640019d8de1cd41f8a243b5c857f2d",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-05-d39dd7a2-full-failed-v56.json",
+      "saveSha256": "43e1ee8ff01d32721e94ee3d98d5ffb0bb07b667314181539f0ca1e7b9f90c1b",
+      "trace": "reports/research/6c4f1f97.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "043f40d67f3282ca86112768a48bb1eb1765adf678c723f98cfa9ca07986361f",
+      "replayed": 142,
+      "openingInputs": 24,
+      "nativeStateSessionRngExact": true,
+      "repair": {
+        "board": 5,
+        "terminal": true,
+        "score": 135,
+        "base": 95,
+        "tiles": 34,
+        "cards": 6,
+        "sourceInputs": 142,
+        "newInputs": 58,
+        "wallMs": 11241.722666000001,
+        "peakNative": 387,
+        "peakMs": 508.4897500000002,
+        "over": 1,
+        "nativeStateAndRngExact": true
+      },
+      "ends": [
+        {
+          "round": 1,
+          "score": 32,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 2,
+          "score": 34,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 4,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 3,
+          "score": 63,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 4,
+          "score": 95,
+          "tech": 5,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "seed": "seti-analyze-421f46598209",
+      "record": "reports/research/82ee7ab2.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 159,
+      "wallMs": 14599,
+      "rounds": [
+        [
+          1,
+          12
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          3,
+          71
+        ],
+        [
+          4,
+          112
+        ]
+      ],
+      "steps": 246,
+      "searches": 188,
+      "overBudget": 4,
+      "maxNative": 689,
+      "maxMs": 1240.476041,
+      "failure": null,
+      "boardScore": 112,
+      "tileScore": 47,
+      "cardScore": 0,
+      "recordSha256": "5a9b60c213a5be2ed3be70e6994d56245c35f1c499a08014d12c74b746a7bbd9",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-06-d39dd7a2-full-v105.json",
+      "saveSha256": "deff37a82f9ec1da470620b5b0c371526d4590c9bb2988f6a4205930efea699f",
+      "trace": "reports/research/82ee7ab2.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "8d22f5ba54111a66e618da745b03e5e8cb56763109809da033ec5915a689486c",
+      "replayed": 246,
+      "openingInputs": 27,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 12,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 3,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 14,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 3,
+          "score": 71,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 6,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 4,
+          "score": 112,
+          "tech": 5,
+          "income": {
+            "credits": 3,
+            "energy": 7,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 5
+          }
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "seed": "seti-analyze-a4886c19154b",
+      "record": "reports/research/bccd371c.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 135,
+      "wallMs": 8429,
+      "rounds": [
+        [
+          1,
+          25
+        ],
+        [
+          2,
+          44
+        ],
+        [
+          3,
+          61
+        ],
+        [
+          4,
+          99
+        ]
+      ],
+      "steps": 179,
+      "searches": 127,
+      "overBudget": 0,
+      "maxNative": 156,
+      "maxMs": 241.3774159999998,
+      "failure": null,
+      "boardScore": 99,
+      "tileScore": 32,
+      "cardScore": 4,
+      "recordSha256": "878dd13af1bf28b03492bd10ce10787a3132b21f6fd78cfdc886e14958af05d6",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-07-d39dd7a2-full-v83.json",
+      "saveSha256": "1c067fe1a565f3d6d87e54227b18458f5874b20669b2e5c44399d4a92c31716c",
+      "trace": "reports/research/bccd371c.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "dcb310f13899ec8d0d8d91a2e034c30ee603e6f9bc8c6a9e99ec24ee714eafd0",
+      "replayed": 179,
+      "openingInputs": 22,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 25,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 44,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 61,
+          "tech": 4,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 4,
+          "score": 99,
+          "tech": 6,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "seed": "seti-analyze-9c11af934643",
+      "record": "reports/research/5db4b568.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 77,
+      "wallMs": 6556,
+      "rounds": [
+        [
+          1,
+          14
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          3,
+          50
+        ],
+        [
+          4,
+          50
+        ]
+      ],
+      "steps": 128,
+      "searches": 75,
+      "overBudget": 1,
+      "maxNative": 294,
+      "maxMs": 382.8672919999999,
+      "failure": null,
+      "boardScore": 50,
+      "tileScore": 27,
+      "cardScore": 0,
+      "recordSha256": "768bb627de8fc120e58a663deec78178ac108b443d3afe65635f11601981b84e",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-08-d39dd7a2-full-v58.json",
+      "saveSha256": "d22f212282364566ba5be4a39ccfdcb3e67dd0dd4585e0a866d407ab70d53979",
+      "trace": "reports/research/5db4b568.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "862116ab234f09358b948a50f73e850bb96f45992577aeb940eb6e960d1c9438",
+      "replayed": 128,
+      "openingInputs": 22,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 14,
+          "tech": 1,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 2,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 14,
+          "tech": 1,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 5,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 2,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 3,
+          "score": 50,
+          "tech": 3,
+          "income": {
+            "credits": 6,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 4,
+          "score": 50,
+          "tech": 3,
+          "income": {
+            "credits": 6,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 6,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "seed": "seti-analyze-24169115909d",
+      "record": "reports/research/e818a171.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 89,
+      "wallMs": 7744,
+      "rounds": [
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          44
+        ],
+        [
+          3,
+          61
+        ],
+        [
+          4,
+          78
+        ]
+      ],
+      "steps": 169,
+      "searches": 115,
+      "overBudget": 0,
+      "maxNative": 218,
+      "maxMs": 292.3137079999997,
+      "failure": null,
+      "boardScore": 78,
+      "tileScore": 11,
+      "cardScore": 0,
+      "recordSha256": "2b924c43d5163d8f60c15dbf1258e9d58c96b43f3d67c0dd35d40a63202e80bf",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-09-d39dd7a2-full-v76.json",
+      "saveSha256": "77b140b4a5954a38220c666d0398a9fb2059e3fd54fdb5b1f5486fb1c458ab68",
+      "trace": "reports/research/e818a171.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "b81a4285b47f464766e7902b1f342acf6c4fcb41e32e0b5146f78f3c0e995c4b",
+      "replayed": 169,
+      "openingInputs": 23,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 17,
+          "tech": 3,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 2,
+          "score": 44,
+          "tech": 4,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 61,
+          "tech": 4,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 4
+          }
+        },
+        {
+          "round": 4,
+          "score": 78,
+          "tech": 5,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "seed": "seti-analyze-2ec4582df1f6",
+      "record": "reports/research/1116c866.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 129,
+      "wallMs": 8326,
+      "rounds": [
+        [
+          1,
+          25
+        ],
+        [
+          2,
+          32
+        ],
+        [
+          3,
+          66
+        ],
+        [
+          4,
+          89
+        ]
+      ],
+      "steps": 195,
+      "searches": 142,
+      "overBudget": 0,
+      "maxNative": 154,
+      "maxMs": 227.029583,
+      "failure": null,
+      "boardScore": 89,
+      "tileScore": 40,
+      "cardScore": 0,
+      "recordSha256": "4432851bcb33b1c3303212ea8a77d9b468737728d24c151a9d238e1d92b038b8",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-10-d39dd7a2-full-v90.json",
+      "saveSha256": "1c77060667d163ee9e51cffd6d35636842233e649ee4f2036bcbd41dd9b39b6a",
+      "trace": "reports/research/1116c866.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "ef86526688d9e35284559c67d789453f12570c3184caf887f7710cd4b7d46353",
+      "replayed": 195,
+      "openingInputs": 25,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 25,
+          "tech": 1,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 2,
+          "score": 32,
+          "tech": 2,
+          "income": {
+            "credits": 2,
+            "energy": 6,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 66,
+          "tech": 4,
+          "income": {
+            "credits": 2,
+            "energy": 7,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 89,
+          "tech": 5,
+          "income": {
+            "credits": 2,
+            "energy": 7,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "seed": "seti-analyze-8cf6f23cc7c1",
+      "record": "reports/research/2f1aaa31.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 113,
+      "wallMs": 12204,
+      "rounds": [
+        [
+          1,
+          20
+        ],
+        [
+          2,
+          29
+        ],
+        [
+          3,
+          41
+        ],
+        [
+          4,
+          71
+        ]
+      ],
+      "steps": 197,
+      "searches": 144,
+      "overBudget": 3,
+      "maxNative": 804,
+      "maxMs": 1346.7186249999995,
+      "failure": null,
+      "boardScore": 71,
+      "tileScore": 34,
+      "cardScore": 8,
+      "recordSha256": "7d4342f5969a3a9e9f2416f94c344e2d71685ea3b63d8e3faecdc13f11f01770",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-11-d39dd7a2-full-v90.json",
+      "saveSha256": "cd46fae0f8532253801e46b721b295e98bac804794dbf1b0a9e94a92099a0760",
+      "trace": "reports/research/2f1aaa31.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "31d602a3208c1a5a47515b55f0e5a2e7ec39c4dfd0fc09fbc6e71e5466b650eb",
+      "replayed": 197,
+      "openingInputs": 23,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 20,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 29,
+          "tech": 2,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 3,
+          "score": 41,
+          "tech": 3,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 6,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 71,
+          "tech": 3,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 5
+          }
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "seed": "seti-analyze-bd83842179ca",
+      "record": "reports/research/f343db9d.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 153,
+      "wallMs": 15674,
+      "rounds": [
+        [
+          1,
+          22
+        ],
+        [
+          2,
+          41
+        ],
+        [
+          3,
+          83
+        ],
+        [
+          4,
+          115
+        ]
+      ],
+      "steps": 252,
+      "searches": 196,
+      "overBudget": 4,
+      "maxNative": 645,
+      "maxMs": 977.1093340000007,
+      "failure": null,
+      "boardScore": 115,
+      "tileScore": 38,
+      "cardScore": 0,
+      "recordSha256": "f7d7b06ccd618ee46ac4961e5d497d810c558b039c9422570663e0e81b2b364f",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-12-d39dd7a2-full-v114.json",
+      "saveSha256": "8dc6dcd30a18cf3dfa0c39f080d6311f1e7fea5c7a742a6219859dfafa3fb946",
+      "trace": "reports/research/f343db9d.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "46e686e1b5c5062ae388e55d82cf361234f1687bd3a1eeee63cfa70ea8bd53bc",
+      "replayed": 252,
+      "openingInputs": 26,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 22,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 41,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 83,
+          "tech": 3,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 115,
+          "tech": 4,
+          "income": {
+            "credits": 4,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 1
+          }
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "seed": "seti-analyze-5c5ff536a8da",
+      "record": "reports/research/22c44c19.d39dd7a2.full.json",
+      "exit": 1,
+      "terminal": false,
+      "score": null,
+      "wallMs": 4803,
+      "rounds": [
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          16
+        ]
+      ],
+      "steps": 116,
+      "searches": 68,
+      "overBudget": 0,
+      "maxNative": 135,
+      "maxMs": 251.99916699999994,
+      "failure": {
+        "code": "SCENARIO_FAILED",
+        "message": "MACHINE_PLAYER_DECISION_FAILED: 座位 player-white 决策函数抛错: ANALYSIS_EXECUTION_FAILED: EFFECT_EXECUTION_FAILED",
+        "checkpointPath": "reports/research/22c44c19.d39dd7a2.full.json.failed-checkpoint.json",
+        "attemptTracePath": "reports/research/22c44c19.d39dd7a2.full.json.attempts.jsonl",
+        "searchGraphClosed": false,
+        "decisionAdmitted": false,
+        "failedDecisionCommitted": false
+      },
+      "failedRound": 3,
+      "failedAfterInput": 116,
+      "recordSha256": "2b5a8817c9fa48ae14d9c5783683cf0a68852ac6629bbb41217e71f5f60e80a6",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-13-d39dd7a2-full-failed-v48.json",
+      "saveSha256": "1b470a8efac145570fda63d8e5c76a2b1944d11ef9193331bddd36e7666b41d7",
+      "trace": "reports/research/22c44c19.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "996c6359ae8e268d7f345a726710c8e9cb017c4d58917e561a732c8f0cca368c",
+      "replayed": 116,
+      "openingInputs": 26,
+      "nativeStateSessionRngExact": true,
+      "repair": {
+        "board": 13,
+        "terminal": true,
+        "score": 97,
+        "base": 72,
+        "tiles": 25,
+        "cards": 0,
+        "sourceInputs": 116,
+        "newInputs": 58,
+        "wallMs": 8825.190042,
+        "peakNative": 209,
+        "peakMs": 306.985416,
+        "over": 0,
+        "nativeStateAndRngExact": true
+      },
+      "ends": [
+        {
+          "round": 1,
+          "score": 16,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 16,
+          "tech": 1,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 1,
+            "handSize": 2,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 44,
+          "tech": 3,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 1,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 72,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 1,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 1,
+            "handSize": 1,
+            "publicity": 3
+          }
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "seed": "seti-analyze-ed3824aaebd6",
+      "record": "reports/research/d4809af1.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 109,
+      "wallMs": 10896,
+      "rounds": [
+        [
+          1,
+          13
+        ],
+        [
+          2,
+          51
+        ],
+        [
+          3,
+          53
+        ],
+        [
+          4,
+          87
+        ]
+      ],
+      "steps": 214,
+      "searches": 161,
+      "overBudget": 1,
+      "maxNative": 299,
+      "maxMs": 454.62366700000007,
+      "failure": null,
+      "boardScore": 87,
+      "tileScore": 22,
+      "cardScore": 0,
+      "recordSha256": "ff2ade440c0d3e42fb14f0bedcafd1355daa3802020c72bdcee8d157c0a1e3ee",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-14-d39dd7a2-full-v91.json",
+      "saveSha256": "c49b374ffd13227ee3e2025740fe93e550946acbb4e59a32ff5b28faaab5f0f4",
+      "trace": "reports/research/d4809af1.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "82c400951969fdbd90c97a73fb3a48814ef661399a508ac7211e261425a400b0",
+      "replayed": 214,
+      "openingInputs": 22,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 13,
+          "tech": 2,
+          "income": {
+            "credits": 2,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 3,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 2,
+          "score": 51,
+          "tech": 4,
+          "income": {
+            "credits": 2,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 53,
+          "tech": 4,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 87,
+          "tech": 5,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 3
+          }
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "seed": "seti-analyze-3cf8ee390c56",
+      "record": "reports/research/3ccb8cdb.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 107,
+      "wallMs": 7483,
+      "rounds": [
+        [
+          1,
+          24
+        ],
+        [
+          2,
+          53
+        ],
+        [
+          3,
+          62
+        ],
+        [
+          4,
+          85
+        ]
+      ],
+      "steps": 167,
+      "searches": 113,
+      "overBudget": 0,
+      "maxNative": 248,
+      "maxMs": 396.8693330000001,
+      "failure": null,
+      "boardScore": 85,
+      "tileScore": 22,
+      "cardScore": 0,
+      "recordSha256": "e80b5b0e9dca380bdb76e7b2c3c8a5805184d738a6e241c0d3674737e4cefd81",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-15-d39dd7a2-full-v77.json",
+      "saveSha256": "c20733c889b98937729686754a15b9f311bff90f2b635eeee9a090170b17a81f",
+      "trace": "reports/research/3ccb8cdb.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "179ff60447c8c758af642d7b2e521c2314f61c9a796c6457cb3b07b1a8cc3d0b",
+      "replayed": 167,
+      "openingInputs": 23,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 24,
+          "tech": 2,
+          "income": {
+            "credits": 2,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 1,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 2,
+          "score": 53,
+          "tech": 3,
+          "income": {
+            "credits": 2,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 62,
+          "tech": 3,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 4,
+          "score": 85,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 4
+          }
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "seed": "seti-analyze-92c262b1b98c",
+      "record": "reports/research/3cfea084.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 112,
+      "wallMs": 10113,
+      "rounds": [
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          42
+        ],
+        [
+          3,
+          76
+        ],
+        [
+          4,
+          83
+        ]
+      ],
+      "steps": 194,
+      "searches": 143,
+      "overBudget": 1,
+      "maxNative": 396,
+      "maxMs": 1047.139208,
+      "failure": null,
+      "boardScore": 83,
+      "tileScore": 21,
+      "cardScore": 8,
+      "recordSha256": "286a5bd6a20a9f49f9c19e1c60df01364c067ae174769369e4bc95727d6120b7",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-16-d39dd7a2-full-v88.json",
+      "saveSha256": "6f014625ec45212d27122c6003bcd7586c9d8ba4b0fa60b5a86db7cb02fa225b",
+      "trace": "reports/research/3cfea084.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "d1dad7824a1e0329f8567d23422b3d5063beaebe85f9b4d241857782b8ffdac4",
+      "replayed": 194,
+      "openingInputs": 24,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 18,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 2,
+            "availableData": 1,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 42,
+          "tech": 3,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 76,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 4,
+          "score": 83,
+          "tech": 5,
+          "income": {
+            "credits": 4,
+            "energy": 3,
+            "availableData": 1,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 2
+          }
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "seed": "seti-analyze-8c7ca70c141f",
+      "record": "reports/research/0ffa9099.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 147,
+      "wallMs": 12907,
+      "rounds": [
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          39
+        ],
+        [
+          3,
+          77
+        ],
+        [
+          4,
+          109
+        ]
+      ],
+      "steps": 226,
+      "searches": 172,
+      "overBudget": 3,
+      "maxNative": 787,
+      "maxMs": 937.4935839999998,
+      "failure": null,
+      "boardScore": 109,
+      "tileScore": 38,
+      "cardScore": 0,
+      "recordSha256": "498473424df47ff4445cf6f89ce509663e48e1f32cad3ae43ed9c8d7d901e4c2",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-17-d39dd7a2-full-v103.json",
+      "saveSha256": "d791da116bd9d484eba11e2de0b0aea23cd1d4c69156488b8b65a8eef51f02fe",
+      "trace": "reports/research/0ffa9099.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "a7f0a826e835370adab4bceb133420cf0155e51632e4b4061c85b615db7cb0ef",
+      "replayed": 226,
+      "openingInputs": 24,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 17,
+          "tech": 1,
+          "income": {
+            "credits": 2,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 1,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 39,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 0
+          }
+        },
+        {
+          "round": 3,
+          "score": 77,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 2
+          }
+        },
+        {
+          "round": 4,
+          "score": 109,
+          "tech": 6,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "seed": "seti-analyze-1466261ceeec",
+      "record": "reports/research/09323b62.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 115,
+      "wallMs": 9594,
+      "rounds": [
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          35
+        ],
+        [
+          3,
+          72
+        ],
+        [
+          4,
+          81
+        ]
+      ],
+      "steps": 203,
+      "searches": 147,
+      "overBudget": 1,
+      "maxNative": 340,
+      "maxMs": 432.11362499999996,
+      "failure": null,
+      "boardScore": 81,
+      "tileScore": 34,
+      "cardScore": 0,
+      "recordSha256": "b752d6e3ee5ad45d6fdee6e71d51658e3df6f6360e07200cc1303a7c9acf75ee",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-18-d39dd7a2-full-v88.json",
+      "saveSha256": "9b476eae1b2a3248755cea51dec2ce8da9efa3e72a4ab27faf33433c9bb90217",
+      "trace": "reports/research/09323b62.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "740b26e5a95ed2c2545c38ef630c21c12a2151dddb3026b550511257f0bda00f",
+      "replayed": 203,
+      "openingInputs": 26,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 11,
+          "tech": 1,
+          "income": {
+            "credits": 4,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 2,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 35,
+          "tech": 2,
+          "income": {
+            "credits": 4,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 1,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 72,
+          "tech": 3,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 81,
+          "tech": 4,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 3,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 3,
+            "energy": 0,
+            "availableData": 1,
+            "handSize": 0,
+            "publicity": 0
+          }
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "seed": "seti-analyze-f54bea5e6f9c",
+      "record": "reports/research/4223c7a8.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 119,
+      "wallMs": 7909,
+      "rounds": [
+        [
+          1,
+          21
+        ],
+        [
+          2,
+          26
+        ],
+        [
+          3,
+          64
+        ],
+        [
+          4,
+          81
+        ]
+      ],
+      "steps": 169,
+      "searches": 114,
+      "overBudget": 0,
+      "maxNative": 216,
+      "maxMs": 350.549,
+      "failure": null,
+      "boardScore": 81,
+      "tileScore": 34,
+      "cardScore": 4,
+      "recordSha256": "50d26833e4ca3cc92b8f608687642890a60699ce7c2b0116e83f01c98621bff3",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-19-d39dd7a2-full-v71.json",
+      "saveSha256": "22c32a3b2c335859367734c728027514ca1b9eacf57dddabcbe13ebec90ddbc6",
+      "trace": "reports/research/4223c7a8.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "bfb4031f0920fcf62fb163dc1de29ece7d9384dee057828d5fa934b6b04766c5",
+      "replayed": 169,
+      "openingInputs": 24,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 21,
+          "tech": 2,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 2,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 26,
+          "tech": 3,
+          "income": {
+            "credits": 3,
+            "energy": 4,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 6,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 64,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 1,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 4,
+          "score": 81,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 3
+          }
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "seed": "seti-analyze-6b38bd2b8e98",
+      "record": "reports/research/abbb47e3.d39dd7a2.full.json",
+      "exit": 0,
+      "terminal": true,
+      "score": 113,
+      "wallMs": 9572,
+      "rounds": [
+        [
+          1,
+          31
+        ],
+        [
+          2,
+          50
+        ],
+        [
+          3,
+          65
+        ],
+        [
+          4,
+          91
+        ]
+      ],
+      "steps": 208,
+      "searches": 157,
+      "overBudget": 1,
+      "maxNative": 411,
+      "maxMs": 571.4977080000003,
+      "failure": null,
+      "boardScore": 91,
+      "tileScore": 22,
+      "cardScore": 0,
+      "recordSha256": "95009967c26dca220acce2600a9b44ecbc10d521dbff6032df5572ac04755522",
+      "save": "seti-saves/seti-save-research-ai-search-v661-free-analyze-random20-20261109-20-d39dd7a2-full-v94.json",
+      "saveSha256": "bcc058289a690083850bdb80f1ea12b5c10660f8ba08773719e1266bbf08bfc5",
+      "trace": "reports/research/abbb47e3.d39dd7a2.full.json.decisions.jsonl",
+      "traceSha256": "c3ae70a21f12605ba8c3a3c1ad3943d6655c16ec2c705f5d2172115ec823e175",
+      "replayed": 208,
+      "openingInputs": 23,
+      "nativeStateSessionRngExact": true,
+      "ends": [
+        {
+          "round": 1,
+          "score": 31,
+          "tech": 2,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 0,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 2,
+          "score": 50,
+          "tech": 3,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 1,
+            "publicity": 1
+          }
+        },
+        {
+          "round": 3,
+          "score": 65,
+          "tech": 3,
+          "income": {
+            "credits": 2,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 1,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 3,
+            "publicity": 3
+          }
+        },
+        {
+          "round": 4,
+          "score": 91,
+          "tech": 4,
+          "income": {
+            "credits": 3,
+            "energy": 5,
+            "availableData": 0,
+            "handSize": 2,
+            "additionalPublicScan": 1,
+            "publicity": 0
+          },
+          "reserve": {
+            "credits": 0,
+            "energy": 0,
+            "availableData": 0,
+            "handSize": 2,
+            "publicity": 4
+          }
+        }
+      ]
+    }
+  ]
+}
