@@ -1,0 +1,172 @@
+{
+  "files": {
+    "randomizer/app/browser-rule-composition.js": "a166bef4e128d17c336df599625b982113ed89e779b65bcca0b99d2247bde6f8",
+    "randomizer/app/rule-observation.js": "ac292f77e54a8219480068d55bdd2ca30a5bcd3a90601b416e18daf92bda5be4",
+    "randomizer/app/simulation-env.js": "3da317af3e8f90b784f29796fad706e02b0107499c0df68ad55bd0aff1af6052",
+    "randomizer/game/actions/standard-action.js": "46e00b8d57779fb1b5b11b45919ff108b190e4a67460e31956daaaa3f7e3b8e6",
+    "randomizer/game/ai/analysis-port.js": "731e6d268ee5224f4ba1a530d4f07ef5caa9943dcf9afab898664cb0a0d4d3a2",
+    "randomizer/game/ai/decision-search.js": "5c9bc6006797108917661421c14585ddb0612f0baf07e1f51476b110a01b5fdc",
+    "randomizer/game/effects/science-session.js": "294a3538d2f98ef3934623e7d3fd36790484de9b3147bb6fa568cbe1b82df168",
+    "randomizer/game/production-composition.js": "b12afa5f8d615ef46b75c23a4f2d2ecc7d94968d8e82129e9517f94c2355a0b5",
+    "randomizer/game/production-kernel.js": "80f6098f704ce1978c6fdbc998e6fc01d550246a614129bf9e4e1719bb60c355",
+    "randomizer/game/rule-composition.js": "ce6bf44d34654ea2f2359add1e807627e3b872ae8c1f600b79423e0029d28d6a"
+  },
+  "graphs": {
+    "official": {
+      "exact": true,
+      "graph": "455d7adc6fe07a9879c38f9ea028ccd5fd2a167a7ccdd72c79ab05433db65677",
+      "native": 221,
+      "logical": 1183,
+      "eval": 289,
+      "nodes": 695,
+      "counters": {
+        "observations": 289,
+        "hidden": 230,
+        "menus": 514,
+        "menuActions": 7667
+      }
+    },
+    "359": {
+      "exact": true,
+      "graph": "432f2d136059ad77bfc0d4466518506892557f054e39f0b59a692d6b0489a727",
+      "native": 229,
+      "logical": 433,
+      "eval": 155,
+      "nodes": 398,
+      "counters": {
+        "observations": 155,
+        "hidden": 134,
+        "menus": 174,
+        "menuActions": 3305
+      }
+    },
+    "317": {
+      "exact": true,
+      "graph": "6873d5b301bf0552a4a1b2808f2f3c6bd69b4e0a7591c6d8405067b44ca93626",
+      "native": 232,
+      "logical": 405,
+      "eval": 100,
+      "nodes": 235,
+      "counters": {
+        "observations": 100,
+        "hidden": 81,
+        "menus": 153,
+        "menuActions": 3310
+      }
+    },
+    "318": {
+      "exact": true,
+      "graph": "196dd13f81151a6eeef8fb990c90c81cd14bf5ff7f2ab50fdb6e26e11ce8ce93",
+      "native": 225,
+      "logical": 394,
+      "eval": 96,
+      "nodes": 225,
+      "counters": {
+        "observations": 96,
+        "hidden": 77,
+        "menus": 150,
+        "menuActions": 2948
+      }
+    },
+    "136": {
+      "exact": true,
+      "graph": "fa261dd9b0cb4556b7c473d43c09f08ee08533bcd442d187617344ea11afc447",
+      "native": 224,
+      "logical": 224,
+      "eval": 103,
+      "nodes": 214,
+      "counters": {
+        "observations": 103,
+        "hidden": 59,
+        "menus": 116,
+        "menuActions": 1387
+      }
+    },
+    "172": {
+      "exact": true,
+      "graph": "f54de3c35e27e308716ab8a47de092643b8b185c18f617a9bc250443bb0145fb",
+      "native": 99,
+      "logical": 99,
+      "eval": 52,
+      "nodes": 110,
+      "counters": {
+        "observations": 52,
+        "hidden": 35,
+        "menus": 55,
+        "menuActions": 558
+      }
+    }
+  },
+  "pairedCold": {
+    "root-317": {
+      "previous": {
+        "medianMs": 422.7,
+        "rangeMs": [
+          420.2,
+          423.8
+        ]
+      },
+      "candidate": {
+        "medianMs": 414.1,
+        "rangeMs": [
+          413.2,
+          415.9
+        ]
+      }
+    },
+    "root-318": {
+      "previous": {
+        "medianMs": 424.2,
+        "rangeMs": [
+          422.9,
+          425.5
+        ]
+      },
+      "candidate": {
+        "medianMs": 413.7,
+        "rangeMs": [
+          411.7,
+          414.6
+        ]
+      }
+    },
+    "root-359": {
+      "previous": {
+        "medianMs": 659.2,
+        "rangeMs": [
+          646.6,
+          722.3
+        ]
+      },
+      "candidate": {
+        "medianMs": 640.0,
+        "rangeMs": [
+          627.9,
+          641.6
+        ]
+      }
+    },
+    "root-official": {
+      "previous": {
+        "medianMs": 734.1,
+        "rangeMs": [
+          733.2,
+          753.1
+        ]
+      },
+      "candidate": {
+        "medianMs": 706.4,
+        "rangeMs": [
+          705.3,
+          707.2
+        ]
+      }
+    }
+  },
+  "verifiedCounts": {
+    "observations": 795,
+    "hidden": 616,
+    "menus": 1162,
+    "menuActions": 19175
+  }
+}

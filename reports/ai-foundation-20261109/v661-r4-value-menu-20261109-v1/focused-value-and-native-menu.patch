@@ -1,0 +1,352 @@
+diff --git a/randomizer/app/browser-rule-composition.js b/randomizer/app/browser-rule-composition.js
+--- a/randomizer/app/browser-rule-composition.js
++++ b/randomizer/app/browser-rule-composition.js
+@@ -44,6 +44,9 @@
+         playerId: null,
+         role: "spectator",
+       };
++      if(resolvedViewer.valueOnly===true&&resolvedViewer.role==="player"){
++        return ruleObservation.buildRuleObservation(canonicalState,context.seed||null,resolvedViewer.playerId,[],{valueOnly:true});
++      }
+       const visible = browserProjection.visibilityPolicy(
+         canonicalState,
+         resolvedViewer,
+diff --git a/randomizer/app/rule-observation.js b/randomizer/app/rule-observation.js
+--- a/randomizer/app/rule-observation.js
++++ b/randomizer/app/rule-observation.js
+@@ -134,6 +134,10 @@
+   // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
+   // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
+   const cheap = options.cheap === true;
++  // The shared evaluator scores a single seat. Keep its complete value
++  // facts (including geometry and pending mark), without building public
++  // scores for other seats or the setup presentation.
++  const valueOnly=options.valueOnly===true&&Boolean(perspectivePlayerId);
+   // Scoring normalizes the same board for each seat. A private copy for the
+   // whole projection keeps those writes off the authoritative state.
+   const scoringBoard = clone(state.finalScoring);
+@@ -145,6 +149,7 @@
+
+   return {
+     schemaVersion: OBSERVATION_SCHEMA_VERSION,
++    ...(valueOnly?{detachedValueProjection:true}:{}),
+     seed: seed ?? null,
+     perspectivePlayerId,
+     publicState: {
+@@ -156,7 +161,7 @@
+       passingPlayerIds: [...(state.passingPlayerIds || turn.passedPlayerIds || [])],
+       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
+       activePlayerIds: [...(turn.activePlayerIds || [])],
+-      players: (playersState.players || []).map((player) => {
++      players: (valueOnly?(selfPlayer?[selfPlayer]:[]):(playersState.players||[])).map((player) => {
+         const breakdown = endGameScoring.computePlayerFinalScore({
+           ...state,
+           finalScoring: scoringBoard,
+@@ -176,8 +181,8 @@
+         return {
+           ...publicPlayer,
+           companyBaseIncome: clone(endGameScoring.getPlayerCompanyBaseIncome(player)),
+-          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore
+-            + pendingFinalMarkValue(state, player),
++          ...(!valueOnly?{securedEndGameBonus:breakdown.totalScore-breakdown.baseScore
++            +pendingFinalMarkValue(state,player)}:{}),
+         };
+       }),
+       board: {
+@@ -194,7 +199,7 @@
+         techSupply: sanitizeTechSupply(state.tech),
+         aliens: sanitizeAlienPublicState(state.aliens),
+       },
+-      resident: {
++      ...(!valueOnly?{resident: {
+         initialSetup: {
+           active: setup?.phase === "selecting",
+           interactive: setup?.phase === "selecting"
+@@ -205,7 +210,7 @@
+             : null,
+           confirmedPlayerIds: clone(setup?.confirmedPlayerIds || []),
+         },
+-      },
++      }}:{}),
+       pending: decision,
+     },
+     selfState,
+diff --git a/randomizer/app/simulation-env.js b/randomizer/app/simulation-env.js
+--- a/randomizer/app/simulation-env.js
++++ b/randomizer/app/simulation-env.js
+@@ -406,7 +406,7 @@
+           seed,
+           viewer?.playerId || null,
+           [],
+-          { cheap: viewer?.cheap === true },
++          { cheap: viewer?.cheap === true, valueOnly: viewer?.valueOnly === true },
+         ),
+       });
+       composition = kernel.composition;
+diff --git a/randomizer/game/actions/standard-action.js b/randomizer/game/actions/standard-action.js
+--- a/randomizer/game/actions/standard-action.js
++++ b/randomizer/game/actions/standard-action.js
+@@ -34,20 +34,37 @@
+     return value == null ? value : structuredClone(value);
+   }
+
++  const stringLiterals=new Map(),actionHashes=new Map();
++  function literal(value){
++    const hit=stringLiterals.get(value);if(hit!==undefined)return hit;
++    const result=JSON.stringify(value);
++    if(value.length<=128){if(stringLiterals.size>=512)stringLiterals.delete(stringLiterals.keys().next().value);stringLiterals.set(value,result);}
++    return result;
++  }
+   function stableSerialize(value) {
+-    if (value == null || typeof value !== "object") return JSON.stringify(value);
+-    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+-    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(",")}}`;
++    if(typeof value==="string")return literal(value);
++    if(value==null||typeof value!=="object")return JSON.stringify(value);
++    if(Array.isArray(value)){
++      let out="[";
++      for(let i=0;i<value.length;i++){if(i)out+=",";if(i in value)out+=stableSerialize(value[i])??"";}
++      return out+"]";
++    }
++    let out="{",first=true;
++    for(const key of Object.keys(value).sort()){if(!first)out+=",";first=false;out+=literal(key)+":"+stableSerialize(value[key]);}
++    return out+"}";
+   }
+
+   function stableHash(value) {
+-    const input = stableSerialize(value);
++    const input = stableSerialize(value), hit=actionHashes.get(input);
++    if(hit!==undefined)return hit;
+     let hash = 0x811c9dc5;
+     for (let index = 0; index < input.length; index += 1) {
+       hash ^= input.charCodeAt(index);
+       hash = Math.imul(hash, 0x01000193);
+     }
+-    return (hash >>> 0).toString(16).padStart(8, "0");
++    const result=(hash>>>0).toString(16).padStart(8,"0");
++    if(input.length<=512){if(actionHashes.size>=1024)actionHashes.delete(actionHashes.keys().next().value);actionHashes.set(input,result);}
++    return result;
+   }
+
+   function fail(code, message, details = {}) {
+@@ -129,8 +146,14 @@
+       if (request.actorId != null && request.actorId !== authority.actorId) return [];
+       const familyFilter = request.family == null ? null : String(request.family);
+       const result = [];
++      if(familyFilter){
++        const definition=definitions.get(familyFilter);
++        if(!definition)return result;
++        const descriptors=definition.enumerate(context,{authority,request})||[];
++        for(const descriptor of descriptors)result.push(normalizeDescriptor(definition,descriptor,authority));
++        return result;
++      }
+       for (const definition of definitions.values()) {
+-        if (familyFilter && definition.family !== familyFilter) continue;
+         const descriptors = definition.enumerate(context, { authority, request }) || [];
+         for (const descriptor of descriptors) result.push(normalizeDescriptor(definition, descriptor, authority));
+       }
+@@ -356,6 +379,7 @@
+     CONDITIONAL_FAMILIES,
+     ALL_FAMILIES,
+     PHASE_BY_FAMILY,
++    stableActionHash: stableHash,
+     createRegistry,
+     createOptionDefinition,
+     createQuickTradeProvider,
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1761,7 +1761,11 @@
+       const key = Object.isFrozen(actions) ? actions : null;
+       if (key&&variants?.has(key)) { goalCatalogHits++; return variants.get(key); }
+       goalCatalogMisses++;
+-      const result = freeze(resourceDemand.catalog({state,seatId,requirements:resourceQuery(state),actions}));
++      const owner=state.players.players.find(p=>p.id===seatId);
++      // Completed main actions cannot consume the pre-main launch, route,
++      // research or scan quotes. The catalog reads only blue placements.
++      const requirements=owner?.mainActionCompleted?{bluePlacements:data.listBluePlacementRequirements(owner)}:resourceQuery(state);
++      const result = freeze(resourceDemand.catalog({state,seatId,requirements,actions}));
+       if(key){
+         if (!variants) { variants = new WeakMap(); goalCatalogs.set(state,variants); }
+         variants.set(key,result);
+@@ -3689,24 +3693,21 @@
+     function checkPostMainInertReservations(state, hasOwnRockets, allowAmiba, plainEnd, deferredTask) {
+       if (!hasTradeInertReservations(state,allowAmiba)) return false;
+       const owner = state.players.players.find(player => player.id === seatId);
+-      const reserved = owner.reservedCards.map(card => {
+-        const copy = structuredClone(card);
+-        // 旧modelCardId下的消耗记录在正式流程中会重置，不能据此证明触发器已用完。
+-        cardEffects.ensureCardEffectState(copy);
+-        return copy;
+-      });
+-      // turn_end还会重新收集历史事件；没有新事件不等于没有待结算触发。
+-      if ((state.turn.type1TriggerEvents || []).some(event => cardEffects.collectMatchingTriggers(
+-        { ...owner, reservedCards: reserved }, event).length)) return false;
++      // turn_end replays historical events. The read-only check already
++      // normalizes stale consumption records just like Native collection.
++      if((state.turn.type1TriggerEvents||[]).some(event=>cardEffects.hasMatchingTrigger(owner,event)))return false;
+       const unreachableEvents = new Set(["launch", "orbit", "land", "researchTech", "signalMarked", "playCard"]);
+       if(allowAmiba)unreachableEvents.add("alienTrace");
+       if (!hasOwnRockets) for (const type of ["move", "visitPlanet", "visitAsteroid", "visitComet"]) unreachableEvents.add(type);
+-      return reserved.every(card => {
++      return owner.reservedCards.every(card => {
+         const model = cardEffects.getCardModel(card), scoring = model.endGameScoring;
++        // Only the container can be assigned by normalization; the arrays
++        // are read below and are never consumed by this proof.
++        const effectState=cardEffects.ensureCardEffectState({...card,cardEffectState:card.cardEffectState&&{...card.cardEffectState}});
+         if (scoring && !["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand",
+           "unmarkedFinalRightmost", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
+           || model.tasks != null && !Array.isArray(model.tasks)) return false;
+-        if ((model.triggers || []).some(trigger => !card.cardEffectState.consumedTriggerIds.includes(trigger.id)
++        if ((model.triggers || []).some(trigger => !effectState.consumedTriggerIds.includes(trigger.id)
+           && !(trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).every(type => unreachableEvents.has(type)))) return false;
+         return (model.tasks || []).every(task => {
+           const condition = task.condition, fields = { traceCount: ["traceType", "count"], completedSectors: ["count"],
+@@ -3717,7 +3718,7 @@
+             || !Number.isSafeInteger(amount) || amount < 1
+             || condition.type === "traceCount" && !["blue", "pink", "yellow"].includes(condition.traceType)) return false;
+           return deferredTask?.cardId===card.id&&deferredTask.taskId===task.id
+-            || card.cardEffectState.completedTaskIds.includes(task.id)
++            || effectState.completedTaskIds.includes(task.id)
+             || !cardEffects.taskConditionMet(task, owner, { data: state.data, aliens: state.aliens, planets:state.planets,
+               ...(condition.type==="probeDistanceFromEarth"?{probeLocationDetails:rockets.buildProbeLocationData({...state,state}).details}:{}) });
+         });
+diff --git a/randomizer/game/ai/decision-search.js b/randomizer/game/ai/decision-search.js
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -704,6 +704,9 @@
+           const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
+             if(now()-startedAt>=limits.milliseconds)return "watchdog";
+             const inputs=work?work.newSubmissions+(input?work.nextNewInput:0):count+(input?1:0);
++            // Intermediate identity counts only answer finite node/frontier
++            // gates. The completed macro still records exact identities.
++            if(limits.nodes===Infinity&&limits.frontier===Infinity)return transitions+inputs>limits.transitions?"transition-budget":null;
+             const fresh=work?resourceStateAdditions([...work.sharedStates,...(work.nextNode?[work.nextNode]:[])]).size+(work.additionalStates||0):count+contexts+(input?1:0);
+             if(transitions+inputs>limits.transitions)return "transition-budget";
+             if(nodes.length+certificateNodes+fresh>limits.nodes)return "node-budget";
+@@ -1017,6 +1020,9 @@
+           const fixed=port.expandResourcePlan(entry.node,plan,(count,contexts,input,work)=>{
+             if(now()-startedAt>=limits.milliseconds)return "watchdog";
+             const inputs=work?work.newSubmissions+(input?work.nextNewInput:0):count+(input?1:0);
++            // Intermediate identity counts only answer finite node/frontier
++            // gates. The completed macro still records exact identities.
++            if(limits.nodes===Infinity&&limits.frontier===Infinity)return transitions+inputs>limits.transitions?"transition-budget":null;
+             const fresh=work?resourceStateAdditions([...work.sharedStates,...(work.nextNode?[work.nextNode]:[])]).size+(work.additionalStates||0):count+contexts+(input?1:0);
+             if(transitions+inputs>limits.transitions)return "transition-budget";
+             if(nodes.length+certificateNodes+fresh>limits.nodes)return "node-budget";
+diff --git a/randomizer/game/effects/science-session.js b/randomizer/game/effects/science-session.js
+--- a/randomizer/game/effects/science-session.js
++++ b/randomizer/game/effects/science-session.js
+@@ -215,24 +215,6 @@
+     };
+   }
+
+-  function stableSerialize(value) {
+-    if (value == null || typeof value !== "object") return JSON.stringify(value);
+-    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+-    return `{${Object.keys(value).sort().map((key) => (
+-      `${JSON.stringify(key)}:${stableSerialize(value[key])}`
+-    )).join(",")}}`;
+-  }
+-
+-  function stableHash(value) {
+-    const input = stableSerialize(value);
+-    let hash = 0x811c9dc5;
+-    for (let index = 0; index < input.length; index += 1) {
+-      hash ^= input.charCodeAt(index);
+-      hash = Math.imul(hash, 0x01000193);
+-    }
+-    return (hash >>> 0).toString(16).padStart(8, "0");
+-  }
+-
+   function formalizeChoices(root, actorId, choices) {
+     return (choices || []).map((choice) => {
+       // choices 由 makeChoice 等每次新建 fresh 对象；session runtime
+@@ -244,7 +226,7 @@
+         schemaVersion: standardAction.SCHEMA_VERSION,
+         family: choice.family,
+         phase: "conditional",
+-        actionId: `${choice.family}:${stableHash(identity)}`,
++        actionId: `${choice.family}:${standardAction.stableActionHash(identity)}`,
+         actorId,
+         stateVersion: root?.meta?.stateVersion ?? 0,
+         decisionVersion: root?.match?.decisionVersion ?? 0,
+diff --git a/randomizer/game/production-composition.js b/randomizer/game/production-composition.js
+--- a/randomizer/game/production-composition.js
++++ b/randomizer/game/production-composition.js
+@@ -821,32 +821,12 @@
+       ownerId: PACK_ID,
+       enumerate(context, request = {}) {
+         if (request.family) return ownedRegistry.enumerate(context, request);
+-        const quickActions = ownedRegistry.enumerate(context, { ...request, family: "quick_trade" });
+-        const playActions = ownedRegistry.enumerate(context, { ...request, family: "play_card" });
+-        const scienceActions = scienceSession.ACTION_FAMILIES.flatMap(
+-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+-        );
+-        const probeTurnActions = probeTurnSession.ACTION_FAMILIES.flatMap(
+-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+-        );
+-        const residualActions = residualDomainSession.ACTION_FAMILIES.flatMap(
+-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+-        );
+-        const conditionalActions = conditionalFamilies.flatMap(
+-          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+-        );
+-        const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
+-        for (const action of [
+-          ...quickActions,
+-          ...playActions,
+-          ...scienceActions,
+-          ...probeTurnActions,
+-          ...residualActions,
+-          ...conditionalActions,
+-        ]) {
+-          byFamily.get(action.family)?.push(action);
+-        }
+-        return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
++        // Production registrations are option definitions: they use the
++        // shared context, not a synthetic family request. Read one authority
++        // and restore the public family order after the single native pass.
++        const byFamily = new Map(standardAction.ALL_FAMILIES.map(family=>[family,[]]));
++        for(const action of ownedRegistry.enumerate(context,request))byFamily.get(action.family).push(action);
++        return standardAction.ALL_FAMILIES.flatMap(family=>byFamily.get(family));
+       },
+       validate(context, action) {
+         return ownedRegistry.validate(context, action);
+diff --git a/randomizer/game/production-kernel.js b/randomizer/game/production-kernel.js
+--- a/randomizer/game/production-kernel.js
++++ b/randomizer/game/production-kernel.js
+@@ -1700,7 +1700,8 @@
+     },
+     projectState(state, viewer, _session, projectionContext = {}) {
+       const requirements = projectedRequirements(state, viewer, _session);
+-      const projectionState = options.trustedProjectionReader === true ? state : clone(state);
++      const detachedValue = viewer?.valueOnly===true&&viewer.role==="player"&&options.trustedForkLifecycle===true&&hostKind==="browser";
++      const projectionState = options.trustedProjectionReader === true || detachedValue ? state : clone(state);
+       const projectedState = {
+         ...projectionState,
+         passingPlayerIds: probeTurnSession.getPassingPlayerIds(state, { queue: projectionContext.pendingEffects }),
+diff --git a/randomizer/game/rule-composition.js b/randomizer/game/rule-composition.js
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -620,16 +620,18 @@
+       // 全部小事实（不跨步骤持有观察、不读 decision），因此同样跳过选择枚举与整棵
+       // clone+deepFreeze；遮蔽路径不使用本标记，仍走冻结完整观测（sanitizer 与其共享未改字段）。
+       const transientObservation = viewer?.cheap === true || viewer?.planEvidence === true;
++      const valueProjection = options.allowTrustedForkLifecycle===true&&viewer?.valueOnly===true&&viewer.role==="player";
+       const observed = {
+         ...runtime.observe(activeSession, clone(viewer), {
+           // 搜索中间观测不消费 decision 字段（选择枚举见后提交 inspect），跳过重复枚举。
+-          skipDecisionChoices: transientObservation,
++          skipDecisionChoices: transientObservation || valueProjection,
+         }),
+         stateVersion: readStoreSnapshot().meta.stateVersion,
+       };
+       // 同上：cheap 中间观测跳过 deepFreeze，叶/根/宿主仍走冻结完整观测。
+       // 完整快照先隔离working state引用，不能把仍待执行的规则状态一起冻结。
+-      return transientObservation ? observed : deepFreeze(clone(observed));
++      return transientObservation ? observed
++        : deepFreeze(valueProjection&&observed.state?.detachedValueProjection===true?observed:clone(observed));
+     }
+
+     function inspect(skipChoices = false) {
