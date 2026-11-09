@@ -185,3 +185,48 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
   }finally{native.close();port.close();c.dispose();}
  }
 }
+
+// The last-round satellite setup is one funded plan. It preserves the paid
+// landing card, reaches the native end-of-turn boundary, and keeps the refill hidden.
+{
+ const {root:envelope,actions:expected,end}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'satellite-scan-setup-20261110-v1.fixture.json.gz'))));
+ const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+ k.newGame({seed});const c=k.composition;
+ function planFromCurrent(){
+  const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{
+   const root=port.openRoot();
+   port.setMovementPlanning(true);port.setCardPickPlanning(true);port.setResourcePlanning(true);
+   port.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});
+   const plan=port.resourceSpec(root)?.plans.find(x=>x.goal.kind==='satellite-scan-setup');
+   if(!plan)return null;
+   const result=port.expandResourcePlan(root,plan,()=>null);
+   return {plan,actions:result.prefixes.map(x=>x.action),status:result.node.status,boundary:result.node.boundary,
+    value:createStateValueEvaluator(seatId)(port.valueObservation(result.node))};
+  }finally{port.close();}
+ }
+ try{
+  assert(c.lifecycle.restore(envelope).ok);
+  const start=c.lifecycle.save().envelope,proof=planFromCurrent();
+  assert.deepEqual(c.lifecycle.save().envelope,start);
+  assert.equal(proof.actions.length,14);
+  assert.deepEqual(proof.actions.map(a=>a.actionId),expected.map(a=>a.actionId));
+  assert.equal(proof.status,'information-barrier');
+  assert.equal(proof.boundary,'hidden_card_reveal');
+  assert.equal(proof.value,200);
+  for(let i=0;i<expected.length;i++){
+   if(i===1||i===2){
+    const cold=planFromCurrent();
+    assert.deepEqual(cold.actions.map(a=>a.actionId),expected.slice(i).map(a=>a.actionId));
+   }
+   submit(c,expected[i].actionId);
+  }
+  assert.deepEqual(c.lifecycle.save().envelope,end);
+  const poor=JSON.parse(envelope.committedState);
+  poor.players.players.find(p=>p.id===seatId).resources.credits=1;
+  assert(c.lifecycle.restore({...envelope,committedState:JSON.stringify(poor)}).ok);
+  assert.equal(planFromCurrent(),null,'scanning must leave enough money to play the landing card');
+ }finally{c.dispose();}
+}

@@ -2620,6 +2620,7 @@
         const income=resourceDemand.incomeChoice({state,seatId,goal:{...goal,required:{}},actions:node.legalActions});if(income)return income;
         return{kind:"fallback",reason:"purpose-effect-native-choice",actionIds:local?.retainedActionIds||node.legalActions.map(a=>a.actionId)};
       }
+      if(goal.kind==="satellite-scan-setup")return satelliteScanSetupStep(node,state,session,goal);
       if(goal.kind==="scan-flow"){
         if(operation.resourceBlueSlot)return resourceDemand.step({state,seatId,goal:{...goal,kind:"scan"},actions:node.legalActions,status:node.status,session,operation});
         const dataStep=resourceDemand.fixedDataChoice({state,seatId,goal,actions:node.legalActions});
@@ -2702,6 +2703,114 @@
       const route=resourceDemand.heldLandingGoal({state:future,seatId,compareTiming:timingForOneGoalQuery(future),
         candidates:()=>native.getProbeRouteRequirements(future,seatId)?.candidates||[]});
       return route?.embeddedMove?{...goal,knownTransport:route.id,knownTransportValue:route.value,...(competing?{competingTransportCash:true}:{})}:null;
+    }
+
+    function satelliteScanSetup(state,stored){
+      const turn=state.turn,owner=state.players.players.find(p=>p.id===seatId);
+      if(!scanPlanning||!movementPlanning||turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded
+        ||owner.mainActionCompleted||owner.passCompletionPending||turn.passedPlayerIds.includes(seatId)
+        ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||turn.cardTurnEventBonuses?.length||owner.industryBorrowedTechTileId
+        ||owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
+        ||localPlans.hasPendingFossilArrival(state))return null;
+      const pickup=goalMovement.knownSatellitePickup(owner),cost=scanEffects.getStandardScanCost(owner);
+      if(!pickup||!knownCards(stored.envelope).has(pickup.card.id)||owner.resources.credits<(cost.credits||0)+pickup.cost.credits
+        ||!players.canAfford(owner,cost)||owner.resources.publicity<1)return null;
+      const types=scanEffects.EFFECT_TYPES,queue=scanEffects.buildScanEffectQueue(owner,{fullScanAction:true,turn});
+      if(queue.length!==4||![types.EARTH_SECTOR_SCAN,types.IMPROVED_SECTOR_SCAN].includes(queue[0].type)
+        ||queue[1].type!==types.PUBLIC_CARD_SCAN||queue[2].type!==types.SCAN_ACTION_4
+        ||queue[3].type!==types.MERCURY_SECTOR_SCAN||queue[3].options?.cost?.publicity!==1)return null;
+      const tiles=type=>scienceSession.listNebulaChoices(state,{
+        ...scienceSession.getPlanetScanSource(state,type),gainData:true});
+      const earth=tiles(queue[0].type),mercury=tiles(queue[3].type);
+      if(earth.length!==1||mercury.length!==1)return null;
+      const prepare=Math.max(0,owner.resources.availableData+3-players.RESOURCE_LIMITS.availableData);
+      const computer=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot).join(",");
+      const blue=data.listBluePlacementRequirements(owner);
+      if(owner.resources.availableData+3-prepare!==players.RESOURCE_LIMITS.availableData
+        ||prepare>1||owner.resources.availableData!==owner.dataState.poolTokens.length
+        ||computer!==(prepare?"1":"1,2")||blue.length!==2
+        ||blue[0].requiredComputerSlot!==1||blue[1].requiredComputerSlot!==3
+        ||blue.some((slot,i)=>{
+          const reward=data.getBlueBonusPlacementReward(owner,slot.blueSlot);
+          return i===0?reward?.type!=="energy"||reward.energy!==1:reward?.type!=="credits"||reward.credits!==1;
+        }))return null;
+      const planet=(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId);
+      const routes=planet?.candidates.filter(route=>route.endpointFamily==="land"&&route.endpointTarget?.type==="satellite"
+        &&["jupiter","saturn"].includes(route.planetId)&&route.path?.length===1&&route.required.movementPoints===1
+        &&route.endpointFacts.rewards.filter(r=>r.type==="choose_colored_nebula_scan").length>=2
+        &&state.pieces.rockets.some(r=>r.id===route.rocketId&&!r.fossilId))||[];
+      if(!routes.length)return null;
+      const publicOffers=scienceSession.listPublicScanChoices(state),candidates=[];
+      const empty=id=>data.listNebulaTokens(state.data,id).filter(t=>!t.replacedByPlayerColor&&!t.playerColor).length;
+      for(const offer of publicOffers){
+        if(!knownCards(stored.envelope).has(offer.target.cardInstanceId))continue;
+        const scans=[earth[0].target.nebulaId,offer.target.nebulaId,mercury[0].target.nebulaId];
+        if(new Set(scans).size!==3||scans.some(id=>empty(id)<2))continue;
+        for(const route of routes){
+          const rewards=route.endpointFacts.rewards;
+          if(goalMovement.knownSatelliteSectorCount(state,owner,rewards)>=2
+            ||goalMovement.knownSatelliteSectorCount(state,owner,rewards,scans)<2)continue;
+          const at=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId===route.planetId);
+          if(!at)continue;
+          candidates.push({id:"scan:prepare:"+route.requirementId,kind:"satellite-scan-setup",required:{},cardId:pickup.card.id,
+            price:pickup.cost.credits,scanData:owner.resources.availableData-prepare,blueSlots:blue.map(x=>x.blueSlot),
+            scans,publicCardId:offer.target.cardInstanceId,rocketId:route.rocketId,at:{x:at.x,y:at.y},
+            dx:route.path[0].deltaX,dy:route.path[0].deltaY,routeId:route.requirementId,rewards});
+        }
+      }
+      // Competing feasible routes need their ordinary policies; this proof is
+      // for a unique funded target and does not enumerate routes in search.
+      return candidates.length===1?candidates[0]:null;
+    }
+
+    function satelliteScanSetupStep(node,state,session,goal){
+      const p=state.players.players.find(q=>q.id===seatId);
+      const pick=(test,reason)=>{
+        const action=node.legalActions.find(test);
+        return action?{kind:"fixed",actionId:action.actionId,reason}:{kind:"infeasible",reason};
+      };
+      const computer=data.listComputerPlacedTokens(p).map(t=>t.placementSlot).join(",");
+      const blue=data.listBlueBonusPlacedTokens(p).map(t=>t.blueSlot).sort().join(",");
+      const [first,second]=goal.blueSlots;
+      // Claim the two known currency slots without reaching the income slot
+      // that could consume the funded satellite card.
+      const tail=computer==="1,2"&&!blue&&p.resources.availableData===6?first
+        :computer==="1,2"&&blue===String(first)&&p.resources.availableData===5?"computer"
+          :computer==="1,2,3"&&blue===String(first)&&p.resources.availableData===4?second:null;
+      if(node.status==="stable"){
+        if(!p.mainActionCompleted){
+          if(computer==="1"&&p.resources.availableData===goal.scanData+1)
+            return pick(a=>a.family==="place_data","one-computer-slot-before-three-scans");
+          return computer==="1,2"&&p.resources.availableData===goal.scanData
+            ?pick(a=>a.family==="scan","start-satellite-scan"):{kind:"infeasible",reason:"satellite-scan-data-capacity-mismatch"};
+        }
+        const probe=state.pieces.rockets.find(r=>r.id===goal.rocketId),at=probe&&rockets.getRocketSectorCoordinate(probe);
+        if(at?.x!==goal.at.x||at?.y!==goal.at.y||!p.hand.some(c=>c.id===goal.cardId)
+          ||p.resources.credits<goal.price||goalMovement.knownSatelliteSectorCount(state,p,goal.rewards)<2)
+          return {kind:"infeasible",reason:"satellite-scan-funded-landing-missing"};
+        if(tail!==null)return pick(a=>a.family==="place_data","bank-currency-without-consuming-satellite-card");
+        return computer==="1,2,3"&&blue===[first,second].sort().join(",")&&p.resources.availableData===3
+          ?pick(a=>a.family==="end_turn","close-known-scan-preparation")
+          :{kind:"infeasible",reason:"satellite-scan-unproved-data-tail"};
+      }
+      const source=session?.journal?.actions?.[0]?.action?.family,head=session?.queue?.[0];
+      if(source==="place_data"&&head?.type===scienceSession.EFFECT_TYPES.PLACE_DATA){
+        const target=p.mainActionCompleted?tail:computer==="1"?"computer":null;
+        return pick(a=>target==="computer"?a.target?.target==="computer":target!==null&&a.target?.blueSlot===target,
+          "fixed-satellite-scan-data-placement");
+      }
+      if(source==="scan"&&head?.type===scienceSession.EFFECT_TYPES.SCAN_ACTION_4)
+        return pick(a=>a.target?.mode==="move"&&a.target.rocketId===goal.rocketId
+          &&a.target.deltaX===goal.dx&&a.target.deltaY===goal.dy&&a.payload?.requiredMovePoints===1,"free-move-to-funded-satellite");
+      if(source==="scan"&&head?.type===scienceSession.EFFECT_TYPES.SCAN_STEP){
+        const opts=head.payload?.options;
+        if(opts?.mode==="public")return pick(a=>a.target?.nebulaId===goal.scans[1]
+          &&a.target.cardInstanceId===goal.publicCardId,"leave-public-sector-one-short");
+        const paid=opts?.cost?.publicity===1;
+        return pick(a=>a.target?.nebulaId===goal.scans[paid?2:0]&&a.payload?.gainData===true,"scan-known-earth-or-mercury-sector");
+      }
+      return {kind:"infeasible",reason:"satellite-scan-unproved-native-followup"};
     }
 
     function resourceSpec(node) {
@@ -2922,6 +3031,11 @@
       const cashColumn=preparationBase&&!stored.intent&&!stored.resourceControl
         &&!node.legalActions.some(a=>a.family==="complete_task")&&hasDeferredBlueCashTail(preparationBase,knownCards(envelope));
       if(cashColumn)goals=[...goals,blueCashAnalysisTail];
+      const satelliteBase=node===openedRoot&&state.turn.roundNumber===4&&!stored.resourceControl&&!stored.intent
+        ?node.status==="stable"?state:["place_data","scan"].includes(source?.family)&&session?.baseState
+          ?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):null:null;
+      const satellite=satelliteBase&&satelliteScanSetup(satelliteBase,stored);
+      if(satellite)goals=[...goals,satellite];
       for(const goal of goals){
         const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
         if(node.status==="decision"&&source?.family==="place_data"&&session?.baseState){
@@ -3050,7 +3164,7 @@
       // Preserve the existing fixed tail, adding only the single known
       // supplier. Its arrival must not reopen other data/corner purposes.
       const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
-      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner||shipmentPlan);
+      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner||shipmentPlan||satellite);
       // A known ready transport that fits in the pool commutes with the
       // already funded computer-income prefix after a public analysis. Join
       // the collected state before replaying those same four placements.
@@ -3128,7 +3242,7 @@
         if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
         const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
-        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
           :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);
         if(step.kind==="complete"){
           if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);current=resourceView(current,null);sharedStates.push(current);contexts++;}
@@ -3136,6 +3250,7 @@
         }
         if(step.kind==="infeasible")return invalid(step.reason);
         if(plan.goal.kind==="funded-earth-shipment"&&prefixes.length>=12)throw Error("FUNDED_EARTH_SHIPMENT_PROGRESS_INVALID");
+        if(plan.goal.kind==="satellite-scan-setup"&&prefixes.length>=14)throw Error("SATELLITE_SCAN_PROGRESS_INVALID");
         if(step.kind==="fallback"&&!forced)return bind(step.reason,operation);
         const id=forced||step.actionId,action=current.legalActions.find(a=>a.actionId===id);
         if(!action)throw new Error("RESOURCE_PLAN_ACTION_NOT_LEGAL");

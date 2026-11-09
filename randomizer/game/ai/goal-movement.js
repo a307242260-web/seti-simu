@@ -56,14 +56,15 @@
     return Object.keys(cost).length===1&&Number.isSafeInteger(cost.credits)&&cost.credits>0
       &&player.resources.credits>=cost.credits?{card,cost}:null;
   }
-  function knownSatelliteSectorCount(state,owner,rewards){
+  function knownSatelliteSectorCount(state,owner,rewards,plannedScans=[]){
     const own=row=>row.playerId===owner.id||row.playerColor===owner.color;
     const ready=rewards.filter(effect=>effect.type==='choose_colored_nebula_scan'
       &&effect.options?.nebulaIds?.some(id=>{
         const tokens=data.listNebulaTokens(state.data,id),next=data.getNextReplaceableNebulaToken(state.data,id);
+        const additions=plannedScans.filter(scan=>scan===id).length;
         if(!next||tokens.length!==data.getNebulaCapacity(id)
-          ||tokens.filter(t=>!t.replacedByPlayerColor&&!t.playerColor).length!==1)return false;
-        const ranking=data.getSectorRanking(state.data,id),mine=ranking.find(own)?.count||0;
+          ||tokens.filter(t=>!t.replacedByPlayerColor&&!t.playerColor).length-additions!==1)return false;
+        const ranking=data.getSectorRanking(state.data,id),mine=(ranking.find(own)?.count||0)+additions;
         return ranking.every(row=>own(row)||mine+1>row.count);
       }));
     return new Set(ready.map(effect=>effect.options.color)).size;
@@ -236,5 +237,5 @@
     return result(chosen||null,chosen?.selected||(free?stop:null),chosen?'selected-objective':'no-affordable-objective',routingNodes,goals.length);
   }
   const __planetQueries={builds:0,reuses:0,skippedUnusableVisitQuotes:0};
-  return Object.freeze({VERSION,diagnosticPlanetQueries:()=>({...__planetQueries}),isDirection:direction,movementAllowance:(head,state)=>cardPlay.getMovementAllowance(head,state),plan});
+  return Object.freeze({VERSION,diagnosticPlanetQueries:()=>({...__planetQueries}),isDirection:direction,knownSatellitePickup,knownSatelliteSectorCount,movementAllowance:(head,state)=>cardPlay.getMovementAllowance(head,state),plan});
 });

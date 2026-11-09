@@ -1,0 +1,360 @@
+{
+  "base": "e3b2849fbb54c2d4623e4e9f61da53150d4954a0",
+  "searchVersion": "v430",
+  "kind": "fixed-visible-scan-setup-no-cross-turn-quote",
+  "decisionControls": [
+    {
+      "label": "teacher272",
+      "base": {
+        "native": 198,
+        "ms": 1126.286917,
+        "graphNodes": 710,
+        "action": "place_data:8fd12fd3",
+        "value": 216.5
+      },
+      "candidate": {
+        "native": 202,
+        "ms": 1147.753083,
+        "graphNodes": 711,
+        "action": "place_data:8fd12fd3",
+        "value": 216.5
+      }
+    },
+    {
+      "label": "official",
+      "base": {
+        "native": 165,
+        "ms": 646.620625,
+        "graphNodes": 535,
+        "action": "industry:e887dc52",
+        "value": 205.5
+      },
+      "candidate": {
+        "native": 165,
+        "ms": 645.3507920000001,
+        "graphNodes": 535,
+        "action": "industry:e887dc52",
+        "value": 205.5
+      }
+    },
+    {
+      "label": "satellite",
+      "base": {
+        "native": 1660,
+        "ms": 2614.300167,
+        "graphNodes": 2504,
+        "action": "place_data:8fd12fd3",
+        "value": 222.5
+      },
+      "candidate": {
+        "native": 1660,
+        "ms": 2721.05725,
+        "graphNodes": 2504,
+        "action": "place_data:8fd12fd3",
+        "value": 222.5
+      }
+    },
+    {
+      "label": "r3-172",
+      "base": {
+        "native": 99,
+        "ms": 223.32199999999997,
+        "graphNodes": 110,
+        "action": "play_card:38489727",
+        "value": 151
+      },
+      "candidate": {
+        "native": 99,
+        "ms": 230.25804100000002,
+        "graphNodes": 110,
+        "action": "play_card:38489727",
+        "value": 151
+      }
+    },
+    {
+      "label": "r3-136",
+      "base": {
+        "native": 224,
+        "ms": 258.39849999999996,
+        "graphNodes": 214,
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5
+      },
+      "candidate": {
+        "native": 224,
+        "ms": 263.80441700000006,
+        "graphNodes": 214,
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5
+      }
+    }
+  ],
+  "nativeProof": {
+    "goal": {
+      "id": "scan:prepare:rocket:7:land:saturn:satellite:enceladus",
+      "kind": "satellite-scan-setup",
+      "required": {},
+      "cardId": "alien-chong-6-16",
+      "price": 1,
+      "scanData": 3,
+      "blueSlots": [
+        1,
+        2
+      ],
+      "scans": [
+        "sector-4-a",
+        "sector-3-b",
+        "sector-3-a"
+      ],
+      "publicCardId": "card-75-0",
+      "rocketId": 7,
+      "at": {
+        "x": 3,
+        "y": 3
+      },
+      "dx": 0,
+      "dy": 1,
+      "routeId": "rocket:7:land:saturn:satellite:enceladus",
+      "rewards": [
+        {
+          "type": "gain_resources",
+          "label": "获得 13 分",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 13
+            }
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "label": "红色星云扫描",
+          "icon": "red_scan",
+          "needsUserChoice": true,
+          "options": {
+            "color": "red",
+            "nebulaIds": [
+              "sector-2-b",
+              "sector-3-b"
+            ]
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "label": "蓝色星云扫描",
+          "icon": "blue_scan",
+          "needsUserChoice": true,
+          "options": {
+            "color": "blue",
+            "nebulaIds": [
+              "sector-2-a",
+              "sector-1-a"
+            ]
+          },
+          "id": "planet-reward-2",
+          "status": "pending"
+        },
+        {
+          "type": "choose_colored_nebula_scan",
+          "label": "黄色星云扫描",
+          "icon": "yellow_scan",
+          "needsUserChoice": true,
+          "options": {
+            "color": "yellow",
+            "nebulaIds": [
+              "sector-4-a",
+              "sector-3-a"
+            ]
+          },
+          "id": "planet-reward-3",
+          "status": "pending"
+        }
+      ]
+    },
+    "inputs": [
+      "放置数据",
+      "第一排放置位 2",
+      "扫描",
+      "扫描 室女座61",
+      "b_18.webp → 比邻星",
+      "移动 7 向外",
+      "扫描 开普勒22",
+      "放置数据",
+      "blue2 下方",
+      "放置数据",
+      "第一排放置位 3",
+      "放置数据",
+      "blue1 下方",
+      "结束回合"
+    ],
+    "count": 14,
+    "nativeExecutions": 5,
+    "knownValue": 200,
+    "probePotential": 11.5,
+    "rootValue": 197.5,
+    "status": "information-barrier",
+    "boundary": "hidden_card_reveal",
+    "endpoint": {
+      "round": 4,
+      "turn": 8,
+      "main": false,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 6,
+        "publicity": 6,
+        "score": 116
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "hand": [
+        [
+          "alien-chong-2-8",
+          "chong_2.webp"
+        ],
+        [
+          "alien-chong-8-12",
+          "chong_8.webp"
+        ],
+        [
+          "alien-chong-4-14",
+          "chong_4.webp"
+        ],
+        [
+          "card-30-pass-3-1",
+          "b_111.webp"
+        ],
+        [
+          "card-67-0",
+          "dlc_15.png"
+        ],
+        [
+          "alien-chong-6-16",
+          "chong_6.webp"
+        ]
+      ],
+      "reserved": [
+        "b_117.webp",
+        "dlc_31.png",
+        "amiba_1.webp",
+        "b_101.webp",
+        "amiba_7.webp",
+        "chong_3.webp"
+      ],
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "taskCount": 2,
+      "market": [
+        [
+          "card-66-0",
+          "dlc_16.png"
+        ],
+        [
+          "card-74-0",
+          "dlc_8.png"
+        ],
+        [
+          "card-76-0",
+          "dlc_7.png"
+        ]
+      ],
+      "computer": [
+        1,
+        2,
+        3
+      ],
+      "blue": [
+        1,
+        2
+      ],
+      "probes": [
+        {
+          "angleDegrees": 67.5,
+          "cargo": null,
+          "color": "white",
+          "fossilId": "fossil_07",
+          "id": 6,
+          "kind": "chong-fossil",
+          "launchGrid": {
+            "x": 3,
+            "y": 3
+          },
+          "launchSectorCoordinate": {
+            "x": 3,
+            "y": 3
+          },
+          "playerId": "player-white",
+          "radius": 227.66,
+          "sectorX": 3,
+          "sectorY": 3,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        {
+          "angleDegrees": 54.9,
+          "color": "white",
+          "id": 7,
+          "launchGrid": {
+            "x": 3,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 3,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 212.48,
+          "sectorX": 3,
+          "sectorY": 3,
+          "slotIndex": 0,
+          "surface": "solar-board"
+        }
+      ],
+      "traces": {
+        "blue": 4,
+        "pink": 3,
+        "yellow": 3
+      },
+      "alienDisplay": 9,
+      "final": 173,
+      "rng": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 3171573311
+      }
+    },
+    "exactHypothesisStateRngAndRoot": true
+  },
+  "gate": {
+    "native": 256,
+    "ms": 600,
+    "teacherRootAdmitted": false
+  },
+  "wholeGameRerun": false
+}
