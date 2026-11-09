@@ -1,0 +1,96 @@
+diff --git a/randomizer/app/rule-observation.js b/randomizer/app/rule-observation.js
+--- a/randomizer/app/rule-observation.js
++++ b/randomizer/app/rule-observation.js
+@@ -3,10 +3,11 @@
+   const common = typeof module === "object" && module.exports;
+   const api = factory(common ? require("./simulation-contract") : root.SetiSimulationContract,
+     common ? require("../game/end-game-scoring") : root.SetiEndGameScoring,
+-    common ? require("../game/cards/effects") : root.SetiCardEffects);
++    common ? require("../game/cards/effects") : root.SetiCardEffects,
++    common ? require("../game/state/state-store") : root.SetiStateStore);
+   if (common) module.exports = api;
+   else root.SetiRuleObservation = api;
+-})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects) {
++})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects, stateStore) {
+ "use strict";
+
+ // 共享规则观察构建器（Browser/Simulation 同源信息层）。
+@@ -138,9 +139,12 @@
+   // facts (including geometry and pending mark), without building public
+   // scores for other seats or the setup presentation.
+   const valueOnly=options.valueOnly===true&&Boolean(perspectivePlayerId);
++  // The fork's ordinary-data copier still owns all returned geometry and
++  // falls back to the platform clone for unsupported data.
++  const copyValueSlice=valueOnly?stateStore.copyForkData:clone;
+   // Scoring normalizes the same board for each seat. A private copy for the
+   // whole projection keeps those writes off the authoritative state.
+-  const scoringBoard = clone(state.finalScoring);
++  const scoringBoard = copyValueSlice(state.finalScoring);
+   const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
+   const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
+   if(selfState)selfState.traceCounts=endGameScoring.getPlayerTraceCounts(selfPlayer,state.aliens);
+@@ -186,11 +190,11 @@
+         };
+       }),
+       board: {
+-        rockets: clone(state.pieces?.rockets || []),
++        rockets: copyValueSlice(state.pieces?.rockets || []),
+         ...(cheap ? {} : {
+-          planets: clone(state.planets || {}),
+-          data: clone(state.data || {}),
+-          solarSystem: clone(state.solarSystem || {}),
++          planets: copyValueSlice(state.planets || {}),
++          data: copyValueSlice(state.data || {}),
++          solarSystem: copyValueSlice(state.solarSystem || {}),
+           finalScoring: sanitizeFinalScoringState(state.finalScoring),
+         }),
+         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
+diff --git a/randomizer/game/ai/state-value.js b/randomizer/game/ai/state-value.js
+--- a/randomizer/game/ai/state-value.js
++++ b/randomizer/game/ai/state-value.js
+@@ -795,10 +795,24 @@
+       income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
+     }
+     const hand = observation.selfState.hand.length * weights.handSize;
+-    const facts={...probeCapital.factsFromObservation(observation,seatId),supply:observation.publicState.board?.techSupply,
+-      researchCost:player.researchPublicityCost,computerSlots:player.dataProgress?.computerSlots,
+-      analyzeEnergyCost:readyAnalysis.energyCost(player.industryAbilityId),reservedCards:observation.selfState.reservedCards};
+-    const capital=purposeCapital(facts,weights);
++    let capital;
++    if(round===4&&!probeCapital.ownedProbes(observation.publicState.board?.rockets,{id:seatId}).length){
++      // In the last round, all salary, research, analysis and other future
++      // purposes are closed. Without an ordinary probe, only an already
++      // earned final mark can retain purpose value. Its native forecast can
++      // still depend on which known income card is immediately fundable.
++      const finalMarkPotential=probeCapital.pendingFinalMarkCapital({
++        nextFinalMark:observation.selfState.nextFinalMark,player:{...player,id:seatId},
++        computerSlots:player.dataProgress?.computerSlots,hand:observation.selfState.hand,
++      });
++      capital={handPotential:0,researchPotential:0,probePotential:0,analysisPotential:0,
++        researchIncomePotential:0,dataPotential:0,finalMarkPotential,toolPlan:{value:0}};
++    }else{
++      const facts={...probeCapital.factsFromObservation(observation,seatId),supply:observation.publicState.board?.techSupply,
++        researchCost:player.researchPublicityCost,computerSlots:player.dataProgress?.computerSlots,
++        analyzeEnergyCost:readyAnalysis.energyCost(player.industryAbilityId),reservedCards:observation.selfState.reservedCards};
++      capital=purposeCapital(facts,weights);
++    }
+     const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
+       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
+       handPotential:capital.handPotential,researchPotential:capital.researchPotential,
+diff --git a/randomizer/game/ai/state-value.test.js b/randomizer/game/ai/state-value.test.js
+--- a/randomizer/game/ai/state-value.test.js
++++ b/randomizer/game/ai/state-value.test.js
+@@ -20,6 +20,13 @@
+ assert.equal(value.components.income, 3, "第2/3/4轮各有一次未来收入");
+ assert.equal(value.components.hand, 2, "未知牌只按数量，不读身份");
+ assert.equal(evaluateStateValue(observation(4), "p1").components.income, 0);
++const earned = observation(4);
++earned.selfState.nextFinalMark = { playerId: "p1", threshold: 10, valuationSafe: true,
++  options: [{ tileId: "b", formulaId: "b1", multiplier: 3, currentValue: 9 }] };
++assert.equal(evaluateStateValue(earned, "p1").components.finalMarkPotential, 9,
++  "没有普通探测器时也保留已经赚到的终局标记");
++earned.selfState.nextFinalMark.threshold = 11;
++assert.equal(evaluateStateValue(earned, "p1").components.finalMarkPotential, 0);
+ const end = { ...start, terminal: true };
+ assert.equal(evaluateStateValue(end, "p1").total, 14, "正式最终分不叠资源或未来收入");
+ assert.deepEqual(start, observation(), "估值不得修改来源");

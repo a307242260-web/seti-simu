@@ -1,0 +1,695 @@
+{
+  "previousProductionCommit": "33be96ecb97ef7e3c77c39e7f52bea071203f77d",
+  "candidateOnly": true,
+  "newFullGames": 0,
+  "singleDecisionGate": {
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 600
+  },
+  "sameSearchGraphsAndValueParts": [
+    {
+      "which": "136",
+      "graph": "fa261dd9b0cb4556b7c473d43c09f08ee08533bcd442d187617344ea11afc447",
+      "counters": {
+        "copies": 515,
+        "detached": 515,
+        "scoreComparisons": 103,
+        "r4NoProbe": 0,
+        "pendingMark": 0,
+        "probe": 0
+      },
+      "native": 224,
+      "logical": 224,
+      "eval": 103,
+      "nodes": 214,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "172",
+      "graph": "f54de3c35e27e308716ab8a47de092643b8b185c18f617a9bc250443bb0145fb",
+      "counters": {
+        "copies": 260,
+        "detached": 260,
+        "scoreComparisons": 52,
+        "r4NoProbe": 0,
+        "pendingMark": 0,
+        "probe": 0
+      },
+      "native": 99,
+      "logical": 99,
+      "eval": 52,
+      "nodes": 110,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "317",
+      "graph": "6873d5b301bf0552a4a1b2808f2f3c6bd69b4e0a7591c6d8405067b44ca93626",
+      "counters": {
+        "copies": 500,
+        "detached": 500,
+        "scoreComparisons": 100,
+        "r4NoProbe": 90,
+        "pendingMark": 0,
+        "probe": 1
+      },
+      "native": 232,
+      "logical": 405,
+      "eval": 100,
+      "nodes": 235,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "318",
+      "graph": "196dd13f81151a6eeef8fb990c90c81cd14bf5ff7f2ab50fdb6e26e11ce8ce93",
+      "counters": {
+        "copies": 480,
+        "detached": 480,
+        "scoreComparisons": 96,
+        "r4NoProbe": 88,
+        "pendingMark": 0,
+        "probe": 1
+      },
+      "native": 225,
+      "logical": 394,
+      "eval": 96,
+      "nodes": 225,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "359",
+      "graph": "432f2d136059ad77bfc0d4466518506892557f054e39f0b59a692d6b0489a727",
+      "counters": {
+        "copies": 775,
+        "detached": 775,
+        "scoreComparisons": 155,
+        "r4NoProbe": 2,
+        "pendingMark": 0,
+        "probe": 89
+      },
+      "native": 229,
+      "logical": 433,
+      "eval": 155,
+      "nodes": 398,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "official",
+      "graph": "455d7adc6fe07a9879c38f9ea028ccd5fd2a167a7ccdd72c79ab05433db65677",
+      "counters": {
+        "copies": 1445,
+        "detached": 1445,
+        "scoreComparisons": 289,
+        "r4NoProbe": 128,
+        "pendingMark": 0,
+        "probe": 156
+      },
+      "native": 221,
+      "logical": 1183,
+      "eval": 289,
+      "nodes": 695,
+      "rootAndRngExact": true
+    }
+  ],
+  "totalAuditCounts": {
+    "copies": 3975,
+    "detached": 3975,
+    "scoreComparisons": 795,
+    "r4NoProbe": 308,
+    "pendingMark": 0,
+    "probe": 247
+  },
+  "snapshotProfile": {
+    "official": {
+      "which": "official",
+      "counters": {
+        "capture:trusted": {
+          "calls": 445,
+          "ms": 7.736036999999811
+        },
+        "copy:committed": {
+          "calls": 77,
+          "ms": 8.153455999999949
+        },
+        "journal:commit": {
+          "calls": 114,
+          "ms": 2.7292559999996513
+        },
+        "invariants:commit": {
+          "calls": 114,
+          "ms": 27.66987299999991
+        },
+        "restore:false/true": {
+          "calls": 272,
+          "ms": 0.32629500000038547
+        },
+        "projection:false/true": {
+          "calls": 269,
+          "ms": 54.030648999999926
+        },
+        "restore:true/true": {
+          "calls": 144,
+          "ms": 15.90775400000038
+        },
+        "restore:false/false": {
+          "calls": 303,
+          "ms": 0.3145390000012469
+        },
+        "projection:true/true": {
+          "calls": 20,
+          "ms": 4.342752999999959
+        }
+      },
+      "native": 221,
+      "complete": true,
+      "rootAndRngExact": true
+    },
+    "359": {
+      "which": "359",
+      "counters": {
+        "capture:trusted": {
+          "calls": 277,
+          "ms": 10.91679499999998
+        },
+        "copy:committed": {
+          "calls": 43,
+          "ms": 5.489789999999942
+        },
+        "journal:commit": {
+          "calls": 105,
+          "ms": 3.783461000000443
+        },
+        "invariants:commit": {
+          "calls": 105,
+          "ms": 26.69070900000051
+        },
+        "restore:false/true": {
+          "calls": 70,
+          "ms": 0.1343739999999798
+        },
+        "projection:true/true": {
+          "calls": 34,
+          "ms": 7.780289000000096
+        },
+        "restore:true/true": {
+          "calls": 186,
+          "ms": 29.980742000000276
+        },
+        "restore:false/false": {
+          "calls": 105,
+          "ms": 0.14559000000028277
+        },
+        "projection:false/true": {
+          "calls": 121,
+          "ms": 27.199789000000123
+        },
+        "restore:true/false": {
+          "calls": 32,
+          "ms": 0.3803359999999998
+        },
+        "projection:false/false": {
+          "calls": 3,
+          "ms": 0.8914579999999432
+        }
+      },
+      "native": 229,
+      "complete": true,
+      "rootAndRngExact": true
+    }
+  },
+  "computer5Native": {
+    "total": 66,
+    "exactAfterAuthority": 66,
+    "exactAuthority": 66,
+    "differences": []
+  },
+  "computer5NextMenu": {
+    "count": 66,
+    "rootSides": [
+      [
+        "company",
+        37
+      ],
+      [
+        "corner",
+        29
+      ]
+    ],
+    "scoreDelta": [
+      [
+        2,
+        66
+      ]
+    ],
+    "stockDelta": [
+      [
+        -1,
+        66
+      ]
+    ],
+    "nextMenus": [
+      [
+        [
+          [
+            "end_turn",
+            null,
+            "end-turn"
+          ],
+          [
+            "place_data",
+            "data:blue:2",
+            null
+          ]
+        ],
+        44
+      ],
+      [
+        [
+          [
+            "end_turn",
+            null,
+            null
+          ],
+          [
+            "place_data",
+            "data:blue:2",
+            null
+          ]
+        ],
+        12
+      ],
+      [
+        [
+          [
+            "end_turn",
+            null,
+            null
+          ],
+          [
+            "place_data",
+            "data:blue:1",
+            null
+          ]
+        ],
+        4
+      ],
+      [
+        [
+          [
+            "complete_task",
+            null,
+            null
+          ],
+          [
+            "end_turn",
+            null,
+            null
+          ]
+        ],
+        2
+      ],
+      [
+        [
+          [
+            "end_turn",
+            null,
+            "end-turn"
+          ],
+          [
+            "card_corner",
+            "data:blue:2",
+            null
+          ]
+        ],
+        2
+      ],
+      [
+        [
+          [
+            "place_data",
+            "data:blue:1",
+            null
+          ]
+        ],
+        1
+      ],
+      [
+        [
+          [
+            "complete_task",
+            null,
+            null
+          ],
+          [
+            "end_turn",
+            null,
+            null
+          ],
+          [
+            "card_corner",
+            "data:blue:2",
+            null
+          ]
+        ],
+        1
+      ]
+    ],
+    "sameHandMarketTask": [
+      [
+        [
+          true,
+          true,
+          true
+        ],
+        66
+      ]
+    ]
+  },
+  "finalCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 429.7,
+        "minMs": 422.9,
+        "maxMs": 444.7,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 418.6,
+        "minMs": 413.3,
+        "maxMs": 423.1,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 429.7,
+        "minMs": 423.5,
+        "maxMs": 438.2,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 420.5,
+        "minMs": 415.9,
+        "maxMs": 423.7,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 675.7,
+        "minMs": 674.5,
+        "maxMs": 683.1,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 670.2,
+        "minMs": 665.0,
+        "maxMs": 673.6,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 758.7,
+        "minMs": 751.0,
+        "maxMs": 788.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 748.1,
+        "minMs": 741.8,
+        "maxMs": 749.8,
+        "samples": 3
+      }
+    }
+  },
+  "copyOnlyCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 428.5,
+        "minMs": 426.4,
+        "maxMs": 430.8,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 421.1,
+        "minMs": 418.3,
+        "maxMs": 423.7,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 422.2,
+        "minMs": 419.2,
+        "maxMs": 423.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 417.6,
+        "minMs": 414.8,
+        "maxMs": 421.5,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 681.2,
+        "minMs": 671.5,
+        "maxMs": 682.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 669.9,
+        "minMs": 668.2,
+        "maxMs": 677.1,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 768.7,
+        "minMs": 754.6,
+        "maxMs": 769.8,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 755.8,
+        "minMs": 753.2,
+        "maxMs": 761.7,
+        "samples": 3
+      }
+    }
+  },
+  "notAdoptedJournalCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 421.4,
+        "minMs": 420.0,
+        "maxMs": 427.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 421.4,
+        "minMs": 415.3,
+        "maxMs": 428.2,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 430.7,
+        "minMs": 426.9,
+        "maxMs": 466.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 456.3,
+        "minMs": 413.2,
+        "maxMs": 476.5,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 674.8,
+        "minMs": 670.1,
+        "maxMs": 675.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 672.7,
+        "minMs": 666.0,
+        "maxMs": 676.6,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 756.8,
+        "minMs": 742.8,
+        "maxMs": 761.4,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 752.7,
+        "minMs": 752.7,
+        "maxMs": 755.2,
+        "samples": 3
+      }
+    }
+  },
+  "notAdoptedPathCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 426.8,
+        "minMs": 422.8,
+        "maxMs": 429.2,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 424.8,
+        "minMs": 422.1,
+        "maxMs": 428.0,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 417.9,
+        "minMs": 413.5,
+        "maxMs": 421.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 417.5,
+        "minMs": 413.0,
+        "maxMs": 446.4,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 682.1,
+        "minMs": 669.3,
+        "maxMs": 783.7,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 672.9,
+        "minMs": 665.8,
+        "maxMs": 695.7,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 748.3,
+        "minMs": 743.2,
+        "maxMs": 762.5,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 746.4,
+        "minMs": 744.2,
+        "maxMs": 751.3,
+        "samples": 3
+      }
+    }
+  }
+}
