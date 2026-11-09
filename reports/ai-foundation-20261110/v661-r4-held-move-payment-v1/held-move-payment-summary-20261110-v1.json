@@ -1,0 +1,170 @@
+{
+  "baselineCommit": "12b3468c42daf41c408995a882e704930f43b874",
+  "modelVersion": "seti-purpose-capital-state-value-v60",
+  "knownOnly": true,
+  "before": {
+    "v59Total": 240.5,
+    "v59ProbeValue": 5,
+    "v60Total": 254.5,
+    "v60ProbeValue": 19
+  },
+  "route": {
+    "id": "9:land:neptune:triton",
+    "family": "land",
+    "planet": "neptune",
+    "funded": true,
+    "supported": true,
+    "payment": {
+      "spend": {
+        "credits": 0,
+        "energy": 3
+      },
+      "energyPurchases": 0,
+      "creditPurchases": 0,
+      "value": 7,
+      "cornerCardIds": [
+        "alien-chong-2-8",
+        "card-66-0"
+      ],
+      "exchangeCardIds": [
+        "alien-amiba-9-20",
+        "alien-chong-8-12"
+      ]
+    },
+    "route": {
+      "coordinate": {
+        "x": 1,
+        "y": 4
+      },
+      "cost": 3,
+      "path": [
+        {
+          "deltaX": 0,
+          "deltaY": 1,
+          "requiredMovePoints": 1
+        },
+        {
+          "deltaX": 0,
+          "deltaY": 1,
+          "requiredMovePoints": 1
+        },
+        {
+          "deltaX": 0,
+          "deltaY": 1,
+          "requiredMovePoints": 1
+        }
+      ]
+    },
+    "ledger": [
+      {
+        "type": "gain_resources",
+        "gain": {
+          "score": 26
+        },
+        "value": 26
+      }
+    ],
+    "capitalDelta": 0,
+    "dataContinuation": null,
+    "value": 19
+  },
+  "directLanding": {
+    "board": 176,
+    "established": 248,
+    "value": 256
+  },
+  "analyzeThenLand": {
+    "postAnalysisValue": 259.5,
+    "board": 179,
+    "established": 253,
+    "value": 261
+  },
+  "checks": {
+    "nodeTargetedPassed": 4,
+    "browserPassed": 2,
+    "stateInputAuditPassed": true,
+    "formalFullCompactScalarSwapParity": true,
+    "restoredRootAndRng": true
+  },
+  "coldSingleRoots": {
+    "teacher272": {
+      "v60": {
+        "action": "place_data:8fd12fd3",
+        "estimatedValue": 216.5,
+        "nativeInputs": 212,
+        "nodes": 721,
+        "milliseconds": 1285.232959
+      },
+      "v59": {
+        "action": "place_data:8fd12fd3",
+        "estimatedValue": 216.5,
+        "nativeInputs": 202,
+        "nodes": 711,
+        "milliseconds": 1157.2930410000001
+      }
+    },
+    "official": {
+      "v60": {
+        "action": "industry:e887dc52",
+        "estimatedValue": 205.5,
+        "nativeInputs": 165,
+        "nodes": 535,
+        "milliseconds": 665.721958
+      },
+      "v59": {
+        "action": "industry:e887dc52",
+        "estimatedValue": 205.5,
+        "nativeInputs": 165,
+        "nodes": 535,
+        "milliseconds": 746.9626659999999
+      }
+    },
+    "satellite": {
+      "v60": {
+        "action": "place_data:8fd12fd3",
+        "estimatedValue": 222.5,
+        "nativeInputs": 1663,
+        "nodes": 2506,
+        "milliseconds": 2823.003792
+      },
+      "v59": {
+        "action": "place_data:8fd12fd3",
+        "estimatedValue": 222.5,
+        "nativeInputs": 1660,
+        "nodes": 2504,
+        "milliseconds": 2664.6295410000002
+      }
+    },
+    "after-launch": {
+      "v60": {
+        "action": "analyze:a5629aa3",
+        "estimatedValue": 267,
+        "nativeInputs": 206,
+        "nodes": 323,
+        "milliseconds": 460.542875
+      }
+    }
+  },
+  "r3SameActionValueInputsAndNodes": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214
+    }
+  ],
+  "gate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "admitted": false
+  },
+  "newAutonomousGames": 0
+}

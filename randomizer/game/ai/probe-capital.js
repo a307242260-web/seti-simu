@@ -25,6 +25,7 @@
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
   const eToC = trades.TRADE_ACTIONS.find(t => t.id === "energy-for-credit");
+  const cardsToE = trades.TRADE_ACTIONS.find(t => t.id === "cards-for-energy");
   const zero = () => ({ value: 0, selected: null, candidates: [] });
 
   function isOwnedProbe(rocket, playerId) {
@@ -223,6 +224,65 @@
     return chosen;
   }
 
+  const fixedScoreSatellitesByDirectory = new WeakMap();
+  function knownMoveGoals(facts, goals, weights) {
+    if (weights !== arithmetic.DEFAULT_WEIGHTS || facts.round !== 4 || !facts.uncontestedRound
+      || facts.pendingNativeEffects || facts.turnCardBonusCount) return [];
+    let satellites = fixedScoreSatellitesByDirectory.get(goals);
+    if (!satellites) {
+      satellites = goals.filter(goal => goal.endpointFamily === 'land' && !goal.requirementId.endsWith(':planet')
+        && goal.route.cost > 0 && goal.route.cost === goal.route.path.length
+        && goal.endpointFacts.rewards.length > 0 && goal.endpointFacts.rewards.every(effect =>
+          effect.type === 'gain_resources' && Object.keys(effect.options.gain).length === 1
+          && effect.options.gain.score > 0));
+      fixedScoreSatellitesByDirectory.set(goals, satellites);
+    }
+    const wallet = facts.player;
+    return satellites.filter(goal => {
+      const {credits=0,energy=0} = goal.endpointFacts.cost;
+      const spareCredits = wallet.credits - credits, spareEnergy = wallet.energy - energy;
+      // Leave the landing fee in the wallet. If ordinary currency already
+      // funds the route, its existing quote remains the sole alternative.
+      return spareCredits >= 0 && spareEnergy >= 0
+        && spareEnergy + Math.floor(spareCredits / cToE.cost.credits) < goal.route.cost;
+    });
+  }
+
+  function movePaymentCard(card) {
+    return cards.getDiscardActionMoveRewardForCard(card)?.movementPoints === 1;
+  }
+
+  function knownMovePayments(goals, hand, wallet, weights) {
+    if (!goals.length) return null;
+    const corners = [], exchange = [];
+    for (const card of hand) {
+      if (!card.id || !card.cardId || card.hidden) continue;
+      (movePaymentCard(card) ? corners : exchange).push(card.id);
+    }
+    if (!corners.length) return null;
+    corners.sort(); exchange.sort();
+    const result = new Map();
+    for (const goal of goals) {
+      const {credits=0,energy=0} = goal.endpointFacts.cost;
+      // Assign one known corner per otherwise unfunded step. An exchange
+      // may supply a single remaining energy from two different non-move
+      // cards. No alternative discards, new cards or sibling goals share it.
+      const missing = energy + goal.route.cost - wallet.energy;
+      const cornerCardIds = corners.slice(0, missing), totalEnergy = energy + goal.route.cost - cornerCardIds.length;
+      let payment = funding(wallet, {credits,energy:totalEnergy}, weights);
+      let exchangeCardIds = [];
+      if (!payment && totalEnergy === wallet.energy + 1
+        && cardsToE.gain.energy === 1 && cardsToE.cost.handSize === 2 && exchange.length >= 2) {
+        exchangeCardIds = exchange.slice(0, 2);
+        payment = {spend:{credits,energy:wallet.energy}, energyPurchases:0, creditPurchases:0,
+          value:credits * weights.credits + wallet.energy * weights.energy};
+      }
+      if (payment) result.set(goal, {...payment, cornerCardIds, exchangeCardIds,
+        value:payment.value + (cornerCardIds.length + exchangeCardIds.length) * weights.handSize});
+    }
+    return result.size ? result : null;
+  }
+
   const traceTypes = Object.freeze(['yellow','pink','blue']);
   const knownTraceSelections = new Map();
   function pickTraceReward(slots, types, publicity, weighted) {
@@ -274,12 +334,11 @@
       extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
     const weights=arithmetic.DEFAULT_WEIGHTS;
     const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
-    // Only income rewards can consume cards (including anonymous cards).
-    // With no investment or later data purpose, a public pick alone has a
-    // fixed hand-count value regardless of the identity it takes.
-    const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'));
+    const moveGoals=knownMoveGoals(shared,goals,weights);
+    const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
+      || moveGoals.length>0 && (player.hand.some(movePaymentCard) || state.cards.publicCards.some(c=>c?.id&&c.cardId&&!c.hidden&&movePaymentCard(c)));
     const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
-      weights,true,true,{prepared,constantInvestment:true});
+      weights,true,true,{prepared,moveGoals,constantInvestment:true});
     return {sensitive,quote};
   }
 
@@ -352,6 +411,9 @@
         if(alternatives.length)portfolio=[...goals.map(goal=>({goal})),...alternatives];
       }
     }
+    const moveGoals=finalSwap?.moveGoals??knownMoveGoals(facts,goals,weights);
+    const movePayments=knownMovePayments(moveGoals,facts.hand,player,weights);
+    if (prepared && movePayments) portfolio=[...prepared,...Array.from(movePayments,([goal,payment])=>({goal,payment}))];
     if(!portfolio&&prepared?.length===0&&Array.isArray(facts.hand)&&player.income!=null){
       __requirementRefs.emptyFundedScalar++;
       return 0;
@@ -376,9 +438,11 @@
     // choice, mission portfolio, or projected Native transition.
     for (const entry of portfolio||prepared||goals) {
       const goal=portfolio||prepared?entry.goal:entry,cost=goal.endpointFacts.cost,card=entry.held?cardRoute.card:null;
-      const payment=entry.payment||funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
+      const payment=entry.payment||movePayments?.get(goal)||funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
       if (!payment) { if(candidates)candidates.push({ id: goal.requirementId, funded: false, value: 0 }); continue; }
-      const hand = card ? knownHand.filter(c=>c.id!==card.id) : knownHand.slice();
+      const hand = card ? knownHand.filter(c=>c.id!==card.id)
+        : payment.cornerCardIds ? knownHand.filter(c=>!payment.cornerCardIds.includes(c.id)&&!payment.exchangeCardIds.includes(c.id))
+        : knownHand.slice();
       let publicCards = scalarOnly ? null : (facts.board.publicCards || []).filter(c => c && !c.hidden && c.cardId);
       const wallet = { credits: player.credits - payment.spend.credits, energy: player.energy - payment.spend.energy,
         publicity: player.publicity, availableData: player.availableData };
