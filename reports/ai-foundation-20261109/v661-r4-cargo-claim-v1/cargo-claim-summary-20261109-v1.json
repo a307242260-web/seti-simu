@@ -1,0 +1,109 @@
+{
+  "source": "V661 search v425 / state value v58",
+  "admitted": false,
+  "fullGameRerun": false,
+  "budget": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "cold": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "value": 227.5,
+      "native": 6,
+      "ms": 78.736333,
+      "quotes": []
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "value": 257.5,
+      "native": 10,
+      "ms": 62.493291,
+      "quotes": [
+        {
+          "value": 7,
+          "cardId": "alien-chong-3-10",
+          "fossilId": "fossil_07",
+          "slots": [
+            5,
+            6
+          ],
+          "credits": 2,
+          "dataGain": 2,
+          "established": 4,
+          "boundary": "hidden_card_reveal"
+        }
+      ]
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "value": 257.5,
+      "native": 2,
+      "ms": 33.934957999999995,
+      "quotes": [
+        {
+          "value": 7,
+          "cardId": "alien-chong-3-10",
+          "fossilId": "fossil_07",
+          "slots": [
+            5,
+            6
+          ],
+          "credits": 2,
+          "dataGain": 2,
+          "established": 4,
+          "boundary": "own-turn-complete"
+        }
+      ]
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "value": 280.5,
+      "native": 1126,
+      "ms": 1954.72775,
+      "quotes": []
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "value": 280.5,
+      "native": 1293,
+      "ms": 2181.6106250000003,
+      "quotes": []
+    }
+  ],
+  "negativeCases": [
+    "unknown-fossil",
+    "unknown-task",
+    "other-player-active",
+    "only-one-quiet-slot"
+  ],
+  "matchedOrdering": {
+    "exactVisibleFactsAndRng": true,
+    "score": 168,
+    "final": 247,
+    "wallet": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 1,
+      "credits": 5,
+      "energy": 5,
+      "handSize": 2,
+      "publicity": 4,
+      "score": 168
+    }
+  },
+  "existingHotRoot": {
+    "nativeExecutions": 1126,
+    "logicalResourceInputs": 512,
+    "sharedResourceInputHits": 45,
+    "resourceGoalPlans": 160,
+    "turnTailProofs": 0,
+    "branchingStates": 286,
+    "equivalents": 180
+  }
+}
