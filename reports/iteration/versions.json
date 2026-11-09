@@ -7,6 +7,41 @@
   },
   "versions": [
     {
+      "id": "ai-search-v661-free-analyze-random20-20261109",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "搜索 V661 · 20 局免电分析",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "baselineEligible": false,
+      "head": "d39dd7a2d",
+      "commits": [
+        "d39dd7a2d"
+      ],
+      "summary": "固定原20个种子；只有白席深空探测自主，其他席只PASS及强制选择；保留所有终局和原生失败",
+      "records": {
+        "e8f869ee.d39dd7a2.full.json": {},
+        "812d8168.d39dd7a2.full.json": {},
+        "53f9180c.d39dd7a2.full.json": {},
+        "2f9eb996.d39dd7a2.full.json": {},
+        "6c4f1f97.d39dd7a2.full.json": {},
+        "82ee7ab2.d39dd7a2.full.json": {},
+        "bccd371c.d39dd7a2.full.json": {},
+        "5db4b568.d39dd7a2.full.json": {},
+        "e818a171.d39dd7a2.full.json": {},
+        "1116c866.d39dd7a2.full.json": {},
+        "2f1aaa31.d39dd7a2.full.json": {},
+        "f343db9d.d39dd7a2.full.json": {},
+        "22c44c19.d39dd7a2.full.json": {},
+        "d4809af1.d39dd7a2.full.json": {},
+        "3ccb8cdb.d39dd7a2.full.json": {},
+        "3cfea084.d39dd7a2.full.json": {},
+        "0ffa9099.d39dd7a2.full.json": {},
+        "09323b62.d39dd7a2.full.json": {},
+        "4223c7a8.d39dd7a2.full.json": {},
+        "abbb47e3.d39dd7a2.full.json": {}
+      }
+    },
+    {
       "id": "ai-search-v661-white-full-20261109",
       "aiGeneration": "v2",
       "agentType": "search",
