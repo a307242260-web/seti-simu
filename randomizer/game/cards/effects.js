@@ -831,14 +831,8 @@
               })
             ]),
       playEffects: Object.freeze([
-              Object.freeze({
-                "id": "aomomo-1-fossil",
-                "type": "aomomo_gain_fossils",
-                "label": "奥陌陌1：1化石",
-                "icon": "aomomoFossil",
-                "options": Object.freeze({
-                  "count": 1
-                })
+              effect("aomomo-1-fossil", REWARD_TYPES.GAIN_RESOURCES, "奥陌陌1：1化石", "aomomoFossil", {
+                gain: Object.freeze({ aomomoFossils: 1 }),
               })
             ]),
     }),
@@ -866,14 +860,9 @@
               })
             ]),
       playEffects: Object.freeze([
-              Object.freeze({
-                "id": "aomomo-2-scan",
-                "type": "aomomo_scan_x",
-                "label": "奥陌陌2：扫描奥陌陌所在扇区",
-                "icon": "scan",
-                "options": Object.freeze({
-                  "gainData": true
-                })
+              effect("aomomo-2-scan", EFFECT_TYPES.PLANET_SECTOR_SCAN, "奥陌陌2：扫描奥陌陌所在扇区", "scan", {
+                planetId: "aomomo",
+                gainData: true,
               })
             ]),
     }),
@@ -901,14 +890,8 @@
               })
             ]),
       playEffects: Object.freeze([
-              Object.freeze({
-                "id": "aomomo-3-land",
-                "type": "aomomo_land_score",
-                "label": "奥陌陌3：登陆；若登陆奥陌陌得3分",
-                "icon": "land",
-                "options": Object.freeze({
-                  "score": 3
-                })
+              cardLandEffect("aomomo-3-land", "奥陌陌3：登陆；若登陆奥陌陌得3分", {
+                afterLandRewards: [{ planetIds: ["aomomo"], effect: gainResourcesEffect("aomomo-3-land-score", "登陆奥陌陌：3分", { score: 3 }) }],
               })
             ]),
     }),
@@ -991,14 +974,8 @@
                   "source": "aomomo"
                 })
               }),
-              Object.freeze({
-                "id": "aomomo-7-fossil",
-                "type": "aomomo_gain_fossils",
-                "label": "奥陌陌7：1化石",
-                "icon": "aomomoFossil",
-                "options": Object.freeze({
-                  "count": 1
-                })
+              effect("aomomo-7-fossil", REWARD_TYPES.GAIN_RESOURCES, "奥陌陌7：1化石", "aomomoFossil", {
+                gain: Object.freeze({ aomomoFossils: 1 }),
               })
             ]),
     }),

@@ -82,7 +82,14 @@ assert.equal(aomomo0Effects[0].type, "card_scan_action");
 assert.equal(aomomo0Effects[1].type, "card_conditional_reward");
 assert.equal(aomomo0Effects[1].options.condition.type, "flowMarkedNebula");
 assert.deepEqual(aomomo0Effects[1].options.condition.nebulaIds, [aomomo.NEBULA_ID]);
-assert.equal(cardEffects.getCardModel("aomomo_1.webp").playEffects[0].type, aomomo.EFFECT_GAIN_FOSSILS);
+for (const index of [1, 7]) {
+  const fossil = cardEffects.getCardModel(`aomomo_${index}.webp`).playEffects.at(-1);
+  assert.equal(fossil.type, cardEffects.REWARD_TYPES.GAIN_RESOURCES);
+  assert.deepEqual(fossil.options.gain, { aomomoFossils: 1 });
+}
+const aomomo2Scan = cardEffects.getCardModel("aomomo_2.webp").playEffects[0];
+assert.equal(aomomo2Scan.type, cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN);
+assert.equal(aomomo2Scan.options.planetId, aomomo.PLANET_ID);
 const aomomo5Effects = cardEffects.getCardModel("aomomo_5.webp").playEffects;
 assert.equal(aomomo5Effects.length, 2);
 assert.equal(aomomo5Effects[0].type, "card_move");

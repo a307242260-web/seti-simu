@@ -1,0 +1,21 @@
+{
+  "ruleFixVerified": true,
+  "productionSearchUnchanged": true,
+  "original20ActionSequencesReplayedExactly": true,
+  "correctedContinuationsReplayedExactly": 3,
+  "newAutonomousFullRuns": 0,
+  "performanceAdmitted": false,
+  "baseCommit": "2f7e9fc9785945f05933424ae8cdc882b5cc2070",
+  "runtimeHashes": {
+    "randomizer/game/cards/effects.js": "e51be45fdf002afec8e6f1784a3f392228c45eceb39547465394783ddbebbc0f",
+    "randomizer/game/cards/play-domain.js": "bb802403be86af4003b87a4d768333fa092587bfb7c952fb53d69451f94a138a",
+    "randomizer/game/effects/science-session.js": "49626fc2ec13909d12b01ae34eea601742a75ec81a554320ff4a850b2eb4f306"
+  },
+  "evidence": {
+    "initial-rule-fix-cold-20261109-v1.json": "0bfbbe56fa71b3c03432246a1e97cbf759d560ec874f70273b48b46206e2eca0",
+    "native-recovery-evidence-20261109-v1.tar.gz": "fa2bcd9aa78c13eee4d291e2ce83586251f80b9a3e1e822a96c8787c69c199d4",
+    "original-20-native-replay-20261109-v1.log": "21bebc91cae0fb0354eacbbc2b7ced0d23db6f3bdda7c0fd127a95d913064585",
+    "repaired-terminals-20261109-v1.json": "3a1d9366b419a6edb34f8d2c3022dd9d0040ac0240671918b8ce9f8fbfad693f",
+    "teacher-r4-native-boundary-20261109-v1.tar.gz": "4c7db0839b576cc8c9eb0c6033addcd6c42efc283191ebcbc46dab3b57e82b53"
+  }
+}

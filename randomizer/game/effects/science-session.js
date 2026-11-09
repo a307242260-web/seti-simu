@@ -1881,11 +1881,17 @@
           spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
         }
         if (result.tileId === "orange1") {
-          const launch = abilities.executeAbility("launchProbe", createActionContext(root, effect.ownerId), {
-            skipCost: true,
-            source: "tech",
-          });
-          if (!launch.ok) return launch;
+          const context = createActionContext(root, effect.ownerId);
+          // The tile has already raised the limit. If earlier effects filled
+          // that capacity, skip only the extra launch, not the research.
+          if (abilities.rocket.getActiveRocketCountForPlayer(context.pieces, actor.id)
+            < abilities.rocket.getRocketLimitForPlayer(actor, context)) {
+            const launch = abilities.executeAbility("launchProbe", context, {
+              skipCost: true,
+              source: "tech",
+            });
+            if (!launch.ok) return launch;
+          }
         }
         if (effect.payload?.options?.afterResearchReward?.kind === "repeatBonus"
           && !effect.payload.options.skipBonus) {

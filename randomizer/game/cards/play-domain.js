@@ -2069,6 +2069,20 @@
           makeChoice("choose_card", "skip", { skip: true }, {}, "跳过"),
         ];
       }
+      if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND) {
+        const max = Math.floor(aliens.aomomo.getFossils(actor) / options.costPerExchange);
+        return Array.from({ length: max + 1 }, (_, count) => makeChoice(
+          "choose_reward", `exchange:${count}`, { count }, {},
+          `支付${count * options.costPerExchange}化石，移动${count * options.movementPerExchange}步后登陆`,
+        ));
+      }
+      if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_DATA) {
+        if (!players.canAfford(actor, { aomomoFossils: options.cost })) return [];
+        return [
+          makeChoice("choose_reward", "pay", { pay: true }, {}, "支付1化石得1数据"),
+          makeChoice("choose_reward", "skip", { skip: true }, {}, "跳过"),
+        ];
+      }
       if (effect.type === cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD) {
         const choices = [makeChoice("choose_reward", "skip", { skip: true }, {}, "停止支付")];
         if ((Number(actor.resources?.credits) || 0) >= 1) {
@@ -2435,6 +2449,27 @@
           { createCardInstance: drawCtx.createCardInstance },
         );
         irreversible = { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" };
+      } else if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND) {
+        const count = legal.target.count;
+        const effects = [];
+        if (count > 0) {
+          const spent = players.spendResources(actor, { aomomoFossils: count * options.costPerExchange });
+          if (!spent.ok) return spent;
+          effects.push({ id: `${effect.id}:move`, type: cardEffects.EFFECT_TYPES.CARD_MOVE,
+            label: effect.label, options: { movementPoints: count * options.movementPerExchange } });
+        }
+        effects.push({ id: `${effect.id}:land`, type: cardEffects.EFFECT_TYPES.CARD_LAND,
+          label: "奥陌陌6：登陆", options: { skipCost: true } });
+        spawnedEffects = spawnCardEffects(effects, sessionEffect);
+      } else if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_DATA) {
+        if (legal.target.pay) {
+          const spent = players.spendResources(actor, { aomomoFossils: options.cost });
+          if (!spent.ok) return spent;
+          spawnedEffects = spawnCardEffects([{
+            id: `${effect.id}:data`, type: cardEffects.REWARD_TYPES.GAIN_DATA,
+            label: effect.label, options: { count: options.dataCount },
+          }], sessionEffect);
+        }
       } else if (effect.type === cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD) {
         if (legal.target.pay) {
           const spent = players.spendResources(actor, { credits: 1 });
@@ -2520,6 +2555,8 @@
       [cardEffects.EFFECT_TYPES.OPTIONAL_DISCARD_SCAN]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.CARD_ORBIT]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD]: { decisionKind: "choose_reward" },
+      [aliens.aomomo.EFFECT_FOSSIL_FOR_DATA]: { decisionKind: "choose_reward" },
+      [aliens.aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND]: { decisionKind: "choose_reward" },
       [cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD]: { decisionKind: "choose_target" },

@@ -2,7 +2,7 @@ from html import escape as esc
 from pathlib import Path
 from statistics import mean,median
 import json,sys
-verified,output=map(Path,sys.argv[1:])
+verified,output=map(Path,sys.argv[1:3])
 data=json.loads(verified.read_text());rows=data['rows'];ok=[x for x in rows if x['terminal']]
 assert len(rows)==20 and all(x['nativeStateSessionRngExact'] for x in rows)
 scores=[x['score'] for x in ok]
@@ -40,5 +40,12 @@ content=f"""<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="
 <section><h2>20 局明细</h2><p class="hint">R1–R4 均为本轮 PASS 选牌和下一轮收入之前的盘面分。耗时为并行批测时的单局墙钟；超线次数按每个决策超过 256 个原生输入或 600 毫秒计。</p><div class="scroll"><table><thead><tr><th>盘面</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>终局</th><th>秒</th><th>单点超线</th><th>结果／复盘</th></tr></thead><tbody>{''.join(rows_html)}</tbody></table></div></section>
 <section><h2>可以下什么结论</h2><p>完成局用时 {min(r['wallMs'] for r in ok)/1000:.2f}–{max(r['wallMs'] for r in ok)/1000:.2f} 秒，均低于 3 分钟。全部尝试共 {sum(r['overBudget'] for r in rows)} 次单点超线，最重 {max(r['maxNative'] for r in rows)} 次输入，最慢 {max(r['maxMs'] for r in rows)/1000:.2f} 秒。04、05、13 在原生效果模拟失败时停止；未提交失败的动作。全部已提交输入均独立原生复放，完整终局和失败存档都与原记录一致。</p>
 <p><a href="../../ai-foundation-20261109/v661-random20-v1/v661-random20-verified-20261109-v1.json">原始统计和原生回放校验</a> · <a href="../../robot-iteration.html?ai=v2">V2 实验中心</a></p></section></main></html>"""
+if len(sys.argv)>3:
+ repaired=json.loads(Path(sys.argv[3]).read_text())
+ add=''.join(f"<tr><td>{x['board']:02}</td><td>{x['score']}</td><td>{x['newInputs']}</td><td>{x['over']}</td></tr>" for x in repaired)
+ appendix=("<section><h2>规则修复后的 3 局续跑</h2><p>从原失败存档继续；这 3 个分数单列，不计入上面的 V661 分布。</p>"
+          "<table><thead><tr><th>盘面</th><th>终局分</th><th>续跑输入</th><th>续跑单点超线</th></tr></thead>"
+          f"<tbody>{add}</tbody></table><p><a href='../../ai-foundation-20261109/v661-random20-repair-v1/repaired-terminals-20261109-v1.json'>查看续跑核验</a></p></section>")
+ content=content.replace('</main>',appendix+'</main>')
 output.parent.mkdir(parents=True,exist_ok=True)
 output.write_text(content+'\n',encoding='utf-8')

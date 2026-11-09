@@ -1,0 +1,47 @@
+[
+  {
+    "board": 4,
+    "terminal": true,
+    "score": 141,
+    "base": 105,
+    "tiles": 36,
+    "cards": 0,
+    "sourceInputs": 165,
+    "newInputs": 35,
+    "wallMs": 12356.375583000001,
+    "peakNative": 451,
+    "peakMs": 687.1855839999998,
+    "over": 2,
+    "nativeStateAndRngExact": true
+  },
+  {
+    "board": 5,
+    "terminal": true,
+    "score": 135,
+    "base": 95,
+    "tiles": 34,
+    "cards": 6,
+    "sourceInputs": 142,
+    "newInputs": 58,
+    "wallMs": 11241.722666000001,
+    "peakNative": 387,
+    "peakMs": 508.4897500000002,
+    "over": 1,
+    "nativeStateAndRngExact": true
+  },
+  {
+    "board": 13,
+    "terminal": true,
+    "score": 97,
+    "base": 72,
+    "tiles": 25,
+    "cards": 0,
+    "sourceInputs": 116,
+    "newInputs": 58,
+    "wallMs": 8825.190042,
+    "peakNative": 209,
+    "peakMs": 306.985416,
+    "over": 0,
+    "nativeStateAndRngExact": true
+  }
+]

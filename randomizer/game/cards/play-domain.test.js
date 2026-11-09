@@ -66,7 +66,8 @@ assert.equal(playDomain.createScienceScanEffect({ type: "gain_resources" }, "p1"
   assert.deepEqual(playDomain.chainScanFinalize([], "p1"), []);
 }
 
-assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 66);
+assert(!playDomain.REACHABLE_PLAY_EFFECT_TYPES.includes("aomomo_gain_fossils"));
+assert(!playDomain.REACHABLE_PLAY_EFFECT_TYPES.includes("aomomo_scan_x"));
 assert.deepEqual(
   playDomain.OWNED_PLAY_EFFECT_TYPES,
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES,
@@ -631,6 +632,57 @@ function runLaunchLimitSettlement() {
 }
 
 runLaunchLimitSettlement();
+
+function runAomomoFossilCards() {
+  for (const [cardId, count, wantRockets] of [
+    ["aomomo_1.webp", 0, 0], ["aomomo_7.webp", 0, 1], ["aomomo_7.webp", 1, 1],
+  ]) {
+    const root = createCanonicalState(cardId);
+    const player = root.players.players[0];
+    player.resources.aomomoFossils = 0;
+    if (count) assert(rockets.launchRocketAtSector(root.pieces, { x: 0, y: 2 }, {
+      playerId: "p1", color: "brown", root,
+    }).ok);
+    const { composition } = createIntegratedComposition(cardId, { state: root });
+    try {
+      const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+      assert(result.ok, JSON.stringify(result));
+      const state = composition.stateSourcePort.getSnapshot();
+      assert.equal(state.pieces.rockets.length, wantRockets);
+      assert.equal(state.players.players[0].resources.aomomoFossils, 1);
+    } finally { composition.dispose(); }
+  }
+  for (const count of [0, 1, 2]) {
+    const cardId = "aomomo_6.webp", root = createCanonicalState(cardId);
+    root.players.players[0].resources.aomomoFossils = 2;
+    const { composition } = createIntegratedComposition(cardId, { state: root });
+    try {
+      const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+      assert(result.ok, JSON.stringify(result));
+      const { decision } = composition.inspect().session;
+      assert.deepEqual(decision.choices.map(a => a.target.count).sort((a,b)=>a-b), [0, 1, 2]);
+      const choice = decision.choices.find(a => a.target.count === count);
+      const accepted = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+      assert(accepted.ok, JSON.stringify(accepted));
+      let settled = accepted;
+      if (count > 0) {
+        const pending = composition.lifecycle.save().envelope.session.session;
+        assert.equal(pending.workingState.players.players[0].resources.aomomoFossils, 2 - count);
+        assert.equal(pending.queue[0].payload.remaining, 2 * count);
+        const move = composition.inspect().session.decision;
+        const done = move.choices.find(a => a.target.skip);
+        assert(done, JSON.stringify(move.choices));
+        settled = composition.inputPort.submitDecision({ decisionId: move.decisionId,
+          decisionVersion: move.decisionVersion, ownerId: move.ownerId, choice: done });
+        assert(settled.ok, JSON.stringify(settled));
+      }
+      assert.equal(composition.stateSourcePort.getSnapshot().players.players[0].resources.aomomoFossils, 2 - count);
+      assert(settled.journal.events.some(e => e.effectType === cardEffects.EFFECT_TYPES.CARD_LAND));
+    } finally { composition.dispose(); }
+  }
+}
+runAomomoFossilCards();
 
 function runProbeLocationConditions() {
   const root = createCanonicalState("dlc_11.png");
