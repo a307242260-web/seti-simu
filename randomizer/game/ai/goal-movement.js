@@ -4,11 +4,11 @@
   const api=factory(common?require('../abilities/rocket'):root.SetiAbilityRocket,
     common?require('../rockets'):root.SetiRocketActions,common?require('../../solar-system/core'):root.SetiSolarSystem,
     common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
-    common?require('../cards/play-domain'):root.SetiCardPlayDomain,common?require('../players'):root.SetiPlayers);
+    common?require('../cards/play-domain'):root.SetiCardPlayDomain,common?require('../players'):root.SetiPlayers,common?require('../data'):root.SetiData);
   if(common)module.exports=api;else root.SetiGoalMovement=api;
-})(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players){
+})(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players,data){
   "use strict";
-  const VERSION='seti-goal-movement-policy-v4';
+  const VERSION='seti-goal-movement-policy-v5';
   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
@@ -37,6 +37,36 @@
     }
     if(cache){if(cache.size>=64)cache.delete(cache.keys().next().value);cache.set(cacheKey,best);}
     return{best,settled};
+  }
+  // These two exact effects buy the landing for the card's fee. A printed
+  // satellite reward may be quoted, but never the identity of a fossil/card.
+  function knownSatellitePickup(player){
+    const suppliers=player.hand.filter(card=>{
+      if(!card.id||!card.cardId||card.hidden)return false;
+      const model=effects.getCardModel(card),list=model?.playEffects||[];
+      const [land,pick]=list;
+      return model?.cardType===2&&!model.triggers?.length&&!model.temporaryTasks?.length&&list.length===2
+        &&land.type==='chong_orbit_or_land_for_pickup'&&pick.type==='chong_pickup_fossil'
+        &&land.options?.orbitOrLand===true&&pick.options?.orbitOrLand===true
+        &&land.options.cardIndex===pick.options.cardIndex
+        &&[land,pick].every(e=>Object.keys(e.options).every(key=>key==='cardIndex'||key==='orbitOrLand'));
+    });
+    if(suppliers.length!==1)return null;
+    const [card]=suppliers,cost=effects.getCardPlayCost(card);
+    return Object.keys(cost).length===1&&Number.isSafeInteger(cost.credits)&&cost.credits>0
+      &&player.resources.credits>=cost.credits?{card,cost}:null;
+  }
+  function knownSatelliteSectorCount(state,owner,rewards){
+    const own=row=>row.playerId===owner.id||row.playerColor===owner.color;
+    const ready=rewards.filter(effect=>effect.type==='choose_colored_nebula_scan'
+      &&effect.options?.nebulaIds?.some(id=>{
+        const tokens=data.listNebulaTokens(state.data,id),next=data.getNextReplaceableNebulaToken(state.data,id);
+        if(!next||tokens.length!==data.getNebulaCapacity(id)
+          ||tokens.filter(t=>!t.replacedByPlayerColor&&!t.playerColor).length!==1)return false;
+        const ranking=data.getSectorRanking(state.data,id),mine=ranking.find(own)?.count||0;
+        return ranking.every(row=>own(row)||mine+1>row.count);
+      }));
+    return new Set(ready.map(effect=>effect.options.color)).size;
   }
   function plan({state,seatId,actions,status,session,intent=null,endpoints=()=>[],objectiveOnly=false,routeCache=null,compareTiming=null}){
     const moving=actions.filter(direction);
@@ -118,6 +148,13 @@
     }
     // Production给出合法环绕/登陆终点、费用与收益；本策略只确定目标及路线。
     let planetLocations;
+    const sameSeatScan=free&&head?.type==='science_domain_scan_action_4'&&onlySeatRemaining
+      &&state.turn.roundNumber===4&&state.turn.currentPlayerId===seatId&&!state.turn.gameEnded
+      &&!passed.includes(seatId)&&owner.mainActionCompleted&&!owner.passCompletionPending
+      &&!hasExpiringMovement&&allowance===1;
+    const pickup=sameSeatScan&&knownSatellitePickup(owner);
+    const nextTurn=[];
+    let hasFundedPickup=false;
     for(const candidate of endpoints()){
       const ship=ships.find(s=>s.id===candidate.rocketId);if(!ship)continue;
       if(planetLocations){__planetQueries.reuses++;}
@@ -127,11 +164,42 @@
       if(!mandatoryPrefix&&!owner.mainActionCompleted&&((cost.credits||0)>owner.resources.credits||(cost.energy||0)>owner.resources.energy
         ||!free&&(route?.cost||0)+(cost.energy||0)>allowance))continue;
       const benefit=candidate.targetBenefit;if(!benefit)throw new Error('GOAL_MOVEMENT_ENDPOINT_BENEFIT_MISSING');
+      if(pickup&&route?.path.length===1&&route.cost===allowance
+        &&(objectiveOnly||moving.some(a=>matches(a,ship.id,route.path[0])))){
+        const eligible=candidate.endpointFamily==='land'&&candidate.endpointTarget?.type==='satellite'
+          &&['jupiter','saturn'].includes(candidate.planetId)&&!ship.fossilId
+          &&knownSatelliteSectorCount(state,owner,candidate.endpointFacts.rewards)>=2;
+        const ordinary=players.canAfford(owner,cost);
+        const standardCost=ordinary?(cost.credits||0)+(cost.energy||0):Infinity;
+        const cardCost=eligible?pickup.cost.credits+1:Infinity;
+        const price=Math.min(standardCost,cardCost);
+        const gross=benefit.score+benefit.dataCount*.5;
+        if(price<gross){
+          const usesCard=cardCost<standardCost;
+          if(usesCard)hasFundedPickup=true;
+          nextTurn.push({goal:{id:candidate.requirementId,kind:candidate.endpointFamily,
+            label:usesCard?`用已知牌登陆 ${candidate.planetId}`:`${candidate.endpointFamily} ${candidate.planetId}`,
+            timing:'funded-next-own-turn',coordinate,planetId:candidate.planetId,endpointTarget:{...candidate.endpointTarget},
+            endpointCost:usesCard?pickup.cost:{...cost},...(usesCard?{cardId:pickup.card.id}:{})},rocketId:ship.id,
+            path:route.path,cost:route.cost,net:gross-price,selected:moving.find(a=>matches(a,ship.id,route.path[0])),
+            startedTurn:state.turn.turnNumber,startedRound:state.turn.roundNumber,free:true,prefixOnly:true});
+        }
+      }
       add({id:candidate.requirementId,kind:candidate.endpointFamily,label:`${candidate.endpointFamily} ${candidate.planetId}`,coordinate,
         timing:mandatoryPrefix?'preparation':owner.mainActionCompleted?'next-turn':'current-turn',planetId:candidate.planetId,endpointTarget:{...candidate.endpointTarget},endpointCost:{...cost}},ship,route,benefit.score+benefit.dataCount*.5+benefit.incomeCount*(4-state.turn.roundNumber),
         (cost.credits||0)+(cost.energy||0));
     }
-    goals.sort((a,b)=>b.net-a.net||a.cost-b.cost||a.path.length-b.path.length||(a.goal.id<b.goal.id?-1:1));
+    const compare=(a,b)=>b.net-a.net||a.cost-b.cost||a.path.length-b.path.length||(a.goal.id<b.goal.id?-1:1);
+    if(hasFundedPickup){
+      // No opponent acts and no rotation occurs before the next own turn.
+      // Compare funded endpoints reachable with this free move, not a route
+      // that needs more paid movement or a hypothetical intervening rotation.
+      const chosen=[...nextTurn,...goals.filter(g=>g.goal.kind==='visit')].sort(compare)[0];
+      return objectiveOnly?{routingNodes,intent:{goal:chosen.goal,rocketId:chosen.rocketId,path:chosen.path,
+        startedTurn:chosen.startedTurn,startedRound:chosen.startedRound,free:true,prefixOnly:true}}
+        :result(chosen,chosen.selected,'funded-next-own-turn-after-free-scan',routingNodes,nextTurn.length);
+    }
+    goals.sort(compare);
     let chosen=null,deferredGoal=null;
     for(const candidate of goals){
       if(!candidate.path.length&&owner.mainActionCompleted&&!mandatoryPrefix){

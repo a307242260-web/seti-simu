@@ -23,6 +23,42 @@ function open(envelope,cache=0){assert(comp.lifecycle.restore(envelope).ok);cons
  assert(c.lifecycle.restore(before).ok);const p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setMovementPlanning(true);
  try{const root=p.openRoot(),policy=p.goalMovementSpec(root);assert.equal(policy.selectedActionId,null,'do not force paid preparation for a rotation that cannot intervene before the next own turn');assert.equal(policy.reason,'defer-movement');assert(policy.retainedActionIds.includes(end.actionId));assert.deepEqual(c.lifecycle.save().envelope,before);}finally{p.close();c.dispose();}
 }
+// A last-round free move can use a known card's actual fee next turn.
+{
+ const fixture=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(__dirname,'funded-free-scan-satellite-20261110-v1.fixture.json.gz'))));
+ const seed=JSON.parse(fixture.envelope.committedState).meta.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
+ k.newGame({seed});const c=k.composition;
+ assert(c.lifecycle.restore(fixture.envelope).ok);
+ const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:fixture.seatId,maxCacheEntries:0});
+ const submit=(match)=>{
+  const d=c.inspect().session?.decision,choices=d?.choices||c.inputPort.enumerateActions({});
+  const a=choices.find(match);assert(a);
+  const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+    :c.inputPort.submitAction(a);assert(r.ok);
+ };
+ try{
+  p.setMovementPlanning(true);const root=p.openRoot(),policy=p.goalMovementSpec(root);
+  assert.equal(policy.selectedActionId,fixture.direction);
+  assert.equal(policy.chosenGoal.endpointTarget.satelliteId,'enceladus');
+  assert.equal(policy.chosenGoal.timing,'funded-next-own-turn');
+  assert.equal(root.legalActions.filter(a=>movement.isDirection(a)&&policy.retainedActionIds.includes(a.actionId)).length,1);
+  assert.deepEqual(c.lifecycle.save().envelope,before);p.close();
+  submit(a=>a.actionId===policy.selectedActionId);
+  submit(a=>a.target?.nebulaId==='sector-3-a');
+  submit(a=>a.family==='end_turn');
+  const next=JSON.parse(c.lifecycle.save().envelope.committedState);
+  assert.equal(next.turn.currentPlayerId,fixture.seatId);
+  assert.deepEqual(next.solarSystem.rotation,before.session.session.workingState.solarSystem.rotation);
+  submit(a=>a.family==='play_card'&&a.target.cardInstanceId===policy.chosenGoal.cardId);
+  const landing=c.inspect().session.decision.choices.find(a=>a.target?.landTarget?.satelliteId==='enceladus');
+  assert(landing);assert.deepEqual(landing.payload.options.cost,{});
+  submit(a=>a.actionId===landing.actionId);
+  const prior=next.players.players.find(a=>a.id===fixture.seatId).resources;
+  const landed=c.lifecycle.save().envelope.session.session.workingState.players.players.find(a=>a.id===fixture.seatId).resources;
+  assert.equal(landed.credits,prior.credits-1);assert.equal(landed.energy,prior.energy);assert.equal(landed.score,prior.score+13);
+ }finally{p.close();c.dispose();}
+}
 // No rotation does not remove deadlines from a real expiring movement modifier.
 {
  const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-038-20261030-v1.json'))),state=JSON.parse(f.compositionEnvelope.committedState),seat=f.seatId;

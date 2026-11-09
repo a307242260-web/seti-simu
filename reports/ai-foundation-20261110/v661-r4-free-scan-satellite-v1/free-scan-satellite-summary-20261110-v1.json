@@ -1,0 +1,976 @@
+{
+  "baseCommit": "8f221b50c775830c1058d7bd37551fee6f4302b0",
+  "searchVersion": "seti-complete-decision-search-v427",
+  "verifiedNativeBranches": 7,
+  "postponedBlueBranches": [
+    {
+      "label": "original",
+      "scanInputs": 14,
+      "suffixInputs": 22,
+      "beforeSuffixDifferences": [],
+      "afterSuffixDifferences": [],
+      "afterSuffixWallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 5,
+        "publicity": 8,
+        "score": 142
+      }
+    },
+    {
+      "label": "defer-second-blue",
+      "scanInputs": 14,
+      "suffixInputs": 22,
+      "beforeSuffixDifferences": [
+        "players"
+      ],
+      "afterSuffixDifferences": [],
+      "afterSuffixWallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 5,
+        "publicity": 8,
+        "score": 142
+      }
+    },
+    {
+      "label": "defer-both-blue",
+      "scanInputs": 14,
+      "suffixInputs": 22,
+      "beforeSuffixDifferences": [
+        "players"
+      ],
+      "afterSuffixDifferences": [
+        "players"
+      ],
+      "afterSuffixWallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 5,
+        "publicity": 8,
+        "score": 142
+      }
+    },
+    {
+      "label": "defer-all",
+      "scanInputs": 14,
+      "suffixInputs": 22,
+      "beforeSuffixDifferences": [
+        "players"
+      ],
+      "afterSuffixDifferences": [
+        "players"
+      ],
+      "afterSuffixWallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 5,
+        "publicity": 8,
+        "score": 142
+      }
+    }
+  ],
+  "benchmarks": {
+    "free-move": {
+      "base": {
+        "action": "choose_target:dc7b078f",
+        "value": 196,
+        "inputs": 4,
+        "nodes": 5,
+        "roots": [
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:43d1120f",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:f4c617ab",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:51fdbd6d",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:dc7b078f",
+            196,
+            -8.5,
+            0
+          ],
+          [
+            "choose_target:24d3d03b",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:f042ebe0",
+            null,
+            null,
+            null
+          ]
+        ],
+        "ms": [
+          71.29708300000001,
+          71.44341599999998
+        ],
+        "medianMs": 71.3702495
+      },
+      "candidate": {
+        "action": "choose_target:f4c617ab",
+        "value": 200.5,
+        "inputs": 4,
+        "nodes": 5,
+        "roots": [
+          [
+            "choose_target:1b977a4f",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:4114a3a7",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:8b86b3d1",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:43d1120f",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:f4c617ab",
+            200.5,
+            -12.5,
+            0
+          ],
+          [
+            "choose_target:51fdbd6d",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:dc7b078f",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:24d3d03b",
+            null,
+            null,
+            null
+          ],
+          [
+            "choose_target:f042ebe0",
+            null,
+            null,
+            null
+          ]
+        ],
+        "ms": [
+          71.63575,
+          72.291291
+        ],
+        "medianMs": 71.9635205
+      }
+    },
+    "teacher272": {
+      "base": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "inputs": 251,
+        "nodes": 723,
+        "roots": [
+          [
+            "scan:2d21a323",
+            206.5,
+            -10.5,
+            0
+          ],
+          [
+            "play_card:f1918668",
+            204.5,
+            -11.5,
+            0
+          ],
+          [
+            "play_card:1da9864f",
+            194.5,
+            -10,
+            0
+          ],
+          [
+            "play_card:88ec7135",
+            214.5,
+            -20,
+            0
+          ],
+          [
+            "play_card:1a1c19d3",
+            198,
+            -11.5,
+            0
+          ],
+          [
+            "play_card:ddbaa2ce",
+            213,
+            -20,
+            0
+          ],
+          [
+            "play_card:5eb1b0e8",
+            195.5,
+            -10,
+            0
+          ],
+          [
+            "pass:a1f33c73",
+            171,
+            0,
+            0
+          ],
+          [
+            "move:c16025a6",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:bde97b72",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:23807efa",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:a36e0e84",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:2df2f24d",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:2a7c4819",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:90134ba1",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:0febc073",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:f385e2ac",
+            215.5,
+            0,
+            0
+          ],
+          [
+            "quick_trade:49c75492",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:12411a2c",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:a39c1a77",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:37140fcf",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:122c43fc",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:df811f99",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:71814d67",
+            197,
+            -10,
+            0
+          ],
+          [
+            "quick_trade:be9dd0cd",
+            null,
+            null,
+            null
+          ],
+          [
+            "industry:e887dc52",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:730579d5",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:367a82a7",
+            213,
+            -19,
+            0
+          ],
+          [
+            "card_corner:cb6e4492",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:bf0cc13d",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:c4357b44",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:40cda505",
+            205.5,
+            -11.5,
+            0
+          ],
+          [
+            "place_data:8fd12fd3",
+            216.5,
+            0,
+            0
+          ]
+        ],
+        "ms": [
+          1177.809958,
+          1173.770417,
+          1159.486417
+        ],
+        "medianMs": 1173.770417
+      },
+      "candidate": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "inputs": 253,
+        "nodes": 730,
+        "roots": [
+          [
+            "scan:2d21a323",
+            206.5,
+            -10.5,
+            0
+          ],
+          [
+            "play_card:f1918668",
+            204.5,
+            -11.5,
+            0
+          ],
+          [
+            "play_card:1da9864f",
+            194.5,
+            -10,
+            0
+          ],
+          [
+            "play_card:88ec7135",
+            214.5,
+            -20,
+            0
+          ],
+          [
+            "play_card:1a1c19d3",
+            198,
+            -11.5,
+            0
+          ],
+          [
+            "play_card:ddbaa2ce",
+            213,
+            -20,
+            0
+          ],
+          [
+            "play_card:5eb1b0e8",
+            195.5,
+            -10,
+            0
+          ],
+          [
+            "pass:a1f33c73",
+            171,
+            0,
+            0
+          ],
+          [
+            "move:c16025a6",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:bde97b72",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:23807efa",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:a36e0e84",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:2df2f24d",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:2a7c4819",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:90134ba1",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:0febc073",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:f385e2ac",
+            215.5,
+            0,
+            0
+          ],
+          [
+            "quick_trade:49c75492",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:12411a2c",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:a39c1a77",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:37140fcf",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:122c43fc",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:df811f99",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:71814d67",
+            197,
+            -10,
+            0
+          ],
+          [
+            "quick_trade:be9dd0cd",
+            null,
+            null,
+            null
+          ],
+          [
+            "industry:e887dc52",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:730579d5",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:367a82a7",
+            213,
+            -19,
+            0
+          ],
+          [
+            "card_corner:cb6e4492",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:bf0cc13d",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:c4357b44",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:40cda505",
+            205.5,
+            -11.5,
+            0
+          ],
+          [
+            "place_data:8fd12fd3",
+            216.5,
+            0,
+            0
+          ]
+        ],
+        "ms": [
+          1183.0351249999999,
+          1161.756584,
+          1155.775292
+        ],
+        "medianMs": 1161.756584
+      }
+    },
+    "official": {
+      "base": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "inputs": 165,
+        "nodes": 535,
+        "roots": [
+          [
+            "launch:c94cda79",
+            185.5,
+            -10,
+            0
+          ],
+          [
+            "scan:2d21a323",
+            192,
+            -9.5,
+            0
+          ],
+          [
+            "play_card:1d27665c",
+            186,
+            -8.5,
+            0
+          ],
+          [
+            "play_card:8c65d747",
+            194.5,
+            -10.5,
+            0
+          ],
+          [
+            "play_card:c93b59a4",
+            193,
+            -10,
+            0
+          ],
+          [
+            "pass:a1f33c73",
+            180,
+            0,
+            0
+          ],
+          [
+            "move:c16025a6",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:bde97b72",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:23807efa",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:a36e0e84",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:f385e2ac",
+            204,
+            0,
+            0
+          ],
+          [
+            "quick_trade:49c75492",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:12411a2c",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:a39c1a77",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:37140fcf",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:122c43fc",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:df811f99",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:be9dd0cd",
+            null,
+            null,
+            null
+          ],
+          [
+            "industry:e887dc52",
+            205.5,
+            0,
+            0
+          ],
+          [
+            "card_corner:bf0cc13d",
+            204.5,
+            0,
+            0
+          ],
+          [
+            "card_corner:0c840bb2",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:f0c6e7b8",
+            null,
+            null,
+            null
+          ]
+        ],
+        "ms": [
+          642.1223749999999,
+          639.2939590000001,
+          655.805792
+        ],
+        "medianMs": 642.1223749999999
+      },
+      "candidate": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "inputs": 165,
+        "nodes": 535,
+        "roots": [
+          [
+            "launch:c94cda79",
+            185.5,
+            -10,
+            0
+          ],
+          [
+            "scan:2d21a323",
+            192,
+            -9.5,
+            0
+          ],
+          [
+            "play_card:1d27665c",
+            186,
+            -8.5,
+            0
+          ],
+          [
+            "play_card:8c65d747",
+            194.5,
+            -10.5,
+            0
+          ],
+          [
+            "play_card:c93b59a4",
+            193,
+            -10,
+            0
+          ],
+          [
+            "pass:a1f33c73",
+            180,
+            0,
+            0
+          ],
+          [
+            "move:c16025a6",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:bde97b72",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:23807efa",
+            null,
+            null,
+            null
+          ],
+          [
+            "move:a36e0e84",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:f385e2ac",
+            204,
+            0,
+            0
+          ],
+          [
+            "quick_trade:49c75492",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:12411a2c",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:a39c1a77",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:37140fcf",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:122c43fc",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:df811f99",
+            null,
+            null,
+            null
+          ],
+          [
+            "quick_trade:be9dd0cd",
+            null,
+            null,
+            null
+          ],
+          [
+            "industry:e887dc52",
+            205.5,
+            0,
+            0
+          ],
+          [
+            "card_corner:bf0cc13d",
+            204.5,
+            0,
+            0
+          ],
+          [
+            "card_corner:0c840bb2",
+            null,
+            null,
+            null
+          ],
+          [
+            "card_corner:f0c6e7b8",
+            null,
+            null,
+            null
+          ]
+        ],
+        "ms": [
+          638.236167,
+          637.86675,
+          639.970084
+        ],
+        "medianMs": 638.236167
+      }
+    }
+  },
+  "rejectedBroadExperiments": [
+    {
+      "case": "cold-satellite-teacher272-20261110-v1",
+      "native": 285,
+      "graph": 753,
+      "ms": 1201.866416
+    },
+    {
+      "case": "cold-scan-candidate-teacher272-20261110-v1",
+      "native": 263,
+      "graph": 824,
+      "ms": 1263.036292
+    },
+    {
+      "case": "cold-scan-sector-candidate-teacher272-20261110-v1",
+      "native": 261,
+      "graph": 754,
+      "ms": 1170.885709
+    }
+  ],
+  "tests": {
+    "node": [
+      "goal-movement",
+      "decision-search",
+      "science-scan-flow"
+    ],
+    "browser": [
+      "production-goal-movement-plan",
+      "production-scan-purpose-plan"
+    ]
+  },
+  "newFullGames": 0,
+  "centerResultsChanged": false
+}
