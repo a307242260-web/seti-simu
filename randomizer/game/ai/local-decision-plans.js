@@ -7,7 +7,7 @@
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v10';
+ const VERSION='seti-local-mark-and-scan-purpose-v11';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -1232,6 +1232,57 @@
   const weights=stateValue.DEFAULT_WEIGHTS,value=stateValue.sumValueParts([total(q,copy)-total(state,p),capital,weights.availableData,-weights.handSize]);
   return value>0?{actionId:a.actionId,cardId:c.id,value,capital}:null;
  }
+ // Score dominance within this turn's visible window only. The Native
+ // slots remain different; keep both when any later choice can use that fact.
+ function pinkScoreBeforeUnknownFossil({state,seatId,actions,session,knownCards,knownFossilIds,knownAmibaDisplay}){
+  const [head,pickup]=session?.queue||[],origin=session?.journal?.actions?.[0]?.action;
+  if(session?.queue.length!==2||session.interruptContext||head?.ownerId!==seatId||head.allowQuickActions
+    ||head.type!==science.EFFECT_TYPES.ALIEN_TRACE||head.payload?.traceType!=='pink'||Object.keys(head.payload).length!==1
+    ||pickup.type!=='card_play_domain_effect:effect:chong_pickup_fossil'||pickup.ownerId!==seatId||pickup.allowQuickActions
+    ||pickup.kind!=='effect'||origin?.family!=='play_card'||pickup.payload?.cardInstanceId!==origin.target.cardInstanceId)return null;
+  const p=owner(state,seatId),t=state.turn,amiba=aliens.amiba;
+  if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p?.mainActionCompleted||p.passCompletionPending
+    ||t.cardTurnEventBonuses?.length||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+    ||p.reservedCards.some(c=>!knownCards.has(c.id))||residual.hasPendingFossilArrival(state))return null;
+  const byPosition=new Map(actions.filter(a=>a.actorId===seatId&&a.family==='choose_target'
+    &&a.target?.kind==='planet-reward-alien-trace'&&a.target.traceType==='pink'&&a.target.speciesId==='amiba'
+    &&[1,2,3,4].includes(a.target.position)).map(a=>[a.target.position,a]));
+  if(!(byPosition.has(1)&&byPosition.has(2)||byPosition.has(3)&&byPosition.has(4)))return null;
+  const slotId=state.aliens.amiba?.revealedSlotId,slot=aliens.getAlienSlot(state.aliens,slotId);
+  if(!slot?.revealed||slot.alienId!=='阿米巴'||aliens.isAlienReadyToReveal(slot)
+    ||[...byPosition.values()].some(a=>String(a.target.alienSlotId)!==String(slotId)))return null;
+  const score=p.resources.score;
+  if(!state.finalScoring.thresholds.every(n=>n<=score&&Object.values(state.finalScoring.tiles).some(tile=>
+    tile.marks?.some(mark=>mark.playerId===seatId&&Number(mark.threshold)===n))))return null;
+  const symbols=amiba.listSymbolsInRegion(state.aliens,'red',{readOnlyRewards:true});
+  if(symbols.some(({reward})=>!reward||Object.keys(reward.gain).some(k=>k!=='score')
+    ||Object.keys(reward).some(k=>k!=='gain'&&reward[k])))return null;
+  const events=[{type:'alienTrace',playerId:seatId,traceType:'pink',alienSlotId:Number(slotId),region:'red'},
+    {type:'card_effect',playerId:seatId,effectType:amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD},
+    ...symbols.map(({symbolId,slotId})=>({type:'amiba_symbol_resolved',symbolId,slotId,region:'red'}))];
+  if(events.some(event=>effects.hasMatchingTrigger(p,event)))return null;
+  const planet=state.match?.cardPlayContext?.lastLanding?.planetId;
+  const fossils=['jupiter','saturn'].includes(planet)&&aliens.chong.getAvailablePlanetFossils(state.aliens,planet);
+  if(!fossils?.length||fossils.some(f=>knownFossilIds.has(f.fossilId)))return null;
+  const omitted=[],proof=[];
+  for(const n of [1,3]){
+   const low=byPosition.get(n),high=byPosition.get(n+1);
+   if(!low||!high)continue;
+   const card=n===3;
+   if(card&&(!Number.isSafeInteger(knownAmibaDisplay)||state.aliens.amiba.displayedCardIndex!==knownAmibaDisplay
+     ||effects.hasMatchingTrigger(p,{type:'alien_card_gain',playerId:seatId,alienId:'阿米巴',source:'display'})))continue;
+   const a=amiba.getTraceReward(state.aliens,'pink',n,{readOnlyRewards:true}),
+    b=amiba.getTraceReward(state.aliens,'pink',n+1,{readOnlyRewards:true});
+   const sameReward=r=>r?.region==='red'&&Boolean(r.pickAlienCard)===card
+    &&Object.keys(r.gain).every(k=>k==='score')&&Object.keys(r).every(k=>['gain','region','pickAlienCard'].includes(k)||!r[k]);
+   if(!sameReward(a)||!sameReward(b)||(b.gain.score||0)-(a.gain.score||0)!==1)continue;
+   omitted.push(low.actionId);
+   proof.push({lower:low.actionId,higher:high.actionId,scoreDelta:1,sameRegion:'red',sameFixedCardReward:card});
+  }
+  return omitted.length?{policy:'seti-pink-score-before-hidden-fossil-v1',kind:'rank-automatic-scan-traces',
+   fixed:false,isEquivalence:false,retainedActionIds:actions.filter(a=>!omitted.includes(a.actionId)).map(a=>a.actionId),
+   excludedActionIds:omitted,proof}:null;
+ }
  // Price only automatic trace rewards. Any real card/fossil selection
  // remains a native branch. This uses the same alien placement primitives.
  function previewQuietPinkTrace({state,seatId,action}){
@@ -2252,5 +2303,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,pinkScoreBeforeUnknownFossil,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
 });

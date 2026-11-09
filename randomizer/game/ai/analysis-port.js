@@ -2015,6 +2015,10 @@
       const stored=nodes.get(node),state=readPlanningState(stored);
       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
       if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope)});
+      if(!result&&resourcePlanning&&cardPickPlanning)result=localPlans.pinkScoreBeforeUnknownFossil({
+        state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope),
+        knownFossilIds:knownRootFossilIds,knownAmibaDisplay:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex,
+      });
       if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
       if(!result&&resourcePlanning){
         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})

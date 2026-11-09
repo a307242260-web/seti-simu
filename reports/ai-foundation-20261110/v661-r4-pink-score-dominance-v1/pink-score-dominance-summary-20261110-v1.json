@@ -1,0 +1,117 @@
+{
+  "cold": {
+    "teacher272": {
+      "before": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "milliseconds": 1181.129125,
+        "nativeInputs": 198,
+        "graphNodes": 684,
+        "valueEvaluations": 278
+      },
+      "after": {
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "milliseconds": 1160.227917,
+        "nativeInputs": 198,
+        "graphNodes": 684,
+        "valueEvaluations": 278
+      },
+      "identicalRootCandidates": 33
+    },
+    "official": {
+      "before": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "milliseconds": 661.1286670000001,
+        "nativeInputs": 165,
+        "graphNodes": 535,
+        "valueEvaluations": 203
+      },
+      "after": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "milliseconds": 686.672667,
+        "nativeInputs": 165,
+        "graphNodes": 535,
+        "valueEvaluations": 203
+      },
+      "identicalRootCandidates": 22
+    },
+    "satellite": {
+      "before": {
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "milliseconds": 2319.384042,
+        "nativeInputs": 1317,
+        "graphNodes": 1908,
+        "valueEvaluations": 930
+      },
+      "after": {
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "milliseconds": 2250.82325,
+        "nativeInputs": 1182,
+        "graphNodes": 1842,
+        "valueEvaluations": 864
+      },
+      "identicalRootCandidates": 32
+    }
+  },
+  "originalMenusCaptured": 128,
+  "fossilMenuSources": 57,
+  "independentNativeInputs": 270,
+  "nativePairComparisons": 90,
+  "identicalKnownRewardsExceptOneScore": true,
+  "guards": {
+    "pruned": [
+      {
+        "lower": "choose_target:51429f22",
+        "higher": "choose_target:59bd8770",
+        "scoreDelta": 1,
+        "sameRegion": "red",
+        "sameFixedCardReward": false
+      },
+      {
+        "lower": "choose_target:c4e4834a",
+        "higher": "choose_target:a47b34e4",
+        "scoreDelta": 1,
+        "sameRegion": "red",
+        "sameFixedCardReward": true
+      }
+    ],
+    "keptUnknownDisplayPair": true,
+    "rejectedKnownFossil": true,
+    "rejectedActiveOpponent": true,
+    "rejectedRedDraw": true,
+    "rejectedPendingMark": true,
+    "rejectedMissingHigher": true,
+    "rejectedAdditionalQueue": true,
+    "rootExact": true
+  },
+  "thirdRoundPreserved": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214
+    }
+  ],
+  "nodePassed": 4,
+  "browserPassed": 2,
+  "stateValueInputAuditPassed": true,
+  "gate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "admitted": false
+  },
+  "newAutonomousGames": 0
+}
