@@ -1,0 +1,396 @@
+{
+  "base": "f219133cc58d9f53be004c54fc22e9b5ece7635c",
+  "gate": {
+    "maxNative": 256,
+    "maxMs": 600
+  },
+  "stages": {
+    "r4-shared-scoring-projection-cold-20261109-v1.json": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 878.5712920000001,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 38.013582999999926,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 10,
+        "ms": 48.260749999999916,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 29.415416999999934,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 358,
+        "ms": 701.3272920000002,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 380,
+        "ms": 702.6127919999999,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      }
+    ],
+    "r4-chong-cash-and-skip-cold-20261109-v1.json": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 877.2252500000001,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 42.12420799999995,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 9,
+        "ms": 44.03620799999999,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 36.018833000000086,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 308,
+        "ms": 677.3597499999998,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 326,
+        "ms": 694.746167,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      }
+    ],
+    "r4-chong-trace-menu-cold-20261109-v1.json": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 871.1246669999999,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 42.211249999999836,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 9,
+        "ms": 43.18579199999999,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 35.490416000000096,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 285,
+        "ms": 673.690625,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 299,
+        "ms": 680.6099999999999,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      }
+    ],
+    "r4-chong-end-prelude-cold-20261109-v1.json": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 867.505916,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 36.60825,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 9,
+        "ms": 48.42720799999984,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 29.04208399999993,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 263,
+        "ms": 678.0014170000002,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 273,
+        "ms": 664.730417,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      }
+    ],
+    "r4-chong-queued-tasks-cold-20261109-v3.json": [
+      {
+        "label": "official-r4",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 221,
+        "ms": 867.475208,
+        "graph": "1e56f189d11aef1b2538c9d3eae4d4d6dd58f432f0e50631ca5d96080617b022"
+      },
+      {
+        "label": 314,
+        "action": "choose_target:f042ebe0",
+        "value": 227.5,
+        "native": 6,
+        "ms": 37.33349999999996,
+        "graph": "76eb6fcbfad06d3834844630f17b5d24213ef913e863ad1d2dd5ebac88d79fbb"
+      },
+      {
+        "label": 351,
+        "action": "choose_target:43d1120f",
+        "value": 257.5,
+        "native": 9,
+        "ms": 50.27558399999998,
+        "graph": "e691d962f55634153fa2d107b1c223e11768bada811dc7c97c0f152ec3c08951"
+      },
+      {
+        "label": 354,
+        "action": "accept_optional_effect:564fb7e2",
+        "value": 257.5,
+        "native": 2,
+        "ms": 30.09349999999995,
+        "graph": "923f3f9cae47af21e177ebb8f7fb87e08cccae95d35b4a0efbd2ba139daf2032"
+      },
+      {
+        "label": 359,
+        "action": "analyze:a5629aa3",
+        "value": 280.5,
+        "native": 241,
+        "ms": 668.4282090000002,
+        "graph": "0bc272f3b76867b570b17b15c5b355a8b1c3179a692d432260d570e87a91dbf8"
+      },
+      {
+        "label": 355,
+        "action": "place_data:8fd12fd3",
+        "value": 280.5,
+        "native": 251,
+        "ms": 672.754375,
+        "graph": "36c30963429b933b49af9b00aca795072d6dfee2145d6bbdbbb1f0400f4c1945"
+      }
+    ]
+  },
+  "freshProcessMs": {
+    "shared-scoring-projection:official-r4": {
+      "samples": [
+        870.655375,
+        866.701083,
+        879.1922079999999
+      ],
+      "median": 870.655375,
+      "min": 866.701083,
+      "max": 879.1922079999999
+    },
+    "shared-scoring-projection:355": {
+      "samples": [
+        895.850416,
+        898.649375,
+        899.0160420000001
+      ],
+      "median": 898.649375,
+      "min": 895.850416,
+      "max": 899.0160420000001
+    },
+    "shared-scoring-projection:359": {
+      "samples": [
+        802.256291,
+        799.809375,
+        795.467791
+      ],
+      "median": 799.809375,
+      "min": 795.467791,
+      "max": 802.256291
+    },
+    "chong-queued-tasks:official-r4": {
+      "samples": [
+        863.075417,
+        860.533916,
+        882.013875
+      ],
+      "median": 863.075417,
+      "min": 860.533916,
+      "max": 882.013875
+    },
+    "chong-queued-tasks:355": {
+      "samples": [
+        866.903083,
+        860.0197909999999,
+        849.557583
+      ],
+      "median": 860.0197909999999,
+      "min": 849.557583,
+      "max": 866.903083
+    },
+    "chong-queued-tasks:359": {
+      "samples": [
+        784.169208,
+        784.283583,
+        770.003166
+      ],
+      "median": 784.169208,
+      "min": 770.003166,
+      "max": 784.283583
+    }
+  },
+  "nativeParity": [
+    {
+      "input": "official-r4",
+      "extraNativeChecks": 0,
+      "counts": {
+        "TransportInputs": 0,
+        "TraceSkips": 0,
+        "TraceMenus": 0,
+        "EndMenus": 0,
+        "QueuedTasks": 0
+      }
+    },
+    {
+      "input": 314,
+      "extraNativeChecks": 0,
+      "counts": {
+        "TransportInputs": 0,
+        "TraceSkips": 0,
+        "TraceMenus": 0,
+        "EndMenus": 0,
+        "QueuedTasks": 0
+      }
+    },
+    {
+      "input": 351,
+      "extraNativeChecks": 1,
+      "counts": {
+        "TransportInputs": 1,
+        "TraceSkips": 0,
+        "TraceMenus": 0,
+        "EndMenus": 0,
+        "QueuedTasks": 0
+      }
+    },
+    {
+      "input": 354,
+      "extraNativeChecks": 0,
+      "counts": {
+        "TransportInputs": 0,
+        "TraceSkips": 0,
+        "TraceMenus": 0,
+        "EndMenus": 0,
+        "QueuedTasks": 0
+      }
+    },
+    {
+      "input": 359,
+      "extraNativeChecks": 117,
+      "counts": {
+        "TransportInputs": 26,
+        "TraceSkips": 24,
+        "TraceMenus": 23,
+        "EndMenus": 22,
+        "QueuedTasks": 22
+      }
+    },
+    {
+      "input": 355,
+      "extraNativeChecks": 129,
+      "counts": {
+        "TransportInputs": 26,
+        "TraceSkips": 28,
+        "TraceMenus": 27,
+        "EndMenus": 26,
+        "QueuedTasks": 22
+      }
+    }
+  ],
+  "tests": {
+    "node": 8,
+    "browser": 2,
+    "vInput": "passed"
+  },
+  "productionAdmitted": false,
+  "wholeGameRun": false
+}

@@ -1,0 +1,338 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -457,6 +457,10 @@
+     let submissionCount = 0, provedFinalDataPlacements = {}, provedFinalDataMenuInputs = 0;
+     let quietDataMenuTemplate = null;
+     let blueTwoPickTemplate = null, provedBlueTwoPickInputs = 0;
++    let provedChongTransportInputs=0, provedChongTraceSkips=0, provedChongTraceMenus=0;
++    let chongTraceMenuTemplate=null,provedChongEndMenus=0;
++    const chongEndTemplates=new Map(),chongQueuedTemplates=new Map();
++    let provedChongQueuedTasks=0;
+     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+     let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0;
+     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
+@@ -860,6 +864,102 @@
+         queue:[prepared,{...advance,payload:{roundNumber:source.turn.roundNumber,turnNumber:source.turn.turnNumber,didPass:false}}],
+         journal:{...s.journal,actions:[{...s.journal.actions[0],action}],replay:[{...s.journal.replay[0],action}]}}});
+       return {envelope:withEnvelopeSession(envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++    }
++
++    function chongQueuedKey(stored,preview){
++      const s=stored.envelope.session.session;
++      return JSON.stringify([s.queue[0].payload.ruleId,s.revision,s.nextEffectSequence,s.nextGroupSequence,
++        s.journal.replay.length,Boolean(preview.opensFossils)]);
++    }
++
++    function rememberChongQueuedTask(stored,action,child,preview){
++      const prior=stored.envelope.session.session,before=prior.journal,head=prior.queue[0];
++      const after=nodes.get(child).envelope.session?.session,j=after?.journal;
++      if(child.status!=="decision"||after?.phase!=="awaiting_input"||after.interruptContext||after.irreversibleBarrier
++        ||after.failure||after.undoFrames.length||after.queue.length!==2||after.revision!==prior.revision+1
++        ||j.actions.length!==before.actions.length||j.history.length!==before.history.length||j.rng.length!==before.rng.length
++        ||j.logs.length!==before.logs.length||j.effects.length!==before.effects.length+1||j.events.length!==before.events.length+1
++        ||j.decisions.length!==before.decisions.length+1||j.replay.length!==before.replay.length+1
++        ||j.decisions.at(-1).choice.actionId!==action.actionId||JSON.stringify(j.events.at(-1))!==JSON.stringify(preview.event)
++        ||JSON.stringify(after.workingState)!==JSON.stringify(preview.working))return;
++      const opened=preview.opensFossils?after.queue[0]:null;
++      if(opened&&(opened.type!=="residual_chong_task_fossil"||opened.ownerId!==seatId||opened.allowQuickActions
++        ||Object.keys(opened.payload).length||opened.source?.parentEffectId!==head.effectId))return;
++      if(JSON.stringify(opened?after.queue.slice(1):after.queue)!==JSON.stringify(prior.queue.slice(1)))return;
++      chongQueuedTemplates.set(chongQueuedKey(stored,preview),{sessionId:prior.sessionId,effect:j.effects.at(-1),opened,
++        effectDelta:after.nextEffectSequence-prior.nextEffectSequence,groupDelta:after.nextGroupSequence-prior.nextGroupSequence});
++    }
++
++    function makeChongQueuedTask(stored,action,preview){
++      const template=chongQueuedTemplates.get(chongQueuedKey(stored,preview));
++      if(!template)return null;
++      const envelope=stored.envelope.session,s=envelope.session,j=s.journal,head=s.queue[0],queue=s.queue.slice(1);
++      if(template.opened){
++        const rebase=id=>s.sessionId+id.slice(template.sessionId.length),f=template.opened;
++        queue.unshift({...f,effectId:rebase(f.effectId),groupId:rebase(f.groupId),source:{...f.source,parentEffectId:head.effectId}});
++      }
++      const choices=template.opened?localPlans.chongTaskFossilChoices(preview.working,queue[0])
++        :localPlans.finalEndTaskChoices(preview.working,queue[0]);
++      if(!choices.length)return null;
++      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
++      const session=freeze({...envelope,replayCursor:j.replay.length+1,session:{...s,workingState:preview.working,queue,
++        revision:s.revision+1,nextEffectSequence:s.nextEffectSequence+template.effectDelta,nextGroupSequence:s.nextGroupSequence+template.groupDelta,
++        journal:{...j,effects:[...j.effects,{...template.effect,effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision:s.revision+1}],
++          events:[...j.events,preview.event],decisions:[...j.decisions,decision],replay:[...j.replay,{cursor:j.replay.length,kind:"decision",confirmed:true,...decision}]}}});
++      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++    }
++
++    function rememberChongEndMenu(action,child,preview){
++      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal;
++      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier
++        ||s.failure||s.undoFrames.length||s.queue.length!==preview.settlements.length+1
++        ||j.actions.length!==1||j.actions[0].action.actionId!==action.actionId||j.replay.length!==1||j.replay[0].kind!=="action"
++        ||j.effects.length!==6||j.decisions.length||j.rng.length||j.logs.length||j.history.length!==1
++        ||j.events.length!==1||j.events[0].type!=="end_turn_handoffs_started"
++        ||JSON.stringify(s.workingState)!==JSON.stringify(preview.working)||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
++      const advance=s.queue.at(-1);
++      if(advance.type!=="probe_turn_advance"||advance.ownerId!==seatId||advance.payload?.didPass!==false
++        ||!preview.settlements.every((task,i)=>s.queue[i].type==="residual_card_decision"&&s.queue[i].ownerId===seatId
++          &&!s.queue[i].allowQuickActions&&JSON.stringify(s.queue[i].payload)===JSON.stringify(task)))return;
++      chongEndTemplates.set(preview.shape,{...checkpoint,session:{...s,baseState:null,workingState:null}});
++    }
++
++    function makeChongEndMenu(stored,action,preview){
++      const template=chongEndTemplates.get(preview.shape),s=template?.session;
++      if(!s)return null;
++      const {source,working,settlements}=preview,j=s.journal;
++      const queue=settlements.map((task,i)=>({...s.queue[i],payload:task}));
++      queue.push({...s.queue.at(-1),payload:{roundNumber:source.turn.roundNumber,turnNumber:source.turn.turnNumber,didPass:false}});
++      const choices=localPlans.finalEndTaskChoices(working,queue[0]);
++      if(choices.length!==2)return null;
++      const session=freeze({...template,session:{...s,baseVersion:source.meta.stateVersion,baseState:working,workingState:working,queue,
++        journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}]}}});
++      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
++    }
++
++    function rememberChongTraceMenu(action,child,preview){
++      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal,head=s?.queue?.[0];
++      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext||s.irreversibleBarrier
++        ||s.failure||s.undoFrames.length||head.type!=="residual_chong_task_fossil"||head.ownerId!==seatId
++        ||head.kind!=="decision"||head.allowQuickActions||Object.keys(head.payload).length
++        ||j.actions.length!==1||j.actions[0].action.actionId!==action.actionId||j.effects.length!==1
++        ||j.replay.length!==1||j.decisions.length||j.events.length!==1||j.events[0].type!=="complete_task"
++        ||j.history.length!==1||j.history[0].type!=="complete_task"||j.rng.length||j.logs.length
++        ||JSON.stringify(s.workingState)!==JSON.stringify(preview.working)
++        ||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
++      chongTraceMenuTemplate={...checkpoint,session:{...s,baseState:null,workingState:null}};
++    }
++
++    function makeChongTraceMenu(stored,action,preview){
++      const template=chongTraceMenuTemplate,s=template?.session;
++      if(!s)return null;
++      const {source,working,event}=preview,j=s.journal;
++      const choices=localPlans.chongTaskFossilChoices(working,s.queue[0]);
++      if(!choices.length)return null;
++      const session=freeze({...template,session:{...s,baseVersion:source.meta.stateVersion,baseState:working,workingState:working,
++        journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}],events:[event],
++          history:[{...j.history[0],...event}]}}});
++      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+     }
+
+     function quietPaidMoveSource(stored,action){
+@@ -1156,13 +1256,62 @@
+         const child = finishProvedCommittedState(node, stored, requested, activeClaim);
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
++      const cargoClaim=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
++        &&requested.family==="complete_task"&&requested.target?.ruleId==="transport"
++        ?localPlans.previewChongTransportQuick({state:readIdentityState(stored.envelope),seatId,action:requested,
++          knownCards:knownCards(stored.envelope),knownFossilIds:visibleRootCargo()}):null;
++      if(cargoClaim){
++        const child=finishProvedCommittedState(node,stored,requested,cargoClaim);
++        provedChongTransportInputs++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const tracePreview=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
++        &&stored.informationBarrier&&requested.family==="complete_task"&&requested.target?.ruleId==="trace"
++        ?localPlans.previewChongTraceMenu({state:readIdentityState(stored.envelope),seatId,action:requested,
++          knownCards:knownCards(stored.envelope)}):null;
++      const traceMenu=tracePreview&&makeChongTraceMenu(stored,requested,tracePreview);
++      if(traceMenu){
++        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,traceMenu);
++        provedChongTraceMenus++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
+       const taskSession=stored.envelope.session?.session;
++      const queuedPreview=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
++        &&stored.informationBarrier&&taskSession?.queue[0]?.payload?.kind==="chong_task"&&requested.family==="accept_optional_effect"
++        ?localPlans.previewQuietQueuedChongTask({state:taskSession.workingState,seatId,session:taskSession,action:requested,
++          knownCards:knownCards(stored.envelope),knownFossilIds:visibleRootCargo()}):null;
++      const queuedTask=queuedPreview&&makeChongQueuedTask(stored,requested,queuedPreview);
++      if(queuedTask){
++        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,queuedTask);
++        provedChongQueuedTasks++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const traceSkip=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&!stored.intent
++        &&stored.informationBarrier&&taskSession&&requested.family==="accept_optional_effect"
++        ?localPlans.previewQuietChongTraceSkip({state:taskSession.workingState,seatId,session:taskSession,
++          action:requested,knownCards:knownCards(stored.envelope)}):null;
++      if(traceSkip){
++        // The previous information barrier still closes the new turn.
++        const child=finishProvedForeignTurn(stored,requested,traceSkip);
++        provedChongTraceSkips++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
+       const endClaim=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession&&requested.family==="accept_optional_effect"
+         ?localPlans.previewFinalPositiveEndTask({state:taskSession.workingState,seatId,actions:node.legalActions,
+           session:taskSession,action:requested,knownCards:knownCards(stored.envelope)}):null;
+       if(endClaim){
+         provedFinalEndTaskInputs++;
+         const child=finishProvedForeignTurn(stored,requested,endClaim);
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const chongEndPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&!stored.intent
++        &&stored.informationBarrier&&requested.family==="end_turn"&&knownRootAlienIds.has("虫")
++        ?localPlans.previewQuietChongEndPrelude({state:readIdentityState(stored.envelope),seatId,action:requested,
++          knownCards:knownCards(stored.envelope)}):null;
++      const chongEndMenu=chongEndPrelude&&makeChongEndMenu(stored,requested,chongEndPrelude);
++      if(chongEndMenu){
++        const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,chongEndMenu);
++        provedChongEndMenus++;
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
+@@ -1268,6 +1417,9 @@
+       const child = finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null,
+         stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
+         stored.informationBarrier, requested, stored);
++      if(queuedPreview&&!chongQueuedTemplates.has(chongQueuedKey(stored,queuedPreview)))rememberChongQueuedTask(stored,requested,child,queuedPreview);
++      if(chongEndPrelude&&!chongEndTemplates.has(chongEndPrelude.shape))rememberChongEndMenu(requested,child,chongEndPrelude);
++      if(tracePreview&&!chongTraceMenuTemplate)rememberChongTraceMenu(requested,child,tracePreview);
+       if(quietMoveMenu&&!moveMenuTemplate)rememberMoveMenu(child,requested);
+       if(endPrelude?.task&&!quietEndPreludeTemplate)rememberQuietEndPrelude(requested,child,endPrelude);
+       if (quietSource && !quietDataMenuTemplate) rememberQuietDataMenu(requested, child);
+@@ -6965,7 +7117,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1523,17 +1523,95 @@
+   if(!next)return null;
+   return next&&previewForeignTurnAfterQuietHandoffs(next,seatId,session.baseVersion+1);
+  }
+- function previewForeignTurnAfterQuietHandoffs(state,seatId,version){
++ function previewChongTransportQuick({state,seatId,action,knownCards,knownFossilIds}){
++  const p=owner(state,seatId),t=state.turn;
++  if(action?.family!=='complete_task'||action.phase!=='quick'||action.target?.ruleId!=='transport'
++    ||action.actorId!==seatId||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded
++    ||t.passedPlayerIds.includes(seatId)||p.passCompletionPending||t.cardTurnEventBonuses?.length
++    ||state.match.initialSetup||state.meta.rngState?.branch
++    ||p.resources.availableData!==p.dataState.poolTokens.length
++    ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
++  const cargo=knownDeliveredCargo({state,seatId,knownCards,knownFossilIds});
++  if(cargo?.card.id!==action.target.cardInstanceId||cargo.ruleId!==action.target.ruleId)return null;
++  const preview=previewKnownCargoClaim({state,seatId,cargo});
++  if(!preview||effects.collectMatchingTriggers(preview.player,{type:'complete_task',playerId:seatId,
++    cardInstanceId:cargo.card.id,ruleId:cargo.ruleId}).length)return null;
++  preview.state.meta.stateVersion=state.meta.stateVersion+1;
++  return preview.state;
++ }
++ function previewChongTraceMenu({state,seatId,action,knownCards}){
++  const p=owner(state,seatId),t=state.turn,cardId=action.target?.cardInstanceId;
++  if(action.family!=='complete_task'||action.phase!=='quick'||action.actorId!==seatId||action.target?.ruleId!=='trace'
++    ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++    ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||state.meta.rngState?.branch
++    ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
++  return previewChongTraceClaim(state,seatId,{type:'complete_task',playerId:seatId,cardInstanceId:cardId,ruleId:'trace'});
++ }
++ function previewChongTraceClaim(state,seatId,event){
++  const p=owner(state,seatId),cardId=event.cardInstanceId;
++  const player={...p,reservedCards:structuredClone(p.reservedCards)};
++  const next={...state,aliens:structuredClone(state.aliens),
++    cards:{...state.cards,drawPileCardIds:[...state.cards.drawPileCardIds],removedFromGameCardIds:[...(state.cards.removedFromGameCardIds||[])]},
++    players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
++  const settlement=residual.queryCardSettlement(next,seatId,{kind:'chong_task',cardInstanceId:cardId,ruleId:'trace'});
++  if(!settlement?.chooseFossilRewardOnly||settlement.effects.length||settlement.fossilId)return null;
++  const result=residual.settleReadyTaskDirect(next,seatId,cardId,'trace'),spawn=result.spawnedEffects?.[0]?.effect;
++  if(!result.ok||result.irreversible||result.spawnedEffects?.length!==1||spawn?.type!==residual.EFFECT_TYPES.CHONG_TASK_FOSSIL
++    ||spawn.ownerId!==seatId||Object.keys(spawn.payload||{}).length||effects.collectMatchingTriggers(player,event).length)return null;
++  return {source:state,working:next,event};
++ }
++ function previewQuietQueuedChongTask({state,seatId,session,action,knownCards,knownFossilIds}){
++  const [head,next,advance]=session.queue,t=state.turn,p=owner(state,seatId),task=head?.payload;
++  if(action.family!=='accept_optional_effect'||action.actorId!==seatId||session.phase!=='awaiting_input'
++    ||session.interruptContext||session.irreversibleBarrier||session.failure||session.undoFrames.length
++    ||session.journal.actions[0]?.action.family!=='end_turn'||head.type!=='residual_card_decision'
++    ||head.ownerId!==seatId||head.allowQuickActions||task?.kind!=='chong_task'
++    ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++    ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
++  const stem='chong_task:'+task.cardInstanceId+':'+task.ruleId,selected=action.target?.choiceId,confirm=selected==='confirm:'+stem;
++  if(!confirm&&selected!=='skip:'+stem)return null;
++  const event={type:'card_rule_settled',playerId:seatId,cardInstanceId:task.cardInstanceId,ruleId:task.ruleId,ruleKind:task.kind};
++  const ordinaryAdvance=e=>e?.type==='probe_turn_advance'&&e.ownerId===seatId&&e.payload?.didPass===false;
++  if(task.ruleId==='trace'&&confirm&&session.queue.length===2&&ordinaryAdvance(next)&&task.chooseFossilRewardOnly){
++   const trace=previewChongTraceClaim(state,seatId,event);
++   return trace?{working:trace.working,event,opensFossils:true}:null;
++  }
++  if(task.ruleId!=='transport'||session.queue.length!==3||!ordinaryAdvance(advance)
++    ||next.type!=='residual_card_decision'||next.ownerId!==seatId||next.allowQuickActions
++    ||next.payload?.kind!=='chong_task'||next.payload.ruleId!=='trace')return null;
++  if(!confirm)return effects.collectMatchingTriggers(structuredClone(p),event).length?null:{working:state,event};
++  const cargo=knownDeliveredCargo({state,seatId,knownCards,knownFossilIds});
++  if(cargo?.card.id!==task.cardInstanceId||cargo.ruleId!==task.ruleId||cargo.job.fossilId!==task.fossilId)return null;
++  const result=previewKnownCargoClaim({state,seatId,cargo});
++  return result&&!effects.collectMatchingTriggers(result.player,event).length?{working:result.state,event}:null;
++ }
++ function chongTaskFossilChoices(state,effect){return residual.chongTaskFossilChoices(state,effect);}
++ function previewQuietChongTraceSkip({state,seatId,session,action,knownCards}){
++  const [head,advance]=session.queue,t=state.turn,p=owner(state,seatId),payload=head?.payload;
++  if(action?.family!=='accept_optional_effect'||action.actorId!==seatId||session.phase!=='awaiting_input'
++    ||session.queue.length!==2||session.interruptContext||session.irreversibleBarrier||session.failure
++    ||session.journal.actions[0]?.action.family!=='end_turn'||head.type!=='residual_card_decision'
++    ||head.ownerId!==seatId||head.allowQuickActions||payload?.kind!=='chong_task'||payload.ruleId!=='trace'
++    ||action.target?.choiceId!==`skip:chong_task:${payload.cardInstanceId}:trace`
++    ||advance.type!=='probe_turn_advance'||advance.ownerId!==seatId||advance.payload?.didPass!==false
++    ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||t.passedPlayerIds.includes(seatId)
++    ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))||!p.mainActionCompleted
++    ||p.passCompletionPending||p.reservedCards.some(c=>!knownCards.has(c.id))
++    ||effects.collectMatchingTriggers(structuredClone(p),{type:'card_rule_settled',playerId:seatId,
++      cardInstanceId:payload.cardInstanceId,ruleId:payload.ruleId,ruleKind:payload.kind}).length)return null;
++  return previewForeignTurnAfterQuietHandoffs(state,seatId,session.baseVersion+1,true);
++ }
++ function previewForeignTurnAfterQuietHandoffs(state,seatId,version,allowSameSeat=false){
+   // Only a normal turn handover remains; this cannot begin a round or pass.
+   const next={...state,meta:{...state.meta,stateVersion:version},turn:structuredClone(state.turn)};
+   const transition=turnFlow.advanceTurnAfterPlayerAction(next,seatId,{passed:false});
+-  if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||transition.nextPlayerId===seatId)return null;
++  if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||!allowSameSeat&&transition.nextPlayerId===seatId)return null;
+   const p=owner(next,seatId),following=owner(next,transition.nextPlayerId);
+   if(!following||following.passCompletionPending||effects.collectMatchingTriggers(p,{type:'end_turn',playerId:seatId,
+     previousRoundNumber:state.turn.roundNumber,roundNumber:next.turn.roundNumber,nextPlayerId:transition.nextPlayerId,
+     roundAdvanced:false,gameEnded:false}).length)return null;
+-  next.players={...next.players,players:next.players.players.map(player=>player===following?{...player,mainActionCompleted:false}
+-    :player===p?{...player,mainActionCompleted:false,passCompletionPending:false}:player)};
++  next.players={...next.players,players:next.players.players.map(player=>player===p?{...player,mainActionCompleted:false,passCompletionPending:false}
++    :player===following?{...player,mainActionCompleted:false}:player)};
+   return next;
+  }
+  function previewFinalForeignEndPrelude({state,seatId,action,knownCards}){
+@@ -1551,6 +1629,20 @@
+   if(preview.settlements.length!==1||task.kind!=='task'
+     ||!knownFinalPositiveTask({state:preview.state,seatId,payload:task,knownCards,eventType:'card_rule_settled'}))return null;
+   return {source:state,working:preview.state,task};
++ }
++ function previewQuietChongEndPrelude({state,seatId,action,knownCards}){
++  const t=state.turn,p=owner(state,seatId);
++  if(action.family!=='end_turn'||action.phase!=='turn_control'||action.target?.kind!=='end-turn'||action.actorId!==seatId
++    ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++    ||t.passedPlayerIds.includes(seatId)||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
++    ||state.match.initialSetup||state.meta.rngState?.branch||p.industryBorrowedTechTileId
++    ||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
++    ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
++  const preview=residual.previewQuietEndHandoffs(state,seatId);
++  if(!preview)return null;
++  const shape=preview.settlements.map(x=>x.kind+':'+x.ruleId).join('/');
++  if(!['chong_task:trace','chong_task:transport/chong_task:trace'].includes(shape))return null;
++  return {source:state,working:preview.state,settlements:preview.settlements,shape};
+  }
+  function finalEndTaskChoices(state,effect){return residual.cardDecisionChoices(state,effect);}
+  function pureOptional({state,seatId,actions,session,knownCards}){
+@@ -2087,5 +2179,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewFinalForeignEndPrelude,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalForeignEndPrelude,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ });
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -2435,6 +2435,7 @@
+     queryCardSettlement: findCardSettlement,
+     previewQuietEndHandoffs,
+     cardDecisionChoices,
++    chongTaskFossilChoices,
+     settleReadyTaskDirect,
+     listFinalMarkChoices,
+     describeEventBonusProgress,
