@@ -692,11 +692,18 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(player.hand.length, 0, "收入牌必须移出游戏");
 })();
 
-(function proofAmiba1ResearchTechTaskSpawnsSymbolChoice() {
+for (const hasSymbol of [true, false]) {
   // amiba_1 牌：研究橙色科技 → 橙色区域 symbol 奖励必须弹细胞器选择决策（不自动结算）
   const root = createRoot();
   const amiba1 = aliens.amiba.createAlienCard(1, 5);
-  root.players.players[0].reservedCards = [amiba1];
+  const player = root.players.players[0];
+  player.reservedCards = [amiba1];
+  root.aliens.amiba = aliens.amiba.createAmibaState();
+  if (hasSymbol) {
+    root.aliens.amiba.symbolSlots.orange_1 = "symbol_3";
+    root.aliens.amiba.symbolsById.symbol_3 = { symbolId: "symbol_3", slotId: "orange_1" };
+  }
+  const original = { resources: structuredClone(player.resources), rng: structuredClone(root.meta.rngState) };
   root.turn.type1TriggerEvents = [{ type: "researchTech", techType: "orange" }];
   const owner = createHarness(residual, "createResidualDomain");
   const handoff = {
@@ -725,11 +732,18 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const symbolDecision = (completed.spawnedEffects || []).find((entry) => (
     String(entry.effect?.type || "").includes("amiba_choose_symbol_reward")
   ));
-  assert.ok(
-    symbolDecision,
-    "amiba_1 任务结算必须生成细胞器选择决策，而不是自动结算",
-  );
-})();
+  assert.equal(Boolean(symbolDecision), hasSymbol, "只有区域有细胞器才能产生必选输入");
+  assert.deepEqual(player.resources, original.resources, "确认本身不提前发奖");
+  assert.deepEqual(root.meta.rngState, original.rng);
+  assert.ok(amiba1.cardEffectState.consumedTriggerIds.includes("amiba1-orange-tech"),
+    "确认仍按同一正式规则消费本次触发");
+  if (symbolDecision) {
+    const play = createHarness(require("../cards/play-domain"), "createExperimentalCardPlayDomain");
+    const symbol = play.executors.get(symbolDecision.effect.type);
+    assert.deepEqual(symbol.getLegalChoices(root, symbolDecision.effect, { state: root })
+      .map(choice => choice.target.symbolId), ["symbol_3"]);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // 寰宇动力 1x 合法性：枚举为合法的动作执行后必能继续（否则 free_move 会话

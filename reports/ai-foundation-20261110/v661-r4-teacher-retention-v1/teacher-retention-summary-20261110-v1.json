@@ -1,0 +1,1297 @@
+{
+  "referenceCommit": "ba9fd2fc260b36fcca25ab11bcb0a3c9e44c3eb1",
+  "case": "human405 / native teacher R4 counterfactual / all opponents PASS plus required choices",
+  "outcomes": {
+    "aiFromTeacher265": {
+      "scores": {
+        "board": 155,
+        "tile": 68,
+        "card": 4,
+        "total": 227
+      },
+      "replayedInputsFromSavedRoot": 51,
+      "walletBeforePass": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 0,
+        "score": 155
+      },
+      "techBeforePass": 8,
+      "handBeforePass": 1,
+      "probesBeforePass": [
+        {
+          "angleDegrees": 22.5,
+          "cargo": null,
+          "color": "white",
+          "fossilId": "fossil_07",
+          "id": 6,
+          "kind": "chong-fossil",
+          "launchGrid": {
+            "x": 3,
+            "y": 3
+          },
+          "launchSectorCoordinate": {
+            "x": 3,
+            "y": 3
+          },
+          "playerId": "player-white",
+          "radius": 227.66,
+          "sectorX": 2,
+          "sectorY": 3,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        {
+          "angleDegrees": -9.9,
+          "color": "white",
+          "id": 8,
+          "launchGrid": {
+            "x": 1,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 1,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 69.42,
+          "sectorX": 1,
+          "sectorY": 1,
+          "slotIndex": 2,
+          "surface": "solar-board"
+        }
+      ]
+    },
+    "aiFromTeacherOpeningAfterTwo": {
+      "scores": {
+        "board": 179,
+        "tile": 79,
+        "card": 6,
+        "total": 264
+      },
+      "replayedInputsFromSavedRoot": 70,
+      "walletBeforePass": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 179
+      },
+      "techBeforePass": 10,
+      "handBeforePass": 1,
+      "probesBeforePass": [
+        {
+          "angleDegrees": 22.5,
+          "cargo": null,
+          "color": "white",
+          "fossilId": "fossil_07",
+          "id": 6,
+          "kind": "chong-fossil",
+          "launchGrid": {
+            "x": 3,
+            "y": 3
+          },
+          "launchSectorCoordinate": {
+            "x": 3,
+            "y": 3
+          },
+          "playerId": "player-white",
+          "radius": 227.66,
+          "sectorX": 2,
+          "sectorY": 3,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        }
+      ]
+    },
+    "teacherWithSamePassers": {
+      "scores": {
+        "board": 246,
+        "tile": 118,
+        "card": 24,
+        "total": 388
+      },
+      "replayedInputsFromSavedRoot": 231,
+      "walletBeforePass": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 246
+      },
+      "techBeforePass": 12,
+      "handBeforePass": 2,
+      "probesBeforePass": []
+    }
+  },
+  "fundedDelivery": {
+    "original": {
+      "board": 155,
+      "tile": 68,
+      "card": 4,
+      "total": 227
+    },
+    "variants": [
+      {
+        "directions": {
+          "free": [
+            0,
+            -1
+          ],
+          "later": [
+            [
+              -1,
+              0
+            ],
+            [
+              0,
+              -1
+            ]
+          ]
+        },
+        "score": {
+          "board": 155,
+          "tile": 72,
+          "card": 4,
+          "total": 231
+        },
+        "walletBefore": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 155
+        },
+        "walletAfter": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 2,
+          "score": 155
+        },
+        "nativeExact": true
+      },
+      {
+        "directions": {
+          "free": [
+            -1,
+            0
+          ],
+          "later": [
+            [
+              0,
+              -1
+            ],
+            [
+              0,
+              -1
+            ]
+          ]
+        },
+        "score": {
+          "board": 155,
+          "tile": 72,
+          "card": 4,
+          "total": 231
+        },
+        "walletBefore": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 155
+        },
+        "walletAfter": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 2,
+          "score": 155
+        },
+        "nativeExact": true
+      }
+    ]
+  },
+  "retainedScan272": {
+    "beforeFixColdNativeInputs": 638,
+    "beforeFixColdMsRounded": 1065,
+    "afterFixProfileNativeInputs": 670,
+    "afterFixUniqueStateAndInputPairs": 670,
+    "nativeInputsByOrigin": {
+      "place_data": 176,
+      "scan": 136,
+      "play_card": 98,
+      "card_corner": 71,
+      "research_tech": 56,
+      "end_turn": 38,
+      "analyze": 36,
+      "quick_trade": 19,
+      "move": 13,
+      "complete_task": 11,
+      "pass": 8,
+      "land": 8
+    },
+    "recordedCategories": [
+      [
+        "card_corner|stable||stable",
+        {
+          "count": 71,
+          "ms": 34.93262000000007,
+          "goals": {
+            "none": 71
+          },
+          "targets": {
+            "chong_6.webp：弃牌角标": 2,
+            "chong_8.webp：弃牌角标": 2,
+            "b_111.webp：弃牌角标": 50,
+            "dlc_15.png：弃牌角标": 17
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_income|place_data|stable",
+        {
+          "count": 68,
+          "ms": 25.723537999999905,
+          "goals": {
+            "none": 68
+          },
+          "targets": {
+            "收入 chong_8.webp": 1,
+            "收入 chong_6.webp": 67
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|scan|stable",
+        {
+          "count": 24,
+          "ms": 10.0870010000001,
+          "goals": {
+            "none": 24
+          },
+          "targets": {
+            "外星人 1 额外痕迹位（3分）": 4,
+            "外星人 1 粉1号位": 4,
+            "外星人 1 粉2号位（1分）": 4,
+            "外星人 2 额外痕迹位（3分）": 4,
+            "外星人 2 粉1号位（4分）": 4,
+            "外星人 2 粉2号位（5分）": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|stable",
+        {
+          "count": 20,
+          "ms": 7.834668000000079,
+          "goals": {
+            "none": 20
+          },
+          "targets": {
+            "跳过": 16,
+            "扫描 开普勒22": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_place_data|place_data|science_domain_income",
+        {
+          "count": 70,
+          "ms": 7.335629000001433,
+          "goals": {
+            "none": 70
+          },
+          "targets": {
+            "第一排放置位 4": 70
+          }
+        }
+      ],
+      [
+        "play_card|stable||stable",
+        {
+          "count": 8,
+          "ms": 6.879831999999908,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "chong_2.webp": 4,
+            "b_111.webp": 4
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|end_turn|turn-boundary",
+        {
+          "count": 20,
+          "ms": 6.508503999999903,
+          "goals": {
+            "none": 20
+          },
+          "targets": {
+            "结算 b_117.webp": 10,
+            "跳过 b_117.webp": 10
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_place_data|place_data|stable",
+        {
+          "count": 16,
+          "ms": 6.337123000000162,
+          "goals": {
+            "none": 16
+          },
+          "targets": {
+            "第一排放置位 2": 4,
+            "第一排放置位 3": 4,
+            "第一排放置位 5": 3,
+            "第一排放置位 6": 3,
+            "blue2 下方": 2
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|scan|stable",
+        {
+          "count": 16,
+          "ms": 6.016209000000231,
+          "goals": {
+            "none": 16
+          },
+          "targets": {
+            "获得展示的低重力研究": 8,
+            "获得展示的虫": 4,
+            "取消": 4
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|research_tech|stable",
+        {
+          "count": 16,
+          "ms": 5.808623000000125,
+          "goals": {
+            "none": 16
+          },
+          "targets": {
+            "结算 amiba_1.webp": 8,
+            "跳过": 8
+          }
+        }
+      ],
+      [
+        "accept_optional_effect|residual_card_decision|play_card|stable",
+        {
+          "count": 16,
+          "ms": 5.786372999999912,
+          "goals": {
+            "effect-purpose": 16
+          },
+          "targets": {
+            "结算 amiba_1.webp": 8,
+            "跳过": 8
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|stable",
+        {
+          "count": 12,
+          "ms": 5.620792000000051,
+          "goals": {
+            "effect-purpose": 12
+          },
+          "targets": {
+            "研究 orange3": 8,
+            "研究 purple1": 4
+          }
+        }
+      ],
+      [
+        "quick_trade|stable||stable",
+        {
+          "count": 7,
+          "ms": 5.59066599999997,
+          "goals": {
+            "none": 7
+          },
+          "targets": {
+            "2信用点 → 1能量": 7
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|science_domain_pick_card",
+        {
+          "count": 12,
+          "ms": 5.583874999999807,
+          "goals": {
+            "none": 12
+          },
+          "targets": {
+            "研究 blue3（蓝槽 3）": 4,
+            "研究 orange1": 4,
+            "研究 purple3": 4
+          }
+        }
+      ],
+      [
+        "end_turn|stable||residual_card_decision",
+        {
+          "count": 18,
+          "ms": 5.527457999999569,
+          "goals": {
+            "none": 18
+          },
+          "targets": {
+            "结束回合": 18
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|stable",
+        {
+          "count": 12,
+          "ms": 5.158753000000104,
+          "goals": {
+            "none": 12
+          },
+          "targets": {
+            "外星人 1 额外痕迹位（3分）": 3,
+            "外星人 1 蓝1号位": 3,
+            "外星人 1 蓝2号位（1分）": 3,
+            "外星人 2 额外痕迹位（3分）": 3
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|science_domain_pick_card",
+        {
+          "count": 16,
+          "ms": 5.064875999999458,
+          "goals": {
+            "effect-purpose": 16
+          },
+          "targets": {
+            "研究 blue3（蓝槽 3）": 4,
+            "研究 orange1": 8,
+            "研究 purple3": 4
+          }
+        }
+      ],
+      [
+        "complete_task|stable||stable",
+        {
+          "count": 10,
+          "ms": 4.815417000000139,
+          "goals": {
+            "none": 10
+          },
+          "targets": {
+            "完成 b_117.webp": 10
+          }
+        }
+      ],
+      [
+        "place_data|stable||science_domain_place_data",
+        {
+          "count": 20,
+          "ms": 4.6936660000001496,
+          "goals": {
+            "none": 20
+          },
+          "targets": {
+            "放置数据": 20
+          }
+        }
+      ],
+      [
+        "choose_payment|probe_turn_move_payment|move|stable",
+        {
+          "count": 12,
+          "ms": 4.361209000000144,
+          "goals": {
+            "none": 12
+          },
+          "targets": {
+            "消耗 1 能量": 8,
+            "弃 1 张移动牌": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|stable",
+        {
+          "count": 8,
+          "ms": 4.205709000000013,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "研究 orange3": 4,
+            "研究 purple1": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_action_4|scan|science_domain_scan_step",
+        {
+          "count": 24,
+          "ms": 4.002206999999942,
+          "goals": {
+            "none": 24
+          },
+          "targets": {
+            "移动 7 逆时针": 24
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|stable",
+        {
+          "count": 12,
+          "ms": 3.944082999999864,
+          "goals": {
+            "effect-purpose": 12
+          },
+          "targets": {
+            "dlc_8.png": 8,
+            "dlc_16.png": 4
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_scan_step|scan|science_domain_scan_action_4",
+        {
+          "count": 24,
+          "ms": 3.927787000000194,
+          "goals": {
+            "none": 24
+          },
+          "targets": {
+            "dlc_16.png → 南河三": 4,
+            "dlc_16.png → 天狼星A": 4,
+            "b_18.webp → 巴纳德": 4,
+            "dlc_8.png → 开普勒22": 4,
+            "b_18.webp → 比邻星": 4,
+            "dlc_8.png → 室女座61": 4
+          }
+        }
+      ],
+      [
+        "quick_trade|stable||standard_action_session_decision",
+        {
+          "count": 5,
+          "ms": 3.8940850000001035,
+          "goals": {
+            "none": 5
+          },
+          "targets": {
+            "3宣传 → 精选1张牌": 4,
+            "2张牌 → 1能量": 1
+          }
+        }
+      ],
+      [
+        "choose_card|probe_turn_pass_discard|pass|terminal",
+        {
+          "count": 4,
+          "ms": 3.494124999999883,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "弃置 chong_2.webp、chong_6.webp": 2,
+            "弃置 chong_2.webp": 2
+          }
+        }
+      ],
+      [
+        "play_card|stable||card_play_domain_effect:decision:chong_pickup_fossil",
+        {
+          "count": 6,
+          "ms": 3.139958999999891,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "chong_8.webp": 4,
+            "chong_6.webp": 2
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|analyze|stable",
+        {
+          "count": 9,
+          "ms": 3.086622999999804,
+          "goals": {
+            "none": 9
+          },
+          "targets": {
+            "获得展示的低重力研究": 3,
+            "获得展示的虫": 3,
+            "取消": 3
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|research_tech|stable",
+        {
+          "count": 8,
+          "ms": 2.9091659999999706,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "dlc_16.png": 8
+          }
+        }
+      ],
+      [
+        "play_card|stable||science_domain_research",
+        {
+          "count": 8,
+          "ms": 2.58345700000001,
+          "goals": {
+            "none": 8
+          },
+          "targets": {
+            "chong_4.webp": 4,
+            "dlc_15.png": 4
+          }
+        }
+      ],
+      [
+        "choose_target|probe_land_choice|land|stable",
+        {
+          "count": 4,
+          "ms": 2.3694999999999595,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "登陆海卫一（海王星）｜奖励：获得 26 分": 4
+          }
+        }
+      ],
+      [
+        "choose_card|standard_action_session_decision|quick_trade|information-barrier",
+        {
+          "count": 4,
+          "ms": 2.0738770000000954,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "dlc_16.png": 4
+          }
+        }
+      ],
+      [
+        "pass|stable||probe_turn_pass_discard",
+        {
+          "count": 4,
+          "ms": 2.0236250000000098,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "PASS": 4
+          }
+        }
+      ],
+      [
+        "land|stable||probe_land_choice",
+        {
+          "count": 4,
+          "ms": 1.7337909999999965,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "登陆": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|residual_alien_card_decision",
+        {
+          "count": 6,
+          "ms": 1.562208000000055,
+          "goals": {
+            "none": 6
+          },
+          "targets": {
+            "外星人 1 蓝3号位（外星人牌）": 3,
+            "外星人 2 蓝8号位（3分+外星人牌）": 3
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|scan|information-barrier",
+        {
+          "count": 4,
+          "ms": 1.4697899999997617,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "盲抽虫牌": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|research_tech|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 1.4636259999999766,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "研究 blue4（蓝槽 3）": 4
+          }
+        }
+      ],
+      [
+        "scan|stable||science_domain_scan_step",
+        {
+          "count": 4,
+          "ms": 1.4402499999999918,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "扫描": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|scan|residual_alien_card_decision",
+        {
+          "count": 12,
+          "ms": 1.3873749999999063,
+          "goals": {
+            "none": 12
+          },
+          "targets": {
+            "外星人 1 粉3号位（外星人牌）": 4,
+            "外星人 1 粉4号位（1分+外星人牌）": 4,
+            "外星人 2 粉3号位（3分+外星人牌）": 4
+          }
+        }
+      ],
+      [
+        "analyze|stable||science_domain_alien_trace",
+        {
+          "count": 3,
+          "ms": 1.3642089999999882,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "分析": 3
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_alien_trace|analyze|information-barrier",
+        {
+          "count": 3,
+          "ms": 1.172666999999933,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "外星人 2 蓝7号位（盲抽2+化石奖励）": 3
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|science_domain_pick_card",
+        {
+          "count": 12,
+          "ms": 1.1118349999999282,
+          "goals": {
+            "effect-purpose": 12
+          },
+          "targets": {
+            "dlc_16.png": 12
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_research|play_card|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 1.0996259999996028,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "研究 blue4（蓝槽 3）": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|science_domain_alien_trace",
+        {
+          "count": 4,
+          "ms": 1.074540999999897,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "跳过": 4
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|research_tech|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 0.9323749999998654,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "dlc_16.png": 4
+          }
+        }
+      ],
+      [
+        "choose_target|science_domain_scan_step|scan|science_domain_scan_step",
+        {
+          "count": 4,
+          "ms": 0.9313760000001139,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "扫描 室女座61": 4
+          }
+        }
+      ],
+      [
+        "research_tech|stable||science_domain_research",
+        {
+          "count": 4,
+          "ms": 0.9204579999999964,
+          "goals": {
+            "none": 4
+          },
+          "targets": {
+            "研究科技": 4
+          }
+        }
+      ],
+      [
+        "choose_card|residual_alien_card_decision|analyze|information-barrier",
+        {
+          "count": 3,
+          "ms": 0.8700420000000122,
+          "goals": {
+            "none": 3
+          },
+          "targets": {
+            "盲抽虫牌": 3
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_income|place_data|information-barrier",
+        {
+          "count": 2,
+          "ms": 0.7716669999999795,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "收入 chong_2.webp": 2
+          }
+        }
+      ],
+      [
+        "choose_payment|standard_action_session_decision|quick_trade|standard_action_session_decision",
+        {
+          "count": 2,
+          "ms": 0.5805839999999591,
+          "goals": {
+            "none": 2
+          },
+          "targets": {
+            "chong_6.webp": 1,
+            "chong_8.webp": 1
+          }
+        }
+      ],
+      [
+        "choose_payment|standard_action_session_decision|quick_trade|stable",
+        {
+          "count": 1,
+          "ms": 0.4375,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "确认弃牌（2/2）": 1
+          }
+        }
+      ],
+      [
+        "move|stable||probe_turn_move_payment",
+        {
+          "count": 1,
+          "ms": 0.38912500000000705,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "移动探测器 7 向外": 1
+          }
+        }
+      ],
+      [
+        "choose_card|science_domain_pick_card|play_card|residual_card_decision",
+        {
+          "count": 4,
+          "ms": 0.37687499999992724,
+          "goals": {
+            "effect-purpose": 4
+          },
+          "targets": {
+            "dlc_8.png": 4
+          }
+        }
+      ],
+      [
+        "complete_task|stable||residual_chong_task_fossil",
+        {
+          "count": 1,
+          "ms": 0.2984169999999722,
+          "goals": {
+            "none": 1
+          },
+          "targets": {
+            "完成 chong_4.webp": 1
+          }
+        }
+      ]
+    ],
+    "roots": [
+      [
+        "scan:2d21a323",
+        206.5,
+        -10.5,
+        0
+      ],
+      [
+        "play_card:f1918668",
+        204.5,
+        -11.5,
+        0
+      ],
+      [
+        "play_card:1da9864f",
+        194.5,
+        -10,
+        0
+      ],
+      [
+        "play_card:88ec7135",
+        214.5,
+        -20,
+        0
+      ],
+      [
+        "play_card:1a1c19d3",
+        198,
+        -11.5,
+        0
+      ],
+      [
+        "play_card:ddbaa2ce",
+        213,
+        -20,
+        0
+      ],
+      [
+        "play_card:5eb1b0e8",
+        195.5,
+        -10,
+        0
+      ],
+      [
+        "pass:a1f33c73",
+        171,
+        0,
+        0
+      ],
+      [
+        "move:c16025a6",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:bde97b72",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:23807efa",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:a36e0e84",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:2df2f24d",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:2a7c4819",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:90134ba1",
+        null,
+        null,
+        null
+      ],
+      [
+        "move:0febc073",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:f385e2ac",
+        215.5,
+        0,
+        0
+      ],
+      [
+        "quick_trade:49c75492",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:12411a2c",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:a39c1a77",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:37140fcf",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:122c43fc",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:df811f99",
+        null,
+        null,
+        null
+      ],
+      [
+        "quick_trade:71814d67",
+        197,
+        -10,
+        0
+      ],
+      [
+        "quick_trade:be9dd0cd",
+        null,
+        null,
+        null
+      ],
+      [
+        "industry:e887dc52",
+        null,
+        null,
+        null
+      ],
+      [
+        "card_corner:730579d5",
+        null,
+        null,
+        null
+      ],
+      [
+        "card_corner:367a82a7",
+        213,
+        -19,
+        0
+      ],
+      [
+        "card_corner:cb6e4492",
+        null,
+        null,
+        null
+      ],
+      [
+        "card_corner:bf0cc13d",
+        null,
+        null,
+        null
+      ],
+      [
+        "card_corner:c4357b44",
+        null,
+        null,
+        null
+      ],
+      [
+        "card_corner:40cda505",
+        205.5,
+        -11.5,
+        0
+      ],
+      [
+        "place_data:8fd12fd3",
+        216.5,
+        0,
+        0
+      ]
+    ],
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 292,
+      "valueCacheHits": 584,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 353,
+      "movementDirectionsExcluded": 2842,
+      "routeGeometryNodes": 256,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 0,
+      "provedTurnTailInputs": 0,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 670,
+      "logicalResourceInputs": 1275,
+      "sharedResourceInputHits": 71,
+      "sharedResourceInternalStates": 859,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 229,
+      "singleAlternativeStates": 202,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 24,
+      "resourceGoalPlans": 375,
+      "resourcePreparationInputs": 1275,
+      "resourceFallbacks": 16,
+      "resourceExcludedActions": 4908,
+      "transitions": 1643,
+      "nodes": 1601,
+      "graphNodes": 723,
+      "certificateNodes": 878,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 97,
+      "selectionMacros": 0,
+      "peakFrontier": 95,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v58\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 1831.8697920000002,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    }
+  },
+  "historical216Replay": {
+    "replayedInputs": 67,
+    "score": 216,
+    "exactStateSessionAndRng": true
+  }
+}

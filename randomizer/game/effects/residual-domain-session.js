@@ -1134,8 +1134,12 @@
             addScoreSource(player, sourceKey, scoreGain);
           }
         } else if (effect.type === "amiba_choose_symbol_reward") {
-          // 阿米巴卡牌单细胞器图标：转成区域内任选一个的决策，与打牌路径一致。
-          // 痕迹的区域全部奖励由独立确定性 Effect 负责。
+          // 与打牌路径一致：空区域无目标，不创建必选输入。已确认的触发仍正常消费。
+          const region = effect.options?.region;
+          if (!["orange", "red", "blue"].includes(region)) {
+            return fail("AMIBA_REGION_INVALID", "阿米巴区域奖励缺少有效颜色");
+          }
+          if (!amiba.listSymbolsInRegion(root.aliens, region).length) continue;
           spawnedEffects.push({
             priority: "direct",
             effect: {

@@ -5,6 +5,17 @@ const { spawnSync } = require("node:child_process");
 const scenario = require("./research-human405-full");
 const runner = require("./run_research_validation");
 
+const { createHash } = require("node:crypto");
+const admission = require("../reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json");
+const checkout = path.resolve(__dirname, "..");
+const drift = Object.entries(admission.runtimeHashes).find(([file, hash]) =>
+  createHash("sha256").update(fs.readFileSync(path.join(checkout, file))).digest("hex") !== hash);
+if (drift) {
+  assert.throws(() => scenario.continuation(scenario.R4_ID), /R4_CANDIDATE_SOURCE_DRIFT/);
+  console.log("Archived R4 continuation rejects the changed runtime");
+  return;
+}
+
 const options = { full: true, config: { agentType: "search", scenario: scenario.R4_ID, compactReplay: true } };
 const identity = runner.buildIdentity(options);
 assert.equal(identity.scenario.openingInputs, 259);
