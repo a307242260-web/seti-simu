@@ -1,0 +1,94 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -391,7 +391,7 @@
+     }
+     let publicSeed = null, rootTurnKey = null;
+     let nodeCount = 0, identityMaterializations = 0;
+-    let submissionCount = 0;
++    let submissionCount = 0, provedFinalDataPlacements = {};
+     let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
+     let observationCount = 0;
+     const cache = new Map();
+@@ -564,7 +564,7 @@
+       cardPickRootStats = cardPickPlanner.getDiagnostics();
+       nodeCount = 0;
+       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+-      submissionCount = 0;
++      submissionCount = 0; provedFinalDataPlacements = {};
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+       observationCount = 0; observationReleases = 0;
+       committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0;
+@@ -619,6 +619,43 @@
+       return openedRoot;
+     }
+
++    function previewQuietFinalDataPlacement(stored, action) {
++      const computer = action.target?.choiceId === "data:computer" && action.target?.target === "computer";
++      const blueSlot = action.target?.target === "blueBonus" && [1, 3].includes(action.target?.blueSlot)
++        && action.target.choiceId === `data:blueBonus:${action.target.blueSlot}` ? action.target.blueSlot : null;
++      if (action.family !== "choose_target" || !computer && !blueSlot) return null;
++      const session = stored.envelope.session?.session, effect = session?.queue?.[0];
++      if (!resourcePlanning || stored.resourceControl || !session || session.phase !== "awaiting_input"
++        || session.queue.length !== 1 || session.interruptContext || session.irreversibleBarrier
++        || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
++        || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
++      const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
++      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
++        || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
++        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job => !job.delivered)
++        || computer && data.listComputerPlacedTokens(owner).length !== 4
++        || owner.resources.availableData !== owner.dataState.poolTokens.length
++        || state.meta.stateVersion !== session.baseVersion) return null;
++      const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
++        reservedCards:structuredClone(owner.reservedCards), scoreSources:{...owner.scoreSources}};
++      const slot = computer ? {placementSlot:5} : {blueSlot};
++      const placement = data.placeDataToComputer(player, blueSlot ? {target:"blueBonus", blueSlot} : undefined);
++      const placementKind = computer ? "computer" : "blueBonus";
++      if (!placement.ok || placement.placementKind !== placementKind
++        || Object.entries(slot).some(([key,value]) => placement[key] !== value) || placement.slotBonuses.length !== 1) return null;
++      const bonus = placement.slotBonuses[0], resource = bonus.type;
++      const eligibleResources = computer ? ["score"] : blueSlot === 1 ? ["energy"] : ["credits", "publicity"];
++      if (!eligibleResources.includes(resource) || !Number.isSafeInteger(bonus[resource]) || bonus[resource] <= 0
++        || Object.keys(bonus).some(key => key !== "type" && key !== resource)) return null;
++      const gain = {[resource]:bonus[resource]};
++      players.gainResources(player, gain, "blueTechScore");
++      const events = [{type:"placeData", playerId:seatId, placementKind, ...slot},
++        {type:"science_resource_bonus", playerId:seatId, gain, sourceKey:"blueTechScore"}];
++      if (events.some(event => cardEffects.collectMatchingTriggers(player, event).length)) return null;
++      return {kind:computer ? "computer5" : `blue${blueSlot}:${resource}`, state:{...state, meta:{...state.meta, stateVersion:session.baseVersion+1},
++        players:{...state.players, players:state.players.players.map(p => p === owner ? player : p)}}};
++    }
++
+     function expand(node, actionId) {
+       const stored = nodes.get(node);
+       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+@@ -633,6 +670,20 @@
+       if (cache.has(key)) {
+         cacheHits += 1;
+         return rememberPrefix(key,node,actionId,cache.get(key));
++      }
++      const fixedData = previewQuietFinalDataPlacement(stored, requested);
++      if (fixedData) {
++        const {kind, state} = fixedData;
++        // The stored menu already owns the precise legal decision. Only the
++        // placement with no unresolved effect is reconstructed in this isolated fork.
++        // Prefix accounting still charges the exact logical input for the witness.
++        const preview = {schemaVersion:stored.envelope.schemaVersion, committedState:JSON.stringify(state), session:null};
++        if (!decodedStates.has(preview.committedState)) cacheCommittedState(preview.committedState, freeze(state));
++        restoreEnvelope(preview, true);
++        provedFinalDataPlacements[kind] = (provedFinalDataPlacements[kind] || 0) + 1;
++        const child = finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, requested) : null,
++          null, stored.informationBarrier, requested, stored);
++        return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       restoreEnvelope(stored.envelope, true);
+       const { before, result } = executeCurrent(requested);
+@@ -6325,7 +6376,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
