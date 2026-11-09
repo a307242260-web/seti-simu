@@ -1,0 +1,831 @@
+{
+  "source": "62023d4323ff891e66fdc2aac4de055640354536",
+  "scenario": "teacher272-round4-with-all-other-seats-already-passed",
+  "basis": "fixed-control-same-own-turn-count-not-terminal",
+  "originalRngAndRootUnchanged": true,
+  "observedLines": [
+    {
+      "line": "triton",
+      "turn2": 221.5,
+      "turn3": {
+        "purpose": "blue4",
+        "dataPlacement": true,
+        "value": 231,
+        "board": 160,
+        "established": 225,
+        "credits": 1,
+        "energy": 1,
+        "data": 0,
+        "hand": 2,
+        "publicity": 4,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "probes": [
+          {
+            "angleDegrees": 67.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 3,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "components": {
+          "realizedScore": 160,
+          "currentEndGameBonus": 65,
+          "resources": 4,
+          "hand": 2,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        }
+      },
+      "turn4": {
+        "purpose": "discard-amiba9-then-research",
+        "precededBy": "blue4",
+        "value": 238,
+        "board": 162,
+        "established": 234,
+        "credits": 1,
+        "energy": 1,
+        "data": 0,
+        "hand": 2,
+        "publicity": 0,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue3": 4,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "components": {
+          "realizedScore": 162,
+          "currentEndGameBonus": 72,
+          "resources": 2,
+          "hand": 2,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        }
+      },
+      "turn5": [
+        {
+          "variant": "original",
+          "value": 246,
+          "board": 169,
+          "established": 243,
+          "credits": 1,
+          "energy": 1,
+          "data": 0,
+          "hand": 1,
+          "publicity": 0,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue3": 4,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "blue4": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "components": {
+            "realizedScore": 169,
+            "currentEndGameBonus": 74,
+            "resources": 2,
+            "hand": 1,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        }
+      ]
+    },
+    {
+      "line": "enceladus",
+      "turn2": 220.5,
+      "turn3": {
+        "purpose": "blue4",
+        "dataPlacement": true,
+        "value": 229,
+        "board": 148,
+        "established": 213,
+        "credits": 4,
+        "energy": 3,
+        "data": 2,
+        "hand": 6,
+        "publicity": 4,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "probes": [
+          {
+            "angleDegrees": 67.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 3,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": 54.9,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_06",
+            "id": 8,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 212.48,
+            "sectorX": 3,
+            "sectorY": 3,
+            "slotIndex": 0,
+            "surface": "solar-board"
+          }
+        ],
+        "components": {
+          "realizedScore": 148,
+          "currentEndGameBonus": 65,
+          "resources": 10,
+          "hand": 6,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        }
+      },
+      "turn4": {
+        "purpose": "chong4-then-research",
+        "precededBy": "blue4",
+        "value": 240.5,
+        "board": 150,
+        "established": 222,
+        "credits": 1,
+        "energy": 3,
+        "data": 2,
+        "hand": 6,
+        "publicity": 5,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": 9.9,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_06",
+            "id": 8,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 212.48,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 0,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 9,
+            "launchGrid": {
+              "x": 1,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 1,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "components": {
+          "realizedScore": 150,
+          "currentEndGameBonus": 72,
+          "resources": 7.5,
+          "hand": 6,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 5,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        }
+      },
+      "turn5": [
+        {
+          "variant": "original",
+          "value": 256,
+          "board": 176,
+          "established": 248,
+          "credits": 1,
+          "energy": 0,
+          "data": 2,
+          "hand": 2,
+          "publicity": 8,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 8,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "components": {
+            "realizedScore": 176,
+            "currentEndGameBonus": 72,
+            "resources": 6,
+            "hand": 2,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        },
+        {
+          "variant": "alternate-fossil",
+          "value": 256,
+          "board": 176,
+          "established": 248,
+          "credits": 1,
+          "energy": 0,
+          "data": 2,
+          "hand": 2,
+          "publicity": 8,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 8,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "components": {
+            "realizedScore": 176,
+            "currentEndGameBonus": 72,
+            "resources": 6,
+            "hand": 2,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        },
+        {
+          "variant": "alternate-blind",
+          "value": 256,
+          "board": 176,
+          "established": 248,
+          "credits": 1,
+          "energy": 0,
+          "data": 2,
+          "hand": 2,
+          "publicity": 8,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 8,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "components": {
+            "realizedScore": 176,
+            "currentEndGameBonus": 72,
+            "resources": 6,
+            "hand": 2,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          }
+        }
+      ]
+    }
+  ],
+  "fifthRootPreflight": [
+    {
+      "line": "triton",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:c4357b44",
+        "actorId": "player-white",
+        "stateVersion": 133,
+        "decisionVersion": 4,
+        "target": {
+          "cardInstanceId": "card-67-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_15.png：弃牌角标"
+      },
+      "value": 246,
+      "native": 34,
+      "ms": 113.37883299999999,
+      "complete": true,
+      "gate": true
+    },
+    {
+      "line": "enceladus",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:a39c1a77",
+        "actorId": "player-white",
+        "stateVersion": 126,
+        "decisionVersion": 1,
+        "target": {
+          "tradeId": "cards-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 1能量"
+      },
+      "value": 260,
+      "native": 206,
+      "ms": 374.328,
+      "complete": true,
+      "gate": true
+    }
+  ],
+  "tritonPaymentControl": {
+    "firstTurnBoth": 216.5,
+    "nextTurnKeepingChong4": 216,
+    "nextTurnWithScan": 221.5,
+    "creditsAndEnergyAfterChong4": [
+      0,
+      0
+    ]
+  },
+  "noNewAutonomousGame": true,
+  "productionStrategyChanged": false
+}
