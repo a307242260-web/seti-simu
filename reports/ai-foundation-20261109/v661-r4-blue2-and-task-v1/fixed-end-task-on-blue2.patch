@@ -1,0 +1,54 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1109,7 +1109,7 @@
+       if(localSpecs.has(node))return localSpecs.get(node);
+       const stored=nodes.get(node),state=readPlanningState(stored);
+       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
+-      if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
++      if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope)});
+       if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
+       if(!result&&resourcePlanning){
+         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1461,11 +1461,38 @@
+   return fixedChoice(actions,confirm,'fixed-positive-optional',{reason:'greedy-free-known-task-score-credit',
+    assumption:'known completed task adds score and currency at end of own turn without forfeiting reserved triggers or scoring'});
+  }
+- function pureOptional({state,seatId,actions,session}){
++ function fixedFinalForeignEndTask({state,seatId,actions,session,payload,knownCards}){
++  const p=owner(state,seatId),turn=state.turn,advance=session?.queue[1];
++  if(turn.roundNumber!==4||!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
++    ||!turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
++    ||session.queue.length!==2||session.interruptContext||session.irreversibleBarrier
++    ||session.journal.actions[0]?.action?.family!=='end_turn'||advance?.type!=='probe_turn_advance'
++    ||advance.ownerId!==seatId||advance.payload?.didPass!==false||actions.length!==2
++    ||!knownCards?.has(payload.cardInstanceId)||turn.cardTurnEventBonuses?.length
++    ||Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
++    ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles).some(t=>t.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
++  const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId), model=card&&effects.getCardModel(card);
++  const supported={"b117-orbit-land-count-task":"credits","b60-jupiter-task":"publicity"}, currency=supported[payload.ruleId];
++  const task=model?.tasks?.length===1&&model.tasks[0], reward=task?.rewards?.length===1&&task.rewards[0];
++  const gain=reward?.options?.gain;
++  if(!currency||!card||card.hidden||model.cardType!==2||model.endGameScoring||model.triggers?.length||model.temporaryTasks?.length
++    ||task?.id!==payload.ruleId||reward?.type!=='gain_resources'||(reward.options.repeat??1)!==1
++    ||!gain||Object.keys(gain).length!==2||!Number.isSafeInteger(gain.score)||gain.score<=0
++    ||!Number.isSafeInteger(gain[currency])||gain[currency]<=0
++    ||p.resources[currency]+gain[currency]>(players.RESOURCE_LIMITS[currency]??Infinity))return null;
++  const event={type:'card_rule_settled',playerId:seatId,cardInstanceId:card.id,ruleId:task.id,ruleKind:'task'};
++  if(effects.collectMatchingTriggers(structuredClone(p),event).length)return null;
++  const confirm=actions.find(a=>a.target?.choiceId===`confirm:task:${card.id}:${task.id}`);
++  if(!confirm||!actions.some(a=>a.target?.choiceId===`skip:task:${card.id}:${task.id}`))return null;
++  return fixedChoice(actions,confirm,'fixed-positive-optional',{reason:'greedy-final-end-task-no-overflow',gain,
++    assumption:'one known non-scoring task, full score/currency payout and the same other-seat turn boundary'});
++ }
++ function pureOptional({state,seatId,actions,session,knownCards}){
+   if(!actions.length||!actions.every(a=>a.family==='accept_optional_effect'))return null;
+   const payload=session?.queue?.[0]?.payload;
+   if(payload?.kind==='task')return deferredPublicityTask({state,seatId,actions,session,payload})
+-    ||fixedPositiveEndTask({state,seatId,actions,session,payload});
++    ||fixedPositiveEndTask({state,seatId,actions,session,payload})
++    ||fixedFinalForeignEndTask({state,seatId,actions,session,payload,knownCards});
+   if(payload?.kind!=='trigger')return null;
+   const confirms=actions.filter(a=>a.target?.choiceId?.startsWith('confirm:')),skip=actions.find(a=>a.target?.choiceId?.startsWith('skip:'));
+   if(!confirms.length||!skip)return null;
