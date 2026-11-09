@@ -1,0 +1,338 @@
+{
+  "baselineCommit": "4dc3d8f5490a61bf2cea221cb562804bd9c6eb30",
+  "runtimeSha256": {
+    "randomizer/game/ai/analysis-port.js": "cdc5afb1d21f6bf3fd0326605d5cf7425596df53c1db371f2eee4bd3a722d36e",
+    "randomizer/game/ai/local-decision-plans.js": "a234500aa3de3cfa9b2a135658487df629dbc01277dbc49480efdf9097f426ee",
+    "randomizer/game/effects/residual-domain-session.js": "34456ff59c147c240f9569fa86d33201a4121ed4dfce6912bff0198216711152"
+  },
+  "scope": "teacher R4 white root #272, no accepted search decision at the source, no official whole run",
+  "gates": {
+    "old": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 197,
+        "milliseconds": 685.510417,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 251,
+        "milliseconds": 479.668583,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 670,
+        "milliseconds": 1308.1905829999998,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    },
+    "new": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "milliseconds": 691.035333,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 149,
+        "milliseconds": 423.7350839999999,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 379,
+        "milliseconds": 1074.5891669999999,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    }
+  },
+  "auditExactByType": {
+    "resource-corner": 71,
+    "pre-main-data-slot": 16,
+    "pre-main-data-menu": 18,
+    "currency": 68,
+    "science_domain_income": 69,
+    "public-before-mercury": 24,
+    "purple-before-mercury": 24,
+    "first-post-main-data-menu": 1
+  },
+  "rootRankings": [
+    [
+      "scan:2d21a323",
+      206.5,
+      -10.5,
+      0
+    ],
+    [
+      "play_card:f1918668",
+      204.5,
+      -11.5,
+      0
+    ],
+    [
+      "play_card:1da9864f",
+      194.5,
+      -10,
+      0
+    ],
+    [
+      "play_card:88ec7135",
+      214.5,
+      -20,
+      0
+    ],
+    [
+      "play_card:1a1c19d3",
+      198,
+      -11.5,
+      0
+    ],
+    [
+      "play_card:ddbaa2ce",
+      213,
+      -20,
+      0
+    ],
+    [
+      "play_card:5eb1b0e8",
+      195.5,
+      -10,
+      0
+    ],
+    [
+      "pass:a1f33c73",
+      171,
+      0,
+      0
+    ],
+    [
+      "move:c16025a6",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:bde97b72",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:23807efa",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:a36e0e84",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:2df2f24d",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:2a7c4819",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:90134ba1",
+      null,
+      null,
+      null
+    ],
+    [
+      "move:0febc073",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:f385e2ac",
+      215.5,
+      0,
+      0
+    ],
+    [
+      "quick_trade:49c75492",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:12411a2c",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:a39c1a77",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:37140fcf",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:122c43fc",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:df811f99",
+      null,
+      null,
+      null
+    ],
+    [
+      "quick_trade:71814d67",
+      197,
+      -10,
+      0
+    ],
+    [
+      "quick_trade:be9dd0cd",
+      null,
+      null,
+      null
+    ],
+    [
+      "industry:e887dc52",
+      null,
+      null,
+      null
+    ],
+    [
+      "card_corner:730579d5",
+      null,
+      null,
+      null
+    ],
+    [
+      "card_corner:367a82a7",
+      213,
+      -19,
+      0
+    ],
+    [
+      "card_corner:cb6e4492",
+      null,
+      null,
+      null
+    ],
+    [
+      "card_corner:bf0cc13d",
+      null,
+      null,
+      null
+    ],
+    [
+      "card_corner:c4357b44",
+      null,
+      null,
+      null
+    ],
+    [
+      "card_corner:40cda505",
+      205.5,
+      -11.5,
+      0
+    ],
+    [
+      "place_data:8fd12fd3",
+      216.5,
+      0,
+      0
+    ]
+  ],
+  "nativeByOrigin": {
+    "old": {
+      "place_data": 176,
+      "scan": 136,
+      "play_card": 98,
+      "card_corner": 71,
+      "research_tech": 56,
+      "end_turn": 38,
+      "analyze": 36,
+      "quick_trade": 19,
+      "move": 13,
+      "complete_task": 11,
+      "pass": 8,
+      "land": 8
+    },
+    "new": {
+      "play_card": 98,
+      "scan": 88,
+      "research_tech": 56,
+      "end_turn": 38,
+      "analyze": 36,
+      "quick_trade": 19,
+      "move": 13,
+      "complete_task": 11,
+      "pass": 8,
+      "land": 8,
+      "place_data": 4
+    }
+  },
+  "searchShape": {
+    "graphNodes": 723,
+    "logicalResourceInputs": 1275,
+    "valueEvaluations": 292
+  },
+  "officialHistoricalReplay": {
+    "replayedInputs": 67,
+    "score": 216,
+    "exactStateSessionAndRng": true
+  },
+  "companyTail": {
+    "action": "industry:e887dc52",
+    "value": 154.5,
+    "native": 96,
+    "rootExact": true,
+    "proofs": 25,
+    "inputs": 167
+  },
+  "fundedShipmentRegression": {
+    "terminal": 233,
+    "decisions": 31,
+    "peakNative": 22,
+    "peakMilliseconds": 74.42345900000001
+  }
+}

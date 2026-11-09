@@ -1280,6 +1280,32 @@
     };
   }
 
+  // Search may reapply this deterministic corner on each exact fork.
+  // The regular executor is still the owner of both data and discard rules.
+  function previewQuietResourceCorner(root, action, knownCards) {
+    const turn=root.turn,owner=actor(root,action.actorId);
+    if(action.family!=="card_corner"||action.phase!=="quick"||action.payload?.kind!=="resource"||action.payload.multiplier!==1
+      ||turn.roundNumber!==4||turn.currentPlayerId!==owner?.id||turn.gameEnded||owner.passCompletionPending
+      ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
+      ||owner.reservedCards.some(c=>!knownCards.has(c.id)))return null;
+    const id=action.target?.cardInstanceId,card=owner.hand.find(c=>c.id===id);
+    const reward=card&&knownCards.has(id)&&cards.getDiscardActionRewardForCard(card);
+    if(!reward||![0,1].includes(reward.dataCount)
+      ||Object.entries(reward.gain).some(([k,n])=>!["credits","energy","publicity","score"].includes(k)||!Number.isSafeInteger(n)||n<=0)
+      ||listFossilArrivalEvents(root).length)return null;
+    const player={...owner,resources:{...owner.resources},dataState:clone(owner.dataState),
+      hand:[...owner.hand],scoreSources:{...owner.scoreSources},reservedCards:clone(owner.reservedCards)};
+    const meta={...root.meta,sequences:{...root.meta.sequences},stateVersion:root.meta.stateVersion+1};
+    // The counterfactual root marker is not part of the saved RNG stream.
+    if(meta.rngState?.branch===true){meta.rngState={...meta.rngState};delete meta.rngState.branch;}
+    const next={...root,meta,cards:{...root.cards,discardPile:[...root.cards.discardPile],drawPileCardIds:[...root.cards.drawPileCardIds]},
+      players:{...root.players,players:root.players.players.map(p=>p===owner?player:p)}};
+    const applied=executeCardCorner(next,action,player);
+    if(!applied.ok||applied.spawnedEffects.length||applied.irreversible
+      ||applied.events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+    return next;
+  }
+
   function executeRunezuFace(root, action, player) {
     const placed = runezu.placePlayerSymbolOnFace(
       root.aliens,
@@ -2495,6 +2521,7 @@
     queryCardSettlement: findCardSettlement,
     previewQuietEndHandoffs,
     previewQuietAmibaYellowLanding,
+    previewQuietResourceCorner,
     hasPendingFossilArrival:root=>listFossilArrivalEvents(root).length>0,
     cardDecisionChoices,
     chongTaskFossilChoices,

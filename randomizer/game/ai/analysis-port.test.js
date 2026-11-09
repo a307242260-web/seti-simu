@@ -584,3 +584,31 @@ console.log("trusted analysis fork isolation and exact reuse passed");
     assert.equal(outcomes[0].picked, outcomes[1].picked);
   } finally { c.dispose(); }
 }
+
+// Closing the fixed data, currency and scan prefixes keeps the real
+// Mercury and random-income choices; it does not replace the saved root.
+{
+  const fs = require("node:fs"), path = require("node:path"), zlib = require("node:zlib");
+  const { createSearchAgent } = require("./search-agent");
+  const { rows: [{ root }] } = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname,
+    "../../../reports/ai-foundation-20261110/v661-r4-fixed-settlements-v1/teacher-272-native-root-20261110-v1.json.gz"))));
+  const seed = JSON.parse(root.committedState).meta.seed, seatId = "player-white";
+  const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed),
+    activePlayerCount: 4, trustedProjectionReader: true,
+    projectCounterfactualState: (s, v) => buildRuleObservation(s, seed, v?.playerId) });
+  kernel.newGame({ seed });
+  const c = kernel.composition, port = createAnalysisPort({ composition: c, seatId, maxCacheEntries: 0 });
+  try {
+    assert(c.lifecycle.restore(root).ok);
+    const legalActions = c.inputPort.enumerateActions({});
+    const q = createSearchAgent({ seatId, analysisPort: port }).decide({ seatId, legalActions }).search;
+    assert(q.complete && q.unresolved.length === 0);
+    assert.equal(q.value, 216.5);
+    assert.equal(legalActions.find(a => a.actionId === q.actionId).family, "place_data");
+    const d = port.getDiagnostics();
+    for (const key of ["provedComputerIncomeMenus", "provedCurrencyIncomeInputs",
+      "provedPublicScanChoices", "provedScan4QuietMoves", "provedFinalResourceCorners"]) assert(d[key] > 0, key);
+    assert(q.diagnostics.nativeExecutions <= 379);
+    assert.deepEqual(c.lifecycle.save().envelope, root);
+  } finally { port.close(); c.dispose(); }
+}
