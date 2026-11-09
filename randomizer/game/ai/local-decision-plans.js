@@ -1923,6 +1923,38 @@
   const {player,capital,dataCornerIds,...summary}=preview;
   return {...summary,dataCornerIds:[...dataCornerIds],...(includePlayer?{player:dataPreviewPlayer(player),capital:{...capital}}:{})};
  }
+ const dataInvariantCardScores=new Set(['sectorWinsByColor','traceCount','techCount','distinctSignalSectors',
+  'planetOrbitOrLand','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost',
+  'chongTraceCount','amibaTraceCount','aomomoTraceCount','runezuMaxSameSymbolCount','runezuMaxSetSize']);
+ function provedDataScoreDelta(state,p,copy){
+  if(state.turn.roundNumber!==4||p.techState!==copy.techState||p.reservedCards!==copy.reservedCards
+   ||p.completedTaskCount!==copy.completedTaskCount||p.id!==copy.id||p.color!==copy.color
+   ||!Number.isSafeInteger(p.resources.score)||!Number.isSafeInteger(copy.resources.score)
+   ||['credits','energy','handSize'].some(k=>p.income[k]!==copy.income[k])
+   ||state.aliens.runezu?.revealInitialized&&!p.runezuSymbols
+   ||state.aliens.jiuzhe?.playerCardsById?.[p.id]
+   ||endScoring.shouldApplyJiuzheThreatPenalty(p,{aliens:state.aliens,players:state.players.players}))return null;
+  // These previews do not move a probe, spend a trace, mark a tile, add a
+  // reservation or resolve a task. The established board and its income
+  // formulas therefore cancel out, except cards that read the changed wallet.
+  let delta=copy.resources.score-p.resources.score;
+  for(const card of p.reservedCards){
+   if(effects.getRuntimeCardTypeCode(card,effects.getCardModel(card)?.cardType)!==3)continue;
+   const rule=endScoring.resolveCardEndGameRule(card,effects);
+   if(typeof rule?.kind==='string'&&rule.kind.startsWith('runezu')&&!p.runezuSymbols)return null;
+   if(!rule||dataInvariantCardScores.has(rule.kind))continue;
+   if(rule.kind!=='remainingResource'||!Number.isSafeInteger(rule.scorePer))return null;
+   delta+=endScoring.scoreCardEndGameRule(rule,copy,{})-endScoring.scoreCardEndGameRule(rule,p,{});
+  }
+  return Number.isSafeInteger(delta)?delta:null;
+ }
+ function dataScoreDelta(state,p,copy){
+  const proved=provedDataScoreDelta(state,p,copy);
+  if(proved!==null)return proved;
+  const context={...state,players:state.players.players.map(v=>v===p?copy:v),aliens:structuredClone(state.aliens),
+   finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  return endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
+ }
  function computeBlueCompletion({state,seatId,goal,cornerPolicy=null},beforeCapital=null){
   const p=owner(state,seatId),copy=dataPreviewPlayer(p);const dataCornerIds=[];let incomeCardId=null;
   const required=data.getRequiredComputerSlotForBlueBonus(goal.blueSlot),occupied=new Set(data.listComputerPlacedTokens(p).map(t=>t.placementSlot));
@@ -1930,7 +1962,7 @@
 
   // Every iteration consumes one card or fills one prerequisite. A full pool
   // first places data, matching native preparation without exceeding capacity.
-  let remaining=computerPlacements;const previewRoot={meta:structuredClone(state.meta)};
+  let remaining=computerPlacements,previewRoot;
   while(remaining>0||copy.resources.availableData<1){
    if(copy.resources.availableData<remaining+1&&copy.resources.availableData<players.RESOURCE_LIMITS.availableData){
     const current={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
@@ -1938,6 +1970,7 @@
     if(!candidate)return{available:false,reason:'blue-tail-needs-preparation'};
     dataCornerIds.push(candidate.id);copy.hand=copy.hand.filter(c=>c.id!==candidate.id);copy.resources.handSize=copy.hand.length;
     if(choice.score)players.gainResources(copy,{score:choice.score});
+    previewRoot??={meta:{...state.meta,sequences:{...state.meta.sequences}}};
     if(!data.gainData(copy,{root:previewRoot}).ok)return{available:false,reason:'blue-tail-data-unavailable'};
     continue;
    }
@@ -1963,8 +1996,7 @@
   const bonuses=placed.slotBonuses||[];
   if(bonuses.some(b=>!['credits','energy','publicity'].includes(b.type)||Object.keys(b).some(k=>k!=='type'&&k!==b.type)))return{available:false,reason:'blue-tail-needs-native-choice'};
   for(const b of bonuses)players.gainResources(copy,{[b.type]:b[b.type]});
-  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
-  const score=endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
+  const score=dataScoreDelta(state,p,copy);
   const resource=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+((copy.resources[k]||0)-(p.resources[k]||0))*w,0);
   const capital={afterCapital:demand.planningCapital(state,copy),beforeCapital:beforeCapital??demand.planningCapital(state,p)};
   const option=capital.afterCapital-capital.beforeCapital;
@@ -1989,8 +2021,7 @@
     players.gainResources(copy,{[bonus.type]:bonus[bonus.type]});
    }
   }
-  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
-  const score=endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
+  const score=dataScoreDelta(state,p,copy);
   const resources=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(copy.resources[k]-p.resources[k])*w,0);
   const capital={afterCapital:demand.planningCapital(state,copy),beforeCapital:beforeCapital??demand.planningCapital(state,p)};
   const net=stateValue.sumValueParts([score,resources,capital.afterCapital,-capital.beforeCapital]);

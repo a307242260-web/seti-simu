@@ -2825,6 +2825,19 @@
       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
       const pending=stored.envelope.session?.session;
+      // A regular Native reward menu cannot supply a new resource plan.
+      // Retain its complete menu and policy shape without rebuilding wallets,
+      // except for typed preparation, scan, payment, or root recovery.
+      if(node.status==="decision"&&node!==openedRoot&&!stored.resourceControl){
+        const source=pending?.journal?.actions?.[0]?.action,decision=pending?.queue?.[0]?.payload?.decisionContext;
+        if(!resourceDemand.isPreparation(source||{})&&source?.family!=="move"
+          &&!(scanPlanning&&localPlans.scanDecision(node.legalActions))
+          &&!(decision?.kind==="discard"&&resourceDemand.MONEY.has(decision.tradeId))){
+          const spec=cardPickSpec(node)?.fixed?null:freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+            plans:[],retainedActionIds:node.legalActions.map(a=>a.actionId),excludedActionIds:[]});
+          resourceSpecs.set(node,spec);return spec;
+        }
+      }
       const shipment=node===openedRoot&&!stored.resourceControl&&!stored.intent&&fundedEarthShipmentStep(node,stored,null,pending);
       const shipmentPlan=shipment&&{id:"cargo:funded:"+shipment.quote.cardId,
         goal:{...shipment.quote,id:"cargo:funded:"+shipment.quote.cardId,required:{}},operation:{},
