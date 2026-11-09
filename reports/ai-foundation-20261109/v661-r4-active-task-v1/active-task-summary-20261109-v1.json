@@ -1,0 +1,105 @@
+{
+  "source": "325149701fe7139043ad73b9467a0e804a4d5cd1",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "officialStart": {
+    "previous": {
+      "action": "深空探测 1x 行动",
+      "actionId": "industry:e887dc52",
+      "value": 205.5,
+      "native": 781,
+      "ms": 1710.21525,
+      "complete": true
+    },
+    "candidate": {
+      "action": "深空探测 1x 行动",
+      "actionId": "industry:e887dc52",
+      "value": 205.5,
+      "native": 707,
+      "ms": 1677.562791,
+      "complete": true
+    },
+    "allRootRankingsEqual": true,
+    "rootAndRngUnchanged": true,
+    "nativeInputCategories": {
+      "launch|stable|—": 5,
+      "play_card|stable|—": 12,
+      "pass|stable|—": 5,
+      "industry|stable|—": 2,
+      "choose_card|residual_company_decision|industry": 4,
+      "card_corner|stable|—": 22,
+      "place_data|stable|—": 9,
+      "choose_target|science_domain_place_data|place_data": 9,
+      "analyze|stable|—": 2,
+      "quick_trade|stable|—": 8,
+      "move|stable|—": 40,
+      "choose_payment|probe_turn_move_payment|move": 40,
+      "land|stable|—": 5,
+      "scan|stable|—": 5,
+      "choose_target|science_domain_scan_step|scan": 15,
+      "choose_card|science_domain_scan_step|scan": 55,
+      "choose_target|science_domain_scan_action_4|scan": 28,
+      "choose_card|standard_action_session_decision|quick_trade": 3,
+      "choose_card|science_domain_pick_card|place_data": 107,
+      "choose_target|science_domain_alien_trace|analyze": 6,
+      "choose_target|science_domain_alien_trace|land": 30,
+      "choose_card|residual_alien_card_decision|land": 10,
+      "accept_optional_effect|residual_card_decision|land": 20,
+      "end_turn|stable|—": 78,
+      "accept_optional_effect|residual_card_decision|end_turn": 74,
+      "choose_payment|standard_action_session_decision|quick_trade": 3,
+      "choose_target|science_domain_scan_step|play_card": 44,
+      "choose_card|science_domain_scan_step|play_card": 44,
+      "choose_target|science_domain_scan_action_4|play_card": 22
+    }
+  },
+  "activeTasks": {
+    "nativePreviewReplays": 74,
+    "exactDelayedEndPairs": 29,
+    "exactDataThenClaimPairs": 44,
+    "uncoveredCardCornerPair": 1,
+    "prunedOrReordered": false
+  },
+  "teacherCheckpoints": [
+    {
+      "input": 314,
+      "chosen": "跳过",
+      "actionId": "choose_target:f042ebe0",
+      "value": 227.5,
+      "native": 6,
+      "ms": 70.723916
+    },
+    {
+      "input": 351,
+      "chosen": "移动 6 向内",
+      "actionId": "choose_target:43d1120f",
+      "value": 257.5,
+      "native": 10,
+      "ms": 70.62070800000004
+    },
+    {
+      "input": 354,
+      "chosen": "跳过 chong_3.webp",
+      "actionId": "accept_optional_effect:564fb7e2",
+      "value": 257.5,
+      "native": 2,
+      "ms": 32.630875
+    },
+    {
+      "input": 359,
+      "chosen": "分析",
+      "actionId": "analyze:a5629aa3",
+      "value": 280.5,
+      "native": 385,
+      "ms": 953.0459169999999
+    },
+    {
+      "input": 355,
+      "chosen": "放置数据",
+      "actionId": "place_data:8fd12fd3",
+      "value": 280.5,
+      "native": 409,
+      "ms": 969.6107499999998
+    }
+  ]
+}
