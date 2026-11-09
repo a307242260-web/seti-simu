@@ -1,0 +1,2467 @@
+{
+  "engine": "652666f8e9f5ee3f007cf5c20111a2e4440f489f",
+  "fixture": "human405-teacher-272",
+  "rootExact": true,
+  "repeatedStateAndRngExact": true,
+  "newSearches": 0,
+  "rows": [
+    {
+      "route": "triton",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 22,
+          "value": 216.5,
+          "board": 145,
+          "secured": 206,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 15,
+          "value": 221.5,
+          "board": 152,
+          "secured": 213,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 10,
+            "score": 152
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-amiba-9-18",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 7,
+          "value": 231,
+          "board": 160,
+          "secured": 225,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 4,
+            "score": 160
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-amiba-9-18",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 4,
+          "nativeInputs": 5,
+          "value": 238,
+          "board": 162,
+          "secured": 234,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 162
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 5,
+          "nativeInputs": 6,
+          "value": 246,
+          "board": 169,
+          "secured": 243,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 169
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [],
+          "blue": [],
+          "hand": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": []
+        }
+      ]
+    },
+    {
+      "route": "paid-blue4-orange1",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 7,
+          "value": 228,
+          "board": 148,
+          "secured": 213,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 3,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 4,
+            "score": 148
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 4,
+          "nativeInputs": 5,
+          "value": 234.5,
+          "board": 150,
+          "secured": 222,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 5,
+            "score": 150
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 1,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "nativeInputs": 14,
+          "value": 255,
+          "board": 176,
+          "secured": 248,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 8,
+            "score": 176
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        }
+      ]
+    },
+    {
+      "route": "paid-analyze-orange1",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 3,
+          "value": 224.5,
+          "board": 145,
+          "secured": 208,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 145
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [],
+          "blue": [],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 4,
+          "nativeInputs": 5,
+          "value": 224,
+          "board": 147,
+          "secured": 210,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 9,
+            "score": 147
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [],
+          "blue": [],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 2,
+              "y": 1
+            }
+          ]
+        }
+      ],
+      "failedToLand": {
+        "turn": 5,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 10,
+          "score": 147
+        },
+        "target": {
+          "x": 1,
+          "y": 4,
+          "energy": 3
+        },
+        "ordinaryProbes": [
+          {
+            "x": 2,
+            "y": 4
+          }
+        ],
+        "usedInputs": 10
+      }
+    },
+    {
+      "route": "paid-blue4-no-deposit",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 5,
+          "value": 227.5,
+          "board": 148,
+          "secured": 213,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 2,
+            "score": 148
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 4,
+          "nativeInputs": 5,
+          "value": 234,
+          "board": 150,
+          "secured": 222,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 3,
+            "score": 150
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 1,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "nativeInputs": 14,
+          "value": 254.5,
+          "board": 176,
+          "secured": 248,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 6,
+            "score": 176
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        }
+      ]
+    },
+    {
+      "route": "paid-analyze-then-extra-trade",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 3,
+          "value": 224.5,
+          "board": 145,
+          "secured": 208,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 145
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [],
+          "blue": [],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 4,
+          "nativeInputs": 5,
+          "value": 224,
+          "board": 147,
+          "secured": 210,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 9,
+            "score": 147
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [],
+          "blue": [],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 2,
+              "y": 1
+            }
+          ]
+        }
+      ],
+      "failedToLand": {
+        "turn": 5,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 3,
+          "handSize": 0,
+          "publicity": 10,
+          "score": 147
+        },
+        "target": {
+          "x": 1,
+          "y": 4,
+          "energy": 3
+        },
+        "ordinaryProbes": [
+          {
+            "x": 2,
+            "y": 4
+          }
+        ],
+        "usedInputs": 14
+      }
+    },
+    {
+      "route": "paid-orange1-land",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 5,
+          "value": 219,
+          "board": 144,
+          "secured": 205,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 9,
+            "score": 144
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 2,
+              "y": 1
+            }
+          ]
+        }
+      ],
+      "failedToLand": {
+        "turn": 4,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 10,
+          "score": 144
+        },
+        "target": {
+          "x": 1,
+          "y": 4,
+          "energy": 3
+        },
+        "ordinaryProbes": [
+          {
+            "x": 2,
+            "y": 4
+          }
+        ],
+        "usedInputs": 10
+      }
+    },
+    {
+      "route": "paid-orange1-early-extra-trade",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 5,
+          "value": 219,
+          "board": 144,
+          "secured": 205,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 9,
+            "score": 144
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 2,
+              "y": 1
+            }
+          ]
+        }
+      ],
+      "failedToLand": {
+        "turn": 4,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 3,
+          "handSize": 0,
+          "publicity": 10,
+          "score": 144
+        },
+        "target": {
+          "x": 1,
+          "y": 4,
+          "energy": 3
+        },
+        "ordinaryProbes": [
+          {
+            "x": 2,
+            "y": 4
+          }
+        ],
+        "usedInputs": 14
+      }
+    },
+    {
+      "route": "paid-orange1-early-aligned",
+      "turns": [
+        {
+          "turn": 1,
+          "nativeInputs": 14,
+          "value": 207,
+          "board": 116,
+          "secured": 173,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 7,
+              "x": 3,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "nativeInputs": 19,
+          "value": 219.5,
+          "board": 142,
+          "secured": 203,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "ordinaryProbes": []
+        },
+        {
+          "turn": 3,
+          "nativeInputs": 5,
+          "value": 219,
+          "board": 144,
+          "secured": 205,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 9,
+            "score": 144
+          },
+          "tech": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "ordinaryProbes": [
+            {
+              "id": 8,
+              "x": 2,
+              "y": 1
+            }
+          ]
+        }
+      ],
+      "failedToLand": {
+        "turn": 4,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 0,
+          "publicity": 10,
+          "score": 144
+        },
+        "target": {
+          "x": 1,
+          "y": 4,
+          "energy": 3
+        },
+        "ordinaryProbes": [
+          {
+            "x": 1,
+            "y": 4
+          }
+        ],
+        "usedInputs": 16
+      }
+    }
+  ]
+}
