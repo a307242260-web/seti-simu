@@ -1763,6 +1763,32 @@
     return state;
   }
 
+  function previewEmptyAmibaResearchTrigger(session, selected, knownCards) {
+    const source=session.workingState,turn=source.turn,head=session.queue[0],payload=head?.payload,match=payload?.matches?.[0];
+    const owner=actor(source,head?.ownerId),origin=session.journal.actions[0]?.action?.family;
+    if(session.phase!=="awaiting_input"||session.queue.length!==1||session.failure||session.interruptContext||session.undoFrames.length
+      ||head?.type!==EFFECT_TYPES.CARD_DECISION||head.kind!=="decision"||head.allowQuickActions
+      ||!["research_tech","play_card"].includes(origin)||source.meta.stateVersion!==session.baseVersion
+      ||selected?.family!=="accept_optional_effect"||selected.actorId!==head.ownerId
+      ||turn.roundNumber!==4||turn.gameEnded||turn.currentPlayerId!==owner?.id||!owner.mainActionCompleted||owner.passCompletionPending
+      ||turn.cardTurnEventBonuses?.length||listFossilArrivalEvents(source).length
+      ||payload.kind!=="trigger"||payload.matches?.length!==1||payload.event?.type!=="researchTech"
+      ||payload.event.techType!=="blue"||payload.event.playerId!==owner.id||match.ruleId!=="amiba1-blue-tech"
+      ||owner.reservedCards.some(c=>!knownCards.has(c.id))||amiba.listSymbolsInRegion(source.aliens,"blue").length)return null;
+    const card=owner.reservedCards.find(c=>c.id===match.cardInstanceId);
+    const reward=cardEffects.getCardModel(card)?.triggers?.find(t=>t.id===match.ruleId)?.effect;
+    if(card?.cardId!=="amiba_1.webp"||reward?.type!==amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD
+      ||reward.options?.region!=="blue"||(reward.options.repeat??1)!==1)return null;
+    const player={...owner,reservedCards:clone(owner.reservedCards)};
+    const state={...source,meta:{...source.meta,stateVersion:session.baseVersion+1},
+      cards:{...source.cards,drawPileCardIds:[...source.cards.drawPileCardIds],removedFromGameCardIds:[...source.cards.removedFromGameCardIds]},
+      players:{...source.players,players:source.players.players.map(p=>p===owner?player:p)}};
+    if(state.meta.rngState?.branch===true){state.meta.rngState={...state.meta.rngState};delete state.meta.rngState.branch;}
+    const result=resolveCardSettlement(state,head,selected);
+    if(!result.ok||result.irreversible||result.spawnedEffects.length||augmentEffectResult(state,result,head).spawnedEffects.length)return null;
+    return state;
+  }
+
   function settleFinalScores(root) {
     const scores = [];
     for (const player of root.players.players || []) {
@@ -2521,6 +2547,7 @@
     queryCardSettlement: findCardSettlement,
     previewQuietEndHandoffs,
     previewQuietAmibaYellowLanding,
+    previewEmptyAmibaResearchTrigger,
     previewQuietResourceCorner,
     hasPendingFossilArrival:root=>listFossilArrivalEvents(root).length>0,
     cardDecisionChoices,

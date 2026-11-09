@@ -969,6 +969,61 @@
     return formalizeChoices(root,effect.ownerId,choices);
   }
 
+  function scanDecisionEffect(type, ownerId, payload, decisionKind = "choose_target") {
+    return {
+      priority: "direct",
+      effect: { type, kind: "decision", decisionKind, ownerId, payload: clone(payload) },
+    };
+  }
+
+  function resolveResearchSelection(root, effect, choice) {
+    const result = executeResearchChoice(
+      root,
+      effect.ownerId,
+      choice,
+      effect.payload?.options || {},
+    );
+    if (!result.ok) return result;
+    const actor = getActor(root, effect.ownerId);
+    if (!effect.payload?.options?.skipCost) consumeAlienLabPanel(actor, "pink");
+    if (effect.payload?.consumeMainAction && actor) actor.mainActionCompleted = true;
+    const spawnedEffects = [];
+    if (result.awaitingCardSelection) {
+      spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
+    }
+    if (result.tileId === "orange1") {
+      const context = createActionContext(root, effect.ownerId);
+      // The tile has already raised the limit. If earlier effects filled
+      // that capacity, skip only the extra launch, not the research.
+      if (abilities.rocket.getActiveRocketCountForPlayer(context.pieces, actor.id)
+        < abilities.rocket.getRocketLimitForPlayer(actor, context)) {
+        const launch = abilities.executeAbility("launchProbe", context, {
+          skipCost: true,
+          source: "tech",
+        });
+        if (!launch.ok) return launch;
+      }
+    }
+    if (effect.payload?.options?.afterResearchReward?.kind === "repeatBonus"
+      && !effect.payload.options.skipBonus) {
+      const repeated = tech.resolver.applyTechBonus(createActionContext(root, effect.ownerId), {
+        bonusId: result.bonusId,
+        firstTake: false,
+        skipCardSelection: true,
+      });
+      if (!repeated.ok) return repeated;
+      if (repeated.awaitingCardSelection) {
+        spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
+      }
+    }
+    return { ok: true,
+      spawnedEffects,
+      irreversible: { code: "tech_bonus_reveal", reason: "拿取科技后露出下一张 bonus" },
+      events: clone(result.events || []),
+      history: [{ type: "science_research", tileId: result.tileId, executorId: EXECUTOR_ID }],
+    };
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -985,13 +1040,6 @@
 
     function scienceResult(state, root, source, extra = {}) {
       return { ok: true, nextState: committed(state, root, source), ...extra };
-    }
-
-    function scanDecisionEffect(type, ownerId, payload, decisionKind = "choose_target") {
-      return {
-        priority: "direct",
-        effect: { type, kind: "decision", decisionKind, ownerId, payload: clone(payload) },
-      };
     }
 
     // 统一扫描节点 spawn：非决策形态（execute 内自动决定直接扫描或提升决策）。
@@ -1845,51 +1893,8 @@
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const result = executeResearchChoice(
-          root,
-          effect.ownerId,
-          choice,
-          effect.payload?.options || {},
-        );
-        if (!result.ok) return result;
-        const actor = getActor(root, effect.ownerId);
-        if (!effect.payload?.options?.skipCost) consumeAlienLabPanel(actor, "pink");
-        if (effect.payload?.consumeMainAction && actor) actor.mainActionCompleted = true;
-        const spawnedEffects = [];
-        if (result.awaitingCardSelection) {
-          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
-        }
-        if (result.tileId === "orange1") {
-          const context = createActionContext(root, effect.ownerId);
-          // The tile has already raised the limit. If earlier effects filled
-          // that capacity, skip only the extra launch, not the research.
-          if (abilities.rocket.getActiveRocketCountForPlayer(context.pieces, actor.id)
-            < abilities.rocket.getRocketLimitForPlayer(actor, context)) {
-            const launch = abilities.executeAbility("launchProbe", context, {
-              skipCost: true,
-              source: "tech",
-            });
-            if (!launch.ok) return launch;
-          }
-        }
-        if (effect.payload?.options?.afterResearchReward?.kind === "repeatBonus"
-          && !effect.payload.options.skipBonus) {
-          const repeated = tech.resolver.applyTechBonus(createActionContext(root, effect.ownerId), {
-            bonusId: result.bonusId,
-            firstTake: false,
-            skipCardSelection: true,
-          });
-          if (!repeated.ok) return repeated;
-          if (repeated.awaitingCardSelection) {
-            spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
-          }
-        }
-        return scienceResult(state, root, EFFECT_TYPES.RESEARCH, {
-          spawnedEffects,
-          irreversible: { code: "tech_bonus_reveal", reason: "拿取科技后露出下一张 bonus" },
-          events: clone(result.events || []),
-          history: [{ type: "science_research", tileId: result.tileId, executorId: EXECUTOR_ID }],
-        });
+        const selected = resolveResearchSelection(root, effect, choice);
+        return selected.ok ? scienceResult(state, root, EFFECT_TYPES.RESEARCH, selected) : selected;
       },
     });
 
@@ -1963,6 +1968,7 @@
     listPickCardChoices,
     listResearchChoices,
     executeResearchChoice,
+    resolveResearchSelection,
     getResearchDataCount,
     formalizeChoices,
   });

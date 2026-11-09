@@ -463,7 +463,7 @@
     const chongEndTemplates=new Map(),chongQueuedTemplates=new Map();
     let provedChongQueuedTasks=0;
     let provedAmibaYellowLandingInputs=0;
-    let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+    let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
     let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
     const scan4RefillCache=new Map();
@@ -655,7 +655,7 @@
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
-      submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0;
+      submissionCount = 0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
       quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
@@ -1290,6 +1290,95 @@
       return next;
     }
 
+    // Preserve the real refill and journal while the search only sees
+    // identities already known at the current root.
+    function previewFixedResearchPick(node,stored,action){
+      if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
+        ||!Number.isInteger(action.target?.publicSlotIndex))return null;
+      const checkpoint=stored.envelope.session,s=checkpoint?.session,head=s?.queue[0],types=scienceSession.EFFECT_TYPES;
+      const source=s?.journal.actions[0]?.action?.family;
+      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length||s.queue.length>3
+        ||!["research_tech","play_card"].includes(source)
+        ||!["tech_bonus_reveal","hidden_card_reveal"].includes(s.irreversibleBarrier?.code)
+        ||head?.type!==types.PICK_CARD||head.kind!=="decision"||Object.keys(head.payload).length
+        ||s.queue.some(e=>e.ownerId!==seatId||e.kind!=="decision"||e.allowQuickActions
+          ||![types.PICK_CARD,"residual_card_decision"].includes(e.type)))return null;
+      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      const known=knownCards(stored.envelope),i=action.target.publicSlotIndex,offer=state.cards.publicCards[i];
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||localPlans.hasPendingFossilArrival(state)
+        ||!offer||!known.has(offer.id)||offer.id!==action.target.cardInstanceId||action.target.choiceId!==`pick:${offer.id}`
+        ||!cards.getCatalogEntryForCard(offer)||p.reservedCards.some(c=>!known.has(c.id)))return null;
+      const pick=cardPickSpec(node);
+      if(!pick?.fixed||pick.selectedActionId!==action.actionId)return null;
+      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...quietSavedMeta(state.meta,s.baseVersion+Number(s.queue.length===1)),sequences:{...state.meta.sequences}},
+        cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
+      next.cards.publicCards[i]={...offer};
+      let usedRandom=false;
+      const picked=cards.pickFromPublic(next.cards,next.players,player,i,()=>{usedRandom=true;return 0;},{root:next});
+      const event={type:"place_data_pick_card",playerId:seatId,cardInstanceId:offer.id};
+      if(!picked.ok||usedRandom||!picked.replenished||cardEffects.collectMatchingTriggers(player,event).length)return null;
+      return prepareResearchContinuation(stored,next,action,{
+        irreversible:{code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"},events:[event],
+        rng:[{owner:"science",cursor:next.meta.rngState?.science?.cursor||0}],
+      });
+    }
+
+    function previewFixedResearchSelection(node,stored,action){
+      if(!resourcePlanning||node.status!=="decision"||action.family!=="choose_target"||!action.target?.tileId)return null;
+      const s=stored.envelope.session?.session,head=s?.queue[0],options=head?.payload?.options,origin=s?.journal.actions[0]?.action;
+      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.irreversibleBarrier||s.undoFrames.length||s.queue.length!==1
+        ||head.type!==scienceSession.EFFECT_TYPES.RESEARCH||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
+        ||!["research_tech","play_card"].includes(origin?.family)
+        ||!options||(options.repeat??1)!==1||options.afterResearchReward&&options.afterResearchReward.kind!=="repeatBonus")return null;
+      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
+      const tile=state.tech.stacks[action.target.tileId];
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
+        ||!tile||tile.bonusHidden||tile.bonusIndex!==knownRootTechIndices.get(action.target.tileId)
+        ||p.reservedCards.some(c=>!known.has(c.id))
+        ||origin.family==="play_card"&&!known.has(origin.target.cardInstanceId))return null;
+      // Rotation and research can write several rule slices. Give the same
+      // Production resolver an isolated copy; only deterministic exits qualify.
+      const next=structuredClone(state),result=scienceSession.resolveResearchSelection(next,head,action);
+      if(!result.ok||result.events.length!==1||result.events[0].type!=="researchTech"
+        ||JSON.stringify(next.meta.rngState)!==JSON.stringify(state.meta.rngState)
+        ||localPlans.hasPendingFossilArrival(next))return null;
+      const augmented=localPlans.augmentResearchSelection(next,result,head);
+      if(augmented.events.length!==1||augmented.spawnedEffects.length>3||augmented.spawnedEffects.some(x=>
+        (x.priority??"direct")!=="direct"||x.effect?.ownerId!==seatId||x.effect.kind!=="decision"
+        ||x.effect.allowQuickActions||![scienceSession.EFFECT_TYPES.PICK_CARD,"residual_card_decision"].includes(x.effect.type)))return null;
+      next.meta=quietSavedMeta(next.meta,s.baseVersion+Number(!augmented.spawnedEffects.length));
+      return prepareResearchContinuation(stored,next,action,augmented);
+    }
+
+    function prepareResearchContinuation(stored,next,action,result){
+      const checkpoint=stored.envelope.session,s=checkpoint.session,head=s.queue[0],types=scienceSession.EFFECT_TYPES;
+      const revision=s.revision+1,barrier={effectId:head.effectId,revision,...result.irreversible};
+      let nextEffectSequence=s.nextEffectSequence,nextGroupSequence=s.nextGroupSequence;
+      const queue=[...(result.spawnedEffects||[]).map(({effect})=>({
+        schemaVersion:head.schemaVersion,effectId:s.sessionId+":effect:"+(++nextEffectSequence),
+        groupId:s.sessionId+":group:"+(++nextGroupSequence),groupKind:"spawned",type:effect.type,kind:"decision",
+        ownerId:seatId,decisionKind:effect.decisionKind||null,allowQuickActions:false,payload:effect.payload,
+        source:{parentEffectId:head.effectId,priority:"direct"},groupIndex:0,
+      })),...s.queue.slice(1)];
+      if(!queue.length)return {barrier,state:next};
+      const pending=queue[0],choices=pending.type===types.PICK_CARD
+        ?scienceSession.formalizeChoices(next,seatId,scienceSession.listPickCardChoices(next))
+        :localPlans.residualCardChoices(next,pending);
+      if(!choices.length)return null;
+      const j=s.journal,cursor=j.replay.length,decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const effect={effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision};
+      const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:next,queue,revision,irreversibleBarrier:barrier,
+        nextEffectSequence,nextGroupSequence,
+        journal:{...j,decisions:[...j.decisions,decision],effects:[...j.effects,effect],events:[...j.events,...result.events],
+          history:[...j.history,...(result.history||[])],rng:[...j.rng,...(result.rng||[])],
+          replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
+      return {barrier,prepared:{envelope:withEnvelopeSession(stored.envelope,session),
+        inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
+    }
+
     function provedCommittedEnvelope(stored, state) {
       const captured=freeze(state);
       let bytes;
@@ -1466,6 +1555,26 @@
         const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanMove.barrier},
           nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,prepared);
         provedScan4QuietMoves++;
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const researchPick=previewFixedResearchPick(node,stored,requested);
+      const researchSelection=previewFixedResearchSelection(node,stored,requested);
+      const research=researchPick||researchSelection;
+      const emptyAmibaResearch=resourcePlanning&&node.status==="decision"&&requested.family==="accept_optional_effect"&&taskSession
+        ?localPlans.previewEmptyAmibaResearchTrigger(taskSession,requested,knownCards(stored.envelope)):null;
+      if(research||emptyAmibaResearch){
+        const before={session:{irreversibleBarrier:taskSession.irreversibleBarrier}},barrier=research?.barrier;
+        const control=stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"
+          ?stored.resourceControl:null;
+        let prepared=research?.prepared;
+        if(!prepared){
+          const envelope=provedCommittedEnvelope(stored,research?.state||emptyAmibaResearch);
+          restoreEnvelope(envelope,true);
+          prepared={envelope,inspection:{phase:"idle",session:null}};
+        }
+        const child=finishChild(before,{irreversibleBarrier:barrier},movementPlanning?nextMovementIntent(node,requested):null,
+          control,stored.informationBarrier,requested,stored,prepared);
+        if(researchPick)provedResearchPicks++;else if(researchSelection)provedResearchSelections++;else provedEmptyAmibaResearch++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const fixedBluePick=previewFixedBluePickSettlement(node,stored,requested);
@@ -7733,7 +7842,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,

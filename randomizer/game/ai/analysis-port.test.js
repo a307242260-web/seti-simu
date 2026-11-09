@@ -607,8 +607,9 @@ console.log("trusted analysis fork isolation and exact reuse passed");
     assert.equal(legalActions.find(a => a.actionId === q.actionId).family, "place_data");
     const d = port.getDiagnostics();
     for (const key of ["provedComputerIncomeMenus", "provedCurrencyIncomeInputs",
-      "provedPublicScanChoices", "provedScan4QuietMoves", "provedFinalResourceCorners"]) assert(d[key] > 0, key);
-    assert(q.diagnostics.nativeExecutions <= 379);
+      "provedPublicScanChoices", "provedScan4QuietMoves", "provedFinalResourceCorners",
+      "provedResearchSelections", "provedResearchPicks", "provedEmptyAmibaResearch"]) assert(d[key] > 0, key);
+    assert(q.diagnostics.nativeExecutions <= 256);
     assert.deepEqual(c.lifecycle.save().envelope, root);
   } finally { port.close(); c.dispose(); }
 }

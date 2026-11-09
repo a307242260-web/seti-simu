@@ -1,0 +1,361 @@
+{
+  "baselineCommit": "b5a50b37cdf7217fca8a7d2af955df0c86c91330",
+  "runtimeSha256": {
+    "randomizer/game/ai/analysis-port.js": "2ae5324196c221c386dc77bfe5ff03471144b4d3f4304eb76432c5782a40af6f",
+    "randomizer/game/ai/local-decision-plans.js": "c44f3e014c9b0ea9d293e15a3aa60332743a9605252878e8b63091aa1b40b1ff",
+    "randomizer/game/effects/residual-domain-session.js": "e73d1448a2ca81b86b1aa0a7df364b707eca4f16125b6a432f032faedd80853a",
+    "randomizer/game/effects/science-session.js": "5b423a04baca32cfbfbf512c03c1d81d5c89551730508e83f88522a2d7deafab"
+  },
+  "gates": {
+    "before": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "milliseconds": 691.035333,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 149,
+        "milliseconds": 423.7350839999999,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 379,
+        "milliseconds": 1074.5891669999999,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    },
+    "after": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "milliseconds": 671.6481249999999,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 85,
+        "milliseconds": 427.2818340000001,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 251,
+        "milliseconds": 1038.800833,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    }
+  },
+  "counts": {
+    "research": 56,
+    "pick": 40,
+    "empty-trigger": 32
+  },
+  "exactRoots": 33,
+  "rootRankings": [
+    [
+      "scan:2d21a323",
+      206.5,
+      -10.5,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:f1918668",
+      204.5,
+      -11.5,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:1da9864f",
+      194.5,
+      -10,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:88ec7135",
+      214.5,
+      -20,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:1a1c19d3",
+      198,
+      -11.5,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:ddbaa2ce",
+      213,
+      -20,
+      0,
+      "complete"
+    ],
+    [
+      "play_card:5eb1b0e8",
+      195.5,
+      -10,
+      0,
+      "complete"
+    ],
+    [
+      "pass:a1f33c73",
+      171,
+      0,
+      0,
+      "complete"
+    ],
+    [
+      "move:c16025a6",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:bde97b72",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:23807efa",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:a36e0e84",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:2df2f24d",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "move:2a7c4819",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:90134ba1",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "move:0febc073",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "quick_trade:f385e2ac",
+      215.5,
+      0,
+      0,
+      "complete"
+    ],
+    [
+      "quick_trade:49c75492",
+      null,
+      null,
+      null,
+      "excluded-by-card-pick-policy"
+    ],
+    [
+      "quick_trade:12411a2c",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "quick_trade:a39c1a77",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "quick_trade:37140fcf",
+      null,
+      null,
+      null,
+      "excluded-by-card-pick-policy"
+    ],
+    [
+      "quick_trade:122c43fc",
+      null,
+      null,
+      null,
+      "excluded-by-card-pick-policy"
+    ],
+    [
+      "quick_trade:df811f99",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "quick_trade:71814d67",
+      197,
+      -10,
+      0,
+      "complete"
+    ],
+    [
+      "quick_trade:be9dd0cd",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "industry:e887dc52",
+      null,
+      null,
+      null,
+      "excluded-by-card-pick-policy"
+    ],
+    [
+      "card_corner:730579d5",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "card_corner:367a82a7",
+      213,
+      -19,
+      0,
+      "complete"
+    ],
+    [
+      "card_corner:cb6e4492",
+      null,
+      null,
+      null,
+      "excluded-by-movement-policy"
+    ],
+    [
+      "card_corner:bf0cc13d",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "card_corner:c4357b44",
+      null,
+      null,
+      null,
+      "excluded-by-resource-policy"
+    ],
+    [
+      "card_corner:40cda505",
+      205.5,
+      -11.5,
+      0,
+      "complete"
+    ],
+    [
+      "place_data:8fd12fd3",
+      216.5,
+      0,
+      0,
+      "complete"
+    ]
+  ],
+  "unshippedCapitalCache": {
+    "official": {
+      "choice": {
+        "milliseconds": [
+          660.8000420000001,
+          659.435,
+          649.663458
+        ],
+        "medianMilliseconds": 659.435,
+        "nativeInputs": 165
+      },
+      "capital": {
+        "milliseconds": [
+          658.560875,
+          657.107375,
+          666.1381250000001
+        ],
+        "medianMilliseconds": 658.560875,
+        "nativeInputs": 165
+      }
+    },
+    "272": {
+      "choice": {
+        "milliseconds": [
+          1189.885375,
+          1181.839584,
+          1192.158208
+        ],
+        "medianMilliseconds": 1189.885375,
+        "nativeInputs": 251
+      },
+      "capital": {
+        "milliseconds": [
+          1174.138792,
+          1191.854333,
+          1167.536
+        ],
+        "medianMilliseconds": 1174.138792,
+        "nativeInputs": 251
+      }
+    }
+  },
+  "officialHistoricalReplay": {
+    "replayedInputs": 67,
+    "score": 216,
+    "exactStateSessionAndRng": true
+  }
+}
