@@ -225,9 +225,24 @@
   }
 
   const fixedScoreSatellitesByDirectory = new WeakMap();
+  const oneEnergyHandTrade = cardsToE.gain.energy === 1 && cardsToE.cost.handSize === 2;
+  function knownMoveWindow(facts, weights) {
+    return weights === arithmetic.DEFAULT_WEIGHTS && facts.round === 4 && facts.uncontestedRound
+      && !facts.pendingNativeEffects && !facts.turnCardBonusCount;
+  }
+
+  function noCurrencyEndpoint(facts, weights) {
+    const p = facts.player;
+    if (p.energy !== 0 || p.credits >= cToE.cost.credits
+      || planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT <= 0
+      || planetAbility.DEFAULT_ORBIT_COST.energy <= 0) return false;
+    // A single hand exchange can fund a one-energy satellite only with the
+    // landing tech and a planet orbit discount. Native requirements verify both.
+    return !(oneEnergyHandTrade && knownMoveWindow(facts, weights)
+      && p.techState?.ownedTiles?.orange3 && !p.techState.disabledTiles?.orange3);
+  }
   function knownMoveGoals(facts, goals, weights) {
-    if (weights !== arithmetic.DEFAULT_WEIGHTS || facts.round !== 4 || !facts.uncontestedRound
-      || facts.pendingNativeEffects || facts.turnCardBonusCount) return [];
+    if (!knownMoveWindow(facts, weights)) return [];
     let satellites = fixedScoreSatellitesByDirectory.get(goals);
     if (!satellites) {
       satellites = goals.filter(goal => goal.endpointFamily === 'land' && !goal.requirementId.endsWith(':planet')
@@ -241,9 +256,9 @@
     return satellites.filter(goal => {
       const {credits=0,energy=0} = goal.endpointFacts.cost;
       const spareCredits = wallet.credits - credits, spareEnergy = wallet.energy - energy;
-      // Leave the landing fee in the wallet. If ordinary currency already
-      // funds the route, its existing quote remains the sole alternative.
-      return spareCredits >= 0 && spareEnergy >= 0
+      // One known exchange can pay the last unit of the landing fee.
+      // If ordinary currency funds the route, keep its original quote.
+      return spareCredits >= 0 && spareEnergy >= (oneEnergyHandTrade ? -1 : 0)
         && spareEnergy + Math.floor(spareCredits / cToE.cost.credits) < goal.route.cost;
     });
   }
@@ -268,11 +283,12 @@
       // may supply a single remaining energy from two different non-move
       // cards. No alternative discards, new cards or sibling goals share it.
       const missing = energy + goal.route.cost - wallet.energy;
-      const cornerCardIds = corners.slice(0, missing), totalEnergy = energy + goal.route.cost - cornerCardIds.length;
+      const cornerCardIds = corners.slice(0, Math.min(goal.route.cost, missing));
+      const totalEnergy = energy + goal.route.cost - cornerCardIds.length;
       let payment = funding(wallet, {credits,energy:totalEnergy}, weights);
       let exchangeCardIds = [];
       if (!payment && totalEnergy === wallet.energy + 1
-        && cardsToE.gain.energy === 1 && cardsToE.cost.handSize === 2 && exchange.length >= 2) {
+        && oneEnergyHandTrade && exchange.length >= 2) {
         exchangeCardIds = exchange.slice(0, 2);
         payment = {spend:{credits,energy:wallet.energy}, energyPurchases:0, creditPurchases:0,
           value:credits * weights.credits + wallet.energy * weights.energy};
@@ -322,8 +338,6 @@
     const inactive=state.turn.gameEnded||player.passCompletionPending||(state.passingPlayerIds||state.turn.passedPlayerIds).includes(player.id);
     if(inactive||!ownedProbes(state.pieces?.rockets,player).length)return {sensitive:false,quote:()=>0};
     const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
-    if(planetAbility.BASE_LAND_ENERGY_COST-1-planetAbility.ORANGE3_LAND_DISCOUNT>0
-      &&planetAbility.DEFAULT_ORBIT_COST.energy>0&&wallet.energy===0&&wallet.credits<cToE.cost.credits)return {sensitive:false,quote:()=>0};
     const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
       ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
       aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),traces:slot.traces}))}};
@@ -333,6 +347,7 @@
       pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),turnCardBonusCount:state.turn.cardTurnEventBonuses?.length,
       extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
     const weights=arithmetic.DEFAULT_WEIGHTS;
+    if(noCurrencyEndpoint(shared,weights))return {sensitive:false,quote:()=>0};
     const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
     const moveGoals=knownMoveGoals(shared,goals,weights);
     const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
@@ -391,13 +406,8 @@
       if (facts.board[key] == null) throw new Error(`PROBE_CAPITAL_PUBLIC_FACTS_MISSING: ${key}`);
     }
     if (!Array.isArray(facts.board.aliens.slots)) throw new Error('PROBE_CAPITAL_ALIEN_SLOTS_MISSING');
-    // All supported ordinary endpoints still cost at least one energy, or
-    // both orbit currencies. With no energy, fewer than two credits cannot
-    // fund even that lower bound; route/mission construction is unnecessary.
     const cardRoute=heldLandingCard(facts,weights);
-    if (!cardRoute && planetAbility.BASE_LAND_ENERGY_COST - 1 - planetAbility.ORANGE3_LAND_DISCOUNT > 0
-      && planetAbility.DEFAULT_ORBIT_COST.energy > 0
-      && player.energy === 0 && player.credits < cToE.cost.credits) return scalarOnly ? 0 : zero();
+    if (!cardRoute && noCurrencyEndpoint(facts,weights)) return scalarOnly ? 0 : zero();
     const goals = finalSwap?.prepared ? null : loadRequirements(facts,scalarOnly);
     if (goals?.length===0) return scalarOnly ? 0 : zero();
     // A finite supplied baseline requires no investment callback. With no

@@ -1,0 +1,226 @@
+{
+  "baseline": "67eef6234bdd60d704016d2a1ce08f1a9a32c06e",
+  "newFullGames": 0,
+  "fullQuoteBefore": {
+    "funded": false,
+    "selected": null,
+    "target": {
+      "id": "8:land:neptune:triton",
+      "funded": false,
+      "value": 0
+    },
+    "publicValue": 234.5,
+    "actual": 255,
+    "swapValue": 0,
+    "fullValue": 0
+  },
+  "fullQuoteAfter": {
+    "funded": true,
+    "selected": {
+      "id": "8:land:neptune:triton",
+      "family": "land",
+      "planet": "neptune",
+      "funded": true,
+      "supported": true,
+      "payment": {
+        "spend": {
+          "credits": 0,
+          "energy": 2
+        },
+        "energyPurchases": 0,
+        "creditPurchases": 0,
+        "value": 7,
+        "cornerCardIds": [
+          "alien-chong-2-8",
+          "alien-chong-9-18",
+          "card-66-0"
+        ],
+        "exchangeCardIds": [
+          "alien-amiba-9-20",
+          "alien-chong-6-16"
+        ]
+      },
+      "route": {
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "cost": 3,
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          }
+        ]
+      },
+      "ledger": [
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 26
+          },
+          "value": 26
+        }
+      ],
+      "capitalDelta": 0,
+      "dataContinuation": null,
+      "value": 19
+    },
+    "target": {
+      "id": "8:land:neptune:triton",
+      "family": "land",
+      "planet": "neptune",
+      "funded": true,
+      "supported": true,
+      "payment": {
+        "spend": {
+          "credits": 0,
+          "energy": 2
+        },
+        "energyPurchases": 0,
+        "creditPurchases": 0,
+        "value": 7,
+        "cornerCardIds": [
+          "alien-chong-2-8",
+          "alien-chong-9-18",
+          "card-66-0"
+        ],
+        "exchangeCardIds": [
+          "alien-amiba-9-20",
+          "alien-chong-6-16"
+        ]
+      },
+      "route": {
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "cost": 3,
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          }
+        ]
+      },
+      "ledger": [
+        {
+          "type": "gain_resources",
+          "gain": {
+            "score": 26
+          },
+          "value": 26
+        }
+      ],
+      "capitalDelta": 0,
+      "dataContinuation": null,
+      "value": 19
+    },
+    "publicValue": 253.5,
+    "actual": 255,
+    "swapValue": 19,
+    "fullValue": 19
+  },
+  "cold": [
+    {
+      "root": "teacher272",
+      "action": "place_data:8fd12fd3",
+      "value": 216.5,
+      "native": 198,
+      "graphEqual": false,
+      "ms": [
+        1088.366875,
+        1073.02525
+      ]
+    },
+    {
+      "root": "official",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 165,
+      "graphEqual": true,
+      "ms": [
+        634.954459,
+        612.1407919999999
+      ]
+    },
+    {
+      "root": "satellite",
+      "action": "place_data:8fd12fd3",
+      "value": 222.5,
+      "native": 999,
+      "graphEqual": true,
+      "ms": [
+        1898.709083,
+        1894.195
+      ]
+    },
+    {
+      "root": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphEqual": true,
+      "ms": [
+        224.60275,
+        226.59883399999998
+      ]
+    },
+    {
+      "root": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphEqual": true,
+      "ms": [
+        260.4762089999999,
+        260.807541
+      ]
+    },
+    {
+      "root": "known-research-then-launch",
+      "action": "analyze:a5629aa3",
+      "value": 266,
+      "native": 258,
+      "rootScoresEqual": true,
+      "ms": [
+        498.2403340000001,
+        480.220458
+      ]
+    }
+  ],
+  "gate": {
+    "native": 256,
+    "milliseconds": 600
+  },
+  "checked": [
+    "production replay and exact post-payment state/RNG",
+    "full, viewer and swap quote agreement",
+    "known-hand requirements",
+    "4 Node tests",
+    "2 Chrome smokes",
+    "V input audit"
+  ]
+}

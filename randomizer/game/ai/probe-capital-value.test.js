@@ -245,3 +245,41 @@ console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true,
     assert.deepEqual(c.lifecycle.save().envelope,before);
   }finally{port.close();c.dispose();}
 }
+
+// In the last round, three distinct move icons pay the route and two
+// other visible cards buy the one missing energy for the landing itself.
+{
+  const {root,end,actions}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'paid-landing-from-hand-20261110-v1.fixture.json.gz'))));
+  const seed=JSON.parse(root.committedState).meta.seed,seatId='player-white';
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+    projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
+  k.newGame({seed});const c=k.composition;
+  try{
+    assert(c.lifecycle.restore(root).ok);
+    const obs=()=>c.projection({role:'player',playerId:seatId}).state, facts=probe.factsFromObservation(obs(),seatId);
+    const q=f=>probe.quote({...f,investment:()=>0},values.DEFAULT_WEIGHTS);
+    const target=f=>q(f).candidates.find(a=>a.id.endsWith(':neptune:triton'));
+    const landing=target(facts);
+    assert.equal(landing.value,19);
+    assert.deepEqual(landing.payment.spend,{credits:0,energy:2});
+    const {cornerCardIds,exchangeCardIds}=landing.payment;
+    assert.equal(cornerCardIds.length,3);assert.equal(exchangeCardIds.length,2);
+    assert.equal(new Set([...cornerCardIds,...exchangeCardIds]).size,5);
+    const known=new Set([...cornerCardIds,exchangeCardIds[0]]);
+    assert.equal(target({...facts,hand:facts.hand.map(card=>known.has(card.id)?card:{...card,hidden:true})}).funded,false);
+    assert.equal(target({...facts,player:{...facts.player,energy:1}}).funded,false);
+    assert.equal(target({...facts,uncontestedRound:false}).funded,false);
+    assert.equal(values.evaluateStateValue(obs(),seatId).components.probePotential,19);
+    for(const recorded of actions){
+      const d=c.inspect().session?.decision;
+      const a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===recorded.actionId);
+      assert(a,recorded.summary);
+      const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+        :a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);
+      assert(r.ok,recorded.summary);
+    }
+    assert.deepEqual(c.lifecycle.save().envelope,end);
+    assert.equal(values.evaluateStateValue(obs(),seatId).components.probePotential,0);
+    assert(c.lifecycle.restore(root).ok);assert.deepEqual(c.lifecycle.save().envelope,root);
+  }finally{c.dispose();}
+}
