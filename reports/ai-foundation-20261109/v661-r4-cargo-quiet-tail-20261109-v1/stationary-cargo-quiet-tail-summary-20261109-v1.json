@@ -1,0 +1,135 @@
+{
+  "sources": {
+    "randomizer/game/ai/analysis-port.js": "0e5f5c0c8f4845ec5325661926c8134a6eeb9dd68dedf6ddb384168d78e80af3",
+    "randomizer/game/ai/local-decision-plans.js": "da21dce6ad9d3a12af6695126f1d190ff5dc3f5242cc6d36ef2e01e1539be126",
+    "randomizer/game/effects/residual-domain-session.js": "2fa5a080e500c46f35d8300858fcebff6c656c8c46b6a85b7ae01b6334e09a5d"
+  },
+  "cold": {
+    "root-317": {
+      "previous": {
+        "native": 386,
+        "msMedian": 561.7,
+        "msRange": [
+          560.3,
+          568.3
+        ]
+      },
+      "candidate": {
+        "native": 232,
+        "msMedian": 485.6,
+        "msRange": [
+          485.4,
+          486.6
+        ]
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": 379,
+        "msMedian": 562.6,
+        "msRange": [
+          562.1,
+          565.1
+        ]
+      },
+      "candidate": {
+        "native": 225,
+        "msMedian": 486.5,
+        "msRange": [
+          481.7,
+          487.6
+        ]
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": 241,
+        "msMedian": 758.8,
+        "msRange": [
+          752.2,
+          760.5
+        ]
+      },
+      "candidate": {
+        "native": 229,
+        "msMedian": 746.2,
+        "msRange": [
+          742.7,
+          746.8
+        ]
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": 221,
+        "msMedian": 823.2,
+        "msRange": [
+          820.7,
+          845.6
+        ]
+      },
+      "candidate": {
+        "native": 221,
+        "msMedian": 828.9,
+        "msRange": [
+          822.6,
+          830.6
+        ]
+      }
+    }
+  },
+  "nativeReplay": {
+    "317": {
+      "replayed": 154,
+      "groups": {
+        "own-end:2": 67,
+        "data-settlement:2": 41,
+        "data-menu:2": 46
+      },
+      "logical": 405,
+      "native": 232
+    },
+    "318": {
+      "replayed": 154,
+      "groups": {
+        "own-end:2": 67,
+        "data-settlement:2": 41,
+        "data-menu:2": 46
+      },
+      "logical": 394,
+      "native": 225
+    }
+  },
+  "untouchedPolicy": {
+    "351": {
+      "nativeBefore": 9,
+      "nativeAfter": 7,
+      "choiceAndRootsExact": true
+    },
+    "354": {
+      "nativeBefore": 2,
+      "nativeAfter": 2,
+      "choiceAndRootsExact": true
+    },
+    "359": {
+      "nativeBefore": 241,
+      "nativeAfter": 229,
+      "choiceAndRootsExact": true
+    }
+  },
+  "continuation": {
+    "inputs": 15,
+    "cacheHits": 13,
+    "postRevealInputsBefore": 29,
+    "postRevealInputsAfter": 20,
+    "endExact": true
+  },
+  "rejections": {
+    "unknownReservedDeclined": true,
+    "foreignSeatDeclined": true,
+    "turnBonusDeclined": true,
+    "realCargoArrivalDeclined": true,
+    "realDataInputDeliversCargo": true,
+    "fossilId": "fossil_06"
+  }
+}

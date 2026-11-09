@@ -1,0 +1,170 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -462,7 +462,7 @@
+     const chongEndTemplates=new Map(),chongQueuedTemplates=new Map();
+     let provedChongQueuedTasks=0;
+     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0;
+-    let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0;
++    let quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
+     let provedScan4QuietMoves=0, provedPublicScanChoices=0;
+     const scan4RefillCache=new Map();
+     let scan4RefillHits=0;
+@@ -654,7 +654,7 @@
+       nodeCount = 0;
+       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+       submissionCount = 0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0;
+-      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
++      quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+       observationCount = 0; observationReleases = 0;
+@@ -716,7 +716,7 @@
+       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+       if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+         || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+-        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job => !job.delivered)
++        || localPlans.hasPendingFossilArrival(state)
+         || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
+       return state;
+     }
+@@ -758,7 +758,7 @@
+       const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+       if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+         || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+-        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job => !job.delivered)
++        || localPlans.hasPendingFossilArrival(state)
+         || data.getBlueBonusPlacementReward(owner, 2)?.type !== "choose_card"
+         || !state.cards.publicCards.some(Boolean)) return null;
+       const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
+@@ -804,7 +804,7 @@
+
+     function previewQuietFinalDataPlacement(stored, action) {
+       const computer = action.target?.choiceId === "data:computer" && action.target?.target === "computer";
+-      const blueSlot = action.target?.target === "blueBonus" && [1, 3].includes(action.target?.blueSlot)
++      const blueSlot = action.target?.target === "blueBonus" && [1, 2, 3].includes(action.target?.blueSlot)
+         && action.target.choiceId === `data:blueBonus:${action.target.blueSlot}` ? action.target.blueSlot : null;
+       if (action.family !== "choose_target" || !computer && !blueSlot) return null;
+       const session = stored.envelope.session?.session, effect = session?.queue?.[0];
+@@ -815,27 +815,28 @@
+       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
+       if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+         || !owner.mainActionCompleted || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+-        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job => !job.delivered)
+-        || computer && data.listComputerPlacedTokens(owner).length !== 4
++        || localPlans.hasPendingFossilArrival(state)
++        || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
+         || owner.resources.availableData !== owner.dataState.poolTokens.length
+         || state.meta.stateVersion !== session.baseVersion) return null;
+       const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
+         reservedCards:structuredClone(owner.reservedCards), scoreSources:{...owner.scoreSources}};
+-      const slot = computer ? {placementSlot:5} : {blueSlot};
+       const placement = data.placeDataToComputer(player, blueSlot ? {target:"blueBonus", blueSlot} : undefined);
+       const placementKind = computer ? "computer" : "blueBonus";
+-      if (!placement.ok || placement.placementKind !== placementKind
+-        || Object.entries(slot).some(([key,value]) => placement[key] !== value) || placement.slotBonuses.length !== 1) return null;
+-      const bonus = placement.slotBonuses[0], resource = bonus.type;
+-      const eligibleResources = computer ? ["score"] : blueSlot === 1 ? ["energy"] : ["credits", "publicity"];
+-      if (!eligibleResources.includes(resource) || !Number.isSafeInteger(bonus[resource]) || bonus[resource] <= 0
+-        || Object.keys(bonus).some(key => key !== "type" && key !== resource)) return null;
+-      const gain = {[resource]:bonus[resource]};
+-      players.gainResources(player, gain, "blueTechScore");
+-      const events = [{type:"placeData", playerId:seatId, placementKind, ...slot},
+-        {type:"science_resource_bonus", playerId:seatId, gain, sourceKey:"blueTechScore"}];
++      if (!placement.ok || placement.placementKind !== placementKind || blueSlot&&placement.blueSlot!==blueSlot) return null;
++      const slot=computer?{placementSlot:placement.placementSlot}:{blueSlot};
++      const events=[{type:"placeData",playerId:seatId,placementKind,...slot}];
++      for(const bonus of placement.slotBonuses){
++        const resource=bonus.type;
++        if(!["credits","energy","publicity","score"].includes(resource)
++          ||!Number.isSafeInteger(bonus[resource])||bonus[resource]<=0
++          ||Object.keys(bonus).some(k=>k!=="type"&&k!==resource))return null;
++        const gain={[resource]:bonus[resource]};
++        players.gainResources(player,gain,"blueTechScore");
++        events.push({type:"science_resource_bonus",playerId:seatId,gain,sourceKey:"blueTechScore"});
++      }
+       if (events.some(event => cardEffects.collectMatchingTriggers(player, event).length)) return null;
+-      return {kind:computer ? "computer5" : `blue${blueSlot}:${resource}`, state:{...state, meta:{...state.meta, stateVersion:session.baseVersion+1},
++      return {kind:computer ? `computer${placement.placementSlot}` : `blue${blueSlot}:${placement.slotBonuses.map(b=>b.type).join("+")}`, state:{...state, meta:{...state.meta, stateVersion:session.baseVersion+1},
+         players:{...state.players, players:state.players.players.map(p => p === owner ? player : p)}}};
+     }
+
+@@ -1312,6 +1313,16 @@
+       if(chongEndMenu){
+         const child=finishChild({session:null},{},null,null,stored.informationBarrier,requested,stored,chongEndMenu);
+         provedChongEndMenus++;
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
++      const sameSeatEnd=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
++        ?localPlans.previewFinalOwnQuietEnd({state:readIdentityState(stored.envelope),seatId,
++          action:requested,knownCards:knownCards(stored.envelope)}):null;
++      if(sameSeatEnd){
++        const envelope=provedCommittedEnvelope(stored,sameSeatEnd),barrier=stored.informationBarrier;
++        inheritCardKnowledge(envelope,stored,requested);
++        const child=createNode(envelope,null,[],barrier?"information-barrier":"turn-boundary",barrier||{code:"own-turn-complete"});
++        provedOwnEndHandovers++;
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
+@@ -7397,7 +7408,7 @@
+         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
++        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+diff --git a/randomizer/game/ai/local-decision-plans.js b/randomizer/game/ai/local-decision-plans.js
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1621,6 +1621,15 @@
+     :player===following?{...player,mainActionCompleted:false}:player)};
+   return next;
+  }
++ function previewFinalOwnQuietEnd({state,seatId,action,knownCards}){
++  const t=state.turn,p=owner(state,seatId);
++  if(action?.family!=='end_turn'||action.phase!=='turn_control'||action.target?.kind!=='end-turn'
++    ||t.roundNumber!==4||state.match.initialSetup||!p||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
++    ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
++  const preview=residual.previewQuietEndHandoffs(state,seatId,{stationaryCargo:true});
++  if(!preview||preview.settlements.length)return null;
++  return previewForeignTurnAfterQuietHandoffs(preview.state,seatId,state.meta.stateVersion+1,true);
++ }
+  function previewFinalForeignEndPrelude({state,seatId,action,knownCards}){
+   const turn=state.turn,p=owner(state,seatId);
+   if(action?.family!=='end_turn'||action.phase!=='turn_control'||action.target?.kind!=='end-turn'
+@@ -2194,5 +2203,5 @@
+   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
+   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
+  }
+- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalForeignEndPrelude,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
++ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalForeignEndPrelude,previewFinalOwnQuietEnd,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ });
+diff --git a/randomizer/game/effects/residual-domain-session.js b/randomizer/game/effects/residual-domain-session.js
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -1960,12 +1960,13 @@
+     );
+   }
+
+-  function previewQuietEndHandoffs(root, ownerId) {
++  function previewQuietEndHandoffs(root, ownerId, {stationaryCargo=false} = {}) {
+     const owner=actor(root,ownerId),turn=root.turn;
+     if (!owner || turn.activePlayerCount!==4 || turn.currentPlayerId!==ownerId || !owner.mainActionCompleted
+       || owner.passCompletionPending || turn.gameEnded || turn.passedPlayerIds.includes(ownerId)
+       || turn.cardTurnEventBonuses?.length
+-      || Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
++      || (stationaryCargo ? listFossilArrivalEvents(root).length>0
++        : Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
+       || [1,2].some(id=>{
+         const slot=aliens.getAlienSlot(root.aliens,id);
+         return slot&&!slot.revealed&&aliens.isAlienReadyToReveal(slot);
+@@ -2434,6 +2435,7 @@
+     SPECIES_IDS,
+     queryCardSettlement: findCardSettlement,
+     previewQuietEndHandoffs,
++    hasPendingFossilArrival:root=>listFossilArrivalEvents(root).length>0,
+     cardDecisionChoices,
+     chongTaskFossilChoices,
+     settleReadyTaskDirect,
