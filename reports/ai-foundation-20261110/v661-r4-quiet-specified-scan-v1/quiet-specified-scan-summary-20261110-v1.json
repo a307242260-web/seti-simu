@@ -1,0 +1,686 @@
+{
+  "sourceBase": "2b13ecca3fe44ee054de8216220a788ac591df48",
+  "pressureNative": [
+    503,
+    293,
+    260,
+    254
+  ],
+  "pressureColdMs": {
+    "before": [
+      1487.722333,
+      1502.135667,
+      1509.69375
+    ],
+    "after": [
+      1497.4250829999999,
+      1480.73175,
+      1467.874583
+    ],
+    "medians": [
+      1502.135667,
+      1480.73175
+    ]
+  },
+  "pressureRootCandidatesEqual": 32,
+  "pressureNativeGroups": [
+    {
+      "family": "play_card",
+      "queue": "stable",
+      "before": 11,
+      "after": 11
+    },
+    {
+      "family": "pass",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_card",
+      "queue": "probe_turn_pass_discard",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "quick_trade",
+      "queue": "stable",
+      "before": 7,
+      "after": 7
+    },
+    {
+      "family": "choose_card",
+      "queue": "standard_action_session_decision",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "place_data",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_place_data",
+      "before": 5,
+      "after": 5
+    },
+    {
+      "family": "analyze",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_payment",
+      "queue": "standard_action_session_decision",
+      "before": 3,
+      "after": 3
+    },
+    {
+      "family": "move",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_payment",
+      "queue": "probe_turn_move_payment",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "land",
+      "queue": "stable",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "probe_land_choice",
+      "before": 6,
+      "after": 6
+    },
+    {
+      "family": "scan",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_scan_step",
+      "before": 212,
+      "after": 2
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_scan_action_4",
+      "before": 10,
+      "after": 10
+    },
+    {
+      "family": "research_tech",
+      "queue": "stable",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_target",
+      "queue": "science_domain_alien_trace",
+      "before": 113,
+      "after": 113
+    },
+    {
+      "family": "choose_card",
+      "queue": "residual_alien_card_decision",
+      "before": 88,
+      "after": 49
+    },
+    {
+      "family": "choose_card",
+      "queue": "science_domain_pick_card",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "end_turn",
+      "queue": "stable",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "complete_task",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_land_for_pickup",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_probe_planet_fossil_reward",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "industry",
+      "queue": "stable",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "family": "choose_card",
+      "queue": "residual_company_decision",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "family": "choose_card",
+      "queue": "science_domain_income",
+      "before": 4,
+      "after": 4
+    },
+    {
+      "family": "choose_target",
+      "queue": "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup",
+      "before": 3,
+      "after": 3
+    }
+  ],
+  "exactNativeSessionStateMenusAndRng": {
+    "satellite": 437,
+    "teacher272": 22,
+    "late": 6
+  },
+  "checks": [
+    {
+      "before": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 160,
+        "graphNodes": 684,
+        "ms": 935.9509170000001,
+        "digest": "af8a96a7755c259d73c71f9483544fcff5bdf8d94e9f310206dd690767873b85",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1423,
+        "identitySliceStores": 803
+      },
+      "after": {
+        "label": "teacher272",
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 156,
+        "graphNodes": 684,
+        "ms": 926.018708,
+        "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+        "bytes": 2262670,
+        "identityMaterializations": 375,
+        "identityBucketCollisions": 340,
+        "identitySliceHits": 1423,
+        "identitySliceStores": 803
+      }
+    },
+    {
+      "before": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 550.846458,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      },
+      "after": {
+        "label": "official",
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "graphNodes": 535,
+        "ms": 539.508417,
+        "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+        "bytes": 2019005,
+        "identityMaterializations": 26,
+        "identityBucketCollisions": 147,
+        "identitySliceHits": 127,
+        "identitySliceStores": 55
+      }
+    },
+    {
+      "before": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 503,
+        "graphNodes": 1596,
+        "ms": 1439.1392919999998,
+        "digest": "bf82a530e98436c38609f17719294a9eee5dd648394ed1ea33a6081e5a893094",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 3464,
+        "identitySliceStores": 1898
+      },
+      "after": {
+        "label": "satellite",
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 254,
+        "graphNodes": 1596,
+        "ms": 1389.35575,
+        "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+        "bytes": 3731526,
+        "identityMaterializations": 794,
+        "identityBucketCollisions": 1164,
+        "identitySliceHits": 3597,
+        "identitySliceStores": 1765
+      }
+    },
+    {
+      "before": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 205.48979199999997,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      },
+      "after": {
+        "label": "r3-172",
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "graphNodes": 110,
+        "ms": 199.56412500000005,
+        "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+        "bytes": 183622,
+        "identityMaterializations": 17,
+        "identityBucketCollisions": 7,
+        "identitySliceHits": 0,
+        "identitySliceStores": 119
+      }
+    },
+    {
+      "before": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 230.57533299999994,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      },
+      "after": {
+        "label": "r3-136",
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "graphNodes": 214,
+        "ms": 224.48670800000002,
+        "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+        "bytes": 373310,
+        "identityMaterializations": 60,
+        "identityBucketCollisions": 49,
+        "identitySliceHits": 0,
+        "identitySliceStores": 364
+      }
+    },
+    {
+      "before": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 224,
+        "graphNodes": 342,
+        "ms": 380.79429200000004,
+        "digest": "2375e76f61adaf4bbc0e1f8b5b76b22faa1cbd85cae9d220f1cc771ca0d43d94",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 176,
+        "identitySliceStores": 496
+      },
+      "after": {
+        "label": "late",
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 222,
+        "graphNodes": 342,
+        "ms": 374.064291,
+        "digest": "50f17e567773270d07834cec0290905f4558a04dcda560722cb61a3d052b5c11",
+        "bytes": 494287,
+        "identityMaterializations": 110,
+        "identityBucketCollisions": 92,
+        "identitySliceHits": 176,
+        "identitySliceStores": 496
+      }
+    }
+  ],
+  "profile": {
+    "teacher272": {
+      "self": [
+        {
+          "call": "serializeState@randomizer/game/ai/analysis-port.js:261",
+          "ms": 30.04
+        },
+        {
+          "call": "evaluateMission@randomizer/game/ai/probe-capital.js:401",
+          "ms": 26.46
+        },
+        {
+          "call": "deepFreeze@randomizer/game/rule-composition.js:42",
+          "ms": 16.54
+        },
+        {
+          "call": "(anonymous)@randomizer/game/effects/probe-turn-session.js:177",
+          "ms": 14.96
+        },
+        {
+          "call": "freeze@randomizer/game/ai/analysis-port.js:129",
+          "ms": 14.87
+        },
+        {
+          "call": "expand@randomizer/game/ai/analysis-port.js:1647",
+          "ms": 13.96
+        },
+        {
+          "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+          "ms": 13.54
+        },
+        {
+          "call": "immutableCapitalInput@randomizer/game/ai/resource-demand.js:152",
+          "ms": 13.5
+        },
+        {
+          "call": "buildProbeRouteRequirements@randomizer/game/production-kernel.js:637",
+          "ms": 13.42
+        },
+        {
+          "call": "stableSerialize@randomizer/game/actions/standard-action.js:44",
+          "ms": 12.67
+        },
+        {
+          "call": "probeStructureKey@randomizer/game/production-kernel.js:746",
+          "ms": 10.46
+        },
+        {
+          "call": "plan@randomizer/game/ai/goal-movement.js:72",
+          "ms": 10.21
+        },
+        {
+          "call": "resourceSpec@randomizer/game/ai/analysis-port.js:3046",
+          "ms": 9.21
+        },
+        {
+          "call": "(anonymous)@randomizer/game/ai/probe-capital.js:549",
+          "ms": 9.12
+        },
+        {
+          "call": "isImmutableRequirementGeometry@randomizer/game/ai/probe-capital.js:50",
+          "ms": 9.0
+        },
+        {
+          "call": "listMoveRequirements@randomizer/game/abilities/rocket.js:336",
+          "ms": 8.96
+        },
+        {
+          "call": "incomePurpose@randomizer/game/ai/probe-capital.js:476",
+          "ms": 8.96
+        },
+        {
+          "call": "deepFreeze@randomizer/game/state/state-store.js:72",
+          "ms": 8.75
+        }
+      ],
+      "inclusive": [
+        {
+          "call": "decide@randomizer/game/ai/search-agent.js:34",
+          "ms": 1015.54
+        },
+        {
+          "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+          "ms": 1000.54
+        },
+        {
+          "call": "expandResourcePlan@randomizer/game/ai/analysis-port.js:3468",
+          "ms": 409.62
+        },
+        {
+          "call": "expand@randomizer/game/ai/analysis-port.js:1647",
+          "ms": 379.21
+        },
+        {
+          "call": "add@randomizer/game/ai/decision-search.js:246",
+          "ms": 349.01
+        },
+        {
+          "call": "resourceSpec@randomizer/game/ai/analysis-port.js:3046",
+          "ms": 154.04
+        },
+        {
+          "call": "runWithWorkingState@randomizer/game/production-kernel.js:1679",
+          "ms": 142.79
+        },
+        {
+          "call": "runWithWorkingStateContext@randomizer/game/rule-composition.js:407",
+          "ms": 142.79
+        },
+        {
+          "call": "expandWithCardPick@randomizer/game/ai/analysis-port.js:2107",
+          "ms": 138.7
+        },
+        {
+          "call": "finishChild@randomizer/game/ai/analysis-port.js:4015",
+          "ms": 137.75
+        },
+        {
+          "call": "describeCardPick@randomizer/game/ai/analysis-port.js:2009",
+          "ms": 122.28
+        },
+        {
+          "call": "plan@randomizer/game/ai/card-pick-planning.js:306",
+          "ms": 117.87
+        },
+        {
+          "call": "cardPickSpec@randomizer/game/ai/analysis-port.js:2087",
+          "ms": 116.2
+        },
+        {
+          "call": "enumerateActions@randomizer/game/rule-composition.js:808",
+          "ms": 110.71
+        },
+        {
+          "call": "valueForNode@randomizer/game/ai/decision-search.js:49",
+          "ms": 110.0
+        },
+        {
+          "call": "enumerate@randomizer/game/actions/standard-action.js:143",
+          "ms": 109.12
+        },
+        {
+          "call": "(anonymous)@randomizer/game/rule-composition.js:815",
+          "ms": 107.75
+        },
+        {
+          "call": "enumerate@randomizer/game/production-composition.js:822",
+          "ms": 106.29
+        }
+      ]
+    },
+    "satellite": {
+      "self": [
+        {
+          "call": "serializeState@randomizer/game/ai/analysis-port.js:261",
+          "ms": 66.09
+        },
+        {
+          "call": "freeze@randomizer/game/ai/analysis-port.js:129",
+          "ms": 43.09
+        },
+        {
+          "call": "normalizeObject@randomizer/game/ai/analysis-port.js:231",
+          "ms": 36.88
+        },
+        {
+          "call": "immutableCapitalInput@randomizer/game/ai/resource-demand.js:152",
+          "ms": 33.46
+        },
+        {
+          "call": "copy@randomizer/game/state/state-store.js:46",
+          "ms": 27.83
+        },
+        {
+          "call": "deepFreeze@randomizer/game/rule-composition.js:42",
+          "ms": 21.5
+        },
+        {
+          "call": "normalize@randomizer/game/ai/analysis-port.js:210",
+          "ms": 20.63
+        },
+        {
+          "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+          "ms": 18.0
+        },
+        {
+          "call": "stableHash@randomizer/game/actions/standard-action.js:57",
+          "ms": 14.92
+        },
+        {
+          "call": "(anonymous)@randomizer/game/effects/probe-turn-session.js:177",
+          "ms": 12.08
+        },
+        {
+          "call": "compactObject@randomizer/app/simulation-contract.js:45",
+          "ms": 11.92
+        },
+        {
+          "call": "internPhysicalIdentity@randomizer/game/ai/analysis-port.js:376",
+          "ms": 10.58
+        },
+        {
+          "call": "expand@randomizer/game/ai/analysis-port.js:1647",
+          "ms": 10.5
+        },
+        {
+          "call": "previewFinalEndPrelude@randomizer/game/ai/local-decision-plans.js:1735",
+          "ms": 9.04
+        },
+        {
+          "call": "previewIncomeTail@randomizer/game/ai/resource-demand.js:883",
+          "ms": 9.0
+        },
+        {
+          "call": "resourceSpec@randomizer/game/ai/analysis-port.js:3046",
+          "ms": 9.0
+        },
+        {
+          "call": "buildProbeRouteRequirements@randomizer/game/production-kernel.js:637",
+          "ms": 8.58
+        },
+        {
+          "call": "evaluateMission@randomizer/game/ai/probe-capital.js:401",
+          "ms": 8.58
+        }
+      ],
+      "inclusive": [
+        {
+          "call": "decide@randomizer/game/ai/search-agent.js:34",
+          "ms": 1441.29
+        },
+        {
+          "call": "searchDecision@randomizer/game/ai/decision-search.js:14",
+          "ms": 1420.54
+        },
+        {
+          "call": "expand@randomizer/game/ai/analysis-port.js:1647",
+          "ms": 610.04
+        },
+        {
+          "call": "add@randomizer/game/ai/decision-search.js:246",
+          "ms": 595.96
+        },
+        {
+          "call": "expandWithCardPick@randomizer/game/ai/analysis-port.js:2107",
+          "ms": 508.25
+        },
+        {
+          "call": "expandResourcePlan@randomizer/game/ai/analysis-port.js:3468",
+          "ms": 229.46
+        },
+        {
+          "call": "valueForNode@randomizer/game/ai/decision-search.js:49",
+          "ms": 190.66
+        },
+        {
+          "call": "resourceSpec@randomizer/game/ai/analysis-port.js:3046",
+          "ms": 176.79
+        },
+        {
+          "call": "get identity@randomizer/game/ai/analysis-port.js:616",
+          "ms": 166.42
+        },
+        {
+          "call": "identity@randomizer/game/ai/analysis-port.js:8312",
+          "ms": 166.42
+        },
+        {
+          "call": "internPhysicalIdentity@randomizer/game/ai/analysis-port.js:376",
+          "ms": 164.92
+        },
+        {
+          "call": "get physicalId@randomizer/game/ai/analysis-port.js:612",
+          "ms": 164.92
+        },
+        {
+          "call": "observeEnvelope@randomizer/game/ai/analysis-port.js:557",
+          "ms": 162.0
+        },
+        {
+          "call": "valueObservation@randomizer/game/ai/analysis-port.js:8284",
+          "ms": 162.0
+        },
+        {
+          "call": "observationForValue@randomizer/game/ai/decision-search.js:38",
+          "ms": 162.0
+        },
+        {
+          "call": "projectionInner@randomizer/game/rule-composition.js:617",
+          "ms": 157.25
+        },
+        {
+          "call": "projection@randomizer/game/rule-composition.js:613",
+          "ms": 157.25
+        },
+        {
+          "call": "project@randomizer/game/ai/analysis-port.js:508",
+          "ms": 151.29
+        }
+      ]
+    }
+  },
+  "newFullGames": 0
+}

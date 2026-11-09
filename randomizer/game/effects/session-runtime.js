@@ -997,6 +997,7 @@
     diagnosticTrustedCheckpointCopies: () => checkpointCopies,
     diagnosticDecisionChoicePrefilter: () => ({choiceIdRejects,serializedCandidates}),
     SPAWN_PRIORITY,
+    normalizeSpawnedEffects,
     createRuntime,
   });
 });

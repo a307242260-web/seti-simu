@@ -2201,7 +2201,9 @@
     if(!result.ok||result.irreversible)return false;
     const events=[{type:"card_effect",effectId:card.id||null,effectType:card.type,playerId:owner.id},...result.events];
     const settled=augmentEffectResult(root,{ok:true,events},effect);
-    return !settled.spawnedEffects.length&&settled.events.length===events.length;
+    if(settled.spawnedEffects.length||settled.events.length!==events.length)return false;
+    return {events:settled.events,history:{type:"card_effect",effectId:card.id||null,
+      effectType:card.type,executorId:cardPlayDomain.EXECUTOR_ID,...result.history}};
   }
 
   function resolveAlienCardSelection(root, effect, selected, random = () => nextRandom(root)) {

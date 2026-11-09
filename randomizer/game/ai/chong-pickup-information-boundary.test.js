@@ -154,4 +154,22 @@ try {
       assert.deepEqual(save(),root);
     }finally{port.close();}
   }
+
+  // A fixed scan may settle the sector and enqueue a trace or a later
+  // scan. The next real menu must be recoverable without redoing the input.
+  const scans=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'fixtures/quiet-scan-proofs-20261110-v1.fixture.json.gz'))));
+  for(const {root,action,menu:expected} of scans){
+    restore(root);
+    const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+    try{
+      port.setResourcePlanning(true);port.setCardPickPlanning(true);port.setDecisionPlanning({scanPlanning:true});
+      const n=port.openRoot(),next=port.expand(n,action.actionId);
+      assert.equal(port.getDiagnostics().submissionCount,0);
+      assert.equal(port.getDiagnostics().provedQuietSpecifiedScans,1);
+      assert.equal(next.status,'decision');
+      assert.deepEqual(next.legalActions,expected);
+      assert.deepEqual(save(),root);
+    }finally{port.close();}
+  }
 }finally{c.dispose();}

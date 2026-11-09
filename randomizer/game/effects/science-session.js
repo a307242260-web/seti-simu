@@ -1089,6 +1089,88 @@
     };
   }
 
+  function finalizeScanFlow(root, effect) {
+    const spawnedEffects = [settleAfterScan(effect.ownerId)];
+    // 公共牌补牌在 SETTLE 之后执行：扇区结算的痕迹/盲抽奖励先于补牌
+    // （规则书 P13；老档逐节点结算顺序亦然），保证盲抽 RNG 消费顺序一致。
+    // 只有本次扫描流产生了空公共牌位才补牌，避免无公共牌扫描的流多出空节点。
+    const cardsState = getWorkingSlice(root, "cards");
+    const hasEmptyPublicSlot = Array.isArray(cardsState.publicCards)
+      && cardsState.publicCards.some((card) => !card);
+    if (hasEmptyPublicSlot) {
+      spawnedEffects.push({
+        priority: "direct",
+        effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
+      });
+    }
+    return {ok:true,spawnedEffects};
+  }
+
+  function settleScanFlow(root, effect) {
+    const nebulaState = getWorkingSlice(root, "data");
+    const playersState = getWorkingSlice(root, "players");
+    const actor = getActor(root, effect.ownerId);
+    // 同一批多个待结算扇区时，先排当前玩家为赢家的扇区，再排其他玩家获胜
+    // 或无赢家的扇区；同组内维持原具名扇区顺序（规则书 P13）。
+    const sectorIds = typeof data.orderSectorIdsByPlayerWinPriority === "function"
+      ? data.orderSectorIdsByPlayerWinPriority(nebulaState, undefined, actor)
+      : undefined;
+    const result = data.settleCompletedSectors(nebulaState, {
+      sectorIds,
+      players: playersState.players,
+      source: "science",
+      root,
+      settledAt: `state:${root.meta?.stateVersion ?? 0}:science-settlement`,
+    });
+    const spawnedEffects = [];
+    const events = [];
+    for (const settlement of result.settlements || []) {
+      const winner = getActor(root, settlement.winner?.playerId)
+        || playersState.players.find((player) => player.color === settlement.winner?.playerColor);
+      const runezuClaim = winner
+        ? aliens.runezu?.claimSectorSymbol?.(
+          getWorkingSlice(root, "aliens"),
+          settlement.sectorId,
+          winner,
+          {},
+        )
+        : null;
+      if (runezuClaim?.ok) {
+        events.push({
+          type: "runezuSectorSymbolClaimed",
+          sectorId: settlement.sectorId,
+          playerId: winner.id,
+          symbolId: runezuClaim.symbolId,
+        });
+      }
+      for (const reward of data.buildSectorRewardDescriptors(settlement)) {
+        const owner = getActor(root, reward.owner?.playerId)
+          || playersState.players.find((player) => player.color === reward.owner?.playerColor);
+        if (!owner) continue;
+        if (reward.kind === "resource") appendResourceBonus(owner, reward.gain, events, "scanScore");
+        if (reward.kind === "alien_trace") spawnedEffects.push(scanDecisionEffect(
+          EFFECT_TYPES.ALIEN_TRACE,
+          owner.id,
+          { traceType: reward.traceType },
+        ));
+      }
+      events.push({ type: "sectorCompleted", ...clone(settlement) });
+    }
+    return {ok:true,spawnedEffects,events};
+  }
+
+  function alienTraceDecisionChoices(root,effect) {
+    const choices = listEffectAlienTraceChoices(root, effect);
+    // 来源标签（如「任意外星人标记 1/2」）拼到每个选项前，玩家能看清这是第几次放置
+    const sourceLabel = effect.payload?.label;
+    if (sourceLabel && choices.length) {
+      for (const choice of choices) {
+        choice.summary = `${sourceLabel} → ${choice.summary || choice.family}`;
+      }
+    }
+    return formalizeChoices(root, effect.ownerId, choices);
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -1503,20 +1585,7 @@
     // 保证盲抽 RNG 消费顺序与规则一致。
     runtime.registerExecutor(EFFECT_TYPES.SCAN_FINALIZE, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
-      const spawnedEffects = [settleAfterScan(effect.ownerId)];
-      // 公共牌补牌在 SETTLE 之后执行：扇区结算的痕迹/盲抽奖励先于补牌
-      // （规则书 P13；老档逐节点结算顺序亦然），保证盲抽 RNG 消费顺序一致。
-      // 只有本次扫描流产生了空公共牌位才补牌，避免无公共牌扫描的流多出空节点。
-      const cardsState = getWorkingSlice(root, "cards");
-      const hasEmptyPublicSlot = Array.isArray(cardsState.publicCards)
-        && cardsState.publicCards.some((card) => !card);
-      if (hasEmptyPublicSlot) {
-        spawnedEffects.push({
-          priority: "direct",
-          effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
-        });
-      }
-      return scienceResult(state, root, EFFECT_TYPES.SCAN_FINALIZE, { spawnedEffects });
+      return scienceResult(state, root, EFFECT_TYPES.SCAN_FINALIZE, finalizeScanFlow(root,effect));
     });
 
     runtime.registerExecutor(EFFECT_TYPES.SCAN_ACTION_4, {
@@ -1567,56 +1636,7 @@
 
     runtime.registerExecutor(EFFECT_TYPES.SETTLE, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
-      const nebulaState = getWorkingSlice(root, "data");
-      const playersState = getWorkingSlice(root, "players");
-      const actor = getActor(root, effect.ownerId);
-      // 同一批多个待结算扇区时，先排当前玩家为赢家的扇区，再排其他玩家获胜
-      // 或无赢家的扇区；同组内维持原具名扇区顺序（规则书 P13）。
-      const sectorIds = typeof data.orderSectorIdsByPlayerWinPriority === "function"
-        ? data.orderSectorIdsByPlayerWinPriority(nebulaState, undefined, actor)
-        : undefined;
-      const result = data.settleCompletedSectors(nebulaState, {
-        sectorIds,
-        players: playersState.players,
-        source: "science",
-        root,
-        settledAt: `state:${root.meta?.stateVersion ?? 0}:science-settlement`,
-      });
-      const spawnedEffects = [];
-      const events = [];
-      for (const settlement of result.settlements || []) {
-        const winner = getActor(root, settlement.winner?.playerId)
-          || playersState.players.find((player) => player.color === settlement.winner?.playerColor);
-        const runezuClaim = winner
-          ? aliens.runezu?.claimSectorSymbol?.(
-            getWorkingSlice(root, "aliens"),
-            settlement.sectorId,
-            winner,
-            {},
-          )
-          : null;
-        if (runezuClaim?.ok) {
-          events.push({
-            type: "runezuSectorSymbolClaimed",
-            sectorId: settlement.sectorId,
-            playerId: winner.id,
-            symbolId: runezuClaim.symbolId,
-          });
-        }
-        for (const reward of data.buildSectorRewardDescriptors(settlement)) {
-          const owner = getActor(root, reward.owner?.playerId)
-            || playersState.players.find((player) => player.color === reward.owner?.playerColor);
-          if (!owner) continue;
-          if (reward.kind === "resource") appendResourceBonus(owner, reward.gain, events, "scanScore");
-          if (reward.kind === "alien_trace") spawnedEffects.push(scanDecisionEffect(
-            EFFECT_TYPES.ALIEN_TRACE,
-            owner.id,
-            { traceType: reward.traceType },
-          ));
-        }
-        events.push({ type: "sectorCompleted", ...clone(settlement) });
-      }
-      return scienceResult(state, root, EFFECT_TYPES.SETTLE, { spawnedEffects, events });
+      return scienceResult(state, root, EFFECT_TYPES.SETTLE, settleScanFlow(root,effect));
     });
 
     runtime.registerExecutor(EFFECT_TYPES.PLACE_DATA, {
@@ -1779,15 +1799,7 @@
       },
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const choices = listEffectAlienTraceChoices(root, effect);
-        // 来源标签（如「任意外星人标记 1/2」）拼到每个选项前，玩家能看清这是第几次放置
-        const sourceLabel = effect.payload?.label;
-        if (sourceLabel && choices.length) {
-          for (const choice of choices) {
-            choice.summary = `${sourceLabel} → ${choice.summary || choice.family}`;
-          }
-        }
-        return formalizeChoices(root, effect.ownerId, choices);
+        return alienTraceDecisionChoices(root,effect);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
@@ -1981,6 +1993,10 @@
     EFFECT_TYPES,
     createActionDefinitions,
     createScienceDomain,
+    finalizeScanFlow,
+    settleScanFlow,
+    alienTraceDecisionChoices,
+    scanDecisionEffect,
     createAlienTraceEffect,
     isPlainPinkTrace,
     applyPlainPinkTrace,

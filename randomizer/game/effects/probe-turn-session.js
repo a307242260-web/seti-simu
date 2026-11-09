@@ -524,6 +524,58 @@
     return {ok:true,events:clone(moved.events||[]),energyCost,cardIds:[...cardIds]};
   }
 
+  function describeRewardEffect(root,effect) {
+    const reward = effect.payload?.reward || {};
+    const rewardOptions = reward.options || {};
+    let delegated = null;
+    if (reward.type === planetRewards.EFFECT_TYPES.PICK_CARD) {
+      delegated = {
+        type: science.EFFECT_TYPES.PICK_CARD, kind: "decision",
+        decisionKind: "choose_card", ownerId: effect.ownerId, payload: {},
+      };
+    } else if (reward.type === planetRewards.EFFECT_TYPES.INCOME) {
+      delegated = domainHandoff("income", "planet_reward_income", effect.ownerId, {
+        reward: clone(reward),
+      }).effect;
+    } else if (reward.type === planetRewards.EFFECT_TYPES.ALIEN_TRACE) {
+      delegated = {
+        type: science.EFFECT_TYPES.ALIEN_TRACE, kind: "decision",
+        decisionKind: "choose_target", ownerId: effect.ownerId,
+        payload: {
+          traceType: rewardOptions.traceType,
+          // 带奖励来源标签（如「任意外星人标记 1/2」），弹窗标题可显示第几次
+          label: reward.label || null,
+        },
+      };
+    } else if (reward.type === planetRewards.EFFECT_TYPES.AOMOMO_CARD) {
+      delegated = domainHandoff("alien", "planet_reward_aomomo_card", effect.ownerId, {
+        reward: clone(reward),
+      }).effect;
+    } else if ([
+      planetRewards.EFFECT_TYPES.SCAN_PLANET_SECTOR,
+      planetRewards.EFFECT_TYPES.CHOOSE_NEBULA_SCAN,
+      planetRewards.EFFECT_TYPES.CHOOSE_COLORED_NEBULA_SCAN,
+    ].includes(reward.type)) {
+      const planet = rewardOptions.planetId
+        ? solar.createSolarSnapshot(slice(root, "solarSystem", "solarSystem")).planetLocations
+          .find((candidate) => candidate.planetId === rewardOptions.planetId)
+        : null;
+      delegated = {
+        type: science.EFFECT_TYPES.SCAN_STEP, ownerId: effect.ownerId,
+        payload: {
+          options: {
+            mode: "specified",
+            sectorX: planet?.x ?? null,
+            nebulaIds: clone(rewardOptions.nebulaIds || []),
+            gainData: true,
+            label: reward.label,
+          },
+        },
+      };
+    }
+    return delegated;
+  }
+
   function createProbeTurnDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -795,54 +847,8 @@
     });
     runtime.registerExecutor(EFFECT_TYPES.REWARD, (state, effect, workingContext) => {
       const root = getRoot(state, workingContext);
-      const reward = effect.payload?.reward || {};
-      const rewardOptions = reward.options || {};
-      let delegated = null;
-      if (reward.type === planetRewards.EFFECT_TYPES.PICK_CARD) {
-        delegated = {
-          type: science.EFFECT_TYPES.PICK_CARD, kind: "decision",
-          decisionKind: "choose_card", ownerId: effect.ownerId, payload: {},
-        };
-      } else if (reward.type === planetRewards.EFFECT_TYPES.INCOME) {
-        delegated = domainHandoff("income", "planet_reward_income", effect.ownerId, {
-          reward: clone(reward),
-        }).effect;
-      } else if (reward.type === planetRewards.EFFECT_TYPES.ALIEN_TRACE) {
-        delegated = {
-          type: science.EFFECT_TYPES.ALIEN_TRACE, kind: "decision",
-          decisionKind: "choose_target", ownerId: effect.ownerId,
-          payload: {
-            traceType: rewardOptions.traceType,
-            // 带奖励来源标签（如「任意外星人标记 1/2」），弹窗标题可显示第几次
-            label: reward.label || null,
-          },
-        };
-      } else if (reward.type === planetRewards.EFFECT_TYPES.AOMOMO_CARD) {
-        delegated = domainHandoff("alien", "planet_reward_aomomo_card", effect.ownerId, {
-          reward: clone(reward),
-        }).effect;
-      } else if ([
-        planetRewards.EFFECT_TYPES.SCAN_PLANET_SECTOR,
-        planetRewards.EFFECT_TYPES.CHOOSE_NEBULA_SCAN,
-        planetRewards.EFFECT_TYPES.CHOOSE_COLORED_NEBULA_SCAN,
-      ].includes(reward.type)) {
-        const planet = rewardOptions.planetId
-          ? solar.createSolarSnapshot(slice(root, "solarSystem", "solarSystem")).planetLocations
-            .find((candidate) => candidate.planetId === rewardOptions.planetId)
-          : null;
-        delegated = {
-          type: science.EFFECT_TYPES.SCAN_STEP, ownerId: effect.ownerId,
-          payload: {
-            options: {
-              mode: "specified",
-              sectorX: planet?.x ?? null,
-              nebulaIds: clone(rewardOptions.nebulaIds || []),
-              gainData: true,
-              label: reward.label,
-            },
-          },
-        };
-      }
+      const reward=effect.payload?.reward||{};
+      const delegated=describeRewardEffect(root,effect);
       if (delegated) {
         // 行星奖励扫描是单节点扫描流：追加 SCAN_FINALIZE 串尾节点统一触发
         // 一次扇区结算（P13：不逐节点结算）。
@@ -992,6 +998,6 @@
   return Object.freeze({
     DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES, PASS_HAND_LIMIT,
     DOMAIN_HANDOFF_EFFECT_TYPE, DOMAIN_HANDOFF_SCHEMA_VERSION,
-    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds, getMovePaymentChoices, settleMovePayment,
+    createActionDefinitions, createProbeTurnDomain, describeRewardEffect, actionContext, getPassingPlayerIds, getMovePaymentChoices, settleMovePayment,
   });
 });
