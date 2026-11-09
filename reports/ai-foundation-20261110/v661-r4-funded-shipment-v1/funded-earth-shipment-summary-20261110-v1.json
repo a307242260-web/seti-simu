@@ -1,0 +1,114 @@
+{
+  "baselineCommit": "9eb5bf43928f0e168b459844f986259b16f52280",
+  "candidateAnalysisPortSha256": "ff2c7602286828817d0d0003126fdf4bea674ae8030a6f6bbe4c899d3f0ec660",
+  "scope": "cold Production suffix, same #265 path at native purple scan decision, all other players already passed",
+  "baseline": {
+    "score": {
+      "baseScore": 155,
+      "tileScore": 68,
+      "cardScore": 4,
+      "totalScore": 227
+    },
+    "inputs": 20,
+    "peakNative": 12,
+    "peakMilliseconds": 55.61066700000001,
+    "firstAction": "跳过"
+  },
+  "candidate": {
+    "score": {
+      "baseScore": 157,
+      "tileScore": 72,
+      "cardScore": 4,
+      "totalScore": 233
+    },
+    "inputs": 31,
+    "peakNative": 26,
+    "peakMilliseconds": 78.99937499999999,
+    "firstAction": "移动 6 逆时针"
+  },
+  "controlled": {
+    "skip": {
+      "score": 227,
+      "exact": true
+    },
+    "use-free": {
+      "score": 231,
+      "exact": true
+    },
+    "use-free-orthogonal": {
+      "score": 231,
+      "exact": true
+    }
+  },
+  "singlePointGates": {
+    "baseline": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 197,
+        "milliseconds": 682.320917,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 251,
+        "milliseconds": 475.79537500000004,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 670,
+        "milliseconds": 1258.1287080000002,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    },
+    "candidate": {
+      "official": {
+        "action": "深空探测 1x 行动",
+        "actionId": "industry:e887dc52",
+        "value": 205.5,
+        "native": 197,
+        "milliseconds": 685.510417,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher265": {
+        "action": "chong_6.webp：弃牌角标",
+        "actionId": "card_corner:40cda505",
+        "value": 215,
+        "native": 251,
+        "milliseconds": 479.668583,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      },
+      "teacher272": {
+        "action": "放置数据",
+        "actionId": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 670,
+        "milliseconds": 1308.1905829999998,
+        "complete": true,
+        "accepted": false,
+        "rootExact": true
+      }
+    }
+  },
+  "officialReplay": {
+    "replayedInputs": 67,
+    "score": 216,
+    "exactStateSessionAndRng": true
+  }
+}

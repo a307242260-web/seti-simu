@@ -506,3 +506,81 @@ console.log("trusted analysis fork isolation and exact reuse passed");
   const partial=p.expandWithCardPick(root,f.source.teacherActionId,n=>n>=2?'transition-budget':null);assert(!partial.complete);assert.equal(partial.stopReason,'transition-budget');assert.equal(partial.submissions,2);assert.deepEqual(c.lifecycle.save().envelope,before);
  }finally{p.close();c.dispose();}
 }
+
+// The visible supplier and two held cards fund only two paid steps. The
+// scan's free step must be chosen first, and the public refill must not be used.
+{
+  const fs = require("node:fs"), path = require("node:path"), zlib = require("node:zlib");
+  const { createSearchAgent } = require("./search-agent");
+  const roots = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname,
+    "../../../reports/ai-foundation-20261110/v661-r4-funded-shipment-v1/funded-earth-shipment-native-roots-20261110-v1.json.gz"))));
+  const seatId = "player-white", seed = JSON.parse(roots.scan.committedState).meta.seed;
+  const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed),
+    activePlayerCount: 4, trustedProjectionReader: true,
+    projectCounterfactualState: (s, v) => buildRuleObservation(s, seed, v?.playerId) });
+  kernel.newGame({ seed });
+  const c = kernel.composition, save = () => c.lifecycle.save().envelope;
+  const restore = root => { assert(c.lifecycle.restore(root).ok); assert.deepEqual(save(), root); };
+  function decide() {
+    const before = save(), legalActions = c.inspect().session?.decision?.choices || c.inputPort.enumerateActions({});
+    const port = createAnalysisPort({ composition: c, seatId, maxCacheEntries: 0 });
+    try {
+      const q = createSearchAgent({ seatId, analysisPort: port }).decide({ seatId, legalActions }).search;
+      assert(q.complete && q.unresolved.length === 0 && q.diagnostics.nativeExecutions <= 256);
+      assert.deepEqual(save(), before);
+      const action = legalActions.find(a => a.actionId === q.actionId);
+      assert(action);
+      return { action, q };
+    } finally { port.close(); }
+  }
+  function submit(action) {
+    const decision = c.inspect().session?.decision;
+    const result = decision ? c.inputPort.submitDecision({ decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: action })
+      : action.phase === "quick" ? c.inputPort.submitQuickAction(action) : c.inputPort.submitAction(action);
+    assert(result.ok, JSON.stringify(result));
+  }
+  try {
+    restore(roots.unfunded);
+    assert(!decide().q.roots.some(r => r.actionId === "quick_trade:71814d67" && Number.isFinite(r.value)));
+    restore(roots.scan);
+    const accepted = [];
+    for (let i = 0; i < 24; i++) {
+      const { action } = decide();
+      if (!i) assert.equal(action.target?.mode, "move");
+      submit(action);
+      accepted.push(action);
+      if (action.family === "complete_task" && action.target.ruleId === "transport") break;
+    }
+    assert.equal(accepted.at(-1).family, "complete_task");
+    assert.equal(accepted.filter(a => a.target?.tradeId === "energy-for-move").length, 2);
+    assert(accepted.some(a => a.family === "choose_card" && a.target.cardInstanceId === "card-58-0"));
+    const claimed = save(), post = JSON.parse(claimed.committedState);
+    const player = post.players.players.find(p => p.id === seatId);
+    assert.equal(player.resources.energy, 0);
+    assert.equal(player.resources.credits, 3);
+    assert.equal(player.resources.availableData, 3);
+    restore(roots.scan);
+    for (const action of accepted) submit(action);
+    assert.deepEqual(save(), claimed);
+
+    // Same public offer, different hidden refill. Both must buy and pick the
+    // same visible face at the same value before any newly exposed information.
+    const outcomes = [];
+    for (const reverse of [false, true]) {
+      const root = structuredClone(roots.funded), state = JSON.parse(root.committedState);
+      if (reverse) state.cards.drawPileCardIds.reverse();
+      root.committedState = JSON.stringify(state);
+      restore(root);
+      const trade = decide(); assert.equal(trade.action.target.tradeId, "publicity-for-card");
+      submit(trade.action);
+      const pick = decide(); assert.equal(pick.action.target.cardInstanceId, "card-58-0");
+      submit(pick.action);
+      const refill = JSON.parse(save().committedState).cards.publicCards[1]?.cardId;
+      outcomes.push({ value: trade.q.value, picked: pick.action.actionId, refill });
+    }
+    assert.notEqual(outcomes[0].refill, outcomes[1].refill);
+    assert.equal(outcomes[0].value, outcomes[1].value);
+    assert.equal(outcomes[0].picked, outcomes[1].picked);
+  } finally { c.dispose(); }
+}
