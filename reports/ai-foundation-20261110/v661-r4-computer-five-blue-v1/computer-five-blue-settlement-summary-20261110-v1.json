@@ -1,0 +1,433 @@
+{
+  "previousProductionCommit": "aa4022825d243726531fcba66e079e05181bba9e",
+  "candidateOnly": true,
+  "newFullGames": 0,
+  "singleDecisionGate": {
+    "maxNativeInputs": 256,
+    "maxMilliseconds": 600
+  },
+  "nativePairedEndings": {
+    "count": 44,
+    "exactBlue": 44,
+    "groups": {
+      "1": 30,
+      "0.5": 14
+    },
+    "actorIds": [
+      "player-green"
+    ],
+    "additionalBlue3": 30
+  },
+  "newProofNativeReplay": {
+    "which": "official",
+    "action": "industry:e887dc52",
+    "value": 205.5,
+    "realization": 0,
+    "preparationDebt": 0,
+    "originalExact": true,
+    "logical": 1087,
+    "native": 221,
+    "nodes": 663,
+    "proofs": 32
+  },
+  "newProofsAmongPairedEndings": 30,
+  "originalLogicalTransitions": 1183,
+  "originalGraphNodes": 695,
+  "winningPlanRowsSame": 24,
+  "sameControlGraphs": [
+    {
+      "which": "136",
+      "graph": "fa261dd9b0cb4556b7c473d43c09f08ee08533bcd442d187617344ea11afc447",
+      "native": 224,
+      "logical": 224,
+      "eval": 103,
+      "nodes": 214,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "172",
+      "graph": "f54de3c35e27e308716ab8a47de092643b8b185c18f617a9bc250443bb0145fb",
+      "native": 99,
+      "logical": 99,
+      "eval": 52,
+      "nodes": 110,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "317",
+      "graph": "6873d5b301bf0552a4a1b2808f2f3c6bd69b4e0a7591c6d8405067b44ca93626",
+      "native": 232,
+      "logical": 405,
+      "eval": 100,
+      "nodes": 235,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "318",
+      "graph": "196dd13f81151a6eeef8fb990c90c81cd14bf5ff7f2ab50fdb6e26e11ce8ce93",
+      "native": 225,
+      "logical": 394,
+      "eval": 96,
+      "nodes": 225,
+      "rootAndRngExact": true
+    },
+    {
+      "which": "359",
+      "graph": "432f2d136059ad77bfc0d4466518506892557f054e39f0b59a692d6b0489a727",
+      "native": 229,
+      "logical": 433,
+      "eval": 155,
+      "nodes": 398,
+      "rootAndRngExact": true
+    }
+  ],
+  "numericPlanningCapitalCounters": {
+    "capital": 1835,
+    "r4": 1641,
+    "mission": 1091,
+    "nonzero": 996
+  },
+  "previousAndNewHistoricalBrowserFixture": {
+    "actionId": "industry:e887dc52",
+    "expectedAction": "industry:e887dc52",
+    "value": 154.5,
+    "native": 98,
+    "proofCount": 25,
+    "proofGoals": [
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ],
+      [
+        "data:computer-prefix:3",
+        "data:blue:1",
+        "data:blue:2"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ],
+      [
+        "data:blue:1"
+      ]
+    ],
+    "complete": true
+  },
+  "finalCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 376.3,
+        "minMs": 370.6,
+        "maxMs": 379.6,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 377.0,
+        "minMs": 371.7,
+        "maxMs": 378.1,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 374.5,
+        "minMs": 372.4,
+        "maxMs": 376.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 377.7,
+        "minMs": 375.2,
+        "maxMs": 378.6,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 604.0,
+        "minMs": 598.4,
+        "maxMs": 621.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 588.8,
+        "minMs": 588.8,
+        "maxMs": 589.5,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 669.1,
+        "minMs": 668.0,
+        "maxMs": 672.3,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 659.4,
+        "minMs": 658.3,
+        "maxMs": 665.6,
+        "samples": 3
+      }
+    }
+  },
+  "directCapitalOnlyCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 424.0,
+        "minMs": 419.6,
+        "maxMs": 429.0,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 421.7,
+        "minMs": 414.0,
+        "maxMs": 437.8,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 417.0,
+        "minMs": 413.4,
+        "maxMs": 424.5,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 415.3,
+        "minMs": 415.1,
+        "maxMs": 419.7,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 672.6,
+        "minMs": 672.0,
+        "maxMs": 678.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 665.7,
+        "minMs": 656.8,
+        "maxMs": 682.3,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 754.8,
+        "minMs": 751.2,
+        "maxMs": 759.7,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 734.7,
+        "minMs": 733.6,
+        "maxMs": 740.5,
+        "samples": 3
+      }
+    }
+  },
+  "initialCompoundCold": {
+    "root-317": {
+      "previous": {
+        "native": [
+          232
+        ],
+        "medianMs": 418.3,
+        "minMs": 417.7,
+        "maxMs": 426.5,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          232
+        ],
+        "medianMs": 419.6,
+        "minMs": 415.3,
+        "maxMs": 438.3,
+        "samples": 3
+      }
+    },
+    "root-318": {
+      "previous": {
+        "native": [
+          225
+        ],
+        "medianMs": 420.5,
+        "minMs": 417.4,
+        "maxMs": 423.1,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          225
+        ],
+        "medianMs": 421.5,
+        "minMs": 420.1,
+        "maxMs": 424.4,
+        "samples": 3
+      }
+    },
+    "root-359": {
+      "previous": {
+        "native": [
+          229
+        ],
+        "medianMs": 673.8,
+        "minMs": 672.3,
+        "maxMs": 680.4,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          229
+        ],
+        "medianMs": 673.9,
+        "minMs": 673.9,
+        "maxMs": 711.1,
+        "samples": 3
+      }
+    },
+    "root-official": {
+      "previous": {
+        "native": [
+          221
+        ],
+        "medianMs": 746.6,
+        "minMs": 743.7,
+        "maxMs": 748.9,
+        "samples": 3
+      },
+      "candidate": {
+        "native": [
+          221
+        ],
+        "medianMs": 756.6,
+        "minMs": 747.9,
+        "maxMs": 758.1,
+        "samples": 3
+      }
+    }
+  }
+}

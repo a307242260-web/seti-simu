@@ -1,0 +1,127 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4147,23 +4147,25 @@
+     // A known card pick may finish with one previously held data remaining.
+     // Reuse the existing compound currency/income proof for that exact stock.
+     // The public refill is always anonymous and cannot create a new purpose.
+-    function quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask,firstFamily="place_data",paidDrawCount=null,quoteAfterPick=null,finalRoundQuiet=false,blue3=false}) {
++    function quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask,firstFamily="place_data",paidDrawCount=null,quoteAfterPick=null,finalRoundQuiet=false,blue3=false,foreignFive=false}) {
+       const hasProbe=hasOwnVisitSource(state);
+       const noMovementAllowance=p=>p.resources.energy===0&&p.hand.every(c=>!c.hidden&&!cards.getDiscardActionMoveRewardForCard(c)?.movementPoints);
+       const singleIncomeWindow=owner.resources.availableData===2&&data.listComputerPlacedTokens(owner).length===3
+         &&(!hasProbe||owner.resources.credits===0&&owner.resources.energy===0);
+       if(hasProbe&&(!movementPlanning||!finalRoundQuiet&&!noMovementAllowance(owner)||deferredTask&&!deferredTask.requiresIncome&&!deferredTask.stationaryCapped))return null;
++      const boundRoute=foreignFive&&stored.intent?.path.length===0&&goalMovementSpec(node)?.reason==="objective-reached";
+       const stationary=current=>{
+         const p=current.players.players.find(q=>q.id===seatId);
+-        if(noMovementAllowance(p))return true;
++        if(boundRoute||noMovementAllowance(p))return true;
+         if(!finalRoundQuiet&&!singleIncomeWindow&&paidDrawCount==null)return false;
+         const objective=goalMovement.plan({state:current,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+           compareTiming:timingForOneGoalQuery(current),endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(current,seatId)?.candidates||[]});
+         goalMovementGeometryNodes+=objective?.routingNodes||0;
+         return !objective?.intent?.path.length;
+       };
+-      if(stored.intent||stored.resourceControl||state.turn.roundNumber!==(finalRoundQuiet?4:3)||transition.nextPlayerId!==seatId
+-        ||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
++      const anotherSeat=state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id));
++      if(stored.intent&&!boundRoute||stored.resourceControl||state.turn.roundNumber!==(finalRoundQuiet?4:3)
++        ||(foreignFive?transition.nextPlayerId===seatId||!anotherSeat:transition.nextPlayerId!==seatId||anotherSeat)
+         ||rootPublicLandingOffer
+         ||!(blue3?[1,2,3,4,5,6]:finalRoundQuiet?[1,2,3]:[1,2]).includes(owner.resources.availableData)
+         ||plan.goal.id!==(blue3?"data:blue:3":"data:blue:2")||plan.goal.blueSlot!==(blue3?3:2)
+@@ -4179,6 +4181,7 @@
+       const choice=actions.find(a=>a.actionId===menu?.selectedActionId),index=choice?.target.publicSlotIndex;
+       if(!Number.isInteger(index)||menu.selection.blind)return null;
+       const card=state.cards.publicCards[index],drawCount=state.cards.drawPileCardIds.length;
++      if(foreignFive&&cardEffects.hasMatchingTrigger(owner,{type:"place_data_pick_card",playerId:seatId,cardInstanceId:card.id}))return null;
+       if(!drawCount||(paidDrawCount==null?cards.getAvailablePool({...state.cards},state.players).length!==drawCount
+         :drawCount!==paidDrawCount||state.cards.drawPileCardIds.some(Boolean)))return null;
+       p.hand.push({...card,blueBonusOwnerId:seatId});p.resources.handSize=p.hand.length;
+@@ -4186,7 +4189,8 @@
+       // completion query below confirms it opens no additional plan.
+       if(p.hand.some(c=>c.hidden)||!finalRoundQuiet&&cards.getDiscardActionRewardForCard(card)?.dataCount>0
+         ||hasProbe&&!singleIncomeWindow&&!stationary(working))return null;
+-      const debt=(s,v)=>{const tool=resourceDemand.movementToolPlan(s,v);return tool.value>0?tool.selected.preparationDebt:0;};
++      // The shared movement tool has no forecast in the final round.
++      const debt=finalRoundQuiet?()=>0:(s,v)=>{const tool=resourceDemand.movementToolPlan(s,v);return tool.value>0?tool.selected.preparationDebt:0;};
+       const retainedDataCorner=p.hand.some(c=>cards.getDiscardActionRewardForCard(c)?.dataCount>0);
+       const preview={...working,cards:{...state.cards,publicCards:state.cards.publicCards.map((c,i)=>i===index?null:c),
+         unknownPublicSlotIndices:[...(state.cards.unknownPublicSlotIndices||[]),index],drawPileCardIds:new Array(drawCount-1).fill(null)}};
+@@ -4256,6 +4260,14 @@
+           canLeaveProbeStationary:current=>hasProbe&&stationary(current)});
+       }
+       const nextPlan=completion.plans?.length===1&&completion.plans[0];
++      if(foreignFive&&completion.plans?.length){
++        const reward=data.getBlueBonusPlacementReward(p,3);
++        if(!nextPlan||nextPlan.goal.id!=="data:blue:3"||reward?.type!=="credits"||reward.credits!==1
++          ||Object.keys(reward).some(k=>k!=="type"&&k!=="credits")
++          ||nextPlan.requiredNativeInputs!==2||nextPlan.immediateScoreGain!==0||nextPlan.dataCornerIds?.length
++          ||cardEffects.hasMatchingTrigger(p,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:3})
++          ||cardEffects.hasMatchingTrigger(p,{type:"science_resource_bonus",playerId:seatId,gain:{credits:reward.credits},sourceKey:"blueTechScore"}))return null;
++      }
+       const singleIncome=Boolean(singleIncomeWindow&&nextPlan?.goal?.kind==="income"&&nextPlan.requiredNativeInputs===3);
+       if(!completion.available||completion.primaryOnly||completion.markedTiles.length
+         ||!finalRoundQuiet&&retainedDataCorner&&completion.plans?.length&&!singleIncome)return null;
+@@ -4275,6 +4287,21 @@
+         unrealizedPurposeDelta:stateValue.sumValueParts([capital,completion.purposeDelta]),bluePublicPick:{cardId:card.id,cardActionId:choice.actionId,publicSlotIndex:index,
+           ordinaryDrawCountBefore:drawCount,ordinaryDrawCountAfter:drawCount-1,...(hasProbe?{stationaryProbe:true}:{}),...(singleIncome?{singleCurrencyIncome:true}:{}),
+           ...(completion.plans?.length?{continuingDataPlans:completion.plans}:{})}};
++    }
++
++    function quietR4ComputerFiveBlue({state,owner,node,stored,plan,transition}){
++      const placements=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot).sort((a,b)=>a-b);
++      if(stored.resourceControl||transition.nextPlayerId===seatId
++        ||goalMovementSpec(node)?.reason!=="objective-reached"
++        ||placements.length!==5||placements.some((slot,i)=>slot!==i+1)
++        ||data.getBlueBonusPlacementReward(owner,2)?.type!=="choose_card"
++        ||Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
++        ||!hasPostMainInertReservations(state,false,true,true)
++        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:2}))return null;
++      const end=turnTailSummary(node,"end-turn");
++      if(!end||end.netGain!==0||end.requiredNativeInputs!==1||end.markedTiles.length||end.deferredPublicity)return null;
++      const result=quietBluePublicPick({state,owner,node,stored,plan,transition,finalRoundQuiet:true,foreignFive:true});
++      return result&&{...result,computerFiveForeignBlue:true};
+     }
+
+     function quietR4Blue3Pick({state,owner,node,stored,plan,transition}){
+@@ -5105,6 +5132,10 @@
+             if(kind==="blue-end-turn"&&publicAmibaCurrencyTail&&plan?.goal.kind==="blue-data"&&plan.goal.blueSlot===2)
+               spec=owner.resources.availableData===0&&!deferredTask?quietScoredCornerThenBluePick({state,owner,node,stored,plan,transition}):
+                 quietBluePublicPick({state,owner,node,stored,plan,transition,deferredTask});
++            if(!spec&&kind==="blue-end-turn"&&publicAmibaCurrencyTail&&!deferredTask
++              &&state.turn.roundNumber===4&&stored.informationBarrier?.code==="hidden_card_reveal"
++              &&stored.intent?.path.length===0&&plan?.goal.id==="data:blue:2")
++              spec=quietR4ComputerFiveBlue({state,owner,node,stored,plan,transition});
+             if(!spec&&kind==="blue-end-turn"&&quietR4ChongData&&!deferredTask&&plan)
+               spec=quietR4Blue3Pick({state,owner,node,stored,plan,transition});
+             if(!spec&&kind==="blue-end-turn"&&fixedR4DeepSpace&&!deferredTask&&plan)
+diff --git a/randomizer/game/ai/decision-search.js b/randomizer/game/ai/decision-search.js
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -648,7 +648,7 @@
+         const regionNeedsTail=tailKind!=="end-turn"&&amibaRegion&&port.amibaRegionNeedsNativeTail(entry.node,amibaRegion);
+         let tail=tailKind&&!regionNeedsTail&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
+         if((tail?.bluePublicPick?.taskChoice||tail?.computerThenScoredBlue)&&(researchDataPurpose||deferredComputerIncome||amibaRegion))tail=null;
+-        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.computerThenKnownBluePick||tail?.quietTaskChoice||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie)&&tailNeedsNative)tail=null;
++        if((tail?.incomeThenQuietEnd||tail?.computerThenQuietEnd||tail?.computerThenKnownBluePick||tail?.quietTaskChoice||tail?.incomeThenBlueCurrency||tail?.cappedTaskBlueCurrency||tail?.scoredCornerBlueCurrency||tail?.exactFixedBlueTie||tail?.computerFiveForeignBlue)&&tailNeedsNative)tail=null;
+         if(!tailNeedsNative&&tail?.primaryOnly&&tail.firstActionId===alternative.firstActionId&&currentIndex!==0&&incumbent){
+           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
+           const currentValue=valueForNode(entry.node),upperBound=exactTailSum(currentValue,tail.netGain);
+diff --git a/randomizer/game/ai/resource-demand.js b/randomizer/game/ai/resource-demand.js
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -183,7 +183,11 @@
+   }
+   function planningCapital(state,p){
+     // Round four keeps only current probe missions and earned final marks.
+-    if(state.turn.roundNumber===4&&!probeCapital.ownedProbes(state.pieces?.rockets,p).length&&noFinalRoundMarkCapital(state,p))return 0;
++    if(noFinalRoundMarkCapital(state,p)){
++      if(!probeCapital.ownedProbes(state.pieces?.rockets,p).length)return 0;
++      const mission=probeCapital.prepareFinalRoundSwapMission(state,p);
++      return mission.quote(p.hand,state.cards.publicCards);
++    }
+     return Object.isFrozen(state)&&Object.isFrozen(p)?planningCapitalDetails(state,p).total
+       :stateValue.purposeCapital(valueFacts(state,p)).total;
+   }
