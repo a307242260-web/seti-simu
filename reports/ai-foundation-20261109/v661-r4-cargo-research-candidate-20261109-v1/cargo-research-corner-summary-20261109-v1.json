@@ -1,0 +1,220 @@
+{
+  "sources": {
+    "randomizer/app/rule-observation.js": "ca318b7f676c8510eb7d112514cf85d57a736e9c67584b55c64dae3d2863c8d0",
+    "randomizer/game/ai/analysis-port.js": "77b121ebcce39676129eeacf6eef6314790431c7185954d898749e5cb9dafd1d",
+    "randomizer/game/ai/analysis-port.test.js": "7d941942b004c2ae8da2f7e9550b891efbd6af98e00c5ae5e8873eef9e5e3bbe",
+    "randomizer/game/ai/decision-search.js": "3a78e0c217f1da7172e6bf230c317900a2cc08e59ff25b4182806569db22c663",
+    "randomizer/game/ai/known-card-money.test.js": "2b18062ecd502cc1b31a6b5f53d2ab4943be8121e91fd03a935ef6ce384d670f",
+    "randomizer/game/ai/local-decision-plans.js": "8f6b652603f71f5599f196e887c4fd85bd9bff2db41aef25ba028af38f9f1b1c",
+    "randomizer/game/ai/resource-demand.js": "c55091d73f095804c36df9c0eac63ae3d25416d3dc0f7337c891709a47ff9b6b",
+    "randomizer/game/cards/effects.js": "3084bfd20885cde637562342492f504d9d44f14eadb56c08ddf7e4a018da1fb7",
+    "randomizer/game/effects/probe-turn-session.js": "6adf2011998326011797ec21ae1d9b5f0fde0b45d245df2ed4db6d9da44b88c9",
+    "randomizer/game/effects/residual-domain-session.js": "7b853f4cdba9a958bbb795f7d6083615bec097a4962a584aff4008ea86e23005",
+    "randomizer/game/effects/science-session.js": "be8f891b07d35a6feb725f5963c1bdfd37230752dcb7669848ab9a3027ba3123",
+    "randomizer/game/rule-composition.js": "39a45812f8e31f946059f8d7c55b95368c314f6578c07a660c989ec5d1bc812f"
+  },
+  "roots": {
+    "root-317": {
+      "native": 386,
+      "ms": 555.669333,
+      "value": 251.5,
+      "chosen": "chong_4.webp：弃牌角标"
+    },
+    "root-318": {
+      "native": 379,
+      "ms": 559.258833,
+      "value": 251.5,
+      "chosen": "R6 向内"
+    },
+    "root-official": {
+      "native": 221,
+      "ms": 829.9192499999999,
+      "value": 205.5,
+      "chosen": "深空探测 1x 行动"
+    },
+    "cold-paid-1": {
+      "native": 7,
+      "ms": 52.13775000000001,
+      "value": 251.5,
+      "chosen": "移动探测器 8 向内"
+    },
+    "cold-paid-2": {
+      "native": 5,
+      "ms": 41.731459,
+      "value": 251.5,
+      "chosen": "移动探测器 6 向内"
+    }
+  },
+  "unaffected": {
+    "351": {
+      "fullRetainedRootsAndChoiceExact": true,
+      "native": 9,
+      "value": 257.5
+    },
+    "354": {
+      "fullRetainedRootsAndChoiceExact": true,
+      "native": 2,
+      "value": 257.5
+    },
+    "359": {
+      "fullRetainedRootsAndChoiceExact": true,
+      "native": 241,
+      "value": 280.5
+    },
+    "official": {
+      "fullRetainedRootsAndChoiceExact": true,
+      "native": 221,
+      "value": 205.5
+    }
+  },
+  "families": {
+    "317": {
+      "launch": 1,
+      "analyze": 1,
+      "play_card": 5,
+      "pass": 1,
+      "choose_card": 39,
+      "quick_trade": 18,
+      "research_tech": 2,
+      "choose_target": 146,
+      "scan": 2,
+      "choose_payment": 3,
+      "card_corner": 1,
+      "complete_task": 17,
+      "end_turn": 85,
+      "accept_optional_effect": 16,
+      "place_data": 49
+    },
+    "318": {
+      "choose_target": 145,
+      "research_tech": 2,
+      "choose_card": 37,
+      "quick_trade": 18,
+      "complete_task": 17,
+      "end_turn": 83,
+      "accept_optional_effect": 16,
+      "place_data": 49,
+      "launch": 1,
+      "analyze": 1,
+      "play_card": 4,
+      "pass": 1,
+      "scan": 2,
+      "choose_payment": 3
+    }
+  },
+  "limit256": {
+    "317": {
+      "native": 253,
+      "stop": "transition-budget",
+      "unresolved": 5,
+      "ms": 416.660708
+    },
+    "318": {
+      "native": 253,
+      "stop": "transition-budget",
+      "unresolved": 5,
+      "ms": 409.503792
+    }
+  },
+  "nativePlay": {
+    "board": 154,
+    "established": 234,
+    "wallet": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 6,
+      "credits": 5,
+      "energy": 3,
+      "handSize": 4,
+      "publicity": 5,
+      "score": 154
+    },
+    "tech": {
+      "blue1": true,
+      "blue2": true,
+      "blue4": true,
+      "orange2": true,
+      "orange4": true,
+      "purple2": true,
+      "purple4": true
+    },
+    "exact": true
+  },
+  "nativePlaySteps": [
+    {
+      "action": "chong_4.webp：弃牌角标",
+      "native": 386,
+      "cache": "not-requested"
+    },
+    {
+      "action": "R6 向内",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "研究科技",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "研究 blue4（蓝槽 3）",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "结算 amiba_1.webp",
+      "native": 29,
+      "cache": "dependencies-changed"
+    },
+    {
+      "action": "blue_1（4分）",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "1能量 → 移动1步",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "移动探测器 8 向内",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "1能量 → 移动1步",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "移动探测器 6 向内",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "完成 chong_6.webp",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "放置数据",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "blue4 下方",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "完成 chong_3.webp",
+      "native": 0,
+      "cache": "hit"
+    },
+    {
+      "action": "结束回合",
+      "native": 0,
+      "cache": "hit"
+    }
+  ]
+}
