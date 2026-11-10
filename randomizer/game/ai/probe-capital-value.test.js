@@ -267,10 +267,13 @@ console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true,
   }finally{c.dispose();}
 }
 
-// In the last round, three distinct move icons pay the route and two
-// other visible cards buy the one missing energy for the landing itself.
-{
-  const {root,end,actions}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'paid-landing-from-hand-20261110-v1.fixture.json.gz'))));
+// Known distinct move icons pay the route. Reserve the actual landing fee
+// from the same wallet, with a hand pair alone or together with credits.
+for(const {file,value,spend,moveCount,creditExchanges} of [
+  {file:'paid-landing-from-hand-20261110-v1.fixture.json.gz',value:19,spend:{credits:0,energy:2},moveCount:3,creditExchanges:0},
+  {file:'mixed-paid-landing-20261110-v1.fixture.json.gz',value:17,spend:{credits:2,energy:1},moveCount:4,creditExchanges:1},
+]){
+  const {root,end,actions}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,file))));
   const seed=JSON.parse(root.committedState).meta.seed,seatId='player-white';
   const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
     projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
@@ -281,16 +284,25 @@ console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true,
     const q=f=>probe.quote({...f,investment:()=>0},values.DEFAULT_WEIGHTS);
     const target=f=>q(f).candidates.find(a=>a.id.endsWith(':neptune:triton'));
     const landing=target(facts);
-    assert.equal(landing.value,19);
-    assert.deepEqual(landing.payment.spend,{credits:0,energy:2});
+    assert.equal(landing.value,value);
+    assert.deepEqual(landing.payment.spend,spend);
+    assert.equal(landing.payment.energyPurchases,creditExchanges);
     const {cornerCardIds,exchangeCardIds}=landing.payment;
-    assert.equal(cornerCardIds.length,3);assert.equal(exchangeCardIds.length,2);
-    assert.equal(new Set([...cornerCardIds,...exchangeCardIds]).size,5);
+    assert.equal(cornerCardIds.length,moveCount);assert.equal(exchangeCardIds.length,2);
+    assert.equal(new Set([...cornerCardIds,...exchangeCardIds]).size,moveCount+2);
     const known=new Set([...cornerCardIds,exchangeCardIds[0]]);
     assert.equal(target({...facts,hand:facts.hand.map(card=>known.has(card.id)?card:{...card,hidden:true})}).funded,false);
-    assert.equal(target({...facts,player:{...facts.player,energy:1}}).funded,false);
+    assert.equal(target({...facts,player:{...facts.player,energy:facts.player.energy-1}}).funded,false);
     assert.equal(target({...facts,uncontestedRound:false}).funded,false);
-    assert.equal(values.evaluateStateValue(obs(),seatId).components.probePotential,19);
+    assert.equal(values.evaluateStateValue(obs(),seatId).components.probePotential,value);
+    if(creditExchanges){
+      assert.equal(target({...facts,player:{...facts.player,credits:1}}).funded,false);
+      assert.equal(target({...facts,hand:facts.hand.map(c=>c.id===cornerCardIds[0]?{...c,hidden:true}:c)}).funded,false);
+      const distinctIds=new Set(actions.flatMap(a=>a.target.cardIds||[a.target.cardInstanceId]).filter(Boolean));
+      assert.deepEqual(distinctIds,new Set([...cornerCardIds,...exchangeCardIds]));
+      const state=JSON.parse(root.committedState),p=state.players.players.find(x=>x.id===seatId);
+      assert.equal(probe.prepareFinalRoundSwapMission(state,p).quote(p.hand,state.cards.publicCards),value);
+    }
     for(const recorded of actions){
       const d=c.inspect().session?.decision;
       const a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===recorded.actionId);

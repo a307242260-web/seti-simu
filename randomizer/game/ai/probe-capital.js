@@ -255,11 +255,12 @@
     const wallet = facts.player;
     return satellites.filter(goal => {
       const {credits=0,energy=0} = goal.endpointFacts.cost;
-      const spareCredits = wallet.credits - credits, spareEnergy = wallet.energy - energy;
-      // One known exchange can pay the last unit of the landing fee.
-      // If ordinary currency funds the route, keep its original quote.
+      const spareCredits = wallet.credits - credits;
+      const spareEnergy = wallet.energy + Math.floor(spareCredits / cToE.cost.credits) - energy;
+      // Reserve the endpoint fee before assigning any movement payments.
+      // Currency can supply part of it, followed by at most one known pair.
       return spareCredits >= 0 && spareEnergy >= (oneEnergyHandTrade ? -1 : 0)
-        && spareEnergy + Math.floor(spareCredits / cToE.cost.credits) < goal.route.cost;
+        && spareEnergy < goal.route.cost;
     });
   }
 
@@ -287,11 +288,15 @@
       const totalEnergy = energy + goal.route.cost - cornerCardIds.length;
       let payment = funding(wallet, {credits,energy:totalEnergy}, weights);
       let exchangeCardIds = [];
-      if (!payment && totalEnergy === wallet.energy + 1
+      const energyPurchases = Math.floor((wallet.credits - credits) / cToE.cost.credits);
+      if (!payment && totalEnergy === wallet.energy + energyPurchases + 1
         && oneEnergyHandTrade && exchange.length >= 2) {
+        // All possible credit exchanges are needed in this one-unit-short
+        // case. Only the remaining unit comes from the distinct hand pair.
         exchangeCardIds = exchange.slice(0, 2);
-        payment = {spend:{credits,energy:wallet.energy}, energyPurchases:0, creditPurchases:0,
-          value:credits * weights.credits + wallet.energy * weights.energy};
+        const spend = {credits:credits + energyPurchases * cToE.cost.credits,energy:wallet.energy};
+        payment = {spend, energyPurchases, creditPurchases:0,
+          value:spend.credits * weights.credits + spend.energy * weights.energy};
       }
       if (payment) result.set(goal, {...payment, cornerCardIds, exchangeCardIds,
         value:payment.value + (cornerCardIds.length + exchangeCardIds.length) * weights.handSize});
