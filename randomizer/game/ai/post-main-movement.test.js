@@ -161,6 +161,50 @@ unusual.pieces.rockets.find(rocket => rocket.playerId === seatId).kind = "fossil
 const rejected = open(unusual);
 assert.equal(rejected.port.postMainPlanSpec(rejected.root), null);
 rejected.port.close();
+// A public purchase can refill the market. Reusing a known move and its
+// energy payment must preserve that same information boundary.
+const afterRefill = fixture(0, 4, 0);
+afterRefill.turn.roundNumber = 4;
+afterRefill.players.players.find(player => player.id === seatId).resources.publicity = 3;
+function moveAfterRefill(proved) {
+  const { port, root, before } = open(afterRefill);
+  try {
+    port.setMovementPlanning(proved);
+    port.setCardPickPlanning(true);
+    port.setResourcePlanning(true);
+    const move = root.legalActions.find(action => action.family === "move");
+    assert(move);
+    assert.equal(port.expand(root, move.actionId).status, "decision"); // learn the native menu
+    const trade = root.legalActions.find(action => action.target?.tradeId === "publicity-for-card");
+    assert(trade);
+    const pick = port.expand(root, trade.actionId);
+    const offered = pick.legalActions.find(action => action.family === "choose_card");
+    assert(offered);
+    const refilled = port.expand(pick, offered.actionId);
+    assert.equal(refilled.boundary, "hidden_card_reveal");
+    const nextMove = refilled.legalActions.find(action => action.family === "move"
+      && action.target.rocketId === move.target.rocketId
+      && action.target.deltaX === move.target.deltaX && action.target.deltaY === move.target.deltaY);
+    assert(nextMove);
+    const menu = port.expand(refilled, nextMove.actionId);
+    assert.equal(menu.status, "decision");
+    const energy = menu.legalActions.find(action => action.target?.choiceId === "energy");
+    assert(energy);
+    const settled = port.expand(menu, energy.actionId);
+    assert.equal(settled.status, "stable");
+    for (const node of [menu, settled]) {
+      assert.equal(node.boundary, "hidden_card_reveal");
+      assert(node.observation.publicState.board.publicCards.some(card => card?.hidden));
+    }
+    const { provedMoveMenus, provedMovePayments } = port.getDiagnostics();
+    assert.equal(provedMoveMenus, Number(proved));
+    assert.equal(provedMovePayments, Number(proved));
+    assert.deepEqual(comp.lifecycle.save().envelope, before);
+    return [menu, settled].map(node => ({ observation: node.observation, actions: node.legalActions }));
+  } finally { port.close(); }
+}
+assert.deepEqual(moveAfterRefill(true), moveAfterRefill(false));
+
 comp.dispose();
 console.log(JSON.stringify({ postMainMovement: "passed", rawInputs: raw.diagnostics.transitions,
   prunedInputs: pruned.diagnostics.transitions, payments, arrivals, twoPointPayments }));

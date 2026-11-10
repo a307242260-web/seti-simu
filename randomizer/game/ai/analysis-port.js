@@ -1057,7 +1057,11 @@
     }
 
     function quietPaidMoveSource(stored,action){
-      if(!resourcePlanning||!movementPlanning||stored.resourceControl||stored.informationBarrier
+      // These reveals can keep their original mask while a known probe moves.
+      // Payment still rejects any card that was not known at the root.
+      const barrier=stored.informationBarrier;
+      if(!resourcePlanning||!movementPlanning||stored.resourceControl
+        ||barrier&&!["hidden_card_reveal","tech_bonus_reveal"].includes(barrier.code)
         ||action?.family!=="move"||action.phase!=="quick"||![1,2].includes(action.payload?.requiredMovePoints))return null;
       const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
       if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
@@ -1840,7 +1844,7 @@
       const quietMoveMenu=moveSource&&!cardEffects.hasMatchingTrigger(moveSource.player,moveEvent);
       const moveMenu=quietMoveMenu&&makeMoveMenu(stored,requested,moveSource.state);
       if(moveMenu){
-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,moveMenu);
+        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,moveMenu);
         provedMoveMenus++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
@@ -1848,7 +1852,7 @@
       if(paidMove){
         const envelope=provedCommittedEnvelope(stored,paidMove);
         restoreEnvelope(envelope);
-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,
+        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,
           {envelope,inspection:{phase:"idle",session:null}});
         provedMovePayments++;
         return rememberPrefix(key,node,actionId,remember(key,child));
