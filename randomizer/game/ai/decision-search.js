@@ -855,6 +855,26 @@
         }
         return Number(edge.actionId===nestedChongBlind.get(index));
       };
+      // A quiet end is already proved on each side. Rank the two fixed
+      // plans only if their settled immediate electricity is the same. Both
+      // successors are one edge from an already valued boundary, so the
+      // longer witness is settled before this choice propagates to parents.
+      if (resourcePlanning && realizationTies && root.observation?.publicState?.roundNumber===3 && port.sameElectricityIncomeTie) {
+        const quietEnd = entry => {
+          const end=entry.edges[0]?.turnTailPlanValue;
+          return entry.edges.length===1&&end?.kind==="end-turn"&&end.netGain===0&&end.markedTiles.length===0;
+        };
+        for (const entry of nodes) {
+          if(entry.edges.length!==2)continue;
+          const blue=entry.edges.find(e=>e.resourcePlan?.goal.kind==="blue-data");
+          const income=entry.edges.find(e=>e.resourcePlan?.goal.kind==="income");
+          if(blue?.goalStatus!=="completed"||income?.goalStatus!=="completed"||blue.fallbackReason||income.fallbackReason
+            ||blue.steps.length!==(entry.node.status==="decision"?1:2)||income.steps.length!==blue.steps.length+1
+            ||!quietEnd(nodes[blue.target])||!quietEnd(nodes[income.target]))continue;
+          if(port.sameElectricityIncomeTie(entry.node,nodes[blue.target].node,nodes[income.target].node,income.resourcePlan.goal.incomeCardId))
+            entry.electricIncomeTie=income;
+        }
+      }
       for (let head = 0; head < changed.length; head += 1) {
         const target = nodes[changed[head]];
         for (const { index, edge } of parents[changed[head]]) {
@@ -865,6 +885,10 @@
           const blindCount=(target.chongBlindCount??0)+chongBlindRank(index,edge);
           const blindRank=blindCount-(parent.chongBlindCount??0);
           const pickupRank=(target.pickupRank??0)-(parent.pickupRank??0);
+          const incomeTieRank=Number(edge===parent.electricIncomeTie)
+            -Number(Boolean(parent.best)&&parent.best===parent.electricIncomeTie);
+          const shorter=distance < parent.distance || (distance === parent.distance && edge.actionId < parent.best?.actionId);
+          const finalTie=incomeTieRank>0 || incomeTieRank===0&&shorter;
           // A certified use of retained resources breaks a score tie before
           // favoring an immediately received but otherwise unbound reward.
           if (parent.value == null || target.value > parent.value
@@ -874,8 +898,7 @@
                   || (target.realization === parent.realization && (target.landingCompanyRetained > parent.landingCompanyRetained
                     || (target.landingCompanyRetained === parent.landingCompanyRetained && (Number(Boolean(target.publicDataCard)) > Number(Boolean(parent.publicDataCard))
                       || (Boolean(target.publicDataCard) === Boolean(parent.publicDataCard)
-                        && (blindRank < 0 || (blindRank === 0 && (distance < parent.distance
-                          || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))))))))) {
+                        && (blindRank < 0 || (blindRank === 0 && finalTie)))))))))))))) {
             parent.value = target.value;
             parent.realization = target.realization;
             parent.preparationDebt = target.preparationDebt;

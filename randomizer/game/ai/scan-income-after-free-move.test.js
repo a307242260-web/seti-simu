@@ -57,4 +57,45 @@ try{
  }
  assert.deepEqual(successors[1],successors[0]);
  assert.deepEqual(c.lifecycle.save().envelope,before);
+
+ // Last data: two complete plans produce the same value and immediate energy.
+ // Prefer the one that also pays permanent income after the round.
+ const tieState=JSON.parse(envelope.committedState),owner=tieState.players.players.find(p=>p.id===seat);
+ const data=require('../data'),amiba=require('../aliens/amiba');
+ tieState.cards.discardPile.push(...owner.hand);owner.hand=[];
+ owner.resources={...owner.resources,credits:0,energy:0,publicity:5,availableData:0,handSize:0};
+ owner.mainActionCompleted=true;
+ owner.dataState=data.createDefaultDataState();owner.blueBonusResources={credits:0,energy:0};
+ for(let i=0;i<3;i++){assert(data.gainData(owner,{root:tieState}).ok);assert(data.placeDataToComputer(owner).ok);}
+ assert(data.gainData(owner,{root:tieState}).ok);
+ tieState.cards.removedFromGameCardIds=tieState.cards.removedFromGameCardIds.filter(id=>id!=='amiba_9.webp');
+ owner.reservedCards.push(amiba.createAlienCard(9,tieState.meta.sequences.alienEntity++));
+ assert(c.lifecycle.restore({...envelope,committedState:JSON.stringify(tieState)}).ok);
+ const submit=a=>{
+  const d=c.inspect().session?.decision;
+  const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+    :c.inputPort.submitQuickAction(a);
+  assert(r.ok,JSON.stringify(r));
+ };
+ submit(c.inputPort.enumerateActions({}).find(a=>a.target?.tradeId==='publicity-for-card'));
+ submit(c.inspect().session.decision.choices.find(a=>a.target?.cardInstanceId===tieState.cards.publicCards.find(c=>c.cardId==='dlc_25.png').id));
+ submit(c.inputPort.enumerateActions({}).find(a=>a.family==='place_data'));
+ const tieRoot=c.lifecycle.save().envelope,tiePort=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+ try{
+  const legalActions=c.inspect().session.decision.choices;
+  const computer=legalActions.find(a=>a.target?.target==='computer');
+  const blue=legalActions.find(a=>a.target?.blueSlot===1);
+  const q=createSearchAgent({seatId:seat,analysisPort:tiePort}).decide({seatId:seat,legalActions}).search;
+  assert(q.complete);
+  const [a,b]=[computer,blue].map(x=>q.roots.find(y=>y.actionId===x.actionId));
+  assert.equal(a.completion,'complete');assert.equal(b.completion,'complete');assert.equal(a.value,b.value);
+  assert.equal(q.actionId,computer.actionId,'same immediate electricity and value favor recurring income');
+  assert.deepEqual(c.lifecycle.save().envelope,tieRoot);
+  submit(computer);submit(c.inspect().session.decision.choices[0]);
+  const paid=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===seat);
+  assert.equal(paid.resources.energy,1);
+  assert.equal(paid.income.energy,owner.income.energy+1);
+  assert.equal(paid.hand.length,0);
+ }finally{tiePort.close();}
+ console.log('completed electricity tie prefers the recurring income');
 }finally{port.close();c.dispose();}
