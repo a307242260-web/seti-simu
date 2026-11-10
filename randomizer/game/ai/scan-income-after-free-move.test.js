@@ -99,3 +99,22 @@ try{
  }finally{tiePort.close();}
  console.log('completed electricity tie prefers the recurring income');
 }finally{port.close();c.dispose();}
+
+
+const finalScanCases=JSON.parse(gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/r4-scan4-launch-20261111-v1.json.gz'))));
+for(const {root,actionId,value} of finalScanCases){
+ const finalKernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+  projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});
+ finalKernel.newGame({seed});const composition=finalKernel.composition;
+ const finalPort=createAnalysisPort({composition,seatId:seat,maxCacheEntries:0});
+ try{
+  assert(composition.lifecycle.restore(root).ok);
+  const legalActions=composition.inputPort.enumerateActions({});
+  const q=createSearchAgent({seatId:seat,analysisPort:finalPort}).decide({seatId:seat,legalActions}).search;
+  assert(q.complete&&!q.unresolved.length);
+  assert.deepEqual([q.actionId,q.value],[actionId,value]);
+  assert(q.diagnostics.nativeExecutions<=256);
+  assert(finalPort.getDiagnostics().provedScan4QuietLaunchSkips>0);
+  assert.deepEqual(composition.lifecycle.save().envelope,root);
+ }finally{finalPort.close();composition.dispose();}
+}

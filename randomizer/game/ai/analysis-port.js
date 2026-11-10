@@ -480,7 +480,7 @@
     let provedAmibaYellowLandingInputs=0,provedAlienDisplays=0,provedPinkCardMenus=0,provedQuietSpecifiedScans=0;
     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
     let provedPinkRefills=0,provedPinkFossilMenus=0,provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
-    let provedScan4QuietMoves=0, provedPublicScanChoices=0;
+    let provedScan4QuietMoves=0, provedScan4QuietLaunchSkips=0, provedPublicScanChoices=0;
     const scan4RefillCache=new Map();
     let scan4RefillHits=0;
     let moveMenuTemplate=null, provedMoveMenus=0, provedMovePayments=0;
@@ -671,7 +671,7 @@
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       submissionCount = 0; provedQuietSpecifiedScans=0; provedPinkCardMenus=0; provedAlienDisplays=0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
-      provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+      provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0;provedScan4QuietLaunchSkips=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
@@ -1365,10 +1365,12 @@
       return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
     }
 
-    function previewQuietScan4Move(node,stored,action){
-      if(!resourcePlanning||!scanPlanning||!movementPlanning||node.status!=="decision"||stored.resourceControl
-        ||stored.informationBarrier||action.family!=="choose_target"||action.target?.mode!=="move"
-        ||action.payload?.requiredMovePoints!==1)return null;
+    function previewQuietScan4Action(node,stored,action){
+      const mode=action.target?.mode,moving=mode==="move";
+      if(!resourcePlanning||!scanPlanning||!movementPlanning||node.status!=="decision"
+        ||stored.resourceControl&&(moving||stored.resourceControl.goal.kind!=="scan-flow")
+        ||stored.informationBarrier||action.family!=="choose_target"
+        ||(moving?action.payload?.requiredMovePoints!==1:!["launch","skip"].includes(mode)||action.target.choiceId!==`scan4:${mode}`))return null;
       const checkpoint=stored.envelope.session, s=checkpoint?.session;
       const [head,second,third,last]=s?.queue||[],types=scienceSession.EFFECT_TYPES;
       const mercury=s?.queue.length===3&&quietMercuryScanStep(second)?second:null;
@@ -1383,29 +1385,41 @@
         ||extra.payload?.options?.mode!=="any"||extra.payload.options.sameSectorRemaining!==1)
         ||source!=="scan"&&source!=="play_card")return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
-      const ship=state.pieces.rockets.find(r=>r.id===action.target.rocketId);
+      if(!moving&&(mercury
+        ||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"))return null;
+      const ship=moving&&state.pieces.rockets.find(r=>r.id===action.target.rocketId);
       const known=knownCards(stored.envelope);
       if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(state):Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
-        ||!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"||p.reservedCards.some(c=>!known.has(c.id))
-        ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)]
+        ||p.reservedCards.some(c=>!known.has(c.id))
+        ||moving&&(!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"
+          ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)])
         ||!mercury&&data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
       const missing=state.cards.publicCards.filter(c=>!c).length;
       if(!missing)return null;
       const player={...p,resources:{...p.resources},reservedCards:structuredClone(p.reservedCards)};
       const next={...state,meta:{...state.meta,sequences:{...state.meta.sequences}},
-        pieces:{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
+        pieces:moving?{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)}
+          :mode==="launch"?copyForkData(state.pieces):state.pieces,
         cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
         players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
-      const move=rocketAbilities.moveProbe(scienceSession.createActionContext(next,seatId),{
-        ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
-      });
-      if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
+      const context=scienceSession.createActionContext(next,seatId);
+      let event={type:"scanAction4Skipped",playerId:seatId};
+      if(moving){
+        const move=rocketAbilities.moveProbe(context,{
+          ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
+        });
+        if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
+        event=move.events[0];
+      }else if(mode==="launch"){
+        const launch=rocketAbilities.launchProbe(context,{cost:{energy:scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY}});
+        if(!launch.ok||launch.events.length!==1||launch.events[0].type!=="launch")return null;
+        event=launch.events[0];
+      }
       if(mercury){
         // The paid Mercury scan remains a real decision. No sector reward
         // or refill is resolved while preparing its native menu.
-        const event=move.events[0];
         if(cardEffects.collectMatchingTriggers(player,event).length)return null;
         const choices=scienceSession.formalizeChoices(next,seatId,scienceSession.listScanStepChoices(next,player,mercury.payload.options));
         if(!choices.length)return null;
@@ -1421,7 +1435,7 @@
         return {prepared:{envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}}};
       }
       if(!refillQuietScan4(next,missing))return null;
-      const events=[move.events[0],{type:"publicRefill",count:missing}];
+      const events=[event,{type:"publicRefill",count:missing}];
       if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
       const eid=n=>s.sessionId+":effect:"+(s.nextEffectSequence+n);
       const gid=n=>s.sessionId+":group:"+(s.nextGroupSequence+n);
@@ -1895,17 +1909,20 @@
         provedPublicScanChoices++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
-      const scanMove=previewQuietScan4Move(node,stored,requested);
-      if(scanMove){
-        let prepared=scanMove.prepared;
+      const scanAction=previewQuietScan4Action(node,stored,requested);
+      if(scanAction){
+        let prepared=scanAction.prepared;
         if(!prepared){
-          const envelope=provedCommittedEnvelope(stored,scanMove.next);
+          const envelope=provedCommittedEnvelope(stored,scanAction.next);
           restoreEnvelope(envelope);
           prepared={envelope,inspection:{phase:"idle",session:null}};
         }
-        const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanMove.barrier},
-          nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,prepared);
-        provedScan4QuietMoves++;
+        const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanAction.barrier},
+          nextMovementIntent(node,requested),
+          stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
+          stored.informationBarrier,requested,stored,prepared);
+        if(requested.target.mode==="move")provedScan4QuietMoves++;
+        else provedScan4QuietLaunchSkips++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const alienDisplay=previewQuietAlienDisplay(node,stored,requested);
@@ -8921,7 +8938,7 @@
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards,
         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
-        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedQuietSpecifiedScans, provedPinkCardMenus, provedAlienDisplays, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+        companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedQuietSpecifiedScans, provedPinkCardMenus, provedAlienDisplays, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, provedScan4QuietLaunchSkips, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
