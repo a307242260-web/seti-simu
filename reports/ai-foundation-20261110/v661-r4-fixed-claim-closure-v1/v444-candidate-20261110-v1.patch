@@ -1,0 +1,35 @@
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+ 
+-  const VERSION = "seti-complete-decision-search-v442";
++  const VERSION = "seti-complete-decision-search-v444";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -1396,13 +1396,17 @@
+     if(species==='amiba'&&aliens.amiba.listSymbolsInRegion(state.aliens,'red',{readOnlyRewards:true})
+       .some(({reward})=>!reward||Object.keys(reward.gain||{}).some(k=>k!=='score')
+         ||Object.keys(reward).some(k=>k!=='gain'&&reward[k])))continue;
+-    // The probe portfolio can quote the best remaining 3/4 card position.
+-    // Do not discard either while that extra valuation input is reachable.
++    // Before the required card reward, Native still has pending effects:
++    // a probe cannot quote a public-sector closure there. The fixed Amiba
++    // reward takes the original display before the state can become stable.
++    // Its replacement is masked against that original root, so the probe's
++    // known-display forecast cannot read the remaining position either.
+     if(takesCard&&(secondPink||state.aliens.amiba.displayedCardIndex!==knownAmibaDisplay
+-      ||!Number.isInteger(knownAmibaDisplay)||probeCapital.ownedProbes(state.pieces.rockets,p).length))continue;
++      ||!Number.isInteger(knownAmibaDisplay)||!aliens.amiba.getCardDefinition(knownAmibaDisplay)))continue;
+     excludedActionIds.push(low.actionId);
+     proof.push({lower:low.actionId,higher:high.actionId,scoreDelta:1,sameSpecies:species,sameRegion:a.region??null,sameCardChoice:takesCard,
+-      continuation:secondPink?'same-two-rewards-in-opposite-order':'same-post-placement-effects'});
++      continuation:secondPink?'same-two-rewards-in-opposite-order':'same-post-placement-effects',
++      ...(takesCard?{forecastScope:'pending-then-masked-amiba-display'}:{})});
+   }
+   return excludedActionIds.length?{policy:'seti-late-pink-position-dominance-v1',kind:'rank-automatic-scan-traces',fixed:false,
+     isEquivalence:false,retainedActionIds:actions.filter(a=>!excludedActionIds.includes(a.actionId)).map(a=>a.actionId),
