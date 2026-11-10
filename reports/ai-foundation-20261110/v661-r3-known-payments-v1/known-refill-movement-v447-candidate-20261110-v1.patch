@@ -1,0 +1,19 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1028 +1028,2 @@
+-      if(!resourcePlanning||!movementPlanning||stored.resourceControl||stored.informationBarrier
++      if(!resourcePlanning||!movementPlanning||stored.resourceControl
++        ||(stored.informationBarrier&&stored.informationBarrier.code!=="hidden_card_reveal")
+@@ -1032,0 +1034 @@
++        ||(stored.informationBarrier&&!p.mainActionCompleted)
+@@ -1798 +1800 @@
+-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,moveMenu);
++        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,moveMenu);
+@@ -1806 +1808 @@
+-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,
++        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,stored.informationBarrier,requested,stored,
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v435";
++  const VERSION = "seti-complete-decision-search-v447";
