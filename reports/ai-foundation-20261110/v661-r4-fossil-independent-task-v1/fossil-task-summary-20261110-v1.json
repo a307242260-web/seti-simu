@@ -1,0 +1,317 @@
+{
+  "baselineSource": "e22103ca5b45014b700fd3e4d7305492ebd3c246",
+  "searchCandidate": "seti-complete-decision-search-v437",
+  "sameTurnEnd": [
+    {
+      "blindDraw": "dlc_6.png",
+      "ordinary": {
+        "value": 221.5,
+        "projectedFinal": 205,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 0,
+          "handSize": 7,
+          "publicity": 8,
+          "score": 144
+        },
+        "taskCount": 3
+      },
+      "heldBeforeFossil": {
+        "value": 214.5,
+        "projectedFinal": 198,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 6,
+          "publicity": 8,
+          "score": 141
+        },
+        "taskCount": 2
+      },
+      "heldAfterFossilAndTask": [
+        {
+          "id": "fossil_06",
+          "pickup": {
+            "value": 214.5,
+            "projectedFinal": 198,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 141
+            },
+            "taskCount": 2
+          },
+          "end": {
+            "value": 222.5,
+            "projectedFinal": 205,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 4,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 144
+            },
+            "taskCount": 3
+          }
+        },
+        {
+          "id": "fossil_01",
+          "pickup": {
+            "value": 214.5,
+            "projectedFinal": 198,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 141
+            },
+            "taskCount": 2
+          },
+          "end": {
+            "value": 222.5,
+            "projectedFinal": 205,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 4,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 144
+            },
+            "taskCount": 3
+          }
+        }
+      ]
+    },
+    {
+      "blindDraw": "dlc_3.png",
+      "ordinary": {
+        "value": 221.5,
+        "projectedFinal": 205,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 0,
+          "handSize": 7,
+          "publicity": 8,
+          "score": 144
+        },
+        "taskCount": 3
+      },
+      "heldBeforeFossil": {
+        "value": 214.5,
+        "projectedFinal": 198,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 6,
+          "publicity": 8,
+          "score": 141
+        },
+        "taskCount": 2
+      },
+      "heldAfterFossilAndTask": [
+        {
+          "id": "fossil_06",
+          "pickup": {
+            "value": 214.5,
+            "projectedFinal": 198,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 141
+            },
+            "taskCount": 2
+          },
+          "end": {
+            "value": 222.5,
+            "projectedFinal": 205,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 4,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 144
+            },
+            "taskCount": 3
+          }
+        },
+        {
+          "id": "fossil_01",
+          "pickup": {
+            "value": 214.5,
+            "projectedFinal": 198,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 3,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 141
+            },
+            "taskCount": 2
+          },
+          "end": {
+            "value": 222.5,
+            "projectedFinal": 205,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 5,
+              "credits": 4,
+              "energy": 1,
+              "handSize": 6,
+              "publicity": 8,
+              "score": 144
+            },
+            "taskCount": 3
+          }
+        }
+      ]
+    }
+  ],
+  "quote": {
+    "boardScore": 3,
+    "credits": 1,
+    "placedC1Score": 4,
+    "searchValue": 8,
+    "hiddenActions": 0,
+    "quotedLeaves": 80,
+    "nativeContinuations": 160,
+    "rootRestored": true
+  },
+  "satellite": {
+    "previous": {
+      "action": "play_card:f1918668",
+      "value": 227,
+      "ms": 1229.491167,
+      "native": 205,
+      "nodes": 1280,
+      "incomeValue": 221.5,
+      "incomeOptions": {
+        "play_card:975c7a35": 214.5,
+        "pass:a1f33c73": 188,
+        "quick_trade:f385e2ac": 221.5
+      },
+      "graphClosed": true
+    },
+    "candidate": {
+      "action": "play_card:f1918668",
+      "value": 227,
+      "ms": 1386.533125,
+      "native": 205,
+      "nodes": 1280,
+      "incomeValue": 222.5,
+      "incomeOptions": {
+        "play_card:975c7a35": 222.5,
+        "pass:a1f33c73": 188,
+        "quick_trade:f385e2ac": 221.5
+      },
+      "graphClosed": true
+    }
+  },
+  "controls": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110,
+      "digest": "9ba0b5e52f053f8663531b478b8ac96d0845e59379f49674c9de17be02a65e8b",
+      "baselineMs": 236.79095799999996,
+      "candidateMs": 233.52249999999998,
+      "sameGraph": true
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214,
+      "digest": "3d956e652273bdd1e9834f2c908f9856659c43fcf85ccf8c7d15cee9bb6850d0",
+      "baselineMs": 281.4055,
+      "candidateMs": 260.29520800000006,
+      "sameGraph": true
+    },
+    {
+      "label": "official",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 165,
+      "graphNodes": 535,
+      "digest": "d3f6d5120d18876a338936d35f852fa46cf0f918d4cfe7e1e4cd8fe315459c08",
+      "baselineMs": 963.115125,
+      "candidateMs": 894.421708,
+      "sameGraph": true
+    },
+    {
+      "label": "late",
+      "action": "analyze:a5629aa3",
+      "value": 266,
+      "native": 222,
+      "graphNodes": 342,
+      "digest": "5384edc7832577dd5a23a8681134444caf77019f5139c48d64da908cfc3b755c",
+      "baselineMs": 464.753333,
+      "candidateMs": 456.85595800000004,
+      "sameGraph": true
+    },
+    {
+      "label": "teacher272",
+      "action": "place_data:8fd12fd3",
+      "value": 223,
+      "native": 157,
+      "graphNodes": 672,
+      "digest": "000b5070a83846cdcf5ae90464048b475b90a73b86c88042d790bbf87abd888f",
+      "baselineMs": 1207.3611250000001,
+      "candidateMs": 1127.6890830000002,
+      "sameGraph": true
+    }
+  ],
+  "tests": {
+    "targetedNode": 6,
+    "valueAudit": 66,
+    "browser": 2
+  },
+  "gates": {
+    "maxNative": 256,
+    "maxMs": 600,
+    "newGameRun": false,
+    "productionAdmission": false,
+    "reason": "satellite and teacher272 decision timing"
+  }
+}
