@@ -1,0 +1,4060 @@
+{
+  "source": "e09af83da21fbc57433b6fae1c00d6ff5210cac0",
+  "root": "teacher #272",
+  "sameRootAndRng": true,
+  "scope": "fixed known five white-seat turns, not full games",
+  "incomeChoice": {
+    "chosen": "alien-chong-6-16",
+    "options": [
+      {
+        "id": "alien-chong-6-16",
+        "gain": {
+          "energy": 1
+        },
+        "price": 1,
+        "value": 7.5
+      },
+      {
+        "id": "card-30-pass-3-1",
+        "gain": {
+          "energy": 1
+        },
+        "price": 2,
+        "value": 7.5
+      }
+    ]
+  },
+  "prescanBeforeEnceladusRemaining": {
+    "sector-3-b": 1,
+    "sector-2-a": 3,
+    "sector-4-a": 1
+  },
+  "reverseEnceladusRemainingAllOffers": {
+    "sector-2-b": 5,
+    "sector-3-b": 2,
+    "sector-2-a": 3,
+    "sector-1-a": 5,
+    "sector-4-a": 2,
+    "sector-3-a": 3
+  },
+  "paths": {
+    "triton": [
+      {
+        "turn": 1,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 206,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 221.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 10,
+            "score": 152
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-amiba-9-18",
+              "amiba_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 4,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 213,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 231,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 4,
+            "score": 160
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-amiba-9-18",
+              "amiba_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 4,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 225,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 238,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 162
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue3": 4,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "blue4": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-77-0",
+              "dlc_6.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 4,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 234,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 246,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 169
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue3": 4,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "blue4": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-77-0",
+              "dlc_6.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [],
+          "blue": [],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 5,
+            "pink": 4,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 243,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ],
+    "paid-blue4-orange1": [
+      {
+        "turn": 1,
+        "value": 207,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 4,
+            "energy": 1,
+            "handSize": 6,
+            "publicity": 6,
+            "score": 116
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "b_117.webp",
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 2,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 54.9,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 3,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 212.48,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 173,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 219.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 7,
+            "publicity": 8,
+            "score": 142
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 5,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 203,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 228,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 3,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 4,
+            "score": 148
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 5,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 213,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 234.5,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 7,
+            "publicity": 5,
+            "score": 150
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ],
+            [
+              "alien-amiba-9-20",
+              "amiba_9.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_4.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-77-0",
+              "dlc_6.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": -9.9,
+              "color": "white",
+              "id": 8,
+              "launchGrid": {
+                "x": 1,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 1,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 1,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 5,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 222,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 255,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 2,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 8,
+            "score": 176
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_4.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-77-0",
+              "dlc_6.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 5,
+            "yellow": 3
+          },
+          "alienDisplay": 5,
+          "final": 248,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ],
+    "reverse-fossil-energy": [
+      {
+        "turn": 1,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 206,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 147
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 8,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 208,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 224.5,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 6,
+            "score": 160
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 54.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 221,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 236,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 162
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 234,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 241,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 165
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [],
+          "blue": [],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 5,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 239,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ],
+    "reverse-fossil-publicity": [
+      {
+        "turn": 1,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 206,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 147
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 8,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 208,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 224.5,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 6,
+            "score": 160
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 54.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 221,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 236,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 162
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 234,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 241,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 165
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [],
+          "blue": [],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 5,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 239,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ],
+    "reverse-fossil-energy-display": [
+      {
+        "turn": 1,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 206,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 147
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 8,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 208,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 224.5,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 6,
+            "score": 160
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 54.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 221,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 236,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 162
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 234,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 240,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 165
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [],
+          "blue": [],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_06",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 5,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 237,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ],
+    "reverse-fossil-publicity-display": [
+      {
+        "turn": 1,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 8,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 9,
+            "score": 145
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 206,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 2,
+        "value": 216.5,
+        "facts": {
+          "round": 4,
+          "turn": 9,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 147
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "alien-chong-6-16",
+              "chong_6.webp"
+            ],
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 8,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 208,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 3,
+        "value": 224.5,
+        "facts": {
+          "round": 4,
+          "turn": 10,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 6,
+            "score": 160
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 3,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 54.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 221,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 4,
+        "value": 236,
+        "facts": {
+          "round": 4,
+          "turn": 11,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 162
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            3
+          ],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 4,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 234,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "turn": 5,
+        "value": 240,
+        "facts": {
+          "round": 4,
+          "turn": 12,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 165
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-9-18",
+              "chong_9.webp"
+            ]
+          ],
+          "reserved": [
+            "dlc_31.png",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp",
+            "chong_6.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue4": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue4": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 4,
+          "market": [
+            [
+              "card-76-0",
+              "dlc_7.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-75-0",
+              "b_18.webp"
+            ]
+          ],
+          "computer": [],
+          "blue": [],
+          "probes": [
+            {
+              "angleDegrees": 22.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 9.9,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_01",
+              "id": 9,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 212.48,
+              "sectorX": 2,
+              "sectorY": 3,
+              "slotIndex": 0,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 5,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 237,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ]
+  }
+}
