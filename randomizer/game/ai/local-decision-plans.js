@@ -1770,14 +1770,14 @@
     :player===following?{...player,mainActionCompleted:false}:player)};
   return next;
  }
- function previewFinalEndPrelude({state,seatId,action,knownCards,allowSameSeat=false}){
+ function previewFinalEndPrelude({state,seatId,action,knownCards,allowSameSeat=false,allowUnrevealedR3=false}){
   const turn=state.turn,p=owner(state,seatId);
   const sameSeat=turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id));
   if(action?.family!=='end_turn'||action.phase!=='turn_control'||action.target?.kind!=='end-turn'
-    ||turn.roundNumber!==4||state.match.initialSetup||!p||sameSeat&&!allowSameSeat
+    ||(turn.roundNumber!==4&&!(allowUnrevealedR3&&turn.roundNumber===3))||state.match.initialSetup||!p||sameSeat&&!allowSameSeat
     ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
   const preview=residual.previewQuietEndHandoffs(state,seatId,{stationaryCargo:sameSeat});
-  if(!preview)return null;
+  if(!preview||(turn.roundNumber===3&&preview.settlements.length))return null;
   if(!preview.settlements.length){
    const finished=previewForeignTurnAfterQuietHandoffs(preview.state,seatId,state.meta.stateVersion+1,sameSeat);
    return finished?{finished}:null;

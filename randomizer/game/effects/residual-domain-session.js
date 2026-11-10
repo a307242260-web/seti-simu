@@ -1286,10 +1286,10 @@
 
   // Search may reapply this deterministic corner on each exact fork.
   // The regular executor is still the owner of both data and discard rules.
-  function previewQuietResourceCorner(root, action, knownCards) {
+  function previewQuietResourceCorner(root, action, knownCards, allowUnrevealedR3 = false) {
     const turn=root.turn,owner=actor(root,action.actorId);
     if(action.family!=="card_corner"||action.phase!=="quick"||action.payload?.kind!=="resource"||action.payload.multiplier!==1
-      ||turn.roundNumber!==4||turn.currentPlayerId!==owner?.id||turn.gameEnded||owner.passCompletionPending
+      ||(turn.roundNumber!==4&&!(allowUnrevealedR3&&turn.roundNumber===3))||turn.currentPlayerId!==owner?.id||turn.gameEnded||owner.passCompletionPending
       ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
       ||owner.reservedCards.some(c=>!knownCards.has(c.id)))return null;
     const id=action.target?.cardInstanceId,card=owner.hand.find(c=>c.id===id);

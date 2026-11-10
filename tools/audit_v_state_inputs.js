@@ -512,9 +512,12 @@ try {
       try{port.setResourcePlanning(true);const root=port.openRoot(),plans=port.resourceSpec(root).plans.filter(p=>p.goal.kind==="research_tech"),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
         for(const plan of plans){const macro=port.expandResourcePlan(root,plan,()=>null);if(!macro.complete||macro.submissions!==8)throw new Error("共享前缀改变科技路径");
           for(const node of [...macro.prefixes.map(p=>p.node),macro.node])if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:fixture.seatId})))throw new Error("共享前缀原始/标准估值不一致");}
-        if(port.getDiagnostics().submissionCount!==18||port.getResourcePrefixGraph().nodes.length!==19)throw new Error("共享前缀未合并实际执行");
+        const d=port.getDiagnostics(),graph=port.getResourcePrefixGraph(),proved=d.provedFinalResourceCorners
+          +d.provedFinalDataMenuInputs+d.provedComputerIncomeMenus+d.provedCurrencyIncomeInputs
+          +Object.values(d.provedFinalDataPlacements).reduce((n,v)=>n+v,0);
+        if(graph.edges.length!==18||graph.nodes.length!==19||d.submissionCount+proved!==graph.edges.length)throw new Error("共享前缀未合并实际执行");
         if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error("共享前缀改变权威根");
-        console.log('[PASS] independent-shared-resource-prefix: goals=11 nativeInputs=18 states=19');
+        console.log(`[PASS] independent-shared-resource-prefix: goals=11 inputs=18 nativeInputs=${d.submissionCount} proved=${proved} states=19`);
       }finally{port.close();}
     }
     {

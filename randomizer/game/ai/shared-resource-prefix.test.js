@@ -9,18 +9,25 @@ assert.equal(ids.length,8);
 function opened(cache){const seed=fixture.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(fixture.compositionEnvelope).ok);return{c,p:createAnalysisPort({composition:c,seatId:fixture.seatId,maxCacheEntries:cache})};}
 const evaluate=createStateValueEvaluator(fixture.seatId);
 function focused(p,root){return{...p,resourceSpec(n){const s=p.resourceSpec(n);return n===root?{...s,retainedActionIds:[],plans:s.plans.filter(a=>ids.includes(a.goal.id))}:s;}};}
+// Proved placements are still edges and consume the search transition
+// budget, but do not submit a second native action in the private fork.
+function chargedAndProved(p){
+ const d=p.getDiagnostics();
+ return d.submissionCount+d.provedFinalResourceCorners+d.provedFinalDataMenuInputs+d.provedComputerIncomeMenus+d.provedCurrencyIncomeInputs
+  +Object.values(d.provedFinalDataPlacements).reduce((n,x)=>n+x,0);
+}
 const observations=[];let rewardInputs,firstPlanInputs;
 for(const cache of [0,256]){
  const {c,p}=opened(cache),before=c.lifecycle.save().envelope;p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setResourcePlanning(true);
  const root=p.openRoot(),plans=p.resourceSpec(root).plans,results=[];
  for(const id of ids){const r=p.expandResourcePlan(root,plans.find(p=>p.goal.id===id),()=>null);assert(r.complete);const extra=r.submissions-8;assert([0,1].includes(extra));results.push(r);assert.deepEqual(r.prefixes.slice(0,8).map(p=>p.action.actionId),edges.find(e=>e.resourcePlan.goal.id===id).steps);if(extra){const a=r.prefixes[8].action;assert.equal(a.family,'choose_card');assert(root.observation.publicState.board.publicCards.some(c=>c?.id===a.target.cardInstanceId));}const native=opened(0);try{native.p.setMovementPlanning(true);native.p.setCardPickPlanning(true);native.p.setResourcePlanning(true);let node=native.p.openRoot();for(const prefix of r.prefixes)node=native.p.expand(node,prefix.action.actionId);assert.equal(evaluate(r.node.observation),evaluate(node.observation),'shared preparation retains current native capability/hand value, not a historical linear scalar');assert.deepEqual(native.c.lifecycle.save().envelope,before);}finally{native.p.close();native.c.dispose();}}
  observations.push(results.map(r=>r.node.observation));
- rewardInputs=results.reduce((n,r)=>n+r.submissions-8,0);firstPlanInputs=results[0].submissions;assert.equal(p.getDiagnostics().submissionCount,15+rewardInputs,'all eight tech kinds share seven preparation inputs; each guaranteed pick is one additional charged native input');
+ rewardInputs=results.reduce((n,r)=>n+r.submissions-8,0);firstPlanInputs=results[0].submissions;assert.equal(chargedAndProved(p),15+rewardInputs,'all eight tech kinds share seven preparation inputs; each guaranteed pick adds one edge');
  const graph=p.getResourcePrefixGraph();assert.equal(graph.edges.length,15+rewardInputs);assert.equal(graph.nodes.length,16+rewardInputs);
  for(const r of results){assert.equal(r.sharedPath.length,r.submissions);assert.deepEqual(r.sharedPath.slice(0,7),results[0].sharedPath.slice(0,7));}assert.equal(new Set(results.map(r=>r.sharedPath[7])).size,8);
  assert.deepEqual(c.lifecycle.save().envelope,before);p.close();assert.equal(p.getDiagnostics().sharedPrefixEdges,0);
  // A restored/fresh search starts a new graph and computes the same physical results.
- assert(c.lifecycle.restore(before).ok);p.setResourcePlanning(true);const fresh=p.openRoot(),plan=p.resourceSpec(fresh).plans.find(p=>p.goal.id===ids[0]),cold=p.expandResourcePlan(fresh,plan,()=>null);assert.equal(p.getDiagnostics().submissionCount,firstPlanInputs);assert.deepEqual(cold.node.observation,results[0].node.observation);p.close();c.dispose();
+ assert(c.lifecycle.restore(before).ok);p.setResourcePlanning(true);const fresh=p.openRoot(),plan=p.resourceSpec(fresh).plans.find(p=>p.goal.id===ids[0]),cold=p.expandResourcePlan(fresh,plan,()=>null);assert.equal(chargedAndProved(p),firstPlanInputs);assert.deepEqual(cold.node.observation,results[0].node.observation);p.close();c.dispose();
 }
 assert.deepEqual(observations[0],observations[1]);
 function run(budget,clock){const {c,p}=opened(0),before=c.lifecycle.save().envelope,root=p.openRoot();let port=focused(p,root);
@@ -29,7 +36,7 @@ function run(budget,clock){const {c,p}=opened(0),before=c.lifecycle.save().envel
 // The technology preparation DAG is still shared, while its current known
 // post-main window now continues after the reward. Do not force the old reveal
 // to masquerade as a completed strategic window.
-const complete=run({});assert(complete.complete,complete.stopReason);assert.equal(complete.diagnostics.transitions,complete.diagnostics.nativeExecutions);assert(complete.diagnostics.transitions>=15+rewardInputs);assert(complete.diagnostics.logicalResourceInputs>=64+rewardInputs);assert(complete.diagnostics.sharedResourceInputHits>=49);assert.equal(complete.lines[0].edges.length,8);assert(complete.lines[0].edges.every(e=>[8,9].includes(e.cost)&&e.sharedPath.length===e.cost));assert(complete.lines[0].edges.some(e=>e.actionId===complete.actionId&&complete.lines[e.target].value===complete.value&&complete.lines[e.target].distance+e.cost===complete.lines[0].distance));
+const complete=run({});assert(complete.complete,complete.stopReason);assert(complete.diagnostics.nativeExecutions>0&&complete.diagnostics.nativeExecutions<=complete.diagnostics.transitions);assert(complete.diagnostics.transitions>=15+rewardInputs);assert(complete.diagnostics.logicalResourceInputs>=64+rewardInputs);assert(complete.diagnostics.sharedResourceInputHits>=49);assert.equal(complete.lines[0].edges.length,8);assert(complete.lines[0].edges.every(e=>[8,9].includes(e.cost)&&e.sharedPath.length===e.cost));assert(complete.lines[0].edges.some(e=>e.actionId===complete.actionId&&complete.lines[e.target].value===complete.value&&complete.lines[e.target].distance+e.cost===complete.lines[0].distance));
 for(const [reason,budget] of [['transition-budget',{transitions:14+rewardInputs}],['node-budget',{nodes:15+rewardInputs}],['frontier-budget',{frontier:1}]]){const r=run(budget);assert(!r.complete);assert.equal(r.stopReason,reason);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert(r.diagnostics.transitions<=14+rewardInputs);}
 // A wholly reused preparation itself adds no native input or internal state,
 // even when the caller admits only cached work. Strategic tails are separate.

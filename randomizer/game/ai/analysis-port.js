@@ -741,11 +741,16 @@
         &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
     }
 
+    function isUnrevealedRoundThree(state) {
+      return state.turn.roundNumber===3&&Object.values(state.aliens.aliens).every(slot=>
+        !slot.revealed&&!alienState.isAlienReadyToReveal(slot));
+    }
+
     function quietDataMenuSource(stored, action) {
       if (!resourcePlanning || stored.envelope.session || stored.resourceControl || action.family !== "place_data"
         || action.phase !== "quick" || action.target?.kind !== "place-data" || Object.keys(action.payload).length) return null;
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if (t.roundNumber !== 4 && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2))
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
@@ -790,7 +795,7 @@
         || s.journal.effects.length !== 1 || s.journal.events.length || s.journal.decisions.length
         || s.journal.replay.length !== 1 || s.undoFrames.length) return null;
       const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if (t.roundNumber !== 4 && !(blue&&quietR3BluePickSource(state,owner))
+      if ((t.roundNumber !== 4 && !(computer&&isUnrevealedRoundThree(state)) && !(blue&&quietR3BluePickSource(state,owner)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length || localPlans.hasPendingFossilArrival(state)
         || computer&&data.listComputerPlacedTokens(owner).length!==3
@@ -856,7 +861,7 @@
         ||s.journal.events[0].type!=="placeData"||s.journal.events[0].placementSlot!==4)return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(p=>p.id===seatId);
       const id=action.target?.cardInstanceId,ix=p.hand.findIndex(c=>c.id===id),card=p.hand[ix],known=knownCards(stored.envelope);
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+      if((t.roundNumber!==4&&!isUnrevealedRoundThree(state))||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||state.meta.stateVersion!==s.baseVersion||localPlans.hasPendingFossilArrival(state)
         ||!card||!known.has(id)||action.target.choiceId!==`income:${id}`
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
@@ -884,7 +889,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
@@ -1265,7 +1270,7 @@
         ||extra?.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
         ||source!=="scan"&&source!=="play_card")return null;
       const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      if((t.roundNumber!==4&&!(source==="scan"&&isUnrevealedRoundThree(root)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
@@ -1789,7 +1794,7 @@
       }
       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
         ?localPlans.previewFinalEndPrelude({state:readIdentityState(stored.envelope),seatId,
-          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true}):null;
+          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true,allowUnrevealedR3:isUnrevealedRoundThree(readIdentityState(stored.envelope))}):null;
       if(endPrelude?.finished){
         const child=finishProvedTurnBoundary(stored,requested,endPrelude.finished);
         if(endPrelude.finished.turn.currentPlayerId===seatId)provedOwnEndHandovers++;
@@ -1894,7 +1899,7 @@
       }
       const resourceCorner=resourcePlanning&&node.status==="stable"&&!stored.resourceControl
         &&requested.family==="card_corner"&&requested.payload?.kind==="resource"
-        ?localPlans.previewQuietResourceCorner(readIdentityState(stored.envelope),requested,knownCards(stored.envelope)):null;
+        ?localPlans.previewQuietResourceCorner(readIdentityState(stored.envelope),requested,knownCards(stored.envelope),isUnrevealedRoundThree(readIdentityState(stored.envelope))):null;
       if(resourceCorner){
         provedFinalResourceCorners++;
         return rememberPrefix(key,node,actionId,remember(key,finishProvedCommittedState(node,stored,requested,resourceCorner)));
