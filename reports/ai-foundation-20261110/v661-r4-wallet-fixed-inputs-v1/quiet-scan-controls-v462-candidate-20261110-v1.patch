@@ -1,0 +1,81 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1144 +1144,5 @@
+-      const [head,finalize]=s?.queue||[],opts=head?.payload?.options;
++      const [head,next]=s?.queue||[],opts=head?.payload?.options;
++      const publicStep=e=>e?.type===types.SCAN_STEP&&e.ownerId===seatId&&!e.allowQuickActions
++        &&e.payload?.options?.mode==="public"&&Object.keys(e.payload).length===1;
++      const nextPublic=!stored.informationBarrier&&next?.kind==="effect"&&publicStep(next);
++      const finalize=nextPublic?s.queue.find(e=>e.type===types.SCAN_FINALIZE):next;
+@@ -1198 +1202 @@
+-          else if(type===types.SCAN_STEP&&simple(effect.payload?.options)){
++          else if(type===types.SCAN_STEP&&(simple(effect.payload?.options)||nextPublic&&publicStep(effect))){
+@@ -1211,0 +1216,4 @@
++        }else if(nextPublic&&effect===next){
++          if(!scienceSession.listPublicScanChoices(state).length)return null;
++          result={ok:true,spawnedEffects:[scienceSession.scanDecisionEffect(types.SCAN_STEP,seatId,
++            {options:copyForkData(effect.payload.options)},"choose_card")]};
+@@ -1246,2 +1254,4 @@
+-      const [head,purple,third,fourth,last]=s?.queue||[],opts=head?.payload?.options;
+-      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=mercury?fourth:third,extra=mercury?null:fourth;
++      const [head,second,third,fourth,last]=s?.queue||[],opts=head?.payload?.options;
++      const finalOnly=s?.queue.length===2&&second?.type===types.SCAN_FINALIZE&&second.kind==="effect";
++      const purple=finalOnly?null:second;
++      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=finalOnly?second:mercury?fourth:third,extra=mercury?null:fourth;
+@@ -1252 +1262 @@
+-        ||purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
++        ||!finalOnly&&(purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision")||finalize?.type!==types.SCAN_FINALIZE
+@@ -1255 +1265 @@
+-      if(source==="scan"&&s.queue.length!==(mercury?4:3)||source==="play_card"&&(s.queue.length!==5
++      if(source==="scan"&&s.queue.length!==(finalOnly?2:mercury?4:3)||source==="play_card"&&(s.queue.length!==5
+@@ -1283,0 +1294,11 @@
++      if(finalOnly&&!repeat){
++        if(data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
++        const missing=state.cards.publicCards.filter(c=>!c).length;
++        if(!missing||cardEffects.hasMatchingTrigger(player,{type:"publicRefill",count:missing}))return null;
++        state.cards.drawPileCardIds=[...state.cards.drawPileCardIds];
++        if(!refillQuietScan4(state,missing))return null;
++        state.meta.stateVersion=s.baseVersion+1;
++        const barrier={effectId:s.sessionId+":effect:"+(s.nextEffectSequence+2),revision:s.revision+4,
++          code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
++        return {envelope:provedCommittedEnvelope(stored,state),inspection:{phase:"idle",session:null},barrier};
++      }
+@@ -1304,0 +1326 @@
++      const mode=action.target?.mode;
+@@ -1306,2 +1328,2 @@
+-        ||stored.informationBarrier||action.family!=="choose_target"||action.target?.mode!=="move"
+-        ||action.payload?.requiredMovePoints!==1)return null;
++        ||stored.informationBarrier||action.family!=="choose_target"||!["move","skip","launch"].includes(mode)
++        ||(mode==="move"?action.payload?.requiredMovePoints!==1:action.target.choiceId!==`scan4:${mode}`))return null;
+@@ -1327,2 +1349,4 @@
+-        ||!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"||p.reservedCards.some(c=>!known.has(c.id))
+-        ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)]
++        ||mode==="move"&&(!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"
++          ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)])
++        ||mode!=="move"&&industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"
++        ||p.reservedCards.some(c=>!known.has(c.id))
+@@ -1334 +1358 @@
+-        pieces:{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
++        pieces:mode==="launch"?copyForkData(state.pieces):{...state.pieces,rockets:state.pieces.rockets.map(r=>r===ship?{...r}:r)},
+@@ -1337,4 +1361,7 @@
+-      const move=rocketAbilities.moveProbe(scienceSession.createActionContext(next,seatId),{
+-        ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
+-      });
+-      if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
++      const context=scienceSession.createActionContext(next,seatId);
++      const action4=mode==="skip"?{ok:true,events:[{type:"scanAction4Skipped",playerId:seatId}]}
++        :mode==="launch"?rocketAbilities.launchProbe(context,{cost:{energy:1}})
++          :rocketAbilities.moveProbe(context,{...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS});
++      const eventType=mode==="skip"?"scanAction4Skipped":mode;
++      if(!action4.ok||action4.events.length!==1||action4.events[0].type!==eventType
++        ||mode==="move"&&action4.payload.requiredMovePoints!==1)return null;
+@@ -1344 +1371 @@
+-        const event=move.events[0];
++        const event=action4.events[0];
+@@ -1360 +1387 @@
+-      const events=[move.events[0],{type:"publicRefill",count:missing}];
++      const events=[action4.events[0],{type:"publicRefill",count:missing}];
+@@ -1815 +1842,2 @@
+-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
++        if(publicScan.barrier)restoreEnvelope(publicScan.envelope);
++        const child=finishChild({session:null},{irreversibleBarrier:publicScan.barrier},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
