@@ -1,0 +1,72 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -2201,0 +2202 @@
++      let boughtAnalysisCard=null;
+@@ -2206,0 +2208,4 @@
++        const source=nodes.get(current).envelope.session?.session?.journal.actions[0]?.action;
++        if(spec?.goal?.id==="data:analyze:6"&&source?.target?.tradeId==="publicity-for-card"
++          &&action.family==="choose_card"&&spec.selection?.cardId===action.target.cardInstanceId)
++          boughtAnalysisCard=spec.selection.cardId;
+@@ -2211,0 +2217,15 @@
++      if(boughtAnalysisCard&&current.status==="information-barrier"){
++        const barrier=nodes.get(current).informationBarrier;
++        let paid=false;
++        while(true){
++          const step=knownPaidAnalysisStep(current,boughtAnalysisCard,barrier,paid);
++          if(!step)break;
++          const stopped=hasCapacity(prefixes.length);
++          if(stopped)return{complete:false,stopReason:stopped,node:current,submissions:prefixes.length,prefixes,fixedChoices};
++          fixedChoices.push({prefix:prefixes.length,policy:"seti-known-paid-analysis-preparation-v1",reason:step.reason});
++          prefixes.push({node:step.node,action:step.action});
++          current=expand(step.node,step.action.actionId);
++          paid ||= step.action.family==="card_corner";
++          if(step.action.family==="analyze")break;
++        }
++      }
+@@ -2212,0 +2233,46 @@
++    }
++
++    function knownPaidAnalysisStep(node,cardId,barrier,paid){
++      const stored=nodes.get(node),envelope=stored.envelope;
++      if(!resourcePlanning||!cardPickPlanning||stored.intent||stored.resourceControl
++        ||barrier?.code!=="hidden_card_reveal"||stored.informationBarrier!==barrier)return null;
++      const state=readIdentityState(envelope),turn=state.turn,p=state.players.players.find(p=>p.id===seatId);
++      const known=knownCards(envelope),slots=data.listComputerPlacedTokens(p);
++      if(turn.roundNumber!==4||turn.gameEnded||turn.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
++        ||JSON.stringify([turn.roundNumber,turn.turnNumber,turn.actionCycleNumber])!==rootTurnKey
++        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
++        ||[...p.hand,...p.reservedCards,...(p.privateAlienCards||[])].some(c=>!known.has(c.id))
++        ||Object.values(state.aliens.aliens).some(a=>a.revealed&&!knownRootAlienIds.has(a.alienId)))return null;
++      const session=envelope.session?.session,head=session?.queue[0];
++      if(!paid&&(session||slots.length+p.resources.availableData!==5||!known.has(cardId)
++        ||cards.getDiscardActionRewardForCard(p.hand.find(c=>c.id===cardId))?.dataCount!==1))return null;
++      if(paid&&(p.hand.some(c=>c.id===cardId)||slots.length+p.resources.availableData<6))return null;
++      if(session&&(session.interruptContext||session.queue.length!==1||head.ownerId!==seatId||head.allowQuickActions
++        ||session.journal.actions[0]?.action?.family!=="place_data"
++        ||![scienceSession.EFFECT_TYPES.PLACE_DATA,scienceSession.EFFECT_TYPES.INCOME].includes(head.type)))return null;
++      restoreEnvelope(envelope);
++      const comp=fork.composition||fork,actions=legalActions(comp);
++      let action,reason;
++      if(!paid){
++        action=actions.find(a=>a.family==="card_corner"&&a.payload.kind==="resource"&&a.target.cardInstanceId===cardId);
++        reason="spend-the-bought-data-card";
++      }else if(head?.type===scienceSession.EFFECT_TYPES.INCOME){
++        const choice=resourceDemand.incomeChoice({state:readPlanningState(stored),seatId,
++          goal:{id:"data:analyze:6",kind:"analyze",targetComputerSlot:6,required:{}},actions});
++        action=actions.find(a=>a.actionId===choice?.actionId);
++        const gain=action&&cards.getIncomeGainForCard(p.hand.find(c=>c.id===action.target.cardInstanceId));
++        if(!gain||!Object.keys(gain).every(k=>k==="credits"||k==="energy"||k==="publicity"))return null;
++        reason="settle-known-income-without-a-draw";
++      }else if(head?.type===scienceSession.EFFECT_TYPES.PLACE_DATA){
++        action=actions.find(a=>a.family==="choose_target"&&a.target.target==="computer");
++        reason="fill-the-next-computer-slot";
++      }else if(slots.length<6){
++        action=actions.find(a=>a.family==="place_data");
++        reason="prepare-the-next-computer-slot";
++      }else{
++        action=actions.find(a=>a.family==="analyze"&&a.payload.skipCost===true);
++        reason="start-free-analysis";
++      }
++      if(!action||action.actorId!==seatId)return null;
++      const view=createNode(envelope,null,[action],session?"decision":"stable",barrier);
++      return {node:view,action,reason};
