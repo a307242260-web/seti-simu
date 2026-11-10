@@ -1,0 +1,19 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1144 +1144,7 @@
+-      const [head,finalize]=s?.queue||[],opts=head?.payload?.options;
++      const [head,next]=s?.queue||[],opts=head?.payload?.options;
++      const publicStep=e=>e?.type===types.SCAN_STEP&&e.ownerId===seatId&&!e.allowQuickActions
++        &&e.payload?.options?.mode==="public"&&Object.keys(e.payload).length===1;
++      // Only open the next public menu. Leave purple, finalization and any
++      // card tail queued for the same Native continuation as before.
++      const nextPublic=!stored.informationBarrier&&next?.kind==="effect"&&publicStep(next);
++      const finalize=nextPublic?s.queue.find(e=>e.type===types.SCAN_FINALIZE):next;
+@@ -1198 +1204 @@
+-          else if(type===types.SCAN_STEP&&simple(effect.payload?.options)){
++          else if(type===types.SCAN_STEP&&(simple(effect.payload?.options)||nextPublic&&publicStep(effect))){
+@@ -1211,0 +1218,4 @@
++        }else if(nextPublic&&effect===next){
++          if(!scienceSession.listPublicScanChoices(state).length)return null;
++          result={ok:true,spawnedEffects:[scienceSession.scanDecisionEffect(types.SCAN_STEP,seatId,
++            {options:copyForkData(effect.payload.options)},"choose_card")]};
