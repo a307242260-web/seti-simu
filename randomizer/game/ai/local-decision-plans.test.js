@@ -121,6 +121,45 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  }finally{port.close();c.dispose();}
 }
 
+// A normal fourth-round handover leaves in-transit cargo where it is.
+// An actual arrival still uses the full native handoff.
+{
+ const envelope=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'final-foreign-cargo-end-20261111-v1.fixture.json.gz'))));
+ const seatId='player-white',source=JSON.parse(envelope.committedState),c=open(envelope);
+ const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+ try{
+  const initial=c.lifecycle.save().envelope;
+  const root=port.openRoot();port.setResourcePlanning(true);
+  const action=root.legalActions.find(a=>a.family==='end_turn');
+  const knownCards=new Set(source.players.players.find(p=>p.id===seatId).reservedCards.map(c=>c.id));
+  const cargo=source.pieces.rockets.find(r=>r.fossilId);
+  assert(cargo);assert.equal(plans.hasPendingFossilArrival(source),false);
+  const preview=plans.previewFinalEndPrelude({state:source,seatId,action,knownCards,allowSameSeat:true});
+  assert(preview?.finished,'ordinary end-turn handover with stationary cargo has a complete preview');
+  const child=port.expand(root,action.actionId);
+  assert.equal(child.status,'other-owner');assert.deepEqual(child.legalActions,[]);
+  assert.equal(port.getDiagnostics().submissionCount,0);
+  assert.deepEqual(c.lifecycle.save().envelope,initial);
+  submit(c,action.actionId);
+  const end=c.lifecycle.save().envelope,next=JSON.parse(end.committedState);
+  assert.equal(end.session,null);assert.notEqual(next.turn.currentPlayerId,seatId);
+  assert.deepEqual(preview.finished,next);
+  assert.deepEqual(next.aliens.chong,source.aliens.chong);
+  assert.deepEqual(next.meta.rngState,source.meta.rngState);
+  const value=createStateValueEvaluator(seatId);
+  assert.equal(value(port.valueObservation(child)),value(c.projection({role:'player',playerId:seatId,valueOnly:true}).state));
+
+  const arrived=structuredClone(source);
+  const destination=Object.values(arrived.aliens.chong.transportTasksByRocketId).find(task=>task.fossilId===cargo.fossilId).destinationPlanetId;
+  const {collectPlanetLocations}=require('../../solar-system/core');
+  const {x,y}=collectPlanetLocations(arrived.solarSystem).find(p=>p.planetId===destination);
+  const carrier=arrived.pieces.rockets.find(r=>r.id===cargo.id);
+  Object.assign(carrier,{sectorX:x,sectorY:y});
+  assert(plans.hasPendingFossilArrival(arrived));
+  assert.equal(plans.previewFinalEndPrelude({state:arrived,seatId,action,knownCards,allowSameSeat:true}),null);
+ }finally{port.close();c.dispose();}
+}
+
 // Closing a land session with a score-only pink trace must not change RNG,
 // scoring attribution or placement. The region reward still opens its real menu.
 {
