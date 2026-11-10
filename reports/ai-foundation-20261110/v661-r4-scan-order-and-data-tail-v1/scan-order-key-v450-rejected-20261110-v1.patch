@@ -1,0 +1,49 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -158,0 +159,25 @@
++  // Last-round, already-spent Deep Space search: scoring ranks competing
++  // marks within one sector. Preserve ties, ownership, occupancy, board
++  // sequence and RNG. The saved state and its original scan order are untouched.
++  const scanOrderDataKeys=new WeakMap();
++  function scanOrderIdentityData(state){
++    if(state.turn?.roundNumber!==4||!state.match?.cardPlayContext?.lastScanNebulaId)return null;
++    const player=state.players.players.find(p=>p.id===state.turn.currentPlayerId);
++    if(!player?.mainActionCompleted||industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId!=="deepspace_swap_cards"
++      ||Object.values(state.data.sectorExtraMarks||{}).some(marks=>marks.length))return null;
++    const board=state.data;
++    if(Object.isFrozen(board)&&scanOrderDataKeys.has(board))return scanOrderDataKeys.get(board);
++    const nebulae={...board.nebulae};
++    for(const [id,sector] of Object.entries(nebulae)){
++      const tokens=sector.tokens;
++      const sequence=tokens.map(t=>t.replacementOrder).filter(order=>order!=null);
++      if(sequence.some(order=>!Number.isSafeInteger(order)||order<1))return null;
++      if(!sequence.length)continue;
++      const ranks=new Map([...new Set(sequence)].sort((a,b)=>a-b).map((v,i)=>[v,i+1]));
++      nebulae[id]={...sector,tokens:tokens.map(t=>t.replacementOrder==null?t:{...t,replacementOrder:ranks.get(t.replacementOrder)})};
++    }
++    const result=freeze({...board,nebulae});
++    if(Object.isFrozen(board))scanOrderDataKeys.set(board,result);
++    return result;
++  }
++
+@@ -163,0 +189,6 @@
++    const scanData=scanOrderIdentityData(source);
++    if(scanData){
++      state.data=scanData;
++      state.match.cardPlayContext={...source.match.cardPlayContext};
++      delete state.match.cardPlayContext.lastScanNebulaId;
++    }
+@@ -349 +380 @@
+-        state.match?.cardPlayContext?.lastScanNebulaId,
++        scanOrderIdentityData(state)?null:state.match?.cardPlayContext?.lastScanNebulaId,
+@@ -356 +387 @@
+-      const state=readIdentityState(envelope), board=state.aliens;
++      const state=readIdentityState(envelope), board=state.aliens,scanData=scanOrderIdentityData(state)||state.data;
+@@ -374 +405 @@
+-        data.NEBULA_IDS.map(id=>state.data.nebulae[id]?.tokens.map(t=>[t.replacementOrder,t.replacedByPlayerId])),
++        data.NEBULA_IDS.map(id=>scanData.nebulae[id]?.tokens.map(t=>[t.replacementOrder,t.replacedByPlayerId])),
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v449";
++  const VERSION = "seti-complete-decision-search-v450";
