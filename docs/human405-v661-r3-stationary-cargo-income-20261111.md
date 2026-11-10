@@ -23,4 +23,6 @@
 
 标准 23 输入开局的 211 个白席决定逐项保持（选择、值和原生输入数），三个轮末均一致为 **15／48／118**。正式第三轮仍缺教师的 3 手牌、3 池数据、2 蓝槽和在运化石。第四轮 246／250 的改善以已经完成土星登陆为起点；要达到目标，还需让标准开局自主进入并完成这条路线，或找到能保住同类资产的替代路线。V41 整局基线不变。
 
+正式 V663 唯一标准试跑：源码 `f595773c1`，259 输入、10.6 秒，211 个决定最重 256 次、最慢 221.2 ms。独立原生重放开局后 236 个输入；与 V662 的 259 个正式动作、三轮检查点、最终状态、会话和 RNG 全部一致。[实验记录](../reports/research/1ae1a75f.f595773c.quick-400.json) · [逐行动复盘](../reports/iteration/ai-search-v663-stationary-cargo-first3-20261111/1ae1a75f.f595773c.quick-400.action-log.html)。
+
 [原生快照、复放脚本与门槛证据](../reports/ai-foundation-20261111/v663-stationary-cargo-income-v1/stationary-cargo-income-native-20261111-v1.tar.gz) · [旧土星登陆留存对照](human405-v661-r3-cargo-income-retention-20261111.md)。
