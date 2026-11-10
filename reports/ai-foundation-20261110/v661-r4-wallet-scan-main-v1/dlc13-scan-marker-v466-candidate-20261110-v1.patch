@@ -1,0 +1,42 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1249,0 +1250,11 @@
++    function quietScanMarker(effect,session,known){
++      const cardEffect=effect?.payload?.cardEffect,cardId=effect?.payload?.cardInstanceId,opts=cardEffect?.options;
++      if(effect?.type!=="card_play_domain_direct"||effect.kind!=="effect"||effect.ownerId!==seatId||effect.allowQuickActions
++        ||cardEffect?.type!=="gain_resources"||cardEffect.status!=="pending"||!cardEffect.id
++        ||opts?.repeat!==1||Object.keys(opts).length!==2||opts.gain?.additionalPublicScan!==1
++        ||Object.keys(opts.gain).length!==1||!known.has(cardId)
++        ||session.journal.actions[0]?.action?.family!=="play_card"
++        ||session.journal.actions[0].action.target.cardInstanceId!==cardId)return null;
++      return {gain:opts.gain,event:{type:"card_effect",effectId:cardEffect.id,effectType:cardEffect.type,playerId:seatId}};
++    }
++
+@@ -1255 +1266,2 @@
+-      const finalOnly=s?.queue.length===2&&second?.type===types.SCAN_FINALIZE&&second.kind==="effect";
++      const markerEffect=s?.queue.at(-1),marker=quietScanMarker(markerEffect,s,knownCards(stored.envelope));
++      const finalOnly=s?.queue.length===(marker?3:2)&&second?.type===types.SCAN_FINALIZE&&second.kind==="effect";
+@@ -1257 +1269 @@
+-      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=finalOnly?second:mercury?fourth:third,extra=mercury?null:fourth;
++      const mercury=!marker&&s?.queue.length===4&&quietMercuryScanStep(third),finalize=finalOnly?second:mercury?fourth:third,extra=mercury?null:fourth;
+@@ -1265 +1277 @@
+-      if(source==="scan"&&s.queue.length!==(finalOnly?2:mercury?4:3)||source==="play_card"&&(s.queue.length!==5
++      if(source==="scan"&&s.queue.length!==(finalOnly?2:mercury?4:3)||source==="play_card"&&(marker?s.queue.length!==(finalOnly?3:4):s.queue.length!==5
+@@ -1299 +1311,2 @@
+-        if(!refillQuietScan4(state,missing))return null;
++        if(!refillQuietScan4(state,missing)||marker&&cardEffects.hasMatchingTrigger(player,marker.event))return null;
++        if(marker)players.gainResources(player,marker.gain,"cardEffectScore");
+@@ -1332,2 +1345,3 @@
+-      const mercury=s?.queue.length===3&&quietMercuryScanStep(second)?second:null;
+-      const finalize=mercury?third:second,extra=mercury?null:third;
++      const marker=s?.queue.length===3&&quietScanMarker(third,s,knownCards(stored.envelope));
++      const mercury=!marker&&s?.queue.length===3&&quietMercuryScanStep(second)?second:null;
++      const finalize=mercury?third:second,extra=mercury||marker?null:third;
+@@ -1339 +1353 @@
+-      if(source==="scan"&&s.queue.length!==(mercury?3:2)||source==="play_card"&&(s.queue.length!==4||extra?.type!==types.SCAN_STEP
++      if(source==="scan"&&s.queue.length!==(mercury?3:2)||source==="play_card"&&!marker&&(s.queue.length!==4||extra?.type!==types.SCAN_STEP
+@@ -1388 +1402,3 @@
+-      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
++      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length)
++        ||marker&&cardEffects.hasMatchingTrigger(player,marker.event))return null;
++      if(marker)players.gainResources(player,marker.gain,"cardEffectScore");
