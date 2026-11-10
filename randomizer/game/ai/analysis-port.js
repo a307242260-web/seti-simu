@@ -734,9 +734,12 @@
 
     function quietR3BluePickSource(state, owner) {
       const t=state.turn;
+      const amibaOnly=knownRootAlienIds.size===1&&knownRootAlienIds.has("阿米巴")
+        &&Object.values(state.aliens.aliens).every(slot=>slot.revealed
+          ?slot.alienId==="阿米巴":!alienState.isAlienReadyToReveal(slot));
       return t.roundNumber===3&&owner.mainActionCompleted
         &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
-        &&knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫")
+        &&(amibaOnly||knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫"))
         &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
         &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
     }
