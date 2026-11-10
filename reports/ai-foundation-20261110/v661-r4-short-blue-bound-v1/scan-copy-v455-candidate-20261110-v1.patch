@@ -1,0 +1,9 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1281,3 +1281,3 @@
+-      const player={...p,resources:{...p.resources},dataState:structuredClone(p.dataState),scoreSources:{...p.scoreSources},
+-        reservedCards:structuredClone(p.reservedCards)};
+-      const state={...root,meta:{...root.meta,sequences:{...root.meta.sequences}},data:structuredClone(root.data),
++      const player={...p,resources:{...p.resources},dataState:copyForkData(p.dataState),scoreSources:{...p.scoreSources},
++        reservedCards:copyForkData(p.reservedCards)};
++      const state={...root,meta:{...root.meta,sequences:{...root.meta.sequences}},data:copyForkData(root.data),

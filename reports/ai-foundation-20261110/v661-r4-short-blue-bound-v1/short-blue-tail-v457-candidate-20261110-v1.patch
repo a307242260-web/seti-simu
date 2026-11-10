@@ -1,0 +1,50 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -5279,0 +5280,29 @@
++    }
++
++    function foreignBlueTwoUpperBound(node,plan){
++      const stored=nodes.get(node);
++      if(node.status!=="stable"||stored.envelope.session||stored.resourceControl
++        ||stored.informationBarrier?.code!=="hidden_card_reveal"||stored.intent?.path.length
++        ||plan.goal.id!=="data:blue:2")return null;
++      const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),turn=state.turn;
++      const end=node.legalActions.find(a=>a.family==="end_turn");
++      if(turn.roundNumber!==4||!end||!owner.mainActionCompleted||owner.passCompletionPending
++        ||industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
++        ||owner.resources.availableData!==2||data.listComputerPlacedTokens(owner).length!==5
++        ||turn.cardTurnEventBonuses?.length||turn.type1TriggerEvents?.length
++        ||node.legalActions.some(a=>a.family==="complete_task")
++        ||owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
++        ||cardEffects.hasMatchingTrigger(owner,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot:2}))return null;
++      const transition=previewTurn(state);
++      if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||transition.nextPlayerId===seatId)return null;
++      const quote=quietBluePublicPick({state,owner,node,stored,plan,transition,finalRoundQuiet:true,foreignFive:true});
++      const suffix=quote?.bluePublicPick.continuingDataPlans;
++      if(quote?.requiredNativeInputs!==6||suffix?.length!==1||suffix[0].goal.id!=="data:blue:3"
++        ||!hasPostMainInertReservations(state,false,true,true))return null;
++      // Validate the actual handover on this source. The supported Blue 2/3
++      // effects change only the hand and wallet; the reservation guard above
++      // excludes task, mark and END effects sensitive to those changes.
++      const endPreview=localPlans.previewFinalEndPrelude({state:readIdentityState(stored.envelope),seatId,action:end,
++        knownCards:knownCards(stored.envelope)});
++      if(!endPreview?.finished)return null;
++      return {netGain:quote.netGain,proof:"seti-known-foreign-blue-2-3-tail-upper-bound-v1"};
+@@ -8505 +8534 @@
+-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, extendKnownBlueTail, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
++    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, extendKnownBlueTail, foreignBlueTwoUpperBound, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -654,0 +655,12 @@
++        if(unlimited&&!tailNeedsNative&&!quoteDeferredCargo&&currentIndex!==0&&incumbent
++          &&alternative.resourcePlan?.goal.id==="data:blue:2"&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)){
++          const proof=port.foreignBlueTwoUpperBound?.(entry.node,alternative.resourcePlan);
++          if(proof){
++            const currentValue=valueForNode(entry.node),upperBound=exactTailSum(currentValue,proof.netGain);
++            if(upperBound!==null&&incumbent.value>upperBound){
++              (entry.actionBounds||=[]).push({actionId:alternative.firstActionId,...incumbent,upperBound,
++                proof:proof.proof,modelKey:evaluate.modelKey,boundKind:"fixed-data-primary-only",currentValue});
++              dataPrimaryBoundPrunes++;continue;
++            }
++          }
++        }

@@ -1,0 +1,8 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -6803 +6802,0 @@
+-        || !hasPostMainInertReservations(state, ownRockets.length > 0)
+@@ -6807 +6806,2 @@
+-        || ownRockets.some(rocket => (rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null)) return null;
++        || ownRockets.some(rocket => (rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null)
++        || !hasPostMainInertReservations(state, ownRockets.length > 0)) return null;
