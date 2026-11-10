@@ -1,0 +1,10 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1483,0 +1484,4 @@
++      // Deep Space can put an already public alien card in the market.
++      // Picking that exact instance does not require the ordinary draw catalog.
++      const supportedOffer=cards.getCatalogEntryForCard(offered)
++        ||offered?.set?.startsWith("alien:")&&cardEffects.getCardModel(offered);
+@@ -1488 +1492 @@
+-        || action.target.choiceId !== `pick:${offered.id}` || !cards.getCatalogEntryForCard(offered)
++        || action.target.choiceId !== `pick:${offered.id}` || !supportedOffer

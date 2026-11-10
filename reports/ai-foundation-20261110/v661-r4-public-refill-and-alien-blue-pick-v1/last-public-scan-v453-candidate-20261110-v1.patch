@@ -1,0 +1,24 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1297 +1297,16 @@
+-      if(!repeat&&!purple||events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
++      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
++      if(!repeat&&!purple){
++        // Only finish a scan with no sector reward or matching event. The
++        // refill remains private until finishChild applies the Native barrier.
++        if(data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
++        if(markerTail&&player.reservedCards.some(c=>cardEffects.getCardModel(c)?.triggers?.length))return null;
++        const missing=state.cards.publicCards.filter(c=>!c).length;
++        if(!missing||cardEffects.hasMatchingTrigger(player,{type:"publicRefill",count:missing}))return null;
++        state.cards.drawPileCardIds=[...state.cards.drawPileCardIds];
++        if(!refillQuietScan4(state,missing))return null;
++        if(markerTail)players.gainResources(player,extra.payload.cardEffect.options.gain);
++        state.meta.stateVersion=s.baseVersion+1;
++        const barrier={effectId:s.sessionId+":effect:"+(s.nextEffectSequence+2),revision:s.revision+4,
++          code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
++        return {envelope:provedCommittedEnvelope(stored,state),inspection:{phase:"idle",session:null},barrier};
++      }
+@@ -1884 +1899,2 @@
+-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
++        if(publicScan.barrier)restoreEnvelope(publicScan.envelope);
++        const child=finishChild({session:null},{irreversibleBarrier:publicScan.barrier},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
