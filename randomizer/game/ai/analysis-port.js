@@ -732,16 +732,25 @@
       return saved;
     }
 
-    function quietR3BluePickSource(state, owner) {
-      const t=state.turn;
-      const amibaOnly=knownRootAlienIds.size===1&&knownRootAlienIds.has("阿米巴")
+    function quietR3AmibaOnly(state) {
+      return knownRootAlienIds.size===1&&knownRootAlienIds.has("阿米巴")
         &&Object.values(state.aliens.aliens).every(slot=>slot.revealed
           ?slot.alienId==="阿米巴":!alienState.isAlienReadyToReveal(slot));
+    }
+
+    function quietR3BluePickSource(state, owner) {
+      const t=state.turn;
       return t.roundNumber===3&&owner.mainActionCompleted
         &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
-        &&(amibaOnly||knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫"))
+        &&(quietR3AmibaOnly(state)||knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫"))
         &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
         &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
+    }
+
+    function quietR3AmibaData(state, owner) {
+      const t=state.turn;
+      return t.roundNumber===3&&owner.mainActionCompleted
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))&&quietR3AmibaOnly(state);
     }
 
     function isUnrevealedRoundThree(state) {
@@ -753,7 +762,11 @@
       if (!resourcePlanning || stored.envelope.session || stored.resourceControl || action.family !== "place_data"
         || action.phase !== "quick" || action.target?.kind !== "place-data" || Object.keys(action.payload).length) return null;
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
+      // Opening a data menu has no placement or reward to settle. Reuse
+      // the witnessed opening after the last active seat's main action,
+      // even if the resulting menu has no Blue 3 card choice.
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaData(state,owner)
+        && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
@@ -892,7 +905,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaData(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
