@@ -206,7 +206,7 @@ console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true,
   firstAndExtraTraces: true, dataAndPublicityCaps: true, fundingControls: controls, originalAndRngUnchanged: true }));
 
 // A stationary satellite can complete two known sectors. The quote covers
-// only the ordinary traces and participant payout, and vanishes on landing.
+// the existing public Amiba display and pure red score once, with an ordinary fallback.
 {
   const e=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'satellite-scan-setup-20261110-v1.fixture.json.gz')))).end;
   const seed=JSON.parse(e.committedState).meta.seed,seatId='player-white';
@@ -214,36 +214,57 @@ console.log(JSON.stringify({ missionRewardContinuity: true, adapterParity: true,
     projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
   k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(e).ok);
   const before=c.lifecycle.save().envelope,viewer={role:'player',playerId:seatId};
-  const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
   const observed=c.projection(viewer).state,observedFacts=probe.factsFromObservation(observed,seatId);
   const state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seatId);
   const quote=facts=>probe.quote({...facts,investment:()=>0},values.DEFAULT_WEIGHTS);
   const q=quote(observedFacts);
   assert.equal(q.selected.id,'7:land:saturn:enceladus');
-  assert.equal(q.value,18.5);
+  assert.equal(q.value,23.5);
+  const concealed={...observedFacts.amibaTraces,displayedCardIndex:null,displayedCardHidden:true};
+  assert.equal(quote({...observedFacts,amibaTraces:concealed}).value,18.5);
+  const occupied=structuredClone(observedFacts.amibaTraces),pink=occupied.traceSlotsByAlienSlotId["1"].pink;
+  pink[3]=pink[4]={playerColor:'brown'};
+  assert.equal(quote({...observedFacts,amibaTraces:occupied}).value,18.5);
+  const uncertain=structuredClone(observedFacts.researchSymbols);
+  uncertain.symbolSlots.red_1='symbol_4';uncertain.symbolsById.symbol_4.slotId='red_1';
+  assert.equal(quote({...observedFacts,researchSymbols:uncertain}).value,18.5);
   assert.equal(quote({...observedFacts,uncontestedRound:false}).value,11.5);
   assert.equal(quote({...observedFacts,pendingNativeEffects:true}).value,11.5);
   assert.deepEqual(q,quote(probe.factsFromState(state,owner)));
   assert.equal(probe.prepareFinalRoundSwapMission(state,owner).quote(owner.hand,state.cards.publicCards),q.value);
   const chosen=q.selected.ledger.filter(r=>r.selected?.sectorClosure);
   assert.deepEqual(chosen.map(r=>[r.selected.id,r.selected.sectorClosure]),[
-    ['sector-3-b',{score:3,publicity:1}],['sector-4-a',{score:3,publicity:1}]]);
+    ['sector-3-b',{score:7,publicity:1,knownPink:{slotId:1,position:4,score:7,hand:1}}],['sector-4-a',{score:3,publicity:1}]]);
   try{
-    let n=port.openRoot();
-    const evaluate=()=>values.evaluateStateValue(port.valueObservation(n),seatId);
-    const v=evaluate();assert.equal(v.total,207);assert.equal(v.components.probePotential,18.5);
-    const next=predicate=>{const a=n.legalActions.find(predicate);assert(a);n=port.expand(n,a.actionId);};
+    const value=obs=>values.evaluateStateValue(obs,seatId);
+    const v=value(observed);assert.equal(v.total,212);assert.equal(v.components.probePotential,23.5);
+    assert.deepEqual(value(c.projection({...viewer,valueOnly:true}).state),v);
+    const next=predicate=>{
+      const decision=c.inspect().session?.decision;
+      const a=(decision?.choices||c.inputPort.enumerateActions({})).find(predicate);assert(a);
+      const result=decision?c.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:a})
+        :a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);
+      assert(result.ok);
+    };
     next(a=>a.family==='quick_trade'&&a.target.tradeId==='credits-for-energy');
     next(a=>a.family==='land');
     next(a=>a.target.landTarget?.satelliteId==='enceladus');
     for(const r of q.selected.ledger.filter(x=>x.selected)){
       next(a=>a.target.nebulaId===r.selected.id);
-      if(r.selected.sectorClosure)next(a=>a.target.stateExtra&&a.target.alienSlotId===1);
+      if(r.selected.sectorClosure?.knownPink){
+        const {slotId,position}=r.selected.sectorClosure.knownPink;
+        next(a=>a.target.speciesId==='amiba'&&a.target.alienSlotId===slotId&&a.target.position===position);
+        next(a=>a.target.choiceId===`amiba:display:${observedFacts.amibaTraces.displayedCardIndex}`);
+      }else if(r.selected.sectorClosure)next(a=>a.target.stateExtra&&a.target.alienSlotId===1);
     }
-    assert.equal(n.status,'stable');assert.equal(evaluate().total,207);
-    assert.equal(evaluate().components.probePotential,0);
-    assert.deepEqual(c.lifecycle.save().envelope,before);
-  }finally{port.close();c.dispose();}
+    assert.equal(c.inspect().phase,'idle');
+    const after=c.projection(viewer).state,known=new Set([...observed.selfState.hand,...after.selfState.hand].map(c=>c.id));
+    const {sanitizeHiddenInformationObservation}=require('../rule-composition');
+    const masked=sanitizeHiddenInformationObservation(observed,after,{code:'hidden_alien_card'},known);
+    assert.equal(value(masked).total,212);assert.equal(value(masked).components.probePotential,0);
+    assert.equal(masked.publicState.board.aliens.amibaTraces.displayedCardIndex,null);
+    assert(c.lifecycle.restore(before).ok);assert.deepEqual(c.lifecycle.save().envelope,before);
+  }finally{c.dispose();}
 }
 
 // In the last round, three distinct move icons pay the route and two

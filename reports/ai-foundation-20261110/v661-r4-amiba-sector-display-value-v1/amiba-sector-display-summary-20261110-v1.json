@@ -1,0 +1,2309 @@
+{
+  "sourceBefore": "1a8d0775ac5c4ced1583f4fa98a2a327ccd6011d",
+  "valueModel": "v60 to v61",
+  "gateMs": 600,
+  "gateNative": 256,
+  "fullGameRun": false,
+  "coldPoints": {
+    "teacher272": [
+      {
+        "label": "teacher272",
+        "normalizedFullGraphEqual": false,
+        "before": {
+          "label": "teacher272",
+          "action": "place_data:8fd12fd3",
+          "value": 216.5,
+          "native": 156,
+          "graphNodes": 684,
+          "roots": [
+            [
+              "scan:2d21a323",
+              214,
+              -18,
+              0
+            ],
+            [
+              "play_card:f1918668",
+              211,
+              -18,
+              0
+            ],
+            [
+              "play_card:1da9864f",
+              194.5,
+              -10,
+              0
+            ],
+            [
+              "play_card:88ec7135",
+              214.5,
+              -20,
+              0
+            ],
+            [
+              "play_card:1a1c19d3",
+              204.5,
+              -18,
+              0
+            ],
+            [
+              "play_card:ddbaa2ce",
+              214,
+              -20,
+              0
+            ],
+            [
+              "play_card:5eb1b0e8",
+              195.5,
+              -10,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              171,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2df2f24d",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2a7c4819",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:90134ba1",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:0febc073",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              215.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              204,
+              -17,
+              0
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              214,
+              -20,
+              0
+            ],
+            [
+              "card_corner:cb6e4492",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:bf0cc13d",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              212,
+              -18,
+              0
+            ],
+            [
+              "place_data:8fd12fd3",
+              216.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "6e7a0c8acbeaf09506aac8650210a38c24877efe8b2d631ca64bcc0bcec21808",
+          "bytes": 2262674,
+          "identityMaterializations": 375,
+          "identityBucketCollisions": 340,
+          "identitySliceHits": 1423,
+          "identitySliceStores": 803,
+          "timesMs": [
+            925.5302499999999,
+            922.1056249999999,
+            903.621042
+          ],
+          "medianMs": 922.1056249999999
+        },
+        "after": {
+          "label": "teacher272",
+          "action": "place_data:8fd12fd3",
+          "value": 216.5,
+          "native": 156,
+          "graphNodes": 684,
+          "roots": [
+            [
+              "scan:2d21a323",
+              214,
+              -18,
+              0
+            ],
+            [
+              "play_card:f1918668",
+              211,
+              -18,
+              0
+            ],
+            [
+              "play_card:1da9864f",
+              194.5,
+              -10,
+              0
+            ],
+            [
+              "play_card:88ec7135",
+              214.5,
+              -20,
+              0
+            ],
+            [
+              "play_card:1a1c19d3",
+              204.5,
+              -18,
+              0
+            ],
+            [
+              "play_card:ddbaa2ce",
+              214,
+              -20,
+              0
+            ],
+            [
+              "play_card:5eb1b0e8",
+              195.5,
+              -10,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              171,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2df2f24d",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2a7c4819",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:90134ba1",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:0febc073",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              215.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              204,
+              -17,
+              0
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              214,
+              -20,
+              0
+            ],
+            [
+              "card_corner:cb6e4492",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:bf0cc13d",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              212,
+              -18,
+              0
+            ],
+            [
+              "place_data:8fd12fd3",
+              216.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "d22a50d7a0c1bb9b6524c53d1875eadd2bd342a580f253f97e458f18f47c92eb",
+          "bytes": 2262674,
+          "identityMaterializations": 375,
+          "identityBucketCollisions": 340,
+          "identitySliceHits": 1423,
+          "identitySliceStores": 803,
+          "timesMs": [
+            920.9015420000001,
+            909.508292,
+            933.218292
+          ],
+          "medianMs": 920.9015420000001
+        }
+      }
+    ],
+    "satellite": [
+      {
+        "label": "satellite",
+        "normalizedFullGraphEqual": false,
+        "before": {
+          "label": "satellite",
+          "action": "place_data:8fd12fd3",
+          "value": 222.5,
+          "native": 254,
+          "graphNodes": 1596,
+          "roots": [
+            [
+              "orbit:5ccd6a69",
+              null,
+              null,
+              null
+            ],
+            [
+              "research_tech:806ccfc8",
+              213.5,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:f1918668",
+              214,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:1da9864f",
+              214,
+              0,
+              0
+            ],
+            [
+              "play_card:88ec7135",
+              210.5,
+              -20.5,
+              0
+            ],
+            [
+              "play_card:1a1c19d3",
+              205,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:ddbaa2ce",
+              213.5,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:5eb1b0e8",
+              215,
+              0,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              173,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2df2f24d",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2a7c4819",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:90134ba1",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:0febc073",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              222,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              206.5,
+              -18.5,
+              0
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:cb6e4492",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:bf0cc13d",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              null,
+              null,
+              null
+            ],
+            [
+              "place_data:8fd12fd3",
+              222.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "f0fee012d15728e10e414cad68bacbc69ee72d49be3562f79ca5d9d1e3f24cb7",
+          "bytes": 3731530,
+          "identityMaterializations": 794,
+          "identityBucketCollisions": 1164,
+          "identitySliceHits": 3597,
+          "identitySliceStores": 1765,
+          "timesMs": [
+            1356.222041,
+            1396.8062499999999,
+            1416.5127499999999
+          ],
+          "medianMs": 1396.8062499999999
+        },
+        "after": {
+          "label": "satellite",
+          "action": "place_data:8fd12fd3",
+          "value": 222.5,
+          "native": 251,
+          "graphNodes": 1594,
+          "roots": [
+            [
+              "orbit:5ccd6a69",
+              null,
+              null,
+              null
+            ],
+            [
+              "research_tech:806ccfc8",
+              218.5,
+              -24.5,
+              0
+            ],
+            [
+              "play_card:f1918668",
+              219,
+              -24.5,
+              0
+            ],
+            [
+              "play_card:1da9864f",
+              214,
+              0,
+              0
+            ],
+            [
+              "play_card:88ec7135",
+              215.5,
+              -25.5,
+              0
+            ],
+            [
+              "play_card:1a1c19d3",
+              210,
+              -24.5,
+              0
+            ],
+            [
+              "play_card:ddbaa2ce",
+              218.5,
+              -24.5,
+              0
+            ],
+            [
+              "play_card:5eb1b0e8",
+              215,
+              0,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              173,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2df2f24d",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:2a7c4819",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:90134ba1",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:0febc073",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              222,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              211.5,
+              -23.5,
+              0
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:cb6e4492",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:bf0cc13d",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              null,
+              null,
+              null
+            ],
+            [
+              "place_data:8fd12fd3",
+              222.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "6107bf9111fc9c042d46e4dbc3c8e8974289f29136c1b091d8429c61cc94badf",
+          "bytes": 3724532,
+          "identityMaterializations": 794,
+          "identityBucketCollisions": 1164,
+          "identitySliceHits": 3597,
+          "identitySliceStores": 1765,
+          "timesMs": [
+            1411.2615,
+            1462.0750839999998,
+            1345.33475
+          ],
+          "medianMs": 1411.2615
+        }
+      }
+    ],
+    "official": [
+      {
+        "label": "official",
+        "normalizedFullGraphEqual": true,
+        "before": {
+          "label": "official",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "native": 165,
+          "graphNodes": 535,
+          "roots": [
+            [
+              "launch:c94cda79",
+              185.5,
+              -10,
+              0
+            ],
+            [
+              "scan:2d21a323",
+              192,
+              -9.5,
+              0
+            ],
+            [
+              "play_card:1d27665c",
+              186,
+              -8.5,
+              0
+            ],
+            [
+              "play_card:8c65d747",
+              194.5,
+              -10.5,
+              0
+            ],
+            [
+              "play_card:c93b59a4",
+              193,
+              -10,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              180,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              204,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              205.5,
+              0,
+              0
+            ],
+            [
+              "card_corner:bf0cc13d",
+              204.5,
+              0,
+              0
+            ],
+            [
+              "card_corner:0c840bb2",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:f0c6e7b8",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "eb8d8b0b7037b019e95d4d246a244a35e309551872315faaf581d08a67fada3d",
+          "bytes": 2019009,
+          "identityMaterializations": 26,
+          "identityBucketCollisions": 147,
+          "identitySliceHits": 127,
+          "identitySliceStores": 55,
+          "timesMs": [
+            535.000125
+          ],
+          "medianMs": 535.000125
+        },
+        "after": {
+          "label": "official",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "native": 165,
+          "graphNodes": 535,
+          "roots": [
+            [
+              "launch:c94cda79",
+              185.5,
+              -10,
+              0
+            ],
+            [
+              "scan:2d21a323",
+              192,
+              -9.5,
+              0
+            ],
+            [
+              "play_card:1d27665c",
+              186,
+              -8.5,
+              0
+            ],
+            [
+              "play_card:8c65d747",
+              194.5,
+              -10.5,
+              0
+            ],
+            [
+              "play_card:c93b59a4",
+              193,
+              -10,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              180,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              204,
+              0,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              205.5,
+              0,
+              0
+            ],
+            [
+              "card_corner:bf0cc13d",
+              204.5,
+              0,
+              0
+            ],
+            [
+              "card_corner:0c840bb2",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:f0c6e7b8",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "eb8d8b0b7037b019e95d4d246a244a35e309551872315faaf581d08a67fada3d",
+          "bytes": 2019009,
+          "identityMaterializations": 26,
+          "identityBucketCollisions": 147,
+          "identitySliceHits": 127,
+          "identitySliceStores": 55,
+          "timesMs": [
+            531.484292
+          ],
+          "medianMs": 531.484292
+        }
+      }
+    ],
+    "late": [
+      {
+        "label": "late",
+        "normalizedFullGraphEqual": true,
+        "before": {
+          "label": "late",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "native": 222,
+          "graphNodes": 342,
+          "roots": [
+            [
+              "analyze:a5629aa3",
+              266,
+              -20,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              235.5,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:e1dfc520",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:77a99194",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:ad36eacc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              241.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:a39c1a77",
+              259,
+              0,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              242.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:71814d67",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:9fee06cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:0aa8437c",
+              255.5,
+              -19,
+              0
+            ],
+            [
+              "card_corner:40dd8298",
+              null,
+              null,
+              null
+            ],
+            [
+              "complete_task:7915e8d6",
+              238.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "df11d000dc69fdb8219e97e383faa7a4f5f8bd157f3f125b0971f92fa3448933",
+          "bytes": 494291,
+          "identityMaterializations": 110,
+          "identityBucketCollisions": 92,
+          "identitySliceHits": 176,
+          "identitySliceStores": 496,
+          "timesMs": [
+            382.335625
+          ],
+          "medianMs": 382.335625
+        },
+        "after": {
+          "label": "late",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "native": 222,
+          "graphNodes": 342,
+          "roots": [
+            [
+              "analyze:a5629aa3",
+              266,
+              -20,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              235.5,
+              0,
+              0
+            ],
+            [
+              "move:c16025a6",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:bde97b72",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:23807efa",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:a36e0e84",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:e1dfc520",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:77a99194",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:ad36eacc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              241.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:a39c1a77",
+              259,
+              0,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:122c43fc",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:df811f99",
+              242.5,
+              0,
+              0
+            ],
+            [
+              "quick_trade:71814d67",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:be9dd0cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:730579d5",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:367a82a7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c4357b44",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:40cda505",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:9fee06cd",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:0aa8437c",
+              255.5,
+              -19,
+              0
+            ],
+            [
+              "card_corner:40dd8298",
+              null,
+              null,
+              null
+            ],
+            [
+              "complete_task:7915e8d6",
+              238.5,
+              0,
+              0
+            ]
+          ],
+          "digest": "df11d000dc69fdb8219e97e383faa7a4f5f8bd157f3f125b0971f92fa3448933",
+          "bytes": 494291,
+          "identityMaterializations": 110,
+          "identityBucketCollisions": 92,
+          "identitySliceHits": 176,
+          "identitySliceStores": 496,
+          "timesMs": [
+            382.176333
+          ],
+          "medianMs": 382.176333
+        }
+      }
+    ],
+    "r3": [
+      {
+        "label": "r3-172",
+        "normalizedFullGraphEqual": true,
+        "before": {
+          "label": "r3-172",
+          "action": "play_card:38489727",
+          "value": 151,
+          "native": 99,
+          "graphNodes": 110,
+          "roots": [
+            [
+              "launch:c94cda79",
+              135.5,
+              -23.5,
+              0
+            ],
+            [
+              "research_tech:806ccfc8",
+              138,
+              -4.5,
+              0
+            ],
+            [
+              "play_card:38489727",
+              151,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:2f9ae88e",
+              138,
+              -21.5,
+              0
+            ],
+            [
+              "play_card:201c00de",
+              134.5,
+              -22,
+              0
+            ],
+            [
+              "play_card:e527bf01",
+              146.5,
+              -19.5,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              114,
+              0,
+              0
+            ],
+            [
+              "quick_trade:f385e2ac",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              144.5,
+              -17,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:96f945a8",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:ab712e76",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:e12a0c99",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:295d3b4f",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "b277e4863fc724892f23d221517595a9f97c7ee0de1514859bf97f9298b286ba",
+          "bytes": 183626,
+          "identityMaterializations": 17,
+          "identityBucketCollisions": 7,
+          "identitySliceHits": 0,
+          "identitySliceStores": 119,
+          "timesMs": [
+            195.05279199999998
+          ],
+          "medianMs": 195.05279199999998
+        },
+        "after": {
+          "label": "r3-172",
+          "action": "play_card:38489727",
+          "value": 151,
+          "native": 99,
+          "graphNodes": 110,
+          "roots": [
+            [
+              "launch:c94cda79",
+              135.5,
+              -23.5,
+              0
+            ],
+            [
+              "research_tech:806ccfc8",
+              138,
+              -4.5,
+              0
+            ],
+            [
+              "play_card:38489727",
+              151,
+              -19.5,
+              0
+            ],
+            [
+              "play_card:2f9ae88e",
+              138,
+              -21.5,
+              0
+            ],
+            [
+              "play_card:201c00de",
+              134.5,
+              -22,
+              0
+            ],
+            [
+              "play_card:e527bf01",
+              146.5,
+              -19.5,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              114,
+              0,
+              0
+            ],
+            [
+              "quick_trade:f385e2ac",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:a39c1a77",
+              144.5,
+              -17,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              null,
+              null,
+              null
+            ],
+            [
+              "industry:e887dc52",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:96f945a8",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:ab712e76",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:e12a0c99",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:295d3b4f",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "b277e4863fc724892f23d221517595a9f97c7ee0de1514859bf97f9298b286ba",
+          "bytes": 183626,
+          "identityMaterializations": 17,
+          "identityBucketCollisions": 7,
+          "identitySliceHits": 0,
+          "identitySliceStores": 119,
+          "timesMs": [
+            198.66249999999997
+          ],
+          "medianMs": 198.66249999999997
+        }
+      },
+      {
+        "label": "r3-136",
+        "normalizedFullGraphEqual": true,
+        "before": {
+          "label": "r3-136",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "native": 224,
+          "graphNodes": 214,
+          "roots": [
+            [
+              "research_tech:806ccfc8",
+              128,
+              -12.5,
+              0
+            ],
+            [
+              "play_card:38489727",
+              128,
+              -13.5,
+              0
+            ],
+            [
+              "play_card:dbf89f44",
+              117,
+              -13.5,
+              0
+            ],
+            [
+              "play_card:0f983196",
+              119,
+              -13.5,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              105.5,
+              0,
+              0
+            ],
+            [
+              "move:02fa703b",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:ff83c607",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:67939f8f",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:3ae44285",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              141.5,
+              -13.5,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              118,
+              -6.5,
+              0
+            ],
+            [
+              "quick_trade:a39c1a77",
+              117,
+              -13.5,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              118,
+              -13,
+              0
+            ],
+            [
+              "industry:e887dc52",
+              141.5,
+              -13.5,
+              0
+            ],
+            [
+              "card_corner:96f945a8",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:792e4fd7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:2fcf1e5a",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c5264e52",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "95c495ccfd904fc04c292496cfcf3e2e3e9248466705d4b39bef209ab4b06285",
+          "bytes": 373314,
+          "identityMaterializations": 60,
+          "identityBucketCollisions": 49,
+          "identitySliceHits": 0,
+          "identitySliceStores": 364,
+          "timesMs": [
+            235.18275000000006
+          ],
+          "medianMs": 235.18275000000006
+        },
+        "after": {
+          "label": "r3-136",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "native": 224,
+          "graphNodes": 214,
+          "roots": [
+            [
+              "research_tech:806ccfc8",
+              128,
+              -12.5,
+              0
+            ],
+            [
+              "play_card:38489727",
+              128,
+              -13.5,
+              0
+            ],
+            [
+              "play_card:dbf89f44",
+              117,
+              -13.5,
+              0
+            ],
+            [
+              "play_card:0f983196",
+              119,
+              -13.5,
+              0
+            ],
+            [
+              "pass:a1f33c73",
+              105.5,
+              0,
+              0
+            ],
+            [
+              "move:02fa703b",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:ff83c607",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:67939f8f",
+              null,
+              null,
+              null
+            ],
+            [
+              "move:3ae44285",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:f385e2ac",
+              141.5,
+              -13.5,
+              0
+            ],
+            [
+              "quick_trade:49c75492",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:12411a2c",
+              118,
+              -6.5,
+              0
+            ],
+            [
+              "quick_trade:a39c1a77",
+              117,
+              -13.5,
+              0
+            ],
+            [
+              "quick_trade:37140fcf",
+              null,
+              null,
+              null
+            ],
+            [
+              "quick_trade:71814d67",
+              118,
+              -13,
+              0
+            ],
+            [
+              "industry:e887dc52",
+              141.5,
+              -13.5,
+              0
+            ],
+            [
+              "card_corner:96f945a8",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:792e4fd7",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:2fcf1e5a",
+              null,
+              null,
+              null
+            ],
+            [
+              "card_corner:c5264e52",
+              null,
+              null,
+              null
+            ]
+          ],
+          "digest": "95c495ccfd904fc04c292496cfcf3e2e3e9248466705d4b39bef209ab4b06285",
+          "bytes": 373314,
+          "identityMaterializations": 60,
+          "identityBucketCollisions": 49,
+          "identitySliceHits": 0,
+          "identitySliceStores": 364,
+          "timesMs": [
+            227.28279199999997
+          ],
+          "medianMs": 227.28279199999997
+        }
+      }
+    ]
+  },
+  "nativeSettlement": {
+    "baseline": {
+      "start": {
+        "modelVersion": "seti-purpose-capital-state-value-v60",
+        "total": 207,
+        "components": {
+          "realizedScore": 116,
+          "currentEndGameBonus": 57,
+          "resources": 9.5,
+          "hand": 6,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 18.5,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "missionQuote": 18.5,
+      "endpoints": [
+        {
+          "pinkAt": -1,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v60",
+            "total": 207,
+            "components": {
+              "realizedScore": 135,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [],
+          "maskedDisplay": 9
+        },
+        {
+          "pinkAt": 0,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v60",
+            "total": 212,
+            "components": {
+              "realizedScore": 139,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [
+            {
+              "cardId": "amiba_9.webp",
+              "score": 7
+            }
+          ],
+          "maskedDisplay": null
+        },
+        {
+          "pinkAt": 2,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v60",
+            "total": 212,
+            "components": {
+              "realizedScore": 139,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [
+            {
+              "cardId": "amiba_9.webp",
+              "score": 7
+            }
+          ],
+          "maskedDisplay": null
+        }
+      ]
+    },
+    "candidate": {
+      "start": {
+        "modelVersion": "seti-purpose-capital-state-value-v61",
+        "total": 212,
+        "components": {
+          "realizedScore": 116,
+          "currentEndGameBonus": 57,
+          "resources": 9.5,
+          "hand": 6,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 23.5,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "missionQuote": 23.5,
+      "endpoints": [
+        {
+          "pinkAt": -1,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v61",
+            "total": 207,
+            "components": {
+              "realizedScore": 135,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 6,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [],
+          "maskedDisplay": 9
+        },
+        {
+          "pinkAt": 0,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v61",
+            "total": 212,
+            "components": {
+              "realizedScore": 139,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [
+            {
+              "cardId": "amiba_9.webp",
+              "score": 7
+            }
+          ],
+          "maskedDisplay": null
+        },
+        {
+          "pinkAt": 2,
+          "value": {
+            "modelVersion": "seti-purpose-capital-state-value-v61",
+            "total": 212,
+            "components": {
+              "realizedScore": 139,
+              "currentEndGameBonus": 57,
+              "resources": 9,
+              "hand": 7,
+              "income": 0,
+              "technologyPotential": 0,
+              "handPotential": 0,
+              "researchPotential": 0,
+              "probePotential": 0,
+              "analysisPotential": 0,
+              "researchIncomePotential": 0,
+              "dataPotential": 0,
+              "finalMarkPotential": 0
+            },
+            "terminal": false,
+            "purposePreparationDebt": 0
+          },
+          "gains": [
+            {
+              "cardId": "amiba_9.webp",
+              "score": 7
+            }
+          ],
+          "maskedDisplay": null
+        }
+      ]
+    }
+  }
+}

@@ -340,12 +340,14 @@
     const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
     const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
       ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
-      aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),traces:slot.traces}))}};
+      aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),alienId:slot.revealed?(slot.alienId||slot.assignedAlienId||null):null,traces:slot.traces}))}};
     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
     const shared={player:wallet,round:4,board,passing:false,terminal:false,
       uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),
       pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),turnCardBonusCount:state.turn.cardTurnEventBonuses?.length,
-      extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0};
+      extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0,
+      reservedCards:player.reservedCards,researchSymbols:amiba.getPublicSymbolState(state.aliens,{readOnly:true}),
+      amibaTraces:amiba.getPublicTraceState(state.aliens,{readOnly:true})};
     const weights=arithmetic.DEFAULT_WEIGHTS;
     if(noCurrencyEndpoint(shared,weights))return {sensitive:false,quote:()=>0};
     const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
@@ -370,10 +372,41 @@
   }
   function quote(facts, weights) {return evaluateMission(facts, weights, false);}
 
+  // One printed Amiba pink placement can use the existing public display.
+  // Count the card, never its next use or the identity of the refill. Only
+  // accept a complete red region whose symbol rewards are fixed scores.
+  function knownAmibaPinkPayout(facts) {
+    const traces=facts.amibaTraces,symbols=facts.researchSymbols,slotId=traces?.revealedSlotId;
+    if(!Number.isInteger(traces?.displayedCardIndex)||traces.displayedCardHidden
+      ||!amiba.getCardDefinition(traces.displayedCardIndex)||symbols?.revealedSlotId!==slotId
+      ||!facts.board.aliens.slots.some(s=>s.slotId===slotId&&s.revealed&&s.alienId===amiba.ALIEN_ID))return null;
+    const pink=traces.traceSlotsByAlienSlotId?.[String(slotId)]?.pink;
+    const position=[4,3].find(pos=>pink&&Object.hasOwn(pink,pos)&&pink[pos]===null);
+    if(!position||!Array.isArray(facts.reservedCards)||facts.reservedCards.some(card=>{
+      const model=cardEffects.getCardModel(card);
+      return !model||model.triggers?.some(t=>(t.event?.types?.length?t.event.types:[t.event?.type])
+        .some(type=>type==='alienTrace'||type==='alien_card_gain'||type==='amiba_symbol_resolved'||type==='card_effect'));
+    }))return null;
+    const printed=amiba.getTraceReward(null,'pink',position,{readOnlyRewards:true});
+    if(!printed?.pickAlienCard||printed.region!=='red'||printed.dataCount||printed.drawCards||printed.pickCard
+      ||Object.keys(printed.gain||{}).some(k=>k!=='score'))return null;
+    let score=printed.gain?.score||0;
+    if(!symbols.symbolSlots||!symbols.symbolsById)return null;
+    for(const place of amiba.REGION_SYMBOL_SLOTS[printed.region]){
+      const id=symbols.symbolSlots[place];
+      if(!id)continue;
+      const reward=amiba.getSymbolReward(id,{readOnlyRewards:true});
+      if(symbols.symbolsById[id]?.slotId!==place||!Number.isSafeInteger(reward?.gain?.score)
+        ||Object.keys(reward.gain).length!==1||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard)return null;
+      score+=reward.gain.score;
+    }
+    return score+1>(alienState.getExtraTraceReward().gain.score||0)?{slotId,position,score,hand:1}:null;
+  }
+
   // Lower bound for one already reachable satellite in the final round.
   // Use the native payout table, and take a guaranteed ordinary extra trace.
   // A tie, a replacement token, or an unknown reward cannot raise the quote.
-  function certainSectorPayout(board, actor, id, token, slots) {
+  function certainSectorPayout(board, actor, id, token, slots, knownPink) {
     if(id===data.AOMOMO_NEBULA_ID||!board.sectorSettlements?.sectors)return null;
     const tokens=data.listNebulaTokens(board,id);
     if(tokens.length!==data.getNebulaCapacity(id)
@@ -392,6 +425,10 @@
       }else if(reward.kind==='alien_trace'&&slots.some(slot=>slot.revealed&&slot.traces?.[reward.traceType]?.firstPlaced)){
         const extra=alienState.getExtraTraceReward().gain;
         if(Object.keys(extra).some(key=>key!=='score'))return null;
+        if(reward.traceType==='pink'&&!gain.knownPink){
+          const pink=knownPink();
+          if(pink){gain.knownPink=pink;gain.score+=pink.score;continue;}
+        }
         gain.score+=extra.score||0;
       }else return null;
     }
@@ -449,7 +486,7 @@
     const initialCapital = capital(knownHand, player, player.income, null, facts.initialInvestmentCapital);
     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
     const actor = { id: seatId, color: player.color };
-    const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape;
+    const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape,amibaPink;
     // A private scalar directory cannot escape through the full menu or
     // through its numeric result. Reuse only pure payments, never an offer
     // choice, mission portfolio, or projected Native transition.
@@ -472,6 +509,7 @@
         &&effects.filter(effect=>effect.type==='choose_colored_nebula_scan').length>=2
         &&effects.every(effect=>['gain_resources','choose_colored_nebula_scan'].includes(effect.type))
         ?new Set():null;
+      let pickedKnownPink=false;
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
       const incomePurpose = (card, availableHand, projectedData=0, commonCapital) => {
         const gain=cards.getIncomeGainForCard(card),immediate={...gain},nextWallet={...wallet,availableData:Math.min(players.RESOURCE_LIMITS.availableData,wallet.availableData+projectedData)},nextIncome={...income};
@@ -552,20 +590,24 @@
               [id]: { ...bucket, tokens: bucket.tokens.filter(t => !usedTokens.has(t.id)) } } };
             const token = data.getNextReplaceableNebulaToken(available, id);
             if (!token||closingSectors?.has(id)) return []; // No forecast of refilled/hidden replacement tokens.
-            const payout=closingSectors&&certainSectorPayout(root.data,actor,id,token,facts.board.aliens.slots);
+            const payout=closingSectors&&certainSectorPayout(root.data,actor,id,token,facts.board.aliens.slots,
+              ()=>pickedKnownPink?null:amibaPink===undefined?(amibaPink=knownAmibaPinkPayout(facts)):amibaPink);
             const publicity=payout?Math.min(payout.publicity,players.RESOURCE_LIMITS.publicity-wallet.publicity):0;
             const score=(data.getNebulaSlotScoreReward(id,token.slotIndex)||0)+(payout?.score||0);
             const gainedData=Number(wallet.availableData<players.RESOURCE_LIMITS.availableData);
-            return [{id,tokenId:token.id,value:score+gainedData*weights.availableData+publicity*(weights.publicity||0),
-              score,data:gainedData,...(payout?{sectorClosure:{score:payout.score,publicity}}:{})}];
+            return [{id,tokenId:token.id,value:score+gainedData*weights.availableData+publicity*(weights.publicity||0)+(payout?.knownPink?.hand||0)*weights.handSize,
+              score,data:gainedData,...(payout?{sectorClosure:{score:payout.score,publicity,...(payout.knownPink?{knownPink:payout.knownPink}:{})}}:{})}];
           }).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
           const selected = quotes[0];
           if (selected) {
             usedTokens.add(selected.tokenId);wallet.availableData+=selected.data;delta+=selected.value;
-            if(selected.sectorClosure){closingSectors.add(selected.id);wallet.publicity+=selected.sectorClosure.publicity;}
+            if(selected.sectorClosure){
+              closingSectors.add(selected.id);wallet.publicity+=selected.sectorClosure.publicity;
+              if(selected.sectorClosure.knownPink){pickedKnownPink=true;unknownCount+=selected.sectorClosure.knownPink.hand;}
+            }
           }
           ledger?.push({ type: effect.type, selected, value: selected?.value || 0,
-            excluded: selected?.sectorClosure?'special trace positions, triggered rewards and new identities'
+            excluded: selected?.sectorClosure?'other special trace positions, triggered rewards and refill identities'
               :'sector completion, triggered rewards, new identities and additional technology movement' });
         } else if (effect.type === 'alien_trace') {
           if(readOnlyTraces&&!traceSlots&&(options.count||1)===1){
