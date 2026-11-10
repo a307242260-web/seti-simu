@@ -1,0 +1,450 @@
+{
+  "source": "1dea78e45f6fda5f3d1354941a905d0c8e3a19c8",
+  "model": "seti-purpose-capital-state-value-v65",
+  "search": "seti-complete-decision-search-v438",
+  "records": [
+    {
+      "mode": "triton-quoted",
+      "baseline": {
+        "action": "play_card:eea1e173",
+        "value": 230,
+        "native": 70,
+        "nodes": 49,
+        "ms": 186.238334,
+        "complete": true
+      },
+      "candidate": {
+        "action": "quick_trade:f385e2ac",
+        "value": 240,
+        "native": 79,
+        "nodes": 53,
+        "ms": 188.66099999999997,
+        "complete": true
+      },
+      "planInputs": 16,
+      "reuse": 15,
+      "actualHostMaxMs": 192.826875,
+      "outcomes": [
+        {
+          "fossilId": "fossil_06",
+          "value": 240,
+          "final": 236
+        },
+        {
+          "fossilId": "fossil_01",
+          "value": 240,
+          "final": 236
+        }
+      ],
+      "quote": {
+        "id": "8:land:saturn:enceladus:card:alien-chong-6-16",
+        "family": "land",
+        "planet": "saturn",
+        "funded": true,
+        "knownLandingCardId": "alien-chong-6-16",
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 3,
+            "energy": 0
+          },
+          "energyPurchases": 1,
+          "creditPurchases": 0,
+          "value": 6,
+          "cornerCardIds": [
+            "card-66-0"
+          ],
+          "exchangeCardIds": [
+            "alien-chong-8-12",
+            "card-30-pass-3-1"
+          ]
+        },
+        "route": {
+          "coordinate": {
+            "x": 2,
+            "y": 3
+          },
+          "cost": 3,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "known-travel-arrival",
+            "gain": {
+              "publicity": 3
+            },
+            "value": 1.5
+          },
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 13
+            },
+            "value": 13
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-2-b",
+              "tokenId": "nebula-data-16",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-1-a",
+              "tokenId": "nebula-data-52",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-3-a",
+              "tokenId": "nebula-data-59",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 9
+      }
+    },
+    {
+      "mode": "triton-hold-ch4",
+      "baseline": {
+        "action": "card_corner:bf0cc13d",
+        "value": 235,
+        "native": 75,
+        "nodes": 46,
+        "ms": 181.978917,
+        "complete": true
+      },
+      "candidate": {
+        "action": "quick_trade:a39c1a77",
+        "value": 240,
+        "native": 81,
+        "nodes": 50,
+        "ms": 201.36379200000002,
+        "complete": true
+      },
+      "planInputs": 15,
+      "reuse": 14,
+      "actualHostMaxMs": 114.79291699999999,
+      "outcomes": [
+        {
+          "fossilId": "fossil_06",
+          "value": 240,
+          "final": 236
+        },
+        {
+          "fossilId": "fossil_01",
+          "value": 240,
+          "final": 236
+        }
+      ],
+      "quote": {
+        "id": "8:land:saturn:enceladus:card:alien-chong-6-16",
+        "family": "land",
+        "planet": "saturn",
+        "funded": true,
+        "knownLandingCardId": "alien-chong-6-16",
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 1,
+            "energy": 0
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 5,
+          "cornerCardIds": [
+            "alien-chong-4-14",
+            "card-66-0"
+          ],
+          "exchangeCardIds": [
+            "alien-chong-8-12",
+            "card-30-pass-3-1"
+          ]
+        },
+        "route": {
+          "coordinate": {
+            "x": 2,
+            "y": 3
+          },
+          "cost": 3,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "known-travel-arrival",
+            "gain": {
+              "publicity": 3
+            },
+            "value": 1.5
+          },
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 13
+            },
+            "value": 13
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-2-b",
+              "tokenId": "nebula-data-16",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-1-a",
+              "tokenId": "nebula-data-52",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          },
+          {
+            "type": "choose_colored_nebula_scan",
+            "selected": {
+              "id": "sector-3-a",
+              "tokenId": "nebula-data-59",
+              "value": 0.5,
+              "score": 0,
+              "data": 1
+            },
+            "value": 0.5,
+            "excluded": "sector completion, triggered rewards, new identities and additional technology movement"
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 10
+      }
+    }
+  ],
+  "terminalFixedContinuations": [
+    {
+      "label": "orange:triton-quoted:fossil_06",
+      "ids": [],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-quoted:fossil_06",
+      "ids": [
+        "card-74-0",
+        "card-75-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-quoted:fossil_06",
+      "ids": [
+        "card-75-0",
+        "card-74-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-quoted:fossil_01",
+      "ids": [],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-quoted:fossil_01",
+      "ids": [
+        "card-74-0",
+        "card-75-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-quoted:fossil_01",
+      "ids": [
+        "card-75-0",
+        "card-74-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_06",
+      "ids": [],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_06",
+      "ids": [
+        "card-74-0",
+        "card-75-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_06",
+      "ids": [
+        "card-75-0",
+        "card-74-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_01",
+      "ids": [],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_01",
+      "ids": [
+        "card-74-0",
+        "card-75-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "orange:triton-hold-ch4:fossil_01",
+      "ids": [
+        "card-75-0",
+        "card-74-0"
+      ],
+      "score": 241
+    },
+    {
+      "label": "scan:publicity:fossil_06",
+      "ids": [],
+      "score": 248
+    },
+    {
+      "label": "scan:card:fossil_06",
+      "ids": [],
+      "score": 251
+    },
+    {
+      "label": "scan:publicity:fossil_01",
+      "ids": [],
+      "score": 248
+    },
+    {
+      "label": "scan:card:fossil_01",
+      "ids": [],
+      "score": 251
+    }
+  ],
+  "exactRestore": true,
+  "teacher272": {
+    "action": "place_data:8fd12fd3",
+    "value": 223,
+    "native": 160,
+    "nodes": 712,
+    "ms": 1122.1824589999999,
+    "complete": true
+  },
+  "satellite": {
+    "action": "play_card:f1918668",
+    "value": 227,
+    "native": 205,
+    "nodes": 1280,
+    "ms": 1258.4222089999998,
+    "complete": true
+  },
+  "unchangedControls": [
+    {
+      "label": "r3-172",
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110,
+      "digest": "9ba0b5e52f053f8663531b478b8ac96d0845e59379f49674c9de17be02a65e8b"
+    },
+    {
+      "label": "r3-136",
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214,
+      "digest": "3d956e652273bdd1e9834f2c908f9856659c43fcf85ccf8c7d15cee9bb6850d0"
+    },
+    {
+      "label": "official",
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 165,
+      "graphNodes": 535,
+      "digest": "d3f6d5120d18876a338936d35f852fa46cf0f918d4cfe7e1e4cd8fe315459c08"
+    },
+    {
+      "label": "late",
+      "action": "analyze:a5629aa3",
+      "value": 266,
+      "native": 222,
+      "graphNodes": 342,
+      "digest": "5384edc7832577dd5a23a8681134444caf77019f5139c48d64da908cfc3b755c"
+    }
+  ],
+  "tests": {
+    "node": 9,
+    "inputs": 66,
+    "chrome": 2
+  },
+  "limits": {
+    "native": 256,
+    "ms": 600
+  },
+  "productionAdmitted": false,
+  "ranNewFullGame": false
+}
