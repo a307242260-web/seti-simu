@@ -1,0 +1,2478 @@
+{
+  "source": "3a21f8759e383e71933851550553cfb4164c787e",
+  "scope": "teacher 272, White only, closed own turns, no final PASS",
+  "decision": {
+    "action": "place_data:8fd12fd3",
+    "value": 223,
+    "inputs": 157,
+    "nodes": 672,
+    "profiledMs": 1152.7886250000001,
+    "complete": true
+  },
+  "firstTurn": [
+    {
+      "turn": 8,
+      "value": 223,
+      "established": 181,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 3,
+        "handSize": 5,
+        "publicity": 6,
+        "score": 124
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange3": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [
+        1,
+        2,
+        3
+      ],
+      "blue": [
+        1,
+        2
+      ],
+      "hand": [
+        [
+          "alien-chong-2-8",
+          "chong_2.webp"
+        ],
+        [
+          "alien-chong-8-12",
+          "chong_8.webp"
+        ],
+        [
+          "alien-chong-4-14",
+          "chong_4.webp"
+        ],
+        [
+          "card-30-pass-3-1",
+          "b_111.webp"
+        ],
+        [
+          "alien-chong-6-16",
+          "chong_6.webp"
+        ]
+      ],
+      "label": "orange3-ranked"
+    },
+    {
+      "turn": 8,
+      "value": 222,
+      "established": 180,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 6,
+        "publicity": 7,
+        "score": 123
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 5,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "blue": [
+        1,
+        2
+      ],
+      "hand": [
+        [
+          "alien-chong-2-8",
+          "chong_2.webp"
+        ],
+        [
+          "alien-chong-8-12",
+          "chong_8.webp"
+        ],
+        [
+          "alien-chong-4-14",
+          "chong_4.webp"
+        ],
+        [
+          "card-30-pass-3-1",
+          "b_111.webp"
+        ],
+        [
+          "card-67-0",
+          "dlc_15.png"
+        ],
+        [
+          "alien-amiba-9-18",
+          "amiba_9.webp"
+        ]
+      ],
+      "label": "scan-ranked"
+    },
+    {
+      "turn": 8,
+      "value": 221,
+      "established": 173,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 6,
+        "publicity": 6,
+        "score": 116
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [
+        1,
+        2,
+        3
+      ],
+      "blue": [
+        1,
+        2
+      ],
+      "hand": [
+        [
+          "alien-chong-2-8",
+          "chong_2.webp"
+        ],
+        [
+          "alien-chong-8-12",
+          "chong_8.webp"
+        ],
+        [
+          "alien-chong-4-14",
+          "chong_4.webp"
+        ],
+        [
+          "card-30-pass-3-1",
+          "b_111.webp"
+        ],
+        [
+          "card-67-0",
+          "dlc_15.png"
+        ],
+        [
+          "alien-chong-6-16",
+          "chong_6.webp"
+        ]
+      ],
+      "label": "scan-teacher"
+    },
+    {
+      "turn": 8,
+      "value": 216.5,
+      "established": 206,
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 0,
+        "handSize": 3,
+        "publicity": 9,
+        "score": 145
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 5,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "blue": [
+        1
+      ],
+      "hand": [
+        [
+          "alien-chong-8-12",
+          "chong_8.webp"
+        ],
+        [
+          "card-30-pass-3-1",
+          "b_111.webp"
+        ],
+        [
+          "card-67-0",
+          "dlc_15.png"
+        ]
+      ],
+      "label": "triton-native"
+    }
+  ],
+  "secondTurn": [
+    {
+      "first": "orange3-ranked",
+      "mode": "triton-quoted",
+      "fossil": null,
+      "end": {
+        "turn": 9,
+        "value": 224,
+        "established": 214,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 8,
+          "score": 153
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "orange3-ranked",
+      "mode": "triton-hold-ch4",
+      "fossil": null,
+      "end": {
+        "turn": 9,
+        "value": 223,
+        "established": 214,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 4,
+          "publicity": 8,
+          "score": 153
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-ranked",
+      "mode": "triton-quoted",
+      "fossil": null,
+      "end": {
+        "turn": 9,
+        "value": 223,
+        "established": 213,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 4,
+          "publicity": 9,
+          "score": 152
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-18",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "paid",
+      "fossil": null,
+      "end": {
+        "turn": 9,
+        "value": 219.5,
+        "established": 203,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 7,
+          "publicity": 8,
+          "score": 142
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "held",
+      "fossil": "fossil_06",
+      "end": {
+        "turn": 9,
+        "value": 220.5,
+        "established": 203,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 6,
+          "publicity": 8,
+          "score": 142
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "held",
+      "fossil": "fossil_01",
+      "end": {
+        "turn": 9,
+        "value": 220.5,
+        "established": 203,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 6,
+          "publicity": 8,
+          "score": 142
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    }
+  ],
+  "commonResearchAndSecondLanding": [
+    {
+      "first": "orange3-ranked",
+      "mode": "triton-quoted",
+      "fossil": null,
+      "third": {
+        "turn": 10,
+        "value": 231,
+        "established": 223,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 0,
+          "handSize": 4,
+          "publicity": 2,
+          "score": 155
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "enceladus",
+        "coordinate": {
+          "x": 2,
+          "y": 3
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 1
+        },
+        "corner": [
+          "card-66-0"
+        ],
+        "buys": 1,
+        "short": 2,
+        "usesPair": false
+      },
+      "fourth": null
+    },
+    {
+      "first": "orange3-ranked",
+      "mode": "triton-hold-ch4",
+      "fossil": null,
+      "third": {
+        "turn": 10,
+        "value": 230,
+        "established": 223,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 5,
+          "publicity": 2,
+          "score": 155
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "enceladus",
+        "coordinate": {
+          "x": 2,
+          "y": 3
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 1
+        },
+        "corner": [
+          "alien-chong-4-14",
+          "card-66-0"
+        ],
+        "buys": 0,
+        "short": 2,
+        "usesPair": false
+      },
+      "fourth": null
+    },
+    {
+      "first": "scan-ranked",
+      "mode": "triton-quoted",
+      "fossil": null,
+      "third": {
+        "turn": 10,
+        "value": 223,
+        "established": 215,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 5,
+          "publicity": 3,
+          "score": 154
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-30-pass-3-1",
+            "b_111.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-18",
+            "amiba_9.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "enceladus",
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 2
+        },
+        "corner": [
+          "card-66-0"
+        ],
+        "buys": 0,
+        "short": 4,
+        "usesPair": false
+      },
+      "fourth": null
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "paid",
+      "fossil": null,
+      "third": {
+        "turn": 10,
+        "value": 236.5,
+        "established": 205,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 8,
+          "publicity": 2,
+          "score": 144
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "triton",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": -1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 3
+        },
+        "corner": [
+          "alien-chong-2-8",
+          "alien-chong-4-14",
+          "alien-chong-9-18",
+          "card-66-0"
+        ],
+        "buys": 1,
+        "short": 1,
+        "usesPair": true
+      },
+      "fourth": {
+        "turn": 11,
+        "value": 238,
+        "established": 231,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 170
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "held",
+      "fossil": "fossil_06",
+      "third": {
+        "turn": 10,
+        "value": 238.5,
+        "established": 205,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 7,
+          "publicity": 2,
+          "score": 144
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "triton",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": -1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 3
+        },
+        "corner": [
+          "alien-chong-2-8",
+          "alien-chong-4-14",
+          "alien-chong-9-18",
+          "card-66-0"
+        ],
+        "buys": 1,
+        "short": 0,
+        "usesPair": false
+      },
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 231,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 170
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan-teacher",
+      "mode": "held",
+      "fossil": "fossil_01",
+      "third": {
+        "turn": 10,
+        "value": 238.5,
+        "established": 205,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 7,
+          "publicity": 2,
+          "score": 144
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-2-8",
+            "chong_2.webp"
+          ],
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "alien-chong-4-14",
+            "chong_4.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-chong-9-18",
+            "chong_9.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ],
+          [
+            "card-66-0",
+            "dlc_16.png"
+          ]
+        ]
+      },
+      "funding": {
+        "target": "triton",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "path": [
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "deltaX": -1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "cost": {
+          "energy": 3
+        },
+        "corner": [
+          "alien-chong-2-8",
+          "alien-chong-4-14",
+          "alien-chong-9-18",
+          "card-66-0"
+        ],
+        "buys": 1,
+        "short": 0,
+        "usesPair": false
+      },
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 231,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 170
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    }
+  ],
+  "reverseHeldSecondLanding": [
+    {
+      "mode": "triton-quoted",
+      "fossil": "fossil_06",
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 168
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": []
+      }
+    },
+    {
+      "mode": "triton-quoted",
+      "fossil": "fossil_01",
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 168
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": []
+      }
+    },
+    {
+      "mode": "triton-hold-ch4",
+      "fossil": "fossil_06",
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 168
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": []
+      }
+    },
+    {
+      "mode": "triton-hold-ch4",
+      "fossil": "fossil_01",
+      "fourth": {
+        "turn": 11,
+        "value": 240,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 168
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ],
+        "hand": []
+      }
+    }
+  ],
+  "fifthTurn": [
+    {
+      "first": "orange3",
+      "mode": "triton-quoted",
+      "fossil": "fossil_06",
+      "slotsFilledBeforeAnalyze": 3,
+      "end": {
+        "turn": 12,
+        "value": 243.5,
+        "established": 241,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 171
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    },
+    {
+      "first": "orange3",
+      "mode": "triton-quoted",
+      "fossil": "fossil_01",
+      "slotsFilledBeforeAnalyze": 3,
+      "end": {
+        "turn": 12,
+        "value": 243.5,
+        "established": 241,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 171
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    },
+    {
+      "first": "orange3",
+      "mode": "triton-hold-ch4",
+      "fossil": "fossil_06",
+      "slotsFilledBeforeAnalyze": 3,
+      "end": {
+        "turn": 12,
+        "value": 243.5,
+        "established": 241,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 171
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    },
+    {
+      "first": "orange3",
+      "mode": "triton-hold-ch4",
+      "fossil": "fossil_01",
+      "slotsFilledBeforeAnalyze": 3,
+      "end": {
+        "turn": 12,
+        "value": 243.5,
+        "established": 241,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 171
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    },
+    {
+      "first": "scan",
+      "mode": "paid",
+      "fossil": null,
+      "slotsFilledBeforeAnalyze": 0,
+      "end": {
+        "turn": 12,
+        "value": 243,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 173
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": [
+          [
+            "alien-chong-6-16",
+            "chong_6.webp"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan",
+      "mode": "held",
+      "fossil": "fossil_06",
+      "slotsFilledBeforeAnalyze": 0,
+      "end": {
+        "turn": 12,
+        "value": 245,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 173
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "first": "scan",
+      "mode": "held",
+      "fossil": "fossil_01",
+      "slotsFilledBeforeAnalyze": 0,
+      "end": {
+        "turn": 12,
+        "value": 245,
+        "established": 236,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 5,
+          "score": 173
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": [
+          [
+            "alien-chong-8-12",
+            "chong_8.webp"
+          ],
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    }
+  ],
+  "sixthScanOnly": [
+    {
+      "mode": "publicity",
+      "fossil": "fossil_06",
+      "end": {
+        "turn": 13,
+        "value": 254,
+        "established": 248,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 178
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": [
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "mode": "card",
+      "fossil": "fossil_06",
+      "end": {
+        "turn": 13,
+        "value": 255,
+        "established": 251,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 181
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    },
+    {
+      "mode": "publicity",
+      "fossil": "fossil_01",
+      "end": {
+        "turn": 13,
+        "value": 254,
+        "established": 248,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 178
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": [
+          [
+            "card-67-0",
+            "dlc_15.png"
+          ],
+          [
+            "alien-amiba-9-20",
+            "amiba_9.webp"
+          ]
+        ]
+      }
+    },
+    {
+      "mode": "card",
+      "fossil": "fossil_01",
+      "end": {
+        "turn": 13,
+        "value": 255,
+        "established": 251,
+        "wallet": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 5,
+          "score": 181
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": [],
+        "hand": []
+      }
+    }
+  ],
+  "auditedNativeInputs": 357,
+  "forecastFinding": {
+    "tritonPublicityUnpriced": 2,
+    "differenceInValue": 1,
+    "affects": [
+      "orange3-ranked",
+      "scan-ranked"
+    ]
+  },
+  "gates": {
+    "inputLimit": 256,
+    "timeLimitMs": 600,
+    "newFullGame": false,
+    "productionChanged": false,
+    "recordsChanged": false
+  }
+}
