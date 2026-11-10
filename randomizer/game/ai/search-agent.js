@@ -40,7 +40,8 @@
         if (expected.size !== context.legalActions.length || root.legalActions.length !== expected.size
           || root.legalActions.some(action => !expected.has(actionKey(action)))) throw new Error("SEARCH_AGENT_BOUNDARY_MISMATCH");
         const result = search.searchDecision({ port: analysisPort, root, evaluate, budget: BUDGET,
-          ...OPTIONS, continuation, planContinuation, modelKey: evaluate.modelKey });
+          ...OPTIONS, continuation, planContinuation, modelKey: evaluate.modelKey,
+          scanOrbitBudget: { nativeInputs: 256, deadline: startedAt + 600 } });
         const { selectionContinuation, planContinuation: nextPlan, ...publicResult } = result;
         const evidence = { ...publicResult, rootAndSearchMilliseconds: performance.now() - startedAt,
           analysis: analysisPort.getDiagnostics?.() || null };
@@ -52,7 +53,7 @@
         }
         continuation = selectionContinuation;
         planContinuation = nextPlan;
-        return { actionId: result.actionId, reasonCode: "search:complete-visible-window", search: evidence };
+        return { actionId: result.actionId, reasonCode: result.scanBeforeOrbit ? "search:proved-scan-before-orbit" : "search:complete-visible-window", search: evidence };
       } catch (error) {
         continuation = null;
         planContinuation = null;

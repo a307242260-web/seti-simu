@@ -6,14 +6,14 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v439";
+  const VERSION = "seti-complete-decision-search-v440";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null, planContinuation = null, planReuse = false,
     modelKey = null, movementPlanning = false, cardPickPlanning = false, resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
-    now = () => performance.now() } = {}) {
+    scanOrbitBudget = null, now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
     const configuredLimits = { ...DEFAULT_BUDGET, ...budget };
@@ -1032,15 +1032,60 @@
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
+    let scanBeforeOrbit=null, continuationNativeInputs=0;
+    const visibleBest=nodes[0].best;
+    const orbitGoal=visibleBest?.resourcePlan?.goal;
+    if(complete&&!unresolved.length&&realizationTies&&scanOrbitBudget&&orbitGoal?.family==="orbit"
+      &&root.status==="stable"&&root.observation.publicState.roundNumber===4&&port.quoteScanBeforeOrbit){
+      const scanAction=root.legalActions.find(a=>a.family==="scan");
+      const scanRoot=scanAction&&roots.find(r=>r.actionId===scanAction.actionId);
+      const scanEdges=scanRoot?.completion==="complete"?nodes[0].edges.filter(e=>e.actionId===scanAction.actionId
+        &&e.target===scanRoot.target&&e.goalStatus==="completed"&&e.resourcePlan?.goal.kind==="scan-flow"):[];
+      const scanEdge=scanEdges.length===1?scanEdges[0]:null;
+      const quietTail=edge=>{
+        let index=edge.target;
+        for(let i=0;i<16;i++){
+          const entry=nodes[index],next=entry.best;
+          if(BOUNDARIES.has(entry.node.status)){
+            const tail=entry.node.planSummary;
+            return entry.node.status==="turn-tail-value"&&tail.kind==="end-turn"&&tail.netGain===0&&tail.markedTiles.length===0
+              ?entry.node:null;
+          }
+          if(!next||nodes[next.target].distance>=entry.distance)return null;
+          index=next.target;
+        }
+        return null;
+      };
+      if(scanEdge&&visibleBest.goalStatus==="completed"){
+        const scanTail=quietTail(scanEdge),orbitTail=quietTail(visibleBest);
+        const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
+        const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions;
+        if(scanTail&&orbitTail){
+          const before=port.getDiagnostics().submissionCount;
+          if(maySubmit(0,before)){
+            const proof=port.quoteScanBeforeOrbit(scanTail,orbitTail,orbitGoal,maySubmit);
+            continuationNativeInputs=port.getDiagnostics().submissionCount-before;
+            transitions+=continuationNativeInputs;
+            if(proof?.score>nodes[0].value&&now()<deadline){
+              scanBeforeOrbit={...proof,actionId:scanAction.actionId,visibleActionId:visibleBest.actionId,
+                visibleValue:nodes[0].value,currentTurnValue:scanRoot.value,nativeInputs:continuationNativeInputs};
+            }
+            if(now()>=deadline)stopReason="watchdog";
+          }
+        }
+      }
+    }
     const evidence = complete && nodes[0].selection ? nodes[0].edges.map(edge => ({
       selectedIds: edge.selectedIds, value: nodes[edge.target].value, realization: nodes[edge.target].realization, preparationDebt:nodes[edge.target].preparationDebt,
       distance: nodes[edge.target].value == null ? null : nodes[edge.target].distance,
     })) : null;
-    let accepted = complete && now() - startedAt < limits.milliseconds;
+    let accepted = complete && !stopReason && now() - startedAt < limits.milliseconds;
     let certificate = accepted && evidence && modelKey && nodes[0].best
       ? port.rememberSelection?.(root, evidence, modelKey) || null : null;
     let planCertificate = null;
-    if (accepted && planReuse && nodes[0].best) {
+    // The existing certificate starts with the visible winner. A proved
+    // override must let the real scan menu build a fresh continuation.
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1157,7 +1202,7 @@
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? nodes[0].best?.actionId || null : null,
+      actionId: accepted ? scanBeforeOrbit?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1167,6 +1212,7 @@
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
       value: accepted ? nodes[0].value : null,
+      ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       realization: accepted ? nodes[0].realization ?? null : null,
       preparationDebt:accepted?nodes[0].preparationDebt??null:null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
@@ -1178,7 +1224,8 @@
       diagnostics: { realizationTies:realizationTies?"funded-preparation-debt-and-latest-native-purpose-capital":"off", valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
         incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,movementValuePrunes,dataPrimaryBoundPrunes,
         winningIncomePlans,winningIncomeInputs,deferredMovementPlans:nodes.filter(e=>e.movementDeferred).length,
-        nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
+        nativeExecutions:port.getDiagnostics?.().submissionCount??null,
+        ...(continuationNativeInputs?{continuationNativeInputs}:{}),logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
         localFinalMarkStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-final-mark").length,
         localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.kind==="fixed-final-mark"?e.decisionPolicy.excludedActionIds.length:0),0),
         fixedDataChoiceStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-data-choice").length,

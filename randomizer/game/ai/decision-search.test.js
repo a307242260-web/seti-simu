@@ -453,3 +453,76 @@ console.log("complete decision graph coverage, cycles, preparation chains and bu
  const stopped=searchDecision({...limited,resourcePlanning:true,now:()=>clock,budget:{...unlimited,milliseconds:10}});
  assert(!stopped.complete);assert.equal(stopped.actionId,null);assert.equal(stopped.stopReason,'watchdog');assert(stopped.unresolved.some(row=>row.policyPending&&row.actionIds.includes('finish')));
 }
+
+// An optional continuation can change the submitted choice without inventing
+// a better current-turn leaf, and an exhausted budget preserves that graph.
+{
+  function searchScanOrbit({ inputs = 4, transitions = null, secondScan = false } = {}) {
+    const root = { status: "stable", observation: wallet(0, 0), legalActions: [
+      { actionId: "trade", actorId: "p1", family: "quick_trade" },
+      { actionId: "scan", actorId: "p1", family: "scan" },
+    ] };
+    const tail = (score, actionId) => ({
+      status: "stable", observation: wallet(0, 0, score),
+      legalActions: [{ actionId, actorId: "p1", family: "end_turn" }],
+    });
+    const orbit = tail(10, "end-orbit"), scan = tail(8, "end-scan");
+    const plan = (firstActionId, goal) => ({ firstActionId, submissions: 1, goal });
+    const plans = [plan("trade", { id: "venus", family: "orbit" }), plan("scan", { id: "a", kind: "scan-flow" }),
+      ...(secondScan ? [plan("scan", { id: "b", kind: "scan-flow" })] : [])];
+    const bases = new Map();
+    let native = 0, quotes = 0;
+    const port = {
+      identity: node => node,
+      expand: () => assert.fail("both current-turn tails are already closed"),
+      getDiagnostics: () => ({ submissionCount: native }),
+      resourceSpec: node => node === root ? { plans, retainedActionIds: [], excludedActionIds: ["trade", "scan"] } : null,
+      expandResourcePlan: (_node, plan) => {
+        native++;
+        return { complete: true, node: plan.firstActionId === "trade" ? orbit : scan, submissions: 1, contexts: 0,
+          goalStatus: "completed", prefixes: [{ action: { actionId: plan.firstActionId } }] };
+      },
+      turnTailSummary: node => node !== root ? { kind: "end-turn", firstActionId: node.legalActions[0].actionId,
+        netGain: 0, markedTiles: [], requiredNativeInputs: 1 } : null,
+      turnTailBase: node => bases.get(node),
+      turnTailBoundary: (node, planSummary) => {
+        const leaf = { status: "turn-tail-value", legalActions: [], planSummary };
+        bases.set(leaf, node);
+        return leaf;
+      },
+      quoteScanBeforeOrbit: (scanLeaf, orbitLeaf, goal, admit) => {
+        quotes++;
+        assert.equal(bases.get(scanLeaf), scan);
+        assert.equal(bases.get(orbitLeaf), orbit);
+        assert.equal(goal.id, "venus");
+        for (let i = 0; i < 2; i++) {
+          if (!admit(i, native)) return null;
+          native++;
+        }
+        return { score: 12 };
+      },
+    };
+    const result = searchDecision({ root, port, evaluate: createStateValueEvaluator("p1"), resourcePlanning: true,
+      budget: { ...unlimited, transitions }, now: () => 0, scanOrbitBudget: { nativeInputs: inputs, deadline: 100 } });
+    return { result, quotes };
+  }
+  const { result: full } = searchScanOrbit();
+  assert(full.complete);
+  assert.equal(full.actionId, "scan");
+  assert.equal(full.value, 10);
+  assert.equal(full.scanBeforeOrbit.score, 12);
+  assert.equal(full.diagnostics.nativeExecutions, 4);
+  for (const limits of [{ inputs: 3 }, { transitions: 3 }]) {
+    const { result, quotes } = searchScanOrbit(limits);
+    assert.equal(quotes, 1);
+    assert(result.complete);
+    assert.equal(result.actionId, "trade");
+    assert.equal(result.scanBeforeOrbit, undefined);
+    assert.equal(result.diagnostics.nativeExecutions, 3);
+    assert.equal(result.diagnostics.continuationNativeInputs, 1);
+    assert.deepEqual(result.lines, full.lines);
+  }
+  const ambiguous = searchScanOrbit({ secondScan: true });
+  assert.equal(ambiguous.quotes, 0);
+  assert.equal(ambiguous.result.actionId, "trade");
+}
