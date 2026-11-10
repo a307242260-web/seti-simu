@@ -1274,21 +1274,27 @@
         ||action.family!=="choose_card")return null;
       const checkpoint=stored.envelope.session,s=checkpoint?.session,types=scienceSession.EFFECT_TYPES;
       const [head,purple,third,fourth,last]=s?.queue||[],opts=head?.payload?.options;
-      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=mercury?fourth:third,extra=mercury?null:fourth;
+      const repeatOnly=s?.queue.length===2&&purple?.type===types.SCAN_FINALIZE;
+      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=repeatOnly?purple:mercury?fourth:third,extra=mercury?null:fourth;
       if(s?.phase!=="awaiting_input"||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
         ||head.type!==types.SCAN_STEP||head.kind!=="decision"||opts?.mode!=="public"
         ||Object.keys(opts).some(k=>!["mode","max","selected","consumeMarkers"].includes(k))
         ||!Number.isSafeInteger(opts.max)||!Number.isSafeInteger(opts.selected)||opts.selected>=opts.max
-        ||purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
+        ||!repeatOnly&&(purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision")||finalize?.type!==types.SCAN_FINALIZE
         ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
       const source=s.journal.actions[0]?.action?.family;
-      if(source==="scan"&&s.queue.length!==(mercury?4:3)||source==="play_card"&&(s.queue.length!==5
+      if(source==="scan"&&!repeatOnly&&s.queue.length!==(mercury?4:3)||source==="play_card"&&(s.queue.length!==5
         ||extra?.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
         ||source!=="scan"&&source!=="play_card")return null;
       const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
       // With only root-visible Amiba and no pending species reveal, this
       // prefix still stops at the native Purple 4 menu, before sector settlement.
-      const quietRoundThree=source==="scan"&&(isUnrevealedRoundThree(root)||quietR3AmibaPostMain(root,p));
+      const quietAmiba=source==="scan"&&quietR3AmibaPostMain(root,p);
+      const quietRoundThree=quietAmiba||source==="scan"&&isUnrevealedRoundThree(root);
+      // A repeat can be reused before the next public choice, but ending
+      // a scan without the Purple 4 menu would also settle the sector.
+      if(repeatOnly&&(!quietAmiba||finalize.kind!=="effect"||Object.keys(finalize.payload).length
+        ||action.target?.done||opts.selected+1>=opts.max))return null;
       if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
@@ -1313,7 +1319,7 @@
         history=[{type:"science_scan",nebulaId:id}];
         repeat=scienceSession.consumePublicScanCard(state,player,action,opts);
       }
-      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+      if(repeatOnly&&!repeat||events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
       const offset=Number(Boolean(repeat)),revision=s.revision+1;
       const nextEffectSequence=s.nextEffectSequence+offset,nextGroupSequence=s.nextGroupSequence+offset;
       const queue=s.queue.slice(1);
@@ -1501,7 +1507,9 @@
         ||!options||(options.repeat??1)!==1||options.afterResearchReward&&options.afterResearchReward.kind!=="repeatBonus")return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
       const tile=state.tech.stacks[action.target.tileId];
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
+      const quietRoundThree=t.roundNumber===3&&quietR3AmibaOnly(state)
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id));
+      if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
         ||!tile||tile.bonusHidden||tile.bonusIndex!==knownRootTechIndices.get(action.target.tileId)
         ||p.reservedCards.some(c=>!known.has(c.id))
         ||origin.family==="play_card"&&!known.has(origin.target.cardInstanceId))return null;

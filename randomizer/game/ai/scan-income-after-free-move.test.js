@@ -14,6 +14,8 @@ try{
  const legalActions=c.inputPort.enumerateActions({}),scan=legalActions.find(a=>a.family==='scan');
  const q=createSearchAgent({seatId:seat,analysisPort:port}).decide({seatId:seat,legalActions}).search;
  assert(q.complete&&!q.unresolved.length);
+ assert(port.getDiagnostics().provedResearchSelections>0,
+  'known third-round research choices reuse their native resolution');
  assert(port.getDiagnostics().provedPublicScanChoices>0,
   'root-visible Amiba does not block exact public scans before the native Purple 4 menu');
  const result=q.roots.find(a=>a.actionId===scan.actionId);
@@ -29,4 +31,30 @@ try{
  assert.equal(lines.get(plan.target).value,142+5/6);
  assert.deepEqual(c.lifecycle.save().envelope,envelope);
  console.log('completed free scan movement preserves the known electricity plan across public refill');
+ // With Purple 4 disabled, a second public scan is still a real choice.
+ port.close();
+ const state=JSON.parse(envelope.committedState),player=state.players.players.find(p=>p.id===seat);
+ player.techState.disabledTiles.purple4=true;
+ player.resources.additionalPublicScan=1;
+ assert(c.lifecycle.restore({...envelope,committedState:JSON.stringify(state)}).ok);
+ const before=c.lifecycle.save().envelope;
+ const successors=[];
+ for(const reuse of [false,true]){
+  const p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+  try{
+   p.setResourcePlanning(reuse);p.setDecisionPlanning({scanPlanning:true});
+   let node=p.openRoot();
+   for(const select of [a=>a.family==='scan',a=>a.family==='choose_target'&&a.target.nebulaId,
+     a=>a.family==='choose_card'&&a.target.publicSlotIndex!==undefined]){
+    const action=node.legalActions.find(select);assert(action);
+    node=p.expand(node,action.actionId);
+   }
+   assert(node.legalActions.some(a=>a.target.done));
+   assert(node.legalActions.some(a=>a.target.publicSlotIndex!==undefined));
+   assert.equal(p.getDiagnostics().provedPublicScanChoices,Number(reuse));
+   successors.push([node.status,node.legalActions,node.observation]);
+  }finally{p.close();}
+ }
+ assert.deepEqual(successors[1],successors[0]);
+ assert.deepEqual(c.lifecycle.save().envelope,before);
 }finally{port.close();c.dispose();}
