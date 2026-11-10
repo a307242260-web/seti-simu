@@ -14,6 +14,8 @@ try{
  const legalActions=c.inputPort.enumerateActions({}),scan=legalActions.find(a=>a.family==='scan');
  const q=createSearchAgent({seatId:seat,analysisPort:port}).decide({seatId:seat,legalActions}).search;
  assert(q.complete&&!q.unresolved.length);
+ assert(port.getDiagnostics().provedPublicScanChoices>0,
+  'root-visible Amiba does not block exact public scans before the native Purple 4 menu');
  const result=q.roots.find(a=>a.actionId===scan.actionId);
  const lines=new Map(q.lines.map(l=>[l.node,l])),post=lines.get(result.target);
  const scanEdge=lines.get(0).edges.find(e=>e.actionId===scan.actionId&&e.target===result.target);

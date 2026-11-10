@@ -747,7 +747,7 @@
         &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
     }
 
-    function quietR3AmibaData(state, owner) {
+    function quietR3AmibaPostMain(state, owner) {
       const t=state.turn;
       return t.roundNumber===3&&owner.mainActionCompleted
         &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))&&quietR3AmibaOnly(state);
@@ -765,7 +765,7 @@
       // Opening a data menu has no placement or reward to settle. Reuse
       // the witnessed opening after the last active seat's main action,
       // even if the resulting menu has no Blue 3 card choice.
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaData(state,owner)
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaPostMain(state,owner)
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
@@ -905,7 +905,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaData(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaPostMain(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
@@ -1286,7 +1286,10 @@
         ||extra?.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
         ||source!=="scan"&&source!=="play_card")return null;
       const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
-      if((t.roundNumber!==4&&!(source==="scan"&&isUnrevealedRoundThree(root)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      // With only root-visible Amiba and no pending species reveal, this
+      // prefix still stops at the native Purple 4 menu, before sector settlement.
+      const quietRoundThree=source==="scan"&&(isUnrevealedRoundThree(root)||quietR3AmibaPostMain(root,p));
+      if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
