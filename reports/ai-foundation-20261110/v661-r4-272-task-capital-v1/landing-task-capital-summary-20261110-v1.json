@@ -1,0 +1,4002 @@
+{
+  "baseCommit": "588382e7f08a8cb5fd2f13920fd03367ef5d73d2",
+  "limits": {
+    "native": 256,
+    "ms": 600
+  },
+  "candidateAdmitted": false,
+  "newFullGame": false,
+  "root": {
+    "base": {
+      "search": {
+        "value": 216.5,
+        "ms": 1044.692167,
+        "n": 156,
+        "roots": [
+          {
+            "actionId": "scan:2d21a323",
+            "target": 24,
+            "value": 214,
+            "realization": -18,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "scan:sector:sector-4-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:f1918668",
+            "target": 1,
+            "value": 211,
+            "realization": -18,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1da9864f",
+            "target": 2,
+            "value": 194.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:88ec7135",
+            "target": 10,
+            "value": 214.5,
+            "realization": -20,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:alien-chong-4-14",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "alien-chong-4-14",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1a1c19d3",
+            "target": 3,
+            "value": 204.5,
+            "realization": -18,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:ddbaa2ce",
+            "target": 11,
+            "value": 214,
+            "realization": -20,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:card-67-0",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-67-0",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:5eb1b0e8",
+            "target": 4,
+            "value": 195.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "pass:a1f33c73",
+            "target": 5,
+            "value": 171,
+            "realization": 0,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "move:c16025a6",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:bde97b72",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:23807efa",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:a36e0e84",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2df2f24d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2a7c4819",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:90134ba1",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:0febc073",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:f385e2ac",
+            "target": 12,
+            "value": 215.5,
+            "realization": 0,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "rocket:7:land:neptune:satellite:triton",
+              "kind": "route",
+              "family": "land",
+              "rocketId": 7,
+              "planetId": "neptune",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "triton",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 3
+              },
+              "benefit": {
+                "score": 26,
+                "incomeCount": 0,
+                "dataCount": 0,
+                "grossEquivalentValue": 31,
+                "rewardSummary": "获得 26 分",
+                "source": "planetRewards.land:neptune"
+              },
+              "coordinate": {
+                "x": 1,
+                "y": 4
+              },
+              "path": [
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 2
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 1,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                }
+              ],
+              "movementPoints": 4,
+              "required": {
+                "credits": 0
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:49c75492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:12411a2c",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:a39c1a77",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:37140fcf",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:122c43fc",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:df811f99",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:71814d67",
+            "target": 6,
+            "value": 204,
+            "realization": -17,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:be9dd0cd",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "industry:e887dc52",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:730579d5",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:367a82a7",
+            "target": 13,
+            "value": 214,
+            "realization": -20,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "tech:blue3:3",
+              "kind": "research_tech",
+              "tileId": "blue3",
+              "blueSlot": 3,
+              "required": {
+                "publicity": 6
+              }
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "card_corner:cb6e4492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:bf0cc13d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:c4357b44",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:40cda505",
+            "target": 7,
+            "value": 212,
+            "realization": -18,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:analyze:6",
+              "kind": "analyze",
+              "targetComputerSlot": 6,
+              "required": {}
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 8,
+            "value": 216.5,
+            "realization": 0,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "resourceGoalCount": 3,
+            "completion": "complete"
+          }
+        ]
+      },
+      "inputs": [
+        "放置数据",
+        "第一排放置位 2",
+        "放置数据",
+        "第一排放置位 3",
+        "放置数据",
+        "第一排放置位 4",
+        "收入 chong_6.webp",
+        "放置数据",
+        "blue2 下方",
+        "2信用点 → 1能量",
+        "移动探测器 7 向外",
+        "消耗 1 能量",
+        "移动探测器 7 向外",
+        "消耗 1 能量",
+        "移动探测器 7 逆时针",
+        "弃 1 张移动牌",
+        "移动探测器 7 逆时针",
+        "弃 1 张移动牌",
+        "登陆",
+        "登陆海卫一（海王星）｜奖励：获得 26 分",
+        "完成 b_117.webp",
+        "结束回合"
+      ],
+      "end": {
+        "score": 145,
+        "secured": 206,
+        "value": 216.5,
+        "probePotential": 0,
+        "wallet": {
+          "credits": 3,
+          "energy": 0,
+          "availableData": 0,
+          "handSize": 3,
+          "publicity": 9
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1
+        ]
+      }
+    },
+    "b117": {
+      "search": {
+        "value": 219,
+        "ms": 1064.2852090000001,
+        "n": 156,
+        "roots": [
+          {
+            "actionId": "scan:2d21a323",
+            "target": 24,
+            "value": 218,
+            "realization": -22,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "scan:sector:sector-4-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:f1918668",
+            "target": 1,
+            "value": 215,
+            "realization": -22,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1da9864f",
+            "target": 2,
+            "value": 194.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:88ec7135",
+            "target": 10,
+            "value": 215.5,
+            "realization": -25,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:alien-chong-4-14",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "alien-chong-4-14",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1a1c19d3",
+            "target": 3,
+            "value": 208.5,
+            "realization": -22,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:ddbaa2ce",
+            "target": 11,
+            "value": 218,
+            "realization": -24,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:card-67-0",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-67-0",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:5eb1b0e8",
+            "target": 4,
+            "value": 195.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "pass:a1f33c73",
+            "target": 5,
+            "value": 171,
+            "realization": 0,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "move:c16025a6",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:bde97b72",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:23807efa",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:a36e0e84",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2df2f24d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2a7c4819",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:90134ba1",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:0febc073",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:f385e2ac",
+            "target": 12,
+            "value": 215.5,
+            "realization": 0,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "rocket:7:land:neptune:satellite:triton",
+              "kind": "route",
+              "family": "land",
+              "rocketId": 7,
+              "planetId": "neptune",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "triton",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 3
+              },
+              "benefit": {
+                "score": 26,
+                "incomeCount": 0,
+                "dataCount": 0,
+                "grossEquivalentValue": 31,
+                "rewardSummary": "获得 26 分",
+                "source": "planetRewards.land:neptune"
+              },
+              "coordinate": {
+                "x": 1,
+                "y": 4
+              },
+              "path": [
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 2
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 1,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                }
+              ],
+              "movementPoints": 4,
+              "required": {
+                "credits": 0
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:49c75492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:12411a2c",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:a39c1a77",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:37140fcf",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:122c43fc",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:df811f99",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:71814d67",
+            "target": 6,
+            "value": 208,
+            "realization": -21,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:be9dd0cd",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "industry:e887dc52",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:730579d5",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:367a82a7",
+            "target": 13,
+            "value": 218,
+            "realization": -24,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "tech:blue3:3",
+              "kind": "research_tech",
+              "tileId": "blue3",
+              "blueSlot": 3,
+              "required": {
+                "publicity": 6
+              }
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "card_corner:cb6e4492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:bf0cc13d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:c4357b44",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:40cda505",
+            "target": 7,
+            "value": 216,
+            "realization": -22,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:analyze:6",
+              "kind": "analyze",
+              "targetComputerSlot": 6,
+              "required": {}
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 8,
+            "value": 219,
+            "realization": -25,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "resourceGoalCount": 3,
+            "completion": "complete"
+          }
+        ]
+      },
+      "inputs": [
+        "放置数据",
+        "blue2 下方",
+        "dlc_15.png",
+        "研究 orange3",
+        "放置数据",
+        "第一排放置位 2",
+        "放置数据",
+        "第一排放置位 3",
+        "放置数据",
+        "blue1 下方",
+        "结束回合"
+      ],
+      "end": {
+        "score": 124,
+        "secured": 181,
+        "value": 219,
+        "probePotential": 25,
+        "wallet": {
+          "credits": 2,
+          "energy": 3,
+          "availableData": 0,
+          "handSize": 5,
+          "publicity": 6
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ]
+      }
+    },
+    "b117c1": {
+      "search": {
+        "value": 223,
+        "ms": 1064.687833,
+        "n": 156,
+        "roots": [
+          {
+            "actionId": "scan:2d21a323",
+            "target": 24,
+            "value": 222,
+            "realization": -26,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "scan:sector:sector-4-a",
+              "kind": "scan-flow",
+              "nebulaId": "sector-4-a",
+              "required": {
+                "credits": 1,
+                "energy": 2
+              },
+              "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:f1918668",
+            "target": 1,
+            "value": 219,
+            "realization": -26,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1da9864f",
+            "target": 2,
+            "value": 194.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:88ec7135",
+            "target": 10,
+            "value": 219.5,
+            "realization": -29,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:alien-chong-4-14",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "alien-chong-4-14",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:1a1c19d3",
+            "target": 3,
+            "value": 212.5,
+            "realization": -26,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:ddbaa2ce",
+            "target": 11,
+            "value": 222,
+            "realization": -28,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "effect:tech:card:card-67-0",
+              "kind": "effect-purpose",
+              "purpose": "tech",
+              "cardId": "card-67-0",
+              "sourceFamily": "play_card",
+              "required": {
+                "credits": 3
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "play_card:5eb1b0e8",
+            "target": 4,
+            "value": 195.5,
+            "realization": -10,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "pass:a1f33c73",
+            "target": 5,
+            "value": 171,
+            "realization": 0,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "move:c16025a6",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:bde97b72",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:23807efa",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:a36e0e84",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2df2f24d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:2a7c4819",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:90134ba1",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "move:0febc073",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:f385e2ac",
+            "target": 12,
+            "value": 215.5,
+            "realization": 0,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "rocket:7:land:neptune:satellite:triton",
+              "kind": "route",
+              "family": "land",
+              "rocketId": 7,
+              "planetId": "neptune",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "triton",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 3
+              },
+              "benefit": {
+                "score": 26,
+                "incomeCount": 0,
+                "dataCount": 0,
+                "grossEquivalentValue": 31,
+                "rewardSummary": "获得 26 分",
+                "source": "planetRewards.land:neptune"
+              },
+              "coordinate": {
+                "x": 1,
+                "y": 4
+              },
+              "path": [
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 2
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 3
+                  },
+                  "to": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 3,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                },
+                {
+                  "from": {
+                    "x": 2,
+                    "y": 4
+                  },
+                  "to": {
+                    "x": 1,
+                    "y": 4
+                  },
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "requiredMovePoints": 1
+                }
+              ],
+              "movementPoints": 4,
+              "required": {
+                "credits": 0
+              }
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:49c75492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:12411a2c",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:a39c1a77",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:37140fcf",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:122c43fc",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:df811f99",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "quick_trade:71814d67",
+            "target": 6,
+            "value": 212,
+            "realization": -25,
+            "preparationDebt": 0,
+            "completion": "complete"
+          },
+          {
+            "actionId": "quick_trade:be9dd0cd",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "industry:e887dc52",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-card-pick-policy",
+            "policy": "seti-purpose-card-pick-policy-v17",
+            "goal": {
+              "kind": "move",
+              "id": "rocket:7:orbit:neptune:planet:",
+              "amount": 1,
+              "priority": 4,
+              "required": {
+                "credits": 1,
+                "energy": 5,
+                "movementSteps": 4,
+                "movementPoints": 4,
+                "paidMovementPoints": 4
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:730579d5",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:367a82a7",
+            "target": 13,
+            "value": 222,
+            "realization": -28,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "tech:blue3:3",
+              "kind": "research_tech",
+              "tileId": "blue3",
+              "blueSlot": 3,
+              "required": {
+                "publicity": 6
+              }
+            },
+            "resourceGoalCount": 6,
+            "completion": "complete"
+          },
+          {
+            "actionId": "card_corner:cb6e4492",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-movement-policy",
+            "policy": "seti-goal-movement-policy-v5",
+            "chosenGoal": {
+              "id": "rocket:7:land:saturn:satellite:enceladus",
+              "kind": "land",
+              "label": "land saturn",
+              "coordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "timing": "current-turn",
+              "planetId": "saturn",
+              "endpointTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              },
+              "endpointCost": {
+                "energy": 2
+              }
+            },
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:bf0cc13d",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:c4357b44",
+            "target": null,
+            "value": null,
+            "valueType": "not-executed",
+            "completion": "excluded-by-resource-policy",
+            "policy": "seti-goal-resource-preparation-v26",
+            "isEquivalence": false
+          },
+          {
+            "actionId": "card_corner:40cda505",
+            "target": 7,
+            "value": 220,
+            "realization": -26,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:analyze:6",
+              "kind": "analyze",
+              "targetComputerSlot": 6,
+              "required": {}
+            },
+            "resourceGoalCount": 1,
+            "completion": "complete"
+          },
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 8,
+            "value": 223,
+            "realization": -29,
+            "preparationDebt": 0,
+            "kind": "resource-goal-plan",
+            "goal": {
+              "id": "data:blue:1",
+              "kind": "blue-data",
+              "blueSlot": 1,
+              "targetComputerSlot": 1,
+              "required": {}
+            },
+            "resourceGoalCount": 3,
+            "completion": "complete"
+          }
+        ]
+      },
+      "inputs": [
+        "放置数据",
+        "blue2 下方",
+        "dlc_15.png",
+        "研究 orange3",
+        "放置数据",
+        "第一排放置位 2",
+        "放置数据",
+        "第一排放置位 3",
+        "放置数据",
+        "blue1 下方",
+        "结束回合"
+      ],
+      "end": {
+        "score": 124,
+        "secured": 181,
+        "value": 223,
+        "probePotential": 29,
+        "wallet": {
+          "credits": 2,
+          "energy": 3,
+          "availableData": 0,
+          "handSize": 5,
+          "publicity": 6
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ]
+      }
+    }
+  },
+  "fixedB117ClaimVsSkip": [
+    {
+      "action": "结算 b_117.webp",
+      "score": 142,
+      "credits": 3,
+      "taskCount": 3,
+      "secured": 203,
+      "value": 219.5
+    },
+    {
+      "action": "跳过 b_117.webp",
+      "score": 139,
+      "credits": 2,
+      "taskCount": 2,
+      "secured": 196,
+      "value": 211.5
+    }
+  ],
+  "candidateFollowup": [
+    {
+      "proof": {
+        "id": "7:land:neptune:triton",
+        "family": "land",
+        "planet": "neptune",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 0,
+            "energy": 3
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 5,
+          "cornerCardIds": [
+            "alien-chong-2-8",
+            "alien-chong-4-14"
+          ],
+          "exchangeCardIds": []
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 4
+          },
+          "cost": 3,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": -1,
+              "deltaY": 0,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 26
+            },
+            "value": 26
+          },
+          {
+            "type": "known-landing-task",
+            "ruleId": "b117-orbit-land-count-task",
+            "gain": {
+              "score": 3,
+              "credits": 1
+            },
+            "tileScore": 4,
+            "value": 8
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 29
+      },
+      "native": {
+        "n": 32,
+        "ms": 186.378584,
+        "v": 235,
+        "a": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 116,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        },
+        "within": true
+      },
+      "inputs": [
+        "研究科技",
+        "研究 blue4（蓝槽 3）",
+        "结算 amiba_1.webp",
+        "结束回合"
+      ],
+      "end": {
+        "score": 126,
+        "secured": 194,
+        "value": 235,
+        "probePotential": 30,
+        "wallet": {
+          "credits": 2,
+          "energy": 4,
+          "availableData": 0,
+          "handSize": 5,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "proof": {
+        "id": "7:land:neptune:triton",
+        "family": "land",
+        "planet": "neptune",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 0,
+            "energy": 4
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 4
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 4
+          },
+          "cost": 2,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 26
+            },
+            "value": 26
+          },
+          {
+            "type": "known-landing-task",
+            "ruleId": "b117-orbit-land-count-task",
+            "gain": {
+              "score": 3,
+              "credits": 1
+            },
+            "tileScore": 4,
+            "value": 8
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 30
+      },
+      "native": {
+        "n": 38,
+        "ms": 193.13250000000002,
+        "v": 239,
+        "a": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:f1918668",
+          "actorId": "player-white",
+          "stateVersion": 118,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "alien-chong-2-8"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "chong_2.webp"
+        },
+        "within": true
+      },
+      "inputs": [
+        "chong_2.webp",
+        "结束回合"
+      ],
+      "end": {
+        "score": 126,
+        "secured": 200,
+        "value": 239,
+        "probePotential": 30,
+        "wallet": {
+          "credits": 1,
+          "energy": 4,
+          "availableData": 0,
+          "handSize": 4,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3
+        ],
+        "blue": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "proof": {
+        "id": "7:land:neptune:triton",
+        "family": "land",
+        "planet": "neptune",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 0,
+            "energy": 4
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 4
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 4
+          },
+          "cost": 2,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 26
+            },
+            "value": 26
+          },
+          {
+            "type": "known-landing-task",
+            "ruleId": "b117-orbit-land-count-task",
+            "gain": {
+              "score": 3,
+              "credits": 1
+            },
+            "tileScore": 4,
+            "value": 8
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 30
+      },
+      "native": {
+        "n": 133,
+        "ms": 354.73758300000003,
+        "v": 240.5,
+        "a": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:2d21a323",
+          "actorId": "player-white",
+          "stateVersion": 120,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        "within": true
+      },
+      "inputs": [
+        "扫描",
+        "扫描 天狼星A",
+        "dlc_8.png → 室女座61",
+        "移动 7 向外",
+        "chong_6.webp：弃牌角标",
+        "放置数据",
+        "第一排放置位 4",
+        "收入 chong_8.webp",
+        "放置数据",
+        "第一排放置位 5",
+        "放置数据",
+        "blue4 下方",
+        "结束回合"
+      ],
+      "end": {
+        "score": 129,
+        "secured": 203,
+        "value": 240.5,
+        "probePotential": 31,
+        "wallet": {
+          "credits": 0,
+          "energy": 3,
+          "availableData": 0,
+          "handSize": 2,
+          "publicity": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "proof": {
+        "id": "7:land:neptune:triton",
+        "family": "land",
+        "planet": "neptune",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 0,
+            "energy": 3
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 3
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 4
+          },
+          "cost": 1,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 26
+            },
+            "value": 26
+          },
+          {
+            "type": "known-landing-task",
+            "ruleId": "b117-orbit-land-count-task",
+            "gain": {
+              "score": 3,
+              "credits": 1
+            },
+            "tileScore": 4,
+            "value": 8
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 31
+      },
+      "native": {
+        "n": 28,
+        "ms": 128.093125,
+        "v": 244.5,
+        "a": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:bf0cc13d",
+          "actorId": "player-white",
+          "stateVersion": 126,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "card-30-pass-3-1"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_111.webp：弃牌角标"
+        },
+        "within": true
+      },
+      "inputs": [
+        "b_111.webp：弃牌角标",
+        "放置数据",
+        "第一排放置位 6",
+        "分析",
+        "外星人 1 额外痕迹位（3分）",
+        "结束回合"
+      ],
+      "end": {
+        "score": 132,
+        "secured": 208,
+        "value": 244.5,
+        "probePotential": 31,
+        "wallet": {
+          "credits": 0,
+          "energy": 3,
+          "availableData": 0,
+          "handSize": 1,
+          "publicity": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": []
+      }
+    },
+    {
+      "proof": {
+        "id": "7:land:neptune:triton",
+        "family": "land",
+        "planet": "neptune",
+        "funded": true,
+        "supported": true,
+        "payment": {
+          "spend": {
+            "credits": 0,
+            "energy": 3
+          },
+          "energyPurchases": 0,
+          "creditPurchases": 0,
+          "value": 3
+        },
+        "route": {
+          "coordinate": {
+            "x": 1,
+            "y": 4
+          },
+          "cost": 1,
+          "path": [
+            {
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ]
+        },
+        "ledger": [
+          {
+            "type": "gain_resources",
+            "gain": {
+              "score": 26
+            },
+            "value": 26
+          },
+          {
+            "type": "known-landing-task",
+            "ruleId": "b117-orbit-land-count-task",
+            "gain": {
+              "score": 3,
+              "credits": 1
+            },
+            "tileScore": 4,
+            "value": 8
+          }
+        ],
+        "capitalDelta": 0,
+        "dataContinuation": null,
+        "value": 31
+      },
+      "native": {
+        "n": 6,
+        "ms": 52.77991700000001,
+        "v": 245,
+        "a": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:2df2f24d",
+          "actorId": "player-white",
+          "stateVersion": 130,
+          "decisionVersion": 1,
+          "target": {
+            "rocketId": 7,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 7 向外"
+        },
+        "within": true
+      },
+      "inputs": [
+        "移动探测器 7 向外",
+        "消耗 1 能量",
+        "登陆",
+        "登陆海卫一（海王星）｜奖励：获得 26 分",
+        "完成 b_117.webp",
+        "结束回合"
+      ],
+      "end": {
+        "score": 161,
+        "secured": 241,
+        "value": 245,
+        "probePotential": 0,
+        "wallet": {
+          "credits": 1,
+          "energy": 0,
+          "availableData": 0,
+          "handSize": 1,
+          "publicity": 4
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange2": true,
+            "orange3": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "blue": []
+      }
+    }
+  ],
+  "forcedFifthTurnLanding": {
+    "inputs": [
+      "移动探测器 7 向外",
+      "消耗 1 能量",
+      "登陆",
+      "登陆海卫一（海王星）｜奖励：获得 26 分",
+      "完成 b_117.webp",
+      "结束回合"
+    ],
+    "end": {
+      "score": 158,
+      "secured": 236,
+      "value": 241,
+      "probePotential": 0,
+      "wallet": {
+        "credits": 1,
+        "energy": 0,
+        "availableData": 0,
+        "handSize": 2,
+        "publicity": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1,
+          "blue4": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue4": true,
+          "orange2": true,
+          "orange3": true,
+          "orange4": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "computer": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "blue": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "oldComparison": {
+    "triton": [
+      {
+        "score": 145,
+        "secured": 206,
+        "value": 216.5
+      },
+      {
+        "score": 152,
+        "secured": 213,
+        "value": 221.5
+      },
+      {
+        "score": 160,
+        "secured": 225,
+        "value": 231
+      },
+      {
+        "score": 165,
+        "secured": 237,
+        "value": 240
+      },
+      {
+        "score": 170,
+        "secured": 244,
+        "value": 246
+      }
+    ],
+    "scan": [
+      {
+        "score": 116,
+        "secured": 173,
+        "value": 207
+      },
+      {
+        "score": 142,
+        "secured": 203,
+        "value": 219.5
+      },
+      {
+        "score": 144,
+        "secured": 205,
+        "value": 236.5
+      },
+      {
+        "score": 150,
+        "secured": 222,
+        "value": 255
+      },
+      {
+        "score": 157,
+        "secured": 231,
+        "value": 264
+      }
+    ]
+  },
+  "orange1Feasibility": [
+    {
+      "label": "direct",
+      "inputs": [
+        "研究科技",
+        "研究 orange1",
+        "dlc_16.png",
+        "结束回合"
+      ],
+      "end": {
+        "score": 147,
+        "secured": 208,
+        "value": 216.5,
+        "probePotential": 0,
+        "wallet": {
+          "credits": 3,
+          "energy": 0,
+          "availableData": 0,
+          "handSize": 4,
+          "publicity": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1
+        ]
+      }
+    },
+    {
+      "label": "hold6",
+      "inputs": [
+        "研究科技",
+        "研究 orange1",
+        "dlc_16.png",
+        "结束回合"
+      ],
+      "end": {
+        "score": 147,
+        "secured": 208,
+        "value": 216.5,
+        "probePotential": 0,
+        "wallet": {
+          "credits": 3,
+          "energy": 0,
+          "availableData": 0,
+          "handSize": 4,
+          "publicity": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1
+        ]
+      }
+    },
+    {
+      "label": "hold4",
+      "inputs": [
+        "研究科技",
+        "研究 orange1"
+      ],
+      "end": {
+        "score": 147,
+        "secured": 208,
+        "value": 215.5,
+        "probePotential": 0,
+        "wallet": {
+          "credits": 3,
+          "energy": 0,
+          "availableData": 0,
+          "handSize": 3,
+          "publicity": 3
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true,
+            "orange1": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blue": [
+          1
+        ]
+      }
+    },
+    {
+      "label": "scan",
+      "inputs": [
+        "研究科技",
+        "研究 orange1",
+        "dlc_16.png",
+        "结束回合"
+      ],
+      "end": {
+        "score": 144,
+        "secured": 205,
+        "value": 236.5,
+        "probePotential": 17,
+        "wallet": {
+          "credits": 3,
+          "energy": 1,
+          "availableData": 3,
+          "handSize": 8,
+          "publicity": 2
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [
+          1,
+          2
+        ]
+      }
+    }
+  ],
+  "unchangedControls": {
+    "r3-172": {
+      "sameGraph": true,
+      "native": 99,
+      "baselineMs": 237.884959,
+      "candidateMs": 259.32741699999997
+    },
+    "r3-136": {
+      "sameGraph": true,
+      "native": 224,
+      "baselineMs": 282.83233299999995,
+      "candidateMs": 301.066708
+    },
+    "official": {
+      "sameGraph": true,
+      "native": 165,
+      "baselineMs": 716.342541,
+      "candidateMs": 687.171833
+    },
+    "late": {
+      "sameGraph": true,
+      "native": 222,
+      "baselineMs": 463.62862499999994,
+      "candidateMs": 464.6349580000001
+    }
+  },
+  "pressureSinglePoint": {
+    "b117": {
+      "label": "satellite",
+      "action": "play_card:f1918668",
+      "value": 223,
+      "native": 251,
+      "graphNodes": 1339,
+      "ms": 1370.994666,
+      "mainMenu": [
+        [
+          "orbit:5ccd6a69",
+          "orbit",
+          "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）"
+        ],
+        [
+          "research_tech:806ccfc8",
+          "research_tech",
+          "研究科技"
+        ],
+        [
+          "play_card:f1918668",
+          "play_card",
+          "chong_2.webp"
+        ],
+        [
+          "play_card:1da9864f",
+          "play_card",
+          "chong_8.webp"
+        ],
+        [
+          "play_card:88ec7135",
+          "play_card",
+          "chong_4.webp"
+        ],
+        [
+          "play_card:1a1c19d3",
+          "play_card",
+          "b_111.webp"
+        ],
+        [
+          "play_card:ddbaa2ce",
+          "play_card",
+          "dlc_15.png"
+        ],
+        [
+          "play_card:5eb1b0e8",
+          "play_card",
+          "chong_6.webp"
+        ],
+        [
+          "pass:a1f33c73",
+          "pass",
+          "PASS"
+        ],
+        [
+          "move:c16025a6",
+          "move",
+          "移动探测器 6 向外"
+        ],
+        [
+          "move:bde97b72",
+          "move",
+          "移动探测器 6 顺时针"
+        ],
+        [
+          "move:23807efa",
+          "move",
+          "移动探测器 6 逆时针"
+        ],
+        [
+          "move:a36e0e84",
+          "move",
+          "移动探测器 6 向内"
+        ],
+        [
+          "move:2df2f24d",
+          "move",
+          "移动探测器 7 向外"
+        ],
+        [
+          "move:2a7c4819",
+          "move",
+          "移动探测器 7 顺时针"
+        ],
+        [
+          "move:90134ba1",
+          "move",
+          "移动探测器 7 逆时针"
+        ],
+        [
+          "move:0febc073",
+          "move",
+          "移动探测器 7 向内"
+        ],
+        [
+          "quick_trade:f385e2ac",
+          "quick_trade",
+          "2信用点 → 1能量"
+        ],
+        [
+          "quick_trade:49c75492",
+          "quick_trade",
+          "2信用点 → 1张牌"
+        ],
+        [
+          "quick_trade:12411a2c",
+          "quick_trade",
+          "2张牌 → 1信用点"
+        ],
+        [
+          "quick_trade:a39c1a77",
+          "quick_trade",
+          "2张牌 → 1能量"
+        ],
+        [
+          "quick_trade:37140fcf",
+          "quick_trade",
+          "2张牌 → 精选1张牌"
+        ],
+        [
+          "quick_trade:71814d67",
+          "quick_trade",
+          "3宣传 → 精选1张牌"
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          "quick_trade",
+          "1能量 → 移动1步"
+        ],
+        [
+          "industry:e887dc52",
+          "industry",
+          "深空探测 1x 行动"
+        ],
+        [
+          "card_corner:730579d5",
+          "card_corner",
+          "chong_2.webp：弃牌角标"
+        ],
+        [
+          "card_corner:367a82a7",
+          "card_corner",
+          "chong_8.webp：弃牌角标"
+        ],
+        [
+          "card_corner:cb6e4492",
+          "card_corner",
+          "chong_4.webp：弃牌角标"
+        ],
+        [
+          "card_corner:bf0cc13d",
+          "card_corner",
+          "b_111.webp：弃牌角标"
+        ],
+        [
+          "card_corner:c4357b44",
+          "card_corner",
+          "dlc_15.png：弃牌角标"
+        ],
+        [
+          "card_corner:40cda505",
+          "card_corner",
+          "chong_6.webp：弃牌角标"
+        ],
+        [
+          "place_data:8fd12fd3",
+          "place_data",
+          "放置数据"
+        ]
+      ],
+      "roots": [
+        [
+          "orbit:5ccd6a69",
+          null,
+          null,
+          null
+        ],
+        [
+          "research_tech:806ccfc8",
+          222.5,
+          -28.5,
+          0
+        ],
+        [
+          "play_card:f1918668",
+          223,
+          -28.5,
+          0
+        ],
+        [
+          "play_card:1da9864f",
+          214,
+          0,
+          0
+        ],
+        [
+          "play_card:88ec7135",
+          219.5,
+          -29.5,
+          0
+        ],
+        [
+          "play_card:1a1c19d3",
+          214,
+          -28.5,
+          0
+        ],
+        [
+          "play_card:ddbaa2ce",
+          222.5,
+          -28.5,
+          0
+        ],
+        [
+          "play_card:5eb1b0e8",
+          215,
+          0,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          173,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2df2f24d",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2a7c4819",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:90134ba1",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:0febc073",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          222,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:71814d67",
+          215.5,
+          -27.5,
+          0
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:730579d5",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:367a82a7",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:cb6e4492",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:bf0cc13d",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:c4357b44",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:40cda505",
+          null,
+          null,
+          null
+        ],
+        [
+          "place_data:8fd12fd3",
+          222.5,
+          0,
+          0
+        ]
+      ],
+      "quietClaims": 255,
+      "digest": "7715c88370f6756492101255e4c772fd0a0a278889e51aa496f54868e50b3c7c",
+      "bytes": 3119617,
+      "identityMaterializations": 274,
+      "identityBucketCollisions": 737,
+      "identitySliceHits": 1057,
+      "identitySliceStores": 665
+    },
+    "b117c1": {
+      "label": "satellite",
+      "action": "play_card:f1918668",
+      "value": 227,
+      "native": 251,
+      "graphNodes": 1339,
+      "ms": 1362.2329579999998,
+      "mainMenu": [
+        [
+          "orbit:5ccd6a69",
+          "orbit",
+          "环绕土星 - 奖励：获得 2 宣传；土星扇区扫描；获得 1 次收入（R7，1信用点 + 1能量）"
+        ],
+        [
+          "research_tech:806ccfc8",
+          "research_tech",
+          "研究科技"
+        ],
+        [
+          "play_card:f1918668",
+          "play_card",
+          "chong_2.webp"
+        ],
+        [
+          "play_card:1da9864f",
+          "play_card",
+          "chong_8.webp"
+        ],
+        [
+          "play_card:88ec7135",
+          "play_card",
+          "chong_4.webp"
+        ],
+        [
+          "play_card:1a1c19d3",
+          "play_card",
+          "b_111.webp"
+        ],
+        [
+          "play_card:ddbaa2ce",
+          "play_card",
+          "dlc_15.png"
+        ],
+        [
+          "play_card:5eb1b0e8",
+          "play_card",
+          "chong_6.webp"
+        ],
+        [
+          "pass:a1f33c73",
+          "pass",
+          "PASS"
+        ],
+        [
+          "move:c16025a6",
+          "move",
+          "移动探测器 6 向外"
+        ],
+        [
+          "move:bde97b72",
+          "move",
+          "移动探测器 6 顺时针"
+        ],
+        [
+          "move:23807efa",
+          "move",
+          "移动探测器 6 逆时针"
+        ],
+        [
+          "move:a36e0e84",
+          "move",
+          "移动探测器 6 向内"
+        ],
+        [
+          "move:2df2f24d",
+          "move",
+          "移动探测器 7 向外"
+        ],
+        [
+          "move:2a7c4819",
+          "move",
+          "移动探测器 7 顺时针"
+        ],
+        [
+          "move:90134ba1",
+          "move",
+          "移动探测器 7 逆时针"
+        ],
+        [
+          "move:0febc073",
+          "move",
+          "移动探测器 7 向内"
+        ],
+        [
+          "quick_trade:f385e2ac",
+          "quick_trade",
+          "2信用点 → 1能量"
+        ],
+        [
+          "quick_trade:49c75492",
+          "quick_trade",
+          "2信用点 → 1张牌"
+        ],
+        [
+          "quick_trade:12411a2c",
+          "quick_trade",
+          "2张牌 → 1信用点"
+        ],
+        [
+          "quick_trade:a39c1a77",
+          "quick_trade",
+          "2张牌 → 1能量"
+        ],
+        [
+          "quick_trade:37140fcf",
+          "quick_trade",
+          "2张牌 → 精选1张牌"
+        ],
+        [
+          "quick_trade:71814d67",
+          "quick_trade",
+          "3宣传 → 精选1张牌"
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          "quick_trade",
+          "1能量 → 移动1步"
+        ],
+        [
+          "industry:e887dc52",
+          "industry",
+          "深空探测 1x 行动"
+        ],
+        [
+          "card_corner:730579d5",
+          "card_corner",
+          "chong_2.webp：弃牌角标"
+        ],
+        [
+          "card_corner:367a82a7",
+          "card_corner",
+          "chong_8.webp：弃牌角标"
+        ],
+        [
+          "card_corner:cb6e4492",
+          "card_corner",
+          "chong_4.webp：弃牌角标"
+        ],
+        [
+          "card_corner:bf0cc13d",
+          "card_corner",
+          "b_111.webp：弃牌角标"
+        ],
+        [
+          "card_corner:c4357b44",
+          "card_corner",
+          "dlc_15.png：弃牌角标"
+        ],
+        [
+          "card_corner:40cda505",
+          "card_corner",
+          "chong_6.webp：弃牌角标"
+        ],
+        [
+          "place_data:8fd12fd3",
+          "place_data",
+          "放置数据"
+        ]
+      ],
+      "roots": [
+        [
+          "orbit:5ccd6a69",
+          null,
+          null,
+          null
+        ],
+        [
+          "research_tech:806ccfc8",
+          226.5,
+          -32.5,
+          0
+        ],
+        [
+          "play_card:f1918668",
+          227,
+          -32.5,
+          0
+        ],
+        [
+          "play_card:1da9864f",
+          214,
+          0,
+          0
+        ],
+        [
+          "play_card:88ec7135",
+          223.5,
+          -33.5,
+          0
+        ],
+        [
+          "play_card:1a1c19d3",
+          218,
+          -32.5,
+          0
+        ],
+        [
+          "play_card:ddbaa2ce",
+          226.5,
+          -32.5,
+          0
+        ],
+        [
+          "play_card:5eb1b0e8",
+          215,
+          0,
+          0
+        ],
+        [
+          "pass:a1f33c73",
+          173,
+          0,
+          0
+        ],
+        [
+          "move:c16025a6",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:bde97b72",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:23807efa",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:a36e0e84",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2df2f24d",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:2a7c4819",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:90134ba1",
+          null,
+          null,
+          null
+        ],
+        [
+          "move:0febc073",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:f385e2ac",
+          222,
+          0,
+          0
+        ],
+        [
+          "quick_trade:49c75492",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:12411a2c",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:a39c1a77",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:37140fcf",
+          null,
+          null,
+          null
+        ],
+        [
+          "quick_trade:71814d67",
+          219.5,
+          -31.5,
+          0
+        ],
+        [
+          "quick_trade:be9dd0cd",
+          null,
+          null,
+          null
+        ],
+        [
+          "industry:e887dc52",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:730579d5",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:367a82a7",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:cb6e4492",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:bf0cc13d",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:c4357b44",
+          null,
+          null,
+          null
+        ],
+        [
+          "card_corner:40cda505",
+          null,
+          null,
+          null
+        ],
+        [
+          "place_data:8fd12fd3",
+          226.5,
+          -32.5,
+          0
+        ]
+      ],
+      "quietClaims": 255,
+      "digest": "b9189b03d82a81e66275607ef55aa65cabe6cb7e373b3009bca5a9d347d1264c",
+      "bytes": 3119624,
+      "identityMaterializations": 274,
+      "identityBucketCollisions": 737,
+      "identitySliceHits": 1057,
+      "identitySliceStores": 665
+    }
+  },
+  "swappedTurn5And6": {
+    "exactCommittedStateAndSession": true,
+    "sameRng": true,
+    "inputs": [
+      "b_111.webp：弃牌角标",
+      "放置数据",
+      "第一排放置位 6",
+      "分析",
+      "外星人 1 额外痕迹位（3分）",
+      "结束回合"
+    ],
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v63",
+      "total": 245,
+      "components": {
+        "realizedScore": 161,
+        "currentEndGameBonus": 80,
+        "resources": 3,
+        "hand": 1,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  }
+}
