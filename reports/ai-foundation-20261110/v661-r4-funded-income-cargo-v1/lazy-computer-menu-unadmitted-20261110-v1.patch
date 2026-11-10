@@ -1,0 +1,137 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -588,13 +588,19 @@
+     function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
+       let visible = observation && freeze(observation);
+       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
+-      const node = Object.freeze({
++      const deferredMenu = typeof actions === "function" ? actions : null;
++      const node = {
+         get observation() {
+           if (!visible) visible = observeEnvelope(envelope, barrier);
+           return visible;
+         },
+-        legalActions: ownLegalActions(actions), status, boundary: barrier?.code || null,
+-      });
++        legalActions: deferredMenu ? null : ownLegalActions(actions), status, boundary: barrier?.code || null,
++      };
++      if (deferredMenu) {
++        let menu;
++        Object.defineProperty(node,"legalActions",{get:()=>menu??=ownLegalActions(deferredMenu())});
++      }
++      Object.freeze(node);
+       const scope=blindIncomeSatellites.get(envelope);
+       const boundary = scope ? [barrier?.code,scope.key,actions.map(a=>a.actionId)] : barrier?.code || null;
+       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope,barrier);
+@@ -1631,10 +1637,10 @@
+         barrier:{effectId:refill.effectId,revision:session.revision+refillIndex+1+extraEffects,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
+     }
+ 
+-    function finishProvedCommittedState(node, stored, action, state) {
++    function finishProvedCommittedState(node, stored, action, state, computerGoal = null) {
+       restoreEnvelope(provedCommittedEnvelope(stored, state), true);
+       return finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, action) : null,
+-        null, stored.informationBarrier, action, stored);
++        null, stored.informationBarrier, action, stored, null, computerGoal);
+     }
+ 
+     function finishProvedTurnBoundary(stored, action, state) {
+@@ -1647,13 +1653,14 @@
+         barrier||(own?{code:"own-turn-complete"}:null));
+     }
+ 
+-    function expand(node, actionId, previewOnly = false) {
++    function expand(node, actionId, previewOnly = false, computerGoal = null) {
+       const stored = nodes.get(node);
+       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+       if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary","income-plan-value","turn-tail-value"].includes(node.status)) {
+         throw new Error(`ANALYSIS_BOUNDARY_CLOSED: ${node.status}`);
+       }
+-      const requested = node.legalActions.find(action => action.actionId === actionId);
++      const requested = stored.fundedComputer?.action.actionId === actionId
++        ? stored.fundedComputer.action : node.legalActions.find(action => action.actionId === actionId);
+       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
+       // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
+       const key = expansionKey(stored,actionId);
+@@ -1923,7 +1930,7 @@
+         // placement with no unresolved effect is reconstructed in this isolated fork.
+         // Prefix accounting still charges the exact logical input for the witness.
+         provedFinalDataPlacements[kind] = (provedFinalDataPlacements[kind] || 0) + 1;
+-        const child = finishProvedCommittedState(node, stored, requested, state);
++        const child = finishProvedCommittedState(node, stored, requested, state, kind.startsWith("computer") ? computerGoal : null);
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       if(previewOnly)return null;
+@@ -2710,6 +2717,8 @@
+ 
+     function resourceStep(node,goal,operation={}) {
+       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
++      if(stored.fundedComputer?.goal===goal)
++        return resourceDemand.step({state,seatId,goal,actions:[stored.fundedComputer.action],status:node.status,session,operation});
+       if(goal.kind==="funded-earth-shipment"){
+         const find=f=>node.legalActions.find(f),fixed=(a,reason)=>({kind:"fixed",actionId:a.actionId,reason});
+         if(node.status==="stable"){
+@@ -3528,7 +3537,8 @@
+         if(plan.goal.kind==="funded-earth-shipment"&&prefixes.length>=12)throw Error("FUNDED_EARTH_SHIPMENT_PROGRESS_INVALID");
+         if(plan.goal.kind==="satellite-scan-setup"&&prefixes.length>=14)throw Error("SATELLITE_SCAN_PROGRESS_INVALID");
+         if(step.kind==="fallback"&&!forced)return bind(step.reason,operation);
+-        const id=forced||step.actionId,action=current.legalActions.find(a=>a.actionId===id);
++        const id=forced||step.actionId,narrow=nodes.get(current).fundedComputer?.action;
++        const action=narrow?.actionId===id?narrow:current.legalActions.find(a=>a.actionId===id);
+         if(!action)throw new Error("RESOURCE_PLAN_ACTION_NOT_LEGAL");
+         const chosen=step.kind==="fallback"?step.candidates?.find(c=>c.actionId===id)||{}:step;
+         const key=expansionKey(nodes.get(current),id),shared=resourcePlanning?prefixEdges.get(key):null;
+@@ -3539,7 +3549,9 @@
+         operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.scanLaunchCompleted?{scanLaunchCompleted:true}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(chosen.resourceBlueSlot!==undefined?{resourceBlueSlot:chosen.resourceBlueSlot}:{}),...(chosen.finalResourceBlue!==undefined?{finalResourceBlue:chosen.finalResourceBlue}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
+         if(plan.goal.kind==="held-satellite-travel")operation.heldTravelIndex=(operation.heldTravelIndex||0)+1;
+         keepCompanyPickIntent(current,action);
+-        prefixes.push({node:current,action});current=expand(current,id);forced=null;
++        const computerGoal=step.reason==="fixed-goal-data-slot"&&action.target?.target==="computer"
++          &&["income","computer-prefix"].includes(plan.goal.kind)?plan.goal:null;
++        prefixes.push({node:current,action});current=expand(current,id,false,computerGoal);forced=null;
+         sharedStates.push(current);if(!shared)newSubmissions++;
+         if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
+         if(step.kind==="target"){
+@@ -4127,7 +4139,7 @@
+       return [];
+     }
+ 
+-    function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null, sourceAction = null, source = null, prepared = null) {
++    function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null, sourceAction = null, source = null, prepared = null, computerGoal = null) {
+       const comp = fork.composition || fork;
+       const inspection = prepared?.inspection || comp.inspect();
+       const nativeBarrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
+@@ -4170,6 +4182,33 @@
+           return createNode(envelope,null,actions,inspection.phase==="idle"?"stable":"decision",barrier);
+         }
+         return createNode(envelope,null,[],"information-barrier",barrier);
++      }
++      // These funded intermediate states are not a new decision. Request
++      // only the next formal placement now; expose the exact full menu
++      // lazily if another path or a saved plan needs it.
++      if(computerGoal&&!prepared&&!intent&&!resourceControl&&!scopeReveal&&!revealed&&sameTurn
++        &&inspection.phase==="idle"&&!envelope.session
++        &&(!newBarrier||cardPickPlanning&&["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code))
++        &&!childState.turn.gameEnded&&childState.turn.currentPlayerId===seatId){
++        const p=childState.players.players.find(p=>p.id===seatId);
++        const slots=data.listComputerPlacedTokens(p),target=computerGoal.targetComputerSlot;
++        if(p.mainActionCompleted&&!p.passCompletionPending&&slots.length<target
++          &&slots.every((slot,i)=>slot.placementSlot===i+1)&&p.resources.availableData>=target-slots.length
++          &&p.resources.availableData===p.dataState.poolTokens.length&&Object.keys(computerGoal.required||{}).length===0
++          &&(computerGoal.kind==="income"?target===4:slots.length>=4||target<4)){
++          const narrow=comp.inputPort.enumerateActions({family:"place_data"});
++          const placed=newBarrier?knownPostMainActions(envelope,narrow):narrow;
++          if(placed.length===1&&placed[0].actorId===seatId){
++            const action=ownLegalActions(placed)[0];
++            const child=createNode(envelope,null,()=>{
++              restoreEnvelope(envelope);
++              const menu=legalActions(comp,inspection);
++              return newBarrier?knownPostMainActions(envelope,menu):menu;
++            },"stable",newBarrier?barrier:null);
++            nodes.get(child).fundedComputer={goal:computerGoal,action};
++            return child;
++          }
++        }
+       }
+       // A refill does not end a root-known post-main plan. Unknown owned
+       // identities, alien reveals, other owners and actual turn changes still close it.
