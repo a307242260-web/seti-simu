@@ -1,0 +1,291 @@
+{
+  "baseCommit": "50bb874f7a72ec60bbecad6e3b1146f3717a4909",
+  "candidateAdmitted": false,
+  "fullGameRun": false,
+  "fees": {
+    "ordinary": {
+      "score": 129,
+      "credits": 2,
+      "energy": 0,
+      "handSize": 6,
+      "availableData": 3,
+      "publicity": 6
+    },
+    "heldCard": {
+      "score": 129,
+      "credits": 3,
+      "energy": 1,
+      "handSize": 5,
+      "availableData": 3,
+      "publicity": 6
+    },
+    "afterPublicScans": {
+      "ordinary": {
+        "score": 139,
+        "credits": 2,
+        "energy": 0,
+        "handSize": 8,
+        "availableData": 6,
+        "publicity": 8
+      },
+      "heldCard": {
+        "score": 139,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 7,
+        "availableData": 6,
+        "publicity": 8
+      }
+    },
+    "knownInputs": 9,
+    "allTestedFossilChoiceEndpoints": [
+      {
+        "score": 142,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 6,
+        "availableData": 3,
+        "publicity": 8
+      },
+      {
+        "score": 142,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 6,
+        "availableData": 3,
+        "publicity": 8
+      }
+    ]
+  },
+  "nextThreeSameTurns": [
+    {
+      "label": "ordinary",
+      "ends": [
+        {
+          "wallet": {
+            "score": 144,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 8,
+            "availableData": 3,
+            "publicity": 2
+          },
+          "value": 236.5,
+          "mission": 17
+        },
+        {
+          "wallet": {
+            "score": 150,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 7,
+            "availableData": 2,
+            "publicity": 4
+          },
+          "value": 255,
+          "mission": 20
+        },
+        {
+          "wallet": {
+            "score": 157,
+            "credits": 0,
+            "energy": 4,
+            "handSize": 7,
+            "availableData": 0,
+            "publicity": 4
+          },
+          "value": 264,
+          "mission": 20
+        }
+      ]
+    },
+    {
+      "label": "held-1",
+      "ends": [
+        {
+          "wallet": {
+            "score": 144,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 7,
+            "availableData": 3,
+            "publicity": 2
+          },
+          "value": 238.5,
+          "mission": 18
+        },
+        {
+          "wallet": {
+            "score": 150,
+            "credits": 1,
+            "energy": 4,
+            "handSize": 6,
+            "availableData": 2,
+            "publicity": 4
+          },
+          "value": 256,
+          "mission": 20
+        },
+        {
+          "wallet": {
+            "score": 157,
+            "credits": 1,
+            "energy": 5,
+            "handSize": 6,
+            "availableData": 0,
+            "publicity": 4
+          },
+          "value": 265,
+          "mission": 20
+        }
+      ]
+    },
+    {
+      "label": "held-2",
+      "ends": [
+        {
+          "wallet": {
+            "score": 144,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 7,
+            "availableData": 3,
+            "publicity": 2
+          },
+          "value": 238.5,
+          "mission": 18
+        },
+        {
+          "wallet": {
+            "score": 150,
+            "credits": 1,
+            "energy": 4,
+            "handSize": 6,
+            "availableData": 2,
+            "publicity": 4
+          },
+          "value": 256,
+          "mission": 20
+        },
+        {
+          "wallet": {
+            "score": 157,
+            "credits": 1,
+            "energy": 5,
+            "handSize": 6,
+            "availableData": 0,
+            "publicity": 4
+          },
+          "value": 265,
+          "mission": 20
+        }
+      ]
+    }
+  ],
+  "pressure": {
+    "b117-satellite-full": {
+      "a": "play_card:f1918668",
+      "v": 227,
+      "native": 251,
+      "graphNodes": 1339,
+      "ms": 1370.7490830000002,
+      "incomeCardId": "alien-chong-6-16",
+      "edgeGoalStatus": "completed",
+      "continuationStatus": "stable",
+      "continuationValue": 226.5,
+      "continuationChildren": 23,
+      "boundary": null
+    },
+    "held-satellite-full-final": {
+      "a": "play_card:f1918668",
+      "v": 227,
+      "native": 157,
+      "graphNodes": 722,
+      "ms": 889.7642500000002,
+      "incomeCardId": "alien-chong-2-8",
+      "edgeGoalStatus": "boundary",
+      "continuationStatus": "information-barrier",
+      "continuationValue": 220.5,
+      "continuationChildren": 0,
+      "boundary": "hidden_card_reveal"
+    }
+  },
+  "teacher272": {
+    "native": 157,
+    "ms": 1088.154959,
+    "value": 223,
+    "previousCandidateValue": 223
+  },
+  "incomeChoices": [
+    {
+      "income": "收入 chong_6.webp",
+      "wallet": {
+        "score": 116,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 5,
+        "availableData": 2,
+        "publicity": 6
+      },
+      "v": 220.5,
+      "canPlayChong6AtEnceladus": false
+    },
+    {
+      "income": "收入 chong_2.webp",
+      "wallet": {
+        "score": 116,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 6,
+        "availableData": 2,
+        "publicity": 6
+      },
+      "v": 220.5,
+      "canPlayChong6AtEnceladus": true
+    },
+    {
+      "income": "收入 b_111.webp",
+      "wallet": {
+        "score": 116,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 5,
+        "availableData": 2,
+        "publicity": 6
+      },
+      "v": 220.5,
+      "canPlayChong6AtEnceladus": true
+    }
+  ],
+  "hiddenIncomeIndependentContinuation": {
+    "identities": [
+      "dlc_6.png",
+      "dlc_3.png"
+    ],
+    "knownInputsAfterIncome": [
+      "chong_6.webp",
+      "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）",
+      "扫描 比邻星",
+      "外星人 2 粉3号位（3分+外星人牌）",
+      "获得展示的虫",
+      "扫描 天狼星A",
+      "扫描 室女座61",
+      "外星人 1 粉4号位（1分+外星人牌）",
+      "获得展示的低重力研究"
+    ],
+    "walletBeforeFossil": {
+      "score": 139,
+      "credits": 3,
+      "energy": 1,
+      "handSize": 7,
+      "availableData": 5,
+      "publicity": 8
+    },
+    "sameKnownResultAndRng": true,
+    "stop": "hidden_chong_fossil_offer"
+  },
+  "thirdRoundControlsSameRankAndCount": [
+    "r3-172",
+    "r3-136"
+  ]
+}
