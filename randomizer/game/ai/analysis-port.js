@@ -1283,6 +1283,17 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}},barrier};
     }
 
+    // These scan and pick prefixes never move cargo. Require the original
+    // public shipment and no arrival that Native would settle on this input.
+    function knownStationaryCargoForScan(state) {
+      const turn=state.turn;
+      if(turn.roundNumber!==4||!knownRootAlienIds.has("虫"))return false;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+      if(jobs.length!==1||jobs[0].delivered||!jobs[0].fossilId||!visibleRootCargo().has(jobs[0].fossilId))return false;
+      const cargo=state.pieces.rockets.find(r=>r.kind==="chong-fossil"&&r.fossilId===jobs[0].fossilId);
+      return Boolean(cargo&&cargo.playerId===seatId&&!localPlans.hasPendingFossilArrival(state));
+    }
+
     function previewQuietPublicScan(node,stored,action){
       if(!resourcePlanning||!scanPlanning||node.status!=="decision"||stored.informationBarrier||stored.resourceControl
         ||action.family!=="choose_card")return null;
@@ -1311,7 +1322,7 @@
         ||action.target?.done||opts.selected+1>=opts.max))return null;
       if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
-        ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
+        ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)&&!knownStationaryCargoForScan(root))
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
       const done=action.target?.done===true;
       const offered=root.cards.publicCards[action.target?.publicSlotIndex];
@@ -1454,7 +1465,7 @@
       if (t.roundNumber !== 4 && !(r3BlueSlot===2&&quietR3BluePickSource(state,p))
         || t.currentPlayerId !== seatId || t.gameEnded || p.passCompletionPending
         || t.passedPlayerIds.includes(seatId) || t.cardTurnEventBonuses?.length
-        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job=>!job.delivered)
+        || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job=>!job.delivered)&&!knownStationaryCargoForScan(state)
         || !offered || !known.has(offered.id) || offered.id !== action.target.cardInstanceId
         || action.target.choiceId !== `pick:${offered.id}` || !cards.getCatalogEntryForCard(offered)
         || p.reservedCards.some(c=>!known.has(c.id))) return null;
@@ -2489,6 +2500,39 @@
       if(dataCards.length!==1||!offered.some(c=>!(cards.getDiscardActionRewardForCard(c)?.dataCount>0))||displayed!==state.aliens.amiba?.displayedCardIndex
         ||!localPlans.visibleAmibaDataCorner(displayed))return null;
       return dataCards[0].id;
+    }
+
+    // A single affordable data corner should not bind an inactive shipment
+    // to the blue slot before the fourth computer slot can be compared.
+    function stationaryCargoIncomeWindow(state,stored,node) {
+      const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.passedPlayerIds.includes(seatId)||p.industryBorrowedTechTileId||stored.intent||stored.resourceControl||stored.informationBarrier
+        ||p.resources.energy!==0||p.resources.credits>1
+        ||!t.activePlayerIds.includes(seatId)||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||t.cardTurnEventBonuses?.length||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"
+        ||node.legalActions.some(goalMovement.isDirection))return false;
+      // The known 3-score/1-credit task can remain a separate Native option.
+      // A data corner or placement cannot change its planet-count condition.
+      const tasks=node.legalActions.filter(a=>a.family==="complete_task");
+      const claim=tasks.length===1&&tasks[0].target.ruleId==="b117-orbit-land-count-task"?tasks[0]:null;
+      if(tasks.length&&!claim)return false;
+      const owned=state.pieces.rockets.filter(r=>[r.playerId,r.playerColor,r.color].some(id=>id===p.id||id===p.color));
+      const slots=data.listComputerPlacedTokens(p);
+      if(owned.length!==1||owned[0].kind!=="chong-fossil"||!owned[0].fossilId||!knownRootAlienIds.has("虫")
+        ||p.hand.some(c=>cards.getDiscardActionMoveRewardForCard(c)?.movementPoints)
+        ||slots.length!==3||slots.some((x,i)=>x.placementSlot!==i+1))return false;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{}),known=knownCards(stored.envelope);
+      return jobs.length===1&&jobs[0].fossilId===owned[0].fossilId&&!jobs[0].delivered&&!localPlans.hasPendingFossilArrival(state)
+        &&p.hand.every(c=>known.has(c.id))&&state.players.players.every(q=>q.reservedCards.every(c=>{
+          const model=cardEffects.getCardModel(c);
+          const task=model?.tasks?.[0],gain=task?.rewards?.[0]?.options?.gain;
+          const auditedClaim=claim?.target.cardInstanceId===c.id&&model?.tasks?.length===1&&task.id===claim.target.ruleId
+            &&task.condition?.type==="orbitOrLandCount"&&task.rewards?.length===1
+            &&task.rewards[0].type==="gain_resources"&&gain?.credits===1&&gain.score===3&&Object.keys(gain).length===2;
+          return q.id===seatId&&known.has(c.id)&&model&&(!model.tasks?.length||auditedClaim)
+            &&!model.temporaryTasks?.length&&!model.triggers?.length;
+        }));
     }
 
     function quietScoredIncomeState(state,stored){
@@ -3587,9 +3631,13 @@
       if(node.status==="stable"&&plans.length===1&&plans[0].goal.kind==="blue-data"
         &&incomeTail?.reason==="income-tail-needs-additional-funding"&&owner.resources.availableData===0){
         const blue=plans[0],action=node.legalActions.find(a=>a.actionId===blue.firstActionId);
-        if(action?.family==="card_corner"&&action.payload?.kind==="resource"&&(action.payload.multiplier??1)===1&&quietScoredIncomeState(state,stored)){
+        const cargoIncome=owner.hand.length===2&&stationaryCargoIncomeWindow(state,stored,node)
+          &&owner.hand.some(c=>c.id!==action?.target.cardInstanceId&&cards.getIncomeGainForCard(c)?.energy===1);
+        if(action?.family==="card_corner"&&action.payload?.kind==="resource"&&(action.payload.multiplier??1)===1
+          &&(quietScoredIncomeState(state,stored)||cargoIncome)){
           const prepared=localPlans.previewScoredAmibaDataCorner({state,seatId,cardId:action.target.cardInstanceId});
-          const future=prepared&&quietScoredIncomeState(prepared,stored)&&localPlans.quietEndCompletion({state:prepared,seatId}).markedTiles?.length===0;
+          const future=prepared&&(quietScoredIncomeState(prepared,stored)||cargoIncome&&stationaryCargoIncomeWindow(prepared,stored,node))
+            &&localPlans.quietEndCompletion({state:prepared,seatId}).markedTiles?.length===0;
           const targets=future&&resourceDemand.catalog({state:prepared,seatId,requirements:{bluePlacements:data.listBluePlacementRequirements(prepared.players.players.find(p=>p.id===seatId))}});
           const income=targets?.find?.(g=>g.kind==="income"),blueStill=targets?.find?.(g=>g.id===blue.goal.id);
           if(income&&blueStill&&targets.length===2){
