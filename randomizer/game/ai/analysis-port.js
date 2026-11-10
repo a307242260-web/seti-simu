@@ -4524,6 +4524,23 @@
         }
       }
       if (!row) return { hit: false, reason: "dependencies-changed" };
+      // A fixed Blue 3 prefix proves its own continuation, not the alternate
+      // use of the last data token for a now-ready electricity income.
+      const fixedBlue=row.roots.find(r=>r.actionId===row.actionId&&r.goalId==="data:blue:2"
+        &&r.completion==="committed-goal-plan-execution");
+      if(fixedBlue&&node.status==="decision"){
+        const session=stored.envelope.session?.session,state=session?.workingState,t=state?.turn;
+        const other=node.legalActions.find(a=>a.family==="choose_target"&&a.target?.choiceId==="data:computer");
+        if(t?.roundNumber===3&&t.currentPlayerId===seatId&&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+          &&session.queue.length===1&&session.queue[0].type===scienceSession.EFFECT_TYPES.PLACE_DATA
+          &&other&&row.roots.some(r=>r.actionId===other.actionId&&r.valueType==="not-executed")){
+          const owner=state.players.players.find(p=>p.id===seatId),card=owner.hand[0],gain=card&&cards.getIncomeGainForCard(card);
+          if(owner.mainActionCompleted&&owner.resources.availableData===1&&owner.hand.length===1&&gain?.energy===1
+            &&Object.keys(gain).length===1&&knownCards(stored.envelope).has(card.id)
+            &&data.listComputerPlacedTokens(owner).map(p=>p.placementSlot).join(",")==="1,2,3")
+            return {hit:false,reason:"fixed-blue-prefix-competing-income"};
+        }
+      }
       return freeze({ hit: true, actionId: row.actionId, value: row.value, realization: row.realization ?? 0, preparationDebt:row.preparationDebt??0, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
         sourceNode: row.sourceNode, source: saved.source, ...(row.committedGoal?{committedGoal:row.committedGoal}:{}) });
