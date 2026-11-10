@@ -7,6 +7,27 @@
   },
   "versions": [
     {
+      "id": "ai-search-v664-known-energy-swap-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V664 第三轮在运化石的公开换牌收入",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v663-stationary-cargo-first3-20261111",
+      "head": "0078b1359",
+      "commits": [
+        "ea0817a03",
+        "3a9adad3b",
+        "04f4d4ad5",
+        "0078b1359"
+      ],
+      "summary": "公开换牌与蓝槽即时电同值时保住永久电；标准前三轮与 V663 逐项对照",
+      "records": {
+        "53ca0b92.0078b135.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v663-stationary-cargo-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
