@@ -7227,9 +7227,16 @@
 
     function knownPickupFundingEnabled(){
       const node=openedRoot,stored=nodes.get(node),head=stored?.envelope.session?.session?.queue?.[0];
-      return rootObservation?.publicState.roundNumber===3&&node.status==="decision"
-        &&head?.type==="card_play_domain_effect:decision:chong_pickup_fossil"&&head.ownerId===seatId
-        &&node.legalActions.length>1&&node.legalActions.every(a=>a.target?.fossilId&&knownRootFossilIds.has(a.target.fossilId));
+      if(rootObservation?.publicState.roundNumber!==3)return false;
+      if(node.status==="decision"&&head?.type==="card_play_domain_effect:decision:chong_pickup_fossil"&&head.ownerId===seatId)
+        return node.legalActions.length>1&&node.legalActions.every(a=>a.target?.fossilId&&knownRootFossilIds.has(a.target.fossilId));
+      if(node.status!=="stable"||stored.envelope.session||!node.legalActions.some(a=>a.family==="end_turn")
+        ||!node.legalActions.some(a=>a.family==="place_data")||!rootObservation.publicState.board.rockets.some(r=>r.fossilId))return false;
+      const state=readPlanningState(stored),p=state.players.players.find(x=>x.id===seatId);
+      return p.mainActionCompleted&&!p.passCompletionPending
+        &&p.resources.availableData>=2&&data.listComputerPlacedTokens(p).length>=5
+        &&Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>
+          !job.delivered&&visibleEarthCargo(state,p,job)&&simpleCargoScanReward(chong.getFossilReward(job.fossilId)));
     }
 
     function quoteKnownPickupFunding(node){
@@ -7245,7 +7252,9 @@
           tile.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
       const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
       if(jobs.length!==1)return null;
-      const job=jobs[0],reward=knownRootFossilIds.has(job.fossilId)&&chong.getFossilReward(job.fossilId);
+      const job=jobs[0];
+      const knownCargo=knownRootFossilIds.has(job.fossilId)||Boolean(visibleEarthCargo(state,p,job));
+      const reward=knownCargo&&chong.getFossilReward(job.fossilId);
       const fossil=state.aliens.chong?.fossilsById?.[job.fossilId];
       if(job.delivered||job.destinationPlanetId!=="earth"||fossil?.status!=="transported"||fossil.taskCompleted
         ||!simpleCargoScanReward(reward))return null;

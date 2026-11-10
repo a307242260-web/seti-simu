@@ -486,9 +486,10 @@
  // looking past the currently displayed alien card.
  function previewPickupAnalysisForCargo({state,seatId,knownAlienDisplay,knownCards}){
   const q=owner(state,seatId),alienId=state.aliens.amiba?.revealedSlotId;
+  const computer=data.listComputerPlacedTokens(q).length,blueCount=data.listBlueBonusPlacedTokens(q).length;
   if(!alienId||!Number.isSafeInteger(knownAlienDisplay)||!industry.getPlayerIndustryDefinition(q)?.passiveIds.includes('deepspace_free_analyze')
-    ||q.resources.availableData!==3||q.resources.energy||q.techState.blueBoardSlots.blue2!==1||!q.techState.ownedTiles.blue2
-    ||q.techState.disabledTiles.blue2||data.listComputerPlacedTokens(q).length!==5||data.listBlueBonusPlacedTokens(q).length!==3
+    ||q.resources.availableData+computer!==8||q.resources.energy||q.techState.blueBoardSlots.blue2!==1||!q.techState.ownedTiles.blue2
+    ||q.techState.disabledTiles.blue2||(computer!==5&&computer!==6)||(blueCount!==2&&blueCount!==3)
     ||effects.listPendingTriggerKeys(q,state.turn).length||!q.reservedCards.every(c=>{
       const m=effects.getCardModel(c);return knownCards.has(c.id)&&m&&!m.triggers?.length&&!m.temporaryTasks?.length;
     }))return null;
@@ -500,8 +501,11 @@
   next.cards.drawPileCardIds.fill(null);
   next.aliens.amiba.cardDeck.fill(null);
   next.aliens.chong.cardDeck.fill(null);
-  const fill=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_COMPUTER});
-  if(!fill.ok||fill.slotBonuses?.length||!data.analyzeDataWithoutEnergy(p).ok)return null;
+  if(computer===5){
+   const fill=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_COMPUTER});
+   if(!fill.ok||fill.slotBonuses?.length)return null;
+  }
+  if(!data.analyzeDataWithoutEnergy(p).ok)return null;
   const trace=previewKnownAmibaTrace({root:next,copy:p,alienId,traceType:'blue',position:choice.position,knownAlienDisplay,seatId});
   if(!trace?.displayed||p.resources.availableData!==3||p.resources.energy)return null;
   const first=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_COMPUTER});

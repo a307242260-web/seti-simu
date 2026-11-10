@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v438";
+  const VERSION = "seti-complete-decision-search-v439";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -865,14 +865,17 @@
           const blindCount=(target.chongBlindCount??0)+chongBlindRank(index,edge);
           const blindRank=blindCount-(parent.chongBlindCount??0);
           const pickupRank=(target.pickupRank??0)-(parent.pickupRank??0);
+          // A certified use of retained resources breaks a score tie before
+          // favoring an immediately received but otherwise unbound reward.
           if (parent.value == null || target.value > parent.value
             || (target.value === parent.value && (target.preparationDebt < parent.preparationDebt
-              || (target.preparationDebt === parent.preparationDebt && (target.realization > parent.realization
-                || (target.realization === parent.realization && (target.landingCompanyRetained > parent.landingCompanyRetained
-                  || (target.landingCompanyRetained === parent.landingCompanyRetained && (Number(Boolean(target.publicDataCard)) > Number(Boolean(parent.publicDataCard))
-                    || (Boolean(target.publicDataCard) === Boolean(parent.publicDataCard)
-                      && (pickupRank > 0 || (pickupRank === 0 && (blindRank < 0 || (blindRank === 0 && (distance < parent.distance
-                        || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))))))))) {
+              || (target.preparationDebt === parent.preparationDebt && (pickupRank > 0
+                || (pickupRank === 0 && (target.realization > parent.realization
+                  || (target.realization === parent.realization && (target.landingCompanyRetained > parent.landingCompanyRetained
+                    || (target.landingCompanyRetained === parent.landingCompanyRetained && (Number(Boolean(target.publicDataCard)) > Number(Boolean(parent.publicDataCard))
+                      || (Boolean(target.publicDataCard) === Boolean(parent.publicDataCard)
+                        && (blindRank < 0 || (blindRank === 0 && (distance < parent.distance
+                          || (distance === parent.distance && edge.actionId < parent.best?.actionId)))))))))))))))) {
             parent.value = target.value;
             parent.realization = target.realization;
             parent.preparationDebt = target.preparationDebt;
