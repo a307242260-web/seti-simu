@@ -23,7 +23,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol, publicityPreparation) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v62";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v67";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -783,9 +783,13 @@
     if (typeof terminal !== "boolean") throw new TypeError("VALUE_TERMINAL_MISSING");
     const realizedScore = number(player.score, "player.score");
     const currentTotal = number(player.finalScore, "player.finalScore");
-    if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal, purposePreparationDebt:0,
+    // A committed last-round PASS leaves no own actions to spend the wallet.
+    // Keep the official score projection (including any resource-based scoring).
+    const finalPass = observation.publicState.roundNumber === 4
+      && observation.publicState.passedPlayerIds?.includes(seatId);
+    if (terminal || finalPass) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal, purposePreparationDebt:0,
       components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
-        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0, analysisPotential: 0, researchIncomePotential: 0, dataPotential: 0, finalMarkPotential:0 }), terminal: true });
+        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0, analysisPotential: 0, researchIncomePotential: 0, dataPotential: 0, finalMarkPotential:0 }), terminal });
 
     const weights = valueWeights(options);
     const round = number(observation.publicState.roundNumber, "roundNumber");

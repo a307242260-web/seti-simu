@@ -20,6 +20,16 @@ assert.equal(value.components.currentEndGameBonus, 4);
 assert.equal(value.components.income, 3, "第2/3/4轮各有一次未来收入");
 assert.equal(value.components.hand, 2, "未知牌只按数量，不读身份");
 assert.equal(evaluateStateValue(observation(4), "p1").components.income, 0);
+const finalPass = observation(4);
+finalPass.publicState.passingPlayerIds = ["p1"];
+finalPass.publicState.passedPlayerIds = [];
+assert(evaluateStateValue(finalPass, "p1").total > 14, "待完成的 PASS 仍有原生决定");
+finalPass.publicState.passedPlayerIds = ["p1"];
+const settledPass = evaluateStateValue(finalPass, "p1");
+assert.equal(settledPass.total, 14, "已完成末轮 PASS 的剩余资产只通过正式计分生效");
+assert.equal(settledPass.terminal, false, "别家仍可继续，本局尚未结束");
+finalPass.publicState.roundNumber = 3;
+assert(evaluateStateValue(finalPass, "p1").total > 14, "前三轮 PASS 后仍可使用钱包和手牌");
 const earned = observation(4);
 earned.selfState.nextFinalMark = { playerId: "p1", threshold: 10, valuationSafe: true,
   options: [{ tileId: "b", formulaId: "b1", multiplier: 3, currentValue: 9 }] };

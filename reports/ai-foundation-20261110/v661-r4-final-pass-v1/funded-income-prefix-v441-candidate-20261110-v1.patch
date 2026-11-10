@@ -1,0 +1,190 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1916,16 +1916,7 @@
+       if(currencyIncome){
+         provedCurrencyIncomeInputs++;
+         const child=finishProvedCommittedState(node,stored,requested,currencyIncome);
+-        if(child.status==="stable"&&knownRootAlienIds.has("虫")
+-          &&Object.keys(currencyIncome.aliens.chong?.transportTasksByRocketId||{}).length===1){
+-          const p=currencyIncome.players.players.find(x=>x.id===seatId);
+-          const before=readIdentityState(stored.envelope).players.players.find(x=>x.id===seatId);
+-          if(p.mainActionCompleted&&p.income.energy>before.income.energy){
+-            const settled=nodes.get(child),view=readPlanningState(settled),owner=view.players.players.find(x=>x.id===seatId);
+-            const paid=paidIncomeEarthCargoPlan(child,settled,view,owner);
+-            if(paid)settled.paidCargoPlan=freeze(paid);
+-          }
+-        }
++        keepPaidIncomeCargoPlan(child,currencyIncome,()=>readIdentityState(stored.envelope));
+         return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const fixedData = previewQuietFinalDataPlacement(stored, requested);
+@@ -3830,19 +3821,81 @@
+         if(final?.finished)paidCargoEndProofs.set(plan,{node,state:freeze(final.finished),end});
+       }
+       return plan;
++    }
++
++    function keepPaidIncomeCargoPlan(child,state,beforeState){
++      if(child.status!=="stable"||!knownRootAlienIds.has("虫")
++        ||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length!==1)return;
++      const player=state.players.players.find(x=>x.id===seatId);
++      if(!player.mainActionCompleted||player.income.energy<=beforeState().players.players.find(x=>x.id===seatId).income.energy)return;
++      const settled=nodes.get(child),view=readPlanningState(settled),owner=view.players.players.find(x=>x.id===seatId);
++      const paid=paidIncomeEarthCargoPlan(child,settled,view,owner);
++      if(paid)settled.paidCargoPlan=freeze(paid);
+     }
+ 
++    // Existing data pays for each computer slot and the plan names its one
++    // known income card. There are no draws, payment choices or observers.
++    // Close only the preparation; the settled state still competes normally.
++    function fundedComputerIncomePrefix(node,plan){
++      const stored=nodes.get(node),goal=plan.goal;
++      if(node.status!=="stable"||!stored||goal.kind!=="income"||goal.targetComputerSlot!==4
++        ||Object.keys(goal).some(k=>!["id","kind","incomeCardId","incomeBefore","targetComputerSlot","required"].includes(k))
++        ||Object.keys(goal.required).length||plan.operation?.finalPlacement!==false||Object.keys(plan.operation).length!==1)return null;
++      const action=node.legalActions.find(a=>a.actionId===plan.firstActionId),state=action&&quietDataMenuSource(stored,action);
++      if(!state)return null;
++      const owner=state.players.players.find(p=>p.id===seatId),known=knownCards(stored.envelope);
++      const id=goal.incomeCardId,ix=owner.hand.findIndex(c=>c.id===id),card=owner.hand[ix];
++      if(!owner.mainActionCompleted||!card||!known.has(id)||owner.reservedCards.some(c=>!known.has(c.id))
++        ||Object.values(owner.income).reduce((a,b)=>a+b,0)!==goal.incomeBefore)return null;
++      const income=cards.getIncomeGainForCard(card),keys=Object.keys(income||{});
++      if(keys.length!==1||!["credits","energy","publicity"].includes(keys[0])||income[keys[0]]!==1)return null;
++      const slots=data.listComputerPlacedTokens(owner),remaining=4-slots.length;
++      if(remaining<1||!slots.every((s,i)=>s.placementSlot===i+1)
++        ||owner.resources.availableData!==owner.dataState.poolTokens.length||owner.resources.availableData<remaining)return null;
++      const player=copyForkData(owner);
++      for(let slot=slots.length+1;slot<=4;slot++){
++        const placed=data.placeDataToComputer(player);
++        if(!placed.ok||placed.placementKind!=="computer"||placed.placementSlot!==slot)return null;
++        if(slot===4&&(placed.slotBonuses.length!==1||placed.slotBonuses[0].type!=="income"))return null;
++        const events=[{type:"placeData",playerId:seatId,placementKind:"computer",placementSlot:slot}];
++        for(const bonus of placed.slotBonuses){
++          if(slot===4)break;
++          const key=bonus.type;
++          if(!["credits","energy","publicity","score"].includes(key)||!Number.isSafeInteger(bonus[key])||bonus[key]<=0
++            ||Object.keys(bonus).some(k=>k!=="type"&&k!==key))return null;
++          const gain={[key]:bonus[key]};
++          players.gainResources(player,gain,"blueTechScore");
++          events.push({type:"science_resource_bonus",playerId:seatId,gain,sourceKey:"blueTechScore"});
++        }
++        if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
++      }
++      if(cardEffects.collectMatchingTriggers(player,{type:"place_data_income",playerId:seatId,cardInstanceId:id}).length)return null;
++      const deck={...state.cards,removedFromGameCardIds:[...state.cards.removedFromGameCardIds],drawPileCardIds:[...state.cards.drawPileCardIds]};
++      const removed=cards.discardFromHandAtIndex(player,ix);
++      if(!removed.ok)throw Error("ANALYSIS_FIXED_INCOME_CARD_MISSING");
++      cards.addRemovedFromGame(deck,removed.card);
++      players.gainIncome(player,income);
++      const settled={...state,cards:deck,meta:quietSavedMeta(state.meta,state.meta.stateVersion+remaining),
++        players:{...state.players,players:state.players.players.map(p=>p===owner?player:p)}};
++      const child=finishProvedCommittedState(node,stored,action,settled);
++      if(child.status!=="stable"||child.boundary!==node.boundary)return null;
++      keepPaidIncomeCargoPlan(child,settled,()=>state);
++      return {node:child,cost:remaining*2+1};
++    }
++
+     function paidCargoProvedBoundary(node,plan){
+       const proof=paidCargoEndProofs.get(plan),stored=nodes.get(node);
+       if(proof?.node!==node||!stored)return null;
+       return finishProvedTurnBoundary(stored,proof.end,proof.state);
+     }
+ 
+-    function matchesPaidCargoBoundary(proved,actual){
++    function matchesProvedResourceEndpoint(proved,actual){
+       const a=nodes.get(proved),b=nodes.get(actual);
+       return Boolean(a&&b&&proved.status===actual.status&&proved.boundary===actual.boundary
+         &&!a.envelope.session&&!b.envelope.session&&cardKnowledgeKey(a.envelope)===cardKnowledgeKey(b.envelope)
+         &&exactClaimState(a.informationBarrier,b.informationBarrier)
++        &&exactClaimState(a.intent,b.intent)&&exactClaimState(a.resourceControl,b.resourceControl)
++        &&exactClaimState(a.paidCargoPlan,b.paidCargoPlan)&&exactClaimState(proved.legalActions,actual.legalActions)
+         &&exactClaimState(readIdentityState(a.envelope),readIdentityState(b.envelope)));
+     }
+ 
+@@ -8637,7 +8690,7 @@
+       return Boolean(stored.intent);
+     }
+ 
+-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, quoteFossilIndependentTask, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, paidCargoProvedBoundary, matchesPaidCargoBoundary, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
++    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, quoteFossilIndependentTask, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, paidCargoProvedBoundary, fundedComputerIncomePrefix, matchesProvedResourceEndpoint, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+ 
+-  const VERSION = "seti-complete-decision-search-v440";
++  const VERSION = "seti-complete-decision-search-v441";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+@@ -185,7 +185,7 @@
+     const known = new Map();
+     const queue = [];
+     const resourceGroups = new Map();
+-    const resourceExecutions = new Map(), paidCargoProofLeaves = new WeakMap();
++    const resourceExecutions = new Map(), provedResourceEndpoints = new WeakMap();
+     const useResourceDominance = !resourcePlanning && !movementPlanning && !cardPickPlanning && resourceDominance && !port.selectionSpec?.(root);
+     const useMoneyCapacity = !resourcePlanning && !movementPlanning && !cardPickPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
+     const useCardTradePruning = !resourcePlanning && cardTradePruning && !port.selectionSpec?.(root);
+@@ -720,17 +720,20 @@
+           // Finite-budget callers keep the original per-input accounting.
+           // For the production complete-window policy, close a verified
+           // deterministic suffix once and materialize it only if it wins.
+-          const proved=unlimited&&planReuse&&modelKey&&realizationTies
+-            &&alternative.resourcePlan.goal.kind==="paid-income-earth-cargo"
+-            &&port.paidCargoProvedBoundary?.(entry.node,alternative.resourcePlan);
+-          if(proved){
+-            const added=add(proved),cost=alternative.resourcePlan.goal.path.length*2+2;
+-            if(added.equivalent)equivalents++;
+-            entry.edges.push({actionId:alternative.firstActionId,target:added.index,cost,equivalent:added.equivalent,
+-              resourcePlan:alternative.resourcePlan,goalStatus:"boundary",actualNativeInputs:0,provedNativeInputs:cost,
+-              proof:"seti-native-paid-cargo-quiet-turn-boundary-v1"});
+-            paidCargoProofLeaves.set(entry.edges.at(-1),proved);
+-            continue;
++          const plan=alternative.resourcePlan;
++          if(unlimited&&planReuse&&modelKey&&realizationTies){
++            const cargo=plan.goal.kind==="paid-income-earth-cargo"&&port.paidCargoProvedBoundary?.(entry.node,plan);
++            const income=plan.goal.kind==="income"&&port.fundedComputerIncomePrefix?.(entry.node,plan);
++            const proved=cargo||income?.node;
++            if(proved){
++              const added=add(proved,income?1:0),cost=income?income.cost:plan.goal.path.length*2+2;
++              if(added.equivalent)equivalents++;
++              entry.edges.push({actionId:alternative.firstActionId,target:added.index,cost,equivalent:added.equivalent,
++                resourcePlan:plan,goalStatus:income?"completed":"boundary",actualNativeInputs:0,provedNativeInputs:cost,
++                proof:income?"seti-native-funded-computer-income-prefix-v1":"seti-native-paid-cargo-quiet-turn-boundary-v1"});
++              provedResourceEndpoints.set(entry.edges.at(-1),proved);
++              continue;
++            }
+           }
+           const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
+             if(now()-startedAt>=limits.milliseconds)return "watchdog";
+@@ -1010,7 +1013,7 @@
+         value: edge ? nodes[edge.target].value : null, realization: edge ? nodes[edge.target].realization ?? null : null, preparationDebt:edge?nodes[edge.target].preparationDebt??null:null,
+         ...(edge?.turnTailPlanValue?{valueType:"proved-plan-value",turnTailPlanValue:edge.turnTailPlanValue}:{}),
+         ...(edge?.knownIncomePlan?{valueType:"proved-plan-value",knownIncomePlan:edge.knownIncomePlan}:{}),
+-        ...(paidCargoProofLeaves.has(edge)?{valueType:"proved-plan-value",proof:edge.proof}:{}),
++        ...(provedResourceEndpoints.has(edge)?{valueType:"proved-plan-value",proof:edge.proof}:{}),
+         ...(resourcePlan?{kind:"resource-goal-plan",goal:resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&(e.resourcePlan||e.provedResourcePlan)).length}:{}),
+         ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
+         completion: stopReason || !edge ? "pending" : edge.knownIncomePlan||edge.turnTailPlanValue?"proved-plan-value":edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
+@@ -1090,13 +1093,13 @@
+         if(best.knownIncomePlan||best.turnTailPlanValue){current=best.target;continue;}
+         if(best.resourcePlan){
+           let macro=resourceExecutions.get(best);
+-          if(best.proof==="seti-native-paid-cargo-quiet-turn-boundary-v1"){
++          if(provedResourceEndpoints.has(best)){
+             // The shortcut is only enabled with all internal budgets open.
+             // An independent Native replay must succeed before any action is returned.
+             macro=port.expandResourcePlan(entry.node,best.resourcePlan,()=>null);
+             if(!macro.complete||macro.submissions!==best.cost
+-              ||!port.matchesPaidCargoBoundary(paidCargoProofLeaves.get(best),macro.node))
+-              throw new Error("SEARCH_WINNING_PAID_CARGO_WITNESS_MISMATCH");
++              ||!port.matchesProvedResourceEndpoint(provedResourceEndpoints.get(best),macro.node))
++              throw new Error(`SEARCH_WINNING_RESOURCE_WITNESS_MISMATCH: ${best.proof}`);
+             const submitted=macro.newSubmissions??macro.submissions,fresh=resourceStateAdditions(macro.sharedStates);
+             transitions+=submitted;logicalResourceInputs+=macro.submissions;sharedResourceInputHits+=macro.submissions-submitted;
+             for(const id of fresh)sharedInternalStates.add(id);
