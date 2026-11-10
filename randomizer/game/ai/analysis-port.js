@@ -8067,12 +8067,49 @@
         if(held?.length===1)return {turn:t.turnNumber,cardId:held[0].id};
       }
     }
+    // A blind region draw may still leave a payable plan made entirely
+    // from the old hand, public tech and the currently displayed alien.
+    function retainedRegionIncomeSource(stored, session, offers) {
+      const a=session?.journal.actions[0]?.action;
+      if(session ? a?.family!=="play_card" : !openedRoot.legalActions.some(a=>a.family==="play_card"))return null;
+      const state=session?planningState(session.baseState,stored.informationBarrier,knownRootCardIds):readPlanningState(stored);
+      const p=state.players.players.find(q=>q.id===seatId),turn=state.turn;
+      if(turn.roundNumber!==3||p.mainActionCompleted||p.passCompletionPending
+        ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
+        ||p.resources.availableData!==2||p.resources.credits!==0||p.resources.energy!==1||p.hand.length!==4
+        ||data.listComputerPlacedTokens(p).length!==6
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
+        ||!hasPostMainInertReservations(state,false,true,true))return null;
+      const removal=p.hand.find(c=>(session?c.id===a.target.cardInstanceId:knownRootCardIds.has(c.id))
+        &&cardEffects.getCardModel(c)?.playEffects?.some(e=>e.type==="amiba_remove_trace_for_region_reward"));
+      if(!removal)return null;
+      return {regionIncome:{turn:turn.turnNumber,retained:p.hand.filter(c=>c!==removal).map(c=>c.id),
+        removal:removal.id,amibaOffer:offers.amibaTraces.displayedCardIndex,chongOffer:offers.chongOffer}};
+    }
+
+    function quoteRetainedRegionIncome(node,purpose){
+      if(node.status!=="information-barrier")return null;
+      const stored=nodes.get(node);
+      if(stored?.informationBarrier?.code!=="hidden_card_draw"||stored.envelope.session||stored.intent)return null;
+      const state=readPlanningState(stored),turn=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(turn.turnNumber!==purpose.turn||!p.mainActionCompleted||p.resources.availableData!==3
+        ||p.hand.some(c=>c.id===purpose.removal)||p.hand.filter(c=>c.hidden&&!c.id&&!c.cardId).length!==1
+        ||purpose.retained.some(id=>!p.hand.some(c=>c.id===id))||!hasPostMainInertReservations(state,false,true,true))return null;
+      const plan=localPlans.previewMatchedAnalysisScan({state,seatId,knownCards:knownRootCardIds,retainedRegion:true,
+        amibaOffer:purpose.amibaOffer,chongOffer:purpose.chongOffer,
+        knownTech:(id,stack)=>Boolean(stack&&!stack.bonusHidden&&stack.bonusIndex===knownRootTechIndices.get(id))});
+      return plan&&{order:"retained-region-income",value:plan.funding.value,originValue:plan.originValue,
+        tileId:plan.tileId,analysis:plan.funding.analysis,income:plan.funding.dataIncome,scan:plan.funding.sector};
+    }
+
     function matchedAnalysisScanSource(){
       const stored=nodes.get(openedRoot),session=stored?.envelope.session?.session;
       if(!stored||!['stable','decision'].includes(openedRoot.status))return null;
       const visible=rootObservation.publicState;
       const offers=visible.board?.aliens,amibaOffer=offers?.amibaTraces?.displayedCardIndex,chongOffer=offers?.chongOffer;
       if(visible.roundNumber!==3||!Number.isSafeInteger(amibaOffer)||!Number.isSafeInteger(chongOffer?.displayedCardIndex))return null;
+      const retained=retainedRegionIncomeSource(stored,session,offers);
+      if(retained)return retained;
       const state=session?(['analyze','research_tech'].includes(session.journal?.actions?.[0]?.action.family)
         ?planningState(session.baseState,stored.informationBarrier,knownRootCardIds):null):readPlanningState(stored);
       if(!state||!hasPostMainInertReservations(state,false,true,true))return null;
@@ -8103,11 +8140,13 @@
     }
 
     function matchedAnalysisScanEnd(node,purpose){
+      if(purpose.regionIncome)return null;
       const end=node.status==='stable'&&node.legalActions.find(a=>a.family==='end_turn');
       return end&&matchAnalysisScanStage(node,purpose)?end.actionId:null;
     }
 
     function quoteMatchedAnalysisScan(node,purpose){
+      if(purpose.regionIncome)return quoteRetainedRegionIncome(node,purpose.regionIncome);
       const tail=node.status==='turn-tail-value'?node.planSummary:null;
       if(!tail&&node.status!=='turn-boundary'||tail?.markedTiles.length)return null;
       const blue=tail?.kind==='blue-end-turn'&&tail.requiredNativeInputs===3&&tail.dataPlans?.length===1

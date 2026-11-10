@@ -590,17 +590,17 @@
    ...Object.entries(w).map(([k,v])=>((k==='handSize'?p.hand.length:p.resources[k])+p.income[k]*(4-state.turn.roundNumber))*v),
    stateValue.technologyCapital(p.techState,state.turn.roundNumber),demand.planningCapital(state,p)]);
  }
- function previewMatchedAnalysisScan({state,seatId,knownCards,knownTech,amibaOffer,chongOffer}){
+ function previewMatchedAnalysisScan({state,seatId,knownCards,knownTech,amibaOffer,chongOffer,retainedRegion=false}){
   const start=owner(state,seatId),turn=state.turn,chong=aliens.chong;
   const owned=Object.keys(start.techState.ownedTiles).find(id=>start.techState.ownedTiles[id]&&science.getResearchDataCount(id)===2);
   const occupied=p=>data.listComputerPlacedTokens(p).map(x=>x.placementSlot).join(',');
-  if(turn.roundNumber!==3||turn.currentPlayerId!==seatId||turn.gameEnded||start.mainActionCompleted||start.passCompletionPending
+  if(turn.roundNumber!==3||turn.currentPlayerId!==seatId||turn.gameEnded||start.mainActionCompleted!==retainedRegion||start.passCompletionPending
     ||!turn.activePlayerIds.includes(seatId)||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
     ||(owned?start.resources.availableData!==5||start.resources.publicity+1>players.RESOURCE_LIMITS.publicity
       :start.resources.availableData!==3||start.resources.publicity!==players.RESOURCE_LIMITS.publicity)
     ||start.resources.credits!==0||start.resources.energy!==1||start.hand.length!==4||occupied(start)!=='1,2,3,4,5,6'
     ||!industry.getPlayerIndustryDefinition(start)?.passiveIds.includes('deepspace_free_analyze')
-    ||[...start.hand,...start.reservedCards].some(c=>!knownCards.has(c.id))||turnHasScanObservers(state,start)
+    ||start.hand.some(c=>!visibleOrOpaque(c,knownCards,retainedRegion))||start.reservedCards.some(c=>!knownCards.has(c.id))||turnHasScanObservers(state,start)
     ||state.pieces.rockets.some(r=>r.playerId===seatId||r.color===start.color)
     ||Object.values(state.aliens.aliens).some(s=>s.revealed&&!['阿米巴','虫'].includes(s.alienId))
     ||!state.aliens.amiba?.revealInitialized||!Number.isSafeInteger(amibaOffer)||state.aliens.amiba.displayedCardIndex!==amibaOffer
@@ -614,7 +614,7 @@
    return r&&r.model.cardType===2&&!r.model.endGameScoring&&!effects.taskConditionMet(r.task,start,{data:state.data})
     ?[{cardId:c.id,taskId:r.task.id}]:[];
   });
-  if(taskChoices.length!==1)return null;
+  if(taskChoices.length!==1||(retainedRegion&&owned))return null;
   const task=taskChoices[0],cost=scanEffects.getStandardScanCost(start),types=scanEffects.EFFECT_TYPES;
   if(cost.credits!==1||cost.energy!==2)return null;
   const originalMarks=state.finalScoring.thresholds;
@@ -714,6 +714,7 @@
    let s=structuredClone(state),known=new Set(knownCards),dataIncome,analysis,sector,first,taskClaimed=false;
    s.cards.drawPileCardIds.fill(null);s.aliens.chong.cardDeck.fill(null);s.aliens.amiba.cardDeck.fill(null);
    for(const [id,stack] of Object.entries(s.tech.stacks))stack.bonusQueue=stack.bonusQueue.map((reward,i)=>i===stack.bonusIndex&&knownTech(id,stack)?reward:null);
+   if(retainedRegion&&!end(s))return null;
    for(let i=0;i<order.length;i++){
     const family=order[i];
     if(family==='scan'){
@@ -723,7 +724,7 @@
      analysis=analyze(s,known);if(!analysis)return null;
     }else if(!research(s))return null;
     const p=owner(s,seatId);p.mainActionCompleted=true;
-    if(family==='analyze'&&owned||i===1&&!owned){
+    if(family==='analyze'&&(owned||retainedRegion)||i===1&&!owned){
      dataIncome=income(s,order[0]==='scan'?'energy':'credits',known);if(!dataIncome)return null;
     }
     if(!taskClaimed&&(i===order.length-1||owned&&i===0&&family==='scan')){
@@ -735,6 +736,10 @@
    }
    return {state:s,value:matchedAnalysisScanValue(s,seatId),first,analysis,sector,dataIncome};
   };
+  if(retainedRegion){
+   const funding=run(['research','analyze','scan']);
+   return funding&&{tileId,funding,originValue:matchedAnalysisScanValue(state,seatId)};
+  }
   const analysis=run(owned?['analyze','scan']:['analyze','research','scan']),researchFirst=owned?null:run(['research','analyze','scan']),
    scanFirst=run(owned?['scan','analyze']:['scan','analyze','research']);
   if(!analysis||!scanFirst||!owned&&!researchFirst)return null;
