@@ -1,0 +1,233 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -392,9 +392,10 @@
+       bucket.push({id,stored});
+       return id;
+     }
+-    function nodeIdentity(physicalId,intent,cardControl,resourceControl,knowledge = null) {
++    function nodeIdentity(physicalId,intent,cardControl,resourceControl,knowledge = null, paidCargoSource = false) {
+       const parts=[physicalId,intent,cardControl,resourceControl];
+-      if(knowledge)parts.push(knowledge);
++      if(knowledge||paidCargoSource)parts.push(knowledge);
++      if(paidCargoSource)parts.push("known-paid-cargo-source");
+       const key=JSON.stringify(parts);
+       if(!identities.has(key))identities.set(key,Object.freeze({}));
+       return identities.get(key);
+@@ -616,7 +617,7 @@
+           return physicalId;
+         },
+         get identity(){
+-          if(identity===undefined)identity=nodeIdentity(this.physicalId,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope));
++          if(identity===undefined)identity=nodeIdentity(this.physicalId,this.intent,this.cardControl,this.resourceControl,cardKnowledgeKey(this.envelope),Boolean(this.paidCargoPlan));
+           return identity;
+         },
+         set identity(value){identity=value;},
+@@ -1914,7 +1915,18 @@
+       const currencyIncome=previewCurrencyIncome(stored,requested);
+       if(currencyIncome){
+         provedCurrencyIncomeInputs++;
+-        return rememberPrefix(key,node,actionId,remember(key,finishProvedCommittedState(node,stored,requested,currencyIncome)));
++        const child=finishProvedCommittedState(node,stored,requested,currencyIncome);
++        if(child.status==="stable"&&knownRootAlienIds.has("虫")
++          &&Object.keys(currencyIncome.aliens.chong?.transportTasksByRocketId||{}).length===1){
++          const p=currencyIncome.players.players.find(x=>x.id===seatId);
++          const before=readIdentityState(stored.envelope).players.players.find(x=>x.id===seatId);
++          if(p.mainActionCompleted&&p.income.energy>before.income.energy){
++            const settled=nodes.get(child),view=readPlanningState(settled),owner=view.players.players.find(x=>x.id===seatId);
++            const paid=paidIncomeEarthCargoPlan(child,settled,view,owner);
++            if(paid)settled.paidCargoPlan=freeze(paid);
++          }
++        }
++        return rememberPrefix(key,node,actionId,remember(key,child));
+       }
+       const fixedData = previewQuietFinalDataPlacement(stored, requested);
+       if (fixedData) {
+@@ -1950,7 +1962,7 @@
+           stored.intent = recoverMovementIntent(stored.envelope);
+           if (stored.intent) {
+             stored.policyKey=undefined;
+-            stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++            stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope),Boolean(stored.paidCargoPlan));
+           }
+         }
+       }
+@@ -2117,7 +2129,7 @@
+         if(pick?.fixed&&!stored.cardControl){
+           stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
+           stored.policyKey=undefined;
+-          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope),Boolean(stored.paidCargoPlan));
+         }
+       }
+     }
+@@ -2710,6 +2722,7 @@
+ 
+     function resourceStep(node,goal,operation={}) {
+       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
++      if(goal.kind==="paid-income-earth-cargo")return paidIncomeEarthCargoStep(node,state,session,goal);
+       if(goal.kind==="funded-earth-shipment"){
+         const find=f=>node.legalActions.find(f),fixed=(a,reason)=>({kind:"fixed",actionId:a.actionId,reason});
+         if(node.status==="stable"){
+@@ -3463,9 +3476,12 @@
+           resourceSpecs.set(node,spec);return spec;
+         }
+       }
++      const selectedPlans=compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation)]
++        :forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation):plans;
++      const cargo=stored.paidCargoPlan||(node===openedRoot?paidIncomeEarthCargoPlan(node,stored,state,owner):null);
+       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+         ...(adjacentCargo?.paid&&plans.some(p=>p.goal===adjacentCargo)?{cargoCommittedMovement:true}:{}),
+-        plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation):plans,
++        plans:cargo?[...selectedPlans,cargo]:selectedPlans,
+         ...(scoredCorner?{scoredCorner}:{}),...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
+         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
+         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
+@@ -3526,6 +3542,7 @@
+         }
+         if(step.kind==="infeasible")return invalid(step.reason);
+         if(plan.goal.kind==="funded-earth-shipment"&&prefixes.length>=12)throw Error("FUNDED_EARTH_SHIPMENT_PROGRESS_INVALID");
++        if(plan.goal.kind==="paid-income-earth-cargo"&&prefixes.length>=plan.goal.path.length*2+2)throw Error("PAID_EARTH_CARGO_PROGRESS_INVALID");
+         if(plan.goal.kind==="satellite-scan-setup"&&prefixes.length>=14)throw Error("SATELLITE_SCAN_PROGRESS_INVALID");
+         if(step.kind==="fallback"&&!forced)return bind(step.reason,operation);
+         const id=forced||step.actionId,action=current.legalActions.find(a=>a.actionId===id);
+@@ -3745,6 +3762,83 @@
+         ...Object.entries(w).map(([key,weight])=>(after.resources[key]-p.resources[key])*weight)]);
+       return value>0?{kind:"funded-earth-shipment",value,path,cardId:job.cardId,fossilId:job.fossilId,
+         supplierId:supplier?.id,pickId:pick?.id,discardIds:discard.map(c=>c.id)}:null;
++    }
++
++    // Price a public transport against the ordinary probe on the same
++    // wallet. The quote is only admission to the graph: actual inputs
++    // and handover are executed and evaluated by the ordinary search.
++    function paidIncomeEarthCargoPlan(node,stored,state,p){
++      if(node.status!=="stable"||stored.resourceControl||state.turn.roundNumber!==4||!p.mainActionCompleted
++        ||!knownRootAlienIds.has("虫")
++        ||!data.listComputerPlacedTokens(p).some(token=>token.placementSlot===4)
++        ||state.turn.gameEnded||state.turn.currentPlayerId!==seatId||p.passCompletionPending||p.industryBorrowedTechTileId
++        ||state.turn.passedPlayerIds.includes(seatId)||state.turn.activePlayerIds.some(id=>id!==seatId&&!state.turn.passedPlayerIds.includes(id))
++        ||state.turn.cardTurnEventBonuses?.length||p.resources.energy<1
++        ||p.resources.availableData>players.RESOURCE_LIMITS.availableData-2
++        ||!node.legalActions.some(a=>a.family==="end_turn"))return null;
++      const known=knownCards(stored.envelope);
++      if([...p.hand,...p.reservedCards,...(p.privateAlienCards||[])].some(c=>!known.has(c.id))
++        ||localPlans.hasPendingFossilArrival(state))return null;
++      const jobs=Object.entries(state.aliens.chong?.transportTasksByRocketId||{});
++      if(jobs.length!==1)return null;
++      const [jobKey,job]=jobs[0],ship=visibleEarthCargo(state,p,job);
++      if(!ship||ship.movementLocked||job.delivered)return null;
++      const marks=Object.values(state.finalScoring.tiles).flatMap(tile=>tile.marks);
++      if(state.finalScoring.thresholds.some(n=>!marks.some(m=>m.playerId===seatId&&m.threshold===n)))return null;
++      const from=rockets.getRocketSectorCoordinate(ship),earth=solar.collectPlanetLocations(state.solarSystem).find(x=>x.planetId==="earth");
++      const path=from&&earth&&shortEarthPath(state,p,ship,from,earth,Math.min(3,p.resources.energy));
++      if(!path?.length)return null;
++      const first=node.legalActions.find(a=>a.family==="move"&&a.target.rocketId===ship.id
++        &&a.target.deltaX===path[0].deltaX&&a.target.deltaY===path[0].deltaY);
++      if(!first)return null;
++      const next=copyForkData(state),q=next.players.players.find(x=>x.id===seatId);
++      const steps=[];
++      for(const step of path){
++        const moved=rocketAbilities.moveProbe(next,{...step,movementPoints:1,cost:{energy:1},source:"move"});
++        if(!moved.ok||moved.payload.requiredMovePoints!==1)return null;
++        const result=localPlans.augmentEffectResult(next,{ok:true,events:moved.events},{type:probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT,ownerId:seatId});
++        if(result.spawnedEffects?.length||result.irreversible)return null;
++        const arrival=result.events.filter(e=>e.synthetic);
++        const isLast=steps.length===path.length-1;
++        if(isLast?(arrival.length!==1||arrival[0].rocketId!==Number(jobKey)||arrival[0].fossilId!==job.fossilId):arrival.length)return null;
++        steps.push({...step,from:moved.payload.from});
++      }
++      const cargo=localPlans.knownDeliveredCargo({state:next,seatId,knownCards:known,knownFossilIds:new Set([job.fossilId])});
++      const claim=cargo&&localPlans.previewKnownCargoClaim({state:next,seatId,cargo});
++      if(!claim||cardEffects.hasMatchingTrigger(claim.player,{type:"complete_task",playerId:seatId,cardInstanceId:job.cardId,ruleId:"transport"})
++        ||claim.player.resources.score!==p.resources.score||q.resources.energy!==p.resources.energy-path.length)return null;
++      const score=(s,v)=>endScoring.computePlayerFinalScore({...s,players:s.players.players,aliens:copyForkData(s.aliens),
++        finalScoring:copyForkData(s.finalScoring),cardEffects,getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
++      const resource=stateValue.sumValueParts(Object.entries(stateValue.DEFAULT_WEIGHTS)
++        .map(([key,weight])=>(claim.player.resources[key]-p.resources[key])*weight));
++      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(claim.state,claim.player),-resourceDemand.planningCapital(state,p)]);
++      const netGain=stateValue.sumValueParts([score(claim.state,claim.player),-score(state,p),resource,capital]);
++      if(!(netGain>0))return null;
++      const id="cargo:paid-income:"+job.cardId,goal={id,kind:"paid-income-earth-cargo",required:{},path:steps,
++        cardId:job.cardId,fossilId:job.fossilId,rocketId:ship.id,netGain,capital};
++      return {id,goal,operation:{},firstActionId:first.actionId,mode:"greedy",reason:"paid-public-transport-with-positive-net-value"};
++    }
++
++    function paidIncomeEarthCargoStep(node,state,session,goal){
++      const a=node.legalActions,find=f=>a.find(f),fixed=(x,reason,kind="fixed")=>
++        x?{kind,actionId:x.actionId,reason}:{kind:"infeasible",reason};
++      if(node.status==="decision"){
++        const head=session?.queue?.[0],source=session?.journal?.actions?.[0]?.action;
++        if(head?.type!==probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT||source?.family!=="move"||source.target.rocketId!==goal.rocketId)
++          return {kind:"infeasible",reason:"paid-cargo-unexpected-native-menu"};
++        return fixed(find(x=>x.family==="choose_payment"&&x.target?.kind==="move-payment"
++          &&x.target.cardIds?.length===0&&x.payload.energyCost===1),"pay-one-energy-to-move-fossil");
++      }
++      const fossil=state.aliens.chong?.fossilsById?.[goal.fossilId];
++      if(fossil?.taskCompleted&&fossil.completedByCardId===goal.cardId)
++        return fixed(find(x=>x.family==="end_turn"),"finish-paid-cargo-turn","target");
++      if(fossil?.status==="delivered")
++        return fixed(find(x=>x.family==="complete_task"&&x.target.ruleId==="transport"
++          &&x.target.cardInstanceId===goal.cardId),"claim-delivered-public-fossil");
++      const ship=state.pieces.rockets.find(x=>x.id===goal.rocketId),at=ship&&rockets.getRocketSectorCoordinate(ship);
++      const step=at&&goal.path.find(x=>x.from.x===at.x&&x.from.y===at.y);
++      return fixed(step&&find(x=>x.family==="move"&&x.target.rocketId===goal.rocketId
++        &&x.target.deltaX===step.deltaX&&x.target.deltaY===step.deltaY),"fixed-funded-fossil-direction");
+     }
+ 
+     function fundedEarthShipmentStep(node,stored,state,session){
+@@ -4548,7 +4642,7 @@
+         });
+         if(row){
+           stored.intent=freeze(structuredClone(row.movementIntent));stored.policyKey=undefined;
+-          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope));
++          stored.identity=nodeIdentity(stored.physicalId,stored.intent,stored.cardControl,stored.resourceControl,cardKnowledgeKey(stored.envelope),Boolean(stored.paidCargoPlan));
+           movementPolicies.delete(node);movementValueBounds.delete(node);turnTailSpecs.delete(node);turnTailNodes.delete(node);resourceSpecs.delete(node);movementIntentRecoveries++;
+           if(!stored.intent.path.length)completedMovementRecoveries++;
+         }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+ 
+-  const VERSION = "seti-complete-decision-search-v438";
++  const VERSION = "seti-complete-decision-search-v439";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+--- a/randomizer/game/ai/analysis-port.test.js
++++ b/randomizer/game/ai/analysis-port.test.js
+@@ -603,8 +603,13 @@
+     const legalActions = c.inputPort.enumerateActions({});
+     const q = createSearchAgent({ seatId, analysisPort: port }).decide({ seatId, legalActions }).search;
+     assert(q.complete && q.unresolved.length === 0);
+-    assert.equal(q.value, 223);
+-    assert.equal(legalActions.find(a => a.actionId === q.actionId).family, "place_data");
++    assert.equal(q.value, 224);
++    const selected=legalActions.find(a => a.actionId === q.actionId);
++    assert.equal(selected.family,"card_corner");
++    assert.equal(selected.target.cardInstanceId,"alien-chong-8-12");
++    const cargo=q.lines.flatMap(line=>line.edges).filter(e=>e.resourcePlan?.goal.kind==="paid-income-earth-cargo");
++    assert(cargo.some(e=>e.goalStatus==="boundary"&&q.lines[e.target].value===q.value
++      &&e.steps.at(-2).startsWith("complete_task:")&&e.steps.at(-1).startsWith("end_turn:")));
+     const d = port.getDiagnostics();
+     for (const key of ["provedComputerIncomeMenus", "provedCurrencyIncomeInputs",
+       "provedPublicScanChoices", "provedScan4QuietMoves", "provedFinalResourceCorners",
+--- a/randomizer/index.html
++++ b/randomizer/index.html
+@@ -556,14 +556,14 @@
+   <script src="./game/ai/research-symbol-capital.js?read-only-rewards-v306"></script>
+   <script src="./game/ai/analysis-publicity-capital.js?deferred-publicity-v281"></script>
+   <script src="./game/ai/state-value.js?held-satellite-travel-20261110"></script>
+-  <script src="./game/ai/decision-search.js?held-satellite-travel-20261110"></script>
++  <script src="./game/ai/decision-search.js?paid-cargo-20261110"></script>
+   <script src="./game/ai/goal-movement.js?known-satellite-fee-20261110"></script>
+   <script src="./game/ai/scan-analysis-income-utility.js?v=scan-analysis-income-v1"></script>
+   <script src="./game/ai/resource-demand.js?held-satellite-travel-20261110"></script>
+   <script src="./game/ai/card-pick-planning.js?fixed-known-chong-v431"></script>
+   <script src="./game/ai/local-decision-plans.js?native-preview-copy-20261110"></script>
+   <script src="./game/ai/funded-movement-tail.js?lean-native-path-v315"></script>
+-  <script src="./game/ai/analysis-port.js?native-preview-copy-20261110"></script>
++  <script src="./game/ai/analysis-port.js?paid-cargo-20261110"></script>
+   <script src="./game/ai/search-agent.js?known-satellite-after-income-20261110"></script>
+   <script src="./game/production-composition.js?v=production-composition-v8"></script>
+   <script src="./game/production-kernel.js?static-occupancy-v317"></script>

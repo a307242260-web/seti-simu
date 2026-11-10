@@ -1,0 +1,664 @@
+{
+  "productionAdmission": false,
+  "newFullGames": 0,
+  "maxNativeInputs": 256,
+  "maxDecisionMilliseconds": 600,
+  "candidateSearch": "v439",
+  "valueModel": "v65",
+  "unchangedFullGraphs": 7,
+  "paidCargoBoundaryValues": {
+    "222": 1,
+    "223": 1,
+    "220": 1,
+    "224": 1,
+    "216": 1,
+    "218.5": 3,
+    "218": 1,
+    "222.5": 2
+  },
+  "nativePaidCargoChecks": {
+    "compared": 82,
+    "hiddenStops": 0,
+    "freshSessionIdAliases": 30,
+    "checks": {
+      "move": 30,
+      "probe_turn_move_payment": 30,
+      "complete_task": 11,
+      "end_turn": 11
+    },
+    "mismatch": [],
+    "rootExact": true,
+    "plans": [
+      {
+        "status": "boundary",
+        "inputs": 6,
+        "first": "move:a36e0e84",
+        "net": 3.5
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 4
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 4
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 4
+      },
+      {
+        "status": "boundary",
+        "inputs": 6,
+        "first": "move:a36e0e84",
+        "net": 3.5
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 2
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 2
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 2
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 2
+      },
+      {
+        "status": "boundary",
+        "inputs": 8,
+        "first": "move:23807efa",
+        "net": 2
+      },
+      {
+        "status": "boundary",
+        "inputs": 6,
+        "first": "move:a36e0e84",
+        "net": 3.5
+      }
+    ],
+    "rank": {
+      "value": 224,
+      "action": "card_corner:367a82a7"
+    },
+    "planCertificateRows": 21
+  },
+  "winningReplay": {
+    "inputs": 21,
+    "reused": 19,
+    "recomputed": 1,
+    "maxFollowupMs": 102.133666,
+    "finalScore": 183,
+    "wallet": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 2,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 4,
+      "publicity": 4,
+      "score": 118
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 5,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "rootExact": true,
+    "endExact": true
+  },
+  "nativeWinningValue": {
+    "leaf": 207,
+    "barrier": "tech_bonus_reveal",
+    "masked": true,
+    "rootExact": true,
+    "value": {
+      "value": 224,
+      "purposePreparationDebt": 0,
+      "unrealizedPurposeValue": 26
+    }
+  },
+  "coldBenchmarks": {
+    "teacher272": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 939.934042,
+          "graph": "d8058eda16b5c1efbec06015442c5cfc7f202dac5d80de8c9475790718246ab9",
+          "action": "place_data:8fd12fd3",
+          "value": 223,
+          "nodes": 712,
+          "native": 160,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1034.3715419999999,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1018.3408329999999,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 927.5081250000001,
+          "graph": "d8058eda16b5c1efbec06015442c5cfc7f202dac5d80de8c9475790718246ab9",
+          "action": "place_data:8fd12fd3",
+          "value": 223,
+          "nodes": 712,
+          "native": 160,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 928.779709,
+          "graph": "d8058eda16b5c1efbec06015442c5cfc7f202dac5d80de8c9475790718246ab9",
+          "action": "place_data:8fd12fd3",
+          "value": 223,
+          "nodes": 712,
+          "native": 160,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1022.707625,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1033.160541,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 936.643,
+          "graph": "d8058eda16b5c1efbec06015442c5cfc7f202dac5d80de8c9475790718246ab9",
+          "action": "place_data:8fd12fd3",
+          "value": 223,
+          "nodes": 712,
+          "native": 160,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 929.659042,
+          "graph": "d8058eda16b5c1efbec06015442c5cfc7f202dac5d80de8c9475790718246ab9",
+          "action": "place_data:8fd12fd3",
+          "value": 223,
+          "nodes": 712,
+          "native": 160,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1028.4736249999999,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        }
+      ],
+      "sameGraph": false,
+      "medians": {
+        "baseline": 929.659042,
+        "candidate": 1028.4736249999999
+      }
+    },
+    "satellite": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 1093.061417,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1080.144459,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1074.1485,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 1081.154,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 1094.3180419999999,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1083.2248749999999,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1085.783083,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 1084.269042,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 1101.323958,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1088.1519170000001,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 1093.061417,
+        "candidate": 1083.2248749999999
+      }
+    },
+    "official": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 544.718041,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 547.7561250000001,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 551.3981249999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 548.476083,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 551.2681670000001,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 542.370042,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 547.64475,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 553.759292,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 546.6050409999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 546.293208,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 548.476083,
+        "candidate": 547.64475
+      }
+    },
+    "late": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 401.867708,
+          "graph": "90a774c46cf65319711f0b597d024f1a1e3bdd07c8187999bde16a6ec6da4f97",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "nodes": 342,
+          "native": 222,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 390.51149999999996,
+          "graph": "90a774c46cf65319711f0b597d024f1a1e3bdd07c8187999bde16a6ec6da4f97",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "nodes": 342,
+          "native": 222,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 401.867708,
+        "candidate": 390.51149999999996
+      }
+    },
+    "r3-172": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 207.88512500000002,
+          "graph": "066ba49c0917e8737c5988546741853fa996f4420ec152cbaab00ee27d52e13c",
+          "action": "play_card:38489727",
+          "value": 151,
+          "nodes": 110,
+          "native": 99,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 215.799084,
+          "graph": "066ba49c0917e8737c5988546741853fa996f4420ec152cbaab00ee27d52e13c",
+          "action": "play_card:38489727",
+          "value": 151,
+          "nodes": 110,
+          "native": 99,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 207.88512500000002,
+        "candidate": 215.799084
+      }
+    },
+    "r3-136": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 313.070834,
+          "graph": "18b6c89ef15266cd61eaf917c5d927dea5ffb17c6f1e0c1743a0c68aa7bce94c",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "nodes": 214,
+          "native": 224,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 306.93675,
+          "graph": "18b6c89ef15266cd61eaf917c5d927dea5ffb17c6f1e0c1743a0c68aa7bce94c",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "nodes": 214,
+          "native": 224,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 313.070834,
+        "candidate": 306.93675
+      }
+    },
+    "held0": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 170.42720799999998,
+          "graph": "ff75b4dc403d8f2a3e139378c7c9ef97c3368157ec89b2b934d99b782f34e22f",
+          "action": "quick_trade:f385e2ac",
+          "value": 240,
+          "nodes": 53,
+          "native": 79,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 173.055042,
+          "graph": "ff75b4dc403d8f2a3e139378c7c9ef97c3368157ec89b2b934d99b782f34e22f",
+          "action": "quick_trade:f385e2ac",
+          "value": 240,
+          "nodes": 53,
+          "native": 79,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 170.42720799999998,
+        "candidate": 173.055042
+      }
+    },
+    "held1": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 173.6405,
+          "graph": "62797cd6bbc24a342460c199bf12857eba70c6c827c8546f50c263c4dfd69aa3",
+          "action": "quick_trade:a39c1a77",
+          "value": 240,
+          "nodes": 50,
+          "native": 81,
+          "complete": true
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 174.77504199999998,
+          "graph": "62797cd6bbc24a342460c199bf12857eba70c6c827c8546f50c263c4dfd69aa3",
+          "action": "quick_trade:a39c1a77",
+          "value": 240,
+          "nodes": 50,
+          "native": 81,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 173.6405,
+        "candidate": 174.77504199999998
+      }
+    }
+  },
+  "nodeTests": 6,
+  "browserSmokes": 2,
+  "valueInputChecks": 66,
+  "artifactsSha256": {
+    "paid-cargo-v439-candidate-20261110-v1.patch": "8a2de4b9d7cd5f1ad36c613a68844cd364dcd914f24d4fbf6a7e477ca3cc1946",
+    "paid-cargo-v439-native-evidence-20261110-v1.tar.gz": "3256e7522cba51cc9f8b6c972a2d03b771c60d0da6663653b7c681203c0b36ce"
+  }
+}
