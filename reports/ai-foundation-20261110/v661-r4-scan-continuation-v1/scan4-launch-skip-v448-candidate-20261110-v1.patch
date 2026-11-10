@@ -1,0 +1,62 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1303,0 +1304,51 @@
++    function previewQuietScan4LaunchOrSkip(node,stored,action){
++      if(!resourcePlanning||!scanPlanning||!movementPlanning||node.status!=="decision"||stored.resourceControl
++        ||stored.informationBarrier||action.family!=="choose_target"||!["launch","skip"].includes(action.target?.mode))return null;
++      const session=stored.envelope.session?.session,types=scienceSession.EFFECT_TYPES;
++      const [head,finalize,tail]=session?.queue||[];
++      if(session?.phase!=="awaiting_input"||session.interruptContext||session.irreversibleBarrier||session.failure||session.undoFrames.length
++        ||head.type!==types.SCAN_ACTION_4||head.kind!=="decision"||!head.payload?.skippable
++        ||finalize?.type!==types.SCAN_FINALIZE||finalize.kind!=="effect"||session.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions)
++        ||action.target.choiceId!==`scan4:${action.target.mode}`)return null;
++      const source=session.journal.actions[0]?.action,known=knownCards(stored.envelope);
++      const card=tail?.payload?.cardEffect,amount=card?.options?.gain?.additionalPublicScan;
++      const markerTail=source?.family==="play_card"&&session.queue.length===3&&tail.type==="card_play_domain_direct"&&tail.kind==="effect"
++        &&source.target?.cardInstanceId===tail.payload.cardInstanceId&&known.has(tail.payload.cardInstanceId)
++        &&card?.type==="gain_resources"&&card.status==="pending"&&card.options.repeat===1
++        &&Number.isSafeInteger(amount)&&amount===1&&Object.keys(card.options.gain).length===1&&Object.keys(card.options).length===2;
++      if(!(source?.family==="scan"&&session.queue.length===2)&&!markerTail)return null;
++      const state=session.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
++      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||t.passedPlayerIds.includes(seatId)
++        ||!p.mainActionCompleted||p.passCompletionPending||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
++        ||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"
++        ||p.reservedCards.some(c=>!known.has(c.id))||localPlans.hasPendingFossilArrival(state)
++        ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
++      const missing=state.cards.publicCards.filter(c=>!c).length;
++      if(!missing)return null;
++      // No sector settles here. Native launch and refill still run, with the
++      // original information barrier kept before any public offers can be read.
++      const player={...p,resources:{...p.resources}};
++      const next={...state,meta:{...state.meta,sequences:{...state.meta.sequences}},
++        pieces:action.target.mode==="launch"?copyForkData(state.pieces):state.pieces,
++        cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
++        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
++      let events;
++      if(action.target.mode==="launch"){
++        const launch=rocketAbilities.launchProbe(scienceSession.createActionContext(next,seatId),{cost:{energy:1}});
++        if(!launch.ok||launch.events.length!==1||launch.events[0].type!=="launch")return null;
++        events=launch.events;
++      }else events=[{type:"scanAction4Skipped",playerId:seatId}];
++      if(!refillQuietScan4(next,missing))return null;
++      events.push({type:"publicRefill",count:missing});
++      // A pending direct card effect is allowed only when it gives a single
++      // scan marker and has no other options. It runs after refill.
++      if(markerTail){
++        if(p.reservedCards.some(c=>(cardEffects.getCardModel(c)?.triggers||[]).length))return null;
++        players.gainResources(player,card.options.gain);
++      }
++      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
++      next.meta.stateVersion=session.baseVersion+1;
++      return {next,barrier:{effectId:session.sessionId+":effect:"+(session.nextEffectSequence+2),
++        revision:session.revision+4,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
++    }
++
+@@ -1819 +1870 @@
+-      const scanMove=previewQuietScan4Move(node,stored,requested);
++      const scanMove=previewQuietScan4LaunchOrSkip(node,stored,requested)||previewQuietScan4Move(node,stored,requested);
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v447";
++  const VERSION = "seti-complete-decision-search-v448";

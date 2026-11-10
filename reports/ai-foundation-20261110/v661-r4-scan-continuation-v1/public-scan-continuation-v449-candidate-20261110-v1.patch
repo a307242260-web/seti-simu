@@ -1,0 +1,52 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1246,2 +1246,4 @@
+-      const [head,purple,third,fourth,last]=s?.queue||[],opts=head?.payload?.options;
+-      const mercury=s?.queue.length===4&&quietMercuryScanStep(third),finalize=mercury?fourth:third,extra=mercury?null:fourth;
++      const [head,second,third,fourth,last]=s?.queue||[],opts=head?.payload?.options;
++      const purple=second?.type===types.SCAN_ACTION_4?second:null;
++      const mercury=purple&&s?.queue.length===4&&quietMercuryScanStep(third),finalize=mercury?fourth:purple?third:second;
++      const extra=mercury?null:purple?fourth:third;
+@@ -1252 +1254 @@
+-        ||purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
++        ||purple&&purple.kind!=="decision"||finalize?.type!==types.SCAN_FINALIZE
+@@ -1254,5 +1256,7 @@
+-      const source=s.journal.actions[0]?.action?.family;
+-      if(source==="scan"&&s.queue.length!==(mercury?4:3)||source==="play_card"&&(s.queue.length!==5
+-        ||extra?.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
+-        ||source!=="scan"&&source!=="play_card")return null;
+-      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
++      const source=s.journal.actions[0]?.action,known=knownCards(stored.envelope);
++      const plain=source?.family==="scan"&&s.queue.length===(mercury?4:purple?3:2);
++      const b9=source?.family==="play_card"&&purple&&s.queue.length===5
++        &&extra?.type===types.SCAN_STEP&&extra.payload?.cardEffect?.id==="b9-any-sector-scan"&&last.type===types.SCAN_FINALIZE;
++      const markerTail=s.queue.length===(purple?4:3)&&quietScanMarkerTail(source,extra,known);
++      if(!plain&&!b9&&!markerTail)return null;
++      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId);
+@@ -1283 +1287 @@
+-      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
++      if(!repeat&&!purple||events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+@@ -1303,0 +1308,8 @@
++    function quietScanMarkerTail(source,tail,known){
++      const card=tail?.payload?.cardEffect,amount=card?.options?.gain?.additionalPublicScan;
++      return source?.family==="play_card"&&tail?.type==="card_play_domain_direct"&&tail.kind==="effect"
++        &&source.target?.cardInstanceId===tail.payload.cardInstanceId&&known.has(tail.payload.cardInstanceId)
++        &&card?.type==="gain_resources"&&card.status==="pending"&&card.options.repeat===1
++        &&amount===1&&Object.keys(card.options.gain).length===1&&Object.keys(card.options).length===2;
++    }
++
+@@ -1314,5 +1326 @@
+-      const card=tail?.payload?.cardEffect,amount=card?.options?.gain?.additionalPublicScan;
+-      const markerTail=source?.family==="play_card"&&session.queue.length===3&&tail.type==="card_play_domain_direct"&&tail.kind==="effect"
+-        &&source.target?.cardInstanceId===tail.payload.cardInstanceId&&known.has(tail.payload.cardInstanceId)
+-        &&card?.type==="gain_resources"&&card.status==="pending"&&card.options.repeat===1
+-        &&Number.isSafeInteger(amount)&&amount===1&&Object.keys(card.options.gain).length===1&&Object.keys(card.options).length===2;
++      const markerTail=session.queue.length===3&&quietScanMarkerTail(source,tail,known);
+@@ -1347 +1355 @@
+-        players.gainResources(player,card.options.gain);
++        players.gainResources(player,tail.payload.cardEffect.options.gain);
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v448";
++  const VERSION = "seti-complete-decision-search-v449";
