@@ -4840,6 +4840,9 @@
         }
       }
       if (!row) return { hit: false, reason: "dependencies-changed" };
+      if(node.status==="stable"&&row.actionId.startsWith("card_corner:")
+        &&cardPickSpec(node)?.companySwap?.reason==="compare-funded-fourth-slot-energy")
+        return {hit:false,reason:"fixed-corner-prefix-competing-income-swap"};
       // A fixed Blue 3 prefix proves its own continuation, not the alternate
       // use of the last data token for a now-ready electricity income.
       const fixedBlue=row.roots.find(r=>r.actionId===row.actionId&&r.goalId==="data:blue:2"
@@ -8860,6 +8863,22 @@
         &&sameExcept(a.income,b.income,"energy")&&b.income.energy===a.income.energy+1;
     }
 
+    function tiedKnownEnergySwap(source,blueEnd,incomeEnd,swap) {
+      const start=nodes.get(source),ends=[blueEnd,incomeEnd].map(node=>nodes.get(node));
+      if(!start?.envelope||start.envelope.session||!stationaryCargoIncomeWindow(readIdentityState(start.envelope),start,source)
+        ||ends.some(end=>!end?.envelope||end.envelope.session||end.informationBarrier))return false;
+      const read=end=>readIdentityState(end.envelope).players.players.find(p=>p.id===seatId);
+      const [before,blue,income]=[start,...ends].map(read);
+      const sameExcept=(a,b,key)=>Object.keys(a).every(k=>k===key||a[k]===b[k])
+        &&Object.keys(b).every(k=>k===key||a[k]===b[k]);
+      return blue.resources.energy===before.resources.energy+1&&blue.resources.availableData===0
+        &&sameExcept(blue.resources,income.resources,'handSize')
+        &&blue.hand.length===1&&blue.hand[0].id===swap.discardIds[0]&&income.hand.length===0
+        &&sameExcept(blue.income,before.income,'energy')&&blue.income.energy===before.income.energy
+        &&sameExcept(blue.income,income.income,'energy')&&income.income.energy===blue.income.energy+1
+        &&data.listComputerPlacedTokens(blue).length===3&&data.listComputerPlacedTokens(income).length===4;
+    }
+
     function retainedPublicDataCard(node) {
       let stored=nodes.get(node);
       if(!resourcePlanning||rootObservation.publicState.roundNumber!==3||!stored)return null;
@@ -8924,7 +8943,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, sameElectricityIncomeTie, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

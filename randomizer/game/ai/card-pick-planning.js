@@ -249,11 +249,41 @@
       return {goal:{kind:'sector-task-swap',id:'sector-task:swap:'+incoming.id,cardId:incoming.id,sectorId:sector.id,task},
         selection:{cardId:incoming.id,blind:false,cache:'fixed-sector-task-purpose'},discardIds:[outgoing.id],reason:'complete-held-sector-task'};
     }
+    function readyEnergyIncomeSwap(state,p,outgoingId){
+      const turn=state.turn;
+      if(turn.roundNumber!==3||turn.currentPlayerId!==p.id||!p.mainActionCompleted||p.passCompletionPending
+        ||!turn.activePlayerIds.includes(p.id)||turn.passedPlayerIds.includes(p.id)||turn.cardTurnEventBonuses?.length
+        ||turn.activePlayerIds.some(id=>id!==p.id&&!turn.passedPlayerIds.includes(id))
+        ||p.resources.availableData||p.resources.energy||p.resources.credits>1
+        ||p.hand.length!==2||p.hand.some(c=>c.hidden))return null;
+      const slots=data.listComputerPlacedTokens(p),probes=state.pieces.rockets.filter(r=>r.playerId===p.id);
+      if(slots.length!==3||slots.some((token,i)=>token.placementSlot!==i+1)
+        ||probes.length!==1||probes[0].kind!=='chong-fossil'||!probes[0].fossilId)return null;
+      const dataOnly=c=>{
+        const corner=cards.getDiscardActionRewardForCard(c);
+        return corner?.dataCount===1&&Object.keys(corner.gain).length===0;
+      };
+      const scored=p.hand.find(c=>{
+        const corner=cards.getDiscardActionRewardForCard(c);
+        return corner?.dataCount===1&&corner.gain.score===1&&Object.keys(corner.gain).length===1
+          &&cards.getIncomeGainForCard(c)?.energy===1;
+      });
+      const outgoing=scored&&p.hand.find(c=>c!==scored&&dataOnly(c)&&cards.getIncomeGainForCard(c)?.credits===1);
+      if(!outgoing||outgoingId&&outgoing.id!==outgoingId)return null;
+      const incoming=state.cards.publicCards.find(c=>c&&!c.hidden&&dataOnly(c)&&cards.getIncomeGainForCard(c)?.energy===1);
+      if(!incoming)return null;
+      return {goal:{kind:'known-income-swap',id:'income:swap:'+incoming.id,cardId:incoming.id,netGain:0},
+        selection:{cardId:incoming.id,blind:false,cache:'fixed-known-income-funding'},
+        discardIds:[outgoing.id],reason:'compare-funded-fourth-slot-energy'};
+    }
+
     function swapIntent(state,seatId,endpoints,outgoingId=null,committed=false,knownSourceCapital=null){
       const p=state.players.players.find(p=>p.id===seatId),outgoing=outgoingId?p.hand.find(c=>c.id===outgoingId):swapHandRanks(state,seatId)[0]?.card;
       const planned=demand.incomeSwapPlan(state,p,committed);
       if(planned&&(!outgoingId||planned.outgoingCardId===outgoingId))return{goal:{kind:'known-income-swap',id:'income:swap:'+planned.incomingCardId,cardId:planned.incomingCardId,netGain:planned.netGain},
         selection:{cardId:planned.incomingCardId,blind:false,cache:'fixed-known-income-funding'},discardIds:[planned.outgoingCardId],reason:'realize-known-income-funding-option'};
+      const readyEnergy=readyEnergyIncomeSwap(state,p,outgoingId);
+      if(readyEnergy)return readyEnergy;
       if(!outgoing)return null;
       const hand=p.hand.filter(c=>c.id!==outgoing.id),purposeState={...state,players:{...state.players,players:state.players.players.map(v=>v===p?{...p,hand,resources:{...p.resources,handSize:p.resources.handSize-1}}:v)}};
       const offered=state.cards.publicCards.filter(c=>c&&!c.hidden&&c.cardId),outFacts=facts(outgoing);

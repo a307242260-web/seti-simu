@@ -62,4 +62,29 @@ run(fixture.r4,({choose})=>{
  assert(r.q.diagnostics.nativeExecutions<=256);
  assert(r.diagnostics.provedPublicScanChoices>0&&r.diagnostics.provedBluePickSettlements>0);
 });
+const swapFixture=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/stationary-cargo-income-swap-20261111-v1.json.gz'))));
+run(swapFixture.ready,({choose,apply})=>{
+ const swap=choose();assert.equal(swap.selected.family,'industry');assert.equal(swap.q.value,200.5);
+ assert(swap.q.diagnostics.nativeExecutions<=256);apply(swap.selected);
+ const outgoing=choose();assert.equal(outgoing.selected.summary,'dlc_15.png');apply(outgoing.selected);
+ const incoming=choose();assert.equal(incoming.selected.summary,'dlc_14.png');
+});
+run(swapFixture.noSwap,({choose})=>{
+ assert.equal(choose().selected.family,'card_corner');
+});
+run(swapFixture.fromYellow,({choose,apply,save})=>{
+ let checkpoint,pass=false;const actions=[];
+ for(let i=0;i<30;i++){
+  const decision=choose(checkpoint),a=decision.selected;
+  assert(decision.q.diagnostics.nativeExecutions<=256);
+  if(a.family==='pass'){pass=true;break;}
+  actions.push(a);apply(a);checkpoint=decision.checkpoint;
+ }
+ assert(pass);
+ assert.equal(actions.filter(a=>a.family==='industry').length,1);
+ const state=JSON.parse(save().committedState),owner=state.players.players.find(x=>x.id===seat);
+ assert.deepEqual([owner.resources.score,owner.resources.credits,owner.resources.energy,owner.income.energy],[124,1,1,4]);
+ assert.deepEqual(listComputerPlacedTokens(owner).map(x=>x.placementSlot),[1,2,3,4]);
+ assert(state.pieces.rockets.some(r=>r.playerId===seat&&r.fossilId==='fossil_01'));
+});
 console.log('stationary cargo leaves fourth-slot income reachable and known scan/pick reuse within budget');

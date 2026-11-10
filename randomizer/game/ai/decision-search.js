@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v443";
+  const VERSION = "seti-complete-decision-search-v444";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1063,6 +1063,30 @@
           publicBluePairChoice={from:chosen.goal.nebulaId,to:next.goal.nebulaId,cards:next.goal.publicBluePair,
             oldOpenSlots:chosen.goal.publicBlueCapacity,newOpenSlots:next.goal.publicBlueCapacity};
           break;
+        }
+      }
+    }
+    // A proved swap can realize permanent electricity at the same V and
+    // immediate wallet as the shorter blue-slot line.
+    if(complete&&!unresolved.length&&realizationTies&&nodes[0].pickPolicy?.companySwap?.reason==='compare-funded-fourth-slot-energy'){
+      const entry=nodes[0],best=entry.best,swap=entry.pickPolicy.companySwap;
+      const action=root.legalActions.find(a=>a.family==='industry'&&a.target?.abilityId==='deepspace_swap_cards');
+      const company=entry.edges.find(edge=>edge.actionId===action?.actionId);
+      const leaf=edge=>{
+        let next=nodes[edge.target];
+        while(next.best&&nodes[next.best.target].distance<next.distance)next=nodes[next.best.target];
+        return next.node.status==='turn-boundary'?next.node:null;
+      };
+      if(company&&best?.resourcePlan?.goal.kind==='blue-data'){
+        const a=nodes[best.target],b=nodes[company.target];
+        const blueEnd=leaf(best),incomeEnd=leaf(company);
+        if(blueEnd&&incomeEnd&&a.value===b.value&&a.realization===b.realization
+          &&a.preparationDebt===b.preparationDebt&&a.pickupRank===b.pickupRank
+          &&a.landingCompanyRetained===b.landingCompanyRetained
+          &&Boolean(a.publicDataCard)===Boolean(b.publicDataCard)&&a.chongBlindCount===b.chongBlindCount
+          &&port.tiedKnownEnergySwap?.(root,blueEnd,incomeEnd,swap)){
+          entry.best=company;
+          entry.distance=b.distance+company.cost;
         }
       }
     }
