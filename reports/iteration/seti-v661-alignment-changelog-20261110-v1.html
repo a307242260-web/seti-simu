@@ -3,160 +3,106 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SETI AI 策略 Changelog · 改动前后与实测收益</title>
+<title>SETI AI 策略 Changelog｜具体改选与实测结果</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f0f4f1;color:#1a302e;font:16px/1.65 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:26px 20px 44px}header,section{background:white;border:1px solid #d4e1d9;border-radius:14px;padding:22px;margin-bottom:15px}header{background:#173c34;color:#fff;border-color:#173c34}header small{color:#b3dcc9}header p{max-width:790px}h1,h2,h3,p,figure{margin:0}h1{font-size:clamp(29px,5vw,43px);line-height:1.16;margin:6px 0 10px}h2{font-size:23px;line-height:1.35;margin-bottom:9px}h3{font-size:18px;line-height:1.42}p+p{margin-top:6px}a{color:#075d52;text-underline-offset:3px}nav{display:flex;flex-wrap:wrap;gap:4px 21px;margin:0 4px 14px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px}.metric{border:1px solid #d4e1d9;background:#fff;border-radius:12px;padding:13px 16px}.metric strong{display:block;font-size:29px;color:#134f41;line-height:1.24;margin:3px 0;font-variant-numeric:tabular-nums}.metric small{display:block;color:#405b54}.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr);gap:12px;margin-top:8px}.cell{background:#f2f6f3;border-radius:8px;padding:9px 11px}.outcome{background:#e6f2eb}.label,.meta,figcaption,footer{font-size:14px;color:#415c54}.label{display:block;font-weight:700;margin-bottom:1px}.tag{display:inline-block;background:#e8f2eb;color:#1c5748;border-radius:4px;padding:0 5px;margin-left:4px;font-size:13px;font-weight:650;vertical-align:middle}.tag.control{background:#eff0f8;color:#454f72}article+article{border-top:1px solid #dbe5de;margin-top:15px;padding-top:15px}.meta{margin-top:6px}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:570px;font-variant-numeric:tabular-nums}caption{text-align:left;color:#415c54;margin:0 0 6px}th,td{padding:7px 9px;text-align:left;vertical-align:top;border-bottom:1px solid #dbe5de}thead{background:#edf4ef}.score{font-weight:750;white-space:nowrap}details{margin-top:9px}summary{cursor:pointer;font-weight:650}details p{margin-top:6px}ul{margin:0;padding-left:1.25em}li+li{margin-top:6px}footer{margin:0 4px}@media(max-width:690px){main{padding:10px}header,section{padding:14px}.metrics,.row{grid-template-columns:1fr;gap:5px}.metric{padding:9px 12px}.metric strong{font-size:24px}nav{gap:4px 12px}}@media print{body,header{background:white;color:#1a302e}header small{color:#415c54}article,.metrics{break-inside:avoid}}
+:root{color-scheme:light;--ink:#192f2d;--soft:#4b635e;--line:#d7e3df;--page:#edf3f0;--green:#114d40;--accent:#e0f4e8}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,sans-serif}main{max-width:1150px;padding:24px 18px 40px;margin:auto}
+header,section{padding:22px 24px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:16px}header{background:#153d35;color:#fff}h1,h2{line-height:1.25;margin:0 0 10px}h1{font-size:clamp(1.7rem,4vw,2.55rem)}h2{font-size:1.38rem}p{margin:8px 0}header small{color:#bfdfd2}header p{max-width:49em}
+a{color:#105b4c;text-underline-offset:3px}.quiet,caption{color:var(--soft);font-size:.9rem}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 16px}.kpi small{display:block;color:var(--soft)}.kpi b{font-size:1.55rem;color:var(--green);font-variant-numeric:tabular-nums}
+.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}caption{text-align:left;padding:2px 0 10px}th,td{padding:12px;vertical-align:top;border-bottom:1px solid var(--line)}thead th{background:#eff6f3;font-size:.92rem}tbody tr:last-child>*{border-bottom:0}tbody th{font-weight:650}.log th:first-child{width:16%}.log td:nth-child(2){width:45%}.ledger th:first-child{width:27%}.delta{font-weight:750;color:var(--green)}.version{display:block;color:var(--soft);font-size:.8rem;font-weight:500}.case{font-size:.78rem;font-weight:650;background:var(--accent);color:#174c3a;border-radius:4px;padding:1px 6px;margin-right:5px}.case.save{background:#f3eee1;color:#5b4521}details{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}summary{cursor:pointer;font-weight:650}footer{padding:0 8px;color:var(--soft)}li+li{margin-top:7px}
+@media(max-width:650px){main{padding:12px}header,section{padding:16px}.grid{grid-template-columns:1fr;gap:6px}.kpi{padding:9px 13px}.log{min-width:620px}.ledger{min-width:480px}th,td{padding:9px}}
 </style>
 </head>
-<body><main>
+<body>
+<main>
 <header>
-<small>405 分教学样本 · 策略 Changelog · 2026-11-10 · 修订 7</small>
-<h1>AI 改了哪些决策，结果变了多少</h1>
-<p>最有收益的变化，是先算清一个动作做完以后，手里的钱、电、牌和数据还能支付什么。它改变了发射、收入选牌、扫描和化石交付的顺序。最新改动让已知的化石 07 当轮送达，固定存档多 6 分、多 1 永久电；正式开局还没有自动走到这条路线。</p>
+<small>SETI · 405 分教学样本 · 2026-11-10</small>
+<h1>AI 策略改动与实测结果</h1>
+<p>最早是看漏了「免费发射以后还能插电收入」；后来能用同一笔资源比较科研、扫描和发射，再到能为已知化石保留付款和数据。下面按版本列实际改选，每条分差都标明来自标准开局还是固定存档。</p>
 </header>
-<div class="metrics" aria-label="三类不能混算的成绩">
-<div class="metric"><small>相同开局 · 自主到第三轮末</small><strong>90 → 118</strong><small>首两轮都是 15／48；第三轮科技 5 → 6，永久钱／电 7／3 → 7／4。</small></div>
-<div class="metric"><small>相同开局 · 自主打到终局</small><strong>120 → 216</strong><small>V189 与 V661 两次完整记录。+96 是多版累计，无法逐项拆分。</small></div>
-<div class="metric"><small>教师第四轮存档 · 同一起点打完</small><strong>AI 264／教师 388</strong><small>AI 少 124 分。264 继承教师前三轮资产，不能与 216 直接相减。</small></div>
-</div>
-<nav aria-label="章节"><a href="#value">估值</a><a href="#funding">筹资</a><a href="#timing">时机与可达性</a><a href="#endgame">末轮</a><a href="#ledger">成绩账本</a></nav>
 
-<section id="value">
-<h2>01 · 估值从“这一步拿多少”变为“走完以后还能做什么”</h2>
-<article>
-<h3>首轮：普通发射 → B117 免费发射 <span class="tag">V158 · 第 24 步</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>普通发射 58 V，B117 只有 55.5 V。模型漏掉免费发射以后接得上的收入。</div>
-<div class="cell"><span class="label">改动后</span>同一个钱包依次支付：B117 发射 → 花 6 宣传研究蓝 2 → 拿已经公开的 B48 → 用已有 4 数据插电收入。</div>
-<div class="cell outcome"><span class="label">实测影响 · 同一决策</span>B117 升到 <b>60 V</b>，实际改选。遮住科研补出的未知牌仍然选它。V158 整个首轮并未就此对齐；后续 V189 首轮才复现教师的 15 分、两科技和六项永久收入。</div>
+<div class="grid" aria-label="三个不同实验口径">
+<div class="kpi"><small>同一开局 · 自主第三轮末</small><b>90 → 118</b><small>V323 → V661；科技 5 → 6，永久钱／电 7／3 → 7／4</small></div>
+<div class="kpi"><small>同一开局 · 自主终局</small><b>120 → 216</b><small>V189 → V661；+96 是累计版本差</small></div>
+<div class="kpi"><small>教师第四轮存档 · 同起点终局</small><b>264 对 388</b><small>AI 对当前规则下的手打重放，差 124</small></div>
 </div>
-<p class="meta"><a href="../../docs/ai-known-research-income-capital-20261104.md">同一存档与遮牌对照</a> · <a href="../../docs/human405-v189-first2-result-20261105.md">V189 自主复盘</a></p>
-</article>
-<article>
-<h3>第二轮：蓝 1 先得 3 分 → 蓝 3 留 B48 插永久电 <span class="tag">V323 · 第 104 步</span></h3>
-<div class="row">
-<div class="cell"><span class="label">两条实际候选</span>同槽蓝 1 立即到 37 分；蓝 3 只到 34 分，但多一张已知 B48。</div>
-<div class="cell"><span class="label">改选依据</span>把后续可插的电收入也算进去，蓝 3 以 <b>98 对 97.75 V</b> 略胜。后面确实插了 B48。</div>
-<div class="cell outcome"><span class="label">实测影响 · 第二轮取舍</span>当下少 3 分，换到永久电。相较 V189 整条第二轮路线，盘面 50 → 48、科技 4 → 3、钱／电收入 7／2 → 6／3；整轮还有其他动作改变。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v323-autonomous-first3-20261107.md">蓝 1／蓝 3 对照与轮末账本</a></p>
-</article>
-</section>
 
-<section id="funding">
-<h2>02 · 先给后续行动留付款，再决定消耗哪张牌</h2>
-<article>
-<h3>插收入：用 DLC32 拿钱，把 B101 留给科研 <span class="tag">V253 → V256</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>旧路线把 B101 插成抽牌收入，失去了打出它做科研的机会。</div>
-<div class="cell"><span class="label">改动后</span>固定选牌先看缺钱还是缺电，再看这张牌的其他用途；同值时优先插费用较低的牌。第 144 步改插 DLC32，第 159–160 步打 B101 研究橙 1。</div>
-<div class="cell outcome"><span class="label">实测影响 · 同一教师第三轮存档</span><b>72 → 87 盘面，4 → 6 科技</b>，永久钱／电／牌 <b>6／3／2 → 7／2／1</b>。15 分含后续不同的登陆，是整条自主续跑的差。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-third-round-v256-result-20261106.md">首次分叉和两条轮末账本</a></p>
-</article>
-<article>
-<h3>第三轮：先打阿米巴 3 扫描 → 先打阿米巴 0，为扫描和发射筹资 <span class="tag">V398 → V445 · 第 179 步</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>分析、扫描和科研分别估值，没证明三条路线能由同一份钱、电、数据和手牌支付。</div>
-<div class="cell"><span class="label">改动后</span>逐笔扣同一份资源：紫 1 补数据 → 电脑插钱收入 → 蓝槽补电及已知牌插电收入 → 用剩余资源扫描、研究橙 1 并发射。盲抽的牌不作付款。</div>
-<div class="cell outcome"><span class="label">实测影响 · 正式开局，前 178 步相同</span>阿米巴 0 以 <b>176.5 对 170.5 V</b> 改选。第三轮 <b>101 → 116</b>，科技仍 6，永久钱／电 <b>6／3 → 7／4</b>。换暗牌仍同选，但实走只有 115 分、3 电收入、无在途探测器。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v445-known-launch-admission-20261108.md">付款与暗牌对照</a> · <a href="../../docs/human405-v445-autonomous-first3-20261108.md">标准开局账本</a></p>
-</article>
-<article>
-<h3>第三轮：两张阿米巴牌换 1 钱 → 打阿米巴 3，留阿米巴 1 插钱 <span class="tag control">8bd4208b · 物种已揭示</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>先把阿米巴 3 和 1 换钱；黄区会盲抽，旧估值没有继续算两张原手牌的用途。</div>
-<div class="cell"><span class="label">改动后</span>只用已知牌和科技算黄区补数据 → 紫 1 → 免电分析 → 阿米巴 1 插钱 → 扫描。改选 <b>152.5 → 160 V</b>，仍用 77 次原生输入。</div>
-<div class="cell outcome"><span class="label">实测影响 · 同一存档四种牌序</span>旧版都到 <b>97 盘面／130 已有资产分</b>；新版两组到 <b>107／147</b>，两组到 <b>117／165</b> 且有在途化石。正式开局在更早处未改选。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v661-r3-retained-region-income-20261110.md">四组自主对照</a></p>
-</article>
-</section>
-
-<section id="timing">
-<h2>03 · 改候选和执行顺序，让原来漏掉的收益可兑现</h2>
-<article>
-<h3>第二轮：马上放数据 → 把第 5、6 格留到下一次分析 <span class="tag">V189 · 第 87／89 步</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>教师先放数据占位；单独比较准备动作时，AI 也容易过早使用数据。</div>
-<div class="cell"><span class="label">改动后</span>准备动作绑定到下一次分析。AI 在两个节点先结束当前回合，先研究蓝 1，再补这两格并分析。</div>
-<div class="cell outcome"><span class="label">实测影响 · 资产等价点</span>第 104 个输入后白席完整资产与教师第二轮末相同。随后 AI 自己多走木星登陆、黄痕迹、紫 1 和蓝列，34 → 50；这 16 分来自追加行动。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v189-teacher-node-review-20261105.md">逐节点对照</a> · <a href="../../docs/human405-v189-first2-result-20261105.md">追加 16 分拆解</a></p>
-</article>
-<article>
-<h3>第三轮：先填电脑 → 先装蓝 1 再填 <span class="tag">V654 → V655</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>发射后立刻放电脑第 5、6 格。第 5 格落下时蓝 1 还没装上，覆盖奖励丢了。</div>
-<div class="cell"><span class="label">改动后</span>已能付蓝 1 且延迟没有其他损失时，先完成科研，随后放回相同两格，仍取同一现金蓝槽。</div>
-<div class="cell outcome"><span class="label">实测影响 · 只改变顺序</span><b>116 → 118 盘面，162 → 164 已有资产分</b>。科技、收入、资源、牌、数据、探测器和随机状态都相同。标准 V661 保留这 2 分。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v655-blue-column-timing-20261109.md">同根原生顺序对照</a></p>
-</article>
-<article>
-<h3>化石：先能去土星拾取，再能在同一轮送回 <span class="tag control">V592 → 46cd8a68</span></h3>
-<div class="row">
-<div class="cell"><span class="label">候选怎么演进</span>V592 增加“付一步 → 虫族 3 免费一步 → 登陆”这一条定向计划。旧版只看原地打牌，差一格就放弃；新版两种付款都到 117 分、7 科技，化石 01 在途。</div>
-<div class="cell"><span class="label">最新入库策略</span>手中已有化石 07 时，蓝 2 补 1 电、两张移动角标各走一格并各拿 1 分，最后用电付第三格。任务给的 2 数据凑满电脑第 4 格插电收入，2 钱留给后续扫描。</div>
-<div class="cell outcome"><span class="label">实测影响 · 同一 110 分存档</span><b>119／167 → 125／173</b>（盘面／已有资产分），科技同为 7，永久钱／电 <b>7／3 → 7／4</b>，电脑和蓝槽各多 2 格；少 1 钱和 2 手牌。化石由在途变为已交付。</div>
-</div>
-<p class="meta">从 106 分刚拾取 07 时交回 AI，也到 125／173；从拾取之前接手，AI 仍选 01，三处存档到 119／119／117 分，永久电仍为 3。<a href="../../docs/human405-v592-early-chong-transport-20261108.md">拾取候选</a> · <a href="../../docs/human405-v661-r3-current-turn-delivery-20261110.md">交付与接管边界</a></p>
-</article>
-<details>
-<summary>展开：第三轮 96 → 98 → 101 的中间两次改选</summary>
-<p><b>V372：</b>相同前 150 步后，改用 DLC32 角标放蓝 3 拿 DLC31，留到下一回合登陆火星，保住 B101 收入。第三轮 96 → 98，科技仍 5，钱／电仍 6／3。<a href="../../docs/human405-v372-autonomous-first3-20261107.md">原生分叉</a></p>
-<p><b>V375：</b>相同前 181 步后，改为两牌换电先赢红扇区，达到条件再领 DLC9；后续完成紫 1、蓝 4、蓝 1。第三轮 98 → 101，科技 5 → 6，钱／电仍 6／3。<a href="../../docs/human405-v375-autonomous-first3-20261107.md">原生分叉</a></p>
-</details>
-</section>
-
-<section id="endgame">
-<h2>04 · 末轮按剩余用途排序，清掉虚高的 PASS</h2>
-<article>
-<h3>紫 4 免费移动：离地球三格也能走第一步 <span class="tag control">4dc3d8f · 同一末轮存档</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>只有免费一步能直接抵达才移动，因此跳过紫 4 的免费一步。</div>
-<div class="cell"><span class="label">改动后</span>先证明公开 DLC27 和已知的两张手牌能各补 1 电，再用免费一步靠近地球，最后补两格送达。</div>
-<div class="cell outcome"><span class="label">实测影响 · #265 后同一免费移动存档</span>自主终局 <b>227 → 233</b>：交付多 4 板块分，奖励数据再多 2 盘面分。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v661-r4-funded-shipment-20261110.md">付款与逐步对照</a></p>
-</article>
-<article>
-<h3>末轮 PASS：停手以后，不再给库存加估值 <span class="tag control">f2c5006 · 免电分析 08 号</span></h3>
-<div class="row">
-<div class="cell"><span class="label">改动前</span>明明已 PASS，还给 6 钱、2 电、2 张牌和 2 宣传算 12.5 V，PASS 报 89.5 V。</div>
-<div class="cell"><span class="label">改动后</span>末轮确认 PASS 后只用规则计分，PASS 降到 77 V。AI 改为先用牌角标取数据，再走蓝槽、扫描、分析。</div>
-<div class="cell outcome"><span class="label">实测影响 · 同一 08 号第四轮存档</span>终局 <b>77 → 91</b>：盘面多 9 分，终局结算多 5 分。20 局原样本的 77 分保留。</div>
-</div>
-<p class="meta"><a href="../../docs/human405-v661-r4-final-pass-20261110.md">估值拆分与复跑</a></p>
-</article>
-</section>
-
-<section id="ledger">
-<h2>成绩账本：哪些结果能放在一起比</h2>
-<div class="scroll" tabindex="0" role="region" aria-label="按起点区分的实测成绩">
-<table>
-<caption>其余三席只 PASS 或做必选；除教师重放外，白席自主。轮末取 PASS 选牌和下一轮收入之前。</caption>
-<thead><tr><th scope="col">可比口径</th><th scope="col">盘面分或终局分</th><th scope="col">资产差与限制</th></tr></thead>
+<section aria-labelledby="changes">
+<h2 id="changes">策略改动记录</h2>
+<div class="wrap" role="region" aria-label="按版本排列的策略改动" tabindex="0">
+<table class="log">
+<caption>只列改变实际决策、估值或执行的条目。标为「固定存档」的分差只适用于该分叉。</caption>
+<thead><tr><th scope="col">版本／决策</th><th scope="col">旧版怎么选 → 新版怎么选</th><th scope="col">实际结果</th></tr></thead>
 <tbody>
-<tr><th scope="row">相同开局，到第三轮末</th><td class="score">90 → 96 → 98 → 101 → 116 → 118</td><td>V323 → V371 → V372 → V375 → V445 → V661。首两轮均为 15／48。<a href="../../docs/human405-v661-autonomous-first3-20261109.md">正式 V661 原生账本</a></td></tr>
-<tr><th scope="row">正式第三轮末：V661／教师</th><td class="score">118／105 盘面<br>164／162 已有资产</td><td>同为 6 科技、永久钱／电 7／4。AI 多蓝 3、紫 1、橙 1；教师对应多紫 2、橙 2、橙 4。AI 多 1 永久牌收入；少 3 手牌、3 池数据、2 蓝槽数据、4 宣传和在运化石。125 来自更晚的固定存档。</td></tr>
-<tr><th scope="row">相同开局，完整终局</th><td class="score">120 → 216</td><td><a href="ai-search-v189-white-full-20261105/db594a2e.1609bf50.full.action-log.html">V189</a> → V661；216 = 151 盘面＋59 板块＋6 卡牌。第四轮提速后仍是 216。<a href="../../docs/human405-v661-r4-guarded-full-20261110.md">正式接续与计分</a></td></tr>
-<tr><th scope="row">同一教师第四轮起点，完整终局</th><td class="score">AI 264／教师 388</td><td>差 124：盘面 67、板块 39、卡牌 18。405 是历史手打分，388 是当前规则、同起点重放。264 在修好空奖励菜单后才跑完。<a href="../../docs/human405-v661-r4-teacher-retention-20261110.md">同起点终局拆分</a></td></tr>
+<tr><th scope="row">首轮发射<span class="version">V158，输入 #24</span></th>
+<td>旧版选普通发射。新版给 B117 免费发射补上确定能走完的后续：研究蓝 2，取已公开的 B48，花已有 4 数据插电收入。</td>
+<td><span class="case save">同一步</span>B117 <span class="delta">55.5 → 60 V</span>，反超普通发射的 58 V。遮掉补出的未知牌仍改选。后续 V189 首轮实际达到 15 分、2 科技，六项永久收入与教师相同。<a href="../../docs/ai-known-research-income-capital-20261104.md">改选证据</a> · <a href="../../docs/human405-v189-first2-result-20261105.md">轮末实录</a></td></tr>
+
+<tr><th scope="row">第三轮选收入牌<span class="version">V253 → V256</span></th>
+<td>旧版把 B101 插成抽牌收入。新版改插 DLC32 拿钱，保留 B101 的打出用途，实际用 B101 做了橙 1 科研。</td>
+<td><span class="case save">教师第三轮存档</span><span class="delta">72 → 87 分，4 → 6 科技</span>；永久钱／电／牌 6／3／2 → 7／2／1。多 15 分包含后来不同的登陆等行动。<a href="../../docs/human405-third-round-v256-result-20261106.md">首个分叉与结果</a></td></tr>
+
+<tr><th scope="row">第二轮研究<span class="version">V323，输入 #104</span></th>
+<td>蓝 1 可立刻多拿 3 分；蓝 3 可取已公开的 B48。新版实际选蓝 3，后面确实把 B48 插成永久电。这张牌的用途让蓝 3 以 98 对 97.75 V 胜出。</td>
+<td><span class="case">标准开局</span>相比 V189 的整条第二轮路线，<span class="delta">50 → 48 分，4 → 3 科技，永久钱／电 7／2 → 6／3</span>。这里是用即期收益换电收入；整轮差也包含其他改选。<a href="../../docs/human405-v323-autonomous-first3-20261107.md">两个候选与账本</a></td></tr>
+
+<tr><th scope="row">第三轮扫描时机<span class="version">V372 → V375，输入 #182</span></th>
+<td>旧版先结算 DLC9；新版用两张牌换电，先扫赢红扇区，再兑现任务，随后研究紫 1、蓝 4 和蓝 1。</td>
+<td><span class="case">标准开局</span>前 181 步一致。第三轮 <span class="delta">98 → 101 分，5 → 6 科技</span>；永久钱／电仍为 6／3。V398 恢复了这条六科技路线。<a href="../../docs/human405-v375-autonomous-first3-20261107.md">实跑分叉</a> · <a href="../../docs/human405-v398-autonomous-first3-20261108.md">V398</a></td></tr>
+
+<tr><th scope="row">第三轮科研与扫描筹资<span class="version">V398 → V445，输入 #179</span></th>
+<td>旧版先打阿米巴 3 扫描。新版逐笔扣同一份钱、电、数据和牌：先打阿米巴 0，紫 1 补数据，插钱收入、蓝槽补电和取已知电收入牌，再扫描、研究橙 1 并发射。新抽的牌不提前拿来付款。</td>
+<td><span class="case">标准开局</span>前 178 步一致。阿米巴 0 以 176.5 对 170.5 V 改选。第三轮 <span class="delta">101 → 116 分，永久钱／电 6／3 → 7／4</span>，科技仍为 6。换暗牌仍选阿米巴 0，但只收 115 分、3 电收入。<a href="../../docs/human405-v445-known-launch-admission-20261108.md">付款与换牌验证</a> · <a href="../../docs/human405-v445-autonomous-first3-20261108.md">标准结果</a></td></tr>
+
+<tr><th scope="row">第三轮电脑放置<span class="version">V654 → V655，V661 保持</span></th>
+<td>旧版发射后马上填电脑第 5、6 格，漏掉第 5 格的蓝列奖励。新版在蓝 1 付得起且延迟没有额外损失时，先装蓝 1，再放原来两格，仍取同一现金蓝槽。</td>
+<td><span class="case">标准开局</span><span class="delta">116 → 118 盘面分，162 → 164 已有资产分</span>。科技、收入、钱包、手牌、数据和探测器都相同。这 2 分可直接归因于顺序。<a href="../../docs/human405-v655-blue-column-timing-20261109.md">只改顺序的对照</a> · <a href="../../docs/human405-v661-autonomous-first3-20261109.md">V661 实录</a></td></tr>
+
+<tr><th scope="row">第四轮免费移动<span class="version">提交 4dc3d8f</span></th>
+<td>旧版只有免费一步能直接到地球才移动。新版先确认公开牌和手里已知牌能补两电，就先走紫 4 免费的一格，再为剩下两格付款。</td>
+<td><span class="case save">同一第四轮存档</span>自主终局 <span class="delta">227 → 233</span>：交付多 4 板块分，奖励数据再多 2 盘面分。<a href="../../docs/human405-v661-r4-funded-shipment-20261110.md">付款和逐步复放</a></td></tr>
+
+<tr><th scope="row">第四轮结束行动<span class="version">提交 f2c5006</span></th>
+<td>旧版最后一轮 PASS 后还给钱、电、牌和宣传加未来用途分。新版在正式 PASS 后只保留规则计分；AI 改为先用牌角标取数据，再放蓝槽、扫描和分析。</td>
+<td><span class="case save">免电分析 08 号</span>PASS 估值 89.5 → 77 V；同存档终局 <span class="delta">77 → 91</span>，其中盘面多 9 分、终局结算多 5 分。原 20 局的 77 分保持。<a href="../../docs/human405-v661-r4-final-pass-20261110.md">估值拆分及续跑</a></td></tr>
+
+<tr><th scope="row">第三轮留收入牌<span class="version">提交 8bd4208</span></th>
+<td>旧版把阿米巴 3 和阿米巴 1 换 1 钱。新版改打阿米巴 3 拿黄痕迹，保留阿米巴 1；把确定能支付的紫 1、免电分析、插钱收入和扫描计入同一个候选。</td>
+<td><span class="case save">物种已揭示</span>同根改选，<span class="delta">97／130 → 107／147 或 117／165</span>（盘面／已有资产分），四种牌序均改善；其中两组有在运化石。根仍用 77 次原生输入。正式开局在更早处没有改选。<a href="../../docs/human405-v661-r3-retained-region-income-20261110.md">四组对照</a></td></tr>
+
+<tr><th scope="row">第三轮化石返程<span class="version">提交 46cd8a68、15fd2b92、dceaf83d</span></th>
+<td>原来留到下轮；现在手持化石 07 时能用蓝 2 补电、两个移动角标和最后 1 电当轮送达，再用奖励数据插电。后续又修了更早的取舍：已揭示化石按送达后能否付扫描费破同分，领完 B117 则为可付款路线保留 1 数据，暂缓用蓝 3 拿牌。</td>
+<td><span class="case save">两个不同存档</span>已持 07：<span class="delta">119／167 → 125／173</span>，永久电 3 → 4。更早的橙 1 前存档：<span class="delta">117／165 → 123／171</span>，改选 06 并送达，永久电 3 → 4，少 1 科技。固定同一张保留牌，后者到第四轮两个白席回合后为 156／223，旧版 129／177；未跑终局。<a href="../../docs/human405-v661-r3-current-turn-delivery-20261110.md">持有 07</a> · <a href="../../docs/human405-v661-r3-blue-data-reserve-20261110.md">更早接管</a></td></tr>
 </tbody>
 </table>
 </div>
 <details>
-<summary>展开：没改选的性能修复，以及没采用的路线</summary>
+<summary>其他改动：执行修复与提速</summary>
 <ul>
-<li><b>固定计划恢复：</b>已经选定的火星路线，存档恢复后不再无故转飞金星；逐输入恢复 12 步兑现同一条 60 V 路线。<a href="../../docs/ai-winning-income-recovery-20261031.md">恢复对照</a></li>
-<li><b>结算复用：</b>第三轮 B9 冷根 345 → 197 次，仍选 163 V 的扫描；第四轮正式接续最重单点 1,361 → 197 次，含前三轮 19.133 → 16.544 秒，仍是 216 分。<a href="../../docs/human405-v661-r3-b9-blue-reuse-20261110.md">B9 对照</a> · <a href="../../docs/human405-v661-r4-guarded-full-20261110.md">第四轮接续</a></li>
-<li><b>未采用一律揭示第二物种：</b>晚揭示原种子虫族到 127／175，但少 1 永久电；另六种的已有资产分都低于正式线的 164。揭示前无从知道是哪种。<a href="../../docs/human405-v661-r3-reveal-energy-20261110.md">七种同存档对照</a></li>
+<li><b>已选火星路线不再在存档恢复后转飞金星。</b>逐输入重建 12 次，维持同一条 60 V 路线。<a href="../../docs/ai-winning-income-recovery-20261031.md">恢复证据</a></li>
+<li><b>第四轮复用确定结算。</b>正式接续最重单点由 1,361 降到 197 次原生输入，记录总耗时 19.133 → 16.544 秒；终局均为 216。<a href="../../docs/human405-v661-r4-guarded-full-20261110.md">正式接续</a></li>
+<li><b>第三轮复用放数据、扫描和结束回合的固定结算。</b>第 136 步由 130 降到 79 次原生输入，89 个正式冷根的首选和候选估值不变。另一个 51 分第二轮结转的扫描分支由 417 降到 256 次，随后自主走到 103 分；这条是历史变体。<a href="../../docs/human405-v661-r3-second-scan-funding-20261110.md">原生输入与搜索图对照</a></li>
+<li><b>修复阿米巴空奖励菜单。</b>同一教师第四轮存档终于可以完成，得到 264。修复前该局未完赛，因而没有可以计算的策略增分。<a href="../../docs/human405-v661-r4-teacher-retention-20261110.md">故障前存档与接续</a></li>
 </ul>
 </details>
-<p class="meta">V 是当时的决策估值，不是得分。已有资产分是把当时已拿到的资产按计分规则折算，不预测第四轮。固定存档试验均从指定分叉续跑，分差不能相加。</p>
 </section>
 
-<footer><a href="ai-search-v661-r4-candidate-20261110/e871fddd.9f2cbc45.full.action-log.html">216 分逐行动复盘</a> · <a href="ai-search-v661-free-analyze-random20-20261109/summary-20261109-v2.html">20 局免电分析原报告</a> · <a href="seti-v661-strategy-overview-20261110-v1.html">当前策略概览</a> · <a href="seti-v661-alignment-changelog-20261110-v2.html">版本索引</a></footer>
-</main></body>
+<section aria-labelledby="scores">
+<h2 id="scores">成绩账本</h2>
+<div class="wrap" role="region" aria-label="按起点区分的成绩" tabindex="0">
+<table class="ledger">
+<thead><tr><th scope="col">口径</th><th scope="col">结果</th></tr></thead>
+<tbody>
+<tr><th scope="row">相同开局 · 第三轮盘面</th><td><span class="delta">90 → 96 → 98 → 101 → 116 → 118</span>（V323、V371、V372、V375、V445、V661）。这几版首两轮均为 15／48；含多项迭代。<a href="../../docs/human405-v323-autonomous-first3-20261107.md">90 分</a> · <a href="../../docs/human405-v371-autonomous-first3-20261107.md">96 分</a> · <a href="../../docs/human405-v372-autonomous-first3-20261107.md">98 分</a> · <a href="../../docs/human405-v661-autonomous-first3-20261109.md">118 分</a></td></tr>
+<tr><th scope="row">V661 对教师 · 第三轮资产</th><td>盘面 <span class="delta">118／105</span>，已有资产 <span class="delta">164／162</span>。同为 6 科技、永久钱／电 7／4，科技种类不同。AI 多 1 永久抽牌，但少 3 手牌、3 池数据、2 蓝槽数据、4 宣传和一枚在运化石。<a href="../../docs/human405-v661-autonomous-first3-20261109.md">资产对照</a></td></tr>
+<tr><th scope="row">相同开局 · 完整终局</th><td><span class="delta">120 → 216</span>（V189 → V661）。216 = 151 盘面＋59 板块＋6 卡牌。<a href="ai-search-v189-white-full-20261105/db594a2e.1609bf50.full.action-log.html">V189 复盘</a> · <a href="ai-search-v661-r4-candidate-20261110/e871fddd.9f2cbc45.full.action-log.html">216 分复盘</a></td></tr>
+<tr><th scope="row">教师第四轮同一起点 · 终局</th><td><span class="delta">AI 264，教师 388</span>。差 124，拆为盘面 67、板块 39、卡牌 18。264 继承的是教师前三轮资产，和 216 使用不同起点；405 是历史手打分。<a href="../../docs/human405-v661-r4-teacher-retention-20261110.md">同起点对照</a></td></tr>
+</tbody>
+</table>
+</div>
+<p class="quiet">标准开局沿用同一 23 个输入；白席自主，其他三席仅 PASS 或做必选。轮末取 PASS 选牌和下一轮收入前。V 是决策估值；已有资产分按已获得资产折算，不预测后续回合。</p>
+</section>
+<footer><a href="ai-search-v661-free-analyze-random20-20261109/summary-20261109-v2.html">20 局免电分析报告</a> · <a href="seti-v661-strategy-overview-20261110-v1.html">策略概览</a></footer>
+</main>
+</body>
 </html>
