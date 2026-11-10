@@ -1,0 +1,78 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -320,6 +320,7 @@
+     let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false, rankKnownFossilTraces = false;
+     let localSpecs=new WeakMap();
+     let resourceSpecs = new WeakMap();
++    let fixedDataFirstSteps = new WeakMap();
+     const resolvedPublicAnalysis = new WeakSet();
+     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
+     let cardPickRootStats = cardPickPlanner.getDiagnostics();
+@@ -2138,9 +2139,9 @@
+       return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
+     }
+ 
+-    function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
+-
+-    function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;rankKnownFossilTraces=options.rankKnownFossilTraces===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
++    function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();fixedDataFirstSteps=new WeakMap();clearPrefixGraph(); }
++
++    function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;rankKnownFossilTraces=options.rankKnownFossilTraces===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();fixedDataFirstSteps=new WeakMap();}
+     const chongTaskPeekBoundaries = new WeakMap(), chongDirectClaims = new Map();
+     function chongClaimKey(stored, cardId) {
+       // Queue identity still governs executable nodes. This key is only for
+@@ -3319,8 +3320,14 @@
+           if(first.resourceBlueSlot)Object.assign(op,{resourceBlueSlot:first.resourceBlueSlot,finalResourceBlue:first.finalResourceBlue});
+         }
+         const step=resourceStep(node,goal,op);
+-        if(step.actionId)plans.push({id:goal.id,goal,operation:op,firstActionId:step.actionId,mode:"greedy",reason:step.reason});
+-        else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:goal.id+":"+id,goal,operation:op,firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
++        if(step.actionId){
++          const plan={id:goal.id,goal,operation:op,firstActionId:step.actionId,mode:"greedy",reason:step.reason};
++          // A data plan starts with the choice already selected on this
++          // exact native node. Later steps still query their own current menu.
++          if(node.status==="stable"&&["blue-data","income","computer-prefix"].includes(goal.kind))
++            fixedDataFirstSteps.set(plan,{node,step});
++          plans.push(plan);
++        }else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:goal.id+":"+id,goal,operation:op,firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
+       }
+       if(node.status==="decision"&&!plans.length){
+         const pending=session?.queue?.[0]?.payload?.decisionContext;
+@@ -3501,6 +3508,8 @@
+     function expandResourcePlan(node,plan,hasCapacity) {
+       const prefixes=[],preparations=[],sharedPath=[],sharedStates=[];let newSubmissions=0;
+       let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId,targetReached=false;
++      const first=fixedDataFirstSteps.get(plan);
++      const firstStep=first?.node===node?first.step:null;
+       const work=(extra={})=>({newSubmissions,sharedStates,...extra});
+       const finish=(extra={})=>({complete:true,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal,sharedPath,sharedStates,newSubmissions,...extra});
+       function stop(reason){return{...finish(),complete:false,stopReason:reason};}
+@@ -3519,7 +3528,8 @@
+         const spec=fixedCardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
+         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
+         const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup","held-satellite-travel"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+-          :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);
++          :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}
++            :forced&&firstStep||resourceStep(current,plan.goal,operation);
+         if(step.kind==="complete"){
+           if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);current=resourceView(current,null);sharedStates.push(current);contexts++;}
+           return finish({goalStatus:"completed"});
+@@ -7210,6 +7220,7 @@
+       cardPickPlanning = false;
+       resourcePlanning = false;finalMarkPlanning=false;scanPlanning=false;localSpecs=new WeakMap();
+       resourceSpecs = new WeakMap();
++      fixedDataFirstSteps = new WeakMap();
+       cardPickSpecs = new WeakMap();
+       envelopeCardSpecs = new WeakMap();
+       envelopeCompanyIntents = new WeakMap();
+--- a/randomizer/index.html
++++ b/randomizer/index.html
+@@ -563,7 +563,7 @@
+   <script src="./game/ai/card-pick-planning.js?fixed-known-chong-v431"></script>
+   <script src="./game/ai/local-decision-plans.js?native-preview-copy-20261110"></script>
+   <script src="./game/ai/funded-movement-tail.js?lean-native-path-v315"></script>
+-  <script src="./game/ai/analysis-port.js?native-preview-copy-20261110"></script>
++  <script src="./game/ai/analysis-port.js?fixed-data-first-step-20261110"></script>
+   <script src="./game/ai/search-agent.js?known-satellite-after-income-20261110"></script>
+   <script src="./game/production-composition.js?v=production-composition-v8"></script>
+   <script src="./game/production-kernel.js?static-occupancy-v317"></script>

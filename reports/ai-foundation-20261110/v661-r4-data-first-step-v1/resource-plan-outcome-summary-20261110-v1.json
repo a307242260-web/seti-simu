@@ -1,0 +1,1066 @@
+{
+  "status": "diagnostic-and-unadmitted-candidate",
+  "productionAdmission": false,
+  "carryForward": false,
+  "newFullGames": 0,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "allPlans": 750,
+  "planAudit": {
+    "official": {
+      "dataEdgeLocalValueComparison": {
+        "all/root": {
+          "logicalInputs": 3,
+          "plans": 1
+        },
+        "all/shares-best-value": {
+          "logicalInputs": 176,
+          "plans": 60
+        },
+        "all/sole-alternative": {
+          "logicalInputs": 202,
+          "plans": 101
+        },
+        "all/strictly-lower": {
+          "logicalInputs": 8,
+          "plans": 2
+        },
+        "blue-data/root": {
+          "logicalInputs": 3,
+          "plans": 1
+        },
+        "blue-data/shares-best-value": {
+          "logicalInputs": 176,
+          "plans": 60
+        },
+        "blue-data/sole-alternative": {
+          "logicalInputs": 54,
+          "plans": 27
+        },
+        "blue-data/strictly-lower": {
+          "logicalInputs": 8,
+          "plans": 2
+        },
+        "computer-prefix/sole-alternative": {
+          "logicalInputs": 148,
+          "plans": 74
+        }
+      },
+      "dataEdgeSourceVsRootBest": {
+        "all/below-root-best": {
+          "logicalInputs": 369,
+          "plans": 156,
+          "soleLogicalInputs": 198,
+          "solePlans": 99
+        },
+        "all/can-match-root-best": {
+          "logicalInputs": 17,
+          "plans": 7,
+          "soleLogicalInputs": 4,
+          "solePlans": 2
+        },
+        "blue-data/below-root-best": {
+          "logicalInputs": 225,
+          "plans": 84,
+          "soleLogicalInputs": 54,
+          "solePlans": 27
+        },
+        "blue-data/can-match-root-best": {
+          "logicalInputs": 13,
+          "plans": 5
+        },
+        "computer-prefix/below-root-best": {
+          "logicalInputs": 144,
+          "plans": 72,
+          "soleLogicalInputs": 144,
+          "solePlans": 72
+        },
+        "computer-prefix/can-match-root-best": {
+          "logicalInputs": 4,
+          "plans": 2,
+          "soleLogicalInputs": 4,
+          "solePlans": 2
+        }
+      },
+      "optimisticOfflineOnly": {
+        "reachableLinesAfter": 533,
+        "reachableLinesBefore": 535,
+        "strictCuts": 2,
+        "uniqueResourcePrefixEdgesAfter": 657,
+        "uniqueResourcePrefixEdgesBefore": 664
+      },
+      "outcomes": {
+        "boundary": {
+          "logicalInputs": 8,
+          "plans": 2
+        },
+        "completed": {
+          "logicalInputs": 765,
+          "plans": 233
+        },
+        "total": {
+          "logicalInputs": 773,
+          "plans": 235
+        }
+      },
+      "perKind": {
+        "analyze": 2,
+        "blue-data": 90,
+        "computer-prefix": 74,
+        "route": 5,
+        "scan-flow": 64
+      }
+    },
+    "r3-136": {
+      "dataEdgeLocalValueComparison": {},
+      "dataEdgeSourceVsRootBest": {},
+      "optimisticOfflineOnly": {
+        "reachableLinesAfter": 214,
+        "reachableLinesBefore": 214,
+        "strictCuts": 0,
+        "uniqueResourcePrefixEdgesAfter": 112,
+        "uniqueResourcePrefixEdgesBefore": 112
+      },
+      "outcomes": {
+        "completed": {
+          "logicalInputs": 168,
+          "plans": 42
+        },
+        "purpose-effect-native-choice": {
+          "logicalInputs": 10,
+          "plans": 2
+        },
+        "total": {
+          "logicalInputs": 178,
+          "plans": 44
+        }
+      },
+      "perKind": {
+        "effect-purpose": 8,
+        "research_tech": 18,
+        "route": 4,
+        "scan-flow": 14
+      }
+    },
+    "satellite": {
+      "dataEdgeLocalValueComparison": {
+        "all/root": {
+          "logicalInputs": 3,
+          "plans": 1
+        },
+        "all/shares-best-value": {
+          "logicalInputs": 68,
+          "plans": 10
+        },
+        "all/strictly-lower": {
+          "logicalInputs": 12,
+          "plans": 4
+        },
+        "blue-data/shares-best-value": {
+          "logicalInputs": 68,
+          "plans": 10
+        },
+        "blue-data/strictly-lower": {
+          "logicalInputs": 12,
+          "plans": 4
+        },
+        "income/root": {
+          "logicalInputs": 3,
+          "plans": 1
+        }
+      },
+      "dataEdgeSourceVsRootBest": {
+        "all/below-root-best": {
+          "logicalInputs": 80,
+          "plans": 14
+        },
+        "blue-data/below-root-best": {
+          "logicalInputs": 80,
+          "plans": 14
+        }
+      },
+      "optimisticOfflineOnly": {
+        "reachableLinesAfter": 1276,
+        "reachableLinesBefore": 1280,
+        "strictCuts": 4,
+        "uniqueResourcePrefixEdgesAfter": 262,
+        "uniqueResourcePrefixEdgesBefore": 274
+      },
+      "outcomes": {
+        "boundary": {
+          "logicalInputs": 12,
+          "plans": 4
+        },
+        "completed": {
+          "logicalInputs": 285,
+          "plans": 97
+        },
+        "purpose-effect-native-choice": {
+          "logicalInputs": 6,
+          "plans": 4
+        },
+        "total": {
+          "logicalInputs": 303,
+          "plans": 105
+        }
+      },
+      "perKind": {
+        "analyze": 1,
+        "blue-data": 14,
+        "effect-purpose": 14,
+        "income": 1,
+        "research_tech": 6,
+        "route": 3,
+        "scan-flow": 66
+      }
+    },
+    "teacher272": {
+      "dataEdgeLocalValueComparison": {
+        "all/root": {
+          "logicalInputs": 9,
+          "plans": 2
+        },
+        "all/shares-best-value": {
+          "logicalInputs": 367,
+          "plans": 152
+        },
+        "all/sole-alternative": {
+          "logicalInputs": 459,
+          "plans": 84
+        },
+        "all/strictly-lower": {
+          "logicalInputs": 59,
+          "plans": 15
+        },
+        "blue-data/root": {
+          "logicalInputs": 2,
+          "plans": 1
+        },
+        "blue-data/shares-best-value": {
+          "logicalInputs": 367,
+          "plans": 152
+        },
+        "blue-data/strictly-lower": {
+          "logicalInputs": 52,
+          "plans": 14
+        },
+        "computer-prefix/sole-alternative": {
+          "logicalInputs": 104,
+          "plans": 31
+        },
+        "income/root": {
+          "logicalInputs": 7,
+          "plans": 1
+        },
+        "income/sole-alternative": {
+          "logicalInputs": 355,
+          "plans": 53
+        },
+        "income/strictly-lower": {
+          "logicalInputs": 7,
+          "plans": 1
+        }
+      },
+      "dataEdgeSourceVsRootBest": {
+        "all/below-root-best": {
+          "logicalInputs": 872,
+          "plans": 248,
+          "soleLogicalInputs": 455,
+          "solePlans": 83
+        },
+        "all/can-match-root-best": {
+          "logicalInputs": 13,
+          "plans": 3,
+          "soleLogicalInputs": 4,
+          "solePlans": 1
+        },
+        "blue-data/below-root-best": {
+          "logicalInputs": 417,
+          "plans": 165
+        },
+        "blue-data/can-match-root-best": {
+          "logicalInputs": 2,
+          "plans": 1
+        },
+        "computer-prefix/below-root-best": {
+          "logicalInputs": 100,
+          "plans": 30,
+          "soleLogicalInputs": 100,
+          "solePlans": 30
+        },
+        "computer-prefix/can-match-root-best": {
+          "logicalInputs": 4,
+          "plans": 1,
+          "soleLogicalInputs": 4,
+          "solePlans": 1
+        },
+        "income/below-root-best": {
+          "logicalInputs": 355,
+          "plans": 53,
+          "soleLogicalInputs": 355,
+          "solePlans": 53
+        },
+        "income/can-match-root-best": {
+          "logicalInputs": 7,
+          "plans": 1
+        }
+      },
+      "optimisticOfflineOnly": {
+        "reachableLinesAfter": 673,
+        "reachableLinesBefore": 712,
+        "strictCuts": 15,
+        "uniqueResourcePrefixEdgesAfter": 1120,
+        "uniqueResourcePrefixEdgesBefore": 1197
+      },
+      "outcomes": {
+        "boundary": {
+          "logicalInputs": 30,
+          "plans": 3
+        },
+        "completed": {
+          "logicalInputs": 1216,
+          "plans": 347
+        },
+        "purpose-effect-native-choice": {
+          "logicalInputs": 24,
+          "plans": 16
+        },
+        "total": {
+          "logicalInputs": 1270,
+          "plans": 366
+        }
+      },
+      "perKind": {
+        "analyze": 4,
+        "blue-data": 167,
+        "computer-prefix": 31,
+        "effect-purpose": 56,
+        "income": 55,
+        "research_tech": 24,
+        "route": 4,
+        "satellite-scan-setup": 1,
+        "scan-flow": 24
+      }
+    }
+  },
+  "teacherIncome": {
+    "incomeKinds": {
+      "energy": 54,
+      "handSize": 1
+    },
+    "allHaveLiveChongTransport": true
+  },
+  "coldSamples": {
+    "first-step": {
+      "teacher272": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 1043.494708,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 1027.082,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 2,
+            "ms": 1020.6959590000001,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 2,
+            "ms": 1044.0135830000002,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 3,
+            "ms": 1053.209166,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 3,
+            "ms": 1027.349792,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 4,
+            "ms": 1021.3350829999999,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 4,
+            "ms": 1089.989833,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 5,
+            "ms": 1067.600459,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 5,
+            "ms": 1040.5110829999999,
+            "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+            "action": "place_data:8fd12fd3",
+            "value": 223,
+            "nodes": 712,
+            "native": 160,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 1053.209166,
+          "candidate": 1027.082
+        }
+      },
+      "satellite": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 1193.606875,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 1203.4742079999999,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 2,
+            "ms": 1197.612292,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 2,
+            "ms": 1193.939625,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 3,
+            "ms": 1205.943167,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 3,
+            "ms": 1217.231667,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 4,
+            "ms": 1192.9515000000001,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 4,
+            "ms": 1213.550875,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 5,
+            "ms": 1225.6779999999999,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 5,
+            "ms": 1210.646,
+            "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+            "action": "play_card:f1918668",
+            "value": 227,
+            "nodes": 1280,
+            "native": 205,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 1205.943167,
+          "candidate": 1203.4742079999999
+        }
+      },
+      "official": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 606.03175,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 601.659292,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 606.03175,
+          "candidate": 601.659292
+        }
+      },
+      "late": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 421.70958300000007,
+            "graph": "392c60ace24e78550158af3aaad48ff7f72d8af3bd3e64838b4ccf3322bc3572",
+            "action": "analyze:a5629aa3",
+            "value": 266,
+            "nodes": 342,
+            "native": 222,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 425.771625,
+            "graph": "392c60ace24e78550158af3aaad48ff7f72d8af3bd3e64838b4ccf3322bc3572",
+            "action": "analyze:a5629aa3",
+            "value": 266,
+            "nodes": 342,
+            "native": 222,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 421.70958300000007,
+          "candidate": 425.771625
+        }
+      },
+      "r3-172": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 227.93474999999998,
+            "graph": "a37c7d93725d4771ef7dadf69865477bbaa1f25b904f01e60995ba03b343541f",
+            "action": "play_card:38489727",
+            "value": 151,
+            "nodes": 110,
+            "native": 99,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 235.39212500000002,
+            "graph": "a37c7d93725d4771ef7dadf69865477bbaa1f25b904f01e60995ba03b343541f",
+            "action": "play_card:38489727",
+            "value": 151,
+            "nodes": 110,
+            "native": 99,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 227.93474999999998,
+          "candidate": 235.39212500000002
+        }
+      },
+      "r3-136": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 312.60195799999997,
+            "graph": "d4c1fc61d9f70ee63689275faee3ab3ddd7ec1480d60c3ffcb9a94deaaa3cdc7",
+            "action": "quick_trade:f385e2ac",
+            "value": 141.5,
+            "nodes": 214,
+            "native": 224,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 314.161666,
+            "graph": "d4c1fc61d9f70ee63689275faee3ab3ddd7ec1480d60c3ffcb9a94deaaa3cdc7",
+            "action": "quick_trade:f385e2ac",
+            "value": 141.5,
+            "nodes": 214,
+            "native": 224,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 312.60195799999997,
+          "candidate": 314.161666
+        }
+      },
+      "held0": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 181.96933299999998,
+            "graph": "6965950b59f812d34e6dc819b2f235211c12176abde48a9faded2b1ccf32c09d",
+            "action": "quick_trade:f385e2ac",
+            "value": 240,
+            "nodes": 53,
+            "native": 79,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 187.01099999999997,
+            "graph": "6965950b59f812d34e6dc819b2f235211c12176abde48a9faded2b1ccf32c09d",
+            "action": "quick_trade:f385e2ac",
+            "value": 240,
+            "nodes": 53,
+            "native": 79,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 181.96933299999998,
+          "candidate": 187.01099999999997
+        }
+      },
+      "held1": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 206.046,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 222.11404100000001,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 206.046,
+          "candidate": 222.11404100000001
+        }
+      }
+    },
+    "control": {
+      "official": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 618.773041,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 624.8798750000001,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 2,
+            "ms": 611.529083,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 2,
+            "ms": 604.532208,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 3,
+            "ms": 599.618292,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 3,
+            "ms": 606.500125,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 4,
+            "ms": 604.177042,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 4,
+            "ms": 601.430708,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 5,
+            "ms": 601.2530419999999,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 5,
+            "ms": 691.12,
+            "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+            "action": "industry:e887dc52",
+            "value": 205.5,
+            "nodes": 535,
+            "native": 165,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 601.430708,
+          "candidate": 611.529083
+        }
+      },
+      "held1": {
+        "samples": [
+          {
+            "variant": "baseline",
+            "sample": 1,
+            "ms": 211.638333,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 1,
+            "ms": 199.126083,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 2,
+            "ms": 188.613875,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 2,
+            "ms": 184.90020800000002,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 3,
+            "ms": 196.84154199999998,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 3,
+            "ms": 188.150417,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 4,
+            "ms": 197.694667,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 4,
+            "ms": 189.17337499999996,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "baseline",
+            "sample": 5,
+            "ms": 192.066459,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          },
+          {
+            "variant": "candidate",
+            "sample": 5,
+            "ms": 189.03400000000002,
+            "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+            "action": "quick_trade:a39c1a77",
+            "value": 240,
+            "nodes": 50,
+            "native": 81,
+            "complete": true
+          }
+        ],
+        "sameGraph": true,
+        "medians": {
+          "baseline": 192.066459,
+          "candidate": 189.03400000000002
+        }
+      }
+    }
+  },
+  "cachedFirstSteps": {
+    "r3-136": {
+      "hits": 0,
+      "rootMismatch": 0,
+      "otherPlans": 44,
+      "counts": {}
+    },
+    "teacher272": {
+      "hits": 253,
+      "rootMismatch": 0,
+      "otherPlans": 113,
+      "counts": {
+        "blue-data": 167,
+        "income": 55,
+        "computer-prefix": 31
+      }
+    },
+    "official": {
+      "hits": 164,
+      "rootMismatch": 0,
+      "otherPlans": 71,
+      "counts": {
+        "blue-data": 90,
+        "computer-prefix": 74
+      }
+    },
+    "satellite": {
+      "hits": 15,
+      "rootMismatch": 0,
+      "otherPlans": 90,
+      "counts": {
+        "income": 1,
+        "blue-data": 14
+      }
+    }
+  },
+  "cachedFirstStepTotal": 432,
+  "nodeTests": 6,
+  "browserSmokes": 2,
+  "artifactsSha256": {
+    "fixed-data-first-step-unadmitted-20261110-v1.patch": "69389a8a3e71a49ccfa04223eb919d2563e46eb8742955339ea5b7107435400a",
+    "resource-plan-outcome-evidence-20261110-v1.tar.gz": "07b8f85b0ace3efafc4263114dc1c899eb5d543caff9bbb64050f5c552aae230"
+  }
+}
