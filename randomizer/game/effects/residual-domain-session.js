@@ -64,6 +64,9 @@
     stateSequences,
     solar,
     rockets,
+    (typeof module === "object" && module.exports)
+      ? require("../state/state-store").copyForkData
+      : value => root.SetiStateStore.copyForkData(value),
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiResidualDomainSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -72,6 +75,7 @@
   cardEffects, cardTaskState, cardPlayDomain, speciesModules, stateSequences,
   solar,
   rockets,
+  copyForkData,
 ) {
   "use strict";
 
@@ -1735,8 +1739,8 @@
       ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
       ||owner.reservedCards.some(c=>!knownCards.has(c.id))
       ||!science.isPlainPinkTrace(source,selected,allowRegion,allowCard))return null;
-    const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:clone(owner.reservedCards)};
-    const state={...source,meta:{...source.meta,sequences:{...source.meta.sequences}},aliens:clone(source.aliens),
+    const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:copyForkData(owner.reservedCards)};
+    const state={...source,meta:{...source.meta,sequences:{...source.meta.sequences}},aliens:copyForkData(source.aliens),
       players:{...source.players,players:source.players.players.map(p=>p===owner?player:p)}};
     const placed=science.applyPlainPinkTrace(state,head,selected,allowRegion,allowCard);
     if(!placed)return null;
@@ -2150,8 +2154,11 @@
         const slot=aliens.getAlienSlot(root.aliens,id);
         return slot&&!slot.revealed&&aliens.isAlienReadyToReveal(slot);
       })) return null;
-    const player={...owner,reservedCards:clone(owner.reservedCards)};
-    const state={...root,turn:{...turn},aliens:clone(root.aliens),finalScoring:clone(root.finalScoring),
+    // This disposable preview owns the same writable slices as before.
+    // The fork copier preserves plain Native data and falls back to the
+    // platform clone for any unsupported input.
+    const player={...owner,reservedCards:copyForkData(owner.reservedCards)};
+    const state={...root,turn:{...turn},aliens:copyForkData(root.aliens),finalScoring:copyForkData(root.finalScoring),
       players:{...root.players,players:root.players.players.map(p=>p===owner?player:p)}};
     if (cardEffects.collectMatchingTriggers(player,{type:"end_turn_handoffs_started",playerId:ownerId}).length) return null;
     const data={roundNumber:turn.roundNumber,turnNumber:turn.turnNumber,didPass:false};
