@@ -1,0 +1,284 @@
+{
+  "baseCommit": "ecbd6e86fda6ffa293f4f1d61079c06712147644",
+  "nodeVersion": "22.22.0",
+  "limits": {
+    "native": 256,
+    "ms": 600,
+    "gameMs": 180000
+  },
+  "copyRuns": {
+    "teacher272": {
+      "baseline": {
+        "ms": [
+          1038.988,
+          1044.514,
+          1024.367
+        ],
+        "medianMs": 1038.988
+      },
+      "candidate": {
+        "ms": [
+          1037.245,
+          1017.811,
+          1028.063
+        ],
+        "medianMs": 1028.063
+      },
+      "action": "place_data:8fd12fd3",
+      "value": 216.5,
+      "native": 156,
+      "graphNodes": 677,
+      "digest": "f9bb0b74c9aadb87ee41c537df555caa7bcaa93969f2d474ee8d37b18914ead2",
+      "bytes": 2243643,
+      "quietClaims": 4
+    },
+    "satellite": {
+      "baseline": {
+        "ms": [
+          1383.93,
+          1406.574,
+          1377.498
+        ],
+        "medianMs": 1383.93
+      },
+      "candidate": {
+        "ms": [
+          1338.907,
+          1437.976,
+          1349.965
+        ],
+        "medianMs": 1349.965
+      },
+      "action": "place_data:8fd12fd3",
+      "value": 222.5,
+      "native": 251,
+      "graphNodes": 1339,
+      "digest": "10f191d78c54dbe2293ceb40a47126d4d1a4fe8080f4ecacea93f232aa40eca7",
+      "bytes": 3119615,
+      "quietClaims": 255
+    },
+    "official": {
+      "baseline": {
+        "ms": [
+          614.793
+        ],
+        "medianMs": 614.793
+      },
+      "candidate": {
+        "ms": [
+          611.712
+        ],
+        "medianMs": 611.712
+      },
+      "action": "industry:e887dc52",
+      "value": 205.5,
+      "native": 165,
+      "graphNodes": 535,
+      "digest": "a6c35eafcd608b920a27bb7981c5553b41c495fd7ec97158b9607e1219698346",
+      "bytes": 2019008,
+      "quietClaims": 0
+    },
+    "late": {
+      "baseline": {
+        "ms": [
+          421.667
+        ],
+        "medianMs": 421.667
+      },
+      "candidate": {
+        "ms": [
+          428.538
+        ],
+        "medianMs": 428.538
+      },
+      "action": "analyze:a5629aa3",
+      "value": 266,
+      "native": 222,
+      "graphNodes": 342,
+      "digest": "12e555802a4b3e556240dbd76d124f24706258490770bd9ffcada46940522b28",
+      "bytes": 494290,
+      "quietClaims": 0
+    },
+    "r3-172": {
+      "baseline": {
+        "ms": [
+          226.851
+        ],
+        "medianMs": 226.851
+      },
+      "candidate": {
+        "ms": [
+          232.242
+        ],
+        "medianMs": 232.242
+      },
+      "action": "play_card:38489727",
+      "value": 151,
+      "native": 99,
+      "graphNodes": 110,
+      "digest": "2401490d05e2e8e39ea75f2c8794b645dfbf2caf1bb821d7808e5aaff3f1df00",
+      "bytes": 183625,
+      "quietClaims": 0
+    },
+    "r3-136": {
+      "baseline": {
+        "ms": [
+          254.611
+        ],
+        "medianMs": 254.611
+      },
+      "candidate": {
+        "ms": [
+          255.153
+        ],
+        "medianMs": 255.153
+      },
+      "action": "quick_trade:f385e2ac",
+      "value": 141.5,
+      "native": 224,
+      "graphNodes": 214,
+      "digest": "9def6e74d00b731ff8d3bafab72a304f5e3ba381a377b1fafdded92ff95c2c1d",
+      "bytes": 373313,
+      "quietClaims": 0
+    }
+  },
+  "copyAudit": {
+    "teacher272": {
+      "previewQuietSpecifiedScan:p.dataState": 25,
+      "previewQuietSpecifiedScan:p.reservedCards": 25,
+      "previewQuietSpecifiedScan:base.data": 25,
+      "previewQuietSpecifiedScan:base.aliens": 25,
+      "previewForeignTurnAfterQuietHandoffs:state.turn": 265,
+      "previewKnownPositiveTaskSettlement:p.reservedCards": 20,
+      "previewKnownPositiveTaskSettlement:state.aliens": 20
+    },
+    "satellite": {
+      "previewQuietSpecifiedScan:p.dataState": 210,
+      "previewQuietSpecifiedScan:p.reservedCards": 210,
+      "previewQuietSpecifiedScan:base.data": 210,
+      "previewQuietSpecifiedScan:base.aliens": 210,
+      "previewForeignTurnAfterQuietHandoffs:state.turn": 747,
+      "previewKnownPositiveTaskSettlement:p.reservedCards": 512,
+      "previewKnownPositiveTaskSettlement:state.aliens": 512
+    },
+    "late": {
+      "previewQuietSpecifiedScan:p.dataState": 12,
+      "previewQuietSpecifiedScan:p.reservedCards": 12,
+      "previewQuietSpecifiedScan:base.data": 12,
+      "previewQuietSpecifiedScan:base.aliens": 12,
+      "previewForeignTurnAfterQuietHandoffs:state.turn": 35
+    }
+  },
+  "exactCopies": 3099,
+  "scanAudits": {
+    "teacher272": 22,
+    "satellite": 437,
+    "late": 6
+  },
+  "taskAudits": {
+    "teacher272": {
+      "count": 4,
+      "nativeInputs": 16,
+      "masked": 0,
+      "omittedMarkCases": 6,
+      "finite": null,
+      "selected": "place_data:8fd12fd3",
+      "value": 216.5,
+      "rootExact": true
+    },
+    "satellite": {
+      "count": 255,
+      "nativeInputs": 1020,
+      "masked": 141,
+      "omittedMarkCases": 3,
+      "finite": null,
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "rootExact": true
+    }
+  },
+  "taskAndScanInputs": 1501,
+  "swapSplitTrial": {
+    "accepted": false,
+    "runs": {
+      "teacher272": {
+        "candidate": {
+          "ms": [
+            1038.142,
+            1057.068,
+            1035.518
+          ],
+          "medianMs": 1038.142
+        },
+        "candidate-swap-split": {
+          "ms": [
+            1042.347,
+            1052.623,
+            1028.531
+          ],
+          "medianMs": 1042.347
+        },
+        "action": "place_data:8fd12fd3",
+        "value": 216.5,
+        "native": 156,
+        "graphNodes": 677,
+        "digest": "f9bb0b74c9aadb87ee41c537df555caa7bcaa93969f2d474ee8d37b18914ead2",
+        "bytes": 2243643,
+        "quietClaims": 4
+      },
+      "satellite": {
+        "candidate": {
+          "ms": [
+            1361.484,
+            1356.869,
+            1385.28
+          ],
+          "medianMs": 1361.484
+        },
+        "candidate-swap-split": {
+          "ms": [
+            1359.188,
+            1354.073,
+            1358.872
+          ],
+          "medianMs": 1358.872
+        },
+        "action": "place_data:8fd12fd3",
+        "value": 222.5,
+        "native": 251,
+        "graphNodes": 1339,
+        "digest": "10f191d78c54dbe2293ceb40a47126d4d1a4fe8080f4ecacea93f232aa40eca7",
+        "bytes": 3119615,
+        "quietClaims": 255
+      }
+    },
+    "equalQuotes": 5594,
+    "quotesByRoot": {
+      "teacher272": {
+        "portfolios": 2516,
+        "quotes": 3796,
+        "filtered": 1416,
+        "fixedEndpoints": 7811,
+        "variableEndpoints": 4537,
+        "evaluationCallsSaved": 5239
+      },
+      "satellite": {
+        "portfolios": 1953,
+        "quotes": 1458,
+        "filtered": 432,
+        "fixedEndpoints": 941,
+        "variableEndpoints": 452,
+        "evaluationCallsSaved": 625
+      },
+      "late": {
+        "portfolios": 257,
+        "quotes": 340,
+        "filtered": 1,
+        "fixedEndpoints": 1,
+        "variableEndpoints": 0,
+        "evaluationCallsSaved": 3
+      }
+    }
+  },
+  "fullGameRun": false
+}

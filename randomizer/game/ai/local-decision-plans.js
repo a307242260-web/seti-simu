@@ -3,9 +3,10 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens,common?require('../industry/catalog'):root.SetiIndustryCatalog,common?require('../abilities'):root.SetiAbilities,common?require('../turn-flow'):root.SetiTurnFlow,common?require('./probe-capital'):root.SetiProbeCapital);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue,common?require('./income-card-order'):root.SetiIncomeCardOrder,common?require('../tech/resolver'):root.SetiTechResolver,common?require('../tech/catalog'):root.SetiTechCatalog,common?require('../data/placement'):root.SetiDataPlacement,common?require('../aliens'):root.SetiAliens,common?require('../industry/catalog'):root.SetiIndustryCatalog,common?require('../abilities'):root.SetiAbilities,common?require('../turn-flow'):root.SetiTurnFlow,common?require('./probe-capital'):root.SetiProbeCapital,
+  common?require("../state/state-store").copyForkData:root.SetiStateStore.copyForkData);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow,probeCapital){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow,probeCapital,copyForkData){
  'use strict';
  const VERSION='seti-local-mark-and-scan-purpose-v12';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -1621,8 +1622,8 @@
  }
  function previewKnownPositiveTaskSettlement(state,seatId,known,version){
   if(!known)return null;
-  const p=owner(state,seatId), player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},reservedCards:structuredClone(p.reservedCards)};
-  const next={...state,meta:{...state.meta,stateVersion:version},aliens:structuredClone(state.aliens),
+  const p=owner(state,seatId), player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},reservedCards:copyForkData(p.reservedCards)};
+  const next={...state,meta:{...state.meta,stateVersion:version},aliens:copyForkData(state.aliens),
     cards:{...state.cards,drawPileCardIds:[...state.cards.drawPileCardIds],removedFromGameCardIds:[...(state.cards.removedFromGameCardIds||[])]},
     players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
   const applied=residual.settleReadyTaskDirect(next,seatId,known.card.id,known.task.id);
@@ -1721,7 +1722,7 @@
  }
  function previewForeignTurnAfterQuietHandoffs(state,seatId,version,allowSameSeat=false){
   // Only a normal turn handover remains; this cannot begin a round or pass.
-  const next={...state,meta:{...state.meta,stateVersion:version},turn:structuredClone(state.turn)};
+  const next={...state,meta:{...state.meta,stateVersion:version},turn:copyForkData(state.turn)};
   const transition=turnFlow.advanceTurnAfterPlayerAction(next,seatId,{passed:false});
   if(!transition.turnAdvanced||transition.roundAdvanced||transition.gameEnded||!allowSameSeat&&transition.nextPlayerId===seatId)return null;
   const p=owner(next,seatId),following=owner(next,transition.nextPlayerId);

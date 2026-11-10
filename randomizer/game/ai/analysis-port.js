@@ -29,10 +29,11 @@
     common ? require("../aliens/jiuzhe") : root.SetiAlienJiuzhe,
     common ? require("../aliens/chong") : root.SetiAlienChong,
     common ? require("../effects/residual-domain-session") : root.SetiResidualDomainSession,
-    common ? require("../effects/session-runtime") : root.SetiEffectSession);
+    common ? require("../effects/session-runtime") : root.SetiEffectSession,
+    common ? require("../state/state-store").copyForkData : root.SetiStateStore.copyForkData);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring, jiuzhe, chong, residualSession, effectSession) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans, stateValue, fundedMovement, endScoring, jiuzhe, chong, residualSession, effectSession, copyForkData) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -1151,11 +1152,12 @@
       if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded||!owner.mainActionCompleted
         ||owner.passCompletionPending||turn.cardTurnEventBonuses?.length||turn.passedPlayerIds.includes(seatId)
         ||owner.reservedCards.some(c=>!known.has(c.id))||localPlans.hasPendingFossilArrival(base))return null;
+      // Native scan helpers may write these slices; they remain privately owned.
       const playersCopy=base.players.players.map(p=>({...p,resources:{...p.resources},scoreSources:{...p.scoreSources},
-        ...(p===owner?{dataState:structuredClone(p.dataState),reservedCards:structuredClone(p.reservedCards)}:{})}));
+        ...(p===owner?{dataState:copyForkData(p.dataState),reservedCards:copyForkData(p.reservedCards)}:{})}));
       const actor=playersCopy.find(p=>p.id===seatId);
-      const state={...base,meta:{...base.meta,sequences:{...base.meta.sequences}},data:structuredClone(base.data),
-        aliens:structuredClone(base.aliens),players:{...base.players,players:playersCopy},
+      const state={...base,meta:{...base.meta,sequences:{...base.meta.sequences}},data:copyForkData(base.data),
+        aliens:copyForkData(base.aliens),players:{...base.players,players:playersCopy},
         match:{...base.match,cardPlayContext:{...base.match.cardPlayContext}}};
       const journal={...s.journal,events:[...s.journal.events],history:[...s.journal.history],effects:[...s.journal.effects]};
       const scratch={...s,workingState:state,journal,queue:s.queue.slice()};
