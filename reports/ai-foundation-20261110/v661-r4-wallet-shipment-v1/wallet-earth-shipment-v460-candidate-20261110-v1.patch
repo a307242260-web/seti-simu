@@ -1,0 +1,126 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -2695,0 +2696 @@
++      if(goal.kind==="wallet-earth-shipment")return walletEarthShipmentStep(node,stored,state,session,goal);
+@@ -3066,0 +3068,7 @@
++      const walletShipment=node===openedRoot&&!stored.resourceControl&&!stored.intent&&!stored.informationBarrier
++        &&walletEarthShipmentPlan(node,stored,pending);
++      if(walletShipment&&node.status==="decision"){
++        const fixed=freeze({policy:resourceDemand.VERSION,isEquivalence:false,cargoCommittedMovement:true,
++          plans:[walletShipment],retainedActionIds:[],excludedActionIds:node.legalActions.map(a=>a.actionId)});
++        resourceSpecs.set(node,fixed);return fixed;
++      }
+@@ -3309,0 +3318 @@
++      if(walletShipment&&!shipmentPlan)plans.push(walletShipment);
+@@ -3412 +3421 @@
+-      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner||shipmentPlan||satellite);
++      const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner||shipmentPlan||walletShipment||satellite);
+@@ -3487 +3496,4 @@
+-        if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
++        if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status)){
++          if(plan.goal.kind==="wallet-earth-shipment")return invalid("wallet-earth-shipment-unproved-boundary");
++          return finish({goalStatus:"boundary"});
++        }
+@@ -3490 +3502 @@
+-        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
++        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","wallet-earth-shipment","satellite-scan-setup"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+@@ -3497,0 +3510,2 @@
++        if(plan.goal.kind==="wallet-earth-shipment"
++          &&prefixes.length>=2*plan.goal.path.length+plan.goal.cashTrades+1)throw Error("WALLET_EARTH_SHIPMENT_PROGRESS_INVALID");
+@@ -3630 +3644 @@
+-    function knownEarthShipment(state,known){
++    function knownEarthShipment(state,known,walletOnly=false){
+@@ -3634 +3648 @@
+-        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
++        ||!walletOnly&&t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+@@ -3652,0 +3667,82 @@
++    }
++
++    // Route over the public board once, using the wallet as the
++    // reachability bound. Keep one minimum-cost path; never offer directions
++    // or payment combinations as independent search branches.
++    function walletEarthPath(state,cargo,capacity){
++      const {p,ship,from,earth}=cargo,query=rockets.createStaticCoordinateMoveQuery(state.pieces,ship.id);
++      const id=at=>at.x+":"+at.y,frontier=[{at:from,cost:0,path:[]}],seen=new Set();
++      while(frontier.length){
++        frontier.sort((a,b)=>a.cost-b.cost||a.path.length-b.path.length);
++        const {at,cost,path}=frontier.shift(),key=id(at);
++        if(seen.has(key))continue;
++        seen.add(key);
++        if(key===id(earth))return {path,cost};
++        const stepCost=rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,at);
++        if(!Number.isSafeInteger(stepCost)||stepCost<1||cost+stepCost>capacity)continue;
++        for(const {deltaX,deltaY} of rocketAbilities.MOVE_DIRECTIONS){
++          const m=query(at,deltaX,deltaY);
++          if(!m.ok||seen.has(id(m.to)))continue;
++          frontier.push({at:m.to,cost:cost+stepCost,path:[...path,{from:at,to:m.to,deltaX,deltaY,cost:stepCost}]});
++        }
++      }
++      return null;
++    }
++
++    function walletEarthShipmentStep(node,stored,state,session,goal){
++      const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
++      const choose=(test,reason)=>{
++        const a=node.legalActions.find(a=>a.actorId===seatId&&test(a));
++        return a?{kind:"fixed",actionId:a.actionId,reason}:{kind:"infeasible",reason};
++      };
++      if(t.roundNumber!==4||t.currentPlayerId!==seatId||p.passCompletionPending||stored.informationBarrier
++        ||JSON.stringify([t.roundNumber,t.turnNumber,t.actionCycleNumber])!==goal.turn)
++        return {kind:"infeasible",reason:"wallet-earth-shipment-turn-changed"};
++      const job=Object.values(state.aliens.chong?.transportTasksByRocketId||{}).find(x=>x.cardId===goal.cardId&&x.fossilId===goal.fossilId);
++      if(!job){
++        return state.aliens.chong?.fossilsById?.[goal.fossilId]?.taskCompleted
++          ?{kind:"complete",reason:"wallet-earth-shipment-settled"}:{kind:"infeasible",reason:"wallet-earth-shipment-disappeared"};
++      }
++      if(job.delivered){
++        const cargo=localPlans.knownDeliveredCargo({state,seatId,knownCards:knownCards(stored.envelope),knownFossilIds:visibleRootCargo()});
++        if(node.status!=="stable"||!cargo||p.resources.availableData+cargo.rule.dataCount>players.RESOURCE_LIMITS.availableData)
++          return {kind:"infeasible",reason:"wallet-earth-shipment-claim-changed"};
++        return choose(a=>a.family==="complete_task"&&a.target.cardInstanceId===goal.cardId&&a.target.ruleId==="transport",
++          "claim-wallet-funded-earth-shipment");
++      }
++      const at=rockets.getRocketSectorCoordinate(state.pieces.rockets.find(r=>r.id===goal.rocketId&&r.fossilId===goal.fossilId));
++      const step=at&&goal.path.find(s=>s.from.x===at.x&&s.from.y===at.y);
++      if(!step||rocketAbilities.getRequiredMovePointsFromCoordinate(state,p,at)!==step.cost)
++        return {kind:"infeasible",reason:"wallet-earth-shipment-route-changed"};
++      const direction=a=>a?.family==="move"&&a.target.rocketId===goal.rocketId
++        &&a.target.deltaX===step.deltaX&&a.target.deltaY===step.deltaY&&a.payload.requiredMovePoints===step.cost;
++      if(node.status==="stable"){
++        if(p.resources.energy<step.cost)return choose(a=>a.family==="quick_trade"&&a.target.tradeId==="credits-for-energy",
++          "buy-only-the-missing-movement-energy");
++        return choose(direction,"follow-fixed-wallet-funded-earth-route");
++      }
++      const head=session?.queue?.[0];
++      if(!direction(session?.journal?.actions?.[0]?.action)||session.queue.length!==1
++        ||head?.type!=="probe_turn_move_payment"||head.ownerId!==seatId||head.allowQuickActions)
++        return {kind:"infeasible",reason:"wallet-earth-shipment-unexpected-movement-menu"};
++      return choose(a=>a.family==="choose_payment"&&a.target.kind==="move-payment"&&a.target.cardIds.length===0
++        &&a.payload.energyCost===step.cost&&a.payload.requiredMovePoints===step.cost,"pay-exact-earth-movement-with-energy");
++    }
++
++    function walletEarthShipmentPlan(node,stored,session){
++      if(rootObservation.publicState.roundNumber!==4||!knownRootAlienIds.has("虫")
++        ||!rootObservation.publicState.board.rockets.some(r=>r.playerId===seatId&&r.kind==="chong-fossil")
++        ||session&&session.journal?.actions?.[0]?.action.family!=="move")return null;
++      const known=knownCards(stored.envelope),s=session?.baseState?planningState(session.baseState,null,known):readPlanningState(stored);
++      const cargo=knownEarthShipment(s,known,true);
++      if(!cargo||cargo.p.resources.availableData+2>players.RESOURCE_LIMITS.availableData)return null;
++      const {p,job,ship}=cargo,trade=quickTrades.getTradeAction("credits-for-energy"),cash=trade.cost.credits;
++      if(!Number.isSafeInteger(cash)||cash<=0||trade.gain.energy!==1)return null;
++      const route=walletEarthPath(s,cargo,p.resources.energy+Math.floor(p.resources.credits/cash));
++      if(!route?.path.length)return null;
++      const cashTrades=Math.max(0,route.cost-p.resources.energy),id="cargo:wallet:"+job.cardId;
++      const goal={id,kind:"wallet-earth-shipment",cardId:job.cardId,fossilId:job.fossilId,rocketId:ship.id,
++        path:route.path,cashTrades,paidMovementPoints:route.cost,required:{},
++        turn:JSON.stringify([s.turn.roundNumber,s.turn.turnNumber,s.turn.actionCycleNumber])};
++      const step=walletEarthShipmentStep(node,stored,readPlanningState(stored),session,goal);
++      return step.actionId?{id,goal,operation:{},firstActionId:step.actionId,mode:"greedy",reason:"wallet-funded-earth-shipment"}:null;
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -972 +972 @@
+-        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(["held-landing-route","cargo-research-corner"].includes(e.resourcePlan?.goal.kind)||e.resourcePlan?.goal.movementFunding))) return {
++        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(["held-landing-route","cargo-research-corner","wallet-earth-shipment"].includes(e.resourcePlan?.goal.kind)||e.resourcePlan?.goal.movementFunding))) return {
+@@ -1072 +1072 @@
+-          const committedGoal=["held-landing-route","cargo-research-corner"].includes(best.resourcePlan.goal.kind)?best.resourcePlan.goal.id:null;
++          const committedGoal=["held-landing-route","cargo-research-corner","wallet-earth-shipment"].includes(best.resourcePlan.goal.kind)?best.resourcePlan.goal.id:null;
