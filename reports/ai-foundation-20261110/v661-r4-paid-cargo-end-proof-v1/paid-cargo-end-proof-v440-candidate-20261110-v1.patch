@@ -1,0 +1,199 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -320,7 +320,7 @@
+     let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false, rankKnownFossilTraces = false;
+     let localSpecs=new WeakMap();
+     let resourceSpecs = new WeakMap();
+-    const resolvedPublicAnalysis = new WeakSet();
++    const resolvedPublicAnalysis = new WeakSet(), paidCargoEndProofs = new WeakMap();
+     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
+     let cardPickRootStats = cardPickPlanner.getDiagnostics();
+     let cardPickSpecs = new WeakMap();
+@@ -3791,9 +3791,11 @@
+       const first=node.legalActions.find(a=>a.family==="move"&&a.target.rocketId===ship.id
+         &&a.target.deltaX===path[0].deltaX&&a.target.deltaY===path[0].deltaY);
+       if(!first)return null;
+-      const next=copyForkData(state),q=next.players.players.find(x=>x.id===seatId);
++      const next=copyForkData(readIdentityState(stored.envelope)),q=next.players.players.find(x=>x.id===seatId);
+       const steps=[];
++      let quietOpening=true;
+       for(const step of path){
++        if(cardEffects.hasMatchingTrigger(q,{type:"move_payment_requested",playerId:seatId,rocketId:ship.id}))quietOpening=false;
+         const moved=rocketAbilities.moveProbe(next,{...step,movementPoints:1,cost:{energy:1},source:"move"});
+         if(!moved.ok||moved.payload.requiredMovePoints!==1)return null;
+         const result=localPlans.augmentEffectResult(next,{ok:true,events:moved.events},{type:probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT,ownerId:seatId});
+@@ -3811,12 +3813,37 @@
+         finalScoring:copyForkData(s.finalScoring),cardEffects,getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},v).totalScore;
+       const resource=stateValue.sumValueParts(Object.entries(stateValue.DEFAULT_WEIGHTS)
+         .map(([key,weight])=>(claim.player.resources[key]-p.resources[key])*weight));
+-      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(claim.state,claim.player),-resourceDemand.planningCapital(state,p)]);
++      const claimView=planningState(claim.state,stored.informationBarrier,known);
++      const viewOwner=claimView.players.players.find(p=>p.id===seatId);
++      const capital=stateValue.sumValueParts([resourceDemand.planningCapital(claimView,viewOwner),-resourceDemand.planningCapital(state,p)]);
+       const netGain=stateValue.sumValueParts([score(claim.state,claim.player),-score(state,p),resource,capital]);
+       if(!(netGain>0))return null;
+       const id="cargo:paid-income:"+job.cardId,goal={id,kind:"paid-income-earth-cargo",required:{},path:steps,
+         cardId:job.cardId,fossilId:job.fossilId,rocketId:ship.id,netGain,capital};
+-      return {id,goal,operation:{},firstActionId:first.actionId,mode:"greedy",reason:"paid-public-transport-with-positive-net-value"};
++      const plan={id,goal,operation:{},firstActionId:first.actionId,mode:"greedy",reason:"paid-public-transport-with-positive-net-value"};
++      // This private proof cannot open a choice or advance the round.
++      // The materialized winning path is checked against all Native fields.
++      if(quietOpening){
++        const after={...claim.state,meta:quietSavedMeta(claim.state.meta,claim.state.meta.stateVersion+steps.length+1)};
++        const end=node.legalActions.find(a=>a.family==="end_turn");
++        const final=localPlans.previewFinalEndPrelude({state:after,seatId,action:end,knownCards:known,allowSameSeat:true});
++        if(final?.finished)paidCargoEndProofs.set(plan,{node,state:freeze(final.finished),end});
++      }
++      return plan;
++    }
++
++    function paidCargoProvedBoundary(node,plan){
++      const proof=paidCargoEndProofs.get(plan),stored=nodes.get(node);
++      if(proof?.node!==node||!stored)return null;
++      return finishProvedTurnBoundary(stored,proof.end,proof.state);
++    }
++
++    function matchesPaidCargoBoundary(proved,actual){
++      const a=nodes.get(proved),b=nodes.get(actual);
++      return Boolean(a&&b&&proved.status===actual.status&&proved.boundary===actual.boundary
++        &&!a.envelope.session&&!b.envelope.session&&cardKnowledgeKey(a.envelope)===cardKnowledgeKey(b.envelope)
++        &&exactClaimState(a.informationBarrier,b.informationBarrier)
++        &&exactClaimState(readIdentityState(a.envelope),readIdentityState(b.envelope)));
+     }
+ 
+     function paidIncomeEarthCargoStep(node,state,session,goal){
+@@ -8610,7 +8637,7 @@
+       return Boolean(stored.intent);
+     }
+ 
+-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, quoteFossilIndependentTask, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
++    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, quoteFossilIndependentTask, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, paidCargoProvedBoundary, matchesPaidCargoBoundary, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+ 
+-  const VERSION = "seti-complete-decision-search-v439";
++  const VERSION = "seti-complete-decision-search-v440";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+@@ -185,7 +185,7 @@
+     const known = new Map();
+     const queue = [];
+     const resourceGroups = new Map();
+-    const resourceExecutions = new Map();
++    const resourceExecutions = new Map(), paidCargoProofLeaves = new WeakMap();
+     const useResourceDominance = !resourcePlanning && !movementPlanning && !cardPickPlanning && resourceDominance && !port.selectionSpec?.(root);
+     const useMoneyCapacity = !resourcePlanning && !movementPlanning && !cardPickPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
+     const useCardTradePruning = !resourcePlanning && cardTradePruning && !port.selectionSpec?.(root);
+@@ -717,6 +717,21 @@
+         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
+         if (stopReason) break outer;
+         if(alternative.resourcePlan){
++          // Finite-budget callers keep the original per-input accounting.
++          // For the production complete-window policy, close a verified
++          // deterministic suffix once and materialize it only if it wins.
++          const proved=unlimited&&planReuse&&modelKey&&realizationTies
++            &&alternative.resourcePlan.goal.kind==="paid-income-earth-cargo"
++            &&port.paidCargoProvedBoundary?.(entry.node,alternative.resourcePlan);
++          if(proved){
++            const added=add(proved),cost=alternative.resourcePlan.goal.path.length*2+2;
++            if(added.equivalent)equivalents++;
++            entry.edges.push({actionId:alternative.firstActionId,target:added.index,cost,equivalent:added.equivalent,
++              resourcePlan:alternative.resourcePlan,goalStatus:"boundary",actualNativeInputs:0,provedNativeInputs:cost,
++              proof:"seti-native-paid-cargo-quiet-turn-boundary-v1"});
++            paidCargoProofLeaves.set(entry.edges.at(-1),proved);
++            continue;
++          }
+           const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
+             if(now()-startedAt>=limits.milliseconds)return "watchdog";
+             const inputs=work?work.newSubmissions+(input?work.nextNewInput:0):count+(input?1:0);
+@@ -973,7 +988,7 @@
+       if(!transportEdge&&nodes[0].pickPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",
+         completion:"excluded-by-card-pick-policy",policy:nodes[0].pickPolicy.policy,goal:nodes[0].pickPolicy.goal,isEquivalence:false};
+       if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)
+-        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(["held-landing-route","cargo-research-corner"].includes(e.resourcePlan?.goal.kind)||e.resourcePlan?.goal.movementFunding))) return {
++        && !nodes[0].edges.some(e=>e.actionId===action.actionId&&(["held-landing-route","cargo-research-corner","paid-income-earth-cargo"].includes(e.resourcePlan?.goal.kind)||e.resourcePlan?.goal.movementFunding))) return {
+         actionId: action.actionId, target: null, value: null, valueType: "not-executed",
+         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
+         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
+@@ -995,6 +1010,7 @@
+         value: edge ? nodes[edge.target].value : null, realization: edge ? nodes[edge.target].realization ?? null : null, preparationDebt:edge?nodes[edge.target].preparationDebt??null:null,
+         ...(edge?.turnTailPlanValue?{valueType:"proved-plan-value",turnTailPlanValue:edge.turnTailPlanValue}:{}),
+         ...(edge?.knownIncomePlan?{valueType:"proved-plan-value",knownIncomePlan:edge.knownIncomePlan}:{}),
++        ...(paidCargoProofLeaves.has(edge)?{valueType:"proved-plan-value",proof:edge.proof}:{}),
+         ...(resourcePlan?{kind:"resource-goal-plan",goal:resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&(e.resourcePlan||e.provedResourcePlan)).length}:{}),
+         ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
+         completion: stopReason || !edge ? "pending" : edge.knownIncomePlan||edge.turnTailPlanValue?"proved-plan-value":edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
+@@ -1019,8 +1035,9 @@
+         const entry = nodes[current], best = entry.best;
+         if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
+         const roots = entry.node.legalActions.map(action => {
+-          const edge = entry.edges.find(edge => edge.actionId === action.actionId);
+-          const policyExclusion = edge?.resourcePlan?.goal.kind==="transport-data-prep"?null:
++          const paid=best.resourcePlan?.goal.kind==="paid-income-earth-cargo"&&best.actionId===action.actionId;
++          const edge = paid?best:entry.edges.find(edge => edge.actionId === action.actionId);
++          const policyExclusion = paid||edge?.resourcePlan?.goal.kind==="transport-data-prep"?null:
+             entry.decisionPolicy?.excludedActionIds.includes(action.actionId)?entry.decisionPolicy.policy:entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
+             :entry.movementPolicy?.excludedActionIds.includes(action.actionId) ? entry.movementPolicy.policy : null;
+           const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof
+@@ -1072,7 +1089,20 @@
+         }
+         if(best.knownIncomePlan||best.turnTailPlanValue){current=best.target;continue;}
+         if(best.resourcePlan){
+-          const macro=resourceExecutions.get(best);
++          let macro=resourceExecutions.get(best);
++          if(best.proof==="seti-native-paid-cargo-quiet-turn-boundary-v1"){
++            // The shortcut is only enabled with all internal budgets open.
++            // An independent Native replay must succeed before any action is returned.
++            macro=port.expandResourcePlan(entry.node,best.resourcePlan,()=>null);
++            if(!macro.complete||macro.submissions!==best.cost
++              ||!port.matchesPaidCargoBoundary(paidCargoProofLeaves.get(best),macro.node))
++              throw new Error("SEARCH_WINNING_PAID_CARGO_WITNESS_MISMATCH");
++            const submitted=macro.newSubmissions??macro.submissions,fresh=resourceStateAdditions(macro.sharedStates);
++            transitions+=submitted;logicalResourceInputs+=macro.submissions;sharedResourceInputHits+=macro.submissions-submitted;
++            for(const id of fresh)sharedInternalStates.add(id);
++            certificateNodes+=fresh.size;peakFrontier=Math.max(peakFrontier,pendingFrontier+Math.max(0,fresh.size-1));
++            best.actualNativeInputs=submitted;best.steps=macro.prefixes.map(p=>p.action.actionId);
++          }
+           const committedGoal=["held-landing-route","cargo-research-corner"].includes(best.resourcePlan.goal.kind)?best.resourcePlan.goal.id:null;
+           if(committedGoal)entries.at(-1).committedGoal=committedGoal;
+           for(let i=1;i<macro.prefixes.length&&entries.length<32;i++){
+--- a/randomizer/game/ai/analysis-port.test.js
++++ b/randomizer/game/ai/analysis-port.test.js
+@@ -609,7 +609,10 @@
+     assert.equal(selected.target.cardInstanceId,"alien-chong-8-12");
+     const cargo=q.lines.flatMap(line=>line.edges).filter(e=>e.resourcePlan?.goal.kind==="paid-income-earth-cargo");
+     assert(cargo.some(e=>e.goalStatus==="boundary"&&q.lines[e.target].value===q.value
+-      &&e.steps.at(-2).startsWith("complete_task:")&&e.steps.at(-1).startsWith("end_turn:")));
++      &&e.steps?.at(-2).startsWith("complete_task:")&&e.steps.at(-1).startsWith("end_turn:")));
++    // A closed quote can compete, but a losing quote has no simulated path.
++    assert(cargo.some(e=>e.proof==="seti-native-paid-cargo-quiet-turn-boundary-v1"
++      &&e.actualNativeInputs===0&&!e.steps&&e.provedNativeInputs===e.cost));
+     const d = port.getDiagnostics();
+     for (const key of ["provedComputerIncomeMenus", "provedCurrencyIncomeInputs",
+       "provedPublicScanChoices", "provedScan4QuietMoves", "provedFinalResourceCorners",
+--- a/randomizer/index.html
++++ b/randomizer/index.html
+@@ -556,14 +556,14 @@
+   <script src="./game/ai/research-symbol-capital.js?read-only-rewards-v306"></script>
+   <script src="./game/ai/analysis-publicity-capital.js?deferred-publicity-v281"></script>
+   <script src="./game/ai/state-value.js?held-satellite-travel-20261110"></script>
+-  <script src="./game/ai/decision-search.js?paid-cargo-20261110"></script>
++  <script src="./game/ai/decision-search.js?paid-cargo-end-proof-20261110"></script>
+   <script src="./game/ai/goal-movement.js?known-satellite-fee-20261110"></script>
+   <script src="./game/ai/scan-analysis-income-utility.js?v=scan-analysis-income-v1"></script>
+   <script src="./game/ai/resource-demand.js?held-satellite-travel-20261110"></script>
+   <script src="./game/ai/card-pick-planning.js?fixed-known-chong-v431"></script>
+   <script src="./game/ai/local-decision-plans.js?native-preview-copy-20261110"></script>
+   <script src="./game/ai/funded-movement-tail.js?lean-native-path-v315"></script>
+-  <script src="./game/ai/analysis-port.js?paid-cargo-20261110"></script>
++  <script src="./game/ai/analysis-port.js?paid-cargo-end-proof-20261110"></script>
+   <script src="./game/ai/search-agent.js?known-satellite-after-income-20261110"></script>
+   <script src="./game/production-composition.js?v=production-composition-v8"></script>
+   <script src="./game/production-kernel.js?static-occupancy-v317"></script>

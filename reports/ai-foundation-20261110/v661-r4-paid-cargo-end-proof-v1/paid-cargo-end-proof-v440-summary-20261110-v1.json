@@ -1,0 +1,928 @@
+{
+  "productionAdmission": false,
+  "newFullGames": 0,
+  "maxNativeInputs": 256,
+  "maxDecisionMilliseconds": 600,
+  "candidateSearch": "v440",
+  "valueModel": "v65",
+  "unchangedControlGraphs": 7,
+  "teacher272RootAndLineRanksExact": true,
+  "provedEndpoints": {
+    "rootExact": true,
+    "closureCases": [
+      {
+        "steps": 6,
+        "paidSteps": 2,
+        "netGain": 3.5,
+        "inputs": [
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "hidden_card_reveal",
+        "value": 222,
+        "realization": -25,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 4,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "tech_bonus_reveal",
+        "value": 223,
+        "realization": -27,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 4,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "tech_bonus_reveal",
+        "value": 220,
+        "realization": -26,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 4,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "tech_bonus_reveal",
+        "value": 224,
+        "realization": -26,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 6,
+        "paidSteps": 2,
+        "netGain": 3.5,
+        "inputs": [
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "own-turn-complete",
+        "value": 216,
+        "realization": -24,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 2,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "hidden_card_reveal",
+        "value": 218.5,
+        "realization": -25,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 2,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "tech_bonus_reveal",
+        "value": 218,
+        "realization": -24,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 2,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "hidden_card_reveal",
+        "value": 218.5,
+        "realization": -25,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 2,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "hidden_card_reveal",
+        "value": 218.5,
+        "realization": -25,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 8,
+        "paidSteps": 3,
+        "netGain": 2,
+        "inputs": [
+          "move:23807efa",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "hidden_card_reveal",
+        "value": 222.5,
+        "realization": -25,
+        "preparationDebt": 0
+      },
+      {
+        "steps": 6,
+        "paidSteps": 2,
+        "netGain": 3.5,
+        "inputs": [
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "move:a36e0e84",
+          "choose_payment:abbb51f1",
+          "complete_task:595f87d5",
+          "end_turn:b2f9b29d"
+        ],
+        "boundary": "own-turn-complete",
+        "value": 222.5,
+        "realization": -24,
+        "preparationDebt": 0
+      }
+    ],
+    "searchNative": 166,
+    "auditNative": 55
+  },
+  "finiteBudgetControls": {
+    "rootExact": true,
+    "rows": [
+      {
+        "budget": {
+          "transitions": 5000,
+          "nodes": 5000,
+          "frontier": 4000,
+          "milliseconds": 10000
+        },
+        "complete": true,
+        "action": "card_corner:367a82a7",
+        "value": 224,
+        "reason": null,
+        "cargoNative": 11,
+        "transitions": 1733,
+        "native": 221
+      },
+      {
+        "budget": {
+          "transitions": 20,
+          "nodes": 5000,
+          "frontier": 4000,
+          "milliseconds": 10000
+        },
+        "complete": false,
+        "action": null,
+        "value": null,
+        "reason": "transition-budget",
+        "cargoNative": 0,
+        "transitions": 20,
+        "native": 10
+      },
+      {
+        "budget": {
+          "transitions": 5000,
+          "nodes": 20,
+          "frontier": 4000,
+          "milliseconds": 10000
+        },
+        "complete": false,
+        "action": null,
+        "value": null,
+        "reason": "node-budget",
+        "cargoNative": 0,
+        "transitions": 19,
+        "native": 10
+      }
+    ]
+  },
+  "coldIncomeRoot": {
+    "stepsToCold": 13,
+    "offered": {
+      "actionId": "move:23807efa",
+      "target": 3,
+      "value": 224,
+      "realization": -26,
+      "preparationDebt": 0,
+      "valueType": "proved-plan-value",
+      "proof": "seti-native-paid-cargo-quiet-turn-boundary-v1",
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "cargo:paid-income:alien-chong-3-10",
+        "kind": "paid-income-earth-cargo",
+        "required": {},
+        "path": [
+          {
+            "rocketId": 6,
+            "deltaX": -1,
+            "deltaY": 0,
+            "from": {
+              "x": 3,
+              "y": 3
+            }
+          },
+          {
+            "rocketId": 6,
+            "deltaX": 0,
+            "deltaY": -1,
+            "from": {
+              "x": 2,
+              "y": 3
+            }
+          },
+          {
+            "rocketId": 6,
+            "deltaX": 0,
+            "deltaY": -1,
+            "from": {
+              "x": 2,
+              "y": 2
+            }
+          }
+        ],
+        "cardId": "alien-chong-3-10",
+        "fossilId": "fossil_07",
+        "rocketId": 6,
+        "netGain": 4,
+        "capital": -1
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    "chosen": "move:23807efa",
+    "value": 224,
+    "native": 7,
+    "ms": 61.32945799999999,
+    "rootExact": true
+  },
+  "winningReplay": {
+    "inputs": 21,
+    "reused": 19,
+    "recomputed": 1,
+    "maxFollowupMs": 111.49812499999996,
+    "finalScore": 183,
+    "wallet": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 2,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 4,
+      "publicity": 4,
+      "score": 118
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 5,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "rootExact": true,
+    "endExact": true
+  },
+  "nativeWinningValue": {
+    "leaf": 207,
+    "barrier": "tech_bonus_reveal",
+    "masked": true,
+    "rootExact": true,
+    "value": {
+      "value": 224,
+      "purposePreparationDebt": 0,
+      "unrealizedPurposeValue": 26
+    }
+  },
+  "coldBenchmarks": {
+    "teacher272": {
+      "samples": [
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 1159.649834,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1113.1029589999998,
+          "graph": "5960dd0ce7671025daf14b13a242d9aede2dfad73692a54118100cfdcabacb30",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 166,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1150.907334,
+          "graph": "5960dd0ce7671025daf14b13a242d9aede2dfad73692a54118100cfdcabacb30",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 166,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 1184.258708,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 1168.1648750000002,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1103.018542,
+          "graph": "5960dd0ce7671025daf14b13a242d9aede2dfad73692a54118100cfdcabacb30",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 166,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1117.8637090000002,
+          "graph": "5960dd0ce7671025daf14b13a242d9aede2dfad73692a54118100cfdcabacb30",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 166,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 1154.904792,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 1194.5296250000001,
+          "graph": "ccfdae96c0bf3550732a38599a02f8105b8bf5859af109b149dda128f6eaf852",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 221,
+          "complete": true
+        },
+        {
+          "ranked": "21d98dda1e80e81dfca2f3dcc95e8e3fd89d1e24a1794485f666b34856879035",
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1129.8490000000002,
+          "graph": "5960dd0ce7671025daf14b13a242d9aede2dfad73692a54118100cfdcabacb30",
+          "action": "card_corner:367a82a7",
+          "value": 224,
+          "nodes": 725,
+          "native": 166,
+          "complete": true
+        }
+      ],
+      "sameGraph": false,
+      "medians": {
+        "baseline": 1168.1648750000002,
+        "candidate": 1117.8637090000002
+      }
+    },
+    "satellite": {
+      "samples": [
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 1202.219,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1199.7414170000002,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1221.189625,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 1201.835,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 1210.137792,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1202.2152079999998,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1206.5324999999998,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 1215.461292,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 1237.9079579999998,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        },
+        {
+          "ranked": "03fa405a03ce5756f9b14712eb5d21ae44a5503b67dec0ef40784fb653a71a5b",
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1225.16325,
+          "graph": "b2748b2ff7870f6b82d96c395b301bcc9f38aa8c8815640cc3e8ed1f34cebc46",
+          "action": "play_card:f1918668",
+          "value": 227,
+          "nodes": 1280,
+          "native": 205,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 1210.137792,
+        "candidate": 1206.5324999999998
+      }
+    },
+    "official": {
+      "samples": [
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 603.2998339999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 604.897959,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 660.504667,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 608.400583,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 610.034875,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 603.371209,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 603.7750839999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 639.0220419999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 607.451542,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        },
+        {
+          "ranked": "e7a47b3bc111f048d2031e67f5fa150047c7acc71bc073fa40cc80d6756266e3",
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 607.6442079999999,
+          "graph": "f6013173cd44ba7739e6ec744de52d7c278c077aea45a5d2ae0b969696248353",
+          "action": "industry:e887dc52",
+          "value": 205.5,
+          "nodes": 535,
+          "native": 165,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 608.400583,
+        "candidate": 604.897959
+      }
+    },
+    "late": {
+      "samples": [
+        {
+          "ranked": "bf23748209d4d7a551399fe58115954f0ffca2a4a4286c545c736091a744721e",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 430.10137499999996,
+          "graph": "90a774c46cf65319711f0b597d024f1a1e3bdd07c8187999bde16a6ec6da4f97",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "nodes": 342,
+          "native": 222,
+          "complete": true
+        },
+        {
+          "ranked": "bf23748209d4d7a551399fe58115954f0ffca2a4a4286c545c736091a744721e",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 428.15458299999995,
+          "graph": "90a774c46cf65319711f0b597d024f1a1e3bdd07c8187999bde16a6ec6da4f97",
+          "action": "analyze:a5629aa3",
+          "value": 266,
+          "nodes": 342,
+          "native": 222,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 430.10137499999996,
+        "candidate": 428.15458299999995
+      }
+    },
+    "r3-172": {
+      "samples": [
+        {
+          "ranked": "12aa6214af41bf31ea3a622106a482a45ee517608e1bb95f469267075dddbc68",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 221.76766700000002,
+          "graph": "066ba49c0917e8737c5988546741853fa996f4420ec152cbaab00ee27d52e13c",
+          "action": "play_card:38489727",
+          "value": 151,
+          "nodes": 110,
+          "native": 99,
+          "complete": true
+        },
+        {
+          "ranked": "12aa6214af41bf31ea3a622106a482a45ee517608e1bb95f469267075dddbc68",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 228.57400000000004,
+          "graph": "066ba49c0917e8737c5988546741853fa996f4420ec152cbaab00ee27d52e13c",
+          "action": "play_card:38489727",
+          "value": 151,
+          "nodes": 110,
+          "native": 99,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 221.76766700000002,
+        "candidate": 228.57400000000004
+      }
+    },
+    "r3-136": {
+      "samples": [
+        {
+          "ranked": "d229e0b4999f7796664a492e4a0bb134e443a056d3934eec63ad85110ac0c7c9",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 319.248042,
+          "graph": "18b6c89ef15266cd61eaf917c5d927dea5ffb17c6f1e0c1743a0c68aa7bce94c",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "nodes": 214,
+          "native": 224,
+          "complete": true
+        },
+        {
+          "ranked": "d229e0b4999f7796664a492e4a0bb134e443a056d3934eec63ad85110ac0c7c9",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 330.312583,
+          "graph": "18b6c89ef15266cd61eaf917c5d927dea5ffb17c6f1e0c1743a0c68aa7bce94c",
+          "action": "quick_trade:f385e2ac",
+          "value": 141.5,
+          "nodes": 214,
+          "native": 224,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 319.248042,
+        "candidate": 330.312583
+      }
+    },
+    "held0": {
+      "samples": [
+        {
+          "ranked": "7f106dfd06a6f6097cb8477fa920aa478a9d349d9746846636b3564bcb9b7bf9",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 189.40583400000003,
+          "graph": "ff75b4dc403d8f2a3e139378c7c9ef97c3368157ec89b2b934d99b782f34e22f",
+          "action": "quick_trade:f385e2ac",
+          "value": 240,
+          "nodes": 53,
+          "native": 79,
+          "complete": true
+        },
+        {
+          "ranked": "7f106dfd06a6f6097cb8477fa920aa478a9d349d9746846636b3564bcb9b7bf9",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 187.08683299999998,
+          "graph": "ff75b4dc403d8f2a3e139378c7c9ef97c3368157ec89b2b934d99b782f34e22f",
+          "action": "quick_trade:f385e2ac",
+          "value": 240,
+          "nodes": 53,
+          "native": 79,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 189.40583400000003,
+        "candidate": 187.08683299999998
+      }
+    },
+    "held1": {
+      "samples": [
+        {
+          "ranked": "a748ebd2f98aaf150eb8462101c0c5cc88957d72b49da2952874aab1c33c94a2",
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 186.401917,
+          "graph": "62797cd6bbc24a342460c199bf12857eba70c6c827c8546f50c263c4dfd69aa3",
+          "action": "quick_trade:a39c1a77",
+          "value": 240,
+          "nodes": 50,
+          "native": 81,
+          "complete": true
+        },
+        {
+          "ranked": "a748ebd2f98aaf150eb8462101c0c5cc88957d72b49da2952874aab1c33c94a2",
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 187.49704200000002,
+          "graph": "62797cd6bbc24a342460c199bf12857eba70c6c827c8546f50c263c4dfd69aa3",
+          "action": "quick_trade:a39c1a77",
+          "value": 240,
+          "nodes": 50,
+          "native": 81,
+          "complete": true
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 186.401917,
+        "candidate": 187.49704200000002
+      }
+    }
+  },
+  "nodeTests": 6,
+  "browserSmokes": 2,
+  "valueInputChecks": 66,
+  "artifactsSha256": {
+    "paid-cargo-end-proof-v440-candidate-20261110-v1.patch": "01819bbb2d65531544edfb927f298d380427a0515c2706edc8163c1efead00f9",
+    "paid-cargo-end-proof-v440-evidence-20261110-v1.tar.gz": "37829dfdba03d93b1c13c8c6f767c1bfca137eaf1517c04308c8005096c76e5c"
+  }
+}
