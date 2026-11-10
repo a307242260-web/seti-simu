@@ -732,11 +732,21 @@
       return saved;
     }
 
+    function quietR3BluePickSource(state, owner) {
+      const t=state.turn;
+      return t.roundNumber===3&&owner.mainActionCompleted
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        &&knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫")
+        &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+        &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
+    }
+
     function quietDataMenuSource(stored, action) {
       if (!resourcePlanning || stored.envelope.session || stored.resourceControl || action.family !== "place_data"
         || action.phase !== "quick" || action.target?.kind !== "place-data" || Object.keys(action.payload).length) return null;
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if (t.roundNumber !== 4 && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2))
+        || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
@@ -780,7 +790,8 @@
         || s.journal.effects.length !== 1 || s.journal.events.length || s.journal.decisions.length
         || s.journal.replay.length !== 1 || s.undoFrames.length) return null;
       const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if (t.roundNumber !== 4 && !(blue&&quietR3BluePickSource(state,owner))
+        || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length || localPlans.hasPendingFossilArrival(state)
         || computer&&data.listComputerPlacedTokens(owner).length!==3
         || blue&&(!owner.mainActionCompleted||data.getBlueBonusPlacementReward(owner, 2)?.type!=="choose_card"
@@ -1395,7 +1406,9 @@
         || session.journal.actions[0]?.action?.family !== "place_data") return null;
       const state=session.workingState, t=state.turn, p=state.players.players.find(p=>p.id===seatId);
       const i=action.target.publicSlotIndex, offered=state.cards.publicCards[i], known=knownCards(stored.envelope);
-      if (t.roundNumber !== 4 || t.currentPlayerId !== seatId || t.gameEnded || p.passCompletionPending
+      const r3BlueSlot=session.journal.events.find(e=>e.type==="placeData"&&e.placementKind==="blueBonus")?.blueSlot;
+      if (t.roundNumber !== 4 && !(r3BlueSlot===2&&quietR3BluePickSource(state,p))
+        || t.currentPlayerId !== seatId || t.gameEnded || p.passCompletionPending
         || t.passedPlayerIds.includes(seatId) || t.cardTurnEventBonuses?.length
         || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job=>!job.delivered)
         || !offered || !known.has(offered.id) || offered.id !== action.target.cardInstanceId
