@@ -482,6 +482,34 @@
    }
    return {displayed};
  }
+ // Prove the known analysis and immediate energy purchase without
+ // looking past the currently displayed alien card.
+ function previewPickupAnalysisForCargo({state,seatId,knownAlienDisplay,knownCards}){
+  const q=owner(state,seatId),alienId=state.aliens.amiba?.revealedSlotId;
+  if(!alienId||!Number.isSafeInteger(knownAlienDisplay)||!industry.getPlayerIndustryDefinition(q)?.passiveIds.includes('deepspace_free_analyze')
+    ||q.resources.availableData!==3||q.resources.energy||q.techState.blueBoardSlots.blue2!==1||!q.techState.ownedTiles.blue2
+    ||q.techState.disabledTiles.blue2||data.listComputerPlacedTokens(q).length!==5||data.listBlueBonusPlacedTokens(q).length!==3
+    ||effects.listPendingTriggerKeys(q,state.turn).length||!q.reservedCards.every(c=>{
+      const m=effects.getCardModel(c);return knownCards.has(c.id)&&m&&!m.triggers?.length&&!m.temporaryTasks?.length;
+    }))return null;
+  const choice=aliens.amiba.TRACE_POSITIONS.map(position=>({position,reward:aliens.amiba.getTraceReward(state.aliens,'blue',position)}))
+   .filter(x=>x.reward?.pickAlienCard&&aliens.amiba.canPlaceAmibaTrace(state.aliens,alienId,'blue',x.position).ok)
+   .sort((a,b)=>(b.reward.gain?.score||0)-(a.reward.gain?.score||0))[0];
+  if(!choice)return null;
+  const next=structuredClone(state),p=owner(next,seatId);
+  next.cards.drawPileCardIds.fill(null);
+  next.aliens.amiba.cardDeck.fill(null);
+  next.aliens.chong.cardDeck.fill(null);
+  const fill=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_COMPUTER});
+  if(!fill.ok||fill.slotBonuses?.length||!data.analyzeDataWithoutEnergy(p).ok)return null;
+  const trace=previewKnownAmibaTrace({root:next,copy:p,alienId,traceType:'blue',position:choice.position,knownAlienDisplay,seatId});
+  if(!trace?.displayed||p.resources.availableData!==3||p.resources.energy)return null;
+  const first=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_COMPUTER});
+  const blue=data.placeDataToComputer(p,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:1});
+  if(!first.ok||!blue.ok||blue.slotBonuses?.length!==1||blue.slotBonuses[0].type!=='energy'
+    ||blue.slotBonuses[0].energy!==1||p.resources.availableData!==1)return null;
+  return {next,p};
+ }
  const visibleOrOpaque=(c,known,opaque)=>known.has(c.id)||Boolean(opaque&&c.hidden&&!c.id&&!c.cardId);
  function quoteFundedSector({state,seatId,knownCards,knownAlienDisplay,allowOpaque=false,claimNewPublicity=false,knownLaunchTech=null}){
   const p=owner(state,seatId),t=state.turn;
@@ -2397,5 +2425,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,pinkScoreBeforeUnknownFossil,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,previewPickupAnalysisForCargo,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,pinkScoreBeforeUnknownFossil,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
 });

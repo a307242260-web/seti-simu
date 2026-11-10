@@ -2706,6 +2706,11 @@
 
     // One current-turn delivery; the two visible movement corners and
     // one Blue 2 energy point pay an all-one-point route to Earth.
+    function simpleCargoScanReward(reward){
+      return reward&&!reward.dataCount&&!reward.drawCards&&!reward.pickCard&&!reward.pickAlienCard&&!reward.chooseFossilRewardOnly
+        &&Object.keys(reward.gain||{}).length===1&&(reward.gain.credits===2||reward.gain.energy===2);
+    }
+
     function dataFundedCargoPlan(node,stored,state){
       if(node!==openedRoot||node.status!=="stable"||stored.envelope.session||stored.intent||stored.informationBarrier
         ||state.turn.roundNumber!==3||state.turn.currentPlayerId!==seatId||!knownRootAlienIds.has("虫"))return null;
@@ -2728,8 +2733,7 @@
       const rule=chong.getCardTask(p.reservedCards.find(c=>c.id===job.cardId)),reward=chong.getFossilReward(job.fossilId);
       if(rule?.dataCount!==2||rule.fossilRewardRepeat!==1||Object.keys(rule.gain||{}).length
         ||rule.effects||rule.rewards||rule.pickCard||rule.pickAlienCard||rule.drawCards
-        ||!reward||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard||reward.chooseFossilRewardOnly
-        ||Object.keys(reward.gain||{}).length!==1||reward.gain.credits!==2)return null;
+        ||!simpleCargoScanReward(reward))return null;
       const earth=solar.collectPlanetLocations(state.solarSystem).find(x=>x.planetId==="earth"),at=rockets.getRocketSectorCoordinate(ship);
       if(!earth||!at)return null;
       const dx=Math.abs(at.x-earth.x),lower=Math.min(dx,8-dx)+Math.abs(at.y-earth.y);
@@ -7221,6 +7225,68 @@
         &&player.reservedCards.some(c=>knownRootCardIds.has(c.id)&&localPlans.sectorPublicityReward(c)!==null);
     }
 
+    function knownPickupFundingEnabled(){
+      const node=openedRoot,stored=nodes.get(node),head=stored?.envelope.session?.session?.queue?.[0];
+      return rootObservation?.publicState.roundNumber===3&&node.status==="decision"
+        &&head?.type==="card_play_domain_effect:decision:chong_pickup_fossil"&&head.ownerId===seatId
+        &&node.legalActions.length>1&&node.legalActions.every(a=>a.target?.fossilId&&knownRootFossilIds.has(a.target.fossilId));
+    }
+
+    function quoteKnownPickupFunding(node){
+      if(node.status!=="turn-boundary"||node.boundary!=="own-turn-complete")return null;
+      const stored=nodes.get(node),state=stored&&!stored.envelope.session&&!stored.informationBarrier&&readPlanningState(stored);
+      if(!state)return null;
+      const t=state.turn,p=state.players.players.find(x=>x.id===seatId);
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.mainActionCompleted||p.passCompletionPending
+        ||p.industryBorrowedTechTileId||t.passedPlayerIds.includes(seatId)||!t.activePlayerIds.includes(seatId)
+        ||t.cardTurnEventBonuses?.length||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||p.hand.some(c=>!knownRootCardIds.has(c.id))
+        ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles).some(tile=>
+          tile.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+      if(jobs.length!==1)return null;
+      const job=jobs[0],reward=knownRootFossilIds.has(job.fossilId)&&chong.getFossilReward(job.fossilId);
+      const fossil=state.aliens.chong?.fossilsById?.[job.fossilId];
+      if(job.delivered||job.destinationPlanetId!=="earth"||fossil?.status!=="transported"||fossil.taskCompleted
+        ||!simpleCargoScanReward(reward))return null;
+      const rule=chong.getCardTask(p.reservedCards.find(c=>c.id===job.cardId));
+      if(rule?.kind!=="transport"||rule.dataCount!==2||rule.fossilRewardRepeat!==1||Object.keys(rule.gain||{}).length
+        ||rule.effects||rule.rewards||rule.pickCard||rule.pickAlienCard||rule.drawCards)return null;
+      const ship=state.pieces.rockets.find(r=>r.playerId===seatId&&r.kind==="chong-fossil"&&r.fossilId===job.fossilId);
+      const earth=solar.collectPlanetLocations(state.solarSystem).find(x=>x.planetId==="earth");
+      const at=ship&&rockets.getRocketSectorCoordinate(ship);
+      const payers=p.hand.filter(c=>cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1);
+      if(!at||!earth||ship.movementLocked||payers.length!==2
+        ||payers.some(c=>Object.keys(cards.getDiscardActionMoveRewardForCard(c).gain).some(k=>k!=="score"))
+        ||state.pieces.rockets.some(r=>r.playerId===seatId&&rockets.isControllablePlayerRocket(r)))return null;
+      const dx=Math.abs(at.x-earth.x);
+      if(Math.min(dx,8-dx)+Math.abs(at.y-earth.y)!==3||shortEarthPath(state,p,ship,at,earth,3)?.length!==3)return null;
+      const knownAlienDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
+      const prep=localPlans.previewPickupAnalysisForCargo({state,seatId,knownAlienDisplay,knownCards:knownRootCardIds});
+      if(!prep)return null;
+      // The Blue 2 point is spent on the third move. Only the
+      // deterministic task reward changes the wallet before income.
+      const q=prep.p,payerIds=new Set(payers.map(c=>c.id));
+      q.hand=q.hand.filter(c=>!payerIds.has(c.id));q.resources.handSize=q.hand.length;
+      players.gainResources(q,reward.gain);
+      for(let i=0;i<rule.dataCount;i++)if(!data.gainData(q,{root:prep.next}).ok)return null;
+      const source=q.hand.filter(c=>cards.getIncomeGainForCard(c)?.energy===1&&Object.keys(cards.getIncomeGainForCard(c)).length===1)
+        .sort((a,b)=>resourceDemand.cardOpportunityCost(prep.next,seatId,a)-resourceDemand.cardOpportunityCost(prep.next,seatId,b)||a.id.localeCompare(b.id))[0];
+      const income=source&&resourceDemand.previewIncomeTail({state:prep.next,seatId,goal:{incomeCardId:source.id}});
+      if(!income?.available||income.placements!==3||income.player.resources.availableData)return null;
+      const wallet=income.player,cost=scanEffects.getStandardScanCost(wallet);
+      const first=scanEffects.buildScanEffectQueue(wallet,{turn:t})[0];
+      const scanSource=first&&scienceSession.getPlanetScanSource(prep.next,first.type);
+      if(!scanSource||!scienceSession.listNebulaChoices(prep.next,{...scanSource,gainData:true}).some(a=>
+        data.listNebulaTokens(state.data,a.target.nebulaId).some(token=>!token.replacedByPlayerId&&!token.replacedByPlayerColor)))return null;
+      const exchange=quickTrades.getTradeAction("credits-for-energy");
+      const count=Math.max(0,Math.ceil((cost.energy-wallet.resources.energy)/exchange.gain.energy));
+      const credits=wallet.resources.credits-count*exchange.cost.credits-cost.credits;
+      if(credits<0)return null;
+      const energy=wallet.resources.energy+count*exchange.gain.energy-cost.energy;
+      return {rank:1+credits+energy,credits,energy,exchangeCount:count,fossilId:job.fossilId};
+    }
+
     function visibleRootCargo(){
       return new Set(rootObservation.publicState.board.rockets.filter(r=>r.fossilId).map(r=>r.fossilId));
     }
@@ -8486,7 +8552,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+      rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
