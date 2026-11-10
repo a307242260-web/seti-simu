@@ -1,0 +1,2047 @@
+{
+  "diagnosticOnly": true,
+  "summary": {
+    "control": {
+      "ms": 1448.4838340000001,
+      "inputs": 251,
+      "graph": 1339
+    },
+    "pruned": {
+      "ms": 1003.719792,
+      "inputs": 208,
+      "graph": 814
+    }
+  },
+  "rows": [
+    {
+      "mode": "control",
+      "sample": 1,
+      "ms": 1448.4838340000001,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 1339,
+      "inputs": 251
+    },
+    {
+      "mode": "pruned",
+      "sample": 1,
+      "ms": 1002.573416,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 814,
+      "inputs": 208
+    },
+    {
+      "mode": "pruned",
+      "sample": 2,
+      "ms": 1014.4807920000001,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 814,
+      "inputs": 208
+    },
+    {
+      "mode": "control",
+      "sample": 2,
+      "ms": 1449.579083,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 1339,
+      "inputs": 251
+    },
+    {
+      "mode": "control",
+      "sample": 3,
+      "ms": 1435.990959,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 1339,
+      "inputs": 251
+    },
+    {
+      "mode": "pruned",
+      "sample": 3,
+      "ms": 991.594791,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 814,
+      "inputs": 208
+    },
+    {
+      "mode": "pruned",
+      "sample": 4,
+      "ms": 1003.719792,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 814,
+      "inputs": 208
+    },
+    {
+      "mode": "control",
+      "sample": 4,
+      "ms": 1424.563375,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 1339,
+      "inputs": 251
+    },
+    {
+      "mode": "control",
+      "sample": 5,
+      "ms": 1579.058625,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 1339,
+      "inputs": 251
+    },
+    {
+      "mode": "pruned",
+      "sample": 5,
+      "ms": 1049.150625,
+      "rank": [
+        {
+          "actionId": "orbit:5ccd6a69",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:f1918668",
+          "value": 219,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1da9864f",
+          "value": 214,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:88ec7135",
+          "value": 215.5,
+          "realization": -25.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:1a1c19d3",
+          "value": 210,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:ddbaa2ce",
+          "value": 218.5,
+          "realization": -24.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "play_card:5eb1b0e8",
+          "value": 215,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "value": 173,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "move:c16025a6",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:bde97b72",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:23807efa",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:a36e0e84",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2df2f24d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:2a7c4819",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:90134ba1",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "move:0febc073",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "value": 222,
+          "realization": 0,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "value": 211.5,
+          "realization": -23.5,
+          "preparationDebt": 0
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:730579d5",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:367a82a7",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:cb6e4492",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:bf0cc13d",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:c4357b44",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "card_corner:40cda505",
+          "value": null,
+          "realization": null,
+          "preparationDebt": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "value": 222.5,
+          "realization": 0,
+          "preparationDebt": 0
+        }
+      ],
+      "selected": "place_data:8fd12fd3",
+      "value": 222.5,
+      "graph": 814,
+      "inputs": 208
+    }
+  ]
+}
