@@ -1,0 +1,74 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -3579,0 +3580,54 @@
++    }
++
++    // Contract only a continuation already selected by the existing policies.
++    // Retain its actual envelope and input witness; no scalar substitutes for
++    // the end-of-turn state, and no competing decision is removed.
++    function extendKnownBlueTail(fixed){
++      if(fixed.goal?.id!=="data:blue:2"||fixed.goalStatus!=="completed")return fixed;
++      function scope(node){
++        if(node.status!=="stable")return null;
++        const stored=nodes.get(node);
++        if(stored.envelope.session||stored.resourceControl||stored.informationBarrier?.code!=="hidden_card_reveal")return null;
++        const state=readIdentityState(stored.envelope),turn=state.turn;
++        if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.type1TriggerEvents?.length||turn.cardTurnEventBonuses?.length)return null;
++        const p=state.players.players.find(q=>q.id===seatId);
++        if(!p.mainActionCompleted||p.passCompletionPending||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards")return null;
++        const pick=cardPickSpec(node);
++        if(pick?.fixed||pick?.selectedActionId)return null;
++        const actions=node.legalActions;
++        const policy=actions.some(a=>Number.isInteger(a.target?.deltaX)||a.target?.kind==="move-payment"
++          ||a.target?.tradeId==="energy-for-move"||a.family==="card_corner"&&a.payload?.kind==="move")?goalMovementSpec(node):null;
++        // Existing search may force an advance despite a forced resource
++        // placement. Even if the proposed move is filtered, fall back here.
++        if(policy?.selectedActionId||policy?.knownFreeScanDelivery)return null;
++        return {policy,pick,state,p};
++      }
++      const first=scope(fixed.node);
++      if(!first)return fixed;
++      const policy=resourceSpec(fixed.node),plan=policy?.plans?.length===1?policy.plans[0]:null;
++      if(policy?.bound||policy?.retainedActionIds.length!==0||plan?.goal.id!=="data:blue:3")return fixed;
++      const reward=data.getBlueBonusPlacementReward(first.p,3);
++      if(reward?.type!=="credits"||reward.credits!==1||Object.keys(reward).length!==2)return fixed;
++      const next=expandResourcePlan(fixed.node,plan,()=>null);
++      if(!next.complete||!next.submissions)throw new Error("ANALYSIS_KNOWN_BLUE_TAIL_INCOMPLETE");
++      const merged={...fixed,node:next.node,submissions:fixed.submissions+next.submissions,
++        newSubmissions:fixed.newSubmissions+next.newSubmissions,contexts:fixed.contexts+next.contexts,
++        prefixes:[...fixed.prefixes,...next.prefixes],sharedStates:[...fixed.sharedStates,...next.sharedStates],
++        sharedPath:[...fixed.sharedPath,...next.sharedPath],preparations:[...fixed.preparations,...next.preparations.map(p=>({...p,input:p.input+fixed.submissions}))],
++        continuedBlueTail:{goal:plan.goal.id,placementInputs:next.submissions,closed:false}};
++      const last=next.goalStatus==="completed"&&scope(next.node);
++      if(!last)return merged;
++      const lastPolicy=resourceSpec(next.node);
++      if(lastPolicy?.plans?.length||lastPolicy?.bound)return merged;
++      const retained=next.node.legalActions.filter(a=>(!lastPolicy||lastPolicy.retainedActionIds.includes(a.actionId))
++        &&(!last.policy||last.policy.retainedActionIds.includes(a.actionId))
++        &&(!last.pick||last.pick.retainedActionIds.includes(a.actionId)));
++      const end=retained.length===1&&retained[0].family==="end_turn"?retained[0]:null;
++      if(!end||turnTailSummary(next.node,"end-turn"))return merged;
++      const key=expansionKey(nodes.get(next.node),end.actionId),shared=prefixEdges.get(key);
++      const child=expand(next.node,end.actionId);
++      const edge=prefixEdges.get(key);
++      if(!edge)throw new Error("ANALYSIS_KNOWN_BLUE_TAIL_EDGE_MISSING");
++      return {...merged,node:child,submissions:merged.submissions+1,newSubmissions:merged.newSubmissions+Number(!shared),
++        prefixes:[...merged.prefixes,{node:next.node,action:end}],sharedPath:[...merged.sharedPath,edge.id],
++        sharedStates:[...merged.sharedStates,child],continuedBlueTail:{...merged.continuedBlueTail,closed:true}};
+@@ -8421 +8475 @@
+-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
++    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, extendKnownBlueTail, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v449";
++  const VERSION = "seti-complete-decision-search-v451";
+@@ -716 +716 @@
+-          const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
++          let fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
+@@ -727,0 +728,2 @@
++          if(unlimited&&!tailNeedsNative&&fixed.complete&&stateValue?.isDefaultStateValueEvaluator?.(evaluate))
++            fixed=port.extendKnownBlueTail?.(fixed)||fixed;
+@@ -739 +741 @@
+-            preparations:fixed.preparations,steps:fixed.prefixes.map(p=>p.action.actionId)});
++            preparations:fixed.preparations,steps:fixed.prefixes.map(p=>p.action.actionId),...(fixed.continuedBlueTail?{continuedBlueTail:fixed.continuedBlueTail}:{})});
