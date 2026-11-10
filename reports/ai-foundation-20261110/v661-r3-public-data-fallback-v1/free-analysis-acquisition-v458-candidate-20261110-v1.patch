@@ -1,0 +1,27 @@
+--- a/randomizer/game/ai/card-pick-planning.js
++++ b/randomizer/game/ai/card-pick-planning.js
+@@ -8 +8,2 @@
+-    common?require('../actions/scan-effects'):root.SetiScanEffects);
++    common?require('../actions/scan-effects'):root.SetiScanEffects,
++    common?require('../industry/passives'):root.SetiIndustryPassives);
+@@ -10 +11 @@
+-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe,scan){
++})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe,scan,industry){
+@@ -38,0 +40 @@
++  const analyzeEnergyCost=p=>industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST;
+@@ -108 +110 @@
+-        if(placed+stock===5&&p.resources.energy>=data.ANALYZE_ENERGY_COST)out.push({kind:'data',id:'data:analyze:6',amount:1,priority:4});
++        if(placed+stock===5&&p.resources.energy>=analyzeEnergyCost(p))out.push({kind:'data',id:'data:analyze:6',amount:1,priority:4});
+@@ -145 +147 @@
+-          if(goal.kind==='data'&&(placedStock(p,remaining)+picked.data<6||wallet.energy<data.ANALYZE_ENERGY_COST))continue;
++          if(goal.kind==='data'&&(placedStock(p,remaining)+picked.data<6||wallet.energy<analyzeEnergyCost(p)))continue;
+--- a/randomizer/game/ai/card-pick-planning.test.js
++++ b/randomizer/game/ai/card-pick-planning.test.js
+@@ -78,0 +79,7 @@
++ const free=structuredClone(s),owner=own(free),publicTrade=trades.filter(a=>a.target.tradeId==='publicity-for-card');
++ owner.initialSelection={...owner.initialSelection,industry:'深空探测'};
++ owner.resources.energy=0;
++ assert.equal(plan(free,publicTrade).goal?.id,'data:analyze:6');
++ assert.equal(plan(free,publicTrade).selection?.cardId,'card-data-offer');
++ const ordinary=structuredClone(free);own(ordinary).initialSelection.industry=null;
++ assert.equal(plan(ordinary,publicTrade).selectedActionId,null);
