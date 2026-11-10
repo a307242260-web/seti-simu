@@ -5705,6 +5705,40 @@
         equivalentTo:plan.firstActionId,...(earlyEnd?{equivalentEnd:endId}:{})};
     }
 
+    function redundantQuietFinalClaim(node, actionId, endId, hasTime) {
+      const stored=nodes.get(node),action=node.legalActions.find(a=>a.actionId===actionId);
+      if(node===openedRoot||node.status!=="stable"||stored.intent||stored.resourceControl||stored.envelope.session
+        ||action?.family!=="complete_task"||action.target?.ruleId!=="b117-orbit-land-count-task"||!hasTime())return null;
+      const early=expand(node,actionId,true);
+      if(!early||early.status!=="stable")return null;
+      // Query the same admitted goals on the new wallet. A newly fundable
+      // conversion, data/computer plan, purchase or route forbids delaying.
+      const policy=stableFinalClaimPolicy(early);
+      if(!policy||policy.plans.length||policy.actions.length!==1||policy.actions[0].family!=="end_turn"
+        ||turnTailSummary(node,"end-turn")||!hasTime())return null;
+      const late=expand(node,endId,true),confirm=late?.status==="decision"&&late.legalActions.find(a=>
+        a.target?.choiceId==="confirm:task:"+action.target.cardInstanceId+":"+action.target.ruleId);
+      if(!confirm||localDecisionSpec(late)?.selectedActionId!==confirm.actionId)return null;
+      const lateEnd=expand(late,confirm.actionId,true);
+      if(!["turn-boundary","information-barrier"].includes(lateEnd?.status))return null;
+      const a=nodes.get(early),b=nodes.get(lateEnd);
+      if(b.envelope.session||b.intent||b.resourceControl||b.cardControl||cardKnowledgeKey(a.envelope)!==cardKnowledgeKey(b.envelope)
+        ||!exactClaimState(a.informationBarrier,b.informationBarrier)
+        ||!exactClaimState(b.informationBarrier,stored.informationBarrier))return null;
+      // The redundant route needs no second search node or committed
+      // envelope. Run its existing quiet handover directly for comparison.
+      const x=localPlans.previewFinalEndPrelude({state:readIdentityState(a.envelope),seatId,
+        action:policy.actions[0],knownCards:knownCards(a.envelope),allowSameSeat:true})?.finished;
+      const y=readIdentityState(b.envelope),source=readIdentityState(stored.envelope);
+      if(!x||y.turn.turnNumber!==source.turn.turnNumber+1||y.turn.currentPlayerId!==seatId)return null;
+      // Claiming separately adds one authority version. All other state,
+      // including the same-seat handover, must match exactly.
+      if(x.meta.stateVersion!==y.meta.stateVersion+1
+        ||!exactClaimState({...x,meta:{...x.meta,stateVersion:y.meta.stateVersion}},y))return null;
+      return {proof:"seti-quiet-final-claim-and-handover-equivalence-v1",equivalentTo:endId,
+        earlySteps:[actionId,policy.actions[0].actionId],delayedSteps:[endId,confirm.actionId]};
+    }
+
     function redundantCargoClaim(node, actionId) {
       const stored=nodes.get(node);
       if(node===openedRoot||!resourcePlanning||!movementPlanning||node.status!=="stable"
@@ -8323,7 +8357,7 @@
 
     return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

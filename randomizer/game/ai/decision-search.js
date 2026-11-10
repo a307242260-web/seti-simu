@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v434";
+  const VERSION = "seti-complete-decision-search-v435";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -24,6 +24,7 @@
     }
     // null is an explicit, JSON-safe opt-out; Infinity never leaves this calculation.
     const limits = Object.fromEntries(Object.entries(configuredLimits).map(([key,value])=>[key,value === null ? Infinity : value]));
+    const unlimited = Object.values(configuredLimits).every(limit=>limit===null);
     const valueCache = new WeakMap(), realizationCache = new WeakMap(), preparationDebtCache = new WeakMap();
     const realizationTies = stateValue?.isDefaultStateValueEvaluator?.(evaluate);
     let valueCacheHits=0,valueEvaluations=0;
@@ -634,6 +635,17 @@
               {plan:blue.resourcePlan,execution},()=>now()-startedAt<limits.milliseconds);
             if(deferred){(entry.blueClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...deferred});continue;}
           }
+          // These two complete fixed paths can share a handover. Keep the
+          // original budget charges for callers with configured limits.
+          const quietEnd=entry.alternatives.length===2&&!alternative.resourcePlan&&!alternative.goalPlan
+            &&unlimited
+            &&entry.alternatives.find(a=>!a.resourcePlan&&!a.goalPlan&&entry.node.legalActions.some(x=>x.actionId===a.firstActionId&&x.family==="end_turn"));
+          const quiet=quietEnd&&port.redundantQuietFinalClaim?.(entry.node,alternative.firstActionId,quietEnd.firstActionId,
+            ()=>now()-startedAt<limits.milliseconds);
+          if(quiet){
+            (entry.quietClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...quiet});
+            continue;
+          }
           const proof=port.redundantCargoClaim?.(entry.node,alternative.firstActionId);
           if(proof){
             (entry.cargoClaimEquivalences||=[]).push({actionId:alternative.firstActionId,...proof});
@@ -908,6 +920,7 @@
       ...(entry.deferredCargo?{deferredCargo:entry.deferredCargo}:{}),
       ...(entry.blueClaimEquivalences?{blueClaimEquivalences:entry.blueClaimEquivalences}:{}),
       ...(entry.cargoClaimEquivalences?{cargoClaimEquivalences:entry.cargoClaimEquivalences}:{}),
+      ...(entry.quietClaimEquivalences?{quietClaimEquivalences:entry.quietClaimEquivalences}:{}),
       ...(entry.researchData?{researchData:entry.researchData}:{}),
       ...(entry.researchScan?{researchScan:entry.researchScan}:{}),
       ...(entry.researchIncome?{deferredComputerIncome:entry.researchIncome}:{}),
