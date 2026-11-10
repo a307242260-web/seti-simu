@@ -3300,8 +3300,16 @@
               &&(separateIncome||p.hand.length===6||p.hand.length===5&&p.industryRoundMarkRound===turn.roundNumber
                 &&p.industryRoundMarkTurn===turn.turnNumber)
               &&p.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount===1).length===3;
+            // A completed free move toward a next-turn landing carries no
+            // current payment. Keep the route as evidence, but compare the
+            // already funded income exactly as at a cold post-scan root.
+            const move=stored.intent;
+            const completedFreeVisit=move?.free===true&&move.path.length===0&&move.goal.kind==='land'
+              &&move.goal.timing==='advance-before-rotation'&&move.startedRound===turn.roundNumber
+              &&move.startedTurn===turn.turnNumber&&stored.informationBarrier?.code==='hidden_card_reveal';
             if(turn.roundNumber===3&&data.listComputerPlacedTokens(p).length===0
-              &&([2,3].includes(p.resources.availableData)||threeCorners)&&p.resources.credits===0&&p.resources.energy===0&&!stored.intent
+              &&([2,3].includes(p.resources.availableData)||threeCorners)&&p.resources.credits===0&&p.resources.energy===0
+              &&(!move||completedFreeVisit)
               &&industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId==="deepspace_swap_cards"
               &&turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id))
               &&p.hand.every(c=>knownCards(stored.envelope).has(c.id))&&!node.legalActions.some(a=>a.family==="complete_task")
