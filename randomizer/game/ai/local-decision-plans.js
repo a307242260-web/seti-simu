@@ -2378,9 +2378,35 @@
   }
   return found;
  }
+ // A paired public scan must use the same visible cards in the same
+ // board order, independent of the target-specific action ids.
+ function publicBluePair(state,seatId,session){
+  const p=owner(state,seatId),opts=session?.queue?.[0]?.payload?.options;
+  if(state.turn.roundNumber!==3||state.turn.currentPlayerId!==seatId
+    ||p.resources.additionalPublicScan!==1||Object.values(state.aliens.aliens).some(a=>a.revealed||aliens.isAlienReadyToReveal(a))
+    ||session&&(session.journal?.actions[0]?.action.family!=='scan'||opts?.mode!=='public'||opts.selected!==0||opts.max!==2))return null;
+  const byTarget=new Map();
+  for(const {target:t} of science.listPublicScanChoices(state)){
+   if(data.getNebulaColor(t.nebulaId)!=='blue')continue;
+   const row=byTarget.get(t.nebulaId)||[];
+   row.push(t);byTarget.set(t.nebulaId,row);
+  }
+  if(byTarget.size!==2)return null;
+  let pair=null;const capacities={};
+  for(const [id,targets] of byTarget){
+   const slots=data.listNebulaTokens(state.data,id);
+   if(targets.length!==2||slots.length<4||slots.some(t=>t.replacedByPlayerId||t.replacedByPlayerColor||t.playerColor))return null;
+   const ids=targets.sort((a,b)=>b.publicSlotIndex-a.publicSlotIndex).map(t=>t.cardInstanceId);
+   if(ids[0]===ids[1]||pair&&ids.some((id,i)=>id!==pair[i]))return null;
+   pair=ids;capacities[id]=slots.length;
+  }
+  return {pair,capacities};
+ }
  function scanGoals({state,seatId,actions,session,required={},launchPossible=false}){
   const ids=[...new Set(sources(state,seatId,actions,session).map(a=>a.target.nebulaId).filter(Boolean))].sort(),p=owner(state,seatId);
-  const goals=ids.map(nebulaId=>({id:'scan:sector:'+nebulaId,kind:'scan-flow',nebulaId,required,purpose:'advance-or-complete-known-sector; collect its data and native reward'}));
+  const pair=publicBluePair(state,seatId,session);
+  const goals=ids.map(nebulaId=>({id:'scan:sector:'+nebulaId,kind:'scan-flow',nebulaId,required,purpose:'advance-or-complete-known-sector; collect its data and native reward',
+   ...(pair?.capacities[nebulaId]?{publicBluePair:pair.pair,publicBlueCapacity:pair.capacities[nebulaId]}:{})}));
   // Already-funded scans retain their native launch/move/skip choices. Only
   // the missing reserve needs a separate, bound preparation purpose.
   if(!session&&!p.mainActionCompleted&&launchPossible&&scanEffects.playerOwnsPurpleTech(p,4,{turn:state.turn})
@@ -2424,7 +2450,11 @@
    scores.push({actionId:a.actionId,nebulaId,score,cardId:card?.id||null,loss,progress,gain,target,
     ...(retainedSupply?{usesRetainedSupply:target&&a.target.cardInstanceId===retainedSupply}: {})});
   }
-  scores.sort((a,b)=>b.score-a.score||a.loss-b.loss||Number(Boolean(a.usesRetainedSupply))-Number(Boolean(b.usesRetainedSupply))||tie(a,b));const skip=actions.find(a=>a.target?.done||a.target?.skip),chosen=scores[0];
+  const canonical=goal.publicBluePair&&opts.mode==='public'&&opts.selected===0&&opts.max===2
+   &&actions.find(a=>a.target?.cardInstanceId===goal.publicBluePair[0]&&a.target?.nebulaId===goal.nebulaId)?.actionId;
+  scores.sort((a,b)=>b.score-a.score||a.loss-b.loss||Number(Boolean(a.usesRetainedSupply))-Number(Boolean(b.usesRetainedSupply))
+   ||(canonical?(b.actionId===canonical)-(a.actionId===canonical):0)||tie(a,b));
+  const skip=actions.find(a=>a.target?.done||a.target?.skip),chosen=scores[0];
   const id=skip&&(!chosen||chosen.score<=0)?skip.actionId:chosen?.actionId||skip?.actionId;
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};

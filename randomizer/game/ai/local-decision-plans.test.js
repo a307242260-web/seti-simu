@@ -230,3 +230,35 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
   assert.equal(planFromCurrent(),null,'scanning must leave enough money to play the landing card');
  }finally{c.dispose();}
 }
+
+// Equal public card uses must refill the same slots in the same order when
+// comparing two empty sectors. A live signal or missing marker breaks that pair.
+{
+ const c=open(),s=JSON.parse(c.lifecycle.save().envelope.committedState);c.dispose();
+ const seatId=fixture.seatId,p=s.players.players.find(x=>x.id===seatId),cards=require('../cards/deck');
+ const science=require('../effects/science-session');
+ const make=id=>cards.createCommittedCardInstance(s,cards.CARD_CATALOG.find(x=>x.card_id===id),'scan-pair');
+ s.turn.currentPlayerId=seatId;s.turn.roundNumber=3;p.resources.additionalPublicScan=1;
+ for(const a of Object.values(s.aliens.aliens)){a.revealed=false;a.traces={blue:null,pink:null,yellow:null};}
+ for(const bucket of Object.values(s.data.nebulae))for(const token of bucket.tokens){token.replacedByPlayerId=null;token.replacedByPlayerColor=null;token.replacementOrder=null;}
+ s.cards.publicCards=['dlc_30.png','dlc_31.png','b_14.webp'].map(make);
+ const [first,,last]=s.cards.publicCards;
+ const options={mode:'public',selected:0,max:2,consumeMarkers:true};
+ const session={queue:[{payload:{options}}],journal:{actions:[{action:{family:'scan'}}]}};
+ const actions=science.listPublicScanChoices(s).map((a,i)=>({...a,actionId:'scan-choice-'+i}));
+ const ids=['sector-1-a','sector-2-a'];
+ for(const nebulaId of ids){
+  const goal=plans.scanGoals({state:s,seatId,actions,session}).find(g=>g.nebulaId===nebulaId);
+  assert.deepEqual(goal.publicBluePair,[last.id,first.id]);
+  const step=plans.scanStep({state:s,seatId,goal,actions,status:'decision',session});
+  const selected=actions.find(a=>a.actionId===step.actionId);
+  assert.equal(selected.target.nebulaId,nebulaId);
+  assert.equal(selected.target.cardInstanceId,last.id);
+ }
+ const token=s.data.nebulae[ids[0]].tokens[0];
+ token.replacedByPlayerId=seatId;token.replacedByPlayerColor=p.color;
+ assert(plans.scanGoals({state:s,seatId,actions,session}).every(g=>!g.publicBluePair));
+ token.replacedByPlayerId=null;token.replacedByPlayerColor=null;
+ p.resources.additionalPublicScan=0;
+ assert(plans.scanGoals({state:s,seatId,actions,session}).every(g=>!g.publicBluePair));
+}

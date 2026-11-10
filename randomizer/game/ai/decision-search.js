@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v440";
+  const VERSION = "seti-complete-decision-search-v441";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1032,6 +1032,40 @@
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
+    // A shorter public sector is a useful tie-break, only after both
+    // exact current-turn plans close with the same order and the same value.
+    let publicBluePairChoice=null;
+    if(complete&&!unresolved.length&&realizationTies&&root.observation?.publicState?.roundNumber===3){
+      const entry=nodes[0],best=entry.best;
+      const trace=edge=>{
+        const goal=edge?.resourcePlan?.goal,execution=resourceExecutions.get(edge);
+        if(!goal?.publicBluePair||!execution||edge.goalStatus!=='completed'||edge.fallbackReason)return null;
+        const actions=execution.prefixes.map(p=>p.action);
+        const pair=actions.filter(a=>a.target?.choiceId?.startsWith('public:')&&a.target?.nebulaId);
+        if(pair.length!==2||pair.some((a,i)=>a.target.cardInstanceId!==goal.publicBluePair[i]||a.target.nebulaId!==goal.nebulaId))return null;
+        return {goal,other:actions.filter(a=>!pair.includes(a)).map(a=>a.actionId)};
+      };
+      const chosen=trace(best);
+      if(chosen){
+        const previous=nodes[best.target];
+        for(const e of entry.edges){
+          const target=nodes[e.target],next=trace(e);
+          if(!next||next.goal.publicBlueCapacity>=chosen.goal.publicBlueCapacity
+            ||next.goal.publicBluePair.some((id,i)=>id!==chosen.goal.publicBluePair[i])
+            ||JSON.stringify(next.other)!==JSON.stringify(chosen.other)
+            ||target.value!==previous.value||target.realization!==previous.realization
+            ||target.preparationDebt!==previous.preparationDebt||target.pickupRank!==previous.pickupRank
+            ||target.landingCompanyRetained!==previous.landingCompanyRetained
+            ||Boolean(target.publicDataCard)!==Boolean(previous.publicDataCard)
+            ||(target.chongBlindCount??0)!==(previous.chongBlindCount??0)
+            ||target.distance+e.cost!==entry.distance)continue;
+          entry.best=e;
+          publicBluePairChoice={from:chosen.goal.nebulaId,to:next.goal.nebulaId,cards:next.goal.publicBluePair,
+            oldOpenSlots:chosen.goal.publicBlueCapacity,newOpenSlots:next.goal.publicBlueCapacity};
+          break;
+        }
+      }
+    }
     let scanBeforeOrbit=null, continuationNativeInputs=0;
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
@@ -1213,6 +1247,7 @@
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
       value: accepted ? nodes[0].value : null,
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
+      ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       realization: accepted ? nodes[0].realization ?? null : null,
       preparationDebt:accepted?nodes[0].preparationDebt??null:null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
