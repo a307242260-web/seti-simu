@@ -648,9 +648,9 @@
     players.gainResources(actor, reward.gain, `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`);
   }
 
-  function scoreOnlyTraceReward(reward, allowRegion = false, allowCard = false) {
+  function scoreOnlyTraceReward(reward, allowRegion = false, allowCard = false, anyRegion = false) {
     return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key]
-        || allowRegion && key === "region" && reward.region === "red"
+        || allowRegion && key === "region" && (anyRegion||reward.region === "red")
         || allowCard && key === "pickAlienCard" && reward.pickAlienCard === true)
       && Object.keys(reward.gain || {}).every(key => key === "score"));
   }
@@ -680,30 +680,30 @@
     };
   }
 
-  function isPlainPinkTrace(root, choice, allowRegion = false, allowCard = false) {
+  function isPlainPinkTrace(root, choice, allowRegion = false, allowCard = false, traceType = "pink") {
     const target = choice?.target, slot = aliens.getAlienSlot(root.aliens, target?.alienSlotId);
     if (choice?.family !== "choose_target" || target?.kind !== "planet-reward-alien-trace"
-      || target.traceType !== "pink" || target.fangzhouUnlock || !slot?.revealed
+      || target.traceType !== traceType || target.fangzhouUnlock || !slot?.revealed
       || !["阿米巴", "虫"].includes(slot.alienId)) return false;
-    if (target.stateExtra) return Boolean(slot.traces?.pink?.firstPlaced);
+    if (target.stateExtra) return Boolean(slot.traces?.[traceType]?.firstPlaced);
     const species = aliens.getSpeciesTraceApi(slot);
     return target.speciesId === species?.speciesId
-      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, "pink", target.position), allowRegion, allowCard);
+      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, traceType, target.position), allowRegion, allowCard, traceType!=="pink");
   }
 
   // The caller owns the writable slices and must settle any reported region
   // using the same formal reward before treating this as a closed input.
-  function applyPlainPinkTrace(root, effect, choice, allowRegion = false, allowCard = false) {
-    if (!isPlainPinkTrace(root, choice, allowRegion, allowCard)) return null;
+  function applyPlainPinkTrace(root, effect, choice, allowRegion = false, allowCard = false, traceType = "pink") {
+    if (!isPlainPinkTrace(root, choice, allowRegion, allowCard, traceType)) return null;
     const placed = placeAlienTrace(root, effect, choice);
     if (!placed?.ok) return null;
-    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion, allowCard)) return null;
+    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion, allowCard, traceType!=="pink")) return null;
     const region = placed.reward?.region || null;
-    awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, "pink");
+    awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, traceType);
     return { ok: true, regionEffect: amibaTraceRegionEffect(root, effect.ownerId, region),
       cardEffect: placed.reward?.pickAlienCard ? traceAlienCardEffect(root, effect.ownerId, choice.target.alienSlotId) : null,
       events: [{
-      type: "alienTrace", playerId: effect.ownerId, traceType: "pink",
+      type: "alienTrace", playerId: effect.ownerId, traceType,
       alienSlotId: choice.target.alienSlotId, region,
     }] };
   }

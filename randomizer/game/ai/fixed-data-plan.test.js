@@ -69,5 +69,21 @@ console.log(JSON.stringify({fixedDataPlan:'passed',incomeOptions:6,selected:1,gr
   assert.equal(decision.value,161.5);
   assert(decision.complete&&decision.unresolved.length===0&&decision.diagnostics.nativeExecutions<=256);
   assert.deepEqual(kernel.lifecycle.save().envelope,before);
+
+  // Compare both legal cards, then restore independently inside the paid
+  // card's free move and landing choices. The second trace rewards close.
+  for(const row of replay.rows.slice(25,50))submit(kernel,row.action.actionId);
+  for(const [index,value] of [[50,193.5],[51,193.5],[52,193.5]]){
+   const source=kernel.lifecycle.save().envelope,inspect=kernel.inspect();
+   const port=createAnalysisPort({composition:kernel,seatId,maxCacheEntries:0});
+   const next=agent.createSearchAgent({seatId,analysisPort:port}).decide({
+    seatId,legalActions:inspect.session?.decision?.choices||kernel.inputPort.enumerateActions({}),
+   }).search;
+   assert.equal(next.actionId,replay.rows[index].action.actionId);
+   assert.equal(next.value,value);
+   assert(next.complete&&next.unresolved.length===0&&next.diagnostics.nativeExecutions<=256);
+   assert.deepEqual(kernel.lifecycle.save().envelope,source);
+   submit(kernel,next.actionId);
+  }
  } finally {kernel.dispose();}
 }
