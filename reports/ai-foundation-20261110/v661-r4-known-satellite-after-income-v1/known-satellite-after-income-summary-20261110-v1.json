@@ -1,0 +1,637 @@
+{
+  "baseCommit": "b5799cb7c1f2beed85bdd53d3f92edf504fc8cc1",
+  "candidateAdmitted": false,
+  "newFullGame": false,
+  "budgets": {
+    "nativeDecisionInputs": 256,
+    "decisionMs": 600,
+    "gameMs": 180000
+  },
+  "satellite": {
+    "stopAtBlindDraw": {
+      "ms": 889.7642500000002,
+      "native": 157,
+      "graphNodes": 722,
+      "value": 227,
+      "actionId": "play_card:f1918668",
+      "incomeStatus": "information-barrier",
+      "incomeValue": 220.5,
+      "incomeBoundary": "hidden_card_reveal",
+      "incomeSuccessorValues": []
+    },
+    "completeWithNativeInputs": {
+      "ms": 1507.3295,
+      "native": 978,
+      "graphNodes": 1260,
+      "value": 227,
+      "actionId": "play_card:f1918668",
+      "incomeStatus": "stable",
+      "incomeValue": 221.5,
+      "incomeBoundary": "hidden_card_reveal",
+      "incomeSuccessorValues": [
+        [
+          "play_card:975c7a35",
+          214.5
+        ],
+        [
+          "pass:a1f33c73",
+          188
+        ],
+        [
+          "quick_trade:f385e2ac",
+          221.5
+        ]
+      ]
+    },
+    "completeWithFixedNativeReuse": {
+      "ms": 1229.491167,
+      "native": 205,
+      "graphNodes": 1280,
+      "value": 227,
+      "actionId": "play_card:f1918668",
+      "incomeStatus": "stable",
+      "incomeValue": 221.5,
+      "incomeBoundary": "hidden_card_reveal",
+      "incomeSuccessorValues": [
+        [
+          "play_card:975c7a35",
+          214.5
+        ],
+        [
+          "pass:a1f33c73",
+          188
+        ],
+        [
+          "quick_trade:f385e2ac",
+          221.5
+        ]
+      ]
+    }
+  },
+  "control": {
+    "teacher272": {
+      "exactGraphExceptVersionAndTime": true,
+      "native": 157,
+      "ms": 1207.3611250000001,
+      "v": 223
+    },
+    "late": {
+      "exactGraphExceptVersionAndTime": true,
+      "native": 222,
+      "ms": 464.753333,
+      "v": 266
+    },
+    "official": {
+      "exactGraphExceptVersionAndTime": true,
+      "native": 165,
+      "ms": 963.115125,
+      "v": 205.5
+    },
+    "r3-172": {
+      "exactGraphExceptVersionAndTime": true,
+      "native": 99,
+      "ms": 236.79095799999996,
+      "v": 151
+    },
+    "r3-136": {
+      "exactGraphExceptVersionAndTime": true,
+      "native": 224,
+      "ms": 281.4055,
+      "v": 141.5
+    }
+  },
+  "scopedNativeAudit": {
+    "compared": 977,
+    "hiddenStops": 80,
+    "freshSessionIdAliases": 156,
+    "checks": {
+      "science_domain_income": 1,
+      "play_card": 2,
+      "pass": 2,
+      "quick_trade": 1,
+      "land": 1,
+      "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup": 2,
+      "science_domain_scan_step": 186,
+      "science_domain_alien_trace": 241,
+      "residual_alien_card_decision": 83,
+      "probe_land_choice": 1,
+      "complete_task": 152,
+      "end_turn": 153,
+      "residual_card_decision": 152
+    },
+    "mismatch": [],
+    "rootExact": true
+  },
+  "blindAudit": {
+    "witness": [
+      {
+        "fresh": "dlc_6.png",
+        "path": [
+          {
+            "value": 220.5,
+            "status": "stable",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "play_card:975c7a35",
+              "pass:a1f33c73",
+              "quick_trade:f385e2ac"
+            ]
+          },
+          {
+            "value": 197.5,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:fba74182"
+            ]
+          },
+          {
+            "value": 199,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:ce8aa997",
+              "choose_target:324ce5af"
+            ]
+          },
+          {
+            "value": 200,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:3ef0c79f",
+              "choose_target:51429f22",
+              "choose_target:59bd8770",
+              "choose_target:c4e4834a",
+              "choose_target:a47b34e4",
+              "choose_target:e8c82757",
+              "choose_target:bf39b96e",
+              "choose_target:84f5ee90",
+              "choose_target:8a3fe86a"
+            ]
+          },
+          {
+            "value": 203,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_card:6d03126f"
+            ]
+          },
+          {
+            "value": 204,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:1a902b3f",
+              "choose_target:50c45347"
+            ]
+          },
+          {
+            "value": 204.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:9017589f",
+              "choose_target:af617fe7"
+            ]
+          },
+          {
+            "value": 205.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:3ef0c79f",
+              "choose_target:51429f22",
+              "choose_target:59bd8770",
+              "choose_target:c4e4834a",
+              "choose_target:a47b34e4",
+              "choose_target:e8c82757",
+              "choose_target:bf39b96e",
+              "choose_target:84f5ee90"
+            ]
+          },
+          {
+            "value": 206.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_card:2ebd81c6"
+            ]
+          },
+          {
+            "value": 213.5,
+            "status": "information-barrier",
+            "boundary": "hidden_chong_fossil_offer",
+            "actions": []
+          }
+        ],
+        "stats": {
+          "cardPick": {
+            "rankingCacheEntries": 0,
+            "maxRankingCacheEntries": 64,
+            "rankingCacheHits": 0,
+            "rankingCacheMisses": 0,
+            "rankedCards": 0,
+            "companyIntentReuses": 0,
+            "companyIntentRecoveries": 0,
+            "companyIntentGuardRejects": 0,
+            "rankingCacheHitsThisRoot": 0,
+            "rankingCacheMissesThisRoot": 0,
+            "rankedCardsThisRoot": 0,
+            "companyIntentReusesThisRoot": 0,
+            "companyIntentRecoveriesThisRoot": 0,
+            "companyIntentGuardRejectsThisRoot": 0
+          },
+          "goalMovementGeometryNodes": 0,
+          "movementRouteCacheEntries": 0,
+          "maxMovementRouteCacheEntries": 64,
+          "nodeCount": 13,
+          "submissionCount": 6,
+          "provedPinkRefills": 0,
+          "provedPinkFossilMenus": 0,
+          "provedLastPlainPinkInputs": 0,
+          "provedQuietSpecifiedScans": 3,
+          "provedPinkCardMenus": 2,
+          "provedAlienDisplays": 1,
+          "provedAmibaYellowLandingInputs": 0,
+          "provedChongTransportInputs": 0,
+          "provedChongTraceSkips": 0,
+          "provedChongTraceMenus": 0,
+          "provedChongEndMenus": 0,
+          "provedChongQueuedTasks": 0,
+          "provedFinalDataMenuInputs": 0,
+          "provedBlueTwoPickInputs": 0,
+          "provedComputerIncomeMenus": 0,
+          "provedCurrencyIncomeInputs": 0,
+          "provedFinalResourceCorners": 0,
+          "provedActiveFinalTaskInputs": 0,
+          "provedFinalEndTaskInputs": 0,
+          "provedBluePickSettlements": 0,
+          "provedResearchPicks": 0,
+          "provedResearchSelections": 0,
+          "provedEmptyAmibaResearch": 0,
+          "provedQuietEndMenus": 0,
+          "provedQuietEndHandovers": 0,
+          "provedOwnEndHandovers": 0,
+          "provedScan4QuietMoves": 0,
+          "scan4RefillHits": 0,
+          "scan4RefillCacheEntries": 0,
+          "provedMoveMenus": 0,
+          "provedMovePayments": 0,
+          "provedPublicScanChoices": 0,
+          "provedFinalDataPlacements": {},
+          "cacheHits": 0,
+          "stableRestoreSkips": 2,
+          "timingPrefixBuilds": 0,
+          "timingPrefixReuses": 0,
+          "movementTimingCacheHits": 0,
+          "movementTimingCacheMisses": 0,
+          "cacheEntries": 0,
+          "observationCount": 10,
+          "observationReleases": 0,
+          "movementTimingCacheEntries": 0,
+          "maxMovementTimingCacheEntries": 256,
+          "normalizedIdentityCacheEntries": 0,
+          "maxNormalizedIdentityCacheEntries": 64,
+          "identityCount": 0,
+          "identityMaterializations": 0,
+          "physicalBucketCount": 0,
+          "identityBucketCollisions": 0,
+          "identitySubtreeCacheHits": 0,
+          "identitySubtreeCacheStores": 0,
+          "identitySliceHits": 0,
+          "identitySliceStores": 0,
+          "maxCacheEntries": 0,
+          "sharedPrefixEdges": 12,
+          "sharedPrefixNodes": 13,
+          "sharedPrefixHits": 0,
+          "decodedStateCacheEntries": 2,
+          "maxDecodedStateCacheEntries": 64,
+          "decodedStateCacheBytes": 172092,
+          "maxDecodedStateCacheBytes": 8388608,
+          "observationCacheHits": 0,
+          "resourceQueryHits": 0,
+          "resourceQueryMisses": 0,
+          "goalCatalogHits": 0,
+          "goalCatalogMisses": 0,
+          "movementBoundQueries": 0,
+          "movementRuleQueries": 0,
+          "movementIntentRecoveries": 0,
+          "completedMovementRecoveries": 0,
+          "committedDecodeCount": 2,
+          "committedDecodeHits": 0,
+          "committedReferenceCount": 6,
+          "committedReferenceHits": 13,
+          "lazyCommittedEnvelopes": 0,
+          "lazyPreviewSerializations": 0,
+          "selectionEvidenceEntries": 0,
+          "maxSelectionEvidenceEntries": 1,
+          "planEvidenceEntries": 0,
+          "planPrefixEntries": 0,
+          "maxPlanPrefixEntries": 32,
+          "milliseconds": {
+            "restore": 0.9031669999999963,
+            "execute": 2.5131660000000693,
+            "observation": 4.318251000000203,
+            "checkpoint": 3.568415000000016,
+            "resourceOrder": 0,
+            "valueBound": 0,
+            "postMainPlan": 0,
+            "preMainDataPlan": 0
+          }
+        }
+      },
+      {
+        "fresh": "dlc_3.png",
+        "path": [
+          {
+            "value": 220.5,
+            "status": "stable",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "play_card:975c7a35",
+              "pass:a1f33c73",
+              "quick_trade:f385e2ac"
+            ]
+          },
+          {
+            "value": 197.5,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:fba74182"
+            ]
+          },
+          {
+            "value": 199,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:ce8aa997",
+              "choose_target:324ce5af"
+            ]
+          },
+          {
+            "value": 200,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_target:3ef0c79f",
+              "choose_target:51429f22",
+              "choose_target:59bd8770",
+              "choose_target:c4e4834a",
+              "choose_target:a47b34e4",
+              "choose_target:e8c82757",
+              "choose_target:bf39b96e",
+              "choose_target:84f5ee90",
+              "choose_target:8a3fe86a"
+            ]
+          },
+          {
+            "value": 203,
+            "status": "decision",
+            "boundary": "hidden_card_reveal",
+            "actions": [
+              "choose_card:6d03126f"
+            ]
+          },
+          {
+            "value": 204,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:1a902b3f",
+              "choose_target:50c45347"
+            ]
+          },
+          {
+            "value": 204.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:9017589f",
+              "choose_target:af617fe7"
+            ]
+          },
+          {
+            "value": 205.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_target:3ef0c79f",
+              "choose_target:51429f22",
+              "choose_target:59bd8770",
+              "choose_target:c4e4834a",
+              "choose_target:a47b34e4",
+              "choose_target:e8c82757",
+              "choose_target:bf39b96e",
+              "choose_target:84f5ee90"
+            ]
+          },
+          {
+            "value": 206.5,
+            "status": "decision",
+            "boundary": "hidden_alien_card",
+            "actions": [
+              "choose_card:2ebd81c6"
+            ]
+          },
+          {
+            "value": 213.5,
+            "status": "information-barrier",
+            "boundary": "hidden_chong_fossil_offer",
+            "actions": []
+          }
+        ],
+        "stats": {
+          "cardPick": {
+            "rankingCacheEntries": 0,
+            "maxRankingCacheEntries": 64,
+            "rankingCacheHits": 0,
+            "rankingCacheMisses": 0,
+            "rankedCards": 0,
+            "companyIntentReuses": 0,
+            "companyIntentRecoveries": 0,
+            "companyIntentGuardRejects": 0,
+            "rankingCacheHitsThisRoot": 0,
+            "rankingCacheMissesThisRoot": 0,
+            "rankedCardsThisRoot": 0,
+            "companyIntentReusesThisRoot": 0,
+            "companyIntentRecoveriesThisRoot": 0,
+            "companyIntentGuardRejectsThisRoot": 0
+          },
+          "goalMovementGeometryNodes": 0,
+          "movementRouteCacheEntries": 0,
+          "maxMovementRouteCacheEntries": 64,
+          "nodeCount": 13,
+          "submissionCount": 6,
+          "provedPinkRefills": 0,
+          "provedPinkFossilMenus": 0,
+          "provedLastPlainPinkInputs": 0,
+          "provedQuietSpecifiedScans": 3,
+          "provedPinkCardMenus": 2,
+          "provedAlienDisplays": 1,
+          "provedAmibaYellowLandingInputs": 0,
+          "provedChongTransportInputs": 0,
+          "provedChongTraceSkips": 0,
+          "provedChongTraceMenus": 0,
+          "provedChongEndMenus": 0,
+          "provedChongQueuedTasks": 0,
+          "provedFinalDataMenuInputs": 0,
+          "provedBlueTwoPickInputs": 0,
+          "provedComputerIncomeMenus": 0,
+          "provedCurrencyIncomeInputs": 0,
+          "provedFinalResourceCorners": 0,
+          "provedActiveFinalTaskInputs": 0,
+          "provedFinalEndTaskInputs": 0,
+          "provedBluePickSettlements": 0,
+          "provedResearchPicks": 0,
+          "provedResearchSelections": 0,
+          "provedEmptyAmibaResearch": 0,
+          "provedQuietEndMenus": 0,
+          "provedQuietEndHandovers": 0,
+          "provedOwnEndHandovers": 0,
+          "provedScan4QuietMoves": 0,
+          "scan4RefillHits": 0,
+          "scan4RefillCacheEntries": 0,
+          "provedMoveMenus": 0,
+          "provedMovePayments": 0,
+          "provedPublicScanChoices": 0,
+          "provedFinalDataPlacements": {},
+          "cacheHits": 0,
+          "stableRestoreSkips": 2,
+          "timingPrefixBuilds": 0,
+          "timingPrefixReuses": 0,
+          "movementTimingCacheHits": 0,
+          "movementTimingCacheMisses": 0,
+          "cacheEntries": 0,
+          "observationCount": 10,
+          "observationReleases": 0,
+          "movementTimingCacheEntries": 0,
+          "maxMovementTimingCacheEntries": 256,
+          "normalizedIdentityCacheEntries": 0,
+          "maxNormalizedIdentityCacheEntries": 64,
+          "identityCount": 0,
+          "identityMaterializations": 0,
+          "physicalBucketCount": 0,
+          "identityBucketCollisions": 0,
+          "identitySubtreeCacheHits": 0,
+          "identitySubtreeCacheStores": 0,
+          "identitySliceHits": 0,
+          "identitySliceStores": 0,
+          "maxCacheEntries": 0,
+          "sharedPrefixEdges": 12,
+          "sharedPrefixNodes": 13,
+          "sharedPrefixHits": 0,
+          "decodedStateCacheEntries": 2,
+          "maxDecodedStateCacheEntries": 64,
+          "decodedStateCacheBytes": 172092,
+          "maxDecodedStateCacheBytes": 8388608,
+          "observationCacheHits": 0,
+          "resourceQueryHits": 0,
+          "resourceQueryMisses": 0,
+          "goalCatalogHits": 0,
+          "goalCatalogMisses": 0,
+          "movementBoundQueries": 0,
+          "movementRuleQueries": 0,
+          "movementIntentRecoveries": 0,
+          "completedMovementRecoveries": 0,
+          "committedDecodeCount": 2,
+          "committedDecodeHits": 0,
+          "committedReferenceCount": 6,
+          "committedReferenceHits": 13,
+          "lazyCommittedEnvelopes": 0,
+          "lazyPreviewSerializations": 0,
+          "selectionEvidenceEntries": 0,
+          "maxSelectionEvidenceEntries": 1,
+          "planEvidenceEntries": 0,
+          "planPrefixEntries": 0,
+          "maxPlanPrefixEntries": 32,
+          "milliseconds": {
+            "restore": 0.5746239999999716,
+            "execute": 1.7747910000000502,
+            "observation": 2.5482089999999857,
+            "checkpoint": 2.846499999999878,
+            "resourceOrder": 0,
+            "valueBound": 0,
+            "postMainPlan": 0,
+            "preMainDataPlan": 0
+          }
+        }
+      }
+    ],
+    "exactCommittedStateSessionRng": true,
+    "actionAndValueParityAcrossDraws": true
+  },
+  "incomeSuccessors": [
+    {
+      "inputs": [
+        "chong_6.webp",
+        "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）",
+        "扫描 比邻星",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "获得展示的低重力研究",
+        "扫描 天狼星A",
+        "扫描 室女座61",
+        "外星人 2 粉2号位（5分）"
+      ],
+      "value": 214.5,
+      "boundary": "hidden_chong_fossil_offer",
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 6,
+        "publicity": 8,
+        "score": 141
+      }
+    },
+    {
+      "inputs": [
+        "PASS"
+      ],
+      "value": 188,
+      "boundary": "hidden_card_reveal",
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 6,
+        "publicity": 6,
+        "score": 116
+      }
+    },
+    {
+      "inputs": [
+        "2信用点 → 1能量",
+        "登陆",
+        "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+        "扫描 比邻星",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "获得展示的低重力研究",
+        "扫描 天狼星A",
+        "扫描 室女座61",
+        "外星人 2 粉2号位（5分）",
+        "结束回合",
+        "结算 b_117.webp"
+      ],
+      "value": 221.5,
+      "boundary": "hidden_alien_card",
+      "wallet": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 3,
+        "energy": 0,
+        "handSize": 7,
+        "publicity": 8,
+        "score": 144
+      }
+    }
+  ]
+}

@@ -1,0 +1,519 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -444,7 +444,7 @@
+     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
+     // Each immutable Native envelope owns one immutable knowledge context.
+     // Sharing a view of that envelope preserves knowledge; siblings never mutate it.
+-    let envelopeKnowledge = new WeakMap();
++    let envelopeKnowledge = new WeakMap(), blindIncomeSatellites = new WeakMap();
+     function knownCards(envelope) { return envelopeKnowledge.get(envelope)?.ids || knownRootCardIds; }
+     function cardKnowledgeKey(envelope) { return envelopeKnowledge.get(envelope)?.key || null; }
+     function inheritCardKnowledge(envelope, source, action) {
+@@ -595,7 +595,8 @@
+         },
+         legalActions: ownLegalActions(actions), status, boundary: barrier?.code || null,
+       });
+-      const boundary = barrier?.code || null;
++      const scope=blindIncomeSatellites.get(envelope);
++      const boundary = scope ? [barrier?.code,scope.key,actions.map(a=>a.actionId)] : barrier?.code || null;
+       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope,barrier);
+       const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status,barrier) : null;
+       const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
+@@ -2244,7 +2245,7 @@
+       if(!result&&resourcePlanning&&cardPickPlanning)result=localPlans.pinkScoreBeforeUnknownFossil({
+         state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope),
+         knownFossilIds:knownRootFossilIds,knownAmibaDisplay:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex,
+-        knownChongDisplay:knownRootAlienIds.has("虫")?knownChongDisplayIndex:null,rankKnownFossilTraces,
++        knownChongDisplay:knownRootAlienIds.has("虫")?knownChongDisplayIndex:null,rankKnownFossilTraces:rankKnownFossilTraces||blindIncomeSatellites.has(stored.envelope),
+       });
+       if(!result&&resourcePlanning)result=quietScanTracePlan(node,stored,state);
+       if(!result&&resourcePlanning){
+@@ -3050,6 +3051,7 @@
+       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
+       if(resourceSpecs.has(node))return resourceSpecs.get(node);
++      if(blindIncomeSatellites.has(stored.envelope))return null;
+       const pending=stored.envelope.session?.session;
+       // A regular Native reward menu cannot supply a new resource plan.
+       // Retain its complete menu and policy shape without rebuilding wallets,
+@@ -4014,6 +4016,86 @@
+       });
+     }
+ 
++    function blindIncomeSatelliteSource(envelope,barrier,source,action){
++      if(!resourcePlanning||!cardPickPlanning||!source||envelope.session
++        ||!["hidden_card_draw","hidden_card_reveal"].includes(barrier?.code)
++        ||action?.family!=="choose_card"||action.actorId!==seatId)return null;
++      const previous=source.envelope.session?.session,head=previous?.queue?.[0];
++      if(previous?.queue.length!==1||head.type!==scienceSession.EFFECT_TYPES.INCOME||head.ownerId!==seatId
++        ||barrier.effectId!==head.effectId||head.allowQuickActions||previous.interruptContext
++        ||action.target?.choiceId!=="income:"+action.target?.cardInstanceId
++        ||previous.journal.actions[0]?.action.family!=="place_data")return null;
++      const p0=previous.workingState.players.players.find(p=>p.id===seatId),known=knownCards(envelope);
++      const used=p0.hand.find(c=>c.id===action.target.cardInstanceId),gain=used&&cards.getIncomeGainForCard(used);
++      if(!used||!known.has(used.id)||gain?.handSize!==1||Object.keys(gain).length!==1
++        ||p0.hand.some(c=>!known.has(c.id)))return null;
++      const state=readIdentityState(envelope),turn=state.turn,p=state.players.players.find(q=>q.id===seatId);
++      const anonymous=p.hand.filter(c=>!known.has(c.id));
++      if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded||p.mainActionCompleted||p.passCompletionPending
++        ||turn.passedPlayerIds.includes(seatId)||turn.cardTurnEventBonuses?.length
++        ||!turn.activePlayerIds.includes(seatId)||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
++        ||anonymous.length!==1||p.hand.length!==p0.hand.length||p.hand.some(c=>c.id===used.id)
++        ||[...p.reservedCards,...(p.privateAlienCards||[])].some(c=>!known.has(c.id))
++        ||Object.values(state.aliens.aliens).some(s=>!s.revealed||!knownRootAlienIds.has(s.alienId))
++        ||localPlans.hasPendingFossilArrival(state))return null;
++      const supplier=goalMovement.knownSatellitePickup({...p,hand:p.hand.filter(c=>known.has(c.id))});
++      if(!supplier)return null;
++      const native=productionKernel||globalThis.SetiProductionKernel;
++      const choices=(native.getProbeRouteRequirements(planningState(state,barrier,known),seatId)?.candidates||[]).filter(goal=>
++        !goal.launchRequired&&goal.path.length===0&&goal.endpointFamily==="land"&&goal.endpointTarget?.type==="satellite"
++        &&["jupiter","saturn"].includes(goal.planetId)&&(goal.endpointFacts.cost.credits??0)===0
++        &&Number.isSafeInteger(goal.endpointFacts.cost.energy)&&goal.endpointFacts.cost.energy>0
++        &&goalMovement.knownSatelliteSectorCount(state,p,goal.endpointFacts.rewards)>=2);
++      if(choices.length!==1)return null;
++      const [goal]=choices,{rocketId,planetId}=goal,satelliteId=goal.endpointTarget.satelliteId,
++        energy=goal.endpointFacts.cost.energy,cardId=supplier.card.id;
++      return {rocketId,planetId,satelliteId,energy,cardId,opaqueId:anonymous[0].id,key:[rocketId,planetId,satelliteId,energy,cardId]};
++    }
++
++    function blindIncomeSatelliteMenu(envelope,inspection,scope){
++      const comp=fork.composition||fork,session=envelope.session?.session,head=session?.queue?.[0];
++      const known=knownCards(envelope),state=readIdentityState(envelope),p=state.players.players.find(q=>q.id===seatId);
++      const opaque=p.hand.filter(c=>!known.has(c.id));
++      if(state.turn.currentPlayerId!==seatId||state.turn.gameEnded||state.turn.passedPlayerIds.includes(seatId)
++        ||opaque.length!==1||opaque[0].id!==scope.opaqueId
++        ||[...p.reservedCards,...(p.privateAlienCards||[])].some(c=>!known.has(c.id)))return [];
++      const menu=legalActions(comp,inspection);
++      const endpoint=a=>a.target?.rocketId===scope.rocketId&&a.target?.planetId===scope.planetId
++        &&a.target?.landTarget?.type==="satellite"&&a.target.landTarget.satelliteId===scope.satelliteId;
++      if(!session&&inspection.phase==="idle"){
++        if(p.mainActionCompleted)return menu.filter(a=>a.actorId===seatId&&(a.family==="end_turn"
++          ||a.family==="complete_task"&&known.has(a.target?.cardInstanceId)&&a.target?.ruleId==="b117-orbit-land-count-task"));
++        return menu.filter(a=>a.actorId===seatId&&(a.family==="pass"
++          ||a.family==="play_card"&&a.target?.cardInstanceId===scope.cardId
++          ||a.family==="land"&&p.resources.energy>=scope.energy
++          ||a.family==="quick_trade"&&a.target?.tradeId==="credits-for-energy"
++            &&p.resources.energy<scope.energy&&p.resources.energy+Math.floor(p.resources.credits/2)>=scope.energy));
++      }
++      if(inspection.phase!=="awaiting_input"||head?.ownerId!==seatId||head.allowQuickActions||session.interruptContext)return [];
++      const first=session.journal.actions[0]?.action,own=menu.filter(a=>a.actorId===seatId);
++      if(first?.family==="end_turn"&&head.type==="residual_card_decision"&&head.payload?.ruleId==="b117-orbit-land-count-task"
++        &&known.has(head.payload.cardInstanceId))return own.filter(a=>a.target?.choiceId?.endsWith(":b117-orbit-land-count-task"));
++      if(first?.family!=="land"&&(first?.family!=="play_card"||first.target?.cardInstanceId!==scope.cardId))return [];
++      if(!session.journal.decisions.some(d=>endpoint(d.choice)))return own.filter(a=>a.family==="choose_target"&&endpoint(a));
++      if(head.type===scienceSession.EFFECT_TYPES.SCAN_STEP&&head.payload.options?.mode==="specified"){
++        return own.filter(a=>a.family==="choose_target"&&!a.target?.cardInstanceId
++          &&knownRootNebulaIds.has(a.target?.nebulaId)&&a.payload?.gainData===true);
++      }
++      if(head.type===scienceSession.EFFECT_TYPES.ALIEN_TRACE)return own.filter(a=>{
++        const t=a.target,slot=alienState.getAlienSlot(state.aliens,t?.alienSlotId);
++        return a.family==="choose_target"&&slot?.revealed&&knownRootAlienIds.has(slot.alienId)
++          &&(t.stateExtra||["amiba","chong"].includes(t.speciesId))&&!t.fossilId&&!t.cardInstanceId;
++      });
++      if(head.type==="residual_alien_card_decision")return own.filter(a=>{
++        const species=head.payload?.speciesId,index=species==="chong"?knownChongDisplayIndex:
++          species==="amiba"?rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex:null;
++        return a.family==="choose_card"&&a.target?.source==="display"&&Number.isSafeInteger(index)
++          &&state.aliens[species]?.displayedCardIndex===index&&a.target.cardIndex===index
++          &&a.target.choiceId===species+":display:"+index;
++      });
++      return [];
++    }
++
+     function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null, sourceAction = null, source = null, prepared = null) {
+       const comp = fork.composition || fork;
+       const inspection = prepared?.inspection || comp.inspect();
+@@ -4040,6 +4122,23 @@
+       }
+       if (!prepared) loadedEnvelope = envelope;
+       const childState = readIdentityState(envelope);
++      const sameTurn=JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey;
++      const previousScope=blindIncomeSatellites.get(source?.envelope);
++      const scoped=sameTurn&&!fossilReveal&&!intent&&!resourceControl
++        &&(previousScope||blindIncomeSatelliteSource(envelope,barrier,source,sourceAction));
++      // This scope owns one ordinary blind draw and the existing public
++      // displays. Another unknown effect still closes the window.
++      const scopeReveal=previousScope&&revealed&&!(barrier?.code==="hidden_alien_card"
++        &&cardKnowledgeKey(envelope)!==cardKnowledgeKey(source.envelope));
++      if(scoped){
++        if(prepared)restoreEnvelope(envelope);
++        const actions=scopeReveal?[]:blindIncomeSatelliteMenu(envelope,inspection,scoped);
++        if(actions.length){
++          blindIncomeSatellites.set(envelope,scoped);
++          return createNode(envelope,null,actions,inspection.phase==="idle"?"stable":"decision",barrier);
++        }
++        return createNode(envelope,null,[],"information-barrier",barrier);
++      }
+       // A refill does not end a root-known post-main plan. Unknown owned
+       // identities, alien reveals, other owners and actual turn changes still close it.
+       let knownRewardActions = [], postMainActions = [];
+@@ -7105,7 +7204,7 @@
+       resourceGroups.clear();
+       cache.clear();
+       clearPrefixGraph();
+-      rootObservation = null;knownChongDisplayIndex=null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();knownRootTechIndices=new Map();knownRootAlienIds=new Set();planningStates=new WeakMap();acquiredPlanningStates=new WeakMap();envelopeKnowledge=new WeakMap();
++      rootObservation = null;knownChongDisplayIndex=null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();knownRootTechIndices=new Map();knownRootAlienIds=new Set();planningStates=new WeakMap();acquiredPlanningStates=new WeakMap();envelopeKnowledge=new WeakMap();blindIncomeSatellites=new WeakMap();
+       publicSeed = null;rootTurnKey=null;
+     }
+ 
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+ 
+-  const VERSION = "seti-complete-decision-search-v435";
++  const VERSION = "seti-complete-decision-search-v436";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+--- a/randomizer/game/ai/probe-capital.js
++++ b/randomizer/game/ai/probe-capital.js
+@@ -338,12 +338,25 @@
+     knownTraceSelections.set(key,result);return result;
+   }
+ 
++  const heldSatelliteDirectories=new WeakMap();
++  function heldSatelliteWindow(facts,weights) {
++    return knownMoveWindow(facts,weights)&&facts.board.aliens.slots.some(s=>s.revealed&&s.alienId==='虫');
++  }
++  function heldSatelliteGoals(goals) {
++    if(!heldSatelliteDirectories.has(goals))heldSatelliteDirectories.set(goals,new Set(goals.filter(goal=>
++      goal.endpointFamily==='land'&&['jupiter','saturn'].includes(goal.planetId)&&goal.route.cost===0
++      &&!goal.requirementId.endsWith(':planet')
++      &&goal.endpointFacts.rewards.filter(e=>e.type==='choose_colored_nebula_scan').length>=2
++      &&goal.endpointFacts.rewards.every(e=>['gain_resources','choose_colored_nebula_scan'].includes(e.type)))));
++    return heldSatelliteDirectories.get(goals);
++  }
++
+   function prepareFinalRoundSwapMission(state, player) {
+     if(state.turn.roundNumber!==4)throw new TypeError('PROBE_FINAL_SWAP_ROUND_INVALID');
+     const inactive=state.turn.gameEnded||player.passCompletionPending||(state.passingPlayerIds||state.turn.passedPlayerIds).includes(player.id);
+     if(inactive||!ownedProbes(state.pieces?.rockets,player).length)return {sensitive:false,quote:()=>0};
+     const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
+-    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
++    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,finalScoring:state.finalScoring,
+       ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
+       aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),alienId:slot.revealed?(slot.alienId||slot.assignedAlienId||null):null,traces:slot.traces}))}};
+     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
+@@ -354,13 +367,17 @@
+       reservedCards:player.reservedCards,researchSymbols:amiba.getPublicSymbolState(state.aliens,{readOnly:true}),
+       amibaTraces:amiba.getPublicTraceState(state.aliens,{readOnly:true})};
+     const weights=arithmetic.DEFAULT_WEIGHTS;
+-    if(noCurrencyEndpoint(shared,weights))return {sensitive:false,quote:()=>0};
++    const mayHoldSatellite=heldSatelliteWindow(shared,weights)
++      &&[...player.hand,...state.cards.publicCards].some(card=>card?.set==='alien:虫'&&
++        cardEffects.knownSatellitePickup({hand:[card],resources:wallet}));
++    if(!mayHoldSatellite&&noCurrencyEndpoint(shared,weights))return {sensitive:false,quote:()=>0};
+     const goals=loadRequirements(shared,true),prepared=preparedFundedGoals(goals,wallet,weights);
++    const satellites=mayHoldSatellite&&heldSatelliteGoals(goals);
+     const moveGoals=knownMoveGoals(shared,goals,weights);
+-    const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
++    const sensitive=Boolean(satellites?.size)||!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
+       || moveGoals.length>0 && (player.hand.some(movePaymentCard) || state.cards.publicCards.some(c=>c?.id&&c.cardId&&!c.hidden&&movePaymentCard(c)));
+     const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
+-      weights,true,true,{prepared,moveGoals,constantInvestment:true});
++      weights,true,true,{prepared,moveGoals,satellites,constantInvestment:true});
+     return {sensitive,quote};
+   }
+ 
+@@ -440,6 +457,35 @@
+     return gain;
+   }
+ 
++  // B117 is paid by the same landing as the mission, not by another probe
++  // or action. Check the printed condition through the same rule as Native.
++  function finalLandingTaskGain(facts) {
++    if (facts.round!==4||!facts.uncontestedRound||facts.pendingNativeEffects||facts.turnCardBonusCount
++      ||!Array.isArray(facts.reservedCards)||facts.board.aliens.slots.length!==2
++      ||!facts.board.aliens.slots.every(s=>s.revealed&&['阿米巴','虫'].includes(s.alienId))) return null;
++    const card=facts.reservedCards.find(c=>c.cardId==='b_117.webp'&&!c.hidden);
++    if(!card)return null;
++    const model=cardEffects.getCardModel(card),task=model?.tasks?.[0],reward=task?.rewards?.[0],gain=reward?.options?.gain;
++    if(model?.tasks?.length!==1||model.endGameScoring||model.triggers?.length||model.temporaryTasks?.length
++      ||task?.id!=='b117-orbit-land-count-task'||task.condition?.type!=='orbitOrLandCount'||task.condition.count!==5
++      ||card.cardEffectState?.modelCardId!==card.cardId||!Array.isArray(card.cardEffectState.completedTaskIds)
++      ||card.cardEffectState.completedTaskIds.includes(task.id)
++      ||task.rewards.length!==1||reward.type!=='gain_resources'||(reward.options.repeat??1)!==1
++      ||Object.keys(gain||{}).length!==2||gain.score!==3||gain.credits!==1) return null;
++    const actor={...facts.player,reservedCards:facts.reservedCards},context={planets:facts.board.planets};
++    if (cardEffects.taskConditionMet(task,actor,context)
++      ||!cardEffects.taskConditionMet({condition:{...task.condition,count:4}},actor,context)
++      ||cardEffects.hasMatchingTrigger(actor,{type:'complete_task',playerId:actor.id,cardInstanceId:card.id,ruleId:task.id})
++      ||cardEffects.hasMatchingTrigger(actor,{type:'card_rule_settled',playerId:actor.id,cardInstanceId:card.id,ruleId:task.id,ruleKind:'task'}))return null;
++    // C1's placed mark pays once per completed task. C2 also depends
++    // on Type 3 counts; leave it outside this independent task quote.
++    const board=facts.board.finalScoring;
++    const mark=board?.tiles?.c?.marks?.find(m=>m.playerId===actor.id);
++    const formula=mark&&endScoring.getFormulaId('c',board.tileVariants?.c);
++    const tileScore=formula==='c1'?endScoring.getSlotMultiplier(formula,mark.slotIndex):0;
++    return {gain,tileScore};
++  }
++
+   function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
+     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
+     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
+@@ -449,8 +495,10 @@
+     }
+     if (!Array.isArray(facts.board.aliens.slots)) throw new Error('PROBE_CAPITAL_ALIEN_SLOTS_MISSING');
+     const cardRoute=heldLandingCard(facts,weights);
+-    if (!cardRoute && noCurrencyEndpoint(facts,weights)) return scalarOnly ? 0 : zero();
++    const satelliteCard=heldSatelliteWindow(facts,weights)&&cardEffects.knownSatellitePickup({hand:facts.hand,resources:player});
++    if (!cardRoute && !satelliteCard && noCurrencyEndpoint(facts,weights)) return scalarOnly ? 0 : zero();
+     const goals = finalSwap?.prepared ? null : loadRequirements(facts,scalarOnly);
++    const satellites=satelliteCard&&(finalSwap?.satellites||goals&&heldSatelliteGoals(goals));
+     if (goals?.length===0) return scalarOnly ? 0 : zero();
+     // A finite supplied baseline requires no investment callback. With no
+     // affordable endpoint there is also no later mission portfolio to price.
+@@ -473,6 +521,10 @@
+     const moveGoals=finalSwap?.moveGoals??knownMoveGoals(facts,goals,weights);
+     const movePayments=knownMovePayments(moveGoals,facts.hand,player,weights);
+     if (prepared && movePayments) portfolio=[...prepared,...Array.from(movePayments,([goal,payment])=>({goal,payment}))];
++    if(prepared&&satellites?.size){
++      const existing=portfolio||prepared;
++      portfolio=[...existing,...[...satellites].filter(goal=>!existing.some(entry=>entry.goal===goal)).map(goal=>({goal}))];
++    }
+     if(!portfolio&&prepared?.length===0&&Array.isArray(facts.hand)&&player.income!=null){
+       __requirementRefs.emptyFundedScalar++;
+       return 0;
+@@ -492,12 +544,20 @@
+     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
+     const actor = { id: seatId, color: player.color };
+     const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape,amibaPink;
++    let landingTaskGain;
+     // A private scalar directory cannot escape through the full menu or
+     // through its numeric result. Reuse only pure payments, never an offer
+     // choice, mission portfolio, or projected Native transition.
+     for (const entry of portfolio||prepared||goals) {
+-      const goal=portfolio||prepared?entry.goal:entry,cost=goal.endpointFacts.cost,card=entry.held?cardRoute.card:null;
+-      const payment=entry.payment||movePayments?.get(goal)||funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
++      const goal=portfolio||prepared?entry.goal:entry,cost=goal.endpointFacts.cost;
++      const ordinary=entry.payment||movePayments?.get(goal)||funding(player,{...cost,energy:(cost.energy||0)+goal.route.cost},weights);
++      const fee=satellites&&satellites.has(goal)?satelliteCard.cost.credits:null;
++      // The paid card is another way to reach this same stationary endpoint.
++      // Compare the fee and the consumed hand card with the ordinary wallet.
++      // Reward scans are the same; the later fossil supplies no modeled gain.
++      const viaSatelliteCard=fee!==null&&(!ordinary||fee*weights.credits+weights.handSize<ordinary.value);
++      const card=viaSatelliteCard?satelliteCard.card:entry.held?cardRoute.card:null;
++      const payment=viaSatelliteCard?{spend:{credits:fee,energy:0},creditPurchases:0,energyPurchases:0,value:fee*weights.credits}:ordinary;
+       if (!payment) { if(candidates)candidates.push({ id: goal.requirementId, funded: false, value: 0 }); continue; }
+       const hand = card ? knownHand.filter(c=>c.id!==card.id)
+         : payment.cornerCardIds ? knownHand.filter(c=>!payment.cornerCardIds.includes(c.id)&&!payment.exchangeCardIds.includes(c.id))
+@@ -639,6 +699,15 @@
+           }
+         } else { supported = false; ledger?.push({ type: effect.type, unsupported: true }); }
+       }
++      if (supported&&weights===arithmetic.DEFAULT_WEIGHTS&&goal.endpointFamily==='land'
++        &&effects.every(effect=>['gain_resources','choose_colored_nebula_scan'].includes(effect.type))) {
++        const task=landingTaskGain===undefined?(landingTaskGain=finalLandingTaskGain(facts)):landingTaskGain;
++        if(task){
++          const {gain,tileScore}=task,value=weighted(gain)+tileScore;
++          delta+=value;
++          ledger?.push({type:'known-landing-task',ruleId:'b117-orbit-land-count-task',gain,tileScore,value});
++        }
++      }
+       const capitalDelta = arithmetic.sum([capital(hand, wallet, income, traceSlots),-initialCapital],weights);
+       // One fixed, existing-data continuation belongs to this mission's
+       // shared wallet. It is an optional forecast, never a native node/bound.
+--- a/randomizer/game/ai/state-value.js
++++ b/randomizer/game/ai/state-value.js
+@@ -23,7 +23,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol, publicityPreparation) {
+   "use strict";
+ 
+-  const MODEL_VERSION = "seti-purpose-capital-state-value-v62";
++  const MODEL_VERSION = "seti-purpose-capital-state-value-v64";
+   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
+   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
+   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
+--- a/randomizer/game/ai/goal-movement.js
++++ b/randomizer/game/ai/goal-movement.js
+@@ -38,24 +38,7 @@
+     if(cache){if(cache.size>=64)cache.delete(cache.keys().next().value);cache.set(cacheKey,best);}
+     return{best,settled};
+   }
+-  // These two exact effects buy the landing for the card's fee. A printed
+-  // satellite reward may be quoted, but never the identity of a fossil/card.
+-  function knownSatellitePickup(player){
+-    const suppliers=player.hand.filter(card=>{
+-      if(!card.id||!card.cardId||card.hidden)return false;
+-      const model=effects.getCardModel(card),list=model?.playEffects||[];
+-      const [land,pick]=list;
+-      return model?.cardType===2&&!model.triggers?.length&&!model.temporaryTasks?.length&&list.length===2
+-        &&land.type==='chong_orbit_or_land_for_pickup'&&pick.type==='chong_pickup_fossil'
+-        &&land.options?.orbitOrLand===true&&pick.options?.orbitOrLand===true
+-        &&land.options.cardIndex===pick.options.cardIndex
+-        &&[land,pick].every(e=>Object.keys(e.options).every(key=>key==='cardIndex'||key==='orbitOrLand'));
+-    });
+-    if(suppliers.length!==1)return null;
+-    const [card]=suppliers,cost=effects.getCardPlayCost(card);
+-    return Object.keys(cost).length===1&&Number.isSafeInteger(cost.credits)&&cost.credits>0
+-      &&player.resources.credits>=cost.credits?{card,cost}:null;
+-  }
++  const knownSatellitePickup=effects.knownSatellitePickup;
+   function knownSatelliteSectorCount(state,owner,rewards,plannedScans=[]){
+     const own=row=>row.playerId===owner.id||row.playerColor===owner.color;
+     const ready=rewards.filter(effect=>effect.type==='choose_colored_nebula_scan'
+--- a/randomizer/game/ai/analysis-port.test.js
++++ b/randomizer/game/ai/analysis-port.test.js
+@@ -603,7 +603,7 @@
+     const legalActions = c.inputPort.enumerateActions({});
+     const q = createSearchAgent({ seatId, analysisPort: port }).decide({ seatId, legalActions }).search;
+     assert(q.complete && q.unresolved.length === 0);
+-    assert.equal(q.value, 216.5);
++    assert.equal(q.value, 223);
+     assert.equal(legalActions.find(a => a.actionId === q.actionId).family, "place_data");
+     const d = port.getDiagnostics();
+     for (const key of ["provedComputerIncomeMenus", "provedCurrencyIncomeInputs",
+--- a/randomizer/game/ai/local-decision-plans.test.js
++++ b/randomizer/game/ai/local-decision-plans.test.js
+@@ -215,7 +215,7 @@
+   assert.deepEqual(proof.actions.map(a=>a.actionId),expected.map(a=>a.actionId));
+   assert.equal(proof.status,'information-barrier');
+   assert.equal(proof.boundary,'hidden_card_reveal');
+-  assert.equal(proof.value,212); // Includes the once-payable public Amiba pink reward.
++  assert.equal(proof.value,221); // Includes B117, C1 and the known lower net cost of the held landing card.
+   for(let i=0;i<expected.length;i++){
+    if(i===1||i===2){
+     const cold=planFromCurrent();
+--- a/randomizer/game/ai/probe-capital-value.test.js
++++ b/randomizer/game/ai/probe-capital-value.test.js
+@@ -218,16 +218,36 @@
+   const state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seatId);
+   const quote=facts=>probe.quote({...facts,investment:()=>0},values.DEFAULT_WEIGHTS);
+   const q=quote(observedFacts);
+-  assert.equal(q.selected.id,'7:land:saturn:enceladus');
+-  assert.equal(q.value,23.5);
++  assert.equal(q.selected.id,'7:land:saturn:enceladus:card:alien-chong-6-16');
++  assert.equal(q.value,32.5);
++  assert.deepEqual(q.selected.payment.spend,{credits:1,energy:0});
++  const withoutSupplier={...observedFacts,hand:observedFacts.hand.filter(c=>c.cardId!=='chong_6.webp')};
++  assert.equal(quote(withoutSupplier).value,31.5);
++  const hiddenSupplier={...observedFacts,hand:observedFacts.hand.map(c=>c.cardId==='chong_6.webp'?{hidden:true}:c)};
++  assert.equal(quote(hiddenSupplier).value,31.5);
++  const dry={...observedFacts,player:{...observedFacts.player,credits:1,energy:0}};
++  assert.equal(quote(dry).selected.id,q.selected.id);
++  assert.equal(quote({...dry,hand:withoutSupplier.hand}).value,0);
++  const blocked={...dry,player:{...dry.player,credits:0}};
++  assert.equal(quote(blocked).value,0);
++  const noOpponent={...dry,uncontestedRound:false};
++  assert.equal(quote(noOpponent).value,0);
++  assert.deepEqual(q.selected.ledger.find(e=>e.type==='known-landing-task'),{
++    type:'known-landing-task',ruleId:'b117-orbit-land-count-task',gain:{score:3,credits:1},tileScore:4,value:8,
++  });
++  const noTask={...observedFacts,reservedCards:observedFacts.reservedCards.filter(c=>c.cardId!=='b_117.webp')};
++  assert.equal(quote(noTask).value,24.5);
++  const noMark=structuredClone(observedFacts.board);
++  noMark.finalScoring.tiles.c.marks=noMark.finalScoring.tiles.c.marks.filter(m=>m.playerId!==seatId);
++  assert.equal(quote({...observedFacts,board:noMark}).value,28.5);
+   const concealed={...observedFacts.amibaTraces,displayedCardIndex:null,displayedCardHidden:true};
+-  assert.equal(quote({...observedFacts,amibaTraces:concealed}).value,18.5);
++  assert.equal(quote({...observedFacts,amibaTraces:concealed}).value,27.5);
+   const occupied=structuredClone(observedFacts.amibaTraces),pink=occupied.traceSlotsByAlienSlotId["1"].pink;
+   pink[3]=pink[4]={playerColor:'brown'};
+-  assert.equal(quote({...observedFacts,amibaTraces:occupied}).value,18.5);
++  assert.equal(quote({...observedFacts,amibaTraces:occupied}).value,27.5);
+   const uncertain=structuredClone(observedFacts.researchSymbols);
+   uncertain.symbolSlots.red_1='symbol_4';uncertain.symbolsById.symbol_4.slotId='red_1';
+-  assert.equal(quote({...observedFacts,researchSymbols:uncertain}).value,18.5);
++  assert.equal(quote({...observedFacts,researchSymbols:uncertain}).value,27.5);
+   assert.equal(quote({...observedFacts,uncontestedRound:false}).value,11.5);
+   assert.equal(quote({...observedFacts,pendingNativeEffects:true}).value,11.5);
+   assert.deepEqual(q,quote(probe.factsFromState(state,owner)));
+@@ -237,7 +257,7 @@
+     ['sector-3-b',{score:7,publicity:1,knownPink:{slotId:1,position:4,score:7,hand:1}}],['sector-4-a',{score:3,publicity:1}]]);
+   try{
+     const value=obs=>values.evaluateStateValue(obs,seatId);
+-    const v=value(observed);assert.equal(v.total,212);assert.equal(v.components.probePotential,23.5);
++    const v=value(observed);assert.equal(v.total,221);assert.equal(v.components.probePotential,32.5);
+     assert.deepEqual(value(c.projection({...viewer,valueOnly:true}).state),v);
+     const next=predicate=>{
+       const decision=c.inspect().session?.decision;
+@@ -263,6 +283,10 @@
+     const masked=sanitizeHiddenInformationObservation(observed,after,{code:'hidden_alien_card'},known);
+     assert.equal(value(masked).total,212);assert.equal(value(masked).components.probePotential,0);
+     assert.equal(masked.publicState.board.aliens.amibaTraces.displayedCardIndex,null);
++    next(a=>a.family==='complete_task'&&a.target?.ruleId==='b117-orbit-land-count-task');
++    const claimed=sanitizeHiddenInformationObservation(observed,c.projection(viewer).state,{code:'hidden_alien_card'},known);
++    assert.equal(value(claimed).total,v.total-1); // Native ordinary payment costs one more V.
++    assert.equal(value(claimed).components.probePotential,0);
+     assert(c.lifecycle.restore(before).ok);assert.deepEqual(c.lifecycle.save().envelope,before);
+   }finally{c.dispose();}
+ }
+--- a/randomizer/game/cards/effects.js
++++ b/randomizer/game/cards/effects.js
+@@ -4695,6 +4695,24 @@
+       .filter((index) => index != null);
+   }
+ 
++  // These two exact effects buy the landing for the card's fee. A printed
++  // satellite reward may be quoted, but never the identity of a fossil/card.
++  function knownSatellitePickup(player){
++    const suppliers=player.hand.filter(card=>{
++      if(card.set!=='alien:虫'||!card.id||!card.cardId||card.hidden)return false;
++      const model=getCardModel(card),list=model?.playEffects||[];
++      const [land,pick]=list;
++      return model?.cardType===2&&!model.triggers?.length&&!model.temporaryTasks?.length&&list.length===2
++        &&land.type==='chong_orbit_or_land_for_pickup'&&pick.type==='chong_pickup_fossil'
++        &&land.options?.orbitOrLand===true&&pick.options?.orbitOrLand===true
++        &&land.options.cardIndex===pick.options.cardIndex
++        &&[land,pick].every(e=>Object.keys(e.options).every(key=>key==='cardIndex'||key==='orbitOrLand'));
++    });
++    if(suppliers.length!==1)return null;
++    const [card]=suppliers,cost=getCardPlayCost(card);
++    return Object.keys(cost).length===1&&Number.isSafeInteger(cost.credits)&&cost.credits>0
++      &&player.resources.credits>=cost.credits?{card,cost}:null;
++  }
+   return Object.freeze({
+     EFFECT_TYPES,
+     REWARD_TYPES,
+@@ -4710,6 +4728,7 @@
+     isReturnUnfinishedTaskTarget,
+     getCardPrice,
+     getCardPlayCost,
++    knownSatellitePickup,
+     buildPlayEffects,
+     getEffectBuildRepeat,
+     getTemporaryTasks,
+--- a/randomizer/index.html
++++ b/randomizer/index.html
+@@ -449,7 +449,7 @@
+   <script src="./game/state/sequences.js?v=canonical-sequences-1"></script>
+   <script src="./game/card-catalog.js?v=card-catalog-sync-1"></script>
+   <script src="./game/cards/deck.js?v=card-deck-alien-card-face-1"></script>
+-  <script src="./game/cards/effects.js?research-trigger-v194"></script>
++  <script src="./game/cards/effects.js?known-satellite-fee-20261110"></script>
+   <script src="./game/cards/task-state.js?v=card-task-state-1"></script>
+   <script src="./game/players.js?v=player-count-neutral-trace-2"></script>
+   <script src="./game/final-scoring.js?v=final-scoring-1"></script>
+@@ -545,7 +545,7 @@
+   <script src="./game/rule-composition.js?pending-copy-v316"></script>
+   <script src="./game/ai/value-arithmetic.js?v=184"></script>
+   <script src="./game/ai/income-card-order.js?income-tie-v255"></script>
+-  <script src="./game/ai/probe-capital.js?mixed-landing-payment-20261110"></script>
++  <script src="./game/ai/probe-capital.js?known-satellite-fee-20261110"></script>
+   <script src="./game/ai/amiba-analysis-capital.js?analysis-invariants-v341"></script>
+   <script src="./game/ai/ready-analysis-capital.js?swap-with-trace-prepaid-v358"></script>
+   <script src="./game/ai/research-income-capital.js?income-printed-type-v349"></script>
+@@ -555,16 +555,16 @@
+   <script src="./game/ai/known-symbol-capital.js?fixed-symbol-rank-v353"></script>
+   <script src="./game/ai/research-symbol-capital.js?read-only-rewards-v306"></script>
+   <script src="./game/ai/analysis-publicity-capital.js?deferred-publicity-v281"></script>
+-  <script src="./game/ai/state-value.js?mixed-landing-payment-20261110"></script>
+-  <script src="./game/ai/decision-search.js?quiet-final-claim-equivalence-20261110"></script>
+-  <script src="./game/ai/goal-movement.js?satellite-scan-setup-v430"></script>
++  <script src="./game/ai/state-value.js?known-satellite-fee-20261110"></script>
++  <script src="./game/ai/decision-search.js?known-satellite-after-income-20261110"></script>
++  <script src="./game/ai/goal-movement.js?known-satellite-fee-20261110"></script>
+   <script src="./game/ai/scan-analysis-income-utility.js?v=scan-analysis-income-v1"></script>
+   <script src="./game/ai/resource-demand.js?income-quote-prefix-20261110"></script>
+   <script src="./game/ai/card-pick-planning.js?fixed-known-chong-v431"></script>
+   <script src="./game/ai/local-decision-plans.js?scan-task-preview-copy-20261110"></script>
+   <script src="./game/ai/funded-movement-tail.js?lean-native-path-v315"></script>
+-  <script src="./game/ai/analysis-port.js?scan-task-preview-copy-20261110"></script>
+-  <script src="./game/ai/search-agent.js?ranked-trace-fossil-v433"></script>
++  <script src="./game/ai/analysis-port.js?known-satellite-after-income-20261110"></script>
++  <script src="./game/ai/search-agent.js?known-satellite-after-income-20261110"></script>
+   <script src="./game/production-composition.js?v=production-composition-v8"></script>
+   <script src="./game/production-kernel.js?static-occupancy-v317"></script>
+   <script src="./app/simulation-contract.js?amiba-analysis-v199"></script>
