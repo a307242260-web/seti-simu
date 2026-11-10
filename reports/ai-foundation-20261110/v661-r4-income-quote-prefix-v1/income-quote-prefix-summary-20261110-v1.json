@@ -1,0 +1,855 @@
+{
+  "sourceBefore": "43ec9b29bd422f21b0f148038fd3f6c4ba223376",
+  "scope": "same native one-decision checkpoints; actual Simulation projection flags; no whole game",
+  "singlePointGate": {
+    "native": 256,
+    "ms": 600
+  },
+  "scoresAreUnchanged": true,
+  "gatePassed": false,
+  "points": {
+    "satellite": {
+      "exactFullGraph": true,
+      "runs": {
+        "base": [
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1593.309458,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1613.2496660000002,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1602.795416,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1649.0085,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1591.402333,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1586.719,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1632.985666,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1641.692041,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1620.454458,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ]
+        ],
+        "prefix": [
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1582.632792,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1630.2197919999999,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1611.3482920000001,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1597.733125,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1599.923084,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1585.728833,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1583.323292,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1567.7755419999999,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ],
+          [
+            {
+              "label": "satellite",
+              "action": "place_data:8fd12fd3",
+              "value": 222.5,
+              "native": 254,
+              "graphNodes": 1596,
+              "ms": 1577.284125,
+              "digest": "5e2fee27d5468aeec4aa45871f8fd012d9d8baafa79c6aa46b85acafbe6aa6cf",
+              "bytes": 3731526,
+              "identityMaterializations": 794,
+              "identityBucketCollisions": 1164,
+              "identitySliceHits": 3597,
+              "identitySliceStores": 1765
+            }
+          ]
+        ]
+      },
+      "mediansMs": {
+        "base": [
+          1613.2496660000002
+        ],
+        "prefix": [
+          1585.728833
+        ]
+      }
+    },
+    "teacher272": {
+      "exactFullGraph": true,
+      "runs": {
+        "base": [
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1057.113333,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1058.698959,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1069.469583,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1346.872333,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1110.3310000000001,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1066.8236670000001,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1055.28375,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1065.4285,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1055.7165839999998,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ]
+        ],
+        "prefix": [
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1059.455792,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1078.808,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1053.439709,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1083.022125,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1074.338916,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1067.434042,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1053.783375,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1043.578,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ],
+          [
+            {
+              "label": "teacher272",
+              "action": "place_data:8fd12fd3",
+              "value": 216.5,
+              "native": 156,
+              "graphNodes": 684,
+              "ms": 1047.6816250000002,
+              "digest": "942ce3cf5fa97f7a2834f9c79ed3c68406c31371e438dfbdf397a0383666ceb9",
+              "bytes": 2262670,
+              "identityMaterializations": 375,
+              "identityBucketCollisions": 340,
+              "identitySliceHits": 1423,
+              "identitySliceStores": 803
+            }
+          ]
+        ]
+      },
+      "mediansMs": {
+        "base": [
+          1065.4285
+        ],
+        "prefix": [
+          1059.455792
+        ]
+      }
+    },
+    "official": {
+      "exactFullGraph": true,
+      "runs": {
+        "base": [
+          [
+            {
+              "label": "official",
+              "action": "industry:e887dc52",
+              "value": 205.5,
+              "native": 165,
+              "graphNodes": 535,
+              "ms": 641.928084,
+              "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+              "bytes": 2019005,
+              "identityMaterializations": 26,
+              "identityBucketCollisions": 147,
+              "identitySliceHits": 127,
+              "identitySliceStores": 55
+            }
+          ]
+        ],
+        "prefix": [
+          [
+            {
+              "label": "official",
+              "action": "industry:e887dc52",
+              "value": 205.5,
+              "native": 165,
+              "graphNodes": 535,
+              "ms": 633.984542,
+              "digest": "a99409f710c30e3873fe66f2a0d642e1d01b4b5cef2b38ef9ff97ac523ae2244",
+              "bytes": 2019005,
+              "identityMaterializations": 26,
+              "identityBucketCollisions": 147,
+              "identitySliceHits": 127,
+              "identitySliceStores": 55
+            }
+          ]
+        ]
+      },
+      "mediansMs": {
+        "base": [
+          641.928084
+        ],
+        "prefix": [
+          633.984542
+        ]
+      }
+    },
+    "late": {
+      "exactFullGraph": true,
+      "runs": {
+        "base": [
+          [
+            {
+              "label": "late",
+              "action": "analyze:a5629aa3",
+              "value": 266,
+              "native": 222,
+              "graphNodes": 342,
+              "ms": 434.27337500000004,
+              "digest": "50f17e567773270d07834cec0290905f4558a04dcda560722cb61a3d052b5c11",
+              "bytes": 494287,
+              "identityMaterializations": 110,
+              "identityBucketCollisions": 92,
+              "identitySliceHits": 176,
+              "identitySliceStores": 496
+            }
+          ]
+        ],
+        "prefix": [
+          [
+            {
+              "label": "late",
+              "action": "analyze:a5629aa3",
+              "value": 266,
+              "native": 222,
+              "graphNodes": 342,
+              "ms": 422.74504199999996,
+              "digest": "50f17e567773270d07834cec0290905f4558a04dcda560722cb61a3d052b5c11",
+              "bytes": 494287,
+              "identityMaterializations": 110,
+              "identityBucketCollisions": 92,
+              "identitySliceHits": 176,
+              "identitySliceStores": 496
+            }
+          ]
+        ]
+      },
+      "mediansMs": {
+        "base": [
+          434.27337500000004
+        ],
+        "prefix": [
+          422.74504199999996
+        ]
+      }
+    },
+    "r3": {
+      "exactFullGraph": true,
+      "runs": {
+        "base": [
+          [
+            {
+              "label": "r3-172",
+              "action": "play_card:38489727",
+              "value": 151,
+              "native": 99,
+              "graphNodes": 110,
+              "ms": 237.591959,
+              "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+              "bytes": 183622,
+              "identityMaterializations": 17,
+              "identityBucketCollisions": 7,
+              "identitySliceHits": 0,
+              "identitySliceStores": 119
+            },
+            {
+              "label": "r3-136",
+              "action": "quick_trade:f385e2ac",
+              "value": 141.5,
+              "native": 224,
+              "graphNodes": 214,
+              "ms": 257.589,
+              "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+              "bytes": 373310,
+              "identityMaterializations": 60,
+              "identityBucketCollisions": 49,
+              "identitySliceHits": 0,
+              "identitySliceStores": 364
+            }
+          ]
+        ],
+        "prefix": [
+          [
+            {
+              "label": "r3-172",
+              "action": "play_card:38489727",
+              "value": 151,
+              "native": 99,
+              "graphNodes": 110,
+              "ms": 232.32800000000003,
+              "digest": "d3420ee413f78ef2bf253ed088b37f94bf7f1c79f800713af91f99277755ff01",
+              "bytes": 183622,
+              "identityMaterializations": 17,
+              "identityBucketCollisions": 7,
+              "identitySliceHits": 0,
+              "identitySliceStores": 119
+            },
+            {
+              "label": "r3-136",
+              "action": "quick_trade:f385e2ac",
+              "value": 141.5,
+              "native": 224,
+              "graphNodes": 214,
+              "ms": 263.3265,
+              "digest": "44782cb3e8d2807f36cc6d7c7317407b82fca1644031ad7da8353e7d207bd1b5",
+              "bytes": 373310,
+              "identityMaterializations": 60,
+              "identityBucketCollisions": 49,
+              "identitySliceHits": 0,
+              "identitySliceStores": 364
+            }
+          ]
+        ]
+      },
+      "mediansMs": {
+        "base": [
+          237.591959,
+          257.589
+        ],
+        "prefix": [
+          232.32800000000003,
+          263.3265
+        ]
+      }
+    }
+  },
+  "endpointAudits": {
+    "audit-teacher272-20261110-v1": {
+      "compared": 946,
+      "readOnly": 805,
+      "public": 141,
+      "available": 840,
+      "misses": 106,
+      "knownDataIncome": 0,
+      "cachedPrefixes": 716
+    },
+    "audit-resource-unit-20261110-v1": {
+      "compared": 23,
+      "readOnly": 22,
+      "public": 1,
+      "available": 23,
+      "misses": 0,
+      "knownDataIncome": 1,
+      "cachedPrefixes": 12
+    },
+    "audit-official-20261110-v1": {
+      "compared": 0,
+      "readOnly": 0,
+      "public": 0,
+      "available": 0,
+      "misses": 0,
+      "knownDataIncome": 0,
+      "cachedPrefixes": 0
+    },
+    "audit-satellite-20261110-v1": {
+      "compared": 2795,
+      "readOnly": 2425,
+      "public": 370,
+      "available": 2795,
+      "misses": 0,
+      "knownDataIncome": 0,
+      "cachedPrefixes": 2425
+    },
+    "audit-r3-20261110-v1": {
+      "compared": 2,
+      "readOnly": 0,
+      "public": 2,
+      "available": 2,
+      "misses": 0,
+      "knownDataIncome": 0,
+      "cachedPrefixes": 0
+    },
+    "audit-late-20261110-v1": {
+      "compared": 96,
+      "readOnly": 82,
+      "public": 14,
+      "available": 0,
+      "misses": 96,
+      "knownDataIncome": 0,
+      "cachedPrefixes": 0
+    }
+  }
+}

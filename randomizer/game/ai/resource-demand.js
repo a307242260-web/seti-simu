@@ -362,7 +362,7 @@
       &&immutableCapitalInput(state)&&immutableCapitalInput(p);
     let owners=immutable?immutableIncomeTailQuotes.get(state):null,quotes=owners?.get(p);
     if(quotes?.has(card))return quotes.get(card);
-    const preview=knownPreview??previewIncomeTail({state,seatId,goal});
+    const preview=knownPreview??computeIncomeTailPreview({state,seatId,goal},true);
     const after=preview.available?planningCapital(state,preview.player):null;
     const quote=Object.freeze(preview.available?{available:true,netGain:preview.netGain,afterCapital:after,
       preparedCapital:incomePreparationCapital(state,preview.player,0,after)}:{available:false,reason:preview.reason});
@@ -388,7 +388,7 @@
     const p=owner(state,seatId),card=p.hand.find(c=>c.id===goal.incomeCardId),gain=card&&cards.getIncomeGainForCard(card);
     const count=state.cards.drawPileCardIds?.length;
     if(gain?.handSize!==1||Object.keys(gain).length!==1||!Number.isSafeInteger(count)||count<1)return null;
-    const preview=previewIncomeTail({state,seatId,goal});if(!preview.available)return null;
+    const preview=computeIncomeTailPreview({state,seatId,goal},true);if(!preview.available)return null;
     const facts=valueFacts(state,preview.player),after=stateValue.purposeCapital({...facts,board:{...facts.board,ordinaryDrawCount:count-1}}).total;
     const old=incomeTailCapital({state,seatId,goal});
     return{beforeCapital:old.beforeCapital,originalAfterCapital:old.afterCapital,afterCapital:after,ordinaryDrawCountBefore:count,ordinaryDrawCountAfter:count-1};
@@ -880,15 +880,41 @@
     }
     return [...byTile.values()];
   }
-  function previewIncomeTail({state,seatId,goal}){
-    const original=owner(state,seatId),p={...original,resources:{...original.resources},income:{...original.income},hand:[...original.hand],dataState:structuredClone(original.dataState)},card=p.hand.find(c=>c.id===goal.incomeCardId);
-    const remaining=Math.max(0,4-placed(p));
-    if(!card||p.resources.availableData<remaining)return{available:false,reason:'income-tail-needs-additional-funding'};
+  const incomeTailPrefixes=new WeakMap();
+  function incomeTailPrefix(original,remaining){
+    const p={...original,resources:{...original.resources},dataState:structuredClone(original.dataState)};
     for(let i=0;i<remaining;i++){
-      const result=data.placeDataToComputer(p);if(!result.ok)return{available:false,reason:'income-tail-slot-unavailable'};
+      const result=data.placeDataToComputer(p);if(!result.ok)return null;
       for(const bonus of result.slotBonuses||[]){if(bonus.type==='publicity')players.gainResources(p,{publicity:bonus.publicity});else if(bonus.type==='score')players.gainResources(p,{score:bonus.score});}
     }
-    p.hand=p.hand.filter(c=>c.id!==card.id);const gain=cards.getIncomeGainForCard(card);let blindHandValue=0,previewRoot=null;
+    return {remaining,resources:p.resources,dataState:p.dataState};
+  }
+  function previewIncomeTail(input){return computeIncomeTailPreview(input,false);}
+  function computeIncomeTailPreview({state,seatId,goal},scalarOnly){
+    const original=owner(state,seatId),card=original.hand.find(c=>c.id===goal.incomeCardId);
+    if(!card)return{available:false,reason:'income-tail-needs-additional-funding'};
+    const gain=cards.getIncomeGainForCard(card);
+    // The computer placements and slot rewards depend only on this player,
+    // before the supplier is consumed. Share the ledger only with read-only
+    // quotes; callers that can add data or return the player get their own.
+    const canShare=scalarOnly&&!gain?.availableData;
+    let prefix=canShare?incomeTailPrefixes.get(original):undefined;
+    const remaining=prefix?.remaining??Math.max(0,4-placed(original));
+    if(original.resources.availableData<remaining)return{available:false,reason:'income-tail-needs-additional-funding'};
+    if(prefix===undefined){
+      prefix=incomeTailPrefix(original,remaining);
+      if(prefix&&canShare&&Array.isArray(prefix.dataState?.poolTokens)&&Array.isArray(prefix.dataState.placedTokens)&&immutableCapitalInput(original)){
+        for(const tokens of [prefix.dataState.poolTokens,prefix.dataState.placedTokens]){
+          for(const token of tokens)Object.freeze(token);
+          Object.freeze(tokens);
+        }
+        Object.freeze(prefix.dataState);
+        incomeTailPrefixes.set(original,prefix);
+      }
+    }
+    if(!prefix)return{available:false,reason:'income-tail-slot-unavailable'};
+    const p={...original,resources:{...prefix.resources},dataState:prefix.dataState,income:{...original.income},hand:original.hand.filter(c=>c.id!==card.id)};
+    let blindHandValue=0,previewRoot=null;
     players.gainIncome(p,gain,{blindDraw:()=>{blindHandValue++;},
       gainData:target=>data.gainData(target,{root:previewRoot||(previewRoot={meta:structuredClone(state.meta)})})});
     p.resources.handSize=p.hand.length+blindHandValue;
