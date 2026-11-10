@@ -1,0 +1,192 @@
+--- a/randomizer/game/ai/probe-capital.js
++++ b/randomizer/game/ai/probe-capital.js
+@@ -401,8 +401,12 @@
+     const moveGoals=knownMoveGoals(shared,goals,weights);
+     const sensitive=Boolean(satellites?.size)||!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
+       || moveGoals.length>0 && (player.hand.some(movePaymentCard) || state.cards.publicCards.some(c=>c?.id&&c.cardId&&!c.hidden&&movePaymentCard(c)));
++    // One exact public board, never keyed by a coarse score/wallet summary.
++    // Unfrozen callers still get a new memo per synchronous quote.
++    const publicMemo=sensitive&&[state.data,state.solarSystem,state.planets,state.finalScoring,state.aliens,player.reservedCards]
++      .every(slice=>isImmutableRequirementGeometry(slice,new Set()))?makeMissionMemo():null;
+     const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
+-      weights,true,true,{prepared,moveGoals,satellites,constantInvestment:true});
++      weights,true,true,{prepared,moveGoals,satellites,constantInvestment:true,publicMemo});
+     return {sensitive,quote};
+   }
+ 
+@@ -511,6 +515,30 @@
+     return {gain,tileScore};
+   }
+ 
++  function makeMissionMemo() {
++    return {menus:new Map(),tokens:new Map(),task:undefined,pink:undefined};
++  }
++
++  function missionScanIds(root,actor,options,memo) {
++    if(!memo)return science.listScanStepChoices(root,actor,{...options,gainData:true}).map(a=>a.target.nebulaId);
++    const key=options.mode==='planet'?'planet:'+options.planetId:options.mode==='color'?'color:'+options.color
++      :'specified:'+JSON.stringify(options.nebulaIds||[]);
++    if(!memo.menus.has(key)){
++      if(memo.menus.size>=32)memo.menus.delete(memo.menus.keys().next().value);
++      memo.menus.set(key,missionScanIds(root,actor,options,null));
++    }
++    return memo.menus.get(key);
++  }
++
++  function missionScanToken(root,id,used,memo) {
++    if(memo&&!memo.tokens.has(id))memo.tokens.set(id,data.getNextReplaceableNebulaToken(root.data,id));
++    const first=memo?memo.tokens.get(id):data.getNextReplaceableNebulaToken(root.data,id);
++    if(!first||!used.has(first.id))return first;
++    const bucket=root.data.nebulae[id],available={...root.data,nebulae:{...root.data.nebulae,
++      [id]:{...bucket,tokens:bucket.tokens.filter(t=>!used.has(t.id))}}};
++    return data.getNextReplaceableNebulaToken(available,id);
++  }
++
+   function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
+     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
+     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
+@@ -571,8 +599,9 @@
+     const initialCapital = capital(knownHand, player, player.income, null, facts.initialInvestmentCapital);
+     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
+     const actor = { id: seatId, color: player.color };
+-    const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape,amibaPink;
+-    let landingTaskGain;
++    const candidates = scalarOnly ? null : [];let bestValue=0,originalTraceShape;
++    const missionMemo=finalSwap?.publicMemo||(finalSwap?.constantInvestment?makeMissionMemo():null);
++    let landingTaskGain,amibaPink;
+     // A private scalar directory cannot escape through the full menu or
+     // through its numeric result. Reuse only pure payments, never an offer
+     // choice, mission portfolio, or projected Native transition.
+@@ -640,7 +669,7 @@
+         } else if (effect.type === 'pick_card') {
+           if ((options.count || 1) !== 1) { supported = false; break; }
+           const following=effects.slice(index+1),incomeAt=following.findIndex(e=>e.type==='income'),incomeLater=incomeAt>=0;
+-          const projectedData=incomeLater?knownScanData(root,actor,following.slice(0,incomeAt),usedTokens):0;
++          const projectedData=incomeLater?knownScanData(root,actor,following.slice(0,incomeAt),usedTokens,missionMemo):0;
+           publicCards ||= (facts.board.publicCards || []).filter(c => c && !c.hidden && c.cardId);
+           let commonCapital;
+           const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomePurpose(card, [...hand, card],projectedData).value
+@@ -684,14 +713,13 @@
+           const opts = effect.type === 'scan_planet_sector' ? { mode: 'planet', planetId: options.planetId }
+             : effect.type === 'choose_colored_nebula_scan' ? { mode: 'color', color: options.color }
+               : { mode: 'specified', nebulaIds: options.nebulaIds };
+-          const quotes = science.listScanStepChoices(root, actor, { ...opts, gainData: true }).flatMap(action => {
+-            const id = action.target.nebulaId, bucket = root.data.nebulae[id];
+-            const available = { ...root.data, nebulae: { ...root.data.nebulae,
+-              [id]: { ...bucket, tokens: bucket.tokens.filter(t => !usedTokens.has(t.id)) } } };
+-            const token = data.getNextReplaceableNebulaToken(available, id);
++          const quotes = missionScanIds(root,actor,opts,missionMemo).flatMap(id => {
++            const token = missionScanToken(root,id,usedTokens,missionMemo);
+             if (!token||closingSectors?.has(id)) return []; // No forecast of refilled/hidden replacement tokens.
+             const payout=closingSectors&&certainSectorPayout(root.data,actor,id,token,facts.board.aliens.slots,
+-              ()=>pickedKnownPink?null:amibaPink===undefined?(amibaPink=knownAmibaPinkPayout(facts)):amibaPink);
++              ()=>pickedKnownPink?null:missionMemo
++                ?missionMemo.pink===undefined?(missionMemo.pink=knownAmibaPinkPayout(facts)):missionMemo.pink
++                :amibaPink===undefined?(amibaPink=knownAmibaPinkPayout(facts)):amibaPink);
+             const publicity=payout?Math.min(payout.publicity,players.RESOURCE_LIMITS.publicity-wallet.publicity):0;
+             const score=(data.getNebulaSlotScoreReward(id,token.slotIndex)||0)+(payout?.score||0);
+             const gainedData=Number(wallet.availableData<players.RESOURCE_LIMITS.availableData);
+@@ -736,7 +764,9 @@
+       }
+       if (supported&&weights===arithmetic.DEFAULT_WEIGHTS&&goal.endpointFamily==='land'
+         &&effects.every(effect=>['gain_resources','choose_colored_nebula_scan'].includes(effect.type))) {
+-        const task=landingTaskGain===undefined?(landingTaskGain=finalLandingTaskGain(facts)):landingTaskGain;
++        const task=missionMemo
++          ?missionMemo.task===undefined?(missionMemo.task=finalLandingTaskGain(facts)):missionMemo.task
++          :landingTaskGain===undefined?(landingTaskGain=finalLandingTaskGain(facts)):landingTaskGain;
+         if(task){
+           const {gain,tileScore}=task,value=weighted(gain)+tileScore;
+           delta+=value;
+@@ -827,14 +857,11 @@
+ 
+   // A single known ordinary scan before queued income. No guessed refill,
+   // settlement reward, optional effect or other owner supplies this data.
+-  function knownScanData(root,actor,effects,usedTokens=new Set()) {
++  function knownScanData(root,actor,effects,usedTokens=new Set(),memo=null) {
+     if(effects.length!==1||effects[0].type!=="scan_planet_sector")return 0;
+     const options=effects[0].options||{};
+-    return Number(science.listScanStepChoices(root,actor,{mode:"planet",planetId:options.planetId,gainData:true}).some(a=>{
+-      const id=a.target.nebulaId,bucket=root.data.nebulae[id];
+-      const available={...root.data,nebulae:{...root.data.nebulae,[id]:{...bucket,tokens:bucket.tokens.filter(t=>!usedTokens.has(t.id))}}};
+-      return !!data.getNextReplaceableNebulaToken(available,id);
+-    }));
++    return Number(missionScanIds(root,actor,{mode:"planet",planetId:options.planetId},memo)
++      .some(id=>missionScanToken(root,id,usedTokens,memo)));
+   }
+ 
+   function funding(wallet, cost, weights) {
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -2095,6 +2095,21 @@
+       const result=describeCardPick(stored.envelope,node.legalActions,node.status,stored.informationBarrier);cardPickSpecs.set(node,result);return result;
+     }
+ 
++    function fixedCardPickSpec(node) {
++      // Stable nodes return acquisition advice, never a committed choice.
++      // Their policy still runs when search ranks that node's alternatives.
++      if(node.status!=="decision")return null;
++      const spec=cardPickSpec(node);
++      return spec?.fixed?spec:null;
++    }
++
++    function keepCompanyPickIntent(node,action) {
++      // The later decision inherits the advisory intent only if this
++      // Native input actually starts the company exchange.
++      if(node.status==="stable"&&action.family==="industry"
++        &&action.target?.abilityId==="deepspace_swap_cards")cardPickSpec(node);
++    }
++
+     function setCardPickPlanning(enabled) {
+       cardPickPlanning=enabled===true;
+       if(cardPickPlanning&&openedRoot){
+@@ -2113,10 +2128,11 @@
+         const stopped=hasCapacity(prefixes.length);
+         if(stopped)return{complete:false,stopReason:stopped,node:current,submissions:prefixes.length,prefixes,fixedChoices};
+         const action=current.legalActions.find(a=>a.actionId===next);if(!action)throw new Error("ANALYSIS_FIXED_CARD_ACTION_STALE");
+-        const spec=cardPickSpec(current)?.fixed?cardPickSpec(current):localDecisionSpec(current);
++        const spec=fixedCardPickSpec(current)||localDecisionSpec(current);
+         if(spec?.fixed||spec?.selectedActionId)fixedChoices.push({prefix:prefixes.length,...spec});
++        keepCompanyPickIntent(current,action);
+         prefixes.push({node:current,action});current=expand(current,next);
+-        const following=cardPickSpec(current)?.fixed?cardPickSpec(current):localDecisionSpec(current);
++        const following=fixedCardPickSpec(current)||localDecisionSpec(current);
+         next=following?.fixed||following?.selectedActionId?following.selectedActionId:null;
+       }
+       return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
+@@ -3500,7 +3516,7 @@
+       }
+       while(true){
+         if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
+-        const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
++        const spec=fixedCardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
+         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
+         const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup","held-satellite-travel"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+           :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);
+@@ -3522,6 +3538,7 @@
+         // Discard identities belong to one native action, not the whole resource goal.
+         operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.scanLaunchCompleted?{scanLaunchCompleted:true}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(chosen.resourceBlueSlot!==undefined?{resourceBlueSlot:chosen.resourceBlueSlot}:{}),...(chosen.finalResourceBlue!==undefined?{finalResourceBlue:chosen.finalResourceBlue}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
+         if(plan.goal.kind==="held-satellite-travel")operation.heldTravelIndex=(operation.heldTravelIndex||0)+1;
++        keepCompanyPickIntent(current,action);
+         prefixes.push({node:current,action});current=expand(current,id);forced=null;
+         sharedStates.push(current);if(!shared)newSubmissions++;
+         if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
+--- a/randomizer/index.html
++++ b/randomizer/index.html
+@@ -545,7 +545,7 @@
+   <script src="./game/rule-composition.js?pending-copy-v316"></script>
+   <script src="./game/ai/value-arithmetic.js?v=184"></script>
+   <script src="./game/ai/income-card-order.js?income-tie-v255"></script>
+-  <script src="./game/ai/probe-capital.js?held-satellite-travel-20261110"></script>
++  <script src="./game/ai/probe-capital.js?fixed-card-policy-lazy-20261110"></script>
+   <script src="./game/ai/amiba-analysis-capital.js?analysis-invariants-v341"></script>
+   <script src="./game/ai/ready-analysis-capital.js?swap-with-trace-prepaid-v358"></script>
+   <script src="./game/ai/research-income-capital.js?income-printed-type-v349"></script>
+@@ -563,7 +563,7 @@
+   <script src="./game/ai/card-pick-planning.js?fixed-known-chong-v431"></script>
+   <script src="./game/ai/local-decision-plans.js?scan-task-preview-copy-20261110"></script>
+   <script src="./game/ai/funded-movement-tail.js?lean-native-path-v315"></script>
+-  <script src="./game/ai/analysis-port.js?held-satellite-travel-20261110"></script>
++  <script src="./game/ai/analysis-port.js?fixed-card-policy-lazy-20261110"></script>
+   <script src="./game/ai/search-agent.js?known-satellite-after-income-20261110"></script>
+   <script src="./game/production-composition.js?v=production-composition-v8"></script>
+   <script src="./game/production-kernel.js?static-occupancy-v317"></script>

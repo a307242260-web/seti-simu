@@ -1,0 +1,437 @@
+{
+  "baseEvidenceCommit": "98fea7e8633219b3e042d2e944dc55c3fc4cca31",
+  "benchmarks": {
+    "teacher272": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 1127.6301250000001
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1058.8389160000002
+        },
+        {
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1069.126667
+        },
+        {
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 1097.979041
+        },
+        {
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 1113.7884159999999
+        },
+        {
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1063.031333
+        },
+        {
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1088.1722080000002
+        },
+        {
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 1306.343917
+        },
+        {
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 1105.189709
+        },
+        {
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1056.893875
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 1113.7884159999999,
+        "candidate": 1063.031333
+      },
+      "graph": "d5058fe4332c70b1ce44f0663476609043a334ae22d0b3c5d99aeb63c3b4da8a",
+      "chosen": {
+        "action": "place_data:8fd12fd3",
+        "value": 223,
+        "native": 160,
+        "nodes": 712
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 202,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 8
+        },
+        "candidate": {
+          "rankingCacheHits": 52,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 8
+        }
+      }
+    },
+    "satellite": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 1225.101291
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 1273.581708
+        },
+        {
+          "variant": "candidate",
+          "sample": 2,
+          "ms": 1231.5837080000001
+        },
+        {
+          "variant": "baseline",
+          "sample": 2,
+          "ms": 1244.046958
+        },
+        {
+          "variant": "baseline",
+          "sample": 3,
+          "ms": 1289.7040829999999
+        },
+        {
+          "variant": "candidate",
+          "sample": 3,
+          "ms": 1237.366459
+        },
+        {
+          "variant": "candidate",
+          "sample": 4,
+          "ms": 1240.895583
+        },
+        {
+          "variant": "baseline",
+          "sample": 4,
+          "ms": 1250.676375
+        },
+        {
+          "variant": "baseline",
+          "sample": 5,
+          "ms": 1271.7600830000001
+        },
+        {
+          "variant": "candidate",
+          "sample": 5,
+          "ms": 1226.5289590000002
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 1250.676375,
+        "candidate": 1237.366459
+      },
+      "graph": "52a8e4a075d3e73093067993d79b0716f5ddbbb5d52c0a0bc43fb436672b5949",
+      "chosen": {
+        "action": "play_card:f1918668",
+        "value": 227,
+        "native": 205,
+        "nodes": 1280
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 36,
+          "rankingCacheMisses": 4,
+          "companyIntentReuses": 0
+        },
+        "candidate": {
+          "rankingCacheHits": 12,
+          "rankingCacheMisses": 4,
+          "companyIntentReuses": 0
+        }
+      }
+    },
+    "official": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 609.266709
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 623.170625
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 609.266709,
+        "candidate": 623.170625
+      },
+      "graph": "097e8bcd9b905e9bdf4656a12667de9e0e6d100117a07c567b079aa45c376427",
+      "chosen": {
+        "action": "industry:e887dc52",
+        "value": 205.5,
+        "native": 165,
+        "nodes": 535
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 156,
+          "rankingCacheMisses": 14,
+          "companyIntentReuses": 4
+        },
+        "candidate": {
+          "rankingCacheHits": 109,
+          "rankingCacheMisses": 14,
+          "companyIntentReuses": 4
+        }
+      }
+    },
+    "late": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 469.81883300000004
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 427.14870900000005
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 469.81883300000004,
+        "candidate": 427.14870900000005
+      },
+      "graph": "392c60ace24e78550158af3aaad48ff7f72d8af3bd3e64838b4ccf3322bc3572",
+      "chosen": {
+        "action": "analyze:a5629aa3",
+        "value": 266,
+        "native": 222,
+        "nodes": 342
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 5,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 0
+        },
+        "candidate": {
+          "rankingCacheHits": 5,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 0
+        }
+      }
+    },
+    "r3-172": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 230.04095799999996
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 227.20504200000002
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 230.04095799999996,
+        "candidate": 227.20504200000002
+      },
+      "graph": "a37c7d93725d4771ef7dadf69865477bbaa1f25b904f01e60995ba03b343541f",
+      "chosen": {
+        "action": "play_card:38489727",
+        "value": 151,
+        "native": 99,
+        "nodes": 110
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 1,
+          "rankingCacheMisses": 1,
+          "companyIntentReuses": 0
+        },
+        "candidate": {
+          "rankingCacheHits": 1,
+          "rankingCacheMisses": 1,
+          "companyIntentReuses": 0
+        }
+      }
+    },
+    "r3-136": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 332.039625
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 319.78158399999995
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 332.039625,
+        "candidate": 319.78158399999995
+      },
+      "graph": "d4c1fc61d9f70ee63689275faee3ab3ddd7ec1480d60c3ffcb9a94deaaa3cdc7",
+      "chosen": {
+        "action": "quick_trade:f385e2ac",
+        "value": 141.5,
+        "native": 224,
+        "nodes": 214
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 18,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 2
+        },
+        "candidate": {
+          "rankingCacheHits": 6,
+          "rankingCacheMisses": 3,
+          "companyIntentReuses": 2
+        }
+      }
+    },
+    "held0": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 190.58987499999998
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 186.14350000000002
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 190.58987499999998,
+        "candidate": 186.14350000000002
+      },
+      "graph": "6965950b59f812d34e6dc819b2f235211c12176abde48a9faded2b1ccf32c09d",
+      "chosen": {
+        "action": "quick_trade:f385e2ac",
+        "value": 240,
+        "native": 79,
+        "nodes": 53
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 3,
+          "rankingCacheMisses": 4,
+          "companyIntentReuses": 0
+        },
+        "candidate": {
+          "rankingCacheHits": 0,
+          "rankingCacheMisses": 1,
+          "companyIntentReuses": 0
+        }
+      }
+    },
+    "held1": {
+      "samples": [
+        {
+          "variant": "baseline",
+          "sample": 1,
+          "ms": 202.93020900000002
+        },
+        {
+          "variant": "candidate",
+          "sample": 1,
+          "ms": 187.982583
+        }
+      ],
+      "sameGraph": true,
+      "medians": {
+        "baseline": 202.93020900000002,
+        "candidate": 187.982583
+      },
+      "graph": "da1b9ae37d6880e3132994aaa6063aa813fe6ac965b905e0bd36ef24debc45fc",
+      "chosen": {
+        "action": "quick_trade:a39c1a77",
+        "value": 240,
+        "native": 81,
+        "nodes": 50
+      },
+      "cardPick": {
+        "baseline": {
+          "rankingCacheHits": 4,
+          "rankingCacheMisses": 5,
+          "companyIntentReuses": 0
+        },
+        "candidate": {
+          "rankingCacheHits": 2,
+          "rankingCacheMisses": 4,
+          "companyIntentReuses": 0
+        }
+      }
+    }
+  },
+  "memoChecks": {
+    "menus": 50580,
+    "menuHits": 11282,
+    "tokens": 47760,
+    "tokenHits": 21704,
+    "usedFirstTokens": 1600,
+    "tasks": 5914,
+    "pinks": 117
+  },
+  "nativeEdgeAudit": {
+    "compared": 977,
+    "hiddenStops": 80,
+    "freshSessionIdAliases": 156,
+    "checks": {
+      "science_domain_income": 1,
+      "play_card": 2,
+      "pass": 2,
+      "quick_trade": 1,
+      "land": 1,
+      "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup": 2,
+      "science_domain_scan_step": 186,
+      "science_domain_alien_trace": 241,
+      "residual_alien_card_decision": 83,
+      "probe_land_choice": 1,
+      "complete_task": 152,
+      "end_turn": 153,
+      "residual_card_decision": 152
+    },
+    "mismatch": [],
+    "rootExact": true
+  },
+  "planExecution": {
+    "steps": 31,
+    "reuse": 29,
+    "originalRootExact": true
+  },
+  "tests": {
+    "node": 7,
+    "inputs": 66,
+    "chrome": 2
+  },
+  "gates": {
+    "native": 256,
+    "ms": 600,
+    "admitted": false,
+    "newFullGame": false,
+    "recordsChanged": false
+  }
+}
