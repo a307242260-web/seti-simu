@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-v665-scan4-launch-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V665 紫四发射与跳过结算复用",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v664-known-energy-swap-first3-20261111",
+      "head": "9a1cafee8",
+      "commits": [
+        "fe88d72ab",
+        "9a1cafee8"
+      ],
+      "summary": "复用末轮紫四发射和跳过的确定结算，补齐早停留牌接续；标准前三轮与 V664 逐项对照",
+      "records": {
+        "926c5bc2.9a1cafee.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v664-known-energy-swap-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
