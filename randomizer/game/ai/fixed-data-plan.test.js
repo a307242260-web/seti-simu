@@ -3,8 +3,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const demand=require('./resource-demand'),{createAnalysisPort}=require('./analysis-port'),{createSimulationRuleComposition}=require('../../training/simulation-rule-composition');
 const {createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),agent=require('./search-agent'),{searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value');
 const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json'))),seatId=fixture.seatId;
-function open(envelope=fixture.compositionEnvelope){const seed=fixture.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);return c;}
-function submit(c,id){const v=c.inspect(),list=v.phase==='awaiting_input'?v.session.decision.choices:c.inputPort.enumerateActions({}),a=list.find(a=>a.actionId===id);assert(a);const r=v.phase==='awaiting_input'?c.inputPort.submitDecision({decisionId:v.session.decision.decisionId,decisionVersion:v.session.decision.decisionVersion,ownerId:seatId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
+function open(envelope=fixture.compositionEnvelope,seed=fixture.source.seed){const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);return c;}
+function submit(c,id){const v=c.inspect(),list=v.phase==='awaiting_input'?v.session.decision.choices:c.inputPort.enumerateActions({}),a=list.find(a=>a.actionId===id);assert(a);const r=v.phase==='awaiting_input'?c.inputPort.submitDecision({decisionId:v.session.decision.decisionId,decisionVersion:v.session.decision.decisionVersion,ownerId:a.actorId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
 const c=open(),before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});p.setResourcePlanning(true);p.setDecisionPlanning({finalMarkPlanning:true});
 const root=p.openRoot(),plan=p.resourceSpec(root).plans.find(g=>g.goal.kind==='income');assert(plan);
 const executed=p.expandResourcePlan(root,plan,()=>null);assert(executed.complete);assert(!executed.fallbackReason);assert(executed.preparations.every(s=>!s.reason?.includes('non-equivalent')));
@@ -46,3 +46,28 @@ assert.deepEqual(borrow.lifecycle.save().envelope,borrowBefore);port.close();bor
  const cold=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0}),root=cold.openRoot(),continued=searchDecision({port:cold,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:agent.BUDGET});assert(continued.complete);assert(root.legalActions.some(a=>a.actionId===continued.actionId),'an already committed native choice remains completable');assert.deepEqual(comp.lifecycle.save().envelope,pending);cold.close();comp.dispose();
 }
 console.log(JSON.stringify({fixedDataPlan:'passed',incomeOptions:6,selected:1,greedyPlacement:true,coldRecovery:true,productionBorrowMacros:0}));
+
+// Reuse quiet placements before the main action even when both species are
+// visible. This is the teacher's legal root after the late Saturn setup scan.
+{
+ const dir=path.resolve(__dirname,'../../../reports/ai-foundation-20261105/third-round-teacher-v1');
+ const replay=JSON.parse(fs.readFileSync(path.join(dir,'teacher-third-current-replay-20261105-v2.json')));
+ const source=JSON.parse(fs.readFileSync(path.join(dir,path.basename(replay.resumeCheckpoint))));
+ const envelope=source.coreState.compositionEnvelope,seatId='player-white';
+ const kernel=open(envelope,JSON.parse(envelope.committedState).meta.seed);
+ try {
+  for(const row of replay.rows.slice(0,25))submit(kernel,row.action.actionId);
+  const before=kernel.lifecycle.save().envelope,state=JSON.parse(before.committedState);
+  assert.equal(state.turn.roundNumber,3);
+  assert(Object.values(state.aliens.aliens).every(slot=>slot.revealed));
+  assert.equal(state.players.players.find(player=>player.id===seatId).mainActionCompleted,false);
+  const p=createAnalysisPort({composition:kernel,seatId,maxCacheEntries:0});
+  const decision=agent.createSearchAgent({seatId,analysisPort:p}).decide({
+   seatId,legalActions:kernel.inputPort.enumerateActions({}),
+  }).search;
+  assert.equal(decision.actionId,replay.rows[25].action.actionId);
+  assert.equal(decision.value,161.5);
+  assert(decision.complete&&decision.unresolved.length===0&&decision.diagnostics.nativeExecutions<=256);
+  assert.deepEqual(kernel.lifecycle.save().envelope,before);
+ } finally {kernel.dispose();}
+}

@@ -747,6 +747,16 @@
         &&data.getBlueBonusPlacementReward(owner,2)?.type==="choose_card";
     }
 
+    // The same quiet data steps can prepare the main action after both
+    // species are public. A live shipment still needs Native settlement.
+    function quietR3RevealedData(state) {
+      const t=state.turn;
+      return t.roundNumber===3&&knownRootAlienIds.size===2&&knownRootAlienIds.has("阿米巴")&&knownRootAlienIds.has("虫")
+        &&Object.values(state.aliens.aliens).every(slot=>slot.revealed&&knownRootAlienIds.has(slot.alienId))
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        &&!Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length;
+    }
+
     function quietR3AmibaPostMain(state, owner) {
       const t=state.turn;
       return t.roundNumber===3&&owner.mainActionCompleted
@@ -762,10 +772,9 @@
       if (!resourcePlanning || stored.envelope.session || stored.resourceControl || action.family !== "place_data"
         || action.phase !== "quick" || action.target?.kind !== "place-data" || Object.keys(action.payload).length) return null;
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      // Opening a data menu has no placement or reward to settle. Reuse
-      // the witnessed opening after the last active seat's main action,
-      // even if the resulting menu has no Blue 3 card choice.
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaPostMain(state,owner)
+      // Opening a data menu has no placement or reward to settle. Its
+      // witnessed session is independent of the resulting Blue 3 menu.
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner)
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
@@ -811,7 +820,7 @@
         || s.journal.effects.length !== 1 || s.journal.events.length || s.journal.decisions.length
         || s.journal.replay.length !== 1 || s.undoFrames.length) return null;
       const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !(computer&&isUnrevealedRoundThree(state)) && !(blue&&quietR3BluePickSource(state,owner)))
+      if ((t.roundNumber !== 4 && !(computer&&(isUnrevealedRoundThree(state)||quietR3RevealedData(state))) && !(blue&&quietR3BluePickSource(state,owner)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length || localPlans.hasPendingFossilArrival(state)
         || computer&&data.listComputerPlacedTokens(owner).length!==3
@@ -877,7 +886,7 @@
         ||s.journal.events[0].type!=="placeData"||s.journal.events[0].placementSlot!==4)return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(p=>p.id===seatId);
       const id=action.target?.cardInstanceId,ix=p.hand.findIndex(c=>c.id===id),card=p.hand[ix],known=knownCards(stored.envelope);
-      if((t.roundNumber!==4&&!isUnrevealedRoundThree(state))||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+      if((t.roundNumber!==4&&!isUnrevealedRoundThree(state)&&!quietR3RevealedData(state))||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||state.meta.stateVersion!==s.baseVersion||localPlans.hasPendingFossilArrival(state)
         ||!card||!known.has(id)||action.target.choiceId!==`income:${id}`
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
@@ -905,7 +914,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3AmibaPostMain(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
