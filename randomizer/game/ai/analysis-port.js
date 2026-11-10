@@ -2704,8 +2704,82 @@
         timing:{paid:2,directLower,waitLower}};
     }
 
+    // One current-turn delivery; the two visible movement corners and
+    // one Blue 2 energy point pay an all-one-point route to Earth.
+    function dataFundedCargoPlan(node,stored,state){
+      if(node!==openedRoot||node.status!=="stable"||stored.envelope.session||stored.intent||stored.informationBarrier
+        ||state.turn.roundNumber!==3||state.turn.currentPlayerId!==seatId||!knownRootAlienIds.has("虫"))return null;
+      const t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.gameEnded||t.passedPlayerIds.includes(seatId)||!t.activePlayerIds.includes(seatId)
+        ||p.passCompletionPending||p.industryBorrowedTechTileId||t.cardTurnEventBonuses?.length
+        ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        ||p.resources.availableData!==3||p.resources.energy||!p.techState.ownedTiles.blue2||p.techState.disabledTiles.blue2
+        ||p.techState.blueBoardSlots.blue2!==1||data.listComputerPlacedTokens(p).length||data.listBlueBonusPlacedTokens(p).length
+        ||!p.hand.every(c=>knownRootCardIds.has(c.id))
+        ||!p.reservedCards.every(c=>{
+          const model=cardEffects.getCardModel(c);
+          return knownRootCardIds.has(c.id)&&model&&!model.triggers?.length&&!model.temporaryTasks?.length;
+        })
+        ||state.pieces.rockets.some(r=>r.playerId===seatId&&rockets.isControllablePlayerRocket(r)))return null;
+      const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
+      if(jobs.length!==1||jobs[0].delivered)return null;
+      const job=jobs[0],ship=visibleEarthCargo(state,p,job),fossil=state.aliens.chong?.fossilsById?.[job.fossilId];
+      if(!ship||ship.movementLocked||fossil?.status!=="transported"||fossil.taskCompleted)return null;
+      const rule=chong.getCardTask(p.reservedCards.find(c=>c.id===job.cardId)),reward=chong.getFossilReward(job.fossilId);
+      if(rule?.dataCount!==2||rule.fossilRewardRepeat!==1||Object.keys(rule.gain||{}).length
+        ||rule.effects||rule.rewards||rule.pickCard||rule.pickAlienCard||rule.drawCards
+        ||!reward||reward.dataCount||reward.drawCards||reward.pickCard||reward.pickAlienCard||reward.chooseFossilRewardOnly
+        ||Object.keys(reward.gain||{}).length!==1||reward.gain.credits!==2)return null;
+      const earth=solar.collectPlanetLocations(state.solarSystem).find(x=>x.planetId==="earth"),at=rockets.getRocketSectorCoordinate(ship);
+      if(!earth||!at)return null;
+      const dx=Math.abs(at.x-earth.x),lower=Math.min(dx,8-dx)+Math.abs(at.y-earth.y);
+      if(lower!==3)return null;
+      const path=shortEarthPath(state,p,ship,at,earth,3);
+      const payers=p.hand.filter(c=>cards.getDiscardActionMoveRewardForCard(c)?.movementPoints===1);
+      if(path?.length!==3||payers.length!==2||payers.some(c=>
+        Object.keys(cards.getDiscardActionMoveRewardForCard(c).gain).some(k=>k!=="score")))return null;
+      const place=node.legalActions.find(a=>a.family==="place_data");
+      if(!place)return null;
+      const sources=p.hand.filter(c=>!payers.includes(c)&&cards.getIncomeGainForCard(c)?.energy===1
+        &&Object.keys(cards.getIncomeGainForCard(c)).length===1).sort((a,b)=>
+          resourceDemand.cardOpportunityCost(state,seatId,a)-resourceDemand.cardOpportunityCost(state,seatId,b)||a.id.localeCompare(b.id));
+      if(!sources.length)return null;
+      const goal={id:"cargo:data-funded:"+job.cardId,kind:"data-funded-cargo",required:{},cardId:job.cardId,
+        path,payers:payers.map(c=>c.id),incomeCardId:sources[0].id,fossilId:job.fossilId,energyIncome:p.income.energy};
+      return {id:goal.id,goal,operation:{},firstActionId:place.actionId,mode:"greedy",reason:"data-funded-current-turn-cargo"};
+    }
+
+    function dataFundedCargoStep(node,state,goal,operation){
+      const i=operation.cargoInput??0;
+      if(i===18){
+        const p=state.players.players.find(q=>q.id===seatId);
+        return node.status==="stable"&&state.aliens.chong?.fossilsById?.[goal.fossilId]?.taskCompleted
+          &&p.income.energy===goal.energyIncome+1&&!p.hand.some(c=>c.id===goal.incomeCardId)
+          ?{kind:"complete",reason:"data-funded-cargo-settled"}
+          :{kind:"infeasible",reason:"data-funded-cargo-endpoint-changed"};
+      }
+      const find=f=>node.legalActions.find(f);
+      let a;
+      if([0,2,11,13,15].includes(i))a=find(q=>q.family==="place_data");
+      else if([1,12,14,16].includes(i))a=find(q=>q.family==="choose_target"&&q.target?.target==="computer");
+      else if(i===3)a=find(q=>q.family==="choose_target"&&q.target?.target==="blueBonus"&&q.target.blueSlot===1);
+      else if(i===10)a=find(q=>q.family==="complete_task"&&q.target?.cardInstanceId===goal.cardId&&q.target.ruleId==="transport");
+      else if(i===17)a=find(q=>q.family==="choose_card"&&q.target?.choiceId==="income:"+goal.incomeCardId);
+      else{
+        const index=(i-4)>>1,move=goal.path[index],id=goal.payers[index];
+        const direction=q=>q.target.rocketId===move.rocketId&&q.target.deltaX===move.deltaX&&q.target.deltaY===move.deltaY;
+        if(id)a=i%2===0?find(q=>q.family==="card_corner"&&q.payload?.kind==="move"&&q.payload.multiplier===1&&q.target.cardInstanceId===id)
+          :find(q=>q.family==="choose_target"&&direction(q));
+        else a=i%2===0?find(q=>q.family==="move"&&direction(q))
+          :find(q=>q.family==="choose_payment"&&q.target?.kind==="move-payment"&&!q.target.cardIds.length);
+      }
+      return a?{kind:"fixed",actionId:a.actionId,reason:"data-funded-cargo-step",cargoInput:i+1}
+        :{kind:"infeasible",reason:"data-funded-cargo-menu-changed"};
+    }
+
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
+      if(goal.kind==="data-funded-cargo")return dataFundedCargoStep(node,state,goal,operation);
       if(goal.kind==="funded-earth-shipment"){
         const find=f=>node.legalActions.find(f),fixed=(a,reason)=>({kind:"fixed",actionId:a.actionId,reason});
         if(node.status==="stable"){
@@ -3320,6 +3394,8 @@
         else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:cargoCorner.id+":"+id,goal:cargoCorner,operation:op,
           firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
       }
+      const dataCargo=dataFundedCargoPlan(node,stored,state);
+      if(dataCargo)plans.push(dataCargo);
       if(shipmentPlan)plans.push(shipmentPlan);
       if(preparation)plans.push(preparation.plan);
       if(competingCash){
@@ -3447,7 +3523,7 @@
       }
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
         ...(adjacentCargo?.paid&&plans.some(p=>p.goal===adjacentCargo)?{cargoCommittedMovement:true}:{}),
-        plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation):plans,
+        plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation||p===dataCargo)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation||p===dataCargo):plans,
         ...(scoredCorner?{scoredCorner}:{}),...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
@@ -3500,7 +3576,7 @@
         if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
         const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
-        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+        const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup","data-funded-cargo"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
           :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);
         if(step.kind==="complete"){
           if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);current=resourceView(current,null);sharedStates.push(current);contexts++;}
@@ -3518,7 +3594,7 @@
         const blocked=hasCapacity(prefixes.length,contexts,true,work({nextNode:next,nextNewInput:shared?0:1,additionalStates:next?0:1}));if(blocked)return stop(blocked);
         preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readPlanningState(nodes.get(current)),seatId,plan.goal),actionId:id});
         // Discard identities belong to one native action, not the whole resource goal.
-        operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.scanLaunchCompleted?{scanLaunchCompleted:true}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(chosen.resourceBlueSlot!==undefined?{resourceBlueSlot:chosen.resourceBlueSlot}:{}),...(chosen.finalResourceBlue!==undefined?{finalResourceBlue:chosen.finalResourceBlue}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
+        operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.scanLaunchCompleted?{scanLaunchCompleted:true}:{}),...(chosen.cargoInput!==undefined?{cargoInput:chosen.cargoInput}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(chosen.resourceBlueSlot!==undefined?{resourceBlueSlot:chosen.resourceBlueSlot}:{}),...(chosen.finalResourceBlue!==undefined?{finalResourceBlue:chosen.finalResourceBlue}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
         prefixes.push({node:current,action});current=expand(current,id);forced=null;
         sharedStates.push(current);if(!shared)newSubmissions++;
         if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
