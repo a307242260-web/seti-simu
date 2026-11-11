@@ -7,6 +7,516 @@
   },
   "versions": [
     {
+      "id": "free-analyze-funded-planet-20261111-01",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-01",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-01",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "1275cd88.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-02",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-02",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-02",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "88cf2b3e.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-03",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-03",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-03",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "635f677e.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-04",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-04",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-04",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "c5bc033b.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-05",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-05",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-05",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "edb1bd60.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-06",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-06",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-06",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "e0b65c81.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-07",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-07",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-07",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "a11ac91b.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-08",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-08",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-08",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "ae6327ad.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-09",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-09",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-09",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "f34c5a45.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-10",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-10",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-10",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "f06cb7be.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-11",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-11",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-11",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "b742f3f9.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-12",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-12",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-12",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "6a963897.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-13",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-13",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-13",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "90d61839.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-14",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-14",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-14",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "45a24f5b.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-15",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-15",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-15",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "32a9d5d3.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-19",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-19",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-19",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "493d2e1d.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-20",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-20",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-20",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "固定20盘同策略严格验收：仅白席行动",
+      "records": {
+        "f8307b94.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-known-planet-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",

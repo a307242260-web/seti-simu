@@ -1,0 +1,225 @@
+{
+  "before": "39f19bec97bef4d5623c3cf57afb578a1d28d65c",
+  "after": "463fc44230e5cdc8b29765a0a109a73ae367bb48",
+  "meanBefore": 130,
+  "meanAfter": 131.3,
+  "improved": 3,
+  "worse": 0,
+  "actionsChanged": 3,
+  "rounds1to3NativeEqual": 20,
+  "independentlyReplayedInputs": 4068,
+  "rows": [
+    {
+      "board": 1,
+      "before": 134,
+      "after": 134,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 192,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 2,
+      "before": 140,
+      "after": 140,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 235,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 3,
+      "before": 138,
+      "after": 138,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 181,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 4,
+      "before": 141,
+      "after": 141,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 200,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 5,
+      "before": 135,
+      "after": 135,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 200,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 6,
+      "before": 159,
+      "after": 159,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 246,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 7,
+      "before": 135,
+      "after": 135,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 179,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 8,
+      "before": 164,
+      "after": 164,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 220,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 9,
+      "before": 89,
+      "after": 89,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 169,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 10,
+      "before": 129,
+      "after": 129,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 195,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 11,
+      "before": 113,
+      "after": 113,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 197,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 12,
+      "before": 153,
+      "after": 153,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 252,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 13,
+      "before": 141,
+      "after": 141,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 220,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 14,
+      "before": 116,
+      "after": 116,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 201,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 15,
+      "before": 107,
+      "after": 107,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 167,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 16,
+      "before": 112,
+      "after": 121,
+      "delta": 9,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 193,
+      "terminalStateSessionRngExact": true,
+      "firstChange": {
+        "input": 169,
+        "old": "扫描",
+        "new": "发射"
+      }
+    },
+    {
+      "board": 17,
+      "before": 147,
+      "after": 157,
+      "delta": 10,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 227,
+      "terminalStateSessionRngExact": true,
+      "firstChange": {
+        "input": 210,
+        "old": "研究 purple1",
+        "new": "研究 orange1"
+      }
+    },
+    {
+      "board": 18,
+      "before": 115,
+      "after": 122,
+      "delta": 7,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 217,
+      "terminalStateSessionRngExact": true,
+      "firstChange": {
+        "input": 201,
+        "old": "发射",
+        "new": "2信用点 → 1能量"
+      }
+    },
+    {
+      "board": 19,
+      "before": 119,
+      "after": 119,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 169,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    },
+    {
+      "board": 20,
+      "before": 113,
+      "after": 113,
+      "delta": 0,
+      "rounds1to3NativeEqual": true,
+      "independentlyReplayedInputs": 208,
+      "terminalStateSessionRngExact": true,
+      "firstChange": null
+    }
+  ]
+}

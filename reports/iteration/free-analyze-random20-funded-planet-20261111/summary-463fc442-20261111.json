@@ -1,0 +1,2581 @@
+{
+  "head": "463fc44230e5cdc8b29765a0a109a73ae367bb48",
+  "attempted": 20,
+  "finished": 20,
+  "complete": true,
+  "all20Average": 131.3,
+  "partialAverage": null,
+  "min": 89,
+  "max": 164,
+  "median": 134.5,
+  "maxGameMs": 11682,
+  "maxInputs": 249,
+  "maxMs": 553.5440420000004,
+  "rows": [
+    {
+      "board": 1,
+      "f": "1275cd88.463fc442.full.json",
+      "terminal": true,
+      "score": 134,
+      "wallMs": 6772,
+      "steps": 192,
+      "peakInputs": 85,
+      "peakMs": 222.75845799999934,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 30,
+          "projected": 30,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 4,
+            "score": 30
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 46,
+          "projected": 46,
+          "tech": [
+            "blue2",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 46
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 73,
+          "projected": 98,
+          "tech": [
+            "blue1",
+            "blue2",
+            "blue4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 73
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 102,
+          "projected": 134,
+          "tech": [
+            "blue1",
+            "blue2",
+            "blue4",
+            "purple1",
+            "purple2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 102
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        }
+      ]
+    },
+    {
+      "board": 2,
+      "f": "88cf2b3e.463fc442.full.json",
+      "terminal": true,
+      "score": 140,
+      "wallMs": 9710,
+      "steps": 235,
+      "peakInputs": 248,
+      "peakMs": 245.60241700000006,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 11,
+          "projected": 11,
+          "tech": [
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "score": 11
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 2,
+          "score": 39,
+          "projected": 54,
+          "tech": [
+            "blue1",
+            "blue3",
+            "blue4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 39
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 64,
+          "projected": 95,
+          "tech": [
+            "blue1",
+            "blue3",
+            "blue4",
+            "orange4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 3,
+            "score": 64
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 94,
+          "projected": 140,
+          "tech": [
+            "blue1",
+            "blue3",
+            "blue4",
+            "orange1",
+            "orange4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 94
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 3,
+      "f": "635f677e.463fc442.full.json",
+      "terminal": true,
+      "score": 138,
+      "wallMs": 7260,
+      "steps": 181,
+      "peakInputs": 100,
+      "peakMs": 163.8559580000001,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 15,
+          "projected": 15,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 15
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 2,
+          "score": 43,
+          "projected": 54,
+          "tech": [
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 2,
+            "score": 43
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 3,
+          "score": 78,
+          "projected": 108,
+          "tech": [
+            "blue2",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 78
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 4,
+          "score": 108,
+          "projected": 138,
+          "tech": [
+            "blue2",
+            "orange3",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 108
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 4,
+      "f": "c5bc033b.463fc442.full.json",
+      "terminal": true,
+      "score": 141,
+      "wallMs": 8735,
+      "steps": 200,
+      "peakInputs": 206,
+      "peakMs": 259.1733750000003,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 12,
+          "projected": 12,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 1,
+            "score": 12
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 2,
+          "score": 34,
+          "projected": 45,
+          "tech": [
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0,
+            "score": 34
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 3,
+          "score": 75,
+          "projected": 104,
+          "tech": [
+            "blue1",
+            "orange1",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 3,
+            "score": 75
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 105,
+          "projected": 141,
+          "tech": [
+            "blue1",
+            "blue3",
+            "orange1",
+            "orange2",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 1,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 105
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        }
+      ]
+    },
+    {
+      "board": 5,
+      "f": "edb1bd60.463fc442.full.json",
+      "terminal": true,
+      "score": 135,
+      "wallMs": 7964,
+      "steps": 200,
+      "peakInputs": 182,
+      "peakMs": 234.51324999999997,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 32,
+          "projected": 37,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 32
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 34,
+          "projected": 41,
+          "tech": [
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 34
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 4
+        },
+        {
+          "r": 3,
+          "score": 63,
+          "projected": 81,
+          "tech": [
+            "blue2",
+            "orange1",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 63
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 4,
+          "score": 95,
+          "projected": 135,
+          "tech": [
+            "blue2",
+            "orange1",
+            "orange3",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 1,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 95
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 6,
+      "f": "e0b65c81.463fc442.full.json",
+      "terminal": true,
+      "score": 159,
+      "wallMs": 10884,
+      "steps": 246,
+      "peakInputs": 235,
+      "peakMs": 553.5440420000004,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 12,
+          "projected": 12,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 12
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 14,
+          "projected": 14,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 14
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 71,
+          "projected": 113,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 0,
+            "score": 71
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 6,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 4,
+          "score": 112,
+          "projected": 159,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 5,
+            "score": 112
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 7,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 7,
+      "f": "a11ac91b.463fc442.full.json",
+      "terminal": true,
+      "score": 135,
+      "wallMs": 6953,
+      "steps": 179,
+      "peakInputs": 112,
+      "peakMs": 158.86145799999986,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 25,
+          "projected": 36,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 25
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 44,
+          "projected": 55,
+          "tech": [
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 44
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 61,
+          "projected": 88,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 61
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 4,
+          "score": 99,
+          "projected": 135,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "orange4",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 3,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 99
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 8,
+      "f": "ae6327ad.463fc442.full.json",
+      "terminal": true,
+      "score": 164,
+      "wallMs": 9443,
+      "steps": 220,
+      "peakInputs": 249,
+      "peakMs": 277.058,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 14,
+          "projected": 14,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 14
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 14,
+          "projected": 14,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 3,
+            "score": 14
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 3,
+          "score": 80,
+          "projected": 129,
+          "tech": [
+            "blue2",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 2,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 80
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 109,
+          "projected": 164,
+          "tech": [
+            "blue2",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 2,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 3,
+            "score": 109
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 9,
+      "f": "f34c5a45.463fc442.full.json",
+      "terminal": true,
+      "score": 89,
+      "wallMs": 6124,
+      "steps": 169,
+      "peakInputs": 80,
+      "peakMs": 169.43779199999972,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 17,
+          "projected": 17,
+          "tech": [
+            "blue2",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 17
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 44,
+          "projected": 44,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 44
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 3,
+          "score": 61,
+          "projected": 61,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 4,
+            "score": 61
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 78,
+          "projected": 89,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 78
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 10,
+      "f": "f06cb7be.463fc442.full.json",
+      "terminal": true,
+      "score": 129,
+      "wallMs": 7047,
+      "steps": 195,
+      "peakInputs": 88,
+      "peakMs": 136.95608399999992,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 25,
+          "projected": 40,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 25
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 32,
+          "projected": 52,
+          "tech": [
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 4,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 32
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 6,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 3,
+          "score": 66,
+          "projected": 102,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 66
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 7,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 89,
+          "projected": 129,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange1",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 89
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 7,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 11,
+      "f": "b742f3f9.463fc442.full.json",
+      "terminal": true,
+      "score": 113,
+      "wallMs": 8637,
+      "steps": 197,
+      "peakInputs": 241,
+      "peakMs": 526.9005000000006,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 20,
+          "projected": 20,
+          "tech": [
+            "blue1"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 20
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 29,
+          "projected": 39,
+          "tech": [
+            "blue1",
+            "blue2"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 29
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 41,
+          "projected": 69,
+          "tech": [
+            "blue1",
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 6,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 41
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 4,
+          "score": 71,
+          "projected": 113,
+          "tech": [
+            "blue1",
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 5,
+            "score": 71
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 3
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "f": "6a963897.463fc442.full.json",
+      "terminal": true,
+      "score": 153,
+      "wallMs": 11682,
+      "steps": 252,
+      "peakInputs": 185,
+      "peakMs": 314.24266700000044,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 22,
+          "projected": 22,
+          "tech": [
+            "blue2"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 22
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 41,
+          "projected": 52,
+          "tech": [
+            "blue2",
+            "blue3"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 1,
+            "score": 41
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 3,
+          "score": 83,
+          "projected": 102,
+          "tech": [
+            "blue2",
+            "blue3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 1,
+            "score": 83
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 4,
+          "score": 115,
+          "projected": 153,
+          "tech": [
+            "blue2",
+            "blue3",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 1,
+            "score": 115
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 2
+        }
+      ]
+    },
+    {
+      "board": 13,
+      "f": "90d61839.463fc442.full.json",
+      "terminal": true,
+      "score": 141,
+      "wallMs": 8677,
+      "steps": 220,
+      "peakInputs": 129,
+      "peakMs": 147.65504199999987,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 16,
+          "projected": 16,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 16
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 26,
+          "projected": 34,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 5,
+            "score": 26
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 53,
+          "projected": 72,
+          "tech": [
+            "blue1",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 53
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 4,
+          "score": 92,
+          "projected": 141,
+          "tech": [
+            "blue1",
+            "orange1",
+            "purple3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 4,
+            "score": 92
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 14,
+      "f": "45a24f5b.463fc442.full.json",
+      "terminal": true,
+      "score": 116,
+      "wallMs": 8406,
+      "steps": 201,
+      "peakInputs": 203,
+      "peakMs": 295.06720799999994,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 13,
+          "projected": 13,
+          "tech": [
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 13
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 2,
+          "score": 51,
+          "projected": 65,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 51
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 3,
+          "score": 53,
+          "projected": 67,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 53
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 94,
+          "projected": 116,
+          "tech": [
+            "blue2",
+            "blue3",
+            "blue4",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 4,
+            "score": 94
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 15,
+      "f": "32a9d5d3.463fc442.full.json",
+      "terminal": true,
+      "score": 107,
+      "wallMs": 6294,
+      "steps": 167,
+      "peakInputs": 234,
+      "peakMs": 276.29270799999995,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 24,
+          "projected": 24,
+          "tech": [
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 24
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 53,
+          "projected": 64,
+          "tech": [
+            "blue4",
+            "orange2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 53
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 3,
+          "score": 62,
+          "projected": 84,
+          "tech": [
+            "blue4",
+            "orange2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 3,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 62
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 85,
+          "projected": 107,
+          "tech": [
+            "blue4",
+            "orange2",
+            "purple1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 4,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 4,
+            "score": 85
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 16,
+      "f": "ad847128.463fc442.full.json",
+      "terminal": true,
+      "score": 121,
+      "wallMs": 7756,
+      "steps": 193,
+      "peakInputs": 141,
+      "peakMs": 462.1493750000009,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 18,
+          "projected": 18,
+          "tech": [
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 18
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 42,
+          "projected": 53,
+          "tech": [
+            "blue4",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 42
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 3,
+          "score": 76,
+          "projected": 100,
+          "tech": [
+            "blue4",
+            "orange1",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 76
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 95,
+          "projected": 121,
+          "tech": [
+            "blue4",
+            "orange1",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 3,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 95
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 0
+        }
+      ]
+    },
+    {
+      "board": 17,
+      "f": "05c3fb5c.463fc442.full.json",
+      "terminal": true,
+      "score": 157,
+      "wallMs": 9356,
+      "steps": 227,
+      "peakInputs": 247,
+      "peakMs": 308.95529199999964,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 17,
+          "projected": 17,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 17
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 2,
+          "score": 39,
+          "projected": 50,
+          "tech": [
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 39
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        },
+        {
+          "r": 3,
+          "score": 77,
+          "projected": 115,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 77
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 119,
+          "projected": 157,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange1",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 119
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 18,
+      "f": "88d7d5e1.463fc442.full.json",
+      "terminal": true,
+      "score": 122,
+      "wallMs": 8332,
+      "steps": 217,
+      "peakInputs": 104,
+      "peakMs": 158.33029199999964,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 11,
+          "projected": 11,
+          "tech": [
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 11
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 35,
+          "projected": 45,
+          "tech": [
+            "blue1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 35
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 3,
+          "score": 72,
+          "projected": 106,
+          "tech": [
+            "blue1",
+            "orange4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 72
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 4,
+          "score": 88,
+          "projected": 122,
+          "tech": [
+            "blue1",
+            "orange4",
+            "purple3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 88
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 19,
+      "f": "493d2e1d.463fc442.full.json",
+      "terminal": true,
+      "score": 119,
+      "wallMs": 6374,
+      "steps": 169,
+      "peakInputs": 128,
+      "peakMs": 241.44233299999996,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 21,
+          "projected": 23,
+          "tech": [
+            "blue2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 21
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 26,
+          "projected": 39,
+          "tech": [
+            "blue2",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 6,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 26
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 64,
+          "projected": 94,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 64
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 4,
+          "score": 81,
+          "projected": 119,
+          "tech": [
+            "blue2",
+            "blue4",
+            "orange1",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 81
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        }
+      ]
+    },
+    {
+      "board": 20,
+      "f": "f8307b94.463fc442.full.json",
+      "terminal": true,
+      "score": 113,
+      "wallMs": 7965,
+      "steps": 208,
+      "peakInputs": 133,
+      "peakMs": 237.229875,
+      "rounds": [
+        {
+          "r": 1,
+          "score": 31,
+          "projected": 31,
+          "tech": [
+            "blue4",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 31
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 0
+        },
+        {
+          "r": 2,
+          "score": 50,
+          "projected": 61,
+          "tech": [
+            "blue4",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 50
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 1
+        },
+        {
+          "r": 3,
+          "score": 65,
+          "projected": 76,
+          "tech": [
+            "blue4",
+            "orange3",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 65
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": 3
+        },
+        {
+          "r": 4,
+          "score": 91,
+          "projected": 113,
+          "tech": [
+            "blue4",
+            "orange3",
+            "purple2",
+            "purple4"
+          ],
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 4,
+            "score": 91
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": 2
+        }
+      ]
+    }
+  ]
+}

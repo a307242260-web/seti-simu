@@ -1,0 +1,12 @@
+{
+  "board": 11,
+  "source": "463fc4423",
+  "record": "b742f3f9.463fc442.full.json",
+  "checkpoint": "reports/research/b742f3f9.463fc442.full.json.round-end-3.checkpoint.json",
+  "inputs": 71,
+  "difference": "/aliens/amiba/traceSlotsByAlienSlotId/1/yellow/1/sequence",
+  "resumed": 6,
+  "continuous": 4,
+  "sameFinalScores": true,
+  "sameRng": true
+}
