@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-v670-stationary-scan-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v670-stationary-scan-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v669-company-retain-first3-20261111",
+      "head": "95a42c162",
+      "commits": [
+        "43567b822",
+        "95a42c162"
+      ],
+      "summary": "第四轮复用不动化石的扫描续接和 DLC13 公开扫描；教师第三轮原生重放及标准前三轮回归",
+      "records": {
+        "17300415.95a42c16.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v669-company-retain-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
