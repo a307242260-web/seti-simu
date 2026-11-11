@@ -479,7 +479,7 @@
     let provedChongQueuedTasks=0;
     let provedAmibaYellowLandingInputs=0,provedAlienDisplays=0,provedPinkCardMenus=0,provedQuietSpecifiedScans=0;
     let provedActiveFinalTaskInputs = 0, provedFinalEndTaskInputs = 0, provedBluePickSettlements = 0, provedResearchPicks = 0, provedResearchSelections = 0, provedEmptyAmibaResearch = 0;
-    let provedPinkRefills=0,provedPinkFossilMenus=0,provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
+    let provedPinkRefills=0,provedPinkFossilMenus=0,provedLastPlainPinkInputs=0,quietEndPreludeTemplate=null, quietEndMarkTemplate=null, provedQuietEndMenus=0, provedQuietEndHandovers=0, provedOwnEndHandovers=0;
     let provedScan4QuietMoves=0, provedScan4QuietLaunchSkips=0, provedPublicScanChoices=0;
     const scan4RefillCache=new Map();
     let scan4RefillHits=0;
@@ -671,7 +671,7 @@
       nodeCount = 0;
       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
       submissionCount = 0; provedQuietSpecifiedScans=0; provedPinkCardMenus=0; provedAlienDisplays=0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
-      provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0;provedScan4QuietLaunchSkips=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+      provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; quietEndMarkTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0;provedScan4QuietLaunchSkips=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
@@ -771,10 +771,12 @@
 
     // The first white turn can use the same inert placement proof. The
     // original effect, owner, payload and trigger guards still apply.
-    function quietSecondRoundHandover(state) {
+    function quietEarlySameSeatHandover(state) {
       const t=state.turn;
-      return t.roundNumber===2&&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
-        &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot));
+      if(!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))return false;
+      return t.roundNumber===2&&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot))
+        ||t.roundNumber===3&&Object.values(state.aliens.aliens).every(slot=>slot.revealed
+          ?knownRootAlienIds.has(slot.alienId):!alienState.isAlienReadyToReveal(slot));
     }
 
     function quietFirstTurnData(state) {
@@ -788,7 +790,7 @@
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
       // Opening a data menu has no placement or reward to settle. Its
       // witnessed session is independent of the resulting Blue 3 menu.
-      if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner)
+      if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !(t.roundNumber===3&&quietEarlySameSeatHandover(state))
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
@@ -928,7 +930,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !(t.roundNumber===3&&quietEarlySameSeatHandover(state))) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
@@ -954,6 +956,39 @@
       const meta=quietSavedMeta(state.meta,session.baseVersion+1);
       return {kind:computer ? `computer${placement.placementSlot}` : `blue${blueSlot}:${placement.slotBonuses.map(b=>b.type).join("+")}`, state:{...state, meta,
         players:{...state.players, players:state.players.players.map(p => p === owner ? player : p)}}};
+    }
+
+    const quietEndMarkQueue=["alien:turn_end_neutral_milestone","alien:turn_end_reveal","company:turn_end","card_trigger:turn_end"];
+    function quietEndMarkTail(queue,state){
+      if(queue.length!==6||queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return false;
+      const [mark,...tail]=queue,end=tail.pop(),t=state.turn;
+      const boundary=data=>data?.roundNumber===t.roundNumber&&data?.turnNumber===t.turnNumber&&data?.didPass===false;
+      return mark.type==="residual_final_mark"&&mark.kind==="decision"&&!Object.keys(mark.payload).length
+        &&end.type==="probe_turn_advance"&&end.kind==="effect"&&boundary(end.payload)
+        &&tail.every((e,i)=>e.type==="game_domain_handoff"&&e.kind==="effect"
+          &&e.payload.domain+":"+e.payload.effectType===quietEndMarkQueue[i]&&boundary(e.payload.data));
+    }
+
+    function rememberQuietEndMark(action,child,state){
+      const cp=nodes.get(child).envelope.session,s=cp?.session,j=s?.journal;
+      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.revision!==2||s.interruptContext||s.irreversibleBarrier
+        ||s.failure||s.undoFrames.length||!quietEndMarkTail(s.queue,state)||j.actions.length!==1
+        ||j.actions[0].action.actionId!==action.actionId||j.replay.length!==1||j.effects.length!==2||j.decisions.length
+        ||j.rng.length||j.logs.length||j.history.length!==1||j.events.length!==2
+        ||j.events[0].type!=="end_turn_handoffs_started"||j.events[1].type!=="final_milestone_pending"
+        ||JSON.stringify(s.baseState)!==JSON.stringify(s.workingState))return;
+      quietEndMarkTemplate={...cp,session:{...s,baseState:null,workingState:null}};
+    }
+
+    function makeQuietEndMark(stored,action,state){
+      const template=quietEndMarkTemplate,s=template?.session;
+      if(s?.journal.actions[0].action.actionId!==action.actionId)return null;
+      const choices=residualSession.listFinalMarkChoices({...state,finalScoring:copyForkData(state.finalScoring)},seatId);
+      if(!choices.length)return null;
+      const working=state.meta.rngState?.branch===true?{...state,meta:quietSavedMeta(state.meta)}:state;
+      const session=freeze({...template,session:{...s,baseState:working,workingState:working,baseVersion:state.meta.stateVersion,
+        journal:{...s.journal,actions:[{...s.journal.actions[0],action}],replay:[{...s.journal.replay[0],action}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
     }
 
     function rememberQuietEndPrelude(action,child,preview){
@@ -1345,7 +1380,7 @@
       // With only root-visible Amiba and no pending species reveal, this
       // prefix still stops at the native Purple 4 menu, before sector settlement.
       const quietAmiba=source==="scan"&&quietR3AmibaPostMain(root,p);
-      const quietRoundThree=quietAmiba||source==="scan"&&isUnrevealedRoundThree(root);
+      const quietRoundThree=quietAmiba||source==="scan"&&(isUnrevealedRoundThree(root)||t.roundNumber===3&&quietEarlySameSeatHandover(root));
       // A repeat can be reused before the next public choice, but ending
       // a scan without the Purple 4 menu would also settle the sector.
       if(repeatOnly&&(!quietAmiba||finalize.kind!=="effect"||Object.keys(finalize.payload).length
@@ -1422,7 +1457,7 @@
       const jobs=state.aliens.chong?.transportTasksByRocketId||{};
       const inTransit=!mercury&&Object.values(jobs).some(job=>!job.delivered);
       const stationaryCargo=!mercury&&inTransit&&knownStationaryCargoForScan(state);
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      if((t.roundNumber!==4&&!(source==="scan"&&t.roundNumber===3&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(state):inTransit&&!stationaryCargo)
         ||p.reservedCards.some(c=>!known.has(c.id))
@@ -1564,7 +1599,7 @@
           ||![types.PICK_CARD,"residual_card_decision"].includes(e.type)))return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
       const known=knownCards(stored.envelope),i=action.target.publicSlotIndex,offer=state.cards.publicCards[i];
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      if((t.roundNumber!==4&&!(t.roundNumber===3&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||localPlans.hasPendingFossilArrival(state)
         ||!offer||!known.has(offer.id)||offer.id!==action.target.cardInstanceId||action.target.choiceId!==`pick:${offer.id}`
         ||!cards.getCatalogEntryForCard(offer)||p.reservedCards.some(c=>!known.has(c.id)))return null;
@@ -1594,8 +1629,7 @@
         ||!options||(options.repeat??1)!==1||options.afterResearchReward&&options.afterResearchReward.kind!=="repeatBonus")return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
       const tile=state.tech.stacks[action.target.tileId];
-      const quietRoundThree=t.roundNumber===3&&quietR3AmibaOnly(state)
-        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id));
+      const quietRoundThree=t.roundNumber===3&&quietEarlySameSeatHandover(state);
       if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
         ||!tile||tile.bonusHidden||tile.bonusIndex!==knownRootTechIndices.get(action.target.tileId)
         ||p.reservedCards.some(c=>!known.has(c.id))
@@ -1953,10 +1987,31 @@
         provedChongEndMenus++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
+      const markSource=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
+        ?readIdentityState(stored.envelope):null;
+      const quietMark=markSource?.turn.roundNumber===3&&quietEarlySameSeatHandover(markSource)
+        &&localPlans.quietSingleEndMark(markSource,seatId);
+      const markMenu=quietMark&&makeQuietEndMark(stored,requested,markSource);
+      if(markMenu){
+        const child=finishChild({session:null},{},movementPlanning?nextMovementIntent(node,requested):null,
+          null,stored.informationBarrier,requested,stored,markMenu);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const markState=taskSession?.workingState;
+      const markCommit=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&requested.family==="choose_target"
+        &&taskSession?.queue[0]?.type==="residual_final_mark"&&taskSession.phase==="awaiting_input"
+        &&!taskSession.failure&&!taskSession.interruptContext&&!taskSession.irreversibleBarrier&&!taskSession.undoFrames.length
+        &&markState.turn.roundNumber===3&&quietEarlySameSeatHandover(markState)&&quietEndMarkTail(taskSession.queue,markState)
+        ?localPlans.previewSingleEndMarkCommit({state:markState,seatId,tileId:requested.target.tileId,
+          action:taskSession.journal.actions[0]?.action,knownCards:knownCards(stored.envelope)}):null;
+      if(markCommit){
+        const child=finishProvedTurnBoundary(stored,requested,markCommit);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
         ?localPlans.previewFinalEndPrelude({state:readIdentityState(stored.envelope),seatId,
-          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true,allowUnrevealedQuiet:isUnrevealedRoundThree(readIdentityState(stored.envelope))
-            ||quietSecondRoundHandover(readIdentityState(stored.envelope))}):null;
+          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true,allowQuietEarlyRound:isUnrevealedRoundThree(readIdentityState(stored.envelope))
+            ||quietEarlySameSeatHandover(readIdentityState(stored.envelope))}):null;
       if(endPrelude?.finished){
         const child=finishProvedTurnBoundary(stored,requested,endPrelude.finished);
         if(endPrelude.finished.turn.currentPlayerId===seatId)provedOwnEndHandovers++;
@@ -2127,6 +2182,7 @@
       if(chongEndPrelude&&!chongEndTemplates.has(chongEndPrelude.shape))rememberChongEndMenu(requested,child,chongEndPrelude);
       if(tracePreview&&!chongTraceMenuTemplate)rememberChongTraceMenu(requested,child,tracePreview);
       if(quietMoveMenu&&!moveMenuTemplate)rememberMoveMenu(child,requested);
+      if(quietMark&&!quietEndMarkTemplate)rememberQuietEndMark(requested,child,markSource);
       if(endPrelude?.task&&!quietEndPreludeTemplate)rememberQuietEndPrelude(requested,child,endPrelude);
       if (quietSource && !quietDataMenuTemplate) rememberQuietDataMenu(requested, child);
       if(dataReward&&!dataRewardMenuTemplates.has(dataReward.type))rememberDataRewardMenu(stored,requested,dataReward,child);
