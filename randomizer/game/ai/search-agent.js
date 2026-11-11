@@ -53,7 +53,8 @@
         }
         continuation = selectionContinuation;
         planContinuation = nextPlan;
-        return { actionId: result.actionId, reasonCode: result.scanBeforeOrbit ? "search:proved-scan-before-orbit" : "search:complete-visible-window", search: evidence };
+        return { actionId: result.actionId, reasonCode: result.scanBeforeOrbit ? "search:proved-scan-before-orbit"
+          : result.scanBeforePass ? "search:round-two-scan-before-pass" : "search:complete-visible-window", search: evidence };
       } catch (error) {
         continuation = null;
         planContinuation = null;

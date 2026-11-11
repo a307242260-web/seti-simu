@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v449";
+  const VERSION = "seti-complete-decision-search-v450";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1162,6 +1162,31 @@
         }
       }
     }
+    // PASS gives up every remaining turn of this round. In round two,
+    // compare that opportunity only after the current-turn search closes.
+    // This is a policy preference, not a bound on future scan rewards.
+    let scanBeforePass=null;
+    const passAction=root.legalActions.find(a=>a.actionId===nodes[0].best?.actionId&&a.family==="pass");
+    if(complete&&!stopReason&&!unresolved.length&&realizationTies&&resourcePlanning&&scanPlanning&&root.status==="stable"&&passAction){
+      const state=root.observation.publicState,seat=passAction.actorId,player=state.players.find(p=>p.playerId===seat);
+      if(state.roundNumber===2&&state.currentPlayerId===seat&&state.activePlayerIds.length===4
+        &&state.activePlayerIds.every(id=>id===seat||state.passedPlayerIds.includes(id))
+        &&!player?.mainActionCompleted&&player?.handCount>=2&&player.additionalPublicScan>=1){
+        const main=new Set(root.legalActions.filter(a=>a.phase==="main"&&a.family!=="pass").map(a=>a.actionId));
+        const bestMain=roots.reduce((v,r)=>main.has(r.actionId)&&Number.isFinite(r.value)?Math.max(v,r.value):v,-Infinity);
+        const scan=root.legalActions.find(a=>a.family==="scan"&&main.has(a.actionId));
+        const quote=roots.find(r=>r.actionId===scan?.actionId),cost=quote?.goal?.required;
+        const loss=nodes[0].value-quote?.value,maxOpportunityCost=2;
+        if(quote?.completion==="complete"&&quote.goal?.kind==="scan-flow"&&quote.goal.nebulaId&&quote.value===bestMain
+          &&Number.isSafeInteger(cost?.credits)&&Number.isSafeInteger(cost?.energy)&&cost.credits>=0&&cost.energy>=0
+          &&player.credits>=cost.credits+1&&player.energy>=cost.energy+1
+          &&loss>=0&&loss<=maxOpportunityCost){
+          scanBeforePass={policy:"round-two-uncontested-scan-opportunity-v1",actionId:scan.actionId,passActionId:passAction.actionId,
+            passValue:nodes[0].value,scanValue:quote.value,loss,maxOpportunityCost,sectorId:quote.goal.nebulaId,
+            realization:quote.realization,preparationDebt:quote.preparationDebt};
+        }
+      }
+    }
     const evidence = complete && nodes[0].selection ? nodes[0].edges.map(edge => ({
       selectedIds: edge.selectedIds, value: nodes[edge.target].value, realization: nodes[edge.target].realization, preparationDebt:nodes[edge.target].preparationDebt,
       distance: nodes[edge.target].value == null ? null : nodes[edge.target].distance,
@@ -1172,7 +1197,7 @@
     let planCertificate = null;
     // The existing certificate starts with the visible winner. A proved
     // override must let the real scan menu build a fresh continuation.
-    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard) {
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1301,7 +1326,7 @@
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? retainRegionCard?.actionId || scanBeforeOrbit?.actionId || nodes[0].best?.actionId || null : null,
+      actionId: accepted ? retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1310,12 +1335,13 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : nodes[0].value : null,
+      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : scanBeforePass?.scanValue ?? nodes[0].value : null,
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
+      ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
-      realization: accepted ? nodes[0].realization ?? null : null,
-      preparationDebt:accepted?nodes[0].preparationDebt??null:null,
+      realization: accepted ? scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null : null,
+      preparationDebt:accepted?scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null:null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,

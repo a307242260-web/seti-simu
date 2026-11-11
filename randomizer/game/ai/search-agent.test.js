@@ -58,6 +58,31 @@ function direct(f, cache = 0) {
   comp.dispose();
   return result;
 }
+// In the two proved round-two roots, PASS discards a productive turn. The
+// preference still preserves the original quotes, and returns no PASS plan.
+for (const [record, round, chosen] of [
+  ["e15da1c1", 1, "pass"], ["0aef5774", 1, "pass"],
+  ["0aef5774", 2, "scan"], ["0b908c22", 2, "scan"],
+]) {
+  const checkpoint = read(`reports/research/${record}.532563ef.full.json.round-end-${round}.checkpoint.json`);
+  const env = require("../../../tools/research-free-analyze-random20").createEnvironment({}, {
+    id: "free-analyze-random20-guarded-v1",
+  });
+  try {
+    env.loadCheckpoint(checkpoint);
+    const action = env.runAgentDecision(), search = action.searches[0];
+    assert(action.agentTrace.actionId.startsWith(chosen + ":"));
+    assert(search.complete && search.diagnostics.nativeExecutions <= 256);
+    if (chosen === "scan") {
+      assert.equal(search.scanBeforePass.scanValue, search.value);
+      assert.equal(search.scanBeforePass.passValue - search.scanBeforePass.scanValue, search.scanBeforePass.loss);
+      assert(search.scanBeforePass.loss > 0 && search.scanBeforePass.loss <= 2);
+      assert.equal(search.planEvidence, null);
+      assert(env.legalActions().every(choice => choice.family === "choose_target"));
+    } else assert.equal(search.scanBeforePass, undefined);
+  } finally { env.dispose(); }
+}
+
 // Host failure handling is tested with an explicitly exhausted input ledger,
 // rather than requiring a particular real fixture to remain slow forever.
 let forceBudgetExhaustion=false;
