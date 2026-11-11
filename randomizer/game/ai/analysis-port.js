@@ -3630,6 +3630,13 @@
         computerTail=null;
       }
       const special=preparationBase&&!deferColumn&&analysisPreparation(preparationBase,stored,node);
+      // Complete the quiet slots before choosing a main action. The existing
+      // analyze goal binds preparation to immediate analysis and cannot price
+      // the public region action with an analysis still in reserve.
+      if(preparationBase&&node===openedRoot&&!stored.intent&&!stored.resourceControl){
+        const prep=publicRegionComputerPreparation(preparationBase,knownCards(envelope));
+        if(prep)goals=[...goals,prep];
+      }
       if(special)goals=[...goals,special];
       const cashColumn=preparationBase&&!stored.intent&&!stored.resourceControl
         &&!node.legalActions.some(a=>a.family==="complete_task")&&hasDeferredBlueCashTail(preparationBase,knownCards(envelope));
@@ -8610,6 +8617,37 @@
         &&play[0].type==='gain_data'&&play[0].options?.count===3&&play[1].type==='amiba_choose_symbol_reward';
     }
 
+    function publicRegionComputerPreparation(state,known){
+      const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
+      if(t.roundNumber!==3||p.mainActionCompleted||p.passCompletionPending||p.resources.credits!==0
+        ||p.resources.energy!==1||p.hand.length!==4
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
+        ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        ||!knownRootAlienIds.has("阿米巴")||!knownRootAlienIds.has("虫")
+        ||t.cardTurnEventBonuses?.length)return null;
+      const goal={id:"data:region-with-analysis-ready:6",kind:"computer-prefix",targetComputerSlot:6,required:{}};
+      const slots=data.listComputerPlacedTokens(p).length;
+      if(slots<4||slots>=6||p.resources.availableData+slots!==8
+        ||!resourceDemand.capacity(state,seatId,goal))return null;
+      const q={...p,resources:{...p.resources},dataState:structuredClone(p.dataState)};
+      for(let i=slots+1;i<=6;i++){
+        const r=data.placeDataToComputer(q);
+        if(!r.ok||r.placementSlot!==i||r.slotBonuses?.length
+          ||cardEffects.collectMatchingTriggers(p,{type:"placeData",playerId:seatId,
+            placementKind:"computer",placementSlot:i}).length)return null;
+      }
+      const choices=p.hand.filter(c=>known.has(c.id)&&c.set==="alien:阿米巴"
+        &&!Object.keys(cardEffects.getCardPlayCost(c)).length
+        &&cardEffects.buildPlayEffects(c).some(e=>e.type===aliens.amiba.EFFECT_TYPES.REMOVE_TRACE_FOR_REGION_REWARD));
+      if(choices.length!==1)return null;
+      const visible=structuredClone(state.aliens),slot=visible.amiba?.revealedSlotId;
+      if(!slot)return null;
+      let nextSequence=state.meta.sequences.alienEntity;
+      aliens.amiba.migrateLegacyTraces(visible,slot,{takeSequence:()=>nextSequence++});
+      if(!aliens.amiba.listPlayerTraceOptions(visible,slot,p).length)return null;
+      return {...goal,kind:"play_card",cardId:choices[0].id};
+    }
+
     function analysisPreparation(state,stored,node){
       const p=state.players.players.find(q=>q.id===seatId),t=state.turn;
       if(t.roundNumber!==3||!p.mainActionCompleted||p.resources.credits!==0
@@ -8796,16 +8834,18 @@
     // from the old hand, public tech and the currently displayed alien.
     function retainedRegionIncomeSource(stored, session, offers) {
       const a=session?.journal.actions[0]?.action;
-      if(session ? a?.family!=="play_card" : !openedRoot.legalActions.some(a=>a.family==="play_card"))return null;
+      if(session ? !["play_card","place_data"].includes(a?.family) : !openedRoot.legalActions.some(a=>a.family==="play_card"))return null;
       const state=session?planningState(session.baseState,stored.informationBarrier,knownRootCardIds):readPlanningState(stored);
       const p=state.players.players.find(q=>q.id===seatId),turn=state.turn;
+      const computer=data.listComputerPlacedTokens(p).length;
+      const prepared=p.resources.availableData===2&&computer===6;
+      if((!prepared||a?.family==="place_data")&&!publicRegionComputerPreparation(state,knownRootCardIds))return null;
       if(turn.roundNumber!==3||p.mainActionCompleted||p.passCompletionPending
         ||turn.activePlayerIds.some(id=>id!==seatId&&!turn.passedPlayerIds.includes(id))
-        ||p.resources.availableData!==2||p.resources.credits!==0||p.resources.energy!==1||p.hand.length!==4
-        ||data.listComputerPlacedTokens(p).length!==6
+        ||p.resources.credits!==0||p.resources.energy!==1||p.hand.length!==4
         ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
         ||!hasPostMainInertReservations(state,false,true,true))return null;
-      const removal=p.hand.find(c=>(session?c.id===a.target.cardInstanceId:knownRootCardIds.has(c.id))
+      const removal=p.hand.find(c=>(a?.family==="play_card"?c.id===a.target.cardInstanceId:knownRootCardIds.has(c.id))
         &&cardEffects.getCardModel(c)?.playEffects?.some(e=>e.type==="amiba_remove_trace_for_region_reward"));
       if(!removal)return null;
       return {regionIncome:{turn:turn.turnNumber,retained:p.hand.filter(c=>c!==removal).map(c=>c.id),
