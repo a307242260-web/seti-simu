@@ -86,6 +86,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/scan-analysis-income-utility.test.js", "policy/state-value", "固定收入选择计入同一钱包下已知非结算扫描、电脑补满及免电分析用途，且不增加搜索分支", "电收入与不能筹资的钱/牌收入同值，预支未知牌、重复扫描token或跨用途共用资源"),
     entry("randomizer/game/ai/income-choice-consistency.test.js", "policy/state-value", "收入严格同值时保留较高费用牌，初始目的、待选恢复和菜单重排一致，明确资金目的及较高收益优先", "卡ID与动作ID平局排序不一致、重排菜单改变选择，或印刷费用压过实际收益"),
     entry("randomizer/game/ai/analysis-publicity-capital.test.js", "policy/state-value", "已有手牌筹宣传潜能在分析和实际角标前后连续交接；10输入Native换序及1输入直接研究筹资、完整正式紧凑与State事实一致", "提前弃牌产生虚假16V/10.5V增值、重复资金或未来未知牌被用作真实宣传来源"),
+    entry("randomizer/game/ai/pickup-income-payment.test.js", "policy/decision-search", "在已知化石登陆目标下用现有数据插钱收入，冷恢复选择同一供应者并保持原根", "明知一个数据可支付仍弃掉两张移动牌，或数据不可用时绑定收入"),
     entry("randomizer/game/ai/funded-scan-analysis.test.js", "policy/decision-search", "只用公开条件比较已筹资的扫描分析与可兑现登陆；原根和随机流不变", "未见补牌身份改变首选，或扫描报价抢占已有更高价值的登陆"),
     entry("randomizer/game/ai/analysis-publicity-preparation.test.js", "policy/decision-search", "主行动后已知宣传筹资潜能提前计价，取消强制提前弃牌；已有角标合法且原根/RNG不变", "未计仍持有的宣传来源，只有提前弃牌才出现虚假增值，或取消合法角标入口"),
     entry("randomizer/game/ai/company-income-priority.test.js", "policy/decision-search", "固定收入/换牌按统一整数价值贪心排序，严格更高的公司目的优先，同值不展开两种准备顺序", "已算出电收入替换路线却先强制消耗钱收入供应牌，固定准备政策互相覆盖并损失可行融资"),

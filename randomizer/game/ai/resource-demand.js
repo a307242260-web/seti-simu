@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog,chong){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v26';
+  const VERSION='seti-goal-resource-preparation-v27';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -139,6 +139,29 @@
     choices.sort((a,b)=>value(b.gain)-value(a.gain)||incomeOrder.compare(a.card,b.card));
     const card=choices[0]?.card;
     return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
+  }
+  // Pay a known pickup with the next computer income when the normal
+  // two-card exchange would consume both known movement tools. Keep a
+  // single fixed payment for this goal, without making the two wallets
+  // equivalent or removing exchanges for other goals.
+  function pickupIncomePayment(state,seatId,goal,requirements,actions){
+    if(goal.kind!=='play_card'||goal.required?.credits!==1||Object.keys(goal.required).length!==1)return null;
+    const p=owner(state,seatId),t=state.turn;
+    if(t.roundNumber!==3||t.currentPlayerId!==seatId
+      ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+      ||p.resources.credits||p.resources.energy||placed(p)!==3||p.resources.availableData<1
+      ||p.hand.length!==3||p.hand.some(c=>!c.id||!c.cardId||c.hidden)
+      ||!actions.some(a=>a.family==='place_data'))return null;
+    const card=p.hand.find(c=>c.id===goal.cardId),payers=p.hand.filter(c=>c!==card);
+    if(!card||!payers.every(c=>movePoints(c)===1))return null;
+    const types=effects.buildPlayEffects(card).map(e=>e.type);
+    if(types.join(',')!=='card_move,chong_land_for_pickup,chong_pickup_fossil'
+      ||!requirements.probeCandidates?.some(c=>!c.launchRequired&&c.rocketId!=null&&c.endpointFamily==='land'
+        &&(c.planetId==='jupiter'||c.planetId==='saturn')&&c.path.length===0))return null;
+    const funding=incomeFunding(state,seatId,goal);
+    if(!funding)return null;
+    const gain=cards.getIncomeGainForCard(payers.find(c=>c.id===funding.incomeCardId));
+    return gain?.credits===1&&Object.keys(gain).length===1?{...funding,id:goal.id+':income:'+funding.incomeCardId}:null;
   }
   function heldAndResearchCapital(state,p){
     const passing=(state.passingPlayerIds||state.turn.passedPlayerIds).includes(p.id)||p.passCompletionPending===true;
@@ -494,8 +517,10 @@
         const directPub=p.hand.reduce((n,c)=>n+(c.id===g.cardId?0:(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier),p.resources.publicity);
         if(g.required.publicity>directPub&&g.required.publicity<=directPub+1&&placed(p)<2)g={...g,publicityData:true,targetComputerSlot:2};
       }
-      if(capacity(state,seatId,g))goals.push(g);
-      else{const funded=incomeFunding(state,seatId,g);if(funded&&capacity(state,seatId,funded))goals.push(funded);}
+      const ordinary=capacity(state,seatId,g);
+      const funded=ordinary?pickupIncomePayment(state,seatId,g,requirements,actions):incomeFunding(state,seatId,g);
+      if(funded&&capacity(state,seatId,funded))goals.push(funded);
+      else if(ordinary)goals.push(g);
     };
     if(!p||state.match.initialSetup||p.passCompletionPending)return goals;
     const analysisFunding=analysisPublicityFunding({state,seatId,actions});
