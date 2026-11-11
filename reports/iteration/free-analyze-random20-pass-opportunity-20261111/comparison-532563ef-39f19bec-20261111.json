@@ -1,0 +1,210 @@
+{
+  "before": "532563ef4a3ae1e10c25bd37266384b15d6747cc",
+  "after": "39f19bec97bef4d5623c3cf57afb578a1d28d65c",
+  "meanBefore": 124.15,
+  "meanAfter": 130,
+  "improved": 2,
+  "worse": 0,
+  "rows": [
+    {
+      "board": 1,
+      "base": 134,
+      "new": 134,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 2,
+      "base": 140,
+      "new": 140,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 3,
+      "base": 138,
+      "new": 138,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 4,
+      "base": 141,
+      "new": 141,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 5,
+      "base": 135,
+      "new": 135,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 6,
+      "base": 159,
+      "new": 159,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 7,
+      "base": 135,
+      "new": 135,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 8,
+      "base": 91,
+      "new": 164,
+      "delta": 73,
+      "firstChange": {
+        "step": 47,
+        "request": "agent:player-white:25:0",
+        "old": "pass:a1f33c73",
+        "new": "scan:2d21a323"
+      },
+      "overrides": [
+        {
+          "request": "agent:player-white:25:0",
+          "round": 2,
+          "policy": "round-two-uncontested-scan-opportunity-v1",
+          "actionId": "scan:2d21a323",
+          "passActionId": "pass:a1f33c73",
+          "passValue": 57,
+          "scanValue": 56.666666666666664,
+          "loss": 0.3333333333333357,
+          "maxOpportunityCost": 2,
+          "sectorId": "sector-1-a",
+          "realization": -7.166666666666667,
+          "preparationDebt": 0
+        }
+      ]
+    },
+    {
+      "board": 9,
+      "base": 89,
+      "new": 89,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 10,
+      "base": 129,
+      "new": 129,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 11,
+      "base": 113,
+      "new": 113,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 12,
+      "base": 153,
+      "new": 153,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 13,
+      "base": 97,
+      "new": 141,
+      "delta": 44,
+      "firstChange": {
+        "step": 48,
+        "request": "agent:player-white:26:2",
+        "old": "pass:a1f33c73",
+        "new": "scan:2d21a323"
+      },
+      "overrides": [
+        {
+          "request": "agent:player-white:26:2",
+          "round": 2,
+          "policy": "round-two-uncontested-scan-opportunity-v1",
+          "actionId": "scan:2d21a323",
+          "passActionId": "pass:a1f33c73",
+          "passValue": 63.666666666666664,
+          "scanValue": 62,
+          "loss": 1.6666666666666643,
+          "maxOpportunityCost": 2,
+          "sectorId": "sector-1-a",
+          "realization": -11.5,
+          "preparationDebt": 0
+        }
+      ]
+    },
+    {
+      "board": 14,
+      "base": 116,
+      "new": 116,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 15,
+      "base": 107,
+      "new": 107,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 16,
+      "base": 112,
+      "new": 112,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 17,
+      "base": 147,
+      "new": 147,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 18,
+      "base": 115,
+      "new": 115,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 19,
+      "base": 119,
+      "new": 119,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    },
+    {
+      "board": 20,
+      "base": 113,
+      "new": 113,
+      "delta": 0,
+      "firstChange": null,
+      "overrides": []
+    }
+  ]
+}
