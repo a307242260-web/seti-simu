@@ -335,3 +335,40 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  assert.equal(fourth.search.value,114.5);
  assert(fourth.search.analysis.observationCount<30,'settled final-round branches should reuse the formal score ledger');
 }
+
+// A full pool does not bind the independent Mercury scan to the first
+// public-card sector. The production search and its restored plan agree.
+{
+ const {origin,steps}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/teacher-mercury-followup-20261112-v1.json.gz'))));
+ const seed=JSON.parse(origin.committedState).meta.seed,seatId='player-white';
+ let control;
+ for(const swap of [null,[0,3],[1,5]]){
+  const committed=JSON.parse(origin.committedState);
+  if(swap){const [i,j]=swap,deck=committed.cards.drawPileCardIds;assert(deck[i]&&deck[j]);[deck[i],deck[j]]=[deck[j],deck[i]];}
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+  k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore({...origin,committedState:JSON.stringify(committed)}).ok);
+  try{
+   for(const action of steps.slice(0,3))submit(c,action.actionId);
+   let checkpoint;
+   for(const wanted of steps.slice(3)){
+    const before=c.lifecycle.save().envelope,menu=actions(c);
+    const decide=saved=>{
+     const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),a=agent.createSearchAgent({seatId,analysisPort:port});
+     if(saved)a.loadCheckpoint(saved);
+     const {actionId,search}=a.decide({seatId,legalActions:menu});assert(search.complete);assert(search.diagnostics.nativeExecutions<=256);
+     assert.deepEqual(c.lifecycle.save().envelope,before);
+     return {actionId,search,checkpoint:a.createCheckpoint()};
+    };
+    const withPlan=decide(checkpoint),cold=checkpoint?decide(null):withPlan;
+    assert.equal(withPlan.actionId,wanted.actionId);
+    assert.equal(cold.actionId,wanted.actionId);
+    if(wanted===steps[3]){
+     const evidence={value:cold.search.value,roots:cold.search.roots,inputs:cold.search.diagnostics.nativeExecutions};
+     if(control)assert.deepEqual(evidence,control);else control=evidence;
+    }
+    checkpoint=withPlan.checkpoint;submit(c,wanted.actionId);
+   }
+  }finally{c.dispose();}
+ }
+}

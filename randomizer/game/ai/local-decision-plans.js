@@ -8,7 +8,7 @@
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow,probeCapital,copyForkData){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v12';
+ const VERSION='seti-local-mark-and-scan-purpose-v13';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -2551,6 +2551,17 @@
   if(opts.cost&&!players.canAfford(p,opts.cost)){
    const exit=actions.find(a=>a.target?.skip||a.target?.done);
    return exit?{kind:'fixed',actionId:exit.actionId,reason:'skip-unfunded-scan-cost'}:{kind:'infeasible',reason:'scan-step-cost-unfunded'};
+  }
+  // The fixed Mercury follow-up is a different use of publicity. End
+  // the previous sector plan here and evaluate the original legal menu.
+  if(state.turn.roundNumber===3&&opts.mode==='specified'&&Number.isSafeInteger(opts.sectorX)&&opts.skippable===true&&opts.gainData===true
+   &&opts.cost?.publicity===1&&Object.keys(opts.cost).length===1
+   &&session.queue[0].type===science.EFFECT_TYPES.SCAN_STEP
+   &&session.journal.actions[0]?.action?.family==='scan'
+   &&p.resources.availableData===players.RESOURCE_LIMITS.availableData){
+   const available=actions.filter(a=>a.target?.nebulaId);
+   if(available.length===1&&available[0].target.nebulaId!==goal.nebulaId)
+    return{kind:'complete',reason:'release-completed-primary-scan-before-independent-followup'};
   }
   for(const a of actions.filter(a=>a.target?.nebulaId)){
    const nebulaId=a.target.nebulaId,next=data.getNextReplaceableNebulaToken(state.data,nebulaId),tokens=data.listNebulaTokens(state.data,nebulaId);
