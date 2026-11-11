@@ -793,7 +793,7 @@
       if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
-        || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)
         || localPlans.hasPendingFossilArrival(state)
         || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
       return state;
@@ -931,7 +931,7 @@
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
       if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
-        || owner.passCompletionPending || t.cardTurnEventBonuses?.length
+        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
         || owner.resources.availableData !== owner.dataState.poolTokens.length
@@ -1114,6 +1114,11 @@
       return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
     }
 
+    function quietSignalBonusesOnly(state){
+      return state.turn.roundNumber===3&&(state.turn.cardTurnEventBonuses||[]).every(bonus=>
+        bonus.eventType==="signalMarked"&&["b28-yellow-signal-bonus","b132-blue-signal-score"].includes(bonus.id));
+    }
+
     function quietPaidMoveSource(stored,action,allowQuietR3=false){
       // These reveals can keep their original mask while a known probe moves.
       // Payment still rejects any card that was not known at the root.
@@ -1126,7 +1131,7 @@
       // The same ordinary payment is quiet before either alien can reveal.
       const quietThirdRound=allowQuietR3&&isUnrevealedRoundThree(state)&&!Object.keys(tasks).length;
       if((t.roundNumber!==4&&!quietThirdRound)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
-        ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)||t.type1TriggerEvents?.length
         ||!state.pieces.rockets.some(r=>r.id===action.target.rocketId&&r.playerId===seatId&&(r.kind||"standard")==="standard")
         ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id)))return null;
       const stationaryCargo=Object.values(tasks).some(job=>!job.delivered);
@@ -1178,7 +1183,7 @@
         players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
       const moved=probeTurnSession.settleMovePayment(next,seatId,origin,action);
       if(!moved.ok||stationaryCargo&&moved.events.some(event=>event.type!=="move")
-        ||moved.events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+        ||moved.events.some(event=>event.type==="signalMarked"||cardEffects.collectMatchingTriggers(player,event).length))return null;
       return next;
     }
 
@@ -2086,7 +2091,7 @@
         provedQuietEndMenus++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
-      const moveSource=node.status==="stable"&&quietPaidMoveSource(stored,requested);
+      const moveSource=node.status==="stable"&&quietPaidMoveSource(stored,requested,true);
       const moveEvent={type:"move_payment_requested",playerId:seatId,rocketId:requested.target?.rocketId};
       const quietMoveMenu=moveSource&&!cardEffects.hasMatchingTrigger(moveSource.player,moveEvent);
       const moveMenu=quietMoveMenu&&makeMoveMenu(stored,requested,moveSource.state);
