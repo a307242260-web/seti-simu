@@ -143,3 +143,39 @@ for (const source of retainedRegionCards) {
   assert.equal(selected.family,"card_corner");
  });
 }
+
+const retainedCompanyCases = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+ "fixtures/r3-company-retain-20261111-v1.json.gz"))));
+for (const source of retainedCompanyCases) {
+ run(source.entry, ({choose,apply,save})=>{
+  let checkpoint;
+  for (const [i,expected] of source.expected.entries()) {
+   const d=choose(checkpoint);
+   assert.deepEqual(d.selected,expected);
+   if(i===0){
+    const proof=d.q.retainRegionCard;
+    assert.equal(proof.incomeCardId,source.income);
+    assert.equal(proof.nativeInputs,15);
+    assert.equal(proof.visibleValue,182);
+    assert.equal(proof.value,source.value);
+    assert.equal(d.q.diagnostics.nativeExecutions,27);
+    assert(d.q.planEvidence);
+   }else{
+    assert.equal(d.q.diagnostics.nativeExecutions,0);
+    assert(d.q.reusedCoverage);
+   }
+   checkpoint=d.checkpoint;apply(d.selected);
+  }
+  const s=JSON.parse(save().committedState),p=s.players.players.find(x=>x.id===seat);
+  assert.equal(p.income.credits,7);
+  assert.equal(p.income.energy,4);
+  assert(p.hand.some(c=>c.cardId==="amiba_5.webp"));
+  assert.equal(choose(checkpoint).selected.family,"play_card");
+ });
+ run(source.entry, ({choose,apply,menu})=>{
+  const outgoing=source.expected[1].target.cardInstanceId;
+  const spend=menu().find(a=>a.family==="card_corner"&&a.target?.cardInstanceId===outgoing);
+  assert(spend);apply(spend);
+  assert.equal(choose().q.retainRegionCard?.incomeCardId,undefined);
+ });
+}

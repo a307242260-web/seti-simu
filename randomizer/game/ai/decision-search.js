@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v447";
+  const VERSION = "seti-complete-decision-search-v448";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -118,7 +118,9 @@
       cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning, finalMarkPlanning, scanPlanning]);
     const retainedRegionSource=resourcePlanning&&realizationTies&&scanOrbitBudget&&port.retainedRegionCardSource?.();
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
-    const reusedPlan = !retainedRegionSource && !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
+    const regionCashGoal="retained-region-cash-income";
+    const reusedPlan = !reused?.hit && planReuse && planContinuation
+      && port.reusePlan(root, planContinuation, planKey, retainedRegionSource ? regionCashGoal : null);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
     if (hit && now() - startedAt < limits.milliseconds) return {
       schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0, preparationDebt:hit.preparationDebt??0,
@@ -1091,20 +1093,32 @@
         }
       }
     }
-    let scanBeforeOrbit=null, retainRegionCard=null, continuationNativeInputs=0;
+    let scanBeforeOrbit=null, retainRegionCard=null, retainedRegionPrefix=null, continuationNativeInputs=0;
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
-    if(complete&&!unresolved.length&&retainedRegionSource&&retainedRegionSource.cornerId===visibleBest?.actionId
-      &&roots.some(r=>r.actionId===retainedRegionSource.firstId&&r.completion==="complete")){
+    if(complete&&!unresolved.length&&retainedRegionSource&&visibleBest
+      &&(retainedRegionSource.cash?planReuse&&visibleBest.actionId!==retainedRegionSource.firstId:
+        retainedRegionSource.cornerId===visibleBest.actionId
+        &&roots.some(r=>r.actionId===retainedRegionSource.firstId&&r.completion==="complete"))){
       const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
-      const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions;
+      const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions
+        &&(!retainedRegionSource.cash||nodes.length+inputs<limits.nodes);
       const before=port.getDiagnostics().submissionCount;
       if(maySubmit(0,before)){
         const proof=port.quoteRetainedRegionCard(retainedRegionSource,evaluate,maySubmit);
         continuationNativeInputs=port.getDiagnostics().submissionCount-before;
         transitions+=continuationNativeInputs;
-        if(proof?.value>nodes[0].value&&now()<deadline)retainRegionCard={...proof,
-          actionId:retainedRegionSource.firstId,visibleActionId:visibleBest.actionId,visibleValue:nodes[0].value,nativeInputs:continuationNativeInputs};
+        if(proof?.value>nodes[0].value&&now()<deadline){
+          const {prefix,...quote}=proof;
+          retainRegionCard={...quote,actionId:retainedRegionSource.firstId,
+            visibleActionId:visibleBest.actionId,visibleValue:nodes[0].value,nativeInputs:continuationNativeInputs};
+          retainedRegionPrefix=prefix;
+          if(prefix){
+            const i=roots.findIndex(r=>r.actionId===retainRegionCard.actionId);
+            roots[i]={actionId:retainRegionCard.actionId,value:quote.value,completion:"proved-native-continuation",
+              valueType:"attained-lower-bound",proof:regionCashGoal};
+          }
+        }
         if(now()>=deadline)stopReason="watchdog";
       }
     }
@@ -1270,6 +1284,18 @@
       planCertificate = accepted ? port.rememberPlan(entries, planKey, { searchVersion: VERSION, rootNode: 0,
         nodeCount: nodes.length+certificateNodes, graphNodeCount: nodes.length, certificateNodeCount: certificateNodes, boundaryWitness: retainedWitness(0), rootValue: nodes[0].value }) : null;
     }
+    if(accepted&&retainedRegionPrefix){
+      const value=retainRegionCard.value,entries=retainedRegionPrefix.map(({node,action},i)=>({
+        node,actionId:action.actionId,value,distance:retainedRegionPrefix.length-i,sourceNode:`retained-region:${i}`,committedGoal:regionCashGoal,
+        roots:node.legalActions.map(a=>({actionId:a.actionId,value:a.actionId===action.actionId?value:null,
+          valueType:a.actionId===action.actionId?"attained-lower-bound":"not-executed",
+          completion:"committed-goal-plan-execution",goalId:regionCashGoal,isEquivalence:false})),
+      }));
+      certificateNodes+=entries.length-1;
+      planCertificate=port.rememberPlan(entries,planKey,{searchVersion:VERSION,rootNode:0,
+        nodeCount:nodes.length+certificateNodes,graphNodeCount:nodes.length,certificateNodeCount:certificateNodes,rootValue:value,proof:regionCashGoal});
+      if(now()>=scanOrbitBudget.deadline){stopReason="watchdog";accepted=false;}
+    }
     const elapsed = now() - startedAt;
     accepted = accepted && elapsed < limits.milliseconds;
     if (!accepted) certificate = null;
@@ -1284,7 +1310,7 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? nodes[0].value : null,
+      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : nodes[0].value : null,
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),

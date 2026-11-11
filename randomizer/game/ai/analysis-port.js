@@ -4345,17 +4345,18 @@
       return { before, result };
     }
 
-    // Root-only purpose: the only held data corner also buys a known public
-    // pick plus a revealed regional reward next turn. No opponent can act.
+    // Root-only purpose: preserve a held data corner for a paid public pick
+    // and known regional reward. A fixed company swap can fund its play.
     function retainedRegionCardSource() {
       if(openedRoot?.status!=="stable"||rootObservation.publicState.roundNumber!==3) return null;
       const end=openedRoot.legalActions.find(a=>a.family==="end_turn");
       const corners=openedRoot.legalActions.filter(a=>a.family==="card_corner"&&a.payload?.kind==="resource");
-      if(!end||corners.length!==1||!knownRootAlienIds.has("阿米巴")||!knownRootAlienIds.has("虫"))return null;
+      const swap=openedRoot.legalActions.find(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards");
+      if(!end||!corners.length||!knownRootAlienIds.has("阿米巴")||!knownRootAlienIds.has("虫"))return null;
       const root=nodes.get(openedRoot),state=readPlanningState(root),t=state.turn;
-      const p=state.players.players.find(p=>p.id===seatId),card=p.hand[0];
-      if(!p.mainActionCompleted||p.passCompletionPending||p.resources.availableData||p.hand.length!==1
-        ||card.id!==corners[0].target.cardInstanceId||!knownRootCardIds.has(card.id)
+      const p=state.players.players.find(p=>p.id===seatId);
+      if(!p.mainActionCompleted||p.passCompletionPending||!p.hand.length||p.hand.length>2
+        ||p.hand.some(c=>!knownRootCardIds.has(c.id))
         ||t.cardTurnEventBonuses?.length||p.industryBorrowedTechTileId
         ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
         ||localPlans.hasPendingFossilArrival(state)
@@ -4365,9 +4366,13 @@
         }))return null;
       const job=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
       if(job.length!==1||job[0].delivered||!visibleEarthCargo(state,p,job[0]))return null;
-      const region=localPlans.blueCashCard(card),reward=cards.getDiscardActionRewardForCard(card);
-      if(!region||p.resources.credits<1||reward?.dataCount!==1||Object.keys(reward.gain).some(k=>k!=="score")
-        ||!state.cards.publicCards.some(c=>c&&knownRootCardIds.has(c.id)))return null;
+      const regionCards=p.hand.flatMap(c=>{
+        const region=localPlans.blueCashCard(c),reward=cards.getDiscardActionRewardForCard(c);
+        return region&&reward?.dataCount===1&&Object.keys(reward.gain).every(k=>k==="score")?[{c,region}]:[];
+      });
+      if(regionCards.length!==1||!state.cards.publicCards.some(c=>c&&knownRootCardIds.has(c.id)))return null;
+      const {c:card,region}=regionCards[0],corner=corners.find(a=>a.target.cardInstanceId===card.id);
+      if(!corner)return null;
       const next=previewTurn(state);
       if(!next.turnAdvanced||next.roundAdvanced||next.gameEnded||next.nextPlayerId!==seatId)return null;
       const tasks=openedRoot.legalActions.filter(a=>a.family==="complete_task");
@@ -4377,7 +4382,21 @@
       const taskReward=task?.rewards?.length===1&&task.rewards[0],gain=taskReward?.options?.gain;
       if(claim&&(task?.condition?.type!=="orbitOrLandCount"||taskReward?.type!=="gain_resources"||(taskReward.options.repeat??1)!==1
         ||!Number.isSafeInteger(gain?.credits)||gain.credits<1||Object.keys(gain).some(k=>k!=="credits"&&k!=="score")))return null;
-      return {firstId:claim?.actionId||end.actionId,claimId:claim?.actionId,claimGain:gain,cornerId:corners[0].actionId,cardId:card.id,region};
+      const retained={firstId:claim?.actionId||end.actionId,claimId:claim?.actionId,claimGain:gain,cornerId:corner.actionId,cardId:card.id,region};
+      if(p.hand.length===1&&corners.length===1&&!p.resources.availableData&&p.resources.credits>=1)return retained;
+      // One known spare card, one fixed fourth-slot cash source, no other
+      // data purchase or trade. The swap itself must not expose a refill.
+      const count=data.listComputerPlacedTokens(p);
+      const outgoing=p.hand.find(c=>c.id!==card.id),printed=outgoing&&cards.getDiscardActionRewardForCard(outgoing);
+      if(!swap||!claim||p.resources.credits||p.resources.energy||!printed?.gain?.publicity||printed.dataCount
+        ||Object.keys(printed.gain).length!==1||count.length<1||count.length>3
+        ||count.some((x,i)=>x.placementSlot!==i+1)||p.resources.availableData!==4-count.length)return null;
+      const income=state.cards.publicCards.find(c=>{
+        const gain=c&&cards.getIncomeGainForCard(c);
+        return c&&knownRootCardIds.has(c.id)&&gain?.credits===1&&Object.keys(gain).length===1;
+      });
+      return income?{...retained,firstId:swap.actionId,
+        cash:{outgoingId:outgoing.id,incomeId:income.id,placements:4-count.length}}:null;
     }
 
     // One fixed Native witness after the closed graph, using the same card
@@ -4386,9 +4405,11 @@
       const root=nodes.get(openedRoot),initial=readIdentityState(root.envelope),comp=fork.composition||fork;
       const previous=loadedEnvelope||root.envelope,firstCount=submissionCount;
       const owner=s=>s.players.players.find(p=>p.id===seatId);
-      let e=root.envelope,barrier=null;
+      const limit=(source.claimId?5:4)+(source.cash?4+2*source.cash.placements:0),prefix=[];
+      let e=root.envelope,barrier=null,recording=Boolean(source.cash);
       const input=a=>{
-        if(!a||a.actorId!==seatId||submissionCount-firstCount>=(source.claimId?5:4)||!admit(submissionCount-firstCount,submissionCount))return false;
+        if(!a||a.actorId!==seatId||submissionCount-firstCount>=limit||!admit(submissionCount-firstCount,submissionCount))return false;
+        if(recording)prefix.push({envelope:e,actions:legalActions(comp),action:a});
         restoreEnvelope(e,true);
         const r=executeCurrent(a).result;
         if(r.irreversibleBarrier){
@@ -4400,18 +4421,38 @@
       const menu=()=>legalActions(comp);
       try{
         restoreEnvelope(e);
+        if(source.cash){
+          const {outgoingId,incomeId,placements}=source.cash;
+          if(!input(menu().find(a=>a.actionId===source.firstId))||!e.session
+            ||!input(menu().find(a=>a.family==="choose_card"&&a.target?.cardInstanceId===outgoingId))||!e.session
+            ||!input(menu().find(a=>a.family==="choose_card"&&a.target?.cardInstanceId===incomeId))||e.session)return null;
+          const swapped=owner(readIdentityState(e));
+          if(swapped.hand.length!==2||![incomeId,source.cardId].every(id=>swapped.hand.some(c=>c.id===id)))return null;
+          for(let i=0;i<placements;i++){
+            if(!input(menu().find(a=>a.family==="place_data"))||!e.session
+              ||!input(menu().find(a=>a.family==="choose_target"&&a.target?.target==="computer")))return null;
+            if(Boolean(e.session)!==(i===placements-1))return null;
+          }
+          if(!input(menu().find(a=>a.family==="choose_card"&&a.target?.choiceId===`income:${incomeId}`))||e.session)return null;
+          const ready=owner(readIdentityState(e)),old=owner(initial);
+          if(ready.income.credits!==old.income.credits+1||ready.income.energy!==old.income.energy
+            ||ready.resources.credits!==old.resources.credits+1||ready.resources.availableData
+            ||ready.hand.length!==1||ready.hand[0].id!==source.cardId)return null;
+        }
         if(source.claimId){
+          const old=owner(readIdentityState(e));
           if(!input(menu().find(a=>a.actionId===source.claimId))||e.session)return null;
-          const old=owner(initial),paid=owner(readIdentityState(e));
+          const paid=owner(readIdentityState(e));
           if(!Object.keys(old.resources).every(k=>paid.resources[k]===old.resources[k]+(source.claimGain[k]||0)))return null;
         }
-        const before=owner(readIdentityState(e));
+        const staged=readIdentityState(e),before=owner(staged);
         if(!input(menu().find(a=>a.family==="end_turn"))||e.session)return null;
+        recording=false;
         const next=readIdentityState(e),p=owner(next);
         if(next.turn.roundNumber!==3||next.turn.turnNumber!==initial.turn.turnNumber+1
           ||next.turn.currentPlayerId!==seatId||p.mainActionCompleted||p.hand.length!==1||p.hand[0].id!==source.cardId
           ||Object.keys(before.resources).some(k=>before.resources[k]!==p.resources[k])
-          ||next.cards.publicCards.some((c,i)=>c?.id!==initial.cards.publicCards[i]?.id))return null;
+          ||next.cards.publicCards.some((c,i)=>c?.id!==staged.cards.publicCards[i]?.id))return null;
         if(!input(menu().find(a=>a.family==="play_card"&&a.target?.cardInstanceId===source.cardId))||!e.session)return null;
         const offers=menu(),pick=describeCardPick(e,offers,"decision",null);
         const choice=pick?.fixed&&offers.find(a=>a.actionId===pick.selectedActionId&&a.family==="choose_card"&&a.target?.source==="public");
@@ -4440,7 +4481,10 @@
           ||done.resources.score!==before.resources.score+(reward.g.score||0)
           ||done.resources.publicity!==before.resources.publicity+(reward.g.publicity||0))return null;
         return {value:evaluate(observeEnvelope(e,barrier,true)),pickedCardId:card.id,symbolSlot:reward.a.target.slotId,cardId:source.cardId,
-          ...(source.claimId?{claimId:source.claimId}:{})};
+          ...(source.claimId?{claimId:source.claimId}:{}),
+          ...(source.cash?{incomeCardId:source.cash.incomeId,prefix:prefix.map(({envelope,actions,action})=>({
+            node:envelope===root.envelope?openedRoot:createNode(envelope,null,actions,envelope.session?"decision":"stable"),action,
+          }))}:{})};
       }finally{restoreEnvelope(previous);}
     }
 
@@ -4979,18 +5023,18 @@
       return { token, evidenceId };
     }
 
-    function reusePlan(node, token, modelKey) {
+    function reusePlan(node, token, modelKey, requiredGoal = null) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       const saved = token && planCertificate?.token === token ? planCertificate : null;
       if (!saved) return { hit: false, reason: "unknown-evidence" };
       if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
       const actions=actionSetKey(node.legalActions);
-      let row = saved.rows.find(entry => entry.key === (entry.committedGoal?policyPhysicalKey(stored):policyDependencyKey(stored)) && entry.actions === actions);
+      let row = saved.rows.find(entry => (!requiredGoal||entry.committedGoal===requiredGoal) && entry.key === (entry.committedGoal?policyPhysicalKey(stored):policyDependencyKey(stored)) && entry.actions === actions);
       // Between native movement sessions a cold root has no pending session
       // from which to recover the selected route. Restore the saved policy
       // only after exact physical/RNG, menu, turn, position and model matching.
-      if(!row&&movementPlanning){
+      if(!row&&!requiredGoal&&movementPlanning){
         const state=readPlanningState(stored);
         row=saved.rows.find(entry=>{
           const intent=entry.movementIntent;if(entry.committedGoal||!savedMovementIntent(intent)||entry.actions!==actions
