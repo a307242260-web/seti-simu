@@ -1294,6 +1294,16 @@
       return Boolean(cargo&&cargo.playerId===seatId&&!localPlans.hasPendingFossilArrival(state));
     }
 
+    function knownPublicScanMarkerTail(effect, source, known) {
+      const card=effect?.payload?.cardEffect,options=card?.options;
+      return effect?.type==="card_play_domain_direct"&&effect.kind==="effect"
+        &&source?.family==="play_card"&&known.has(source.target?.cardInstanceId)
+        &&effect.payload.cardInstanceId===source.target.cardInstanceId
+        &&card?.id==="dlc13-public-scan-marker"&&card.type==="gain_resources"
+        &&options?.gain?.additionalPublicScan===1&&Object.keys(options.gain).length===1
+        &&(options.repeat??1)===1&&Object.keys(options).every(k=>k==="gain"||k==="repeat");
+    }
+
     function previewQuietPublicScan(node,stored,action){
       if(!resourcePlanning||!scanPlanning||node.status!=="decision"||stored.informationBarrier||stored.resourceControl
         ||action.family!=="choose_card")return null;
@@ -1307,11 +1317,16 @@
         ||!Number.isSafeInteger(opts.max)||!Number.isSafeInteger(opts.selected)||opts.selected>=opts.max
         ||!repeatOnly&&(purple?.type!==types.SCAN_ACTION_4||purple.kind!=="decision")||finalize?.type!==types.SCAN_FINALIZE
         ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
-      const source=s.journal.actions[0]?.action?.family;
-      if(source==="scan"&&!repeatOnly&&s.queue.length!==(mercury?4:3)||source==="play_card"&&(s.queue.length!==5
-        ||extra?.type!==types.SCAN_STEP||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"||last.type!==types.SCAN_FINALIZE)
-        ||source!=="scan"&&source!=="play_card")return null;
-      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
+      const actionSource=s.journal.actions[0]?.action,source=actionSource?.family;
+      const known=knownCards(stored.envelope);
+      const b9=s.queue.length===5&&extra?.type===types.SCAN_STEP
+        &&extra.payload?.cardEffect?.id==="b9-any-sector-scan"&&last.type===types.SCAN_FINALIZE;
+      // The DLC13 marker stays in the original queue and settles natively,
+      // after the scan's real Purple 4 decision and public refill.
+      const markerTail=s.queue.length===4&&!mercury&&knownPublicScanMarkerTail(extra,actionSource,known);
+      if(source==="scan"&&!repeatOnly&&s.queue.length!==(mercury?4:3)
+        ||source==="play_card"&&!b9&&!markerTail||source!=="scan"&&source!=="play_card")return null;
+      const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId);
       // With only root-visible Amiba and no pending species reveal, this
       // prefix still stops at the native Purple 4 menu, before sector settlement.
       const quietAmiba=source==="scan"&&quietR3AmibaPostMain(root,p);
@@ -1391,7 +1406,9 @@
       const known=knownCards(stored.envelope);
       if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
-        ||(mercury?localPlans.hasPendingFossilArrival(state):Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
+        ||(mercury?localPlans.hasPendingFossilArrival(state):
+          Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
+          &&(moving||!knownStationaryCargoForScan(state)))
         ||p.reservedCards.some(c=>!known.has(c.id))
         ||moving&&(!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"
           ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)])

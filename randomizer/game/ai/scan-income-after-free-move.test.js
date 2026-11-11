@@ -158,3 +158,23 @@ for(const {root,actionId} of visitCases){
   assert.deepEqual(plannedTrigger.result,nativeTrigger.result);
  }finally{composition.dispose();}
 }
+
+const markerCases=JSON.parse(gunzipSync(fs.readFileSync(path.join(__dirname,
+ "fixtures/r4-stationary-scan-marker-20261111-v1.json.gz"))));
+for(const {root,actionId,value,n} of markerCases){
+ const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+  projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId,[],
+   {cheap:viewer?.cheap===true,valueOnly:viewer?.valueOnly===true})});
+ kernel.newGame({seed});const composition=kernel.composition;
+ const port=createAnalysisPort({composition,seatId:seat,maxCacheEntries:0});
+ try{
+  assert(composition.lifecycle.restore(root).ok);
+  const legalActions=composition.inputPort.enumerateActions({});
+  const q=createSearchAgent({seatId:seat,analysisPort:port}).decide({seatId:seat,legalActions}).search;
+  assert(q.complete&&!q.unresolved.length);
+  assert.deepEqual([q.actionId,q.value,q.diagnostics.nativeExecutions],[actionId,value,n]);
+  assert(n<=256);
+  assert(q.analysis.provedScan4QuietLaunchSkips>=28&&q.analysis.provedPublicScanChoices>=112);
+  assert.deepEqual(composition.lifecycle.save().envelope,root);
+ }finally{port.close();composition.dispose();}
+}
