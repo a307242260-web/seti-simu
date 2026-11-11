@@ -7,6 +7,98 @@
   },
   "versions": [
     {
+      "id": "free-analyze-random20-guarded-move-20261111-03",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-move-20261111-03",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-move-first3-20261111",
+      "head": "bfacb7827",
+      "commits": [
+        "bfacb7827"
+      ],
+      "summary": "固定二十盘严格验收第03盘",
+      "records": {
+        "b13a75b5.bfacb782.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "ai-search-quiet-move-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-move-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-opening-quiet-first3-20261111",
+      "head": "bfacb7827",
+      "commits": [
+        "d8d72280a",
+        "163ceda3e",
+        "bfacb7827"
+      ],
+      "summary": "第三轮移动付款复用后的标准教学盘",
+      "records": {
+        "bf26140c.bfacb782.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-20261111-01",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-20261111-01",
+      "date": "2026-11-11",
+      "baseline": "ai-search-opening-quiet-first3-20261111",
+      "head": "bdab196e7",
+      "commits": [
+        "bdab196e7"
+      ],
+      "summary": "固定二十盘验收第01盘",
+      "records": {
+        "ca016477.bdab196e.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-20261111-02",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-20261111-02",
+      "date": "2026-11-11",
+      "baseline": "ai-search-opening-quiet-first3-20261111",
+      "head": "bdab196e7",
+      "commits": [
+        "bdab196e7"
+      ],
+      "summary": "固定二十盘验收第02盘",
+      "records": {
+        "7a80d09a.bdab196e.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-20261111-14",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-20261111-14",
+      "date": "2026-11-11",
+      "baseline": "ai-search-opening-quiet-first3-20261111",
+      "head": "bdab196e7",
+      "commits": [
+        "bdab196e7"
+      ],
+      "summary": "固定二十盘验收第14盘",
+      "records": {
+        "882d8bb8.bdab196e.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-opening-quiet-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
