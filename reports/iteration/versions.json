@@ -7,6 +7,115 @@
   },
   "versions": [
     {
+      "id": "ai-search-quiet-tail-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-tail-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-trade-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "716f8ca42",
+        "f41d6e839"
+      ],
+      "summary": "复用第三轮固定结算后的标准教学盘",
+      "records": {
+        "ea71e7e3.f41d6e83.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-tail-20261111-06",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-tail-20261111-06",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "f41d6e839"
+      ],
+      "summary": "固定二十盘严格验收第06盘",
+      "records": {
+        "b24b0b9a.f41d6e83.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-tail-20261111-07",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-tail-20261111-07",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "f41d6e839"
+      ],
+      "summary": "固定二十盘严格验收第07盘",
+      "records": {
+        "113c24ca.f41d6e83.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-tail-20261111-08",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-tail-20261111-08",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "f41d6e839"
+      ],
+      "summary": "固定二十盘严格验收第08盘",
+      "records": {
+        "1e7bbdeb.f41d6e83.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-tail-20261111-09",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-tail-20261111-09",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "f41d6e839"
+      ],
+      "summary": "固定二十盘严格验收第09盘",
+      "records": {
+        "e220b409.f41d6e83.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-tail-20261111-10",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-tail-20261111-10",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "f41d6e839",
+      "commits": [
+        "f41d6e839"
+      ],
+      "summary": "固定二十盘严格验收第10盘",
+      "records": {
+        "fb63d93d.f41d6e83.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-quiet-trade-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
