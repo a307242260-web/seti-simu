@@ -87,6 +87,32 @@ try {
   assert.equal(lateSearch.value,266);
   assert.deepEqual(save(),late);
 
+  // Only the exposed, payable reward has a fully witnessed next-turn quote.
+  const {exposed,withoutCash}=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+    'fixtures/visible-fossil-transport-r3-20261112-v1.json.gz'))));
+  restore(exposed);
+  const reward=search(),first=menu().find(a=>a.actionId===reward.actionId);
+  assert.equal(first.target.fossilId,'fossil_07');
+  assert.equal(reward.value,190.5);
+  assert.equal(reward.visibleFossilTransport.nativeInputs,8);
+  assert.equal(reward.visibleFossilTransport.previousValue,176.5);
+  assert.equal(reward.diagnostics.nativeExecutions,11);
+  assert.equal(reward.planEvidence,null);
+  const budgeted=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{
+    budgeted.openRoot();
+    const source=budgeted.visibleFossilTransportSource();
+    assert(source);
+    assert.equal(budgeted.quoteVisibleFossilTransport(source,()=>assert.fail('partial witness'),count=>count<1),null);
+    assert.equal(budgeted.getDiagnostics().submissionCount,1);
+    assert.deepEqual(save(),exposed);
+  }finally{budgeted.close();}
+  restore(withoutCash);
+  const energy=search();
+  assert.equal(menu().find(a=>a.actionId===energy.actionId).target.fossilId,'fossil_06');
+  assert.equal(energy.diagnostics.nativeExecutions,3);
+  assert.equal(energy.visibleFossilTransport,undefined);
+
   // Real landing and scan menus: the paid reward is already displayed;
   // any replacements stay masked even though the rules fork advances both decks.
   const picks=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,

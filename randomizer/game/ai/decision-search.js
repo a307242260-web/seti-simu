@@ -1139,6 +1139,30 @@
       }
     }
     let scanBeforeOrbit=null, retainRegionCard=null, retainedRegionPrefix=null, continuationNativeInputs=0;
+    let visibleFossilTransport=null;
+    if(complete&&!stopReason&&!unresolved.length&&resourcePlanning&&realizationTies&&scanOrbitBudget
+      &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)&&root.status==="decision"){
+      const source=port.visibleFossilTransportSource?.();
+      const current=source&&roots.find(r=>r.actionId===source.action.actionId&&r.completion==="complete");
+      if(current&&current.actionId!==nodes[0].best?.actionId){
+        const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
+        const admit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs
+          &&transitions+inputs<limits.transitions&&nodes.length+inputs<limits.nodes;
+        const before=port.getDiagnostics().submissionCount;
+        if(admit(0,before)){
+          const proof=port.quoteVisibleFossilTransport(source,evaluate,admit);
+          continuationNativeInputs=port.getDiagnostics().submissionCount-before;
+          transitions+=continuationNativeInputs;
+          if(proof?.value>nodes[0].value&&now()<deadline){
+            visibleFossilTransport={...proof,nativeInputs:continuationNativeInputs,currentValue:current.value,
+              previousValue:nodes[0].value,previousActionId:nodes[0].best.actionId};
+            roots[roots.indexOf(current)]={...current,value:proof.value,completion:"proved-native-continuation",
+              valueType:"attained-lower-bound",proof:"visible-fossil-transport"};
+          }
+          if(now()>=deadline)stopReason="watchdog";
+        }
+      }
+    }
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
     if(complete&&!unresolved.length&&retainedRegionSource&&visibleBest
@@ -1242,7 +1266,7 @@
     let planCertificate = null;
     // The existing certificate starts with the visible winner. A proved
     // override must let the real scan menu build a fresh continuation.
-    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass) {
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass && !visibleFossilTransport) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1371,7 +1395,7 @@
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
+      actionId: accepted ? visibleFossilTransport?.actionId || retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1380,8 +1404,9 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : scanBeforePass?.scanValue ?? nodes[0].value : null,
+      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value : null,
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
+      ...(accepted&&visibleFossilTransport?{visibleFossilTransport}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
