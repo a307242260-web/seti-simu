@@ -118,3 +118,43 @@ for(const {root,actionId,value} of finalScanCases){
   assert.deepEqual(composition.lifecycle.save().envelope,root);
  }finally{finalPort.close();composition.dispose();}
 }
+
+const visitCases=JSON.parse(gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/r4-scan4-visit-20261111-v1.json.gz'))));
+const cards=require('../cards/deck');
+for(const {root,actionId} of visitCases){
+ const visitKernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+  projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId,[],{valueOnly:viewer?.valueOnly===true})});
+ visitKernel.newGame({seed});const composition=visitKernel.composition;
+ function moveArrival(source,reuse){
+  assert(composition.lifecycle.restore(source).ok);
+  const before=composition.lifecycle.save().envelope;
+  const port=createAnalysisPort({composition,seatId:seat,maxCacheEntries:0});
+  try{
+   port.setResourcePlanning(reuse);
+   port.setMovementPlanning(true);
+   port.setDecisionPlanning({scanPlanning:true});
+   const node=port.openRoot();
+   const action=node.legalActions.find(a=>a.actionId===actionId);
+   assert(action);
+   const child=port.expand(node,action.actionId);
+   assert.deepEqual(composition.lifecycle.save().envelope,before);
+   return {result:[child.status,child.boundary,child.legalActions,child.observation],reused:port.getDiagnostics().provedScan4QuietMoves};
+  }finally{port.close();}
+ }
+ try{
+  const ordinary=moveArrival(root,false),planned=moveArrival(root,true);
+  assert.equal(ordinary.reused,0);
+  assert.equal(planned.reused,1,'an untriggered free Saturn visit is reusable');
+  assert.deepEqual(planned.result,ordinary.result);
+  const triggering=structuredClone(root);
+  const state=triggering.session.session.workingState;
+  const card=cards.createCommittedCardInstance(state,cards.getCatalogEntryForCard({cardId:'b_92.webp'}));
+  state.players.players.find(player=>player.id===seat).reservedCards.push(card);
+  const index=state.cards.drawPileCardIds.indexOf(card.cardId);
+  if(index!==-1)state.cards.drawPileCardIds.splice(index,1);
+  const nativeTrigger=moveArrival(triggering,false),plannedTrigger=moveArrival(triggering,true);
+  assert.equal(plannedTrigger.reused,0,'a Saturn trigger still needs Native');
+  assert(plannedTrigger.result[2].some(action=>action.family==='accept_optional_effect'));
+  assert.deepEqual(plannedTrigger.result,nativeTrigger.result);
+ }finally{composition.dispose();}
+}

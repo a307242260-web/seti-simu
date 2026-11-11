@@ -1405,22 +1405,31 @@
         cards:{...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]},
         players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
       const context=scienceSession.createActionContext(next,seatId);
-      let event={type:"scanAction4Skipped",playerId:seatId};
+      let actionEvents=[{type:"scanAction4Skipped",playerId:seatId}];
       if(moving){
         const move=rocketAbilities.moveProbe(context,{
           ...action.target,cost:{},skipCost:true,movementPoints:scanEffects.SCAN_ACTION_4_MOVE_POINTS,
         });
-        if(!move.ok||move.events.length!==1||move.events[0].type!=="move"||move.payload.requiredMovePoints!==1)return null;
-        event=move.events[0];
+        if(!move.ok||move.events[0]?.type!=="move"||move.payload.requiredMovePoints!==1)return null;
+        actionEvents=move.events;
+        if(actionEvents.length!==1){
+          // A normal visit already applied publicity via moveProbe. Reuse
+          // Native's orbit facts and trigger check before preparing the refill.
+          if(actionEvents.length!==2||actionEvents[1].type!=="visitPlanet"
+            ||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)return null;
+          const arrival=residualSession.augmentEffectResult(next,{ok:true,events:actionEvents},head);
+          if(arrival.spawnedEffects.length)return null;
+          actionEvents=arrival.events;
+        }
       }else if(mode==="launch"){
         const launch=rocketAbilities.launchProbe(context,{cost:{energy:scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY}});
         if(!launch.ok||launch.events.length!==1||launch.events[0].type!=="launch")return null;
-        event=launch.events[0];
+        actionEvents=launch.events;
       }
       if(mercury){
         // The paid Mercury scan remains a real decision. No sector reward
         // or refill is resolved while preparing its native menu.
-        if(cardEffects.collectMatchingTriggers(player,event).length)return null;
+        if(actionEvents.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
         const choices=scienceSession.formalizeChoices(next,seatId,scienceSession.listScanStepChoices(next,player,mercury.payload.options));
         if(!choices.length)return null;
         const revision=s.revision+2,nextEffectSequence=s.nextEffectSequence+1,nextGroupSequence=s.nextGroupSequence+1;
@@ -1430,12 +1439,12 @@
         const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
         const effects=[head,mercury].map((e,i)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+i+1}));
         const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:next,queue,revision,nextEffectSequence,nextGroupSequence,
-          journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,event],effects:[...j.effects,...effects],
+          journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,...actionEvents],effects:[...j.effects,...effects],
             replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
         return {prepared:{envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}}};
       }
       if(!refillQuietScan4(next,missing))return null;
-      const events=[event,{type:"publicRefill",count:missing}];
+      const events=[...actionEvents,{type:"publicRefill",count:missing}];
       if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
       const eid=n=>s.sessionId+":effect:"+(s.nextEffectSequence+n);
       const gid=n=>s.sessionId+":group:"+(s.nextGroupSequence+n);
