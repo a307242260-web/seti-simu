@@ -2972,7 +2972,22 @@
         }
       }
       if(!publicityPayer)return null;
-      const moves=(source?[source]:actions).filter(a=>a.family==="move"&&a.target.rocketId===ships[0].id
+      const payer=movePayers[0];
+      const reward=cards.getDiscardActionMoveRewardForCard(payer);
+      const committedCorner=source?.family==="card_corner";
+      const corner=(committedCorner?[source]:!source?actions:[]).find(a=>a.family==="card_corner"
+        &&a.target.cardInstanceId===payer.id&&a.payload.kind==="move"&&a.payload.multiplier===1);
+      // The remaining unscored payer keeps the later landing unchanged.
+      // Do not alter the separate two-scored-card ordering proof.
+      const scored=!heldPayments&&corner&&reward?.gain?.score===1&&Object.keys(reward.gain).length===1
+        &&!cardEffects.hasMatchingTrigger(p,{type:"cardCorner",playerId:seatId,cardInstanceId:payer.id,
+          cornerCode:cards.normalizeDiscardActionTriggerCode(cards.getDiscardActionCodeForCard(payer)),cornerKind:"move"})
+        &&!state.finalScoring.thresholds.includes(p.resources.score+1);
+      if(committedCorner&&!scored)return null;
+      const candidates=committedCorner?rocketAbilities.listPlayerMoveChoices(state,p,{maxPoints:1}).map(target=>({
+        family:"move",actionId:null,target,payload:{requiredMovePoints:target.requiredMovePoints},
+      })):source?[source]:actions;
+      const moves=candidates.filter(a=>a.family==="move"&&a.target.rocketId===ships[0].id
         &&a.payload?.requiredMovePoints===1).filter(({target})=>{
         const copy={...p,resources:{...p.resources}},future={...state,pieces:structuredClone(state.pieces),
           players:{...state.players,players:state.players.players.map(x=>x===p?copy:x)}};
@@ -2983,7 +2998,8 @@
       if(moves.length!==1)return null;
       const required={publicity:techResolver.getResearchPublicityCost(p)};
       return {id:"tech:blue1:"+slots[0]+":transport-funding",kind:"research_tech",tileId:"blue1",blueSlot:slots[0],required,
-        movementFunding:{cardId:movePayers[0].id,publicityPayerId:publicityPayer.id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity},
+        movementFunding:{cardId:payer.id,publicityPayerId:publicityPayer.id,firstMoveId:moves[0].actionId,publicity:p.resources.publicity,
+          ...(scored?{scoredCornerId:corner.actionId,cornerTarget:moves[0].target}:{})},
         ...(heldPayments?{heldPayments:true,probeId:ships[0].id}:{})};
     }
 
@@ -3361,15 +3377,26 @@
       }
       if(goal.movementFunding){
         const payment=goal.movementFunding,p=state.players.players.find(v=>v.id===seatId);
-        if(node.status==='decision'&&session?.journal?.actions?.[0]?.action.actionId===payment.firstMoveId){
+        const fundingSource=session?.journal?.actions?.[0]?.action;
+        if(node.status==="decision"&&payment.scoredCornerId&&fundingSource?.actionId===payment.scoredCornerId){
+          const head=session.queue[0],target=payment.cornerTarget;
+          const action=session.queue.length===1&&head.ownerId===seatId&&!head.allowQuickActions
+            &&head.payload?.cardEffect?.type==="card_move"&&head.payload.remaining===1
+            &&node.legalActions.find(a=>a.family==="choose_target"&&a.payload?.requiredMovePoints===1
+              &&a.target.rocketId===target.rocketId&&a.target.deltaX===target.deltaX&&a.target.deltaY===target.deltaY);
+          return action?{kind:"fixed",actionId:action.actionId,reason:"known-scored-research-direction"}
+            :{kind:"infeasible",reason:"known-scored-research-direction-changed"};
+        }
+        if(node.status==='decision'&&fundingSource?.actionId===payment.firstMoveId){
           const a=node.legalActions.find(x=>x.target?.kind==='move-payment'&&x.target.cardIds?.length===1
             &&x.target.cardIds[0]===payment.cardId&&x.payload?.energyCost===0);
           return a?{kind:'fixed',actionId:a.actionId,reason:'pay-purposeful-research-move'}
             :{kind:'infeasible',reason:'known-research-move-payment-changed'};
         }
         if(node.status==='stable'&&!p.mainActionCompleted&&p.hand.some(c=>c.id===payment.cardId)){
-          const a=node.legalActions.find(x=>x.actionId===payment.firstMoveId);
-          return a&&p.resources.publicity===payment.publicity?{kind:'fixed',actionId:a.actionId,reason:'one-known-route-step-funds-research'}
+          const a=node.legalActions.find(x=>x.actionId===(payment.scoredCornerId||payment.firstMoveId));
+          return a&&p.resources.publicity===payment.publicity?{kind:'fixed',actionId:a.actionId,reason:payment.scoredCornerId
+            ?'scored-corner-funds-same-research-route':'one-known-route-step-funds-research'}
             :{kind:'infeasible',reason:'known-research-move-source-changed'};
         }
         if(payment.publicityPayerId&&node.status==="stable"&&!p.mainActionCompleted&&p.resources.publicity<goal.required.publicity){
@@ -3802,8 +3829,12 @@
             ?researchMovementPlan(planningState(session.baseState,stored.informationBarrier,knownCards(envelope)),[],knownCards(envelope),source):null;
         if(candidate)goals=[...goals,candidate];
         const transport=node.status==="stable"?transportResearchMove(state,node.legalActions,knownCards(envelope))
-          :source?.family==="move"&&session?.baseState
-            ?transportResearchMove(planningState(session.baseState,stored.informationBarrier,knownCards(envelope)),[],knownCards(envelope),source):null;
+          :(source?.family==="move"||source?.family==="card_corner"&&source.payload?.kind==="move")&&session?.baseState
+            ?(()=>{
+              const known=knownCards(envelope);
+              const sourceKnown=source.family==="card_corner"?new Set([...known,source.target.cardInstanceId]):known;
+              return transportResearchMove(planningState(session.baseState,stored.informationBarrier,sourceKnown),[],sourceKnown,source);
+            })():null;
         if(transport&&(!transport.heldPayments||fixedResearchTransportValue(
           session?.baseState?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):state,
           knownCards(envelope),transport.probeId,true)))goals=[...goals,transport];

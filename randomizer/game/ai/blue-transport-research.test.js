@@ -29,18 +29,48 @@ function decide(envelope,checkpoint){
   } finally {port.close();}
 }
 try {
+  const seat=state=>state.players.players.find(p=>p.id===seatId);
+  const read=()=>JSON.parse(save().committedState);
+  const beforeMove=JSON.parse(f.beforeMove.committedState);
+  restore(f.beforeMove);
+  const nativeMove=menu().find(a=>a.family==='move'&&a.target.deltaX===0&&a.target.deltaY===1);
+  assert(c.inputPort.submitQuickAction(nativeMove).ok);
+  const legacy=decide(save()),oldPending=c.inspect().session.decision;
+  assert.deepEqual(legacy.action.target.cardIds,['alien-chong-2-6']);
+  assert(c.inputPort.submitDecision({decisionId:oldPending.decisionId,decisionVersion:oldPending.decisionVersion,
+    ownerId:oldPending.ownerId,choice:legacy.action}).ok);
+  const afterLegacy=read();
+
   const move=decide(f.beforeMove);
-  assert.equal(move.action.family,'move');
-  assert.equal(move.action.target.deltaY,1);
-  assert.equal(move.q.value,168.5);
+  assert.equal(move.action.family,'card_corner');
+  assert.equal(move.action.target.cardInstanceId,'alien-chong-2-6');
+  assert.equal(move.q.value,169.5);
   assert(c.inputPort.submitQuickAction(move.action).ok);
-  const payment=decide(save()),d=c.inspect().session.decision;
-  assert.deepEqual(payment.action.target.cardIds,['alien-chong-2-6']);
-  assert(c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:payment.action}).ok);
-  const player=JSON.parse(save().committedState).players.players.find(p=>p.id===seatId);
-  assert.equal(player.resources.publicity,5);
+  const atDirection=save();
+  const direction=decide(atDirection),d=c.inspect().session.decision;
+  assert.deepEqual([direction.action.target.rocketId,direction.action.target.deltaX,direction.action.target.deltaY],[6,0,1]);
+  assert.equal(decide(atDirection,move.checkpoint).action.actionId,direction.action.actionId);
+  assert(c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:direction.action}).ok);
+  const afterScored=read(),player=seat(afterScored),old=seat(afterLegacy);
+  assert.equal(player.resources.score,old.resources.score+1);
+  assert.deepEqual({...player.resources,score:old.resources.score},old.resources);
+  assert.deepEqual(player.hand,old.hand);
+  assert.deepEqual(afterScored.pieces,afterLegacy.pieces);
+  assert.deepEqual(afterScored.meta.rngState,afterLegacy.meta.rngState);
   assert(player.hand.some(card=>card.cardId==='chong_3.webp'));
   assert(player.hand.some(card=>card.cardId==='dlc_20.png'));
+
+  const changedMove=structuredClone(f.beforeMove),hiddenMove=JSON.parse(changedMove.committedState);
+  const pileMove=hiddenMove.cards.drawPileCardIds;[pileMove[0],pileMove[1]]=[pileMove[1],pileMove[0]];
+  changedMove.committedState=JSON.stringify(hiddenMove);
+  const privateMove=decide(changedMove);
+  assert.deepEqual([privateMove.action.actionId,privateMove.q.value,privateMove.q.roots],[move.action.actionId,move.q.value,move.q.roots]);
+  const threshold=structuredClone(f.beforeMove);
+  beforeMove.finalScoring.thresholds.push(seat(beforeMove).resources.score+1);
+  beforeMove.finalScoring.thresholds.sort((a,b)=>a-b);
+  threshold.committedState=JSON.stringify(beforeMove);
+  assert(!decide(threshold).q.lines[0].edges.some(e=>e.resourcePlan?.goal.movementFunding?.scoredCornerId),
+    'a newly crossed mark disables the scored-payment substitution');
 
   const direct=decide(f.beforeResearch);
   assert.equal(direct.action.family,'research_tech');
@@ -269,7 +299,7 @@ try {
   assert.deepEqual(tailCursor,column['after-cash']);
   const columnPlayer=JSON.parse(tailCursor.committedState).players.players.find(p=>p.id===seatId);
   assert.deepEqual([columnPlayer.resources.score,columnPlayer.resources.credits,columnPlayer.resources.availableData],[105,1,0]);
-  console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],coldPayment:payment.action.target.cardIds,
+  console.log(JSON.stringify({knownTransportQuote:direct.quotes[0],legacyPayment:legacy.action.target.cardIds, scoredMovementExtraPoint:true,
     privateCardsAndNextTechDoNotChangeRanking:true,knownHeldTransportAutonomousInputs:held.expectedNativeActions.length,
     deferredColumnInputs:column.actions.length}));
 } finally {c.dispose();}
