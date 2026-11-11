@@ -7,6 +7,385 @@
   },
   "versions": [
     {
+      "id": "ai-search-quiet-signal-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-signal-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-sector-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "8f8c3f883",
+        "532563ef4"
+      ],
+      "summary": "按事件范围复用后的标准教学盘",
+      "records": {
+        "39813558.532563ef.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-01",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-01",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第01盘",
+      "records": {
+        "838f0da8.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-02",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-02",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第02盘",
+      "records": {
+        "e15da1c1.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-03",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-03",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第03盘",
+      "records": {
+        "926724be.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-04",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-04",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第04盘",
+      "records": {
+        "32da5856.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-05",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-05",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第05盘",
+      "records": {
+        "52474711.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-06",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-06",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第06盘",
+      "records": {
+        "c478fa9d.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-07",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-07",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第07盘",
+      "records": {
+        "49fe8e5b.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-08",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-08",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第08盘",
+      "records": {
+        "0aef5774.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-09",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-09",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第09盘",
+      "records": {
+        "6dbf83d2.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-10",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-10",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第10盘",
+      "records": {
+        "372bcfd3.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-11",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-11",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第11盘",
+      "records": {
+        "db86c0fa.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-12",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-12",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第12盘",
+      "records": {
+        "6fb394c1.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-13",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-13",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第13盘",
+      "records": {
+        "0b908c22.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-14",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-14",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第14盘",
+      "records": {
+        "902ee0b8.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-15",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-15",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第15盘",
+      "records": {
+        "d6bee54a.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-16",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-16",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第16盘",
+      "records": {
+        "d9e19de7.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-17",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-17",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第17盘",
+      "records": {
+        "878006c7.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-18",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-18",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第18盘",
+      "records": {
+        "c18ced0f.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-19",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-19",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第19盘",
+      "records": {
+        "0bb8be19.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-signal-20261111-20",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-signal-20261111-20",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "532563ef4",
+      "commits": [
+        "532563ef4"
+      ],
+      "summary": "固定二十盘严格验收第20盘",
+      "records": {
+        "dbe332db.532563ef.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-quiet-sector-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
