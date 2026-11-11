@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-aomomo8-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-aomomo8-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-signal-first3-20261111",
+      "head": "32985c4af",
+      "commits": [
+        "b692a1582",
+        "32985c4af"
+      ],
+      "summary": "奥陌陌八号规则修复后的标准教学盘",
+      "records": {
+        "a90d0145.32985c4a.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-quiet-signal-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
