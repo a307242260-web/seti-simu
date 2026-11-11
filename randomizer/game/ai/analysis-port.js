@@ -1079,7 +1079,7 @@
       return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
     }
 
-    function quietPaidMoveSource(stored,action){
+    function quietPaidMoveSource(stored,action,allowQuietR3=false){
       // These reveals can keep their original mask while a known probe moves.
       // Payment still rejects any card that was not known at the root.
       const barrier=stored.informationBarrier;
@@ -1087,11 +1087,13 @@
         ||barrier&&!["hidden_card_reveal","tech_bonus_reveal"].includes(barrier.code)
         ||action?.family!=="move"||action.phase!=="quick"||![1,2].includes(action.payload?.requiredMovePoints))return null;
       const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
-      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+      const tasks=state.aliens.chong?.transportTasksByRocketId||{};
+      // The same ordinary payment is quiet before either alien can reveal.
+      const quietThirdRound=allowQuietR3&&isUnrevealedRoundThree(state)&&!Object.keys(tasks).length;
+      if((t.roundNumber!==4&&!quietThirdRound)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
         ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||!state.pieces.rockets.some(r=>r.id===action.target.rocketId&&r.playerId===seatId&&(r.kind||"standard")==="standard")
         ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id)))return null;
-      const tasks=state.aliens.chong?.transportTasksByRocketId||{};
       const stationaryCargo=Object.values(tasks).some(job=>!job.delivered);
       // A standard probe does not move the fossil. Keep native settlement
       // when there is already an arrival to record or the moved ID is bound.
@@ -1128,7 +1130,7 @@
       if(action.family!=="choose_payment"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext
         ||s.irreversibleBarrier||s.failure||s.undoFrames.length||e.type!==probeTurnSession.EFFECT_TYPES.MOVE_PAYMENT
         ||e.ownerId!==seatId||e.allowQuickActions||s.journal.actions[0]?.action?.family!=="move")return null;
-      const source=quietPaidMoveSource(stored,origin);
+      const source=quietPaidMoveSource(stored,origin,true);
       if(!source)return null;
       const {state,player:p,stationaryCargo}=source,ship=state.pieces.rockets.find(r=>r.id===origin.target.rocketId);
       const known=knownCards(stored.envelope);
