@@ -1,0 +1,19 @@
+{
+  "source": "ff577dea6",
+  "board": 9,
+  "before": 89,
+  "after": 122,
+  "firstChange": 106,
+  "old": "跳过",
+  "new": "发射探测器",
+  "rounds": [
+    17,
+    44,
+    61,
+    103
+  ],
+  "wallMs": 7533,
+  "inputs": 193,
+  "first2NativeExact": true,
+  "continuousReplayAndControlledTerminalExact": true
+}

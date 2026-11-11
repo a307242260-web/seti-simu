@@ -7,6 +7,46 @@
   },
   "versions": [
     {
+      "id": "ai-search-scan-launch-value-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-scan-launch-value-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-known-planet-first3-20261111",
+      "head": "ff577dea6",
+      "commits": [
+        "661ead8c5",
+        "e50fcb422",
+        "ff577dea6"
+      ],
+      "summary": "第三轮扫描发射的已知下一轮用途",
+      "records": {
+        "4539c186.ff577dea.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-scan-launch-value-20261112-09",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-scan-launch-value-20261112-09",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-funded-planet-20261111-09",
+      "head": "ff577dea6",
+      "commits": [
+        "661ead8c5",
+        "e50fcb422",
+        "ff577dea6"
+      ],
+      "summary": "第三轮扫描发射的已知下一轮用途",
+      "records": {
+        "9f89c9c8.ff577dea.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "free-analyze-funded-planet-20261111-01",
       "aiGeneration": "v2",
       "agentType": "search",
