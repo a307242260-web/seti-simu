@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-11-11T11:49:24.296Z",
+  "builtAt": "2026-11-11T12:05:42.811Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "27d21b1b7",
+  "headCommit": "f5d861d53",
   "defaultGeneration": "v2",
   "generations": {
     "v1": {
@@ -253,8 +253,8 @@
           }
         ]
       },
-      "versionCount": 119,
-      "recordCount": 137
+      "versionCount": 121,
+      "recordCount": 139
     }
   },
   "currentBaseline": "ai-search-v41-baseline-20261029",
@@ -389,6 +389,2609 @@
     ]
   },
   "versions": [
+    {
+      "id": "ai-search-quiet-sector-first3-20261111",
+      "aiGeneration": "v2",
+      "name": "ai-search-quiet-sector-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-b38-first3-20261111",
+      "head": "f5d861d53",
+      "commits": [
+        {
+          "hash": "5a43f2921",
+          "date": "2026-11-11",
+          "subject": "登记固定盘面十一十二十五的严格完赛结果"
+        },
+        {
+          "hash": "f5d861d53",
+          "date": "2026-11-11",
+          "subject": "复用公共扫描并减少条件扇区的重复读取"
+        }
+      ],
+      "summary": "条件扇区查询复用后的标准教学盘",
+      "diffStat": "58 files changed, 1122512 insertions(+), 53 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/free-analyze-board16-20261111.md",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/analysis-port.js",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/sector-card-capital.js",
+          "insertions": 5,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 18,
+          "deletions": 27
+        },
+        {
+          "file": "reports/ai-foundation-20261111/free-analyze-board16-v1/free-analyze-board16-proof-20261111-v1.tar.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/ai-search-quiet-b38-first3-20261111/8cbd5b19.27d21b1b.quick-400.action-log.html",
+          "insertions": 751,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/free-analyze-random20-guarded-b38-20261111-11/da866698.27d21b1b.full.action-log.html",
+          "insertions": 745,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/free-analyze-random20-guarded-b38-20261111-12/70226b84.27d21b1b.full.action-log.html",
+          "insertions": 779,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/free-analyze-random20-guarded-b38-20261111-15/1d214825.27d21b1b.full.action-log.html",
+          "insertions": 643,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 5380,
+          "deletions": 10
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json",
+          "insertions": 161823,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.decisions.jsonl",
+          "insertions": 144,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-end-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-end-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-end-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-end-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.round-ends.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d214825.27d21b1b.full.json.rounds.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json",
+          "insertions": 347798,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.decisions.jsonl",
+          "insertions": 226,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-end-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-end-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-end-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-end-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.round-ends.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/70226b84.27d21b1b.full.json.rounds.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json",
+          "insertions": 264557,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json.decisions.jsonl",
+          "insertions": 236,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json.round-end-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json.round-end-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json.round-end-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8cbd5b19.27d21b1b.quick-400.json.round-ends.jsonl",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json",
+          "insertions": 298608,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.decisions.jsonl",
+          "insertions": 174,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-end-1.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-end-2.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-end-3.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-end-4.checkpoint.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.round-ends.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/da866698.27d21b1b.full.json.rounds.jsonl",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 5380,
+          "deletions": 10
+        },
+        {
+          "file": "seti-saves/seti-save-research-ai-search-quiet-b38-first3-20261111-27d21b1b-quick-400-v115.json",
+          "insertions": 9715,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-free-analyze-random20-guarded-b38-20261111-11-27d21b1b-full-v90.json",
+          "insertions": 8158,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-free-analyze-random20-guarded-b38-20261111-12-27d21b1b-full-v114.json",
+          "insertions": 10025,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-free-analyze-random20-guarded-b38-20261111-15-27d21b1b-full-v77.json",
+          "insertions": 7209,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "21fbabf4.f5d861d5.quick-400.json",
+          "recordPath": "reports/research/21fbabf4.f5d861d5.quick-400.json",
+          "mode": "quick-400",
+          "steps": 259,
+          "stepsLimit": 400,
+          "terminal": false,
+          "wallMs": 10368,
+          "flags": {
+            "compactReplay": true,
+            "scenario": "human405-white-first3-v1"
+          },
+          "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v449/seti-purpose-capital-state-value-v67/human405-white-first3-v1/seti-human405-pass-only-v1",
+          "agentType": "search",
+          "aiGeneration": "v2",
+          "gitCommit": "f5d861d53",
+          "createdAt": "2026-11-11T11:59:29.700Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "comparisonScope": "white-only-first-three-rounds",
+          "scoreSemantics": "provisional-first-three-rounds-before-pass-card-and-next-income",
+          "scenarioResult": {
+            "firstRoundSettled": true,
+            "openingInputs": 23,
+            "firstThreeRoundsSettled": true,
+            "newInputsAfterOpening": 236,
+            "completedRoundEnds": [
+              1,
+              2,
+              3
+            ]
+          },
+          "roundEnds": [
+            {
+              "round": 1,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 61,
+              "checkpointPath": "reports/research/21fbabf4.f5d861d5.quick-400.json.round-end-1.checkpoint.json",
+              "checkpointSha256": "7f51a9da7b0305bd01b21e83d99166cb44b28d563eac042be5ce2bb433bf8ee9",
+              "score": 15,
+              "resources": {
+                "additionalPublicScan": 0,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 1,
+                "handSize": 0,
+                "publicity": 3,
+                "score": 15
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue2": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [
+                "b_117.webp",
+                "dlc_9.png"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-1",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "id": "data-token-2",
+                    "index": 2,
+                    "placementKind": "computer",
+                    "placementSlot": 2
+                  },
+                  {
+                    "id": "data-token-3",
+                    "index": 3,
+                    "placementKind": "computer",
+                    "placementSlot": 3
+                  },
+                  {
+                    "id": "data-token-4",
+                    "index": 4,
+                    "placementKind": "computer",
+                    "placementSlot": 4
+                  },
+                  {
+                    "blueSlot": 1,
+                    "id": "data-token-11",
+                    "index": 5,
+                    "placementKind": "blueBonus"
+                  }
+                ],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "neutral": false,
+                      "ownerPlayerColor": "blue"
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "neutral": false,
+                        "ownerPlayerColor": "blue"
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 2,
+                  "b": 1,
+                  "c": 1,
+                  "d": 2
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": []
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": []
+                  }
+                }
+              },
+              "projectedFinalScore": 15
+            },
+            {
+              "round": 2,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 128,
+              "checkpointPath": "reports/research/21fbabf4.f5d861d5.quick-400.json.round-end-2.checkpoint.json",
+              "checkpointSha256": "ad516a88a636ddcddf7ac723d00fb45fb8659668862acb11f3d451efae115f17",
+              "score": 48,
+              "resources": {
+                "additionalPublicScan": 0,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 1,
+                "handSize": 1,
+                "publicity": 4,
+                "score": 48
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 6,
+                "energy": 3,
+                "handSize": 1,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue2": 1,
+                  "blue3": 2
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue2": true,
+                  "blue3": true,
+                  "purple4": true
+                }
+              },
+              "hand": [
+                "dlc_32.png"
+              ],
+              "playedCards": [
+                "b_117.webp",
+                "dlc_9.png"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [
+                {
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-1-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 4
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "neutral": false,
+                      "ownerPlayerColor": "blue"
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "neutral": false,
+                        "ownerPlayerColor": "blue"
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 2,
+                  "b": 1,
+                  "c": 1,
+                  "d": 2
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": []
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": [
+                      {
+                        "id": "final-mark-1",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 25,
+                        "tileId": "d"
+                      }
+                    ]
+                  }
+                }
+              },
+              "projectedFinalScore": 55
+            },
+            {
+              "round": 3,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 258,
+              "checkpointPath": "reports/research/21fbabf4.f5d861d5.quick-400.json.round-end-3.checkpoint.json",
+              "checkpointSha256": "be51225ebf737f14b5b7d7d3698f5dad9107bb040719294bf7c502a3be25630a",
+              "score": 118,
+              "resources": {
+                "additionalPublicScan": 0,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 1,
+                "handSize": 0,
+                "publicity": 1,
+                "score": 118
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 0,
+                "credits": 7,
+                "energy": 4,
+                "handSize": 2,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue1": 3,
+                  "blue2": 1,
+                  "blue3": 2
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue1": true,
+                  "blue2": true,
+                  "blue3": true,
+                  "orange1": true,
+                  "purple1": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [
+                "b_117.webp",
+                "dlc_31.png",
+                "amiba_0.webp",
+                "amiba_5.webp"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-41",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "id": "data-token-42",
+                    "index": 2,
+                    "placementKind": "computer",
+                    "placementSlot": 2
+                  },
+                  {
+                    "id": "data-token-43",
+                    "index": 3,
+                    "placementKind": "computer",
+                    "placementSlot": 3
+                  },
+                  {
+                    "id": "data-token-44",
+                    "index": 4,
+                    "placementKind": "computer",
+                    "placementSlot": 4
+                  }
+                ],
+                "poolTokens": []
+              },
+              "probes": [
+                {
+                  "angleDegrees": 112.5,
+                  "color": "white",
+                  "id": 6,
+                  "launchGrid": {
+                    "x": 5,
+                    "y": 1
+                  },
+                  "launchSectorCoordinate": {
+                    "x": 5,
+                    "y": 1
+                  },
+                  "playerId": "player-white",
+                  "playerSequence": 1,
+                  "radius": 156.26,
+                  "sectorX": 4,
+                  "sectorY": 2,
+                  "slotIndex": 4,
+                  "surface": "solar-board"
+                }
+              ],
+              "sectorWins": [
+                {
+                  "sectorId": "sector-2-a",
+                  "settlementNumber": 1
+                },
+                {
+                  "sectorId": "sector-1-b",
+                  "settlementNumber": 1
+                },
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-1-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": true,
+                  "alienId": "阿米巴",
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "blue": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "neutral": false
+                    },
+                    "pink": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null
+                    },
+                    "yellow": {
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "firstPlaced": true,
+                      "neutral": false,
+                      "ownerPlayerColor": "blue"
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": true,
+                    "alienId": "阿米巴",
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "blue": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "neutral": false
+                      },
+                      "pink": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null
+                      },
+                      "yellow": {
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "firstPlaced": true,
+                        "neutral": false,
+                        "ownerPlayerColor": "blue"
+                      }
+                    }
+                  }
+                ],
+                "amiba": {
+                  "revealInitialized": true,
+                  "revealedSlotId": 1,
+                  "symbolSlots": {
+                    "orange_2": "symbol_4",
+                    "orange_3": "symbol_1",
+                    "orange_1": "symbol_5",
+                    "red_1": "symbol_2",
+                    "blue_2": "symbol_3"
+                  },
+                  "symbolsById": {
+                    "symbol_4": {
+                      "symbolId": "symbol_4",
+                      "slotId": "orange_2",
+                      "sequence": 1
+                    },
+                    "symbol_2": {
+                      "symbolId": "symbol_2",
+                      "slotId": "red_1",
+                      "sequence": 2
+                    },
+                    "symbol_1": {
+                      "symbolId": "symbol_1",
+                      "slotId": "orange_3",
+                      "sequence": 3
+                    },
+                    "symbol_5": {
+                      "symbolId": "symbol_5",
+                      "slotId": "orange_1",
+                      "sequence": 4
+                    },
+                    "symbol_3": {
+                      "symbolId": "symbol_3",
+                      "slotId": "blue_2",
+                      "sequence": 5
+                    }
+                  }
+                },
+                "amibaTraces": {
+                  "revealedSlotId": 1,
+                  "traceSlotsByAlienSlotId": {
+                    "1": {
+                      "pink": {
+                        "1": {
+                          "traceType": "pink",
+                          "position": 1,
+                          "sequence": 7,
+                          "playerId": null,
+                          "playerColor": "white",
+                          "rewardApplied": false
+                        },
+                        "2": null,
+                        "3": {
+                          "traceType": "pink",
+                          "position": 3,
+                          "sequence": 11,
+                          "playerId": "player-white",
+                          "playerColor": "white",
+                          "rewardApplied": true
+                        },
+                        "4": {
+                          "traceType": "pink",
+                          "position": 4,
+                          "sequence": 4,
+                          "playerId": "player-white",
+                          "playerColor": "white",
+                          "rewardApplied": true
+                        }
+                      },
+                      "yellow": {
+                        "1": null,
+                        "2": null,
+                        "3": null,
+                        "4": null
+                      },
+                      "blue": {
+                        "1": {
+                          "traceType": "blue",
+                          "position": 1,
+                          "sequence": 6,
+                          "playerId": null,
+                          "playerColor": "white",
+                          "rewardApplied": false
+                        },
+                        "2": null,
+                        "3": {
+                          "traceType": "blue",
+                          "position": 3,
+                          "sequence": 13,
+                          "playerId": "player-white",
+                          "playerColor": "white",
+                          "rewardApplied": true
+                        },
+                        "4": {
+                          "traceType": "blue",
+                          "position": 4,
+                          "sequence": 9,
+                          "playerId": "player-white",
+                          "playerColor": "white",
+                          "rewardApplied": true
+                        }
+                      }
+                    }
+                  },
+                  "blindCardCount": 2,
+                  "displayedCardAvailable": true,
+                  "displayedCardIndex": 8
+                }
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 2,
+                  "b": 1,
+                  "c": 1,
+                  "d": 2
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": [
+                      {
+                        "id": "final-mark-2",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 50,
+                        "tileId": "a"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": [
+                      {
+                        "id": "final-mark-3",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 70,
+                        "tileId": "b"
+                      }
+                    ]
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": [
+                      {
+                        "id": "final-mark-1",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 25,
+                        "tileId": "d"
+                      }
+                    ]
+                  }
+                }
+              },
+              "projectedFinalScore": 164
+            }
+          ],
+          "note": null,
+          "scores": {
+            "player-blue": 7,
+            "player-green": 7,
+            "player-brown": 8,
+            "player-white": 118
+          },
+          "avgScore": 35,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-ai-search-quiet-sector-first3-20261111-f5d861d5-quick-400-v115.json",
+          "reportPath": "reports/iteration/ai-search-quiet-sector-first3-20261111/21fbabf4.f5d861d5.quick-400.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "baselineEligible": false,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "21fbabf4.f5d861d5.quick-400",
+            "path": "reports/iteration/ai-search-quiet-sector-first3-20261111/21fbabf4.f5d861d5.quick-400.action-log.html",
+            "mode": "quick-400"
+          }
+        ]
+      }
+    },
+    {
+      "id": "free-analyze-random20-guarded-sector-20261111-16",
+      "aiGeneration": "v2",
+      "name": "free-analyze-random20-guarded-sector-20261111-16",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-sector-first3-20261111",
+      "head": "f5d861d53",
+      "commits": [
+        {
+          "hash": "f5d861d53",
+          "date": "2026-11-11",
+          "subject": "复用公共扫描并减少条件扇区的重复读取"
+        }
+      ],
+      "summary": "固定二十盘严格验收第16盘",
+      "diffStat": "",
+      "diffFiles": [],
+      "results": [
+        {
+          "recordFile": "3b8be3cb.f5d861d5.full.json",
+          "recordPath": "reports/research/3b8be3cb.f5d861d5.full.json",
+          "mode": "full",
+          "steps": 194,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 7537,
+          "flags": {
+            "compactReplay": true,
+            "scenario": "free-analyze-random20-guarded-v1"
+          },
+          "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v449/seti-purpose-capital-state-value-v67/free-analyze-random20-guarded-v1/seti-human405-pass-only-v1",
+          "agentType": "search",
+          "aiGeneration": "v2",
+          "gitCommit": "f5d861d53",
+          "createdAt": "2026-11-11T11:59:45.741Z",
+          "resumeStep": 0,
+          "seed": "seti-analyze-92c262b1b98c",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-analyze-92c262b1b98c",
+            "worldVersion": "seeded-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "af3df26a3ffb29d19ecbc4e00de62c63d9645f5cf3b1935b9db031675689eb2b",
+            "components": {
+              "aliens": "5cd7fa7b84b39462a41940ed752813294713e716532371ad83233fca7e133704",
+              "cards": "4920941a1a2ad289827a02162ef51a16fff672bebfb9dbcfb2d3d4ce6747585a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "6d97c0bb7ceebe65acedb3c7c736b549b8fd6cb37d6884f83970377646d69b1d",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "67e52a56e2d9ce3f6c3a3a386d9c9906aeadd65def72920b2f01ab2d0f12dd87",
+              "solarSystem": "9dde0b3eae6a77b389a3d504215e50f96177653747ebb62b88582288c47e6dcc",
+              "tech": "b32cbf3c5dd8c939bb68a1c9d18a7a864b14de0d43c9050fab817fa120af0fd9",
+              "turn": "e8572b414298b5f99ffaac6653fd337c9d7711eabbac3015e353a7b07ccd5b9a",
+              "initialOffers": "999ba519dc073c23464240e524bacef35289613cf93369acb0a994bc1575c25b",
+              "initialRandom": "f76d410b8714188acda7068a1aad849ecff468f7be72d1da83369d7f35598f55"
+            }
+          },
+          "comparisonScope": "white-only-full-game",
+          "scoreSemantics": "terminal-score-with-passive-opponents",
+          "scenarioResult": {
+            "firstRoundSettled": true,
+            "openingInputs": 24,
+            "fullGameCompleted": true,
+            "completedRounds": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "completedRoundEnds": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "roundEnds": [
+            {
+              "round": 1,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 62,
+              "checkpointPath": "reports/research/3b8be3cb.f5d861d5.full.json.round-end-1.checkpoint.json",
+              "checkpointSha256": "43a62a727ffb5ac6a92f5d8d0ac0562936025851beb771918eef903e81b9098b",
+              "score": 18,
+              "resources": {
+                "additionalPublicScan": 0,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 1,
+                "score": 18
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 1,
+                "credits": 3,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue4": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue4": true,
+                  "purple4": true
+                }
+              },
+              "hand": [
+                "dlc_18.png"
+              ],
+              "playedCards": [],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-2-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "green",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "green",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 1,
+                  "b": 2,
+                  "c": 2,
+                  "d": 1
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": []
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": []
+                  }
+                }
+              },
+              "projectedFinalScore": 18
+            },
+            {
+              "round": 2,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 108,
+              "checkpointPath": "reports/research/3b8be3cb.f5d861d5.full.json.round-end-2.checkpoint.json",
+              "checkpointSha256": "139cb9e1e6e0d897f7b791867fc3425a694b1c322ac7b931ab6d0bd1f0da7d31",
+              "score": 42,
+              "resources": {
+                "additionalPublicScan": 1,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 1,
+                "energy": 1,
+                "handSize": 0,
+                "publicity": 1,
+                "score": 42
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 1,
+                "credits": 3,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue4": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue4": true,
+                  "orange1": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-12",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "blueSlot": 1,
+                    "id": "data-token-13",
+                    "index": 2,
+                    "placementKind": "blueBonus"
+                  },
+                  {
+                    "id": "data-token-14",
+                    "index": 3,
+                    "placementKind": "computer",
+                    "placementSlot": 2
+                  },
+                  {
+                    "id": "data-token-15",
+                    "index": 4,
+                    "placementKind": "computer",
+                    "placementSlot": 3
+                  },
+                  {
+                    "id": "data-token-16",
+                    "index": 5,
+                    "placementKind": "computer",
+                    "placementSlot": 4
+                  }
+                ],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-2-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "green",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "green",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 1,
+                  "b": 2,
+                  "c": 2,
+                  "d": 1
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": []
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": []
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": [
+                      {
+                        "id": "final-mark-1",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 25,
+                        "tileId": "d"
+                      }
+                    ]
+                  }
+                }
+              },
+              "projectedFinalScore": 53
+            },
+            {
+              "round": 3,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 166,
+              "checkpointPath": "reports/research/3b8be3cb.f5d861d5.full.json.round-end-3.checkpoint.json",
+              "checkpointSha256": "e10fc8e1d9c4e816fd6f7ba809f1f61d8b083b63a182d79fd61df170db278fcc",
+              "score": 76,
+              "resources": {
+                "additionalPublicScan": 2,
+                "aomomoFossils": 0,
+                "availableData": 0,
+                "credits": 0,
+                "energy": 0,
+                "handSize": 0,
+                "publicity": 0,
+                "score": 76
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 1,
+                "credits": 3,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue4": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue4": true,
+                  "orange1": true,
+                  "orange3": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [
+                "dlc_39.png"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-19",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "blueSlot": 1,
+                    "id": "data-token-20",
+                    "index": 2,
+                    "placementKind": "blueBonus"
+                  }
+                ],
+                "poolTokens": []
+              },
+              "probes": [],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-2-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": true,
+                  "alienId": "符文族",
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "blue": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "green",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": true,
+                    "alienId": "符文族",
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "blue": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "green",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 1,
+                  "b": 2,
+                  "c": 2,
+                  "d": 1
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": [
+                      {
+                        "id": "final-mark-2",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 50,
+                        "tileId": "a"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": [
+                      {
+                        "id": "final-mark-3",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 70,
+                        "tileId": "c"
+                      }
+                    ]
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": [
+                      {
+                        "id": "final-mark-1",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 25,
+                        "tileId": "d"
+                      }
+                    ]
+                  }
+                }
+              },
+              "projectedFinalScore": 100
+            },
+            {
+              "round": 4,
+              "phase": "before-pass-card-and-income",
+              "beforeInput": 194,
+              "checkpointPath": "reports/research/3b8be3cb.f5d861d5.full.json.round-end-4.checkpoint.json",
+              "checkpointSha256": "c62fcce985ddd7f1cf6fff8b6377f676cb974e3ad87892868619c6c9c0ae137c",
+              "score": 83,
+              "resources": {
+                "additionalPublicScan": 2,
+                "aomomoFossils": 0,
+                "availableData": 1,
+                "credits": 0,
+                "energy": 0,
+                "handSize": 0,
+                "publicity": 2,
+                "score": 83
+              },
+              "income": {
+                "additionalPublicScan": 1,
+                "availableData": 1,
+                "credits": 4,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0
+              },
+              "technology": {
+                "blueBoardSlots": {
+                  "blue4": 1
+                },
+                "disabledTiles": {},
+                "ownedTiles": {
+                  "blue4": true,
+                  "orange1": true,
+                  "orange3": true,
+                  "purple2": true,
+                  "purple4": true
+                }
+              },
+              "hand": [],
+              "playedCards": [
+                "dlc_39.png",
+                "b_46.webp"
+              ],
+              "data": {
+                "discardedCount": 0,
+                "placedTokens": [
+                  {
+                    "id": "data-token-19",
+                    "index": 1,
+                    "placementKind": "computer",
+                    "placementSlot": 1
+                  },
+                  {
+                    "blueSlot": 1,
+                    "id": "data-token-20",
+                    "index": 2,
+                    "placementKind": "blueBonus"
+                  },
+                  {
+                    "id": "data-token-21",
+                    "index": 3,
+                    "placementKind": "computer",
+                    "placementSlot": 2
+                  },
+                  {
+                    "id": "data-token-22",
+                    "index": 4,
+                    "placementKind": "computer",
+                    "placementSlot": 3
+                  },
+                  {
+                    "id": "data-token-23",
+                    "index": 5,
+                    "placementKind": "computer",
+                    "placementSlot": 4
+                  }
+                ],
+                "poolTokens": [
+                  {
+                    "id": "data-token-24",
+                    "index": 6,
+                    "slotIndex": 4
+                  }
+                ]
+              },
+              "probes": [
+                {
+                  "angleDegrees": -22.5,
+                  "color": "white",
+                  "id": 5,
+                  "launchGrid": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "launchSectorCoordinate": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "playerId": "player-white",
+                  "playerSequence": 1,
+                  "radius": 84.68,
+                  "sectorX": 1,
+                  "sectorY": 1,
+                  "slotIndex": 4,
+                  "surface": "solar-board"
+                }
+              ],
+              "sectorWins": [],
+              "scanProgress": [
+                {
+                  "sectorId": "sector-1-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                },
+                {
+                  "sectorId": "sector-1-b",
+                  "ownedSlots": [
+                    1
+                  ],
+                  "capacity": 4
+                },
+                {
+                  "sectorId": "sector-2-a",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 6
+                },
+                {
+                  "sectorId": "sector-2-b",
+                  "ownedSlots": [
+                    1,
+                    2
+                  ],
+                  "capacity": 5
+                },
+                {
+                  "sectorId": "sector-4-b",
+                  "ownedSlots": [
+                    1
+                  ],
+                  "capacity": 5
+                }
+              ],
+              "alienTraceSlots": [
+                {
+                  "slotId": 1,
+                  "revealed": true,
+                  "alienId": "符文族",
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "blue": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "white",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    }
+                  }
+                },
+                {
+                  "slotId": 2,
+                  "revealed": false,
+                  "alienId": null,
+                  "traces": {
+                    "yellow": {
+                      "firstPlaced": true,
+                      "ownerPlayerColor": "green",
+                      "extraCount": 0,
+                      "extraMarkers": [],
+                      "neutral": false
+                    },
+                    "pink": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    },
+                    "blue": {
+                      "firstPlaced": false,
+                      "ownerPlayerColor": null,
+                      "extraCount": 0,
+                      "extraMarkers": []
+                    }
+                  }
+                }
+              ],
+              "aliens": {
+                "slots": [
+                  {
+                    "slotId": 1,
+                    "revealed": true,
+                    "alienId": "符文族",
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "blue": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "white",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      }
+                    }
+                  },
+                  {
+                    "slotId": 2,
+                    "revealed": false,
+                    "alienId": null,
+                    "traces": {
+                      "yellow": {
+                        "firstPlaced": true,
+                        "ownerPlayerColor": "green",
+                        "extraCount": 0,
+                        "extraMarkers": [],
+                        "neutral": false
+                      },
+                      "pink": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      },
+                      "blue": {
+                        "firstPlaced": false,
+                        "ownerPlayerColor": null,
+                        "extraCount": 0,
+                        "extraMarkers": []
+                      }
+                    }
+                  }
+                ]
+              },
+              "finalScoring": {
+                "thresholds": [
+                  25,
+                  50,
+                  70
+                ],
+                "tileVariants": {
+                  "a": 1,
+                  "b": 2,
+                  "c": 2,
+                  "d": 1
+                },
+                "tiles": {
+                  "a": {
+                    "id": "a",
+                    "marks": [
+                      {
+                        "id": "final-mark-2",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 50,
+                        "tileId": "a"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "id": "b",
+                    "marks": []
+                  },
+                  "c": {
+                    "id": "c",
+                    "marks": [
+                      {
+                        "id": "final-mark-3",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 70,
+                        "tileId": "c"
+                      }
+                    ]
+                  },
+                  "d": {
+                    "id": "d",
+                    "marks": [
+                      {
+                        "id": "final-mark-1",
+                        "playerColor": "white",
+                        "playerId": "player-white",
+                        "slot3Order": null,
+                        "slotIndex": 1,
+                        "threshold": 25,
+                        "tileId": "d"
+                      }
+                    ]
+                  }
+                }
+              },
+              "projectedFinalScore": 112
+            }
+          ],
+          "note": null,
+          "scores": {
+            "player-blue": 9,
+            "player-green": 7,
+            "player-brown": 7,
+            "player-white": 112
+          },
+          "avgScore": 33.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 9,
+              "base": 9,
+              "tile": 0,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 9,
+                "landScore": 0,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-green": {
+              "total": 7,
+              "base": 7,
+              "tile": 0,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 7,
+              "base": 7,
+              "tile": 0,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-white": {
+              "total": 112,
+              "base": 83,
+              "tile": 21,
+              "card": 8,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 11
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a1",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c2",
+                  "multiplier": 8,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d1",
+                  "multiplier": 11,
+                  "score": 11,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_39.png",
+                  "rule": {
+                    "kind": "allOrbitOrLand",
+                    "scorePer": 2
+                  },
+                  "score": 8
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 12,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 3,
+                "landScore": 12,
+                "orbitScore": 11,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 19
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-free-analyze-random20-guarded-sector-20261111-16-f5d861d5-full-v88.json",
+          "reportPath": "reports/iteration/free-analyze-random20-guarded-sector-20261111-16/3b8be3cb.f5d861d5.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "baselineEligible": false,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "3b8be3cb.f5d861d5.full",
+            "path": "reports/iteration/free-analyze-random20-guarded-sector-20261111-16/3b8be3cb.f5d861d5.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "ai-search-quiet-b38-first3-20261111",
       "aiGeneration": "v2",
@@ -1671,7 +4274,7 @@
       ],
       "roadmap": null,
       "baselineEligible": false,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -3120,7 +5723,7 @@
       ],
       "roadmap": null,
       "baselineEligible": false,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -4498,7 +7101,7 @@
       ],
       "roadmap": null,
       "baselineEligible": false,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -5745,7 +8348,7 @@
       ],
       "roadmap": null,
       "baselineEligible": false,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

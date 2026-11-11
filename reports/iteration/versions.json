@@ -7,6 +7,43 @@
   },
   "versions": [
     {
+      "id": "ai-search-quiet-sector-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-sector-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-b38-first3-20261111",
+      "head": "f5d861d53",
+      "commits": [
+        "5a43f2921",
+        "f5d861d53"
+      ],
+      "summary": "条件扇区查询复用后的标准教学盘",
+      "records": {
+        "21fbabf4.f5d861d5.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-sector-20261111-16",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-sector-20261111-16",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-sector-first3-20261111",
+      "head": "f5d861d53",
+      "commits": [
+        "f5d861d53"
+      ],
+      "summary": "固定二十盘严格验收第16盘",
+      "records": {
+        "3b8be3cb.f5d861d5.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-quiet-b38-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
