@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-funded-local-landing-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-funded-local-landing-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-funded-income-restore-first3-20261112",
+      "head": "03ef90f95",
+      "commits": [
+        "abef87733",
+        "04a0828c8",
+        "269d2addc",
+        "1fff875a4",
+        "27e82dcb2",
+        "03ef90f95"
+      ],
+      "summary": "末轮已到达的探测器保留确定登陆费用",
+      "records": {
+        "9836a1ee.03ef90f9.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-funded-income-restore-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
