@@ -2067,6 +2067,13 @@
           `支付${count * options.costPerExchange}化石，移动${count * options.movementPerExchange}步后登陆`,
         ));
       }
+      if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_ANY_SCAN) {
+        if (!players.canAfford(actor, { aomomoFossils: options.cost })) return [];
+        return [
+          makeChoice("choose_reward", "pay", { pay: true }, {}, `支付${options.cost}化石扫描任意扇区`),
+          makeChoice("choose_reward", "skip", { skip: true }, {}, "跳过"),
+        ];
+      }
       if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_DATA) {
         if (!players.canAfford(actor, { aomomoFossils: options.cost })) return [];
         return [
@@ -2452,6 +2459,16 @@
         effects.push({ id: `${effect.id}:land`, type: cardEffects.EFFECT_TYPES.CARD_LAND,
           label: "奥陌陌6：登陆", options: { skipCost: true } });
         spawnedEffects = spawnCardEffects(effects, sessionEffect);
+      } else if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_ANY_SCAN) {
+        if (legal.target.pay) {
+          const spent = players.spendResources(actor, { aomomoFossils: options.cost });
+          if (!spent.ok) return spent;
+          // 奥陌陌 8 的前三次扫描已在卡牌队列末尾排入统一结算。
+          spawnedEffects = [createSpawnedCardEffect({
+            id: `${effect.id}:scan`, type: cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN,
+            label: effect.label, options: { gainData: options.gainData !== false },
+          }, actor.id, sessionEffect.payload.cardInstanceId)];
+        }
       } else if (effect.type === aliens.aomomo.EFFECT_FOSSIL_FOR_DATA) {
         if (legal.target.pay) {
           const spent = players.spendResources(actor, { aomomoFossils: options.cost });
@@ -2547,6 +2564,7 @@
       [cardEffects.EFFECT_TYPES.CARD_ORBIT]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD]: { decisionKind: "choose_reward" },
       [aliens.aomomo.EFFECT_FOSSIL_FOR_DATA]: { decisionKind: "choose_reward" },
+      [aliens.aomomo.EFFECT_FOSSIL_FOR_ANY_SCAN]: { decisionKind: "choose_reward" },
       [aliens.aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND]: { decisionKind: "choose_reward" },
       [cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN]: { decisionKind: "choose_target" },

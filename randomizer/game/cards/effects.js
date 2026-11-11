@@ -988,7 +988,7 @@
       playEffects: Object.freeze([
               Object.freeze({
                 "id": "aomomo-8-yellow",
-                "type": "card_color_scan",
+                "type": EFFECT_TYPES.SCAN_COLOR_CHOICE,
                 "label": "奥陌陌8：黄色扇区扫描",
                 "icon": "yellow_scan",
                 "options": Object.freeze({
@@ -998,7 +998,7 @@
               }),
               Object.freeze({
                 "id": "aomomo-8-red",
-                "type": "card_color_scan",
+                "type": EFFECT_TYPES.SCAN_COLOR_CHOICE,
                 "label": "奥陌陌8：红色扇区扫描",
                 "icon": "red_scan",
                 "options": Object.freeze({
@@ -1008,7 +1008,7 @@
               }),
               Object.freeze({
                 "id": "aomomo-8-blue",
-                "type": "card_color_scan",
+                "type": EFFECT_TYPES.SCAN_COLOR_CHOICE,
                 "label": "奥陌陌8：蓝色扇区扫描",
                 "icon": "blue_scan",
                 "options": Object.freeze({

@@ -684,6 +684,49 @@ function runAomomoFossilCards() {
 }
 runAomomoFossilCards();
 
+// 奥陌陌 8 按顺序扫描三种颜色；第四次可选，整张牌只在串尾结算一次。
+for (const [fossils, pay] of [[0, false], [1, false], [1, true]]) {
+  const cardId = "aomomo_8.webp", root = createCanonicalState(cardId);
+  root.players.players[0].resources.aomomoFossils = fossils;
+  const { composition } = createIntegratedComposition(cardId, { state: root });
+  try {
+    let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+    assert(result.ok, result.failure?.message || result.message);
+    const choose = select => {
+      const decision = composition.inspect().session.decision;
+      const choice = select(decision.choices);
+      assert(choice);
+      result = composition.inputPort.submitDecision({
+        decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice,
+      });
+      assert(result.ok, result.failure?.message || result.message);
+    };
+    for (const color of ["yellow", "red", "blue"]) {
+      choose(choices => {
+        assert.deepEqual(new Set(choices.map(c => c.target.nebulaId)), new Set(cardEffects.NEBULA_IDS_BY_COLOR[color]));
+        return choices[0];
+      });
+    }
+    if (fossils) {
+      choose(choices => {
+        assert.deepEqual(choices.map(c => c.target.choiceId), ["pay", "skip"]);
+        return choices.find(c => pay ? c.target.pay : c.target.skip);
+      });
+      if (pay) choose(choices => {
+        assert.equal(choices.length, 8);
+        return choices[0];
+      });
+    }
+    assert.equal(result.phase, "completed");
+    const after = composition.stateSourcePort.getSnapshot().players.players[0];
+    assert.equal(after.resources.aomomoFossils, fossils - Number(pay));
+    assert.equal(result.journal.events.filter(e => e.type === "signalMarked").length, 3 + Number(pay));
+    assert.equal(result.journal.effects.filter(e => e.type === scienceSession.EFFECT_TYPES.SCAN_FINALIZE).length, 1);
+    assert(after.reservedCards.some(card => card.cardId === cardId));
+  } finally { composition.dispose(); }
+}
+
 function runProbeLocationConditions() {
   const root = createCanonicalState("dlc_11.png");
   const player = root.players.players[0];
