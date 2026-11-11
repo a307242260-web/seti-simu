@@ -679,7 +679,13 @@
   // income principal is already booked elsewhere; only net use is priced.
   function nextIncomeLaunchReplacement(facts,weights,currentMissionValue,incomeCardCost) {
     const none=reason=>({value:0,selected:null,reason});
-    if(facts.terminal||facts.round!==3||!facts.uncontestedRound
+    // A Purple 4 probe at Earth can retain replacement value even before
+    // the other seats PASS. Price only a mission the printed next salary can
+    // pay at the public snapshot; this never assumes the opponents' moves.
+    const launchWindow=facts.uncontestedRound || (weights===arithmetic.DEFAULT_WEIGHTS && !facts.passing
+      && facts.player.energy===0 && facts.player.additionalPublicScan>=1
+      && facts.player.techState?.ownedTiles?.purple4 && !facts.player.techState.disabledTiles?.purple4);
+    if(facts.terminal||facts.round!==3||!launchWindow
       ||facts.companyState?.abilityId!=='deepspace_swap_cards'
       ||facts.pendingNativeEffects&&!facts.passing
       ||!Array.isArray(facts.pendingCardTriggers)||facts.pendingCardTriggers.length
