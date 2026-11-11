@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-v672-region-analysis-order-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v672-region-analysis-order-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v671-known-blue-supply-first3-20261111",
+      "head": "a1ac8bc91",
+      "commits": [
+        "d2c83531b",
+        "a1ac8bc91"
+      ],
+      "summary": "第三轮先补齐电脑再打公开区域牌，复用可核对的分析收入估值。",
+      "records": {
+        "04214205.a1ac8bc9.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v671-known-blue-supply-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
