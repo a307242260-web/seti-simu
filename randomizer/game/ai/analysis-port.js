@@ -9497,21 +9497,22 @@
 
     // Compare the real settled wallets, before their proved quiet end turns.
     // This ranks two already complete plans; it neither opens nor removes one.
-    function sameElectricityIncomeTie(source, blue, income, incomeCardId) {
+    function sameElectricityIncomeTie(source, blue, income, incomeCardId, multi = false) {
       const [start, blueEnd, incomeEnd]=[source,blue,income].map(node=>nodes.get(node));
       if([start,blueEnd,incomeEnd].some(stored=>!stored?.envelope||stored.informationBarrier)
         ||blue.status!=="stable"||income.status!=="stable"||blueEnd.envelope.session||incomeEnd.envelope.session)return false;
       const state=readIdentityState(start.envelope),turn=state.turn;
-      const player=state.players.players.find(p=>p.id===seatId);
+      const player=state.players.players.find(p=>p.id===seatId),filled=data.listComputerPlacedTokens(player).length;
       if(turn.roundNumber!==3||turn.currentPlayerId!==seatId||!player.mainActionCompleted||player.passCompletionPending
         ||!turn.activePlayerIds?.includes(seatId)||turn.passedPlayerIds.includes(seatId)
         ||!turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id))
-        ||player.resources.availableData!==1||data.listComputerPlacedTokens(player).length!==3
+        ||(multi?filled<1||filled>2||player.resources.availableData!==4-filled:player.resources.availableData!==1||filled!==3)
         ||player.hand.length!==1||player.hand[0].id!==incomeCardId||!knownCards(start.envelope).has(incomeCardId))return false;
       const [a,b]=[blueEnd,incomeEnd].map(stored=>readIdentityState(stored.envelope).players.players.find(p=>p.id===seatId));
       const sameExcept=(left,right,key)=>Object.keys(left).every(k=>k===key||left[k]===right[k])
         &&Object.keys(right).every(k=>k===key||left[k]===right[k]);
-      return a.resources.energy===player.resources.energy+1&&a.resources.availableData===0
+      return (!multi||data.listComputerPlacedTokens(a).length===3&&data.listComputerPlacedTokens(b).length===4)
+        &&a.resources.energy===player.resources.energy+1&&a.resources.availableData===0
         &&sameExcept(a.resources,b.resources,"handSize")
         &&a.hand.length===1&&a.hand[0].id===incomeCardId&&b.hand.length===0
         &&sameExcept(a.income,player.income,"energy")&&a.income.energy===player.income.energy

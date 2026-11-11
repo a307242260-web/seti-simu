@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v456";
+  const VERSION = "seti-complete-decision-search-v457";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -892,13 +892,25 @@
           return entry.edges.length===1&&end?.kind==="end-turn"&&end.netGain===0&&end.markedTiles.length===0;
         };
         for (const entry of nodes) {
-          if(entry.edges.length!==2)continue;
           const blue=entry.edges.find(e=>e.resourcePlan?.goal.kind==="blue-data");
           const income=entry.edges.find(e=>e.resourcePlan?.goal.kind==="income");
           if(blue?.goalStatus!=="completed"||income?.goalStatus!=="completed"||blue.fallbackReason||income.fallbackReason
-            ||blue.steps.length!==(entry.node.status==="decision"?1:2)||income.steps.length!==blue.steps.length+1
-            ||!quietEnd(nodes[blue.target])||!quietEnd(nodes[income.target]))continue;
-          if(port.sameElectricityIncomeTie(entry.node,nodes[blue.target].node,nodes[income.target].node,income.resourcePlan.goal.incomeCardId))
+            ||!quietEnd(nodes[income.target]))continue;
+          let blueEnd=nodes[blue.target],multi=false;
+          if(entry.edges.length===2){
+            if(blue.steps.length!==(entry.node.status==="decision"?1:2)||income.steps.length!==blue.steps.length+1)continue;
+          }else if(entry.edges.length===3&&entry.node.status==="decision"&&blue.steps.length===1){
+            // The blue line may spend its other data on the first three computer slots.
+            // Follow that sole completed plan only; a valuation shortcut or another choice
+            // cannot stand in for the settled wallet.
+            const prefix=entry.edges.find(e=>e.resourcePlan?.goal.id==="data:computer-prefix:3");
+            const tail=blueEnd.edges.length===1&&blueEnd.edges[0];
+            if(prefix?.goalStatus!=="completed"||prefix.fallbackReason||prefix.actionId!==income.actionId
+              ||tail?.resourcePlan?.goal.id!=="data:computer-prefix:3"||tail.goalStatus!=="completed"||tail.fallbackReason
+              ||prefix.steps.length+1!==tail.steps.length||income.steps.length!==tail.steps.length+2)continue;
+            blueEnd=nodes[tail.target];multi=true;
+          }else continue;
+          if(quietEnd(blueEnd)&&port.sameElectricityIncomeTie(entry.node,blueEnd.node,nodes[income.target].node,income.resourcePlan.goal.incomeCardId,multi))
             entry.electricIncomeTie=income;
         }
       }
