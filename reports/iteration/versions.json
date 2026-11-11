@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-v668-retained-region-card-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v668-retained-region-card-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v667-direct-earth-shipment-first3-20261111",
+      "head": "6071c49f2",
+      "commits": [
+        "9797a57df",
+        "cf4245240",
+        "6071c49f2"
+      ],
+      "summary": "第三轮已知在运化石下，先领钱并保留可付得起的公开区域奖励牌；标准前三轮回归",
+      "records": {
+        "08d5a8d9.6071c49f.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v667-direct-earth-shipment-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
