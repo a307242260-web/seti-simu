@@ -1094,7 +1094,7 @@
     let scanBeforeOrbit=null, retainRegionCard=null, continuationNativeInputs=0;
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
-    if(complete&&!unresolved.length&&retainedRegionSource?.cornerId===visibleBest?.actionId
+    if(complete&&!unresolved.length&&retainedRegionSource&&retainedRegionSource.cornerId===visibleBest?.actionId
       &&roots.some(r=>r.actionId===retainedRegionSource.firstId&&r.completion==="complete")){
       const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
       const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions;

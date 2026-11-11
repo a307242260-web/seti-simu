@@ -40,6 +40,15 @@ assert.equal(result.lines.find(line => line.edges.some(edge => edge.actionId ===
 assert.deepEqual(result.unresolved, []);
 assert(result.diagnostics.equivalents >= 3);
 
+const closedResourceGraph=graph({root:{observation:{publicState:{roundNumber:3}},next:{cycle:"root"}}});
+closedResourceGraph.port.resourceSpec=()=>null;
+closedResourceGraph.port.expandResourcePlan=()=>{throw new Error("unexpected macro");};
+const noBoundary=searchDecision({...closedResourceGraph,evaluate:createStateValueEvaluator("p1"),
+  resourcePlanning:true,scanOrbitBudget:{nativeInputs:256,deadline:Infinity}});
+assert.equal(noBoundary.actionId,null);
+assert.equal(noBoundary.stopReason,"no-reachable-boundary");
+
+
 for (const budget of [{ transitions: 2 }, { nodes: 2 }, { frontier: 1 }]) {
   const limited = searchDecision({ ...graph(fixture), budget });
   assert.equal(limited.complete, false);
