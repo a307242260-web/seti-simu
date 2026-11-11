@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-mercury-followup-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-mercury-followup-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-data-salary-first3-20261112",
+      "head": "0852ceb03",
+      "commits": [
+        "882b24724",
+        "6d9d5b50b",
+        "0852ceb03"
+      ],
+      "summary": "第三轮水星指定补扫独立于先前扇区计划",
+      "records": {
+        "c052b038.0852ceb0.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-data-salary-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
