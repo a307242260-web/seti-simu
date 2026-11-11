@@ -790,7 +790,7 @@
       const state = readIdentityState(stored.envelope), t = state.turn, owner = state.players.players.find(p => p.id === seatId);
       // Opening a data menu has no placement or reward to settle. Its
       // witnessed session is independent of the resulting Blue 3 menu.
-      if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !(t.roundNumber===3&&quietEarlySameSeatHandover(state))
+      if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
@@ -930,7 +930,7 @@
         || effect.type !== scienceSession.EFFECT_TYPES.PLACE_DATA || effect.ownerId !== seatId || effect.allowQuickActions
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
-      if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !(t.roundNumber===3&&quietEarlySameSeatHandover(state))) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
+      if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
         || owner.passCompletionPending || t.cardTurnEventBonuses?.length
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
@@ -1599,7 +1599,7 @@
           ||![types.PICK_CARD,"residual_card_decision"].includes(e.type)))return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
       const known=knownCards(stored.envelope),i=action.target.publicSlotIndex,offer=state.cards.publicCards[i];
-      if((t.roundNumber!==4&&!(t.roundNumber===3&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      if((t.roundNumber!==4&&!quietEarlySameSeatHandover(state))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||localPlans.hasPendingFossilArrival(state)
         ||!offer||!known.has(offer.id)||offer.id!==action.target.cardInstanceId||action.target.choiceId!==`pick:${offer.id}`
         ||!cards.getCatalogEntryForCard(offer)||p.reservedCards.some(c=>!known.has(c.id)))return null;
@@ -1620,23 +1620,36 @@
       });
     }
 
+    function cardInstanceIdForB38(state,origin){
+      const id=origin.target?.cardInstanceId;
+      const isB38=c=>c.id===id&&c.cardId==="b_38.webp";
+      return state.cards.discardPile.find(isB38)?.id||state.players.players.find(p=>p.id===seatId).reservedCards.find(isB38)?.id;
+    }
+
     function previewFixedResearchSelection(node,stored,action){
       if(!resourcePlanning||node.status!=="decision"||action.family!=="choose_target"||!action.target?.tileId)return null;
       const s=stored.envelope.session?.session,head=s?.queue[0],options=head?.payload?.options,origin=s?.journal.actions[0]?.action;
-      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.irreversibleBarrier||s.undoFrames.length||s.queue.length!==1
+      const finalize=s?.queue[1],scanTail=s?.queue.length===2&&finalize.type===scienceSession.EFFECT_TYPES.SCAN_FINALIZE
+        &&finalize.kind==="effect"&&finalize.ownerId===seatId&&!finalize.allowQuickActions&&!Object.keys(finalize.payload).length;
+      if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.irreversibleBarrier||s.undoFrames.length||s.queue.length!==1&&!scanTail
         ||head.type!==scienceSession.EFFECT_TYPES.RESEARCH||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
         ||!["research_tech","play_card"].includes(origin?.family)
         ||!options||(options.repeat??1)!==1||options.afterResearchReward&&options.afterResearchReward.kind!=="repeatBonus")return null;
       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
       const tile=state.tech.stacks[action.target.tileId];
-      const quietRoundThree=t.roundNumber===3&&quietEarlySameSeatHandover(state);
-      if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
+      const quietEarlyRound=quietEarlySameSeatHandover(state);
+      if((t.roundNumber!==4&&!quietEarlyRound)||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending||t.cardTurnEventBonuses?.length
         ||!tile||tile.bonusHidden||tile.bonusIndex!==knownRootTechIndices.get(action.target.tileId)
         ||p.reservedCards.some(c=>!known.has(c.id))
         ||origin.family==="play_card"&&!known.has(origin.target.cardInstanceId))return null;
+      if(scanTail&&(t.roundNumber!==2||!quietEarlyRound||origin.family!=="play_card"
+        ||origin.target?.cardId!=="b_38.webp"&&cardInstanceIdForB38(state,origin)!==origin.target?.cardInstanceId
+        ||!options.skipCost||options.techTypes?.length!==1||options.techTypes[0]!=="purple"
+        ||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length
+        ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id))))return null;
       // Rotation and research can write several rule slices. Give the same
       // Production resolver an isolated copy; only deterministic exits qualify.
-      const next=structuredClone(state),result=scienceSession.resolveResearchSelection(next,head,action);
+      const next=scanTail?copyForkData(state):structuredClone(state),result=scienceSession.resolveResearchSelection(next,head,action);
       if(!result.ok||result.events.length!==1||result.events[0].type!=="researchTech"
         ||JSON.stringify(next.meta.rngState)!==JSON.stringify(state.meta.rngState)
         ||localPlans.hasPendingFossilArrival(next))return null;
@@ -1644,6 +1657,20 @@
       if(augmented.events.length!==1||augmented.spawnedEffects.length>3||augmented.spawnedEffects.some(x=>
         (x.priority??"direct")!=="direct"||x.effect?.ownerId!==seatId||x.effect.kind!=="decision"
         ||x.effect.allowQuickActions||![scienceSession.EFFECT_TYPES.PICK_CARD,"residual_card_decision"].includes(x.effect.type)))return null;
+      if(scanTail){
+        if(augmented.spawnedEffects.length||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(next.data,id)))return null;
+        const missing=next.cards.publicCards.filter(c=>!c).length;
+        if(missing&&!refillQuietScan4(next,missing))return null;
+        if(missing){
+          const refill={ownerId:seatId,type:scienceSession.EFFECT_TYPES.PUBLIC_REFILL};
+          const events=localPlans.augmentEffectResult(next,{ok:true,events:[{type:"publicRefill",count:missing}]},refill);
+          if(events.spawnedEffects.length||events.events.length!==1)return null;
+        }
+        next.meta=quietSavedMeta(next.meta,s.baseVersion+1);
+        return {state:next,barrier:missing?{effectId:s.sessionId+":effect:"+(s.nextEffectSequence+2),
+          revision:s.revision+4,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}
+          :{effectId:head.effectId,revision:s.revision+1,...augmented.irreversible}};
+      }
       next.meta=quietSavedMeta(next.meta,s.baseVersion+Number(!augmented.spawnedEffects.length));
       return prepareDecisionContinuation(stored,next,action,augmented);
     }
@@ -1805,24 +1832,58 @@
         barrier:{effectId:refill.effectId,revision:session.revision+refillIndex+1+extraEffects,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
     }
 
-    function previewQuietCurrencyTrade(stored,action) {
-      // Leave card selection and its menu to the rule engine. Only settle
-      // the already chosen, known pair when payment cannot open an effect.
-      if(!resourcePlanning||action.family!=="choose_payment"||action.target?.confirm!==true)return null;
+    function quietCurrencyTradeSource(stored,action) {
+      if(!resourcePlanning||action.family!=="choose_payment")return null;
       const session=stored.envelope.session?.session,head=session?.queue[0],pending=head?.payload?.decisionContext;
       const start=session?.journal.actions[0]?.action,tradeId=pending?.tradeId;
       if(session?.phase!=="awaiting_input"||session.queue.length!==1||session.interruptContext||session.irreversibleBarrier
         ||session.failure||session.undoFrames.length||head.type!=="standard_action_session_decision"||head.allowQuickActions
         ||head.ownerId!==seatId||pending?.kind!=="discard"||pending.type!=="trade"||pending.playerId!==seatId
         ||!["cards-for-credit","cards-for-energy"].includes(tradeId)||pending.count!==2||pending.required!==true
-        ||pending.selected?.length!==2||pending.selected[0]===pending.selected[1]
+        ||!Array.isArray(pending.selected)||pending.selected.length>2||new Set(pending.selected).size!==pending.selected.length
         ||start?.family!=="quick_trade"||start.target.tradeId!==tradeId)return null;
       const source=session.workingState,turn=source.turn,p=source.players.players.find(p=>p.id===seatId);
       if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded||p.passCompletionPending
         ||turn.cardTurnEventBonuses?.length||turn.type1TriggerEvents?.length
         ||Object.keys(source.aliens.chong?.transportTasksByRocketId||{}).length)return null;
       const known=knownCards(stored.envelope);
-      if(pending.selected.some(id=>!known.has(id)))return null;
+      return pending.selected.some(id=>!known.has(id))?null:{session,head,pending,source,p,known,tradeId};
+    }
+
+    function previewQuietCurrencyTradeSelection(stored,action){
+      if(action.target?.kind!=="discard-hand-card"||stored.informationBarrier)return null;
+      const entry=quietCurrencyTradeSource(stored,action);
+      if(!entry)return null;
+      const {session:s,head,pending,source,p,known,tradeId}=entry,id=action.target.cardInstanceId;
+      const selected=[...pending.selected],index=selected.indexOf(id);
+      if(!known.has(id)||!p.hand.some(c=>c.id===id)||index<0&&selected.length===2)return null;
+      if(index<0)selected.push(id);else selected.splice(index,1);
+      const event={type:"quick_trade_discard_selection",tradeId,playerId:seatId,cardInstanceId:id,selected};
+      if(cardEffects.collectMatchingTriggers(p,event).length)return null;
+      const offered=head.payload.choices.filter(a=>!a.target?.confirm);
+      if(offered.length!==p.hand.length||offered.some((a,i)=>a.target?.kind!=="discard-hand-card"
+        ||a.target.cardInstanceId!==p.hand[i].id||a.family!=="choose_payment"||!known.has(a.target.cardInstanceId)))return null;
+      const choices=offered.map(a=>a.presentation?{...a,presentation:{...a.presentation,selected:selected.includes(a.target.cardInstanceId)}}:a);
+      if(selected.length===2)choices.push(...scienceSession.formalizeChoices(source,seatId,[{
+        family:"choose_payment",target:{kind:"confirm",confirm:true},payload:{},summary:"确认弃牌（2/2）",
+      }]));
+      const j=s.journal,cursor=j.replay.length,revision=s.revision+1,nextEffectSequence=s.nextEffectSequence+1,nextGroupSequence=s.nextGroupSequence+1;
+      const effect={effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision};
+      const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+      const checkpoint=stored.envelope.session;
+      const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,revision,nextEffectSequence,nextGroupSequence,
+        queue:[{...head,effectId:s.sessionId+":effect:"+nextEffectSequence,groupId:s.sessionId+":group:"+nextGroupSequence,
+          source:{parentEffectId:head.effectId,priority:"direct"},payload:{choices,decisionContext:{...pending,selected}}}],
+        journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,event],effects:[...j.effects,effect],
+          replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
+      return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function previewQuietCurrencyTrade(stored,action) {
+      if(action.target?.confirm!==true)return null;
+      const entry=quietCurrencyTradeSource(stored,action);
+      if(!entry||entry.pending.selected.length!==2)return null;
+      const {session,head,pending,source,p,tradeId}=entry;
       const player={...p,hand:[...p.hand],resources:{...p.resources},blueBonusResources:{...p.blueBonusResources}};
       const next={...source,meta:{...source.meta,stateVersion:session.baseVersion+1},
         cards:{...source.cards,discardPile:[...source.cards.discardPile]},
@@ -2161,6 +2222,13 @@
         // Prefix accounting still charges the exact logical input for the witness.
         provedFinalDataPlacements[kind] = (provedFinalDataPlacements[kind] || 0) + 1;
         const child = finishProvedCommittedState(node, stored, requested, state);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const currencySelection=previewQuietCurrencyTradeSelection(stored,requested);
+      if(currencySelection){
+        const control=stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null;
+        const child=finishChild({session:null},{},movementPlanning?nextMovementIntent(node,requested):null,
+          control,stored.informationBarrier,requested,stored,currencySelection);
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       const currencyTrade=previewQuietCurrencyTrade(stored,requested);
@@ -7098,9 +7166,17 @@
       // keep the native continuation until this broader ceiling is proved.
       if(sourceState.turn.roundNumber<4){
         const active=sourceState.turn.activePlayerIds,passed=sourceState.passingPlayerIds||sourceState.turn.passedPlayerIds||[];
-        const mark=node.observation.selfState?.nextFinalMark;
-        if(Array.isArray(active)&&active.length>0&&active.filter(id=>id!==seatId).every(id=>passed.includes(id))
-          &&mark?.valuationSafe&&mark.options.some(option=>option.currentValue>0)){postMainValueBounds.set(node,null);return null;}
+        if(Array.isArray(active)&&active.length>0&&active.every(id=>id===seatId||passed.includes(id))){
+          const state=readIdentityState(stored.envelope);
+          // The shared observation publishes this rule-derived mark unchanged
+          // through a card or tech reveal. This bound needs no other projection.
+          const direct=state.turn.roundNumber===2&&quietEarlySameSeatHandover(state)
+            &&Object.hasOwn(rootObservation.selfState||{},"nextFinalMark");
+          const mark=direct?endScoring.describeNextFinalMark({...state,cardEffects,
+            getCardTypeCode:card=>cardEffects.getRuntimeCardTypeCode(card,cardEffects.getCardModel(card)?.cardType)},
+            state.players.players.find(p=>p.id===seatId)):node.observation.selfState?.nextFinalMark;
+          if(mark?.valuationSafe&&mark.options.some(option=>option.currentValue>0)){postMainValueBounds.set(node,null);return null;}
+        }
       }
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.

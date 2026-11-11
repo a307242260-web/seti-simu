@@ -1982,7 +1982,8 @@
   'planetOrbitOrLand','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost',
   'chongTraceCount','amibaTraceCount','aomomoTraceCount','runezuMaxSameSymbolCount','runezuMaxSetSize']);
  function provedDataScoreDelta(state,p,copy){
-  if(state.turn.roundNumber!==4||p.techState!==copy.techState||p.reservedCards!==copy.reservedCards
+  const quietSecondRound=state.turn.roundNumber===2&&Object.values(state.aliens.aliens).every(slot=>!slot.revealed);
+  if((state.turn.roundNumber!==4&&!quietSecondRound)||p.techState!==copy.techState||p.reservedCards!==copy.reservedCards
    ||p.completedTaskCount!==copy.completedTaskCount||p.id!==copy.id||p.color!==copy.color
    ||!Number.isSafeInteger(p.resources.score)||!Number.isSafeInteger(copy.resources.score)
    ||['credits','energy','handSize'].some(k=>p.income[k]!==copy.income[k])
