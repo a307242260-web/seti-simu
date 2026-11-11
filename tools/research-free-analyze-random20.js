@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const whiteFull=require('./research-human405-full'),first=require('./research-human405-round1');
-const ID='v661-free-analyze-random20-v1',FILE='reports/fixed-boards/free-analyze-random20-20261104-v1.json';
+const ID='v661-free-analyze-random20-v1',STRICT_ID='free-analyze-random20-guarded-v1',IDS=Object.freeze([ID,STRICT_ID]),FILE='reports/fixed-boards/free-analyze-random20-20261104-v1.json';
 const raw=fs.readFileSync(path.resolve(__dirname,'..',FILE)),catalog=JSON.parse(raw),hash=crypto.createHash('sha256').update(raw).digest('hex');
 const LEARNER='player-white',COMPANY='industry:深空探测.png',SETUP=['start_initial_setup','select_initial_card','confirm_initial_setup','discard-hand-cards'];
 const sorted=(a,key)=>[...a].sort((x,y)=>key(x).localeCompare(key(y)));
@@ -10,14 +10,15 @@ function describe(identity,{full}={}){
  if(!full||identity.agentType!=='search'||identity.activePlayerCount!==4)throw Error('RANDOM20_REQUIRES_FOUR_SEAT_SEARCH_FULL_MODE');
  const board=catalog.boards.find(x=>x.seed===identity.seed);
  if(!board)throw Error('RANDOM20_SEED_NOT_IN_ORIGINAL_CATALOG');
- return {id:ID,learnerSeat:LEARNER,learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',
+ const strict=identity.flags?.scenario===STRICT_ID;
+ return {id:strict?STRICT_ID:ID,learnerSeat:LEARNER,learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',
   boardNumber:board.number,boardName:board.name,catalog:FILE,catalogSha256:hash,
   setupPolicy:'deep-space-white-then-first-offered-initial-cards-and-required-discard-v1',
   opponentPolicyVersion:'seti-human405-pass-only-v1',opponentReserveRule:'historical-preference-if-offered-otherwise-stable-action-id',
   roles:{'player-white':'shared-search','player-green':'pass-only','player-blue':'pass-only','player-brown':'pass-only'},
   comparisonScope:'white-only-full-game',scoreSemantics:'terminal-score-with-passive-opponents',
   roundEndPhase:'before-pass-card-and-income',baselineEligible:false,stopAfterRound:null,
-  decisionGate:{nativeInputs:256,milliseconds:600,enforcement:'measure-only'},gameMillisecondsTarget:180000};
+  decisionGate:{nativeInputs:256,milliseconds:600,enforcement:strict?'reject-before-input':'measure-only'},gameMillisecondsTarget:180000};
 }
 function initialize(env,config,metadata){
  const board=catalog.boards.find(x=>x.seed===config.seed);
@@ -53,4 +54,7 @@ function initialize(env,config,metadata){
  assert(p,'RANDOM20_WHITE_OBSERVATION_UNAVAILABLE');
  return prefix;
 }
-module.exports={ID,describe,initialize,createEnvironment:whiteFull.createEnvironment,settled:whiteFull.settled};
+function createEnvironment(options,metadata){
+ return metadata?.id===STRICT_ID?first.createEnvironment(options,metadata):whiteFull.createEnvironment(options,metadata);
+}
+module.exports={ID,IDS,describe,initialize,createEnvironment,settled:whiteFull.settled};

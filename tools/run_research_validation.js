@@ -131,7 +131,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = (config.scenario === random20.ID ? random20 : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
+    identity.scenario = (random20.IDS.includes(config.scenario) ? random20 : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -418,7 +418,7 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const scenario = identity.scenario?.id === random20.ID ? random20 : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
+  const scenario = random20.IDS.includes(identity.scenario?.id) ? random20 : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const fullWhite = scenario === whiteFull || scenario === random20;
   const pinnedContinuation = scenario === whiteFull;
   const guardedR4 = identity.scenario?.id === whiteFull.R4_ID;
@@ -598,6 +598,9 @@ function runValidation(options) {
     const terminalFull = fullWhite && terminal;
     const summary = summaryOf(terminalFull ? finalObs : (lastRoundEndObservation || finalObs), { boardOnly: !terminalFull && Boolean(lastRoundEndObservation) });
     const wallMs = Date.now() - startedAt;
+    if (scenario === random20 && identity.scenario.decisionGate.enforcement === "reject-before-input" && wallMs >= identity.scenario.gameMillisecondsTarget) {
+      throw Object.assign(new Error("RANDOM20_GAME_TIME_LIMIT"), {code:"RANDOM20_GAME_TIME_LIMIT"});
+    }
     if (guardedR4 && wallMs + identity.scenario.continuation.sourceGameWallMs > identity.scenario.gameMillisecondsTarget) {
       throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
     }
