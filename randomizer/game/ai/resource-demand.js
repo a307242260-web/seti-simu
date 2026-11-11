@@ -793,8 +793,24 @@
   }
   function preparations({state,seatId,goal,actions,selectionOnly=false}){
     const before=needs(state,seatId,goal),out=[];
+    const actor=owner(state,seatId);
     for(const action of actions.filter(isPreparation)){
       if(action.family==='place_data'||action.family==='card_corner'&&(action.payload.kind!=='resource'||protectedCard({id:action.target.cardInstanceId},goal)))continue;
+      // The preparation must strictly shrink a current deficit. Discarding
+      // cards cannot add movement points and these pure previews do not
+      // move a probe, fire an observer, or advance a computer/blue slot.
+      if(action.family==='card_corner'){
+        const card=actor.hand.find(c=>c.id===action.target.cardInstanceId),reward=card&&cards.getDiscardActionRewardForCard(card);
+        const multiplier=action.payload.multiplier||1;
+        if(reward&&multiplier>0&&!((before.credits&&reward.gain.credits>0)
+          ||(before.energy&&reward.gain.energy>0)||(before.publicity&&reward.gain.publicity>0)
+          ||(before.data&&(reward.dataCount>0||reward.gain.availableData>0))))continue;
+      }else{
+        const {cost,gain}=action.payload;
+        if(cost&&gain&&Object.values(cost).every(v=>v>=0)
+          &&!((before.credits&&gain.credits>0)||(before.energy&&gain.energy>0)
+            ||(before.publicity&&gain.publicity>0)||(before.data&&gain.availableData>0)))continue;
+      }
       const discarded=action.family==='quick_trade'?paymentCards(state,seatId,goal,action.payload.cost.handSize||0):[action.target.cardInstanceId];
       if(!discarded)continue;const after=project(state,seatId,action,discarded);if(!after)continue;const d=needs(after,seatId,goal);
       if(Object.keys(before).some(k=>d[k]>before[k])||deficit(d)>=deficit(before))continue;
