@@ -1484,13 +1484,17 @@
         || session.journal.actions[0]?.action?.family !== "place_data") return null;
       const state=session.workingState, t=state.turn, p=state.players.players.find(p=>p.id===seatId);
       const i=action.target.publicSlotIndex, offered=state.cards.publicCards[i], known=knownCards(stored.envelope);
+      // A company swap can leave an already revealed Amiba instance in
+      // the public slot. Native takes that instance and refills the same way.
+      const publicAmiba = t.roundNumber === 4 && knownRootAlienIds.has("阿米巴")
+        && offered?.set === "alien:阿米巴" && aliens.amiba.getCardDefinition(offered)?.cardId === offered.cardId;
       const r3BlueSlot=session.journal.events.find(e=>e.type==="placeData"&&e.placementKind==="blueBonus")?.blueSlot;
       if (t.roundNumber !== 4 && !(r3BlueSlot===2&&quietR3BluePickSource(state,p))
         || t.currentPlayerId !== seatId || t.gameEnded || p.passCompletionPending
         || t.passedPlayerIds.includes(seatId) || t.cardTurnEventBonuses?.length
         || Object.values(state.aliens.chong?.transportTasksByRocketId || {}).some(job=>!job.delivered)&&!knownStationaryCargoForScan(state)
         || !offered || !known.has(offered.id) || offered.id !== action.target.cardInstanceId
-        || action.target.choiceId !== `pick:${offered.id}` || !cards.getCatalogEntryForCard(offered)
+        || action.target.choiceId !== `pick:${offered.id}` || (!publicAmiba && !cards.getCatalogEntryForCard(offered))
         || p.reservedCards.some(c=>!known.has(c.id))) return null;
       const policy=cardPickSpec(node);
       if (!policy?.fixed || policy.selectedActionId !== action.actionId) return null;
@@ -3008,6 +3012,21 @@
       if(goal.kind==="data-funded-cargo")return dataFundedCargoStep(node,state,goal,operation);
       if(goal.kind==="funded-earth-shipment"){
         const find=f=>node.legalActions.find(f),fixed=(a,reason)=>({kind:"fixed",actionId:a.actionId,reason});
+        if (goal.directEnergy) {
+          const input = operation.cargoInput ?? 0;
+          if (input === 2 * goal.path.length + 1) return {kind:"complete",reason:"funded-earth-shipment-settled"};
+          const move = goal.path[Math.floor(input / 2)];
+          const source = session?.journal?.actions?.[0]?.action;
+          const matches = action => action?.target?.rocketId === move.rocketId
+            && action.target.deltaX === move.deltaX && action.target.deltaY === move.deltaY;
+          const action = !move ? find(a => a.family === "complete_task" && a.target?.cardInstanceId === goal.cardId
+            && a.target.ruleId === "transport")
+            : input % 2 === 0 ? find(a => a.family === "move" && matches(a) && a.payload?.requiredMovePoints === 1)
+            : source?.family === "move" && matches(source) && find(a => a.family === "choose_payment"
+              && a.target?.kind === "move-payment" && a.target.choiceId === "energy" && a.payload?.energyCost === 1);
+          return action ? {...fixed(action,"execute-funded-earth-shipment"),cargoInput:input+1}
+            : {kind:"infeasible",reason:"funded-earth-shipment-menu-changed"};
+        }
         if(node.status==="stable"){
           const claim=find(a=>a.family==="complete_task"&&a.target?.cardInstanceId===goal.cardId&&a.target.ruleId==="transport");
           if(claim)return fixed(claim,"settle-funded-earth-shipment");
@@ -3377,7 +3396,8 @@
           resourceSpecs.set(node,spec);return spec;
         }
       }
-      const shipment=node===openedRoot&&!stored.resourceControl&&!stored.intent&&fundedEarthShipmentStep(node,stored,null,pending);
+      const shipment=node===openedRoot&&!stored.resourceControl&&!stored.intent
+        &&(fundedEarthShipmentStep(node,stored,null,pending)||directEarthShipment(node,stored));
       const shipmentPlan=shipment&&{id:"cargo:funded:"+shipment.quote.cardId,
         goal:{...shipment.quote,id:"cargo:funded:"+shipment.quote.cardId,required:{}},operation:{},
         firstActionId:shipment.action.actionId,mode:"greedy",reason:"funded-earth-shipment"};
@@ -3952,6 +3972,30 @@
         }
       }
       return null;
+    }
+
+    function directEarthShipment(node, stored) {
+      if (node.status !== "stable" || stored.informationBarrier || rootObservation.publicState.roundNumber !== 4
+        || !knownRootAlienIds.has("虫") || !node.legalActions.some(a => a.family === "move")) return null;
+      const state = readPlanningState(stored), turn = state.turn, p = state.players.players.find(p => p.id === seatId);
+      if (turn.currentPlayerId !== seatId || turn.gameEnded || p.mainActionCompleted || p.passCompletionPending
+        || p.industryBorrowedTechTileId || turn.cardTurnEventBonuses?.length || p.resources.energy < 1
+        || p.reservedCards.some(card => {
+          const model = cardEffects.getCardModel(card);
+          return !knownRootCardIds.has(card.id) || !model || model.triggers?.length || model.temporaryTasks?.length;
+        })) return null;
+      const jobs = Object.values(state.aliens.chong?.transportTasksByRocketId || {});
+      if (jobs.length !== 1 || jobs[0].delivered) return null;
+      const [job] = jobs, ship = visibleEarthCargo(state, p, job);
+      if (!ship || ship.movementLocked) return null;
+      const from = rockets.getRocketSectorCoordinate(ship);
+      const earth = solar.collectPlanetLocations(state.solarSystem).find(planet => planet.planetId === "earth");
+      const path = from && earth && shortEarthPath(state, p, ship, from, earth, Math.min(3, p.resources.energy));
+      if (!path?.length) return null;
+      const [first] = path;
+      const action = node.legalActions.find(a => a.family === "move" && a.target.rocketId === ship.id
+        && a.target.deltaX === first.deltaX && a.target.deltaY === first.deltaY && a.payload?.requiredMovePoints === 1);
+      return action ? {action,quote:{kind:"funded-earth-shipment",directEnergy:true,path,cardId:job.cardId}} : null;
     }
 
     function knownEarthShipment(state,known){

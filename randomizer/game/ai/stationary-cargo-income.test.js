@@ -10,7 +10,7 @@ const seat='player-white',fixture=JSON.parse(zlib.gunzipSync(fs.readFileSync(pat
 function run(envelope,exercise){
  const seed=JSON.parse(envelope.committedState).meta.seed;
  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
-  projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
+  projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
  k.newGame({seed});const c=k.composition;
  try{
   assert(c.lifecycle.restore(envelope).ok);
@@ -31,7 +31,7 @@ function run(envelope,exercise){
     :a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);
    assert(result.ok,JSON.stringify(result));
   };
-  exercise({choose,apply,save});
+  exercise({choose,apply,save,menu:()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({})});
  }finally{c.dispose();}
 }
 run(fixture.income,({choose,apply,save})=>{
@@ -88,3 +88,30 @@ run(swapFixture.fromYellow,({choose,apply,save})=>{
  assert(state.pieces.rockets.some(r=>r.playerId===seat&&r.fossilId==='fossil_01'));
 });
 console.log('stationary cargo leaves fourth-slot income reachable and known scan/pick reuse within budget');
+
+const directShipments = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+ "fixtures/r4-direct-earth-shipment-20261111-v1.json.gz"))));
+const directCandidate = q => q.candidates?.find(c => c.plan?.goal?.directEnergy);
+for (const source of directShipments) {
+ run(source.entry, ({choose,apply,save})=>{
+  let checkpoint;
+  for (const [index, action] of source.actions.entries()) {
+   const decision = choose(checkpoint);
+   if (index === 0) {
+    assert(directCandidate(decision.q));
+    assert(decision.q.roots.some(root=>root.actionId.startsWith("play_card:") && Number.isFinite(root.value)));
+   }
+   assert.equal(decision.q.diagnostics.nativeExecutions<=256,true);
+   assert.deepEqual(decision.selected,action);
+   checkpoint=decision.checkpoint;
+   apply(decision.selected);
+  }
+  assert.deepEqual(save(),source.delivered);
+ });
+ run(source.entry, ({choose,apply,menu})=>{
+  const exchange=menu().find(a=>a.family==="quick_trade" && a.target?.tradeId==="energy-for-credit");
+  assert(exchange);
+  apply(exchange);
+  assert(!directCandidate(choose().q),"insufficient energy does not create a direct shipment plan");
+ });
+}
