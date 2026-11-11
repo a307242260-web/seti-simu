@@ -590,10 +590,8 @@
             : effect.type === 'choose_colored_nebula_scan' ? { mode: 'color', color: options.color }
               : { mode: 'specified', nebulaIds: options.nebulaIds };
           const quotes = science.listScanStepChoices(root, actor, { ...opts, gainData: true }).flatMap(action => {
-            const id = action.target.nebulaId, bucket = root.data.nebulae[id];
-            const available = { ...root.data, nebulae: { ...root.data.nebulae,
-              [id]: { ...bucket, tokens: bucket.tokens.filter(t => !usedTokens.has(t.id)) } } };
-            const token = data.getNextReplaceableNebulaToken(available, id);
+            const id = action.target.nebulaId;
+            const token = data.getNextReplaceableNebulaToken(root.data, id, usedTokens);
             if (!token||closingSectors?.has(id)) return []; // No forecast of refilled/hidden replacement tokens.
             const payout=closingSectors&&certainSectorPayout(root.data,actor,id,token,facts.board.aliens.slots,
               ()=>pickedKnownPink?null:amibaPink===undefined?(amibaPink=knownAmibaPinkPayout(facts)):amibaPink);
@@ -726,11 +724,8 @@
   function knownScanData(root,actor,effects,usedTokens=new Set()) {
     if(effects.length!==1||effects[0].type!=="scan_planet_sector")return 0;
     const options=effects[0].options||{};
-    return Number(science.listScanStepChoices(root,actor,{mode:"planet",planetId:options.planetId,gainData:true}).some(a=>{
-      const id=a.target.nebulaId,bucket=root.data.nebulae[id];
-      const available={...root.data,nebulae:{...root.data.nebulae,[id]:{...bucket,tokens:bucket.tokens.filter(t=>!usedTokens.has(t.id))}}};
-      return !!data.getNextReplaceableNebulaToken(available,id);
-    }));
+    return Number(science.listScanStepChoices(root,actor,{mode:"planet",planetId:options.planetId,gainData:true})
+      .some(a=>data.getNextReplaceableNebulaToken(root.data,a.target.nebulaId,usedTokens)));
   }
 
   function funding(wallet, cost, weights) {

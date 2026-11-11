@@ -378,9 +378,11 @@
     return deriveNebulaStats(bucket);
   }
 
-  function getNextReplaceableNebulaToken(state, nebulaId) {
+  // A forecast can skip the tokens already used by its earlier scans
+  // without constructing a different nebula state.
+  function getNextReplaceableNebulaToken(state, nebulaId, excluded = null) {
     return listNebulaTokens(state, nebulaId)
-      .filter((token) => !getTokenOwnerColor(token))
+      .filter((token) => !getTokenOwnerColor(token) && (!excluded || !excluded.has(token.id)))
       .sort((a, b) => a.slotIndex - b.slotIndex || a.index - b.index)[0] || null;
   }
 

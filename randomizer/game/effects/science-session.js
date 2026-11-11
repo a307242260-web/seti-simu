@@ -264,9 +264,7 @@
       nebulaIds = found ? [found.id] : [];
     }
     return [...new Set(nebulaIds)].flatMap((nebulaId) => {
-      const next = data.getNextReplaceableNebulaToken(nebulaState, nebulaId);
-      const tokens = data.listNebulaTokens(nebulaState, nebulaId);
-      return next || tokens.length
+      return data.listNebulaTokens(nebulaState, nebulaId).length
         ? [makeChoice(
           "choose_target",
           `nebula:${nebulaId}`,
