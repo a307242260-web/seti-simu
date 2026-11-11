@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-v671-known-blue-supply-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v671-known-blue-supply-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v670-stationary-scan-first3-20261111",
+      "head": "4a33e0c06",
+      "commits": [
+        "c82130a40",
+        "dbd030e96",
+        "4a33e0c06"
+      ],
+      "summary": "第三轮从盘面重建已付得起的蓝槽公开取牌和火星登陆准备，标准前三轮回归。",
+      "records": {
+        "93d07f1e.4a33e0c0.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v670-stationary-scan-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
