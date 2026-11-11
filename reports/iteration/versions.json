@@ -7,6 +7,115 @@
   },
   "versions": [
     {
+      "id": "ai-search-known-planet-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-known-planet-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-funded-scan-first3-20261111",
+      "head": "463fc4423",
+      "commits": [
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "末轮已知移动牌可支付的固定行星登陆",
+      "records": {
+        "2a26d03a.463fc442.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-16",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-16",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-16",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "末轮已知移动牌可支付的固定行星登陆",
+      "records": {
+        "ad847128.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-17",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-17",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-17",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "末轮已知移动牌可支付的固定行星登陆",
+      "records": {
+        "05c3fb5c.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-18",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-planet-20261111-18",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-random20-pass-opportunity-20261111-18",
+      "head": "463fc4423",
+      "commits": [
+        "80952f116",
+        "931ddada5",
+        "8c8b39330",
+        "5218b2f0e",
+        "27bacf364",
+        "3942849df",
+        "fe9219db3",
+        "ac4401cf7",
+        "5526a2154",
+        "f63a04cdd",
+        "c972265c1",
+        "63b5e6db9",
+        "463fc4423"
+      ],
+      "summary": "末轮已知移动牌可支付的固定行星登陆",
+      "records": {
+        "88d7d5e1.463fc442.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-funded-scan-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",

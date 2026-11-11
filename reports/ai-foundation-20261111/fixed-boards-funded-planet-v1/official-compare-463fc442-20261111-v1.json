@@ -1,0 +1,179 @@
+{
+  "sourceCommit": "463fc4423",
+  "batchScope": [
+    16,
+    17,
+    18
+  ],
+  "previousMean": 124.66666666666667,
+  "candidateMean": 133.33333333333334,
+  "rows": [
+    {
+      "id": "ai-search-known-planet-first3-20261111",
+      "board": 0,
+      "record": "2a26d03a.463fc442.quick-400.json",
+      "wallMs": 10433,
+      "terminal": false,
+      "score": 118,
+      "rounds": [
+        15,
+        48,
+        118
+      ],
+      "peak": [
+        256,
+        217.3397500000001
+      ],
+      "before": 118,
+      "stepCount": 259,
+      "decisions": 211,
+      "roundEnds": [
+        {
+          "round": 1,
+          "score": 15,
+          "nativeEqual": true
+        },
+        {
+          "round": 2,
+          "score": 48,
+          "nativeEqual": true
+        },
+        {
+          "round": 3,
+          "score": 118,
+          "nativeEqual": true
+        }
+      ],
+      "firstDifferent": null
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-16",
+      "board": 16,
+      "record": "ad847128.463fc442.full.json",
+      "wallMs": 7756,
+      "terminal": true,
+      "score": 121,
+      "rounds": [
+        18,
+        42,
+        76,
+        95
+      ],
+      "peak": [
+        141,
+        462.1493750000009
+      ],
+      "before": 112,
+      "stepCount": 193,
+      "decisions": 142,
+      "roundEnds": [
+        {
+          "round": 1,
+          "score": 18,
+          "nativeEqual": true
+        },
+        {
+          "round": 2,
+          "score": 42,
+          "nativeEqual": true
+        },
+        {
+          "round": 3,
+          "score": 76,
+          "nativeEqual": true
+        }
+      ],
+      "firstDifferent": {
+        "input": 169,
+        "old": "扫描",
+        "new": "发射"
+      }
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-17",
+      "board": 17,
+      "record": "05c3fb5c.463fc442.full.json",
+      "wallMs": 9356,
+      "terminal": true,
+      "score": 157,
+      "rounds": [
+        17,
+        39,
+        77,
+        119
+      ],
+      "peak": [
+        247,
+        308.95529199999964
+      ],
+      "before": 147,
+      "stepCount": 227,
+      "decisions": 173,
+      "roundEnds": [
+        {
+          "round": 1,
+          "score": 17,
+          "nativeEqual": true
+        },
+        {
+          "round": 2,
+          "score": 39,
+          "nativeEqual": true
+        },
+        {
+          "round": 3,
+          "score": 77,
+          "nativeEqual": true
+        }
+      ],
+      "firstDifferent": {
+        "input": 210,
+        "old": "研究 purple1",
+        "new": "研究 orange1"
+      }
+    },
+    {
+      "id": "free-analyze-funded-planet-20261111-18",
+      "board": 18,
+      "record": "88d7d5e1.463fc442.full.json",
+      "wallMs": 8332,
+      "terminal": true,
+      "score": 122,
+      "rounds": [
+        11,
+        35,
+        72,
+        88
+      ],
+      "peak": [
+        104,
+        158.33029199999964
+      ],
+      "before": 115,
+      "stepCount": 217,
+      "decisions": 161,
+      "roundEnds": [
+        {
+          "round": 1,
+          "score": 11,
+          "nativeEqual": true
+        },
+        {
+          "round": 2,
+          "score": 35,
+          "nativeEqual": true
+        },
+        {
+          "round": 3,
+          "score": 72,
+          "nativeEqual": true
+        }
+      ],
+      "firstDifferent": {
+        "input": 201,
+        "old": "发射",
+        "new": "2信用点 → 1能量"
+      }
+    }
+  ]
+}
