@@ -1770,16 +1770,16 @@
     :player===following?{...player,mainActionCompleted:false}:player)};
   return next;
  }
- function previewFinalEndPrelude({state,seatId,action,knownCards,allowSameSeat=false,allowUnrevealedR3=false}){
+ function previewFinalEndPrelude({state,seatId,action,knownCards,allowSameSeat=false,allowUnrevealedQuiet=false}){
   const turn=state.turn,p=owner(state,seatId);
   const sameSeat=turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id));
   if(action?.family!=='end_turn'||action.phase!=='turn_control'||action.target?.kind!=='end-turn'
-    ||(turn.roundNumber!==4&&!(allowUnrevealedR3&&turn.roundNumber===3))||state.match.initialSetup||!p||sameSeat&&!allowSameSeat
+    ||(turn.roundNumber!==4&&!(allowUnrevealedQuiet&&[2,3].includes(turn.roundNumber)))||state.match.initialSetup||!p||sameSeat&&!allowSameSeat
     ||p.reservedCards.some(c=>!knownCards.has(c.id)))return null;
   // A normal end turn doesn't rotate or move a carrier. At the final-round
   // handover to another seat, reuse only if no cargo can arrive at this position.
   const preview=residual.previewQuietEndHandoffs(state,seatId,{stationaryCargo:sameSeat||turn.roundNumber===4});
-  if(!preview||(turn.roundNumber===3&&preview.settlements.length))return null;
+  if(!preview||(turn.roundNumber<4&&preview.settlements.length))return null;
   if(!preview.settlements.length){
    const finished=previewForeignTurnAfterQuietHandoffs(preview.state,seatId,state.meta.stateVersion+1,sameSeat);
    return finished?{finished}:null;

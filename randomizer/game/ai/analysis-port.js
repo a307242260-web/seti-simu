@@ -771,6 +771,12 @@
 
     // The first white turn can use the same inert placement proof. The
     // original effect, owner, payload and trigger guards still apply.
+    function quietSecondRoundHandover(state) {
+      const t=state.turn;
+      return t.roundNumber===2&&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot));
+    }
+
     function quietFirstTurnData(state) {
       return state.turn.roundNumber===1&&state.turn.turnNumber===1
         &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot));
@@ -1911,7 +1917,8 @@
       }
       const endPrelude=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
         ?localPlans.previewFinalEndPrelude({state:readIdentityState(stored.envelope),seatId,
-          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true,allowUnrevealedR3:isUnrevealedRoundThree(readIdentityState(stored.envelope))}):null;
+          action:requested,knownCards:knownCards(stored.envelope),allowSameSeat:true,allowUnrevealedQuiet:isUnrevealedRoundThree(readIdentityState(stored.envelope))
+            ||quietSecondRoundHandover(readIdentityState(stored.envelope))}):null;
       if(endPrelude?.finished){
         const child=finishProvedTurnBoundary(stored,requested,endPrelude.finished);
         if(endPrelude.finished.turn.currentPlayerId===seatId)provedOwnEndHandovers++;
