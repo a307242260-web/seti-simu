@@ -1,0 +1,53 @@
+[
+  {
+    "id": "ai-search-data-salary-first3-20261112",
+    "board": 0,
+    "record": "1db636c6.d74f5aed.quick-400.json",
+    "wallMs": 10398,
+    "terminal": false,
+    "score": 118,
+    "rounds": [
+      15,
+      48,
+      118
+    ],
+    "peak": [
+      256,
+      212.83554099999992
+    ],
+    "priorRecord": "812cbda0.39065c78.quick-400.json",
+    "priorScore": 118,
+    "inputs": 259,
+    "equalNativeRoundEnds": 3,
+    "firstChange": null,
+    "independentContinuousReplay": false
+  },
+  {
+    "id": "ai-search-data-salary-board11-20261112",
+    "board": 11,
+    "record": "3db2d755.d74f5aed.full.json",
+    "wallMs": 11523,
+    "terminal": true,
+    "score": 154,
+    "rounds": [
+      20,
+      29,
+      44,
+      93
+    ],
+    "peak": [
+      228,
+      514.5632919999998
+    ],
+    "priorRecord": "b742f3f9.463fc442.full.json",
+    "priorScore": 113,
+    "inputs": 242,
+    "equalNativeRoundEnds": 2,
+    "firstChange": {
+      "input": 127,
+      "old": "PASS",
+      "new": "放置数据"
+    },
+    "independentContinuousReplay": true
+  }
+]

@@ -7,6 +7,67 @@
   },
   "versions": [
     {
+      "id": "ai-search-data-salary-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-data-salary-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-visible-fossil-first3-20261112",
+      "head": "d74f5aed4",
+      "commits": [
+        "3ec9d8fdc",
+        "f17ee2aab",
+        "cb36a8bbc",
+        "7c6f14129",
+        "d74f5aed4"
+      ],
+      "summary": "核算可收数据收入与复用末轮结算",
+      "records": {
+        "1db636c6.d74f5aed.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "ai-search-data-salary-board11-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-data-salary-board11-20261112",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-funded-planet-20261111-11",
+      "head": "d74f5aed4",
+      "commits": [
+        "661ead8c5",
+        "e50fcb422",
+        "ff577dea6",
+        "10df4c762",
+        "f842f19cd",
+        "090bc5d11",
+        "287569b6b",
+        "14e7d6199",
+        "81eb43d1b",
+        "9a5f5ac3d",
+        "d120d3f01",
+        "50f9e0d43",
+        "0aee4a8e9",
+        "a554b8760",
+        "5fcef8d1e",
+        "436c26d64",
+        "39065c782",
+        "3ec9d8fdc",
+        "f17ee2aab",
+        "cb36a8bbc",
+        "7c6f14129",
+        "d74f5aed4"
+      ],
+      "summary": "核算可收数据收入与复用末轮结算",
+      "records": {
+        "3db2d755.d74f5aed.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-visible-fossil-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
