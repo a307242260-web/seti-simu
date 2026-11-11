@@ -1404,14 +1404,15 @@
         ||industryCatalog.getPlayerIndustryDefinition(p)?.activeAbilityId!=="deepspace_swap_cards"))return null;
       const ship=moving&&state.pieces.rockets.find(r=>r.id===action.target.rocketId);
       const known=knownCards(stored.envelope);
+      const jobs=state.aliens.chong?.transportTasksByRocketId||{};
+      const inTransit=!mercury&&Object.values(jobs).some(job=>!job.delivered);
+      const stationaryCargo=!mercury&&inTransit&&knownStationaryCargoForScan(state);
       if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
-        ||(mercury?localPlans.hasPendingFossilArrival(state):
-          Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)
-          &&(moving||!knownStationaryCargoForScan(state)))
+        ||(mercury?localPlans.hasPendingFossilArrival(state):inTransit&&!stationaryCargo)
         ||p.reservedCards.some(c=>!known.has(c.id))
         ||moving&&(!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"
-          ||state.aliens.chong?.transportTasksByRocketId?.[String(ship.id)])
+          ||jobs[String(ship.id)])
         ||!mercury&&data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
       const missing=state.cards.publicCards.filter(c=>!c).length;
       if(!missing)return null;
@@ -1429,11 +1430,13 @@
         });
         if(!move.ok||move.events[0]?.type!=="move"||move.payload.requiredMovePoints!==1)return null;
         actionEvents=move.events;
-        if(actionEvents.length!==1){
-          // A normal visit already applied publicity via moveProbe. Reuse
-          // Native's orbit facts and trigger check before preparing the refill.
-          if(actionEvents.length!==2||actionEvents[1].type!=="visitPlanet"
-            ||Object.keys(state.aliens.chong?.transportTasksByRocketId||{}).length)return null;
+        if(actionEvents.length!==1||stationaryCargo){
+          // The regular probe collects comet publicity while the public
+          // cargo stays still. Other cargo visits use Native handling.
+          const visitType=actionEvents[1]?.type;
+          if(actionEvents.length!==2||(stationaryCargo
+            ?visitType!=="visitComet"||localPlans.hasPendingFossilArrival(next)
+            :visitType!=="visitPlanet"||Object.keys(jobs).length))return null;
           const arrival=residualSession.augmentEffectResult(next,{ok:true,events:actionEvents},head);
           if(arrival.spawnedEffects.length)return null;
           actionEvents=arrival.events;
