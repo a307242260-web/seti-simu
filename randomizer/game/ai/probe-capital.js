@@ -241,25 +241,42 @@
     return !(oneEnergyHandTrade && knownMoveWindow(facts, weights)
       && p.techState?.ownedTiles?.orange3 && !p.techState.disabledTiles?.orange3);
   }
+  const fixedPlanetLandingsByDirectory = new WeakMap();
   function knownMoveGoals(facts, goals, weights) {
-    if (!knownMoveWindow(facts, weights)) return [];
-    let satellites = fixedScoreSatellitesByDirectory.get(goals);
+    const satelliteWindow = knownMoveWindow(facts, weights);
+    const planetWindow = weights === arithmetic.DEFAULT_WEIGHTS && facts.round === 4
+      && !facts.pendingNativeEffects && facts.turnCardBonusCount === 0
+      && facts.pendingCardTriggers?.length === 0;
+    if (!satelliteWindow && !planetWindow) return [];
+    const unitRoute = goal => goal.endpointFamily === 'land' && goal.route.cost > 0
+      && goal.route.cost === goal.route.path.length;
+    const points = effect => effect.type === 'gain_resources' && Object.keys(effect.options.gain).length === 1
+      && effect.options.gain.score > 0;
+    let satellites = satelliteWindow ? fixedScoreSatellitesByDirectory.get(goals) : [];
     if (!satellites) {
-      satellites = goals.filter(goal => goal.endpointFamily === 'land' && !goal.requirementId.endsWith(':planet')
-        && goal.route.cost > 0 && goal.route.cost === goal.route.path.length
-        && goal.endpointFacts.rewards.length > 0 && goal.endpointFacts.rewards.every(effect =>
-          effect.type === 'gain_resources' && Object.keys(effect.options.gain).length === 1
-          && effect.options.gain.score > 0));
+      satellites = goals.filter(goal => unitRoute(goal) && !goal.requirementId.endsWith(':planet')
+        && goal.endpointFacts.rewards.length > 0 && goal.endpointFacts.rewards.every(points));
       fixedScoreSatellitesByDirectory.set(goals, satellites);
     }
+    let planets = planetWindow ? fixedPlanetLandingsByDirectory.get(goals) : [];
+    if (!planets) {
+      planets = goals.filter(goal => {
+        if (!unitRoute(goal) || !goal.requirementId.endsWith(':planet')) return false;
+        const [gain, trace] = goal.endpointFacts.rewards;
+        return goal.endpointFacts.rewards.length === 2 && points(gain) && trace.type === 'alien_trace'
+          && trace.options.traceType === 'yellow' && (trace.options.count || 1) === 1;
+      });
+      fixedPlanetLandingsByDirectory.set(goals, planets);
+    }
     const wallet = facts.player;
-    return satellites.filter(goal => {
+    return (planets.length ? [...satellites,...planets] : satellites).filter(goal => {
       const {credits=0,energy=0} = goal.endpointFacts.cost;
       const spareCredits = wallet.credits - credits;
       const spareEnergy = wallet.energy + Math.floor(spareCredits / cToE.cost.credits) - energy;
-      // Reserve the endpoint fee before assigning any movement payments.
-      // Currency can supply part of it, followed by at most one known pair.
-      return spareCredits >= 0 && spareEnergy >= (oneEnergyHandTrade ? -1 : 0)
+      // A planet quote reserves the printed landing fee in the current wallet.
+      // It prices a public opportunity, so ownership and route are rechecked
+      // by normal planning before committing the next main action.
+      return spareCredits >= 0 && spareEnergy >= (!goal.requirementId.endsWith(':planet') && oneEnergyHandTrade ? -1 : 0)
         && spareEnergy < goal.route.cost;
     });
   }
@@ -268,7 +285,7 @@
     return cards.getDiscardActionMoveRewardForCard(card)?.movementPoints === 1;
   }
 
-  function knownMovePayments(goals, hand, wallet, weights) {
+  function knownMovePayments(goals, hand, wallet, weights, allowPlanet) {
     if (!goals.length) return null;
     const corners = [], exchange = [];
     for (const card of hand) {
@@ -279,6 +296,8 @@
     corners.sort(); exchange.sort();
     const result = new Map();
     for (const goal of goals) {
+      const planet = goal.requirementId.endsWith(':planet');
+      if (planet && !allowPlanet) continue;
       const {credits=0,energy=0} = goal.endpointFacts.cost;
       // Assign one known corner per otherwise unfunded step. An exchange
       // may supply a single remaining energy from two different non-move
@@ -290,7 +309,7 @@
       let exchangeCardIds = [];
       const energyPurchases = Math.floor((wallet.credits - credits) / cToE.cost.credits);
       if (!payment && totalEnergy === wallet.energy + energyPurchases + 1
-        && oneEnergyHandTrade && exchange.length >= 2) {
+        && !planet && oneEnergyHandTrade && exchange.length >= 2) {
         // All possible credit exchanges are needed in this one-unit-short
         // case. Only the remaining unit comes from the distinct hand pair.
         exchangeCardIds = exchange.slice(0, 2);
@@ -349,7 +368,8 @@
     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
     const shared={player:wallet,round:4,board,passing:false,terminal:false,
       uncontestedRound:Array.isArray(active)&&active.length>0&&active.filter(id=>id!==player.id).every(id=>passed.includes(id)),
-      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),turnCardBonusCount:state.turn.cardTurnEventBonuses?.length,
+      pendingNativeEffects:(state.pendingEffectOwnerIds||[]).includes(player.id),turnCardBonusCount:(state.turn.cardTurnEventBonuses||[]).length,
+      pendingCardTriggers:cardEffects.listPendingTriggerKeys(player,state.turn),
       extraUnknownCount:Math.max(0,(player.resources.handSize||0)-player.hand.length),initialInvestmentCapital:0,
       reservedCards:player.reservedCards,researchSymbols:amiba.getPublicSymbolState(state.aliens,{readOnly:true}),
       amibaTraces:amiba.getPublicTraceState(state.aliens,{readOnly:true})};
@@ -359,7 +379,9 @@
     const moveGoals=knownMoveGoals(shared,goals,weights);
     const sensitive=!prepared||prepared.some(({goal})=>goal.endpointFacts.rewards.some(effect=>effect.type==='income'))
       || moveGoals.length>0 && (player.hand.some(movePaymentCard) || state.cards.publicCards.some(c=>c?.id&&c.cardId&&!c.hidden&&movePaymentCard(c)));
-    const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards}},
+    const planetFunding=moveGoals.some(goal=>goal.requirementId.endsWith(':planet'));
+    const quote=(hand,publicCards)=>evaluateMission({...shared,hand,board:{...board,publicCards},
+      pendingHandCardTriggers:planetFunding?cardEffects.listPendingTriggerKeys({...player,reservedCards:hand},state.turn):undefined},
       weights,true,true,{prepared,moveGoals,constantInvestment:true});
     return {sensitive,quote};
   }
@@ -471,7 +493,7 @@
       }
     }
     const moveGoals=finalSwap?.moveGoals??knownMoveGoals(facts,goals,weights);
-    const movePayments=knownMovePayments(moveGoals,facts.hand,player,weights);
+    const movePayments=knownMovePayments(moveGoals,facts.hand,player,weights,facts.pendingHandCardTriggers?.length===0);
     if (prepared && movePayments) portfolio=[...prepared,...Array.from(movePayments,([goal,payment])=>({goal,payment}))];
     if(!portfolio&&prepared?.length===0&&Array.isArray(facts.hand)&&player.income!=null){
       __requirementRefs.emptyFundedScalar++;
@@ -650,7 +672,7 @@
     if(scalarOnly)return bestValue;
     const ranked = candidates.filter(c => c.funded && c.supported).sort((a, b) => b.value - a.value || a.id.localeCompare(b.id));
     return { value: ranked[0]?.value || 0, selected: ranked[0] || null, candidates,
-      scope: 'One current-wallet-funded ordinary mission with its complete paid geometric route and optional fixed existing-data tail; maximum, not sum. No future income, card moves, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound.' };
+      scope: 'One current-wallet-funded ordinary mission with its paid geometric route, supported known move corners and optional existing-data tail; maximum, not sum. No future income, new card identities, arrival triggers or opponent changes. Forecast hypothesis, never an admissible bound.' };
   }
 
   // One income-funded replacement option for an existing Earth probe. The
