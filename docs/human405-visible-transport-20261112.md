@@ -29,3 +29,17 @@
 [存档、计数与复现脚本](../reports/ai-foundation-20261112/human405-visible-transport-v1/visible-transport-native-evidence-20261112-v1.tar.gz) · [教师续跑和 V454 已登记结果](human405-pickup-income-20261112.md)
 
 证据包从源码根目录执行脚本，参数依次为输入与新输出路径。顺序：`visible-transport.cjs` 读取 V454 教师重放；`visible-transport-retain.cjs`、`hidden-cash-fossil.cjs`、`count-native-transport.cjs`、`profile-visible-transport.cjs` 读取 `visible-transport` 的输出；`visible-transport-fourth.cjs` 读取 `visible-transport-retain` 的输出。计数脚本仅在隔离进程内插桩，严格对账原生输入且不会提交超限决定。
+
+## 已见奖励选择：何时需要看下一回合
+
+在同一土星奖励菜单，V454 的 3 次原生输入只比较本回合结束前的状态。固定各奖励后重放结束回合，下一次白席决策如下：
+
+| 公开奖励 | 当前报价 | 下回合首选 | 单点准入 |
+| --- | ---: | --- | --- |
+| 化石 06：2 电 | 176.5 | 普通登陆 | 2,054 次／1,776 毫秒，不提交 |
+| 化石 01：3 宣传 | 164.5 | 研究科技 | 29 次／57 毫秒 |
+| 化石 07：2 钱 | 162 | 已知虫族 9 登陆 | 179 次／139 毫秒 |
+
+当前排序没有看到现金买到的已知运输计划。普通登陆在无约束搜索中报价更高，因此证据也不支持普遍下调电价值。另一个隔离试验仅允许现有双痕迹加速覆盖全已揭示化石，两个失败根仍是 2,008／400 次；未将它加入生产。下一步应在已经展示奖励的真实菜单，对付得起、可复现、符合单点门槛的下一回合计划报价，保持探查前的不可见边界。
+
+[三种奖励的逐项重放及现有加速的反例](../reports/ai-foundation-20261112/human405-visible-transport-v1/visible-fossil-reward-proof-20261112-v1.tar.gz)。三个脚本调用均读前一证据包的 `visible-transport-v454-20261112-v1.json.gz`，输出指定的新路径；`probe-paired-known-fossils.cjs` 的第三参数分别为 `original` 和 `allow-visible`。
