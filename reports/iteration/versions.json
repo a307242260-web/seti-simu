@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-funded-income-restore-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-funded-income-restore-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-mercury-followup-first3-20261112",
+      "head": "93947ab2d",
+      "commits": [
+        "cf04c5e42",
+        "ba3fa0c57",
+        "452963e64",
+        "04e905349",
+        "9cb1e87d9",
+        "93947ab2d"
+      ],
+      "summary": "第三轮多格插电计划在冷恢复时保持一致",
+      "records": {
+        "599c3f5b.93947ab2.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-mercury-followup-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
