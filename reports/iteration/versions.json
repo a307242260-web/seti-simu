@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-v666-scan4-visit-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V666 · 紫 4 免费访问行星",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v665-scan4-launch-first3-20261111",
+      "head": "c30b18dd1",
+      "commits": [
+        "aa3293885",
+        "27d10d116",
+        "97a4c4c9b",
+        "e7460067c",
+        "73a1a9452",
+        "c30b18dd1"
+      ],
+      "summary": "复用紫 4 免费移动的普通访问与宣传结算，保持原生触发、隐信息和前三轮策略。",
+      "records": {
+        "31f6eb84.c30b18dd.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v665-scan4-launch-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
