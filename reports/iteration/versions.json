@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-v673-stationary-comet-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v673-stationary-comet-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v672-region-analysis-order-first3-20261111",
+      "head": "cbd73e00c",
+      "commits": [
+        "6c9941efe",
+        "cbd73e00c"
+      ],
+      "summary": "复用化石原位时的普通探测器彗星扫描，核验第三轮保留库存的接续表现。",
+      "records": {
+        "d3183131.cbd73e00.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v672-region-analysis-order-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
