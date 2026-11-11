@@ -7,6 +7,57 @@
   },
   "versions": [
     {
+      "id": "ai-search-funded-scan-analysis-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-funded-scan-analysis-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-scan-launch-value-first3-20261112",
+      "head": "9a5f5ac3d",
+      "commits": [
+        "10df4c762",
+        "f842f19cd",
+        "090bc5d11",
+        "287569b6b",
+        "14e7d6199",
+        "81eb43d1b",
+        "9a5f5ac3d"
+      ],
+      "summary": "第三轮已筹资的扫描和免电分析续走",
+      "records": {
+        "4bde05f3.9a5f5ac3.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-funded-scan-analysis-20261112-15",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-funded-scan-analysis-20261112-15",
+      "date": "2026-11-11",
+      "baseline": "free-analyze-funded-planet-20261111-15",
+      "head": "9a5f5ac3d",
+      "commits": [
+        "661ead8c5",
+        "e50fcb422",
+        "ff577dea6",
+        "10df4c762",
+        "f842f19cd",
+        "090bc5d11",
+        "287569b6b",
+        "14e7d6199",
+        "81eb43d1b",
+        "9a5f5ac3d"
+      ],
+      "summary": "第三轮已筹资的扫描和免电分析续走",
+      "records": {
+        "8590c3e3.9a5f5ac3.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-scan-launch-value-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
