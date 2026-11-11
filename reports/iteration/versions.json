@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-pickup-income-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-pickup-income-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-funded-scan-analysis-first3-20261112",
+      "head": "0aee4a8e9",
+      "commits": [
+        "d120d3f01",
+        "50f9e0d43",
+        "0aee4a8e9"
+      ],
+      "summary": "已知化石登陆优先用电脑收入筹资",
+      "records": {
+        "b8f75432.0aee4a8e.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-funded-scan-analysis-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
