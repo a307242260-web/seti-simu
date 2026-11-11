@@ -951,18 +951,23 @@
     const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
     if(!p||turn.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||turn.currentPlayerId!==seatId
       ||p.industryRoundMarkRound===turn.roundNumber||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
-      ||p.hand.some(c=>!c.id||!c.cardId||c.hidden)||p.hand.length+p.resources.availableData!==2
-      ||p.resources.availableData>1||p.dataState.poolTokens.length!==p.resources.availableData)return null;
+      ||p.hand.some(c=>!c.id||!c.cardId||c.hidden)||p.dataState.poolTokens.length!==p.resources.availableData)return null;
     const computer=data.listComputerPlacedTokens(p).map(t=>t.placementSlot).sort((a,b)=>a-b);
-    if(computer.length!==3||computer.some((n,i)=>n!==i+1))return null;
-    const ready=data.listBluePlacementRequirements(p).filter(({blueSlot})=>bluePrerequisites(p,blueSlot)===0
+    if(computer.length>3||computer.some((n,i)=>n!==i+1))return null;
+    const remaining=3-computer.length,pool=p.resources.availableData;
+    // Only extend the existing supplier goal when all computer placements
+    // are already funded, leaving exactly one known corner for the blue slot.
+    // No income slot, new choice, or hidden supply enters the prefix.
+    if(remaining?(p.hand.length!==2||pool!==remaining):(p.hand.length+pool!==2||pool>1))return null;
+    const ready=data.listBluePlacementRequirements(p).filter(({blueSlot})=>bluePrerequisites(p,blueSlot)===remaining
       &&data.getBlueBonusPlacementReward(p,blueSlot)?.type==='choose_card');
     if(ready.length!==1)return null;
-    const corner=!p.resources.availableData&&p.hand.find(c=>{
+    const useCorner=pool===remaining;
+    const corner=useCorner&&p.hand.find(c=>{
       const gain=cards.getDiscardActionRewardForCard(c);
       return gain?.dataCount===1&&!Object.keys(gain.gain||{}).length;
     });
-    if(!p.resources.availableData&&(!corner||industry.shouldDoubleDiscardCornerRewards?.(p)||observes(state,seatId,'cardCorner')))return null;
+    if(useCorner&&(!corner||industry.shouldDoubleDiscardCornerRewards?.(p)||observes(state,seatId,'cardCorner')))return null;
     const rest=p.hand.filter(c=>c!==corner);
     if(rest.length!==1||cards.getIncomeGainForCard(rest[0])?.handSize!==1)return null;
     const supplier=publicLandingSupplier(state);
@@ -1003,7 +1008,9 @@
     const find=(predicate,reason)=>{const a=actions.find(predicate);return a?{kind:'fixed',actionId:a.actionId,reason}:{kind:'infeasible',reason};};
     if(status==='decision'){
       if(actions.every(a=>a.family==='choose_target'&&['computer','blueBonus'].includes(a.target?.target)))
-        return find(a=>a.target.blueSlot===goal.blueSlot,'place-data-for-known-landing');
+        return bluePrerequisites(p,goal.blueSlot)>0
+          ?find(a=>a.target.target==='computer','prepare-computer-for-known-landing')
+          :find(a=>a.target.blueSlot===goal.blueSlot,'place-data-for-known-landing');
       return find(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('pick:')&&a.target.cardInstanceId===goal.cardId,'take-known-landing-supplier');
     }
     if(p.resources.availableData>0)return find(a=>a.family==='place_data','start-known-landing-blue-reward');
