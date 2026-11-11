@@ -7,6 +7,79 @@
   },
   "versions": [
     {
+      "id": "ai-search-quiet-b38-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-b38-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-tail-first3-20261111",
+      "head": "27d21b1b7",
+      "commits": [
+        "2bed1dd58",
+        "27d21b1b7"
+      ],
+      "summary": "扫描科研与弃牌点选复用后的标准教学盘",
+      "records": {
+        "8cbd5b19.27d21b1b.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-b38-20261111-11",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-b38-20261111-11",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-b38-first3-20261111",
+      "head": "27d21b1b7",
+      "commits": [
+        "27d21b1b7"
+      ],
+      "summary": "固定二十盘严格验收第11盘",
+      "records": {
+        "da866698.27d21b1b.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-b38-20261111-12",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-b38-20261111-12",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-b38-first3-20261111",
+      "head": "27d21b1b7",
+      "commits": [
+        "27d21b1b7"
+      ],
+      "summary": "固定二十盘严格验收第12盘",
+      "records": {
+        "70226b84.27d21b1b.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-b38-20261111-15",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-b38-20261111-15",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-b38-first3-20261111",
+      "head": "27d21b1b7",
+      "commits": [
+        "27d21b1b7"
+      ],
+      "summary": "固定二十盘严格验收第15盘",
+      "records": {
+        "1d214825.27d21b1b.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-quiet-tail-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
