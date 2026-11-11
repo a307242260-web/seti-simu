@@ -7,6 +7,27 @@
   },
   "versions": [
     {
+      "id": "ai-search-visible-fossil-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-visible-fossil-first3-20261112",
+      "date": "2026-11-11",
+      "baseline": "ai-search-pickup-income-first3-20261112",
+      "head": "39065c782",
+      "commits": [
+        "a554b8760",
+        "5fcef8d1e",
+        "436c26d64",
+        "39065c782"
+      ],
+      "summary": "已见化石奖励比较下一回合可执行运输",
+      "records": {
+        "812cbda0.39065c78.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-pickup-income-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
