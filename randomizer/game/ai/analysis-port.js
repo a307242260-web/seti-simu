@@ -1771,6 +1771,42 @@
         barrier:{effectId:refill.effectId,revision:session.revision+refillIndex+1+extraEffects,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"}};
     }
 
+    function previewQuietCurrencyTrade(stored,action) {
+      // Leave card selection and its menu to the rule engine. Only settle
+      // the already chosen, known pair when payment cannot open an effect.
+      if(!resourcePlanning||action.family!=="choose_payment"||action.target?.confirm!==true)return null;
+      const session=stored.envelope.session?.session,head=session?.queue[0],pending=head?.payload?.decisionContext;
+      const start=session?.journal.actions[0]?.action,tradeId=pending?.tradeId;
+      if(session?.phase!=="awaiting_input"||session.queue.length!==1||session.interruptContext||session.irreversibleBarrier
+        ||session.failure||session.undoFrames.length||head.type!=="standard_action_session_decision"||head.allowQuickActions
+        ||head.ownerId!==seatId||pending?.kind!=="discard"||pending.type!=="trade"||pending.playerId!==seatId
+        ||!["cards-for-credit","cards-for-energy"].includes(tradeId)||pending.count!==2||pending.required!==true
+        ||pending.selected?.length!==2||pending.selected[0]===pending.selected[1]
+        ||start?.family!=="quick_trade"||start.target.tradeId!==tradeId)return null;
+      const source=session.workingState,turn=source.turn,p=source.players.players.find(p=>p.id===seatId);
+      if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded||p.passCompletionPending
+        ||turn.cardTurnEventBonuses?.length||turn.type1TriggerEvents?.length
+        ||Object.keys(source.aliens.chong?.transportTasksByRocketId||{}).length)return null;
+      const known=knownCards(stored.envelope);
+      if(pending.selected.some(id=>!known.has(id)))return null;
+      const player={...p,hand:[...p.hand],resources:{...p.resources},blueBonusResources:{...p.blueBonusResources}};
+      const next={...source,meta:{...source.meta,stateVersion:session.baseVersion+1},
+        cards:{...source.cards,discardPile:[...source.cards.discardPile]},
+        players:{...source.players,players:source.players.players.map(q=>q===p?player:q)}};
+      for(const id of pending.selected){
+        const index=player.hand.findIndex(card=>card.id===id);
+        if(index<0)return null;
+        const removed=cards.discardFromHandAtIndex(player,index);
+        if(!removed.ok)return null;
+        cards.addToDiscardPile(next.cards,removed.card);
+      }
+      const settled=quickTrades.finalizeTradeAfterDiscard(tradeId,next,player);
+      if(!settled.ok||settled.awaitingCardSelection)return null;
+      const event={type:"quick_trade_payment",tradeId,playerId:seatId,cardInstanceIds:[...pending.selected]};
+      const audited=localPlans.augmentEffectResult(next,{ok:true,events:[event]},head);
+      return !audited.spawnedEffects.length&&audited.events.length===1?next:null;
+    }
+
     function finishProvedCommittedState(node, stored, action, state) {
       restoreEnvelope(provedCommittedEnvelope(stored, state), true);
       return finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, action) : null,
@@ -2070,6 +2106,15 @@
         // Prefix accounting still charges the exact logical input for the witness.
         provedFinalDataPlacements[kind] = (provedFinalDataPlacements[kind] || 0) + 1;
         const child = finishProvedCommittedState(node, stored, requested, state);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
+      const currencyTrade=previewQuietCurrencyTrade(stored,requested);
+      if(currencyTrade){
+        const envelope=provedCommittedEnvelope(stored,currencyTrade);
+        restoreEnvelope(envelope);
+        const control=stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null;
+        const child=finishChild({session:null},{},movementPlanning?nextMovementIntent(node,requested):null,
+          control,stored.informationBarrier,requested,stored,{envelope,inspection:{phase:"idle",session:null}});
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
       if(previewOnly)return null;
