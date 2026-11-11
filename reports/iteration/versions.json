@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-v667-direct-earth-shipment-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v667-direct-earth-shipment-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-v666-scan4-visit-first3-20261111",
+      "head": "93c471b0e",
+      "commits": [
+        "26a0e5d91",
+        "35a1d4e9f",
+        "89d18d91f",
+        "f12b80ed5",
+        "3382f4f59",
+        "93c471b0e"
+      ],
+      "summary": "第四轮比较现有电已足的化石返程并复用明牌阿米巴结算；标准前三轮回归",
+      "records": {
+        "6fd85941.93c471b0.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v666-scan4-visit-first3-20261111",
       "aiGeneration": "v2",
       "agentType": "search",
