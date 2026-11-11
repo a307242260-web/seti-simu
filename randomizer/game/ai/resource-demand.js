@@ -326,6 +326,8 @@
   const immutableIncomePreparationQuotes=new WeakMap();
   function incomePreparationCapital(state,p,projectedData=0,knownCapital=null){
     const current=knownCapital??planningCapital(state,p);
+    // Both future income preparation and its scan bridge are closed in R4.
+    if(state.turn.roundNumber===4)return current;
     if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]
       &&["blue1","blue2","blue4"].includes(id)))return current;
     const immutable=Object.isFrozen(state)&&Object.isFrozen(p)&&immutableCapitalInput(state)&&immutableCapitalInput(p);
