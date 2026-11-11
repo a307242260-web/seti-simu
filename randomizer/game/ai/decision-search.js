@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v446";
+  const VERSION = "seti-complete-decision-search-v447";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -116,8 +116,9 @@
       || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
       cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning, finalMarkPlanning, scanPlanning]);
+    const retainedRegionSource=resourcePlanning&&realizationTies&&scanOrbitBudget&&port.retainedRegionCardSource?.();
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
-    const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
+    const reusedPlan = !retainedRegionSource && !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
     if (hit && now() - startedAt < limits.milliseconds) return {
       schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0, preparationDebt:hit.preparationDebt??0,
@@ -1090,9 +1091,23 @@
         }
       }
     }
-    let scanBeforeOrbit=null, continuationNativeInputs=0;
+    let scanBeforeOrbit=null, retainRegionCard=null, continuationNativeInputs=0;
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
+    if(complete&&!unresolved.length&&retainedRegionSource?.cornerId===visibleBest?.actionId
+      &&roots.some(r=>r.actionId===retainedRegionSource.firstId&&r.completion==="complete")){
+      const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
+      const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions;
+      const before=port.getDiagnostics().submissionCount;
+      if(maySubmit(0,before)){
+        const proof=port.quoteRetainedRegionCard(retainedRegionSource,evaluate,maySubmit);
+        continuationNativeInputs=port.getDiagnostics().submissionCount-before;
+        transitions+=continuationNativeInputs;
+        if(proof?.value>nodes[0].value&&now()<deadline)retainRegionCard={...proof,
+          actionId:retainedRegionSource.firstId,visibleActionId:visibleBest.actionId,visibleValue:nodes[0].value,nativeInputs:continuationNativeInputs};
+        if(now()>=deadline)stopReason="watchdog";
+      }
+    }
     if(complete&&!unresolved.length&&realizationTies&&scanOrbitBudget&&orbitGoal?.family==="orbit"
       &&root.status==="stable"&&root.observation.publicState.roundNumber===4&&port.quoteScanBeforeOrbit){
       const scanAction=root.legalActions.find(a=>a.family==="scan");
@@ -1143,7 +1158,7 @@
     let planCertificate = null;
     // The existing certificate starts with the visible winner. A proved
     // override must let the real scan menu build a fresh continuation.
-    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit) {
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1260,7 +1275,7 @@
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? scanBeforeOrbit?.actionId || nodes[0].best?.actionId || null : null,
+      actionId: accepted ? retainRegionCard?.actionId || scanBeforeOrbit?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1271,6 +1286,7 @@
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
       value: accepted ? nodes[0].value : null,
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
+      ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       realization: accepted ? nodes[0].realization ?? null : null,
       preparationDebt:accepted?nodes[0].preparationDebt??null:null,

@@ -115,3 +115,31 @@ for (const source of directShipments) {
   assert(!directCandidate(choose().q),"insufficient energy does not create a direct shipment plan");
  });
 }
+
+const retainedRegionCards = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+ "fixtures/r3-retain-amiba5-20261111-v1.json.gz"))));
+for (const source of retainedRegionCards) {
+ run(source.beforeClaim, ({choose,apply})=>{
+  let checkpoint;
+  for (const [index,expected] of [source.claim,...source.actions].entries()) {
+   const d=choose(checkpoint);
+   assert.deepEqual(d.selected,expected);
+   if(index<2){
+    const proof=d.q.retainRegionCard;
+    assert.equal(proof.value,source.proofValue);
+    assert.equal(proof.visibleValue,source.originalValue);
+    assert.equal(proof.nativeInputs,5-index);
+    assert.equal(proof.claimId,index===0?source.claim.actionId:undefined);
+    assert(d.q.roots.some(r=>r.actionId===proof.visibleActionId&&r.completion==="complete"));
+   }
+   checkpoint=d.checkpoint;apply(d.selected);
+  }
+ });
+ run(source.entry, ({choose,apply,menu})=>{
+  const trade=menu().find(a=>a.family==="quick_trade"&&a.target.tradeId==="credits-for-energy");
+  assert(trade);apply(trade);
+  const {q,selected}=choose();
+  assert.equal(q.retainRegionCard,undefined);
+  assert.equal(selected.family,"card_corner");
+ });
+}
