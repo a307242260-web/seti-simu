@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v454";
+  const VERSION = "seti-complete-decision-search-v455";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -36,6 +36,13 @@
       if (details) {realizationCache.set(observation,-details.unrealizedPurposeValue);preparationDebtCache.set(observation,details.purposePreparationDebt);}
       valueCache.set(observation,value); return value;
     }
+    const quietLeaves=new WeakMap();
+    function quietLeaf(node){
+      if(!realizationTies||!resourcePlanning||!port.quietFinalValue)return null;
+      if(quietLeaves.has(node))return quietLeaves.get(node);
+      const q=port.quietFinalValue(node);
+      quietLeaves.set(node,q);return q;
+    }
     const observationForValue=node=>stateValue?.isStateValueEvaluator?.(evaluate)&&port.valueObservation?port.valueObservation(node):node.observation;
     const legacyProof = node => !stateValue?.isStateValueEvaluator?.(evaluate)
       || stateValue.supportsLegacyValueProof(observationForValue(node));
@@ -48,7 +55,7 @@
       return stateValue.sumValueParts([base,gain]);
     };
     const valueForNode=node=>{
-      if(!["income-plan-value","turn-tail-value"].includes(node.status))return valueOf(observationForValue(node));
+      if(!["income-plan-value","turn-tail-value"].includes(node.status))return quietLeaf(node)?.value??valueOf(observationForValue(node));
       if(!stateValue?.isDefaultStateValueEvaluator?.(evaluate)||evaluate.seatId!==root.legalActions?.[0]?.actorId)throw new TypeError("SEARCH_INCOME_PROOF_MODEL_INVALID");
       const baseValue=valueOf(observationForValue((node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node))));
       // A complete audited plan with exactly zero value change is an identity,
@@ -72,6 +79,8 @@
         const before=realizationForNode(node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node));
         return node.planSummary.unrealizedPurposeDelta===undefined?before:stateValue.sumValueParts([before,-node.planSummary.unrealizedPurposeDelta]);
       }
+      const quiet=quietLeaf(node);
+      if(quiet)return -quiet.unrealizedPurposeValue;
       const observation=observationForValue(node);
       valueOf(observation);
       return realizationCache.get(observation);
@@ -80,6 +89,7 @@
       if (!realizationTies) return 0;
       if (node.status === "income-plan-value") return preparationDebtForNode(port.incomePlanBase(node));
       if (node.status === "turn-tail-value") return preparationDebtForNode(port.turnTailBase(node));
+      if(quietLeaf(node))return 0;
       const observation=observationForValue(node);valueOf(observation);return preparationDebtCache.get(observation);
     }
     const startedAt = now();
@@ -157,6 +167,7 @@
     // not run a portfolio hook at any leaf of those existing searches.
     const quoteDeferredSector = resourcePlanning && realizationTies
       && root.observation.publicState.roundNumber===3 && port.deferredSectorPublicityEnabled?.()===true;
+    const finalDataSalary=resourcePlanning&&realizationTies&&port.finalDataSalarySource?.();
     const knownPickupFunding=resourcePlanning&&realizationTies&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       &&port.knownPickupFundingEnabled?.()===true;
     const quoteDeferredCargo=resourcePlanning&&realizationTies&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
@@ -298,6 +309,7 @@
       const transportForecast=transportQuote?stateValue.sumValueParts([transportQuote.value,baseRealization]):0;
       const takesTransport=transportForecast>priorForecast;
       const forecast=takesTransport?transportForecast:priorForecast;
+      const salary=finalDataSalary&&port.finalDataSalaryQuote(node,finalDataSalary);
       const value = forecast?stateValue.sumValueParts([baseValue,forecast]):baseValue;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       const realization = takesTransport ? -transportQuote.value : baseRealization;
@@ -306,7 +318,8 @@
       const publicDataCard=realizationTies&&BOUNDARIES.has(node.status)?port.retainedPublicDataCard?.(node)||null:null;
       // A closed leaf retains its exact native envelope and scalar V; its full
       // observation can be regenerated, rather than pinning a second large tree.
-      if (BOUNDARIES.has(node.status)&&!["income-plan-value","turn-tail-value"].includes(node.status)) port.releaseBoundaryObservation?.(node);
+      if (BOUNDARIES.has(node.status)&&!["income-plan-value","turn-tail-value"].includes(node.status)&&!quietLeaf(node))
+        port.releaseBoundaryObservation?.(node);
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
       let decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
@@ -455,7 +468,7 @@
         }
       }
       const configured={ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, deferredPublicity, deferredCargo, pickupFunding, pickupRank:pickupFunding?.rank, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, paidScanAnalysis, analysisFundingQuote, matchedScanQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, displayTransportQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, queuePriority, salary, deferredPublicity, deferredCargo, pickupFunding, pickupRank:pickupFunding?.rank, researchData, researchScan, researchIncome, regionFollowup, scanTimingQuote, paidScanAnalysis, analysisFundingQuote, matchedScanQuote, transportQuote:takesTransport?transportQuote:null, preparedTransport:preparedGain>0?preparedTransport:null, displayTransportQuote, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, realization, preparationDebt, landingCompanyRetained, publicDataCard, distance: boundary ? 0 : Infinity, best: null };
       if(initializeDeferred){configured.queued=nodes[index].queued;nodes[index]=configured;}else nodes.push(configured);
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -840,6 +853,14 @@
           covered.push(index);
         }
       }
+      // A next-round salary quote is a ranking forecast, never an upper
+      // bound. Apply only after an unpruned current-turn graph has closed.
+      if(finalDataSalary&&!covered.length){
+        for(const entry of nodes)if(entry.salary){
+          entry.value=stateValue.sumValueParts([entry.value,entry.salary.gain]);
+          entry.salaryScore=entry.salary.score;
+        }
+      }
       const changed = nodes.flatMap((entry, index) => entry.value == null ? [] : [index]);
       // An opaque blind draw can close sooner than the same free displayed
       // Chong reward. Distance alone must not favor that information barrier.
@@ -894,7 +915,9 @@
           const incomeTieRank=Number(edge===parent.electricIncomeTie)
             -Number(Boolean(parent.best)&&parent.best===parent.electricIncomeTie);
           const shorter=distance < parent.distance || (distance === parent.distance && edge.actionId < parent.best?.actionId);
-          const finalTie=incomeTieRank>0 || incomeTieRank===0&&shorter;
+          const salaryTie=Number.isFinite(target.salaryScore)&&Number.isFinite(parent.salaryScore)
+            ?target.salaryScore-parent.salaryScore:0;
+          const finalTie=incomeTieRank>0 || incomeTieRank===0&&(salaryTie>0||salaryTie===0&&shorter);
           // A certified use of retained resources breaks a score tie before
           // favoring an immediately received but otherwise unbound reward.
           if (parent.value == null || target.value > parent.value
@@ -912,6 +935,7 @@
             parent.publicDataCard = target.publicDataCard;
             parent.chongBlindCount = blindCount;
             parent.pickupRank = target.pickupRank;
+            parent.salaryScore=target.salaryScore;
             parent.distance = distance;
             parent.best = edge;
             changed.push(index);
@@ -956,6 +980,7 @@
       ...(entry.deferredPublicity?{deferredSectorPublicity:entry.deferredPublicity}:{}),
       ...(entry.deferredCargo?{deferredCargo:entry.deferredCargo}:{}),
       ...(entry.pickupFunding?{knownPickupFunding:entry.pickupFunding}:{}),
+      ...(entry.salary&&Number.isFinite(entry.salaryScore)?{finalDataSalary:entry.salary}:{}),
       ...(entry.blueClaimEquivalences?{blueClaimEquivalences:entry.blueClaimEquivalences}:{}),
       ...(entry.cargoClaimEquivalences?{cargoClaimEquivalences:entry.cargoClaimEquivalences}:{}),
       ...(entry.quietClaimEquivalences?{quietClaimEquivalences:entry.quietClaimEquivalences}:{}),
@@ -1018,7 +1043,9 @@
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
         JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
-        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[b.target].landingCompanyRetained-nodes[a.target].landingCompanyRetained||Number(Boolean(nodes[b.target].publicDataCard))-Number(Boolean(nodes[a.target].publicDataCard))||(nodes[a.target].chongBlindCount??0)-(nodes[b.target].chongBlindCount??0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
+        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||(nodes[a.target].preparationDebt??0)-(nodes[b.target].preparationDebt??0)||(nodes[b.target].realization??0)-(nodes[a.target].realization??0)||nodes[b.target].landingCompanyRetained-nodes[a.target].landingCompanyRetained||Number(Boolean(nodes[b.target].publicDataCard))-Number(Boolean(nodes[a.target].publicDataCard))||(nodes[a.target].chongBlindCount??0)-(nodes[b.target].chongBlindCount??0)
+          ||(Number.isFinite(nodes[a.target].salaryScore)&&Number.isFinite(nodes[b.target].salaryScore)
+            ?nodes[b.target].salaryScore-nodes[a.target].salaryScore:0)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
       if (selection && !action.target?.confirm) return {
         actionId: action.actionId, target: null, value: nodes[0].value,
         completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",

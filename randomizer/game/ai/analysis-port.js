@@ -771,6 +771,12 @@
 
     // The first white turn can use the same inert placement proof. The
     // original effect, owner, payload and trigger guards still apply.
+    function quietFinalRoundMark(state){
+      const t=state.turn;
+      return t.roundNumber===4
+        &&knownRootAlienIds.has("奥陌陌")&&Object.values(state.aliens.aliens).every(slot=>!slot.revealed||knownRootAlienIds.has(slot.alienId));
+    }
+
     function quietEarlySameSeatHandover(state) {
       const t=state.turn;
       if(!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))return false;
@@ -793,7 +799,7 @@
       if ((t.roundNumber !== 4 && !quietFirstTurnData(state) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)
         && !(quietR3BluePickSource(state,owner)&&data.listEligibleBlueBonusSlots(owner).includes(2)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
-        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)
+        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)&&!residualSession.hasOnlyAomomoScanScoreBonus(t,seatId)
         || localPlans.hasPendingFossilArrival(state)
         || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
       return state;
@@ -838,12 +844,12 @@
       const state = s.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
       if ((t.roundNumber !== 4 && !(computer&&(quietFirstTurnData(state)||isUnrevealedRoundThree(state)||quietR3RevealedData(state))) && !(blue&&quietR3BluePickSource(state,owner)))
         || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
-        || owner.passCompletionPending || t.cardTurnEventBonuses?.length || localPlans.hasPendingFossilArrival(state)
+        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!residualSession.hasOnlyAomomoScanScoreBonus(t,seatId) || localPlans.hasPendingFossilArrival(state)
         || computer&&data.listComputerPlacedTokens(owner).length!==3
         || blue&&(!owner.mainActionCompleted||data.getBlueBonusPlacementReward(owner, 2)?.type!=="choose_card"
           ||!state.cards.publicCards.some(Boolean))) return null;
-      const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
-        reservedCards:structuredClone(owner.reservedCards)};
+      const player = {...owner, resources:{...owner.resources}, dataState:copyForkData(owner.dataState),
+        reservedCards:copyForkData(owner.reservedCards)};
       const placed = data.placeDataToComputer(player, blue?{target:"blueBonus",blueSlot:2}:undefined);
       const placementKind=computer?"computer":"blueBonus",bonus=computer?"income":"choose_card";
       if(!placed.ok||placed.placementKind!==placementKind||(computer?placed.placementSlot!==4:placed.blueSlot!==2)
@@ -903,12 +909,12 @@
       const state=s.workingState,t=state.turn,p=state.players.players.find(p=>p.id===seatId);
       const id=action.target?.cardInstanceId,ix=p.hand.findIndex(c=>c.id===id),card=p.hand[ix],known=knownCards(stored.envelope);
       if((t.roundNumber!==4&&!isUnrevealedRoundThree(state)&&!quietR3RevealedData(state))||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
-        ||t.cardTurnEventBonuses?.length||state.meta.stateVersion!==s.baseVersion||localPlans.hasPendingFossilArrival(state)
+        ||t.cardTurnEventBonuses?.length&&!residualSession.hasOnlyAomomoScanScoreBonus(t,seatId)||state.meta.stateVersion!==s.baseVersion||localPlans.hasPendingFossilArrival(state)
         ||!card||!known.has(id)||action.target.choiceId!==`income:${id}`
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
       const gain=cards.getIncomeGainForCard(card),keys=Object.keys(gain||{});
       if(keys.length!==1||!["credits","energy","publicity"].includes(keys[0])||gain[keys[0]]!==1)return null;
-      const player={...p,hand:[...p.hand],income:{...p.income},resources:{...p.resources},reservedCards:structuredClone(p.reservedCards)};
+      const player={...p,hand:[...p.hand],income:{...p.income},resources:{...p.resources},reservedCards:copyForkData(p.reservedCards)};
       if(cardEffects.collectMatchingTriggers(player,{type:"place_data_income",playerId:seatId,cardInstanceId:id}).length)return null;
       const deck={...state.cards,removedFromGameCardIds:[...state.cards.removedFromGameCardIds],drawPileCardIds:[...state.cards.drawPileCardIds]};
       const result=cards.discardFromHandAtIndex(player,ix);
@@ -931,13 +937,13 @@
         || session.journal?.actions?.[0]?.action?.family !== "place_data") return null;
       const state = session.workingState, t = state.turn, owner = state.players.players.find(p => p.id === seatId);
       if ((t.roundNumber !== 4 && !(computer&&quietFirstTurnData(state)) && !isUnrevealedRoundThree(state) && !quietR3RevealedData(state) && !quietR3AmibaPostMain(state,owner) && !quietEarlySameSeatHandover(state)) || t.currentPlayerId !== seatId || t.gameEnded || t.passedPlayerIds.includes(seatId)
-        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)
+        || owner.passCompletionPending || t.cardTurnEventBonuses?.length&&!quietSignalBonusesOnly(state)&&!residualSession.hasOnlyAomomoScanScoreBonus(t,seatId)
         || localPlans.hasPendingFossilArrival(state)
         || owner.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
         || owner.resources.availableData !== owner.dataState.poolTokens.length
         || state.meta.stateVersion !== session.baseVersion) return null;
-      const player = {...owner, resources:{...owner.resources}, dataState:structuredClone(owner.dataState),
-        reservedCards:structuredClone(owner.reservedCards), scoreSources:{...owner.scoreSources}};
+      const player = {...owner, resources:{...owner.resources}, dataState:copyForkData(owner.dataState),
+        reservedCards:copyForkData(owner.reservedCards), scoreSources:{...owner.scoreSources}};
       const placement = data.placeDataToComputer(player, blueSlot ? {target:"blueBonus", blueSlot} : undefined);
       const placementKind = computer ? "computer" : "blueBonus";
       if (!placement.ok || placement.placementKind !== placementKind || blueSlot&&placement.blueSlot!==blueSlot) return null;
@@ -1378,9 +1384,10 @@
         &&extra.payload?.cardEffect?.id==="b9-any-sector-scan"&&last.type===types.SCAN_FINALIZE;
       // The DLC13 marker stays in the original queue and settles natively,
       // after the scan's real Purple 4 decision and public refill.
+      const aomomoScan=source==="play_card"&&s.queue.length===3&&residualSession.hasOnlyAomomoScanScoreBonus(s.workingState.turn,seatId);
       const markerTail=s.queue.length===4&&!mercury&&knownPublicScanMarkerTail(extra,actionSource,known);
       if(source==="scan"&&!repeatOnly&&s.queue.length!==(mercury?4:3)
-        ||source==="play_card"&&!b9&&!markerTail||source!=="scan"&&source!=="play_card")return null;
+        ||source==="play_card"&&!b9&&!markerTail&&!aomomoScan||source!=="scan"&&source!=="play_card")return null;
       const root=s.workingState,t=root.turn,p=root.players.players.find(q=>q.id===seatId);
       // With only root-visible Amiba and no pending species reveal, this
       // prefix still stops at the native Purple 4 menu, before sector settlement.
@@ -1391,16 +1398,16 @@
       if(repeatOnly&&(!quietAmiba||finalize.kind!=="effect"||Object.keys(finalize.payload).length
         ||action.target?.done||opts.selected+1>=opts.max))return null;
       if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
-        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||t.cardTurnEventBonuses?.length&&!aomomoScan||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)&&!knownStationaryCargoForScan(root))
         ||p.reservedCards.some(c=>!known.has(c.id)))return null;
       const done=action.target?.done===true;
       const offered=root.cards.publicCards[action.target?.publicSlotIndex];
       if(done?action.target.choiceId!=="public:done":!offered||!known.has(offered.id)||offered.id!==action.target.cardInstanceId
         ||action.target.choiceId!==`public:${offered.id}:${action.target.nebulaId}`||action.payload.gainData!==true)return null;
-      const player={...p,resources:{...p.resources},dataState:structuredClone(p.dataState),scoreSources:{...p.scoreSources},
-        reservedCards:structuredClone(p.reservedCards)};
-      const state={...root,meta:{...root.meta,sequences:{...root.meta.sequences}},data:structuredClone(root.data),
+      const player={...p,resources:{...p.resources},dataState:copyForkData(p.dataState),scoreSources:{...p.scoreSources},
+        reservedCards:copyForkData(p.reservedCards)};
+      const state={...root,...(aomomoScan?{turn:{...t,cardTurnEventBonuses:copyForkData(t.cardTurnEventBonuses)}}:{}),meta:{...root.meta,sequences:{...root.meta.sequences}},data:copyForkData(root.data),
         match:{...root.match,cardPlayContext:{...root.match.cardPlayContext}},cards:{...root.cards,publicCards:[...root.cards.publicCards],discardPile:[...root.cards.discardPile]},
         players:{...root.players,players:root.players.players.map(q=>q===p?player:q)}};
       let repeat=null,events,history=[];
@@ -1413,6 +1420,11 @@
         events=result.events||[];
         history=[{type:"science_scan",nebulaId:id}];
         repeat=scienceSession.consumePublicScanCard(state,player,action,opts);
+      }
+      if(aomomoScan){
+        const adjusted=residualSession.augmentEffectResult(state,{ok:true,events},head);
+        if(adjusted.spawnedEffects.length||adjusted.events.length!==events.length)return null;
+        events=adjusted.events;
       }
       if(repeatOnly&&!repeat||events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
       const offset=Number(Boolean(repeat)),revision=s.revision+1;
@@ -1450,7 +1462,8 @@
         ||!finalize||finalize.type!==types.SCAN_FINALIZE
         ||s.queue.some(e=>e.ownerId!==seatId||e.allowQuickActions))return null;
       const source=s.journal.actions[0]?.action?.family;
-      if(source==="scan"&&s.queue.length!==(mercury?3:2)||source==="play_card"&&(s.queue.length!==4||extra?.type!==types.SCAN_STEP
+      const aomomoScan=source==="play_card"&&s.queue.length===2&&residualSession.hasOnlyAomomoScanScoreBonus(s.workingState.turn,seatId);
+      if(source==="scan"&&s.queue.length!==(mercury?3:2)||source==="play_card"&&!aomomoScan&&(s.queue.length!==4||extra?.type!==types.SCAN_STEP
         ||extra.kind!=="effect"||last.type!==types.SCAN_FINALIZE||extra.payload?.cardEffect?.id!=="b9-any-sector-scan"
         ||extra.payload?.options?.mode!=="any"||extra.payload.options.sameSectorRemaining!==1)
         ||source!=="scan"&&source!=="play_card")return null;
@@ -1463,7 +1476,7 @@
       const inTransit=!mercury&&Object.values(jobs).some(job=>!job.delivered);
       const stationaryCargo=!mercury&&inTransit&&knownStationaryCargoForScan(state);
       if((t.roundNumber!==4&&!(source==="scan"&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
-        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||t.cardTurnEventBonuses?.length&&!aomomoScan||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(state):inTransit&&!stationaryCargo)
         ||p.reservedCards.some(c=>!known.has(c.id))
         ||moving&&(!ship||ship.playerId!==seatId||(ship.kind||"standard")!=="standard"
@@ -1520,7 +1533,7 @@
       }
       if(!refillQuietScan4(next,missing))return null;
       const events=[...actionEvents,{type:"publicRefill",count:missing}];
-      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length))return null;
+      if(events.some(e=>cardEffects.collectMatchingTriggers(player,e).length||aomomoScan&&e.type==="signalMarked"))return null;
       const eid=n=>s.sessionId+":effect:"+(s.nextEffectSequence+n);
       const gid=n=>s.sessionId+":group:"+(s.nextGroupSequence+n);
       const barrier={effectId:eid(2),revision:s.revision+4,code:"hidden_card_reveal",reason:"公共牌补牌翻出新牌"};
@@ -1708,7 +1721,39 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices}}}}};
     }
 
+    function previewQuietAomomoCard(node,stored,action){
+      const s=stored.envelope.session?.session,head=s?.queue[0],tail=s?.queue[1],source=action.target?.source;
+      if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
+        ||!["display","blind","cancel"].includes(source)||stored.informationBarrier&&stored.informationBarrier.code!=="hidden_card_reveal"
+        ||s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.irreversibleBarrier&&s.irreversibleBarrier.code!=="hidden_card_reveal"||s.undoFrames.length
+        ||head?.type!=="residual_alien_card_decision"||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
+        ||head.payload.speciesId!=="aomomo"||head.payload.source!=="trace_reward"||s.queue.length>2
+        ||tail&&(tail.type!==scienceSession.EFFECT_TYPES.PUBLIC_REFILL||tail.kind!=="effect"||tail.ownerId!==seatId
+          ||tail.allowQuickActions||Object.keys(tail.payload).length))return null;
+      const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId),deck=state.aliens.aomomo;
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length&&!residualSession.hasOnlyAomomoScanScoreBonus(t,seatId)||t.passedPlayerIds.includes(seatId)||!knownRootAlienIds.has("奥陌陌")
+        ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))||localPlans.hasPendingFossilArrival(state)
+        ||!deck?.revealInitialized)return null;
+      const player={...p,resources:{...p.resources},hand:[...p.hand],reservedCards:structuredClone(p.reservedCards)};
+      const next={...state,meta:{...quietSavedMeta(state.meta,s.baseVersion+1),sequences:{...state.meta.sequences}},
+        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)},
+        aliens:{...state.aliens,aomomo:{...deck,cardDeck:[...deck.cardDeck]}}};
+      let random=false;
+      const result=residualSession.resolveAlienCardSelection(next,head,action,()=>{random=true;return 0;});
+      const expected=source!=="cancel";
+      if(!result.ok||random||(result.irreversible?.code==="hidden_alien_card")!==expected
+        ||(result.events?.length||0)!==Number(expected))return null;
+      const augmented=residualSession.augmentEffectResult(next,result,head);
+      if((augmented.spawnedEffects?.length||0)||(augmented.events?.length||0)!==Number(expected))return null;
+      const barrier=expected?{effectId:head.effectId,revision:s.revision+1,...result.irreversible}:s.irreversibleBarrier||null;
+      return tail?prepareQuietPublicRefill(stored,s,next,1,0,2)
+        :{envelope:provedCommittedEnvelope(stored,next),inspection:{phase:"idle",session:null},barrier};
+    }
+
     function previewQuietAlienDisplay(node,stored,action){
+      if(stored.envelope.session?.session?.queue[0]?.payload?.speciesId==="aomomo")
+        return previewQuietAomomoCard(node,stored,action);
       if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
         ||action.target?.source!=="display")return null;
       const s=stored.envelope.session?.session,head=s?.queue[0],species=head?.payload?.speciesId;
@@ -1820,9 +1865,9 @@
         inspection:{phase:"awaiting_input",session:{irreversibleBarrier:barrier,decision:{choices:preview.choices}}}};
     }
 
-    function prepareQuietPublicRefill(stored,session,state,refillIndex=1,extraEffects=0){
+    function prepareQuietPublicRefill(stored,session,state,refillIndex=1,extraEffects=0,maxMissing=1){
       const missing=state.cards.publicCards.filter(c=>!c).length;
-      if(missing!==1)return null;
+      if(missing<1||missing>maxMissing)return null;
       const refill=session.queue[refillIndex];
       state.cards={...state.cards,publicCards:[...state.cards.publicCards],drawPileCardIds:[...state.cards.drawPileCardIds]};
       // The cached native refill declines reshuffles. The card drawn into the
@@ -1968,7 +2013,9 @@
       const taskSession=stored.envelope.session?.session;
       const pairedTrace=taskSession&&pairedTracePickupScope(taskSession.workingState,taskSession);
       const pinkTraceCards=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession
-        &&requested.family==="choose_target"&&(requested.target?.traceType==="pink"||pairedTrace&&requested.target?.traceType)
+        &&requested.family==="choose_target"&&(requested.target?.traceType==="pink"||pairedTrace&&requested.target?.traceType
+          ||requested.target?.traceType==="blue"&&taskSession.journal.actions[0]?.action?.family==="analyze"
+          ||requested.target?.traceType==="yellow"&&taskSession.queue[0]?.payload?.cardEffect?.id==="b32-yellow-trace")
         &&knownCards(stored.envelope);
       const species=pinkTraceCards&&requested.target?.speciesId;
       const knownDisplay=species&&(species==="chong"?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex);
@@ -1998,7 +2045,7 @@
       }
       const pinkBeforeRefill=pinkTraceCards&&!pairedTrace?localPlans.previewPinkTraceBeforeRefill(taskSession,requested,pinkTraceCards):null;
       const pinkRefill=pinkBeforeRefill&&prepareQuietPublicRefill(stored,taskSession,pinkBeforeRefill.state,
-        1,Number(pinkBeforeRefill.regionSettled));
+        1,Number(pinkBeforeRefill.regionSettled),2);
       if(pinkRefill){
         restoreEnvelope(pinkRefill.envelope,true);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
@@ -2055,7 +2102,7 @@
       }
       const markSource=resourcePlanning&&node.status==="stable"&&!stored.resourceControl&&requested.family==="end_turn"
         ?readIdentityState(stored.envelope):null;
-      const quietMark=markSource?.turn.roundNumber===3&&quietEarlySameSeatHandover(markSource)
+      const quietMark=markSource&&(quietFinalRoundMark(markSource)||markSource.turn.roundNumber===3&&quietEarlySameSeatHandover(markSource))
         &&localPlans.quietSingleEndMark(markSource,seatId);
       const markMenu=quietMark&&makeQuietEndMark(stored,requested,markSource);
       if(markMenu){
@@ -2067,7 +2114,7 @@
       const markCommit=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&requested.family==="choose_target"
         &&taskSession?.queue[0]?.type==="residual_final_mark"&&taskSession.phase==="awaiting_input"
         &&!taskSession.failure&&!taskSession.interruptContext&&!taskSession.irreversibleBarrier&&!taskSession.undoFrames.length
-        &&markState.turn.roundNumber===3&&quietEarlySameSeatHandover(markState)&&quietEndMarkTail(taskSession.queue,markState)
+        &&(quietFinalRoundMark(markState)||markState.turn.roundNumber===3&&quietEarlySameSeatHandover(markState))&&quietEndMarkTail(taskSession.queue,markState)
         ?localPlans.previewSingleEndMarkCommit({state:markState,seatId,tileId:requested.target.tileId,
           action:taskSession.journal.actions[0]?.action,knownCards:knownCards(stored.envelope)}):null;
       if(markCommit){
@@ -9511,6 +9558,63 @@
       return card?{cardId:card.id,computerPlacements:6-occupied.length,dataAvailable:p.resources.availableData}:null;
     }
 
+    // The default last-round evaluator has no future income or tech value.
+    // Use its same Native final score and existing probe portfolio on these
+    // completed leaves. Do not bypass an earned but unsettled scoring mark.
+    function quietFinalValue(node){
+      if(!knownRootAlienIds.has("奥陌陌")||!knownRootAlienIds.has("阿米巴")
+        ||!["turn-boundary","other-owner","information-barrier"].includes(node.status))return null;
+      const stored=nodes.get(node);
+      if(!stored?.envelope||stored.envelope.session||stored.informationBarrier
+        &&!["hidden_card_reveal","hidden_alien_card","tech_bonus_reveal"].includes(stored.informationBarrier.code))return null;
+      const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==4||t.gameEnded||!p||p.passCompletionPending||t.passedPlayerIds.includes(seatId)
+        ||(state.passingPlayerIds||t.passedPlayerIds).includes(seatId)||state.match.initialSetup
+        ||p.resources.handSize!==p.hand.length||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
+        ||Object.values(state.aliens.aliens).some(s=>s.revealed&&!knownRootAlienIds.has(s.alienId)))return null;
+      const board=state.finalScoring,tiles=Object.values(board.tiles||{});
+      if(!Number.isSafeInteger(p.resources.score)||!Array.isArray(board.thresholds)||!tiles.length
+        ||!["a","b","c","d"].every(id=>board.tiles[id]?.id===id&&Array.isArray(board.tiles[id].marks))
+        ||!board.tileVariants
+        ||!board.thresholds.every(n=>Number.isSafeInteger(n)&&(n>p.resources.score||tiles.some(tile=>
+          tile.marks?.some(m=>m.playerId===seatId&&Number(m.threshold)===n)))))return null;
+      const probe=state.pieces.rockets.some(r=>r.surface==="solar-board"&&(r.kind||"standard")==="standard"&&r.fossilId==null&&r.playerId===seatId);
+      const ready=probe&&readPlanningState(stored);
+      const mission=probe?resourceDemand.planningCapital(ready,ready.players.players.find(q=>q.id===seatId)):0;
+      const wallet=p.resources,parts=[wallet.credits,wallet.energy,wallet.publicity/2,wallet.availableData/2,wallet.additionalPublicScan/2,p.hand.length];
+      if(!parts.every(n=>Number.isSafeInteger(n*2)))return null;
+      const finalScore=endScoring.computePlayerFinalScore({...state,finalScoring:{...board,tiles:{...board.tiles},tileVariants:{...board.tileVariants}},
+        players:state.players.players,currentPlayer:p,cardEffects,
+        getCardTypeCode:c=>cardEffects.getRuntimeCardTypeCode(c,cardEffects.getCardModel(c)?.cardType)},p).totalScore;
+      return {value:stateValue.sumValueParts([finalScore,...parts,mission]),unrealizedPurposeValue:mission,purposePreparationDebt:0};
+    }
+
+    function finalDataSalarySource(){
+      const stored=nodes.get(openedRoot);
+      if(!stored?.envelope||rootObservation?.publicState.roundNumber!==3)return null;
+      const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||!p.income.availableData||p.mainActionCompleted||p.passCompletionPending
+        ||p.resources.credits||p.resources.energy||p.resources.availableData<players.RESOURCE_LIMITS.availableData-2
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
+        ||openedRoot.legalActions.some(a=>a.phase==="main"&&!["pass","analyze"].includes(a.family)))return null;
+      const claims=p.reservedCards.flatMap(c=>{
+        if(!knownRootCardIds.has(c.id))return [];
+        const rule=endScoring.resolveCardEndGameRule(c,cardEffects);
+        return rule?.kind==="remainingResource"&&rule.resource==="availableData"&&rule.scorePer>0?[{id:c.id,multiplier:rule.scorePer}]:[];
+      });
+      return claims.length===1?claims[0]:null;
+    }
+    function finalDataSalaryQuote(node,source){
+      if(node.status!=="turn-boundary"&&!(node.status==="information-barrier"
+        &&["hidden_pass_reserve_offer","alien_reveal_turn_end"].includes(node.boundary)))return null;
+      const stored=nodes.get(node),state=readIdentityState(stored.envelope),p=state.players.players.find(q=>q.id===seatId);
+      if(!p?.reservedCards.some(c=>c.id===source.id)||state.turn.roundNumber!==3)return null;
+      const score=p.resources.score,pool=p.resources.availableData,income=p.income.availableData;
+      if(![score,pool,income].every(Number.isSafeInteger)||pool<0||pool>players.RESOURCE_LIMITS.availableData||income<=0)return null;
+      const keep=Math.min(income,players.RESOURCE_LIMITS.availableData-pool);
+      return {score,keep,overflow:income-keep,gain:source.multiplier*keep-(income-keep)*stateValue.DEFAULT_WEIGHTS.availableData};
+    }
     function valueObservation(node) {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(stored.incomeProofBase||stored.turnTailBase)throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");
@@ -9551,7 +9655,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

@@ -682,7 +682,8 @@
     const target = choice?.target, slot = aliens.getAlienSlot(root.aliens, target?.alienSlotId);
     if (choice?.family !== "choose_target" || target?.kind !== "planet-reward-alien-trace"
       || target.traceType !== traceType || target.fangzhouUnlock || !slot?.revealed
-      || !["阿米巴", "虫"].includes(slot.alienId)) return false;
+      || (!["阿米巴", "虫"].includes(slot.alienId)
+        &&!(root.turn.roundNumber===4&&slot.alienId==="奥陌陌"))) return false;
     if (target.stateExtra) return Boolean(slot.traces?.[traceType]?.firstPlaced);
     const species = aliens.getSpeciesTraceApi(slot);
     return target.speciesId === species?.speciesId

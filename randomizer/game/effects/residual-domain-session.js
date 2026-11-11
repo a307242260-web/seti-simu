@@ -1727,16 +1727,33 @@
     };
   }
 
+  // This printed bonus can only react to a signal. A data placement,
+  // alien trace or ordinary handover cannot pay it; scans still use the
+  // Production event dispatcher.
+  function hasOnlyAomomoScanScoreBonus(turn, ownerId) {
+    const bonuses=turn.cardTurnEventBonuses;
+    return turn.roundNumber===4&&bonuses?.length===1&&bonuses.every(b=>
+      b.id==="aomomo9-aomomo-signal-score"&&b.eventType==="signalMarked"&&b.duration==="flow"
+      &&b.ownerId===ownerId&&b.playerId===ownerId&&!b.publicityToMoveFollowup&&!b.movementModifiers
+      &&b.rewards?.length===1&&b.rewards[0].type==="gain_resources"
+      &&Object.keys(b.rewards[0].options?.gain||{}).length===1&&b.rewards[0].options.gain.score===2);
+  }
+
   function previewPlainPinkTrace(session, selected, knownCards, allowRegion=false, allowCard=false, paired=false) {
     const source=session.workingState,head=session.queue[0],turn=source.turn;
-    const owner=actor(source,head?.ownerId),traceType=paired?selected.target.traceType:"pink";
+    const b32=head?.payload?.cardEffect?.id==="b32-yellow-trace"
+      &&head.payload.cardEffect.options?.targetRule==="playerHasSameTrace"
+      &&head.payload.cardEffect.options?.allowedTraceTypes?.length===1
+      &&head.payload.cardEffect.options.allowedTraceTypes[0]==="yellow"
+      &&head.payload.cardEffect.options?.repeat===1&&Object.keys(head.payload.cardEffect.options).length===3;
+    const owner=actor(source,head?.ownerId),traceType=b32?"yellow":paired?selected.target.traceType:session.journal.actions[0]?.action?.family==="analyze"?"blue":"pink";
     if(session.phase!=="awaiting_input"||session.failure
       ||session.interruptContext||session.undoFrames.length||source.meta.stateVersion!==session.baseVersion
       ||head?.type!==science.EFFECT_TYPES.ALIEN_TRACE||head.kind!=="decision"||head.allowQuickActions
-      ||head.payload?.traceType!==(paired?null:"pink")||Object.keys(head.payload).length!==(paired?2:1)
+      ||!b32&&(head.payload?.traceType!==(paired?null:traceType)||Object.keys(head.payload).length!==(paired?2:1))
       ||selected?.actorId!==head.ownerId||turn.roundNumber!==(paired?3:4)||turn.gameEnded
       ||turn.currentPlayerId!==head.ownerId||!owner?.mainActionCompleted||owner.passCompletionPending
-      ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length
+      ||turn.passedPlayerIds.includes(owner.id)||turn.cardTurnEventBonuses?.length&&!hasOnlyAomomoScanScoreBonus(turn,head.ownerId)
       ||owner.reservedCards.some(c=>!knownCards.has(c.id))
       ||!science.isPlainPinkTrace(source,selected,allowRegion,allowCard,traceType))return null;
     const player={...owner,resources:{...owner.resources},scoreSources:{...owner.scoreSources},reservedCards:copyForkData(owner.reservedCards)};
@@ -1753,7 +1770,7 @@
   }
 
   function previewLastPlainPinkTrace(session, selected, knownCards) {
-    if(session.queue.length!==1||session.journal.actions[0]?.action?.family!=="land")return null;
+    if(session.queue.length!==1||(!["land","analyze"].includes(session.journal.actions[0]?.action?.family)&&session.queue[0]?.payload?.cardEffect?.id!=="b32-yellow-trace"))return null;
     const trace=previewPlainPinkTrace(session,selected,knownCards,true);
     if(!trace)return null;
     trace.state.meta.stateVersion=session.baseVersion+1;
@@ -1783,7 +1800,8 @@
 
   function previewPinkTraceBeforeRefill(session, selected, knownCards) {
     const [head,refill]=session.queue;
-    if(session.queue.length!==2||session.journal.actions[0]?.action?.family!=="scan"
+    if(session.queue.length!==2||(session.journal.actions[0]?.action?.family!=="scan"&&!(session.journal.actions[0]?.action?.family==="play_card"
+        &&hasOnlyAomomoScanScoreBonus(session.workingState.turn,head.ownerId)))
       ||refill.type!==science.EFFECT_TYPES.PUBLIC_REFILL||refill.kind!=="effect"
       ||refill.ownerId!==head.ownerId||refill.allowQuickActions||Object.keys(refill.payload).length)return null;
     return previewPlainPinkTrace(session,selected,knownCards,true);
@@ -2147,7 +2165,7 @@
     const owner=actor(root,ownerId),turn=root.turn;
     if (!owner || turn.activePlayerCount!==4 || turn.currentPlayerId!==ownerId || !owner.mainActionCompleted
       || owner.passCompletionPending || turn.gameEnded || turn.passedPlayerIds.includes(ownerId)
-      || turn.cardTurnEventBonuses?.length
+      || turn.cardTurnEventBonuses?.length&&!hasOnlyAomomoScanScoreBonus(turn,ownerId)
       || (stationaryCargo ? listFossilArrivalEvents(root).length>0
         : Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
       || [1,2].some(id=>{
@@ -2158,7 +2176,14 @@
     // The fork copier preserves plain Native data and falls back to the
     // platform clone for any unsupported input.
     const player={...owner,reservedCards:copyForkData(owner.reservedCards)};
-    const state={...root,turn:{...turn},aliens:copyForkData(root.aliens),finalScoring:copyForkData(root.finalScoring),
+    const sourceBoard=root.finalScoring;
+    const reuse=hasOnlyAomomoScanScoreBonus(turn,ownerId)
+      &&Array.isArray(sourceBoard.thresholds)&&["a","b","c","d"].every(id=>Array.isArray(sourceBoard.tiles?.[id]?.marks))
+      &&sourceBoard.tileVariants;
+    // This preview has already ruled out a reveal and a neutral milestone.
+    // Final-board normalization writes only its own variant map on this shape.
+    const board=reuse?{...sourceBoard,tiles:{...sourceBoard.tiles},tileVariants:{...sourceBoard.tileVariants}}:copyForkData(sourceBoard);
+    const state={...root,turn:{...turn},aliens:reuse?root.aliens:copyForkData(root.aliens),finalScoring:board,
       players:{...root.players,players:root.players.players.map(p=>p===owner?player:p)}};
     if (cardEffects.collectMatchingTriggers(player,{type:"end_turn_handoffs_started",playerId:ownerId}).length) return null;
     const data={roundNumber:turn.roundNumber,turnNumber:turn.turnNumber,didPass:false};
@@ -2639,6 +2664,7 @@
     resolveAlienCardSelection,
     previewQuietAmibaRegion,
     previewQuietEndHandoffs,
+    hasOnlyAomomoScanScoreBonus,
     previewLastPlainPinkTrace,
     previewPinkTraceCardMenu:(session,selected,knownCards,paired=false)=>previewPlainPinkTrace(session,selected,knownCards,true,true,paired),
     alienCardChoices,

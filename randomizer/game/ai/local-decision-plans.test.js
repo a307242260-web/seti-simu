@@ -301,3 +301,37 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  p.resources.additionalPublicScan=0;
  assert(plans.scanGoals({state:s,seatId,actions,session}).every(g=>!g.publicBluePair));
 }
+
+// A real salary overflow makes delaying PASS worthwhile. The known
+// replenishment is the same with a different, still hidden alien deck.
+{
+ const fixture=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,
+   'fixtures/data-salary-board11-20261112-v1.json.gz'))));
+ const seatId='player-white';
+ const choose=envelope=>{
+  const seed=JSON.parse(envelope.committedState).meta.seed;
+  const game=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{valueOnly:v?.valueOnly===true})});
+  game.newGame({seed});const c=game.composition;
+  try{
+   assert(c.lifecycle.restore(envelope).ok);
+   const legal=actions(c),port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+   const search=agent.createSearchAgent({seatId,analysisPort:port}).decide({seatId,legalActions:legal}).search;
+   assert.deepEqual(c.lifecycle.save().envelope,envelope);
+   assert(search.complete&&!search.unresolved.length&&search.diagnostics.nativeExecutions<=256);
+   return {search,legal};
+  }finally{c.dispose();}
+ };
+ const {search,legal}=choose(fixture.beforePass);
+ assert.equal(search.value,93);
+ assert.equal(search.roots.find(x=>x.actionId===search.actionId).goal.kind,'analyze');
+ assert.equal(search.roots.find(x=>x.actionId===legal.find(a=>a.family==='pass').actionId).value,92);
+ const alternate=JSON.parse(fixture.beforePass.committedState),deck=alternate.aliens.aomomo.initialConfiguration.cardDeck;
+ [deck[0],deck[3]]=[deck[3],deck[0]];
+ const hidden=choose({...fixture.beforePass,committedState:JSON.stringify(alternate)}).search;
+ assert.deepEqual([hidden.actionId,hidden.roots,hidden.lines],[search.actionId,search.roots,search.lines]);
+ const fourth=choose(fixture.heavyFourth);
+ assert.equal(fourth.legal.find(a=>a.actionId===fourth.search.actionId).family,'place_data');
+ assert.equal(fourth.search.value,114.5);
+ assert(fourth.search.analysis.observationCount<30,'settled final-round branches should reuse the formal score ledger');
+}
