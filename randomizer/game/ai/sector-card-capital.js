@@ -2,9 +2,10 @@
  'use strict';const common=typeof module==='object'&&module.exports;
  const api=factory(common?require('../cards/effects'):root.SetiCardEffects,common?require('../data'):root.SetiData,
   common?require('../effects/science-session'):root.SetiScienceSession,common?require('../players'):root.SetiPlayers,
-  common?require('../aliens/state'):root.SetiAlienState,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic);
+  common?require('../aliens/state'):root.SetiAlienState,common?require('./probe-capital'):root.SetiProbeCapital,common?require('./value-arithmetic'):root.SetiValueArithmetic,
+  common?require('../state/state-store').copyForkData:root.SetiStateStore.copyForkData);
  if(common)module.exports=api;else root.SetiSectorCardCapital=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(effects,data,science,players,aliens,probe,arithmetic){
+})(typeof globalThis!=='undefined'?globalThis:window,function(effects,data,science,players,aliens,probe,arithmetic,copyForkData){
  'use strict';
  const zero=reason=>({value:0,selected:null,reason}),models=new WeakMap();
  function supported(card){
@@ -26,7 +27,7 @@
    const cost=effects.getCardPlayCost(card);if(Object.keys(cost).some(k=>!['credits','energy'].includes(k)||!Number.isSafeInteger(cost[k])||cost[k]<0))continue;
    const payment=probe.funding(facts.player,cost,weights);if(!payment)continue;
    const wallet={...facts.player,credits:facts.player.credits-payment.spend.credits,energy:facts.player.energy-payment.spend.energy,handSize:facts.hand.length+facts.extraUnknownCount-1},actor={id:wallet.id,color:wallet.color,resources:wallet,techState:wallet.techState};
-   const signals=structuredClone(facts.board.data),root={data:signals,solarSystem:facts.board.solarSystem,players:{players:[actor]}};
+   const signals=copyForkData(facts.board.data),root={data:signals,solarSystem:facts.board.solarSystem,players:{players:[actor]}};
    if(data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(signals,id)))continue;
    const targets=science.listScanStepChoices(root,actor,{mode:'conditional',...supported(card)}).map(a=>a.target.nebulaId);
    if(targets.length>8||new Set(targets).size!==targets.length)throw Error('SECTOR_CARD_TARGETS_INVALID');
@@ -40,7 +41,7 @@
    // Signal counts/rank only: no entity allocation, sector reset, native node
    // or successor observation. Spent old tokens remain unavailable to later
    // missions; no refill or sector reset is invented in this count ledger.
-   const traceSlots=structuredClone(facts.board.aliens.slots);let safe=true;
+   const traceSlots=copyForkData(facts.board.aliens.slots);let safe=true;
    for(const id of data.NEBULA_IDS){
     if(!data.isSectorReadyToSettle(signals,id))continue;
     const participants=data.getSectorRanking(signals,id),settlement={ok:true,sectorId:id,participants,winner:participants[0],settlementNumber:(signals.sectorSettlements?.sectors?.[id]?.settlementCount||0)+1};

@@ -844,26 +844,6 @@
     });
   }
 
-  function getNebulaSectorX(root, nebulaId) {
-    const solarState = solar.normalizeSolarInput(getWorkingSlice(root, "solarSystem"));
-    const location = solar.getNebulaLocations(solarState.sectorBySlot)
-      .find((entry) => entry.id === nebulaId);
-    return location?.x == null ? null : solar.mod8(Number(location.x));
-  }
-
-  function countSignalsInSector(root, actor, sectorX) {
-    return Object.keys(cardEffects.NEBULA_IDS_BY_COLOR)
-      .flatMap((color) => cardEffects.NEBULA_IDS_BY_COLOR[color])
-      .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(sectorX))
-      .reduce((count, nebulaId) => count + (
-        data.listNebulaTokens(getWorkingSlice(root, "data"), nebulaId)
-          .filter((token) => (
-            token.replacedByPlayerId === actor.id
-            || token.replacedByPlayerColor === actor.color
-          )).length
-      ), 0);
-  }
-
   function scanStepChoices(root, actor, opts) {
     const choices = [];
     const mode = opts.mode || "specified";
@@ -907,15 +887,26 @@
       }
       if (Number(opts.maxTargets) > 1) choices.push(makeChoice("choose_target", "probe:done", { done: true }, {}, "结束探测器扫描"));
     } else if (mode === "conditional") {
-      const sectorXs = [...new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR)
-        .flat().map((nebulaId) => getNebulaSectorX(root, nebulaId)).filter((x) => x != null))];
+      const nebulaIds = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat();
+      const solarState = solar.normalizeSolarInput(getWorkingSlice(root, "solarSystem"));
+      const locations = solar.getNebulaLocations(solarState.sectorBySlot);
+      const position = new Map(), signalCounts = new Map();
+      const nebulaState = getWorkingSlice(root, "data");
+      // The same layout and tokens serve the condition and final menu.
+      // Keep the existing nebula order and first-match position semantics.
+      for (const id of nebulaIds) {
+        const x = locations.find(entry => entry.id === id)?.x;
+        if (x == null) continue;
+        const sector = solar.mod8(Number(x));
+        position.set(id, sector);
+        const ownSignals = data.listNebulaTokens(nebulaState, id).filter(token =>
+          token.replacedByPlayerId === actor.id || token.replacedByPlayerColor === actor.color).length;
+        signalCounts.set(sector, (signalCounts.get(sector) || 0) + ownSignals);
+      }
       const matching = cardEffects.getMatchingConditionalSectorXs(
-        opts.condition,
-        sectorXs,
-        (sectorX) => countSignalsInSector(root, actor, sectorX),
+        opts.condition, [...signalCounts.keys()], sectorX => signalCounts.get(solar.mod8(sectorX)) || 0,
       );
-      const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
-        .filter((nebulaId) => matching.includes(getNebulaSectorX(root, nebulaId)));
+      const ids = nebulaIds.filter(id => position.has(id) && matching.includes(position.get(id)));
       choices.push(...listNebulaChoices(root, { nebulaIds: ids, gainData: opts.gainData }));
     } else if (mode === "hand") {
       choices.push(...handScanChoices(root, actor.id));

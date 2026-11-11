@@ -1380,7 +1380,7 @@
       // With only root-visible Amiba and no pending species reveal, this
       // prefix still stops at the native Purple 4 menu, before sector settlement.
       const quietAmiba=source==="scan"&&quietR3AmibaPostMain(root,p);
-      const quietRoundThree=quietAmiba||source==="scan"&&(isUnrevealedRoundThree(root)||t.roundNumber===3&&quietEarlySameSeatHandover(root));
+      const quietRoundThree=quietAmiba||source==="scan"&&(isUnrevealedRoundThree(root)||quietEarlySameSeatHandover(root));
       // A repeat can be reused before the next public choice, but ending
       // a scan without the Purple 4 menu would also settle the sector.
       if(repeatOnly&&(!quietAmiba||finalize.kind!=="effect"||Object.keys(finalize.payload).length
@@ -1457,7 +1457,7 @@
       const jobs=state.aliens.chong?.transportTasksByRocketId||{};
       const inTransit=!mercury&&Object.values(jobs).some(job=>!job.delivered);
       const stationaryCargo=!mercury&&inTransit&&knownStationaryCargoForScan(state);
-      if((t.roundNumber!==4&&!(source==="scan"&&t.roundNumber===3&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+      if((t.roundNumber!==4&&!(source==="scan"&&quietEarlySameSeatHandover(state)))||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(state):inTransit&&!stationaryCargo)
         ||p.reservedCards.some(c=>!known.has(c.id))
