@@ -894,6 +894,101 @@
   }
   return quotes.sort((a,b)=>b.value-a.value||a.tracePosition-b.tracePosition)[0]||null;
  }
+ // Score one optional future scan and an already fundable free analysis
+ // after a proved current-turn data tail. The most that can be hidden is
+ // two market slots, so at most 16 public colour cases are considered. Each
+ // uses only legal token positions, without sector settlement or opponent
+ // moves. The ordinary catalog prior is a forecast, never a pruning bound
+ // or a plan to execute. Existing computer value and all payments are charged.
+ const scanCodePopulation=Array.from({length:4},(_,code)=>cards.CARD_CATALOG.filter(c=>!c.set.startsWith('alien:')&&c.scan_action_code===code).length);
+ const scanCodeProbes=scanCodePopulation.map((_,code)=>({id:'class-'+code,scanActionCode:code}));
+ function fundedScanAnalysisSource(state,seatId){
+  const p=owner(state,seatId),t=state.turn;
+  return t.roundNumber===3&&t.currentPlayerId===seatId&&p&&!p.mainActionCompleted&&!p.passCompletionPending
+   &&t.activePlayerIds.filter(id=>id!==seatId&&!t.passedPlayerIds.includes(id)).length<=1
+   &&industry.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
+   &&!p.reservedCards.length&&!state.pieces.rockets.some(r=>r.playerId===seatId)
+   &&!Object.values(state.aliens.aliens).some(s=>s.revealed)
+   &&p.resources.availableData<4-data.listComputerPlacedTokens(p).length
+   &&p.resources.additionalPublicScan>=1;
+ }
+ function quoteFundedScanAnalysis(state,seatId,plans,known){
+  const p=owner(state,seatId),turn=state.turn;
+  if(!p.mainActionCompleted||p.reservedCards.length||state.pieces.rockets.some(r=>r.playerId===seatId)
+   ||Object.values(state.aliens.aliens).some(s=>s.revealed)||turn.cardTurnEventBonuses?.length
+   ||!plans?.length||plans.length>2||plans[0].goal.kind!=='income')return null;
+  const withOwner=q=>({...state,players:{...state.players,players:state.players.players.map(x=>x===p?q:x)}});
+  const gain=cards.getIncomeGainForCard(p.hand.find(c=>c.id===plans[0].goal.incomeCardId));
+  if(!gain||!Object.keys(gain).every(k=>k==='credits'||k==='energy'))return null;
+  const income=demand.previewIncomeTail({state,seatId,goal:plans[0].goal});
+  if(!income.available||!known.has(plans[0].goal.incomeCardId))return null;
+  let q=income.player;
+  if(plans.length>1){
+   const {goal}=plans[1];if(goal.kind!=='blue-data'||plans[1].dataCornerId||plans[1].incomeCardId||plans[1].computerPlacements)return null;
+   const blue=previewBlueCompletion({state:withOwner(q),seatId,goal});
+   if(!blue.available||!blue.player)return null;q=blue.player;
+  }
+  if(q.hand.some(c=>!known.has(c.id))||data.listComputerPlacedTokens(q).map(t=>t.placementSlot).join(',')!=='1,2,3,4'
+   ||q.resources.availableData>1)return null;
+  const w=q.resources,cost=scanEffects.getStandardScanCost(q),W=stateValue.DEFAULT_WEIGHTS;
+  if(w.credits<cost.credits||w.energy<cost.energy)return null;
+  const f=probeCapital.factsFromState(withOwner(q),q),facts={...f,supply:state.tech,researchCost:tech.getResearchPublicityCost(q),analyzeEnergyCost:0};
+  const slots=state.cards.publicCards.map((c,i)=>state.cards.unknownPublicSlotIndices?.includes(i)||c&&!known.has(c.id)?'?':c?.scanActionCode??null);
+  if(!slots.includes('?')||slots.filter(x=>x==='?').length>2)return null;
+  const types=scanEffects.EFFECT_TYPES,queue=scanEffects.buildScanEffectQueue(q,{turn}),first=queue[0];
+  if(!first||queue.some(e=>![types.EARTH_SECTOR_SCAN,types.IMPROVED_SECTOR_SCAN,types.PUBLIC_CARD_SCAN,types.SCAN_ACTION_4].includes(e.type)))return null;
+  const earthSource=science.getPlanetScanSource(state,first.type);
+  if(!earthSource||facts.nextFinalMark&&w.score>=facts.nextFinalMark.threshold)return null;
+  const earth=science.listNebulaChoices(state,{...earthSource,gainData:true}).map(a=>a.target.nebulaId);
+  const byCode=scanCodeProbes.map(c=>science.listPublicScanChoices({...state,cards:{...state.cards,publicCards:[c]}}).map(a=>a.target.nebulaId));
+  const sector=Object.fromEntries(Object.keys(state.data.nebulae).map(id=>[id,data.listNebulaTokens(state.data,id)
+   .filter(t=>!t.replacedByPlayerId&&!t.replacedByPlayerColor).sort((a,b)=>a.slotIndex-b.slotIndex).map(t=>t.slotIndex)]));
+  const base=stateValue.purposeCapital(facts),memo=new Map(),list=[];
+  const weightKeys=Object.keys(W).filter(k=>k!=='handSize'),limit=Math.min(3,1+w.additionalPublicScan),count={};
+  function result(n,score,used){
+   if(!used||n+w.availableData<2)return 0;
+   const marks=Math.max(0,used-1),key=[n,score,marks].join(',');
+   if(memo.has(key))return memo.get(key);
+   const wallet={...facts.player,credits:w.credits-cost.credits,energy:w.energy-cost.energy,availableData:Math.min(players.RESOURCE_LIMITS.availableData,w.availableData+n),
+     score:w.score+score,additionalPublicScan:w.additionalPublicScan-marks};
+   const x=stateValue.purposeCapital({...facts,player:wallet,board:{...facts.board,publicCards:[]}});
+   const a=x.analysisPlan.selected,columns=Object.entries(q.techState.blueBoardSlots).filter(([id])=>q.techState.ownedTiles[id]&&!q.techState.disabledTiles[id]).map(([,slot])=>placement.getRequiredComputerSlotForBlueBonus(slot));
+   const tail=a?.blueSlot?placement.getRequiredComputerSlotForBlueBonus(a.blueSlot):0;
+   const maxScore=5+2*columns.filter(slot=>slot>=5||slot<=tail).length;
+   const capitalDelta=Math.min(x.total-base.total,x.analysisPotential-base.analysisPotential);
+   const value=a?.slotId&&x.analysisPlan.value>0&&wallet.score+maxScore<(facts.nextFinalMark?.threshold??Infinity)
+    ?Math.max(0,stateValue.sumValueParts([score,capitalDelta,...weightKeys.map(k=>(wallet[k]-facts.player[k])*W[k])],W)):0;
+   memo.set(key,value);return value;
+  }
+  function scenario(a,weight){
+   let best=0;
+   function add(id){
+    const j=count[id]||0,open=sector[id];
+    // This purpose never reaches settlement, which could reveal a species
+    // or insert a mandatory choice before analysis.
+    if(!open||j+1>=open.length)return null;
+    count[id]=j+1;return data.getNebulaSlotScoreReward(id,open[j]);
+   }
+   function visit(i,left,n,score){
+    if(i===a.length||!left){best=Math.max(best,result(n,score,limit-left));return;}
+    visit(i+1,left,n,score);
+    for(const id of byCode[a[i]]||[]){
+     const x=add(id);if(x===null)continue;
+     visit(i+1,left-1,n+1,score+x);count[id]--;
+    }
+   }
+   for(const id of earth){if(id===data.AOMOMO_NEBULA_ID)continue;const x=add(id);if(x===null)continue;visit(0,limit,1,x);count[id]--;}
+   list.push({a,weight,best});
+  }
+  function walk(a,i,weight){
+   if(i===slots.length){scenario(a,weight);return;}
+   if(slots[i]==='?')for(let k=0;k<4;k++)walk([...a,k],i+1,weight*scanCodePopulation[k]);
+   else walk([...a,slots[i]],i+1,weight);
+  }
+  walk([],0,1);
+  const total=list.reduce((n,c)=>n+c.weight,0),mean=list.reduce((n,c)=>n+c.weight*c.best,0)/total;
+  return mean>0?{value:stateValue.normalizeValue(mean,W),floor:Math.min(...list.map(c=>c.best)),max:Math.max(...list.map(c=>c.best)),classes:list.length,slots}:null;
+ }
  function scanTimingSource({state,seatId,knownCards,trade}){
   const p=owner(state,seatId),t=state.turn;
   if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.passCompletionPending||t.gameEnded
@@ -2477,5 +2572,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,quietSingleEndMark,previewSingleEndMarkCommit,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,previewPickupAnalysisForCargo,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,pinkScoreBeforeUnknownFossil,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,quietSingleEndMark,previewSingleEndMarkCommit,previewFinalPositiveTaskClaim,previewFinalPositiveEndTask,previewChongTransportQuick,previewQuietChongTraceSkip,previewLastPlainPinkTrace:residual.previewLastPlainPinkTrace,previewPinkTraceFossilMenu:residual.previewPinkTraceFossilMenu,previewPinkTraceBeforeRefill:residual.previewPinkTraceBeforeRefill,previewQuietAmibaYellowLanding:residual.previewQuietAmibaYellowLanding,previewEmptyAmibaResearchTrigger:residual.previewEmptyAmibaResearchTrigger,residualCardChoices:residual.cardDecisionChoices,augmentEffectResult:residual.augmentEffectResult,previewQuietResourceCorner:residual.previewQuietResourceCorner,previewChongTraceMenu,chongTaskFossilChoices,previewQuietChongEndPrelude,previewQuietQueuedChongTask,previewFinalEndPrelude,hasPendingFossilArrival:residual.hasPendingFossilArrival,finalEndTaskChoices,sectorPublicityReward,knownSectorPublicityTask,canDeferSectorPublicityTask,previewCappedSectorClaim,deferredSectorPublicityQuote,researchDataPurpose,quoteResearchDataPurpose,deferredComputerIncomeSource,quoteDeferredComputerIncome,researchScanPurpose,quoteResearchScanPurpose,quoteFundedSector,quoteFundedChongSector,previewMatchedAnalysisScan,matchedAnalysisScanSignature,quoteResearchIncomeScan,quoteReadyAnalysisFunding,fundedScanAnalysisSource,quoteFundedScanAnalysis,scanTimingSource,quoteScanTiming,amibaRegionFollowup,quoteAmibaRegionFollowup,preparedRegionPurpose,quotePreparedRegionAnalysis,previewAnalysisPreparation,previewReversedAnalysisPreparation,previewPickupAnalysisForCargo,quoteLateAnalysisIncome,quoteLatePublicDataPick,lateIncomePayment,preserveResearchInThreeCornerIncome,previewAnalysisSwapSupply,blueCashCard,knownBlueCashOffers,quoteBlueCashAnalysis,quoteAnalysisLaunchPick,quoteDeferredCargo,knownDeliveredCargo,previewKnownCargoClaim,scoredEndCorner,pinkScoreBeforeUnknownFossil,previewQuietPinkTrace,reorganization,incomeCompletion,blueCompletion,previewBlueCompletion,computerCompletion,previewComputerCompletion,deferredComputerPublicity,previewScoredAmibaDataCorner,computerThenScoredCurrency,dataTailCompletion,quietEndCompletion,scanDecision,scanGoals,scanStep,visibleAmibaDataCorner});
 });
