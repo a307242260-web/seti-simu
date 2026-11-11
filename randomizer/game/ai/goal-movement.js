@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiGoalMovement=api;
 })(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players,data){
   "use strict";
-  const VERSION='seti-goal-movement-policy-v5';
+  const VERSION='seti-goal-movement-policy-v6';
   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
@@ -224,6 +224,22 @@
           deferredGoal ||= {...candidate.goal,timing:'defer',movementTiming:timing};continue;
         }
         const path=candidate.path.slice(0,timing.bestPrefixLength);
+        // A speculative rotation cannot justify exhausting the fee of a
+        // funded landing at the probe's current planet after the main action.
+        if(!free&&!hasExpiringMovement&&state.turn.roundNumber===4&&ships.length===1
+          &&(ships[0].kind||'standard')==='standard'&&!ships[0].fossilId){
+          const current=goals.find(g=>!g.path.length&&g.goal.kind==='land'&&g.goal.endpointTarget?.type==='planet'
+            &&g.goal.endpointCost.energy>0&&players.canAfford(owner,g.goal.endpointCost));
+          if(current){
+            const cardsToMove=owner.hand.reduce((n,c)=>n+(!c.hidden?cards.getDiscardActionMoveRewardForCard(c)?.movementPoints||0:0),0);
+            const minEnergy=Math.max(0,path.reduce((n,s)=>n+s.requiredMovePoints,0)-cardsToMove);
+            if(minEnergy>owner.resources.energy-current.goal.endpointCost.energy){
+              if(objectiveOnly)return null;
+              return {...result(null,null,'reserve-funded-current-landing',routingNodes,goals.length),
+                deferredGoal:{...current.goal,timing:'defer'}};
+            }
+          }
+        }
         executable={...candidate,path,goal:{...candidate.goal,targetCoordinate:candidate.goal.coordinate,coordinate:path[path.length-1].to,
           timing:'advance-before-rotation',movementTiming:timing}};
       }

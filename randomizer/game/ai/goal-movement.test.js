@@ -186,3 +186,32 @@ assert.equal(results[0].actionId,results[1].actionId);assert.equal(results[0].va
  const restored=open(after);const cold=searchDecision({port:restored.port,root:restored.root,evaluate,modelKey:evaluate.modelKey,...agent.OPTIONS,budget:{transitions:4096,nodes:4097,frontier:4096,milliseconds:15000}});assert(cold.complete);assert.equal(warm.actionId,cold.actionId);assert.equal(warm.value,cold.value);assert.equal(warm.lines[0]?.distance??warm.reusedCoverage.distance,cold.lines[0].distance);restored.port.close();
 }
 comp.dispose();console.log(JSON.stringify({goalMovement:'passed',goal,routeSteps,searchInputs:results[0].diagnostics.transitions,policyExclusions:results[0].diagnostics.movementDirectionsExcluded,cacheAndRestore:true}));
+
+// A paid prefix cannot spend the remaining fee of the funded local landing.
+{
+ const fixture=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/funded-landing-after-b9-20261112-v1.json.gz'))));
+ const state=JSON.parse(fixture.committedState),seat='player-white',seed=state.meta.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+  projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
+ k.newGame({seed});
+ const c=k.composition;
+ try{
+  for(const [energy,reason] of [[2,'reserve-funded-current-landing'],[3,'selected-objective']]){
+   state.players.players.find(p=>p.id===seat).resources.energy=energy;
+   assert(c.lifecycle.restore({...fixture,committedState:JSON.stringify(state)}).ok);
+   const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+   try{
+    p.setMovementPlanning(true);
+    const root=p.openRoot(),policy=p.goalMovementSpec(root);
+    assert.equal(policy.reason,reason);
+    if(energy===2){
+     assert.equal(policy.deferredGoal.planetId,'saturn');
+     assert.equal(policy.deferredGoal.endpointCost.energy,1);
+     assert(!policy.selectedActionId);
+     assert(root.legalActions.some(a=>a.family==='end_turn'&&policy.retainedActionIds.includes(a.actionId)));
+    }else assert(root.legalActions.some(a=>a.actionId===policy.selectedActionId&&movement.isDirection(a)));
+    assert.deepEqual(c.lifecycle.save().envelope,before);
+   }finally{p.close();}
+  }
+ }finally{c.dispose();}
+}
