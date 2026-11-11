@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v451";
+  const VERSION = "seti-complete-decision-search-v452";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1035,6 +1035,47 @@
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
+    // The last-round wallet is only useful when it can still buy an action.
+    // At an exact tie against an unproductive launch, keep the completed
+    // funded scan that has already increased the official score projection.
+    let fundedScanOverBareLaunch = null;
+    const launchEdge = nodes[0].best;
+    const launch = root.legalActions.find(a => a.actionId === launchEdge?.actionId && a.family === "launch");
+    if (complete && !unresolved.length && realizationTies && root.status === "stable" && launch
+      && root.observation.publicState.roundNumber === 4 && launchEdge.cost === 1 && nodes[0].realization === 0) {
+      const state = root.observation.publicState, seat = launch.actorId;
+      const p = state.players.find(x => x.playerId === seat);
+      const scoreAt = node => observationForValue(node).publicState.players.find(x => x.playerId === seat)?.finalScore;
+      const launched = nodes[launchEdge.target], end = launched.best;
+      if (p?.energy === 0 && p.handCount === 0 && state.activePlayerIds.every(id => id === seat || state.passedPlayerIds.includes(id))
+        && launched.edges.length === 1 && end?.cost === 1 && end.actionId.startsWith("end_turn:")
+        && nodes[end.target].node.status === "turn-boundary" && scoreAt(nodes[end.target].node) === p.finalScore) {
+        const alternatives = [];
+        for (const edge of nodes[0].edges) {
+          const t = nodes[edge.target], goal = edge.resourcePlan?.goal, finish = t.best;
+          if (edge.goalStatus !== "completed" || goal?.kind !== "scan-flow" || edge.fallbackReason
+            || !edge.actionId.startsWith("quick_trade:") || t.value !== launched.value
+            || t.realization !== launched.realization || t.preparationDebt !== launched.preparationDebt
+            || t.pickupRank !== launched.pickupRank || t.landingCompanyRetained !== launched.landingCompanyRetained
+            || Boolean(t.publicDataCard) !== Boolean(launched.publicDataCard) || t.chongBlindCount !== launched.chongBlindCount
+            || !finish || finish.cost !== 1 || !finish.actionId.startsWith("end_turn:")) continue;
+          const last = nodes[finish.target];
+          if (!["turn-boundary", "information-barrier"].includes(last.node.status)) continue;
+          const score = scoreAt(last.node);
+          if (score > p.finalScore) alternatives.push({edge, score, distance: edge.cost+t.distance});
+        }
+        alternatives.sort((a,b) => b.score-a.score || a.distance-b.distance || a.edge.actionId.localeCompare(b.edge.actionId));
+        const selected = alternatives[0];
+        if (selected) {
+          nodes[0].best = selected.edge;
+          nodes[0].distance = selected.distance;
+          lines[0].distance = selected.distance;
+          fundedScanOverBareLaunch = { sectorId:selected.edge.resourcePlan.goal.nebulaId,
+            launchProjectedScore:p.finalScore, scanProjectedScore:selected.score };
+        }
+      }
+    }
+
     // A shorter public sector is a useful tie-break, only after both
     // exact current-turn plans close with the same order and the same value.
     let publicBluePairChoice=null;
@@ -1339,6 +1380,7 @@
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
+      ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       realization: accepted ? scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null : null,
       preparationDebt:accepted?scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null:null,
