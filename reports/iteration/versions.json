@@ -7,6 +7,79 @@
   },
   "versions": [
     {
+      "id": "ai-search-quiet-trade-first3-20261111",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-quiet-trade-first3-20261111",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-move-first3-20261111",
+      "head": "5bfc31ae8",
+      "commits": [
+        "1603826dd",
+        "5bfc31ae8"
+      ],
+      "summary": "第四轮弃牌确认复用后的标准教学盘",
+      "records": {
+        "f8b07cf8.5bfc31ae.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-trade-20261111-04",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-trade-20261111-04",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-trade-first3-20261111",
+      "head": "5bfc31ae8",
+      "commits": [
+        "5bfc31ae8"
+      ],
+      "summary": "固定二十盘严格验收第04盘",
+      "records": {
+        "73ac84c5.5bfc31ae.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-trade-20261111-05",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-trade-20261111-05",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-trade-first3-20261111",
+      "head": "5bfc31ae8",
+      "commits": [
+        "5bfc31ae8"
+      ],
+      "summary": "固定二十盘严格验收第05盘",
+      "records": {
+        "f50963c1.5bfc31ae.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "free-analyze-random20-guarded-trade-20261111-13",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "free-analyze-random20-guarded-trade-20261111-13",
+      "date": "2026-11-11",
+      "baseline": "ai-search-quiet-trade-first3-20261111",
+      "head": "5bfc31ae8",
+      "commits": [
+        "5bfc31ae8"
+      ],
+      "summary": "固定二十盘严格验收第13盘",
+      "records": {
+        "dfe6ae09.5bfc31ae.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "free-analyze-random20-guarded-move-20261111-03",
       "aiGeneration": "v2",
       "agentType": "search",
