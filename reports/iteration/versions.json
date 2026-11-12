@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-held-scan-sector-tie-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第三轮同分扫描 · 跨轮扇区",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-cold-cash-column-current-20261113",
+      "head": "3e53ecf86",
+      "commits": [
+        "7c42d7177",
+        "3e53ecf86"
+      ],
+      "summary": "第三轮普通扫描冷恢复只调整已有闭合同值路线的顺序；保留手中牌和永久收入已能支持的下轮扫描。以同一开局独立验证前三轮。",
+      "records": {
+        "f44ec32f.3e53ecf8.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-cold-cash-column-current-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
