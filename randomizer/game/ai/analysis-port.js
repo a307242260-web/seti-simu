@@ -2370,6 +2370,142 @@
       return passPlanningState(state,session);
     }
 
+    // Only the named public supplier, backed by its already-earned task.
+    function blueLaunchTaskSupply(state,known){
+      const t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p||p.mainActionCompleted
+        ||p.passCompletionPending||p.industryBorrowedTechTileId||t.cardTurnEventBonuses?.length
+        ||p.resources.availableData<1||p.resources.availableData!==p.dataState.poolTokens.length
+        ||localPlans.hasPendingFossilArrival(state))return null;
+      const scan=p.hand.find(c=>c.cardId==="b_9.webp"&&known.has(c.id));
+      if(!scan)return null;
+      const launch=state.cards.publicCards.filter(c=>c?.cardId==="b_60.webp"&&known.has(c.id));
+      if(launch.length!==1)return null;
+      const [card]=launch,model=cardEffects.getCardModel(card),task=model?.tasks?.[0],cost=cardEffects.getCardPlayCost(card);
+      if(model?.cardType!==2||model.tasks.length!==1||task?.condition.type!=="planetOrbitOrLand"
+        ||model.playEffects?.length!==2||model.playEffects[0].type!=="launch"||model.playEffects[1].type!=="gain_data"
+        ||Object.keys(cost).length!==1||cost.credits!==3||p.resources.credits<cost.credits+cardEffects.getCardPlayCost(scan).credits
+        ||!cardEffects.taskConditionMet(task,p,state)
+        ||rocketAbilities.getActiveRocketCountForPlayer(state.pieces,p.id)>=rocketAbilities.getRocketLimitForPlayer(p,state))return null;
+      const count=data.listComputerPlacedTokens(p).length;
+      const slots=data.listBluePlacementRequirements(p).filter(r=>r.requiredComputerSlot<=count
+        &&data.getBlueBonusPlacementReward(p,r.blueSlot)?.type==="choose_card");
+      if(slots.length!==1)return null;
+      const blueSlot=slots[0].blueSlot;
+      if(cardEffects.collectMatchingTriggers(p,{type:"placeData",playerId:seatId,placementKind:"blueBonus",blueSlot}).length)return null;
+      return {id:"data:known-launch-task:"+card.id,kind:"blue-launch-task",required:{},
+        blueSlot,cardId:card.id,scanId:scan.id,price:cost.credits};
+    }
+
+    function blueLaunchTaskStep(node,session,goal){
+      const head=session?.queue?.[0];
+      const a=node.legalActions.find(a=>node.status==="stable"?a.family==="place_data"
+        :head?.type===scienceSession.EFFECT_TYPES.PLACE_DATA?a.family==="choose_target"&&a.target?.blueSlot===goal.blueSlot
+        :head?.type===scienceSession.EFFECT_TYPES.PICK_CARD&&head.payload.blueBonusSource
+          &&a.family==="choose_card"&&a.target?.cardInstanceId===goal.cardId);
+      return a?{kind:"fixed",actionId:a.actionId,reason:"free-blue-slot-for-known-launch-task"}
+        :{kind:"infeasible",reason:"known-blue-launch-supply-menu-changed"};
+    }
+
+    function blueLaunchContinuationSource(){
+      const stored=nodes.get(openedRoot),session=stored?.envelope.session?.session,head=session?.queue[0];
+      if(!stored||stored.informationBarrier||!["stable","decision"].includes(openedRoot.status))return null;
+      if(session&&(session.failure||session.interruptContext||session.irreversibleBarrier||head?.ownerId!==seatId
+        ||session.journal.actions[0]?.action.family!=="place_data"
+        ||![scienceSession.EFFECT_TYPES.PLACE_DATA,scienceSession.EFFECT_TYPES.PICK_CARD].includes(head.type)))return null;
+      const base=session?.baseState||readPlanningState(stored),goal=blueLaunchTaskSupply(base,knownRootCardIds);
+      if(!goal||!knownRootAlienIds.has("阿米巴")||!Number.isSafeInteger(base.aliens.amiba?.displayedCardIndex))return null;
+      if(head?.type===scienceSession.EFFECT_TYPES.PICK_CARD
+        &&(!head.payload.blueBonusSource||!session.journal.decisions.some(({choice})=>choice?.family==="choose_target"
+          &&choice.target?.target==="blueBonus"&&choice.target.blueSlot===goal.blueSlot)))return null;
+      const next=blueLaunchTaskStep(openedRoot,session,goal);
+      if(!next.actionId)return null;
+      return {...goal,firstId:next.actionId,display:base.aliens.amiba.displayedCardIndex};
+    }
+
+    // A single bounded witness, separate from the ordinary graph. Match
+    // only root-known cards, one unambiguous sector and public rewards.
+    // Actual new reveals never enter the action choice or leaf valuation.
+    function quoteBlueLaunchContinuation(source,evaluate,admit){
+      const root=nodes.get(openedRoot),comp=fork.composition||fork,previous=loadedEnvelope||root.envelope,first=submissionCount;
+      const owner=s=>s.players.players.find(p=>p.id===seatId),initial=readIdentityState(root.envelope);
+      let e=root.envelope,barrier=null,recording=true;
+      const prefix=[],state=()=>readIdentityState(e);
+      const menu=()=>legalActions(comp);
+      const one=pred=>{const matches=menu().filter(pred);return matches.length===1?matches[0]:null;};
+      const input=a=>{
+        if(!a||a.actorId!==seatId||a.target?.source==="blind"
+          ||a.target?.cardInstanceId&&!knownCards(e).has(a.target.cardInstanceId)
+          ||submissionCount-first>=16||!admit(submissionCount-first,submissionCount))return false;
+        const before=e;if(recording)prefix.push({envelope:e,actions:menu(),action:a});
+        restoreEnvelope(e,true);
+        const r=executeCurrent(a).result;e=snapshot(comp);
+        inheritCardKnowledge(e,{envelope:before},a);
+        const reveal=r.irreversibleBarrier||e.session?.session?.irreversibleBarrier;
+        if(reveal){
+          if(!["hidden_card_reveal","hidden_alien_card"].includes(reveal.code))return false;
+          barrier ||= reveal;
+        }
+        const t=state().turn,rng=state().meta.rngState;
+        return t.roundNumber===initial.turn.roundNumber&&t.turnNumber===initial.turn.turnNumber
+          &&t.currentPlayerId===seatId&&rng?.algorithm===initial.meta.rngState?.algorithm
+          &&rng?.state===initial.meta.rngState?.state;
+      };
+      const occupied=s=>data.listComputerPlacedTokens(owner(s)).map(x=>x.placementSlot).join(",");
+      const tokens=(s,id)=>data.listNebulaTokens(s.data,id);
+      const open=(s,id)=>tokens(s,id).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor).length;
+      try{
+        restoreEnvelope(e);
+        if(!e.session&&!input(one(a=>a.family==="place_data")))return null;
+        if(e.session?.session?.queue[0]?.type===scienceSession.EFFECT_TYPES.PLACE_DATA
+          &&!input(one(a=>a.target?.target==="blueBonus"&&a.target.blueSlot===source.blueSlot)))return null;
+        if(!input(one(a=>a.family==="choose_card"&&a.target?.cardInstanceId===source.cardId))||e.session||!barrier)return null;
+        recording=false;
+        if(!input(one(a=>a.family==="play_card"&&a.target?.cardInstanceId===source.scanId)))return null;
+        const s=state(),p=owner(s);
+        if(s.aliens.amiba?.displayedCardIndex!==source.display||occupied(s)!=="1,2,3,4")return null;
+        const select=one(a=>{
+          const id=a.target?.nebulaId;
+          return a.family==="choose_target"&&id&&knownRootNebulaIds.has(id)&&id!==data.AOMOMO_NEBULA_ID&&open(s,id)===2
+            &&tokens(s,id).filter(x=>x.replacedByPlayerId===seatId||x.replacedByPlayerColor===p.color).length+2>tokens(s,id).length/2;
+        });
+        if(!select||!input(select))return null;
+        const sector=select.target.nebulaId;
+        const side=one(a=>{
+          const id=a.target?.nebulaId,c=state().cards.publicCards[a.target?.publicSlotIndex];
+          return a.family==="choose_card"&&id&&id!==sector&&id!==data.AOMOMO_NEBULA_ID
+            &&c&&knownRootCardIds.has(c.id)&&c.cardId==="dlc_15.png"&&open(state(),id)>1
+            &&tokens(state(),id).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor)
+              .every(x=>data.getNebulaSlotScoreReward(id,x.slotIndex)===0);
+        });
+        if(!input(side)||!input(one(a=>a.family==="choose_card"&&a.target?.done))
+          ||!input(one(a=>a.family==="choose_target"&&a.target?.mode==="skip"))
+          ||!input(one(a=>a.family==="choose_target"&&a.target?.nebulaId===sector)))return null;
+        const trace=one(a=>a.family==="choose_target"&&a.target?.speciesId==="amiba"
+          &&a.target.traceType==="pink"&&a.target.position===4);
+        if(!input(trace)||!input(one(a=>a.family==="choose_card"&&a.target?.source==="display"
+          &&a.target.cardIndex===source.display&&a.target.choiceId===`amiba:display:${source.display}`))||e.session)return null;
+        if(!input(one(a=>a.family==="place_data"))
+          ||!input(one(a=>a.target?.target==="computer"))||e.session||occupied(state())!=="1,2,3,4,5")return null;
+        const cash=data.listBluePlacementRequirements(owner(state())).filter(x=>x.requiredComputerSlot<=5
+          &&data.getBlueBonusPlacementReward(owner(state()),x.blueSlot)?.credits===1);
+        if(cash.length!==1||!input(one(a=>a.family==="place_data"))
+          ||!input(one(a=>a.target?.target==="blueBonus"&&a.target.blueSlot===cash[0].blueSlot))||e.session)return null;
+        const after=state(),done=owner(after);
+        const won=s=>(s.data.sectorSettlements.winsByPlayerId[seatId]||[]).filter(w=>w.sectorId===sector).length;
+        if(won(after)!==won(initial)+1||!done.mainActionCompleted||done.resources.credits<source.price||!done.hand.some(c=>c.id===source.cardId)
+          ||after.cards.publicCards.some(c=>c?.id===source.cardId)||!menu().some(a=>a.family==="end_turn")
+          ||localPlans.hasPendingFossilArrival(after))return null;
+        const detail=evaluate.details(observeEnvelope(e,barrier,true));
+        return {actionId:source.firstId,value:detail.value,realization:-detail.unrealizedPurposeValue,
+          preparationDebt:detail.purposePreparationDebt,cardId:source.cardId,
+          scanId:source.scanId,sector,blueSlot:source.blueSlot,
+          prefix:prefix.map(({envelope,actions,action})=>({
+            node:envelope===root.envelope?openedRoot:createNode(envelope,null,actions,envelope.session?"decision":"stable"),action,
+          }))};
+      }finally{restoreEnvelope(previous);}
+    }
+
     function blueLandingGoalFor(state) {
       const native=productionKernel||globalThis.SetiProductionKernel;
       return resourceDemand.blueLandingSupplyGoal({state,seatId,compareTiming:timingForOneGoalQuery(state),
@@ -9769,7 +9905,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

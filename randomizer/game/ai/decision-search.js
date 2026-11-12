@@ -1229,6 +1229,46 @@
         }
       }
     }
+    let blueLaunchContinuation=null,blueLaunchPrefix=null;
+    if(complete&&!stopReason&&!unresolved.length&&realizationTies&&resourcePlanning&&scanOrbitBudget
+      &&root.observation.publicState.roundNumber===4&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)){
+      const source=port.blueLaunchContinuationSource?.(),best=nodes[0].best;
+      const selected=root.legalActions.find(a=>a.actionId===best?.actionId);
+      const usesSupply=source&&(()=>{
+        let current=0;
+        for(let i=0;i<16;i++){
+          const entry=nodes[current],edge=entry.best;
+          if(!edge||nodes[edge.target].distance>=entry.distance)return false;
+          const steps=resourceExecutions.get(edge)?.prefixes||entry.fixedCardExecutions?.get(edge.actionId)?.prefixes||[];
+          const action=entry.node.legalActions.find(a=>a.actionId===edge.actionId);
+          if([action,...steps.map(x=>x.action)].some(a=>a?.family==="choose_card"
+            &&a.target?.nebulaId&&a.target?.cardInstanceId===source.cardId))return true;
+          current=edge.target;
+        }
+        return false;
+      })();
+      if(source&&selected&&source.firstId!==selected.actionId&&(root.status==="decision"
+        ||selected.family==="play_card"&&selected.target.cardInstanceId===source.scanId&&usesSupply)){
+        const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
+        const maySubmit=(inputs,total)=>now()<deadline-20&&total<scanOrbitBudget.nativeInputs
+          &&transitions+inputs<limits.transitions&&nodes.length+3<limits.nodes;
+        const before=port.getDiagnostics().submissionCount;
+        const proof=maySubmit(0,before)&&port.quoteBlueLaunchContinuation(source,evaluate,maySubmit);
+        const nativeInputs=port.getDiagnostics().submissionCount-before;
+        continuationNativeInputs+=nativeInputs;transitions+=nativeInputs;
+        if(proof?.value>=nodes[0].value&&now()<deadline){
+          const {prefix,...quote}=proof;
+          blueLaunchPrefix=prefix;
+          blueLaunchContinuation={...quote,nativeInputs,visibleActionId:selected.actionId,visibleValue:nodes[0].value};
+          const i=roots.findIndex(r=>r.actionId===proof.actionId);
+          const row={actionId:proof.actionId,value:proof.value,realization:proof.realization,
+            preparationDebt:proof.preparationDebt,goal:{id:source.id,kind:source.kind,cardId:source.cardId,blueSlot:source.blueSlot},
+            valueType:"attained-lower-bound",
+            completion:"proved-native-continuation",proof:"known-blue-launch-before-held-scan"};
+          if(i<0)roots.push(row);else roots[i]=row;
+        }
+      }
+    }
     const visibleBest=nodes[0].best;
     const orbitGoal=visibleBest?.resourcePlan?.goal;
     if(complete&&!unresolved.length&&retainedRegionSource&&visibleBest
@@ -1332,7 +1372,7 @@
     let planCertificate = null;
     // The existing certificate starts with the visible winner. A proved
     // override must let the real scan menu build a fresh continuation.
-    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass && !visibleFossilTransport) {
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass && !visibleFossilTransport && !blueLaunchContinuation) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1456,12 +1496,24 @@
         nodeCount:nodes.length+certificateNodes,graphNodeCount:nodes.length,certificateNodeCount:certificateNodes,rootValue:value,proof:regionCashGoal});
       if(now()>=scanOrbitBudget.deadline){stopReason="watchdog";accepted=false;}
     }
+    if(accepted&&planReuse&&blueLaunchPrefix){
+      const value=blueLaunchContinuation.value,proof="known-blue-launch-before-held-scan";
+      const entries=blueLaunchPrefix.map(({node,action},i)=>({
+        node,actionId:action.actionId,value,realization:blueLaunchContinuation.realization,
+        preparationDebt:blueLaunchContinuation.preparationDebt,distance:blueLaunchPrefix.length-i,sourceNode:`blue-launch:${i}`,
+        roots:node.legalActions.map(a=>({actionId:a.actionId,value:a.actionId===action.actionId?value:null,
+          valueType:a.actionId===action.actionId?"attained-lower-bound":"not-executed",completion:"fixed-plan-execution",proof})),
+      }));
+      certificateNodes+=entries.length-1;
+      planCertificate=port.rememberPlan(entries,planKey,{searchVersion:VERSION,rootNode:0,
+        nodeCount:nodes.length+certificateNodes,graphNodeCount:nodes.length,certificateNodeCount:certificateNodes,rootValue:value,proof});
+    }
     const elapsed = now() - startedAt;
     accepted = accepted && elapsed < limits.milliseconds;
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? visibleFossilTransport?.actionId || retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
+      actionId: accepted ? blueLaunchContinuation?.actionId || visibleFossilTransport?.actionId || retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1470,7 +1522,8 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value : null,
+      value: accepted ? blueLaunchContinuation?.value ?? (retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value) : null,
+      ...(accepted&&blueLaunchContinuation?{blueLaunchContinuation}:{}),
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&visibleFossilTransport?{visibleFossilTransport}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
@@ -1478,8 +1531,8 @@
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       ...(accepted&&heldScanSectorChoice?{heldScanSectorChoice}:{}),
-      realization: accepted ? scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null : null,
-      preparationDebt:accepted?scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null:null,
+      realization: accepted ? blueLaunchContinuation?.realization ?? (scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null) : null,
+      preparationDebt:accepted?blueLaunchContinuation?.preparationDebt ?? (scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null):null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,
