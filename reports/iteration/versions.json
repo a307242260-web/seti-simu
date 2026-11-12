@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-third-round-income-payment-first3-20261112",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-third-round-income-payment-first3-20261112",
+      "date": "2026-11-12",
+      "baseline": "ai-search-funded-local-landing-first3-20261112",
+      "head": "e98ba6a5a",
+      "commits": [
+        "37b970e55",
+        "e98ba6a5a"
+      ],
+      "summary": "第三轮同值收入按已知扫描付款比较；只额外报价一张电收入牌。",
+      "records": {
+        "633cba5d.e98ba6a5.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-funded-local-landing-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
