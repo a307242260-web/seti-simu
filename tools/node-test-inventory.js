@@ -84,6 +84,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/stationary-cargo-income.test.js", "policy/decision-search", "第三轮在运化石核对第四格收入、公司换牌及保牌证明的跨输入复用，第四轮固定结算及预付三步返程保持在门槛内", "运输资产错误屏蔽永久收入或让等价扫描重复执行超限"),
     entry("randomizer/game/ai/funded-income-restore.test.js", "policy/decision-search", "多枚数据已能付清的插电路线在槽位会话冷恢复时保留完整同分比较", "冷恢复将同分、同即时电的第三轮永久收入改为蓝槽"),
     entry("randomizer/game/ai/income-payment-alternative.test.js", "policy/decision-search", "同值插钱和插电按原生付款压力比较，固定数据计划连续执行与冷恢复一致", "复用未报价的收入选择或将插电优先扩到其他收入菜单"),
+    entry("randomizer/game/ai/held-scan-sector-tie.test.js", "policy/decision-search", "扫描同值时只保留能用已知手牌和永久收入结算的跨轮扇区，带计划与冷恢复一致", "利用未知补牌、没有下轮付款时强行改目标或只在冷恢复时改序"),
     entry("randomizer/game/ai/scan-income-after-free-move.test.js", "policy/decision-search", "扫描后已知插电跨补牌；运输不动的紫四跳过及 DLC13 明牌续选保留完整搜索", "用空移动前缀误拦已经付得起的第四格电收入"),
     entry("randomizer/game/ai/scan-analysis-income-utility.test.js", "policy/state-value", "固定收入选择计入同一钱包下已知非结算扫描、电脑补满及免电分析用途，且不增加搜索分支", "电收入与不能筹资的钱/牌收入同值，预支未知牌、重复扫描token或跨用途共用资源"),
     entry("randomizer/game/ai/income-choice-consistency.test.js", "policy/state-value", "收入严格同值时保留较高费用牌，初始目的、待选恢复和菜单重排一致，明确资金目的及较高收益优先", "卡ID与动作ID平局排序不一致、重排菜单改变选择，或印刷费用压过实际收益"),

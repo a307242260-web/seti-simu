@@ -9220,6 +9220,67 @@
       return localPlans.quoteFundedScanAnalysis(readPlanningState(stored),seatId,node.planSummary.dataPlans,knownRootCardIds);
     }
 
+    function heldScanSectorTieSource(){
+      const stored=nodes.get(openedRoot),s=stored?.envelope.session?.session;
+      const head=s?.queue[0];
+      if(s?.phase!=="awaiting_input"||s.journal.actions[0]?.action.family!=="scan"||s.journal.decisions.length
+        ||s.irreversibleBarrier||s.interruptContext||head?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP
+        ||head.payload.options?.mode!=="specified")return null;
+      const state=readIdentityState(stored.envelope),t=state.turn;
+      if(!resourcePlanning||!scanPlanning||t?.roundNumber!==3||t.currentPlayerId!==seatId
+        ||t.activePlayerCount!==4||t.passedPlayerIds.length!==3||t.passedPlayerIds.includes(seatId)
+        ||t.cardTurnEventBonuses?.length
+        ||!Object.values(state.aliens.aliens).every(slot=>slot.revealed))return null;
+      const p=state.players.players.find(q=>q.id===seatId),card=p.hand.find(c=>c.cardId==="b_9.webp"
+        &&knownRootCardIds.has(c.id));
+      if(!card||p.industryBorrowedTechTileId)return null;
+      const cost=cardEffects.getCardPlayCost(card),effects=cardEffects.buildPlayEffects(card),types=scanEffects.EFFECT_TYPES;
+      if(Object.keys(cost).length!==1||cost.credits!==3||effects.length!==2
+        ||effects[0].type!=="card_scan_action"||effects[0].options?.skipCost!==true
+        ||(effects[0].options.repeat??1)!==1||Object.keys(effects[0].options).some(k=>!["skipCost","repeat"].includes(k))
+        ||effects[1].type!=="card_any_sector_scan"||effects[1].options?.gainData!==true
+        ||Object.keys(effects[1].options).length!==1
+        ||p.income.credits<cost.credits
+        ||scanEffects.buildScanEffectQueue(p,{turn:t}).map(e=>e.type).join(",")!==
+          [types.IMPROVED_SECTOR_SCAN,types.PUBLIC_CARD_SCAN,types.SCAN_ACTION_4].join(","))return null;
+      const choices=root=>scienceSession.listNebulaChoices(root,
+        scienceSession.getPlanetScanSource(root,types.IMPROVED_SECTOR_SCAN)).map(a=>a.target.nebulaId);
+      // The current round has already rotated. Before the next own main
+      // action either zero or one rotation has occurred because of the new round's
+      // first PASS rotation. Require the same target in both menus.
+      const rotated={...state,solarSystem:{...state.solarSystem,
+        rotation:solar.applySolarOrbitRotation(state.solarSystem.rotation,1)}};
+      const after=choices(rotated);
+      const open=(root,id)=>data.listNebulaTokens(root.data,id).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor);
+      const sectors=choices(state).filter(id=>id!==data.AOMOMO_NEBULA_ID&&after.includes(id)&&open(state,id).length===3);
+      return sectors.length?{cardId:card.id,credits:cost.credits,sectors}:null;
+    }
+
+    function heldScanSectorTie(node,sectorId,proof){
+      if(!proof.sectors.includes(sectorId))return null;
+      const stored=nodes.get(node);
+      if(!stored||stored.envelope.session||node.status!=="stable")return null;
+      const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||p.income.credits<proof.credits
+        ||p.hand.length>probeTurnSession.PASS_HAND_LIMIT||!p.hand.some(c=>c.id===proof.cardId)
+        ||p.reservedCards.some(c=>!knownRootCardIds.has(c.id)||!cardEffects.getCardModel(c)
+          ||cardEffects.getCardModel(c).triggers?.length))return null;
+      const tokens=data.listNebulaTokens(state.data,sectorId);
+      const empty=tokens.filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor).length;
+      const owned=tokens.filter(x=>x.replacedByPlayerId===seatId).length;
+      if(empty!==2||owned+empty<=tokens.length/2)return null;
+      // One already-known public card can discharge the mandatory public
+      // scan elsewhere, without settling that other sector. The optional
+      // public repeat and Purple 4 step can be skipped. No reward is priced.
+      const publicCards=state.cards.publicCards.map(c=>c&&knownRootCardIds.has(c.id)?c:null);
+      const known={...state,cards:{...state.cards,publicCards}};
+      const side=scienceSession.listScanStepChoices(known,p,{mode:"public",selected:0,max:1}).find(a=>
+        a.target.nebulaId&&a.target.nebulaId!==sectorId&&a.target.nebulaId!==data.AOMOMO_NEBULA_ID
+        &&data.listNebulaTokens(state.data,a.target.nebulaId).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor).length>1);
+      return side?{sectorId,cardId:proof.cardId,publicCardId:side.target.cardInstanceId,empty,owned}:null;
+    }
+
     function scanTimingPurpose() {
       const stored=nodes.get(openedRoot);
       if(!stored)return null;
@@ -9708,7 +9769,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

@@ -1154,6 +1154,32 @@
         }
       }
     }
+    // Keep a current scan that enables a complete, publicly funded scan
+    // next round. It is only an exact tie-break over already closed edges.
+    let heldScanSectorChoice=null;
+    if(complete&&!unresolved.length&&realizationTies&&root.status==="decision"
+      &&root.observation.publicState.roundNumber===3){
+      const proof=port.heldScanSectorTieSource?.(),entry=nodes[0],best=entry.best;
+      const ranked=edge=>{
+        const action=resourceExecutions.get(edge)?.prefixes?.[0]?.action;
+        return edge?.resourcePlan?.goal.kind==="scan-flow"&&edge.goalStatus==="completed"&&!edge.fallbackReason
+          &&action?.family==="choose_target"&&action.target?.choiceId===`nebula:${action.target.nebulaId}`?port.heldScanSectorTie(nodes[edge.target].node,action.target.nebulaId,proof):null;
+      };
+      if(proof&&best&&!ranked(best)){
+        const previous=nodes[best.target];
+        for(const e of entry.edges){
+          const target=nodes[e.target];
+          if(target.value!==previous.value||target.realization!==previous.realization
+            ||target.preparationDebt!==previous.preparationDebt||target.pickupRank!==previous.pickupRank
+            ||target.landingCompanyRetained!==previous.landingCompanyRetained
+            ||Boolean(target.publicDataCard)!==Boolean(previous.publicDataCard)
+            ||(target.chongBlindCount??0)!==(previous.chongBlindCount??0)
+            ||target.distance+e.cost!==entry.distance)continue;
+          const witness=ranked(e);
+          if(witness){entry.best=e;heldScanSectorChoice={...witness,from:best.actionId,to:e.actionId};break;}
+        }
+      }
+    }
     // A proved swap can realize permanent electricity at the same V and
     // immediate wallet as the shorter blue-slot line.
     if(complete&&!unresolved.length&&realizationTies&&nodes[0].pickPolicy?.companySwap?.reason==='compare-funded-fourth-slot-energy'){
@@ -1451,6 +1477,7 @@
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
+      ...(accepted&&heldScanSectorChoice?{heldScanSectorChoice}:{}),
       realization: accepted ? scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null : null,
       preparationDebt:accepted?scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null:null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
