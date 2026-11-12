@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-deferred-company-scan-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "先结束回合，保留扫描换牌",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-visible-analysis-income-20261113",
+      "head": "7e593024e",
+      "commits": [
+        "1c42e4842",
+        "7e593024e"
+      ],
+      "summary": "B101 橙2之后，换牌与安静结束同值、下一次扫描不缺电时保留公司换牌。教师第137步只固定橙2后白席自主，第三轮80→104、科技5→6；标准前三轮独立验收。",
+      "records": {
+        "8dc7b46b.7e593024.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-visible-analysis-income-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
