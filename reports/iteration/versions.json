@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-cold-cash-column-current-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第三轮冷恢复 · 科研付款",
+      "date": "2026-11-13",
+      "baseline": "ai-search-third-round-income-payment-first3-20261112",
+      "head": "5fe447723",
+      "commits": [
+        "1537088b5",
+        "5fe447723"
+      ],
+      "summary": "冷恢复时恢复已知蓝 1 现金的单角标科研付款，保留第四份永久电。",
+      "records": {
+        "901e0eff.5fe44772.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-third-round-income-payment-first3-20261112",
       "aiGeneration": "v2",
       "agentType": "search",
