@@ -63,6 +63,54 @@ try{for(const name of ['cancel','blind']){const p=open();try{let node=p.openRoot
  for(const result of maskedDataWorlds.slice(1))assert.deepEqual(result,maskedDataWorlds[0],'unknown ordinary deck identities cannot affect a fixed data plan');
  assert(c.lifecycle.restore(teacher.compositionEnvelope).ok);const noMovement=open();
  try{noMovement.setMovementPlanning(false);let node=noMovement.openRoot();for(const id of ['play_card:5d3aef4d','choose_card:3fd1e1f1','choose_target:4ca50ef1'])node=noMovement.expand(node,id);assert.equal(node.status,'information-barrier','without movement timing policy the Native continuation is unproved');}finally{noMovement.close();}
+ // With the swap still available, an acquired public display and one
+ // opaque ordinary card can still leave an independent funded blue tail.
+ const display=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(__dirname,
+  'fixtures/r3-analysis-display-unspent-company-20261113-v1.json.gz'))));
+ assert(c.lifecycle.restore(display.before).ok);
+ const main=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+ try{
+  const before=c.lifecycle.save().envelope,legalActions=c.inputPort.enumerateActions({});
+  const q=require('./search-agent').createSearchAgent({seatId:seat,analysisPort:main}).decide({seatId:seat,legalActions}).search;
+  assert(q.complete&&!q.unresolved.length&&q.diagnostics.nativeExecutions<=256);
+  assert.equal(legalActions.find(a=>a.actionId===q.actionId).family,'place_data');
+  assert.equal(q.value,127.08333333333333);
+  assert.deepEqual(c.lifecycle.save().envelope,before);
+ }finally{main.close();}
+ const variants=[];
+ for(const kind of ['original','ordinary','alien']){
+  const source=structuredClone(display.display);
+  const reorder=state=>{
+   const pile=kind==='ordinary'?state.cards.drawPileCardIds:kind==='alien'?state.aliens.amiba.cardDeck:null;
+   if(pile)[pile[0],pile[1]]=[pile[1],pile[0]];
+  };
+  const s=JSON.parse(source.committedState);reorder(s);source.committedState=JSON.stringify(s);
+  for(const key of ['baseState','workingState','committedState']){
+   const s=source.session.session[key];if(s)reorder(s);
+  }
+  assert(c.lifecycle.restore(source).ok);const p=open();
+  try{
+   const root=p.openRoot(),node=p.expand(root,display.card);
+   assert.equal(node.status,'stable');
+   const view=p.valueObservation(node);
+   const opaque=view.selfState.hand.filter(c=>c.hidden);assert.equal(opaque.length,1);assert(!opaque[0].id&&!opaque[0].cardId);
+   assert(view.selfState.hand.some(c=>c.cardId==='amiba_9.webp'&&!c.hidden));
+   assert.equal(view.publicState.board.aliens.amibaTraces.displayedCardIndex,null);
+   const proof=p.turnTailSummary(node,'blue-end-turn');assert(proof);
+   assert.equal(proof.requiredNativeInputs,5);
+   assert(nativePort.lifecycle.restore(display.after).ok);
+   const after=nativePort.projection({role:'player',playerId:seat}).state;
+   const acquired=after.selfState.hand.find(c=>c.cardId==='amiba_9.webp');
+   const masked=require('../rule-composition').sanitizeHiddenInformationObservation(root.observation,after,{code:'hidden_card_draw'},[acquired.id]);
+   assert.equal(values.sumValueParts([values.evaluateStateValue(view,seat).total,proof.netGain]),
+    values.evaluateStateValue(masked,seat).total,'the fixed blue tail agrees with the independent Native suffix');
+   const blind=root.legalActions.find(a=>a.target?.choiceId==='amiba:blind');
+   assert(blind);assert.equal(p.expand(root,blind.actionId).status,'information-barrier','no public acquisition means the old opaque boundary still applies');
+   variants.push({v:values.evaluateStateValue(view,seat),proof,actions:node.legalActions});
+   assert.deepEqual(c.lifecycle.save().envelope,source);
+  }finally{p.close();}
+ }
+ for(const v of variants.slice(1))assert.deepEqual(v,variants[0]);
  assert(c.lifecycle.restore(original).ok);
- console.log(JSON.stringify({knownPostdrawTail:'passed',nativeControlledBranches:checked,referenceNativeInputs:18,anonymousCardUsed:false,freeCardValue:125.25,cancelValue:124.25,hiddenDeckWorldsIndependent:6,closedUnprovedBoundary:true,rootAndRngUnchanged:true,fixedPostdrawDataNativeInputs:4,ordinaryDeckWorldsIndependent:6,newAiSearches:0}));
+ console.log(JSON.stringify({knownPostdrawTail:'passed',nativeControlledBranches:checked,referenceNativeInputs:18,anonymousCardUsed:false,freeCardValue:125.25,cancelValue:124.25,hiddenDeckWorldsIndependent:6,closedUnprovedBoundary:true,rootAndRngUnchanged:true,fixedPostdrawDataNativeInputs:4,ordinaryDeckWorldsIndependent:6,newAiSearches:1,unspentCompanyMaskedControls:3}));
 }finally{nativePort.dispose();c.dispose();}

@@ -5315,8 +5315,16 @@
       if(!resourcePlanning||!cardPickPlanning||!movementPlanning||intent||resourceControl
         ||!["hidden_card_draw","hidden_card_reveal"].includes(barrier?.code))return null;
       const state=readIdentityState(envelope),owner=state.players.players.find(p=>p.id===seatId);
+      const known=knownCards(envelope);
+      // A Native acquisition can establish one public display even when
+      // the company's swap remains available. Its replacement and the
+      // simultaneous blind draw remain opaque. Below we still reject any
+      // competing card or movement purpose and require a fixed data tail.
+      const visibleDisplayTail=state.turn.roundNumber===3&&cardKnowledgeKey(envelope)
+        &&owner.hand.some(c=>c.amibaCard===true&&!knownRootCardIds.has(c.id)&&known.has(c.id))
+        &&owner.hand.filter(c=>!known.has(c.id)).length===1;
       if(industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId!=="deepspace_swap_cards"
-        ||owner.industryRoundMarkRound!==state.turn.roundNumber
+        ||owner.industryRoundMarkRound!==state.turn.roundNumber&&!visibleDisplayTail
         ||!owner.hand.some(card=>!knownCards(envelope).has(card.id))
         ||[...owner.reservedCards,...(owner.privateAlienCards||[])].some(card=>!knownCards(envelope).has(card.id))
         ||Object.values(state.aliens.aliens).some(slot=>slot.revealed&&!knownRootAlienIds.has(slot.alienId))
