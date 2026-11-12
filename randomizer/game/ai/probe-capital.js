@@ -591,9 +591,21 @@
             const anonymousFloor=unknownCount>0&&index===effects.length-1
               &&effects.slice(0,index).every(e=>e.type==='gain_resources')
               &&Number.isSafeInteger(facts.board.ordinaryDrawCount)&&facts.board.ordinaryDrawCount>0;
-            if(anonymousFloor){unknownCount--;delta-=weights.handSize;
-              ledger?.push({type:effect.type,value:-weights.handSize,anonymousCardsConsumed:1,
-                policy:'known-final-income-consumption-floor',excluded:'all unknown immediate and permanent income gains; no funding from this reward'});
+            if(anonymousFloor){unknownCount--;
+              // The analysis quote already counted this displayed card's hand
+              // slot. Use only its printed income, after this mission is paid.
+              const supplier=facts.displayedAnalysisIncome;
+              if(supplier&&planningRound===3&&goal.endpointFamily==='orbit'){
+                const gain=supplier.gain,key=gain.energy===1?'energy':'credits';
+                wallet[key]+=gain[key];income[key]+=gain[key];
+                const linear=weighted(gain)*(1+4-planningRound)-weights.handSize;
+                delta+=linear;ledger?.push({type:effect.type,cardId:supplier.cardId,gain,value:linear,
+                  policy:'known-analysis-display-income'});
+              }else{
+                delta-=weights.handSize;
+                ledger?.push({type:effect.type,value:-weights.handSize,anonymousCardsConsumed:1,
+                  policy:'known-final-income-consumption-floor',excluded:'all unknown immediate and permanent income gains; no funding from this reward'});
+              }
             }else{
               if (unknownCount) supported = false;
               ledger?.push({ type: effect.type, value: 0, unresolvedUnknownIncome: unknownCount > 0 });

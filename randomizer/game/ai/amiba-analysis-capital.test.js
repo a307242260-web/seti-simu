@@ -6,7 +6,10 @@ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),ac
 function submit(a){assert(a);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));nativeInputs++;}
 try{
  const original=c.lifecycle.save().envelope,root=observe(),f=facts(root),before=values.evaluateStateValue(root,seat),q=values.purposeCapital(f).analysisPlan,serialized=JSON.stringify(f);
- assert.equal(q.selected.slotId,1);assert.equal(q.selected.position,4);assert.equal(q.selected.blueSlot,1);assert.equal(q.selected.unknownCards,2);assert.equal(q.selected.linearGain,9.5);assert.equal(q.value,10.083333333333334);assert.equal(before.total,124.08333333333333);
+ const hiddenDisplay=structuredClone(root);hiddenDisplay.publicState.board.aliens.amibaTraces.displayedCardIndex=null;
+ const blindOnly=values.evaluateStateValue(hiddenDisplay,seat);
+ assert.equal(before.total-blindOnly.total,2,'only the already visible card can supply the later paid orbit income');
+ assert.equal(q.selected.slotId,1);assert.equal(q.selected.position,4);assert.equal(q.selected.blueSlot,1);assert.equal(q.selected.unknownCards,2);assert.equal(q.selected.linearGain,9.5);assert.equal(q.value,12.083333333333334);assert.equal(before.total,126.08333333333333);
  const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};freeze(f);assert.deepEqual(analysis.quote(f,values.DEFAULT_WEIGHTS,()=>0,0),analysis.quote(structuredClone(f),values.DEFAULT_WEIGHTS,()=>0,0),'readonly trace colors/markers and privately copied blue/symbol locations preserve the entire quote');
  {
   const Module=require('node:module'),filename=require.resolve('./amiba-analysis-capital'),reference=new Module(filename,module);reference.filename=filename;reference.paths=module.paths;
@@ -29,7 +32,7 @@ try{
  const port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const n=port.openRoot();assert.deepEqual(values.evaluateStateValue(port.valueObservation(n),seat),before);assert.deepEqual(values.evaluateStateValue(n.observation,seat),before);}finally{port.close();}
  for(const i of [160,161,162])submit(legal().find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId));assert.deepEqual(c.lifecycle.save().envelope,read(folder+'teacher-before-input-163-20261105-v1.checkpoint.json').coreState.compositionEnvelope,'the exact native blue4/card/locked-region endpoint and RNG remain unchanged');
  submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='computer'));submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='blueBonus'&&a.target.blueSlot===1));submit(legal().find(a=>a.family==='end_turn'));assert(!c.inspect().session);
- const after=observe(),masked=rules.sanitizeHiddenInformationObservation(root,after,{code:'hidden_card_reveal'}),afterValue=values.evaluateStateValue(masked,seat);assert.equal(afterValue.total,before.total,'the complete native analysis and funded currency tail realize the same shared-wallet capital without seeing either new card identity');assert.equal(values.purposeCapital(facts(masked)).analysisPlan.value,0,'the analysis cannot quote a second cleared computer');
+ const after=observe(),masked=rules.sanitizeHiddenInformationObservation(root,after,{code:'hidden_card_reveal'}),afterValue=values.evaluateStateValue(masked,seat);assert.equal(afterValue.total,blindOnly.total,'the historical blind choice realizes the original shared-wallet floor without seeing either new card identity');assert.equal(values.purposeCapital(facts(masked)).analysisPlan.value,0,'the analysis cannot quote a second cleared computer');
  const ending=c.lifecycle.save().envelope,as=JSON.parse(ending.committedState),ap=as.players.players.find(p=>p.id===seat),linear=values.sumValueParts([ap.resources.score-p.resources.score,...Object.entries(values.DEFAULT_WEIGHTS).map(([key,w])=>(key==='handSize'?ap.hand.length-p.hand.length:ap.resources[key]-p.resources[key])*w)]);assert.equal(linear,q.selected.linearGain);assert.equal(nativeInputs,8);
  // A pure resource mission with a final mandatory income must not disappear
  // solely because it gains anonymous hand cards. Only the consumed card is
@@ -46,6 +49,30 @@ try{
  if(c.inspect().session){const state=c.lifecycle.save().envelope.session.session.workingState,actions=legal(),mark=require('./local-decision-plans').finalMark({state,seatId:seat,actions});submit(actions.find(a=>a.actionId===mark.selectedActionId));}
  assert(!c.inspect().session);const missionAfter=JSON.parse(c.lifecycle.save().envelope.committedState),mb=missionBeforeState.players.players.find(p=>p.id===seat),ma=missionAfter.players.players.find(p=>p.id===seat),missionLinear=values.sumValueParts([ma.resources.score-mb.resources.score,...Object.entries(values.DEFAULT_WEIGHTS).map(([key,w])=>(key==='handSize'?ma.hand.length-mb.hand.length:ma.resources[key]-mb.resources[key])*w)]);
  assert(missionLinear>=withUnknown.value,'the one-card consumption-only quote is a conservative value for the same real route and actual native mandatory income');const missionInputs=nativeInputs-analysisInputs;
+ // The earlier information set knows the displayed card, but not the
+ // ordinary draw or the next alien display. Give only that card to the
+ // endpoint evaluator; the actual Native selection supplies its instance.
+ assert(c.lifecycle.restore(original).ok);
+ for(const i of [160,161])submit(legal().find(a=>a.actionId===teacher.replaySteps[i-1].action.actionId));
+ submit(legal().find(a=>a.target?.source==='display'&&a.target.cardIndex===f.amibaTraces.displayedCardIndex));
+ const displayCard=observe().selfState.hand.find(card=>card.cardId==='amiba_9.webp');
+ assert(displayCard);
+ submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='computer'));
+ submit(legal().find(a=>a.family==='place_data'));submit(legal().find(a=>a.target?.target==='blueBonus'&&a.target.blueSlot===1));
+ submit(legal().find(a=>a.family==='end_turn'));
+ const shown=rules.sanitizeHiddenInformationObservation(root,observe(),{code:'hidden_card_reveal'},[displayCard.id]);
+ assert.equal(shown.selfState.hand.filter(card=>card.cardId).length,1);
+ assert.equal(values.evaluateStateValue(shown,seat).total,before.total,'the known display and rebuilt blue slot realize the amended forecast');
+ const route=probe.quote({...facts(shown),investment},values.DEFAULT_WEIGHTS).selected;
+ assert.equal(route.planet,'venus');assert.equal(route.value,6);
+ for(const step of route.route.path){
+  submit(legal().find(a=>a.family==='move'&&a.target?.rocketId===5&&a.target.deltaX===step.deltaX&&a.target.deltaY===step.deltaY));
+  submit(legal().find(a=>a.family==='choose_payment'&&a.target?.choiceId==='energy'));
+ }
+ submit(legal().find(a=>a.family==='orbit'&&a.target?.rocketId===5&&a.target.planetId==='venus'));
+ submit(legal().find(a=>a.target?.choiceId?.startsWith('income:')&&a.target.cardInstanceId===displayCard.id));
+ assert.equal(observe().publicState.players.find(p=>p.playerId===seat).income.energy,
+  shown.publicState.players.find(p=>p.playerId===seat).income.energy+1);
  assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);
  let portfolioCalls=0;const fixed=analysis.quote(f,values.DEFAULT_WEIGHTS,()=>{portfolioCalls++;return 0;},0);assert.equal(portfolioCalls,1,'one fixed local analysis plan requotes the shared future portfolio once');assert(fixed.candidates.filter(c=>c!==fixed.selected).every(c=>c.planNetGain===null),'unselected greedy candidates never masquerade as complete future quotes');assert.equal(fixed.selected.position,4);assert.equal(fixed.selected.blueSlot,1);
  const noPortfolio=next=>0;

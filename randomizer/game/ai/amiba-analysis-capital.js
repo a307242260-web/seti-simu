@@ -316,12 +316,22 @@
    const remainingUnknown=unknownCards-Number(Boolean(best.publicCorner));
    const plan={slotId:choice.slot.slotId,position:choice.position||null,traceType:'blue',payment,preparationPlacements:needed.length,blueSlot:best.blueSlot,
     planNetGain:null,localPlanValue:best.value,linearGain:delta(best.wallet,remainingUnknown),securedGain,unknownCards:remainingUnknown,region,...(best.publicCorner?{publicCorner:best.publicCorner}:{}),...(trigger?{blueDataTrigger:trigger.trigger}:{})};
-   candidates.push({plan,context,traceCounts,triggerProgress,wallet:best.wallet,required:best.required,ordinaryLeft,blindCardCount,displayedCardAvailable,materialized:false});
+   // A known display can supply exactly one ordinary income after the
+   // proved analysis/currency tail. Its Native instance does not exist yet.
+   const income=facts.round===3&&facts.uncontestedRound&&facts.hand.length===0&&facts.extraUnknownCount===0&&best.blueSlot!==null
+    &&choice.reward.pickAlienCard&&!best.publicCorner&&!facts.amibaTraces.displayedCardHidden&&known&&cards.getIncomeGainForCard(known);
+   const displayedIncome=income&&Object.keys(income).length===1&&(income.energy===1||income.credits===1)
+    ?{cardId:known.cardId,gain:income}:null;
+   candidates.push({plan,context,traceCounts,triggerProgress,wallet:best.wallet,required:best.required,ordinaryLeft,blindCardCount,displayedCardAvailable,displayedIncome,materialized:false});
   }
   candidates.sort((a,b)=>b.plan.localPlanValue-a.plan.localPlanValue||a.plan.slotId-b.plan.slotId||(b.plan.position||0)-(a.plan.position||0));
   const selected=candidates.length?materialize(candidates[0]):null;
   if(!selected&&markBoundary)return zero('mixed-analysis-final-mark-needs-native-value');
-  if(selected){const {resources,aliens,...progress}=selected.endpoint;selected.planNetGain=arithmetic.sum([selected.linearGain,portfolio(resources,aliens.slots,{...progress,aliens}),-baseValue],weights);}
+  if(selected){
+   const {resources,aliens,...progress}=selected.endpoint,displayedAnalysisIncome=candidates[0].displayedIncome;
+   selected.planNetGain=arithmetic.sum([selected.linearGain,portfolio(resources,aliens.slots,
+    {...progress,aliens,...(displayedAnalysisIncome?{displayedAnalysisIncome}:{})}),-baseValue],weights);
+  }
   let explanations,explanationsReady=false;
   return{value:Math.max(0,selected?.planNetGain||0),selected:selected||null,
    get candidates(){if(!explanationsReady){explanations=candidates.map(materialize);explanationsReady=true;}return explanations;},
