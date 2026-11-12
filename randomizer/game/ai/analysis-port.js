@@ -9294,6 +9294,28 @@
       }});
     }
 
+    function canDeferCompanyIncomeForScan(node,swap) {
+      const stored=nodes.get(node);
+      if(node!==openedRoot||node.status!=="stable"||!stored?.envelope||stored.informationBarrier
+        ||swap?.goal?.kind!=="known-income-swap"||swap.selection?.blind!==false||swap.discardIds?.length!==1)return false;
+      const state=readIdentityState(stored.envelope),t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(t.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending
+        ||p.industryRoundMarkRound===t.roundNumber||p.hand.length!==1||p.hand[0].id!==swap.discardIds[0]
+        ||p.resources.availableData!==3||data.listComputerPlacedTokens(p).length!==3
+        ||state.pieces.rockets.some(r=>r.playerId===seatId)||node.legalActions.some(a=>a.family==="complete_task")
+        ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id)))return false;
+      const offer=state.cards.publicCards.find(c=>c?.id===swap.selection.cardId);
+      const gain=offer&&cards.getIncomeGainForCard(offer);
+      if(!gain||Object.keys(gain).length!==1||gain.energy!==1||!knownRootCardIds.has(offer.id))return false;
+      const cost=scanEffects.getStandardScanCost(p),types=scanEffects.EFFECT_TYPES,
+        queue=scanEffects.buildScanEffectQueue(p,{fullScanAction:true,turn:t});
+      if(p.resources.credits<(cost.credits||0)||p.resources.energy<(cost.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY
+        ||queue.length!==4||queue[1].type!==types.PUBLIC_CARD_SCAN||queue[2].type!==types.SCAN_ACTION_4
+        ||queue[3].type!==types.MERCURY_SECTOR_SCAN||!players.canAfford(p,queue[3].options?.cost||{}))return false;
+      const next=previewTurn(state);
+      return next.turnAdvanced&&!next.roundAdvanced&&!next.gameEnded&&next.nextPlayerId===seatId;
+    }
+
     function deferredComputerIncomeSource() {
       const stored=nodes.get(openedRoot);
       if(openedRoot?.status!=="stable"||!openedRoot.legalActions.some(a=>a.family==="end_turn"))return null;
@@ -9905,7 +9927,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

@@ -94,6 +94,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/pickup-income-payment.test.js", "policy/decision-search", "在已知化石登陆目标下用现有数据插钱收入，冷恢复选择同一供应者并保持原根", "明知一个数据可支付仍弃掉两张移动牌，或数据不可用时绑定收入"),
     entry("randomizer/game/ai/funded-scan-analysis.test.js", "policy/decision-search", "只用公开条件比较已筹资的扫描分析与可兑现登陆；原根和随机流不变", "未见补牌身份改变首选，或扫描报价抢占已有更高价值的登陆"),
     entry("randomizer/game/ai/analysis-publicity-preparation.test.js", "policy/decision-search", "主行动后已知宣传筹资潜能提前计价，取消强制提前弃牌；已有角标合法且原根/RNG不变", "未计仍持有的宣传来源，只有提前弃牌才出现虚假增值，或取消合法角标入口"),
+    entry("randomizer/game/ai/deferred-company-scan-income.test.js", "policy/decision-search", "回合末等值时保留每轮一次的公司换牌，且下回合的扫描和发射已付得起", "先兑现等值换牌而失去下回合仍可使用的选项，或在扫描尚缺电时错误推迟"),
     entry("randomizer/game/ai/company-income-priority.test.js", "policy/decision-search", "固定收入/换牌按统一整数价值贪心排序，严格更高的公司目的优先，同值不展开两种准备顺序", "已算出电收入替换路线却先强制消耗钱收入供应牌，固定准备政策互相覆盖并损失可行融资"),
     entry("randomizer/game/ai/income-purpose-eligibility.test.js", "policy/state-value", "主行动前先过滤不能满足当前货币需求的收入牌，再比较价值和平局；已开始及主行动后收入保持", "缺电时平局选钱牌再删除整条收入准备，遗漏可达的电收入路线并损失末轮窗口价值"),
     entry("randomizer/game/ai/income-preparation-cache.test.js", "policy/decision-search", "完整不可变状态与玩家的收入准备标量按投影数据分别复用，可变及浅冻结状态实时重算", "跨数据数量或可变状态复用过期值，或将不同调用者的资本基线缓存为收益差"),

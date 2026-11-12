@@ -1217,6 +1217,21 @@
         }
       }
     }
+    // Do not realize a once-per-round swap on a score tie when the same
+    // quiet seat can already pay for the next scan without its income.
+    if(complete&&!unresolved.length&&realizationTies&&root.status==="stable"){
+      const entry=nodes[0],best=entry.best,swap=entry.pickPolicy?.companySwap;
+      const end=entry.edges.find(e=>e.turnTailPlanValue?.kind==="end-turn");
+      const tail=end?.turnTailPlanValue,action=root.legalActions.find(a=>a.actionId===best?.actionId);
+      if(action?.family==="industry"&&action.target?.abilityId==="deepspace_swap_cards"
+        &&tail?.publicAmibaPlainEnd&&tail.netGain===0&&tail.markedTiles.length===0
+        &&nodes[end.target].value===entry.value&&nodes[end.target].preparationDebt===entry.preparationDebt
+        &&port.canDeferCompanyIncomeForScan?.(root,swap)){
+        entry.best=end;
+        entry.distance=nodes[end.target].distance+end.cost;
+        entry.realization=nodes[end.target].realization;
+      }
+    }
     let scanBeforeOrbit=null, retainRegionCard=null, retainedRegionPrefix=null, continuationNativeInputs=0;
     let visibleFossilTransport=null;
     if(complete&&!stopReason&&!unresolved.length&&resourcePlanning&&realizationTies&&scanOrbitBudget
