@@ -1143,6 +1143,14 @@
     const donors=short===1?others.filter(c=>!movePoints(c)).map(c=>c.id):[];
     if(short===1&&(donors.length!==2||observes(state,seatId,'quick_trade_payment')
       ||observes(state,seatId,'quick_trade_discard_selection')))return null;
+    // Corner points precede movement. Leave score thresholds and extra
+    // corner observers on the ordinary native payment path.
+    const withCornerScore=movers.every(c=>{
+      const gain=cards.getDiscardActionMoveRewardForCard(c)?.gain;
+      return gain?.score===1&&Object.keys(gain).length===1;
+    })&&!observes(state,seatId,'cardCorner')&&!observes(state,seatId,'move')
+      &&!state.turn.cardTurnEventBonuses?.length&&!state.finalScoring.thresholds.some(n=>
+        n>p.resources.score&&n<=p.resources.score+movers.length);
     const options=[],weights=stateValue.DEFAULT_WEIGHTS;
     for(const c of candidates()){
       if(c.launchRequired||c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!['jupiter','saturn'].includes(c.planetId)
@@ -1155,7 +1163,7 @@
         const move=rockets.canMoveFromCoordinate(state.pieces,at,deltaX,deltaY,c.rocketId);
         if(!move.ok)throw Error('DIRECT_TRANSPORT_ROUTE_INVALID');
         const requiredMovePoints=rocketAbility.getRequiredMovePointsFromCoordinate({...state,state},p,at);
-        const step={from:at,to:move.to,deltaX,deltaY,requiredMovePoints,paymentCardId:movers[i].id};
+        const step={from:at,to:move.to,deltaX,deltaY,requiredMovePoints,paymentCardId:movers[i].id,...(withCornerScore?{scoredCorner:true}:{})};
         at=move.to;return step;
       });
       if(!path.every(s=>s.requiredMovePoints===1))continue;
@@ -1236,7 +1244,14 @@
           const next=goal.creditPaymentIds.find(id=>!selected.includes(id));
           return find(a=>next?a.target.cardInstanceId===next:a.target.confirm,'direct-transport-fixed-credit-payment');
         }
-        const payer=goal.path[0]?.paymentCardId;
+        const next=goal.path[0];
+        if(next?.scoredCorner&&source?.family==='card_corner'&&source.payload?.kind==='move'
+          &&source.target?.cardInstanceId===next.paymentCardId){
+          return find(a=>a.family==='choose_target'&&a.target.rocketId===goal.rocketId
+            &&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY
+            &&a.payload?.requiredMovePoints===1,'direct-transport-scored-corner-direction');
+        }
+        const payer=next?.paymentCardId;
         return payer?find(a=>a.target?.kind==='move-payment'&&a.target.cardIds?.length===1&&a.target.cardIds[0]===payer,
           'direct-transport-fixed-movement-payment'):{kind:'infeasible',reason:'direct-transport-movement-payment-changed'};
       }
@@ -1266,6 +1281,10 @@
     }
     const next=goal.path[0];
     if(goal.directTransport&&!p.hand.some(c=>c.id===next.paymentCardId))return{kind:'infeasible',reason:'direct-transport-payer-unavailable'};
+    if(goal.directTransport&&next.scoredCorner&&!state.finalScoring.thresholds.includes(p.resources.score+1)){
+      return find(a=>a.family==='card_corner'&&a.target.cardInstanceId===next.paymentCardId
+        &&a.payload?.kind==='move'&&a.payload.multiplier===1,'direct-transport-scored-corner-payment');
+    }
     return find(a=>a.family==='move'&&a.target.rocketId===goal.rocketId&&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY,
       'held-landing-fixed-direction');
   }

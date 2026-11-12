@@ -68,6 +68,48 @@ try{
   const plan=trade.q.roots.find(x=>x.actionId===trade.a.actionId).goal;
   assert.equal(plan.planetId,'saturn');
   assert.equal(new Set([plan.cardId,...plan.path.map(x=>x.paymentCardId),...plan.creditPaymentIds]).size,5);
+  assert(plan.path.every(step=>step.scoredCorner));
+  const advance=(checkpoint=null)=>{
+    const next=choose(checkpoint);
+    if(checkpoint)assert.deepEqual(next.a,choose().a);
+    play(next.a);
+    return next;
+  };
+  const funding=[];
+  let transport=trade;
+  for(let i=0;i<4;i++){
+    funding.push(transport.a);play(transport.a);
+    if(i<3)transport=choose(transport.checkpoint);
+  }
+  for(const step of plan.path){
+    transport=advance(transport.checkpoint);
+    assert.equal(transport.a.family,'card_corner');
+    assert.equal(transport.a.target.cardInstanceId,step.paymentCardId);
+    transport=advance(transport.checkpoint);
+    assert.deepEqual([transport.a.target.deltaX,transport.a.target.deltaY],[step.deltaX,step.deltaY]);
+  }
+  const scored=JSON.parse(save().committedState);
+  restore(f.pretrade);funding.forEach(play);
+  for(const step of plan.path){
+    play(legal().find(a=>a.family==='move'&&a.target.rocketId===plan.rocketId
+      &&a.target.deltaX===step.deltaX&&a.target.deltaY===step.deltaY));
+    play(legal().find(a=>a.target.kind==='move-payment'&&a.target.cardIds?.length===1
+      &&a.target.cardIds[0]===step.paymentCardId));
+  }
+  const ordinary=JSON.parse(save().committedState),player=s=>s.players.players.find(p=>p.id===seat);
+  assert.equal(player(scored).resources.score,player(ordinary).resources.score+2);
+  assert.deepEqual({...player(scored).resources,score:player(ordinary).resources.score},player(ordinary).resources);
+  assert.deepEqual(player(scored).hand,player(ordinary).hand);
+  assert.deepEqual(scored.pieces,ordinary.pieces);
+  assert.deepEqual(scored.meta.rngState,ordinary.meta.rngState);
+
+  restore(replaceCards(f.pretrade,state=>{
+    state.finalScoring.thresholds.push(player(state).resources.score+1);
+    state.finalScoring.thresholds.sort((a,b)=>a-b);
+  }));
+  const guarded=choose().q.lines[0].edges.find(e=>e.resourcePlan?.goal.directTransport)?.resourcePlan.goal;
+  assert(guarded&&!guarded.path.some(step=>step.scoredCorner));
+
 
   restore(replaceCards(f.pretrade,state=>{
     const p=state.players.players.find(x=>x.id===seat);
@@ -96,7 +138,7 @@ try{
   }
   assert(settled);
   const end=save(),s=JSON.parse(end.committedState),p=s.players.players.find(x=>x.id===seat);
-  assert.equal(p.resources.score,127);
+  assert.equal(p.resources.score,129);
   assert.equal(p.resources.credits,1);
   assert.equal(p.income.energy,3);
   assert.deepEqual(p.hand.map(x=>x.cardId),['chong_3.webp']);

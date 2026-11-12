@@ -3941,7 +3941,7 @@
         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
           const base=planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope));
           goals=resourceCatalog(base,[source]);
-          if(source.family==="move"||source.target?.tradeId==="cards-for-credit"){
+          if(source.family==="move"||source.family==="card_corner"&&source.payload?.kind==="move"||source.target?.tradeId==="cards-for-credit"){
             const native=productionKernel||globalThis.SetiProductionKernel;
             const landing=resourceDemand.heldLandingGoal({state:base,seatId,compareTiming:timingForOneGoalQuery(base),
               candidates:()=>native.getProbeRouteRequirements(base,seatId)?.candidates||[]});
