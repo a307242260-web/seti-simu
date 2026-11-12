@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-analysis-known-tail-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "展示牌领取后保留数据接续",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-deferred-company-scan-20261113",
+      "head": "36f84a256",
+      "commits": [
+        "594ec8363",
+        "36f84a256"
+      ],
+      "summary": "公开阿米巴展示牌已领取时可续接已有数据固定计划，盲抽和替换不公开。橙1同一扫描后存档自主先分析，第三轮82→86、永久电3→4、电脑3→5；标准前三轮独立验收。",
+      "records": {
+        "47b42a2f.36f84a25.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-deferred-company-scan-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
