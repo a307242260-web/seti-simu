@@ -799,11 +799,22 @@
     if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
       ||goal.kind!=='research_tech'||goal.tileId!=='blue1'||!goal.blueSlot||goal.publicityCornerCardId
       ||!need.publicity||need.credits||need.energy||need.data||p.resources.credits||p.resources.energy
-      ||p.resources.availableData!==1||placed(p)!==6||p.hand.length!==4||out.length!==3
+      ||p.hand.length!==4||out.length!==3
       ||t.cardTurnEventBonuses?.length||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
       ||p.industryRoundMarkRound===t.roundNumber||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'
       ||!state.pieces.rockets.some(r=>r.playerId===seatId&&r.surface==='solar-board'&&!r.fossilId)
       ||p.hand.some(c=>c.hidden||!c.id||!c.cardId)||out.some(c=>c.observer||c.greedyFailed))return null;
+    const computer=placed(p),pool=p.resources.availableData;
+    // A board-only restore may land just after the funding move, before
+    // filling the final column. The same payment is valid when the pool
+    // covers the remaining computer placements and the blue cash reward.
+    const full=computer===6&&pool===1;
+    const pendingColumn=computer===4&&pool===3&&goal.blueSlot===3
+      &&p.techState.ownedTiles.orange1&&p.dataState.poolTokens.length===pool
+      &&data.listComputerPlacedTokens(p).map(token=>token.placementSlot).join(',')==='1,2,3,4'
+      &&data.getRequiredComputerSlotForBlueBonus(goal.blueSlot)===5
+      &&data.getBlueTileDataBonus(goal.tileId)?.credits===1;
+    if(!full&&!pendingColumn)return null;
     const offers=out.map(candidate=>{
       const action=actions.find(a=>a.actionId===candidate.actionId),card=p.hand.find(c=>c.id===action?.target?.cardInstanceId);
       const amount=action?.family==='card_corner'&&(action.payload.multiplier??1)===1&&purePublicityCorner(card);
