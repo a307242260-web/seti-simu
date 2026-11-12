@@ -2552,13 +2552,14 @@
    const exit=actions.find(a=>a.target?.skip||a.target?.done);
    return exit?{kind:'fixed',actionId:exit.actionId,reason:'skip-unfunded-scan-cost'}:{kind:'infeasible',reason:'scan-step-cost-unfunded'};
   }
-  // The fixed Mercury follow-up is a different use of publicity. End
-  // the previous sector plan here and evaluate the original legal menu.
+  // The Mercury follow-up spends publicity on a different sector. When
+  // the scan can fill the last pool slot or would overflow, compare the
+  // native follow-up and skip without inheriting the first sector's target.
   if(state.turn.roundNumber===3&&opts.mode==='specified'&&Number.isSafeInteger(opts.sectorX)&&opts.skippable===true&&opts.gainData===true
    &&opts.cost?.publicity===1&&Object.keys(opts.cost).length===1
    &&session.queue[0].type===science.EFFECT_TYPES.SCAN_STEP
    &&session.journal.actions[0]?.action?.family==='scan'
-   &&p.resources.availableData===players.RESOURCE_LIMITS.availableData){
+   &&p.resources.availableData>=players.RESOURCE_LIMITS.availableData-1){
    const available=actions.filter(a=>a.target?.nebulaId);
    if(available.length===1&&available[0].target.nebulaId!==goal.nebulaId)
     return{kind:'complete',reason:'release-completed-primary-scan-before-independent-followup'};

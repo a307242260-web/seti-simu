@@ -927,7 +927,20 @@
           const incomePayment=parent.resourcePolicy?.alternateIncome?.actionId;
           const incomeRank=e=>Number(Boolean(e)&&(e===parent.electricIncomeTie||e.actionId===incomePayment));
           const incomeTieRank=incomeRank(edge)-incomeRank(parent.best);
-          const shorter=distance < parent.distance || (distance === parent.distance && edge.actionId < parent.best?.actionId);
+          const sameScanPrefix=edge.actionId===parent.best?.actionId
+            &&edge.resourcePlan?.goal.kind==="scan-flow"&&parent.best.resourcePlan?.goal.kind==="scan-flow";
+          // Plans for the same public card may share a mandatory scan input.
+          // Break a tie on that card's actual choice, as in its cold menu.
+          const firstDifference=sameScanPrefix&&distance===parent.distance
+            ?edge.steps.findIndex((step,i)=>step!==parent.best.steps[i]):-1;
+          const scanOffer=e=>resourceExecutions.get(e)?.prefixes[firstDifference]?.action;
+          const offer=firstDifference>=0?scanOffer(edge):null;
+          const other=offer?.family==="choose_card"?scanOffer(parent.best):null;
+          const earlierInput=offer?.target?.nebulaId&&other?.family==="choose_card"&&other.target?.nebulaId
+            &&Number.isSafeInteger(offer.target.publicSlotIndex)&&offer.target.publicSlotIndex===other.target.publicSlotIndex
+            &&offer.target.cardInstanceId===other.target.cardInstanceId&&offer.actionId<other.actionId;
+          const shorter=distance < parent.distance || (distance === parent.distance
+            && (edge.actionId < parent.best?.actionId || earlierInput));
           const salaryTie=Number.isFinite(target.salaryScore)&&Number.isFinite(parent.salaryScore)
             ?target.salaryScore-parent.salaryScore:0;
           const finalTie=incomeTieRank>0 || incomeTieRank===0&&(salaryTie>0||salaryTie===0&&shorter);
