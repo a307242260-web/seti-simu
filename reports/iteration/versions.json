@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-blue-before-blind-income-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "先结算蓝槽，再插盲抽收入",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-analysis-known-tail-20261113",
+      "head": "ffb0db82b",
+      "commits": [
+        "ce7fecb3c",
+        "ffb0db82b"
+      ],
+      "summary": "当前池同时付得起时，先拿货币蓝槽再插盲抽收入。橙1同根自主先扫描，第三轮86→107；标准前三轮独立验收。",
+      "records": {
+        "4d84a767.ffb0db82.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-analysis-known-tail-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
