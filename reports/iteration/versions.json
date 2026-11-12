@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r4-blue-known-launch-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第四轮蓝槽 · 保留公开发射任务",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-held-scan-sector-tie-20261113",
+      "head": "0066b222b",
+      "commits": [
+        "287830768",
+        "0066b222b"
+      ],
+      "summary": "第四轮仅在已知 B9 扫描会消耗可付得起的公开任务牌、且原生接续达到原报价时，先用蓝槽取牌。此登记只核对标准前三轮。",
+      "records": {
+        "f9583830.0066b222.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-held-scan-sector-tie-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
