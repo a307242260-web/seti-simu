@@ -2698,6 +2698,49 @@
       // matters. On the first mark, compare every possible next color too.
       return make(keep,"same-trace-effects-score-dominance",[...groups.entries()].map(([key,v])=>[key,v.map(x=>[x.a.actionId,x.v])]));
     }
+    const incomePaymentAlternatives=new WeakMap();
+    function incomePaymentAlternative(node,stored,state){
+      if(node!==openedRoot||node.status!=="decision"||stored.resourceControl||stored.informationBarrier)return null;
+      const session=stored.envelope.session?.session;
+      if(session?.queue.length!==1||session.queue[0].type!==scienceSession.EFFECT_TYPES.INCOME
+        ||session.interruptContext||session.failure||session.journal.actions[0]?.action.family!=="place_data")return null;
+      if(incomePaymentAlternatives.has(node))return incomePaymentAlternatives.get(node);
+      const t=state.turn,p=state.players.players.find(x=>x.id===seatId);
+      let result=null;
+      if(t.roundNumber===3&&p.mainActionCompleted
+        &&!p.passCompletionPending&&!t.cardTurnEventBonuses?.length&&p.resources.energy===0&&p.resources.availableData===0&&p.resources.credits>0&&p.income.energy<=2
+        &&t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        &&node.legalActions.every(a=>a.target?.choiceId?.startsWith("income:"))
+        &&p.hand.every(c=>knownCards(stored.envelope).has(c.id))
+        &&state.cards.publicCards.some(c=>c&&knownCards(stored.envelope).has(c.id))){
+        const rows=node.legalActions.map(a=>{
+          const card=p.hand.find(c=>c.id===a.target.cardInstanceId);
+          return {a,card,gain:cards.getIncomeGainForCard(card),value:resourceDemand.incomeCardValue(state,seatId,card)};
+        });
+        const best=Math.max(...rows.map(x=>x.value));
+        const money=rows.find(x=>x.gain.credits===1&&x.value===best);
+        const electric=rows.filter(x=>{
+          if(x.gain.energy!==1||x.value!==best)return false;
+          const body=cardEffects.buildPlayEffects(x.card),sector=body[0]?.options?.nebulaId;
+          return body.length===2&&sector&&body.every(e=>e.type==="card_scan_nebula"&&e.options.nebulaId===sector&&e.options.gainData===true)
+            &&data.listNebulaTokens(state.data,sector).filter(t=>!t.replacedByPlayerId&&!t.replacedByPlayerColor).length>body.length;
+        });
+        const cost=scanEffects.getStandardScanCost(p);
+        const trade=quickTrades.getTradeAction("credits-for-energy");
+        const pay=(income)=>Math.ceil(Math.max(0,(cost.energy||0)-(income.gain.energy||0))/trade.gain.energy)
+          *trade.cost.credits+(cost.credits||0);
+        if(money&&electric.length===1){
+          const e=electric[0],left=p.resources.credits-pay(e),base=p.resources.credits+1-pay(money);
+          const body=cardEffects.buildPlayEffects(money.card),cost=cardEffects.getCardPlayCost(money.card);
+          const corner=cards.getDiscardActionRewardForCard(money.card);
+          if(base===0&&left===1&&cost?.credits===1&&Object.keys(cost).length===1
+            &&corner?.dataCount===1&&Object.keys(corner.gain).every(k=>k==="score")
+            &&body.some(e=>e.type==="pick_card")&&body.some(e=>e.type==="amiba_choose_symbol_reward"))
+            result={actionId:e.a.actionId,baseline:money.a.actionId,left,base};
+        }
+      }
+      incomePaymentAlternatives.set(node,result);return result;
+    }
     function localDecisionSpec(node){
       if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
       if(localSpecs.has(node))return localSpecs.get(node);
@@ -2713,7 +2756,7 @@
       if(!result&&resourcePlanning){
         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
           ||resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
-        if(fixed)result={policy:fixed.reason==="fixed-positive-paid-repeat"?"seti-greedy-paid-budget-v1":"seti-greedy-data-execution-v1",kind:fixed.reason==="fixed-positive-paid-repeat"?"fixed-paid-repeat":"fixed-data-choice",fixed:true,isEquivalence:false,
+        if(fixed&&!incomePaymentAlternative(node,stored,state))result={policy:fixed.reason==="fixed-positive-paid-repeat"?"seti-greedy-paid-budget-v1":"seti-greedy-data-execution-v1",kind:fixed.reason==="fixed-positive-paid-repeat"?"fixed-paid-repeat":"fixed-data-choice",fixed:true,isEquivalence:false,
           selectedActionId:fixed.actionId,retainedActionIds:[fixed.actionId],excludedActionIds:node.legalActions.filter(a=>a.actionId!==fixed.actionId).map(a=>a.actionId),reason:fixed.reason,...(fixed.netGain!==undefined?{netGain:fixed.netGain}:{})};
       }
       const spec=result&&freeze(result);localSpecs.set(node,spec);return spec;
@@ -4074,7 +4117,9 @@
           resourceSpecs.set(node,spec);return spec;
         }
       }
+      const alternateIncome=incomePaymentAlternative(node,stored,state);
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+        ...(alternateIncome?{alternateIncome}:{}),
         ...(adjacentCargo?.paid&&plans.some(p=>p.goal===adjacentCargo)?{cargoCommittedMovement:true}:{}),
         plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation||p===dataCargo)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation||p===dataCargo):plans,
         ...(scoredCorner?{scoredCorner}:{}),...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
@@ -4082,7 +4127,7 @@
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
         ...(sharedDataFunding?{sharedDataFunding}:{}),...(deferColumn?{deferredBlueColumn:true}:{}),
         ...(recoveredDataOrder?{recoveredDataOrder:{income:recoveredDataOrder.income,blue:recoveredDataOrder.blue.netGain,selected:forcedKind}}:{}),
-        retainedActionIds:forcedKind&&!compareFixedPurposes?(swapAction?[swapAction.actionId]:[]):node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forcedKind&&!compareFixedPurposes?node.legalActions.filter(a=>a!==swapAction).map(a=>a.actionId):excluded.map(a=>a.actionId)});
+        retainedActionIds:node.legalActions.filter(a=>a.actionId===alternateIncome?.actionId||(forcedKind&&!compareFixedPurposes?a===swapAction:!excluded.includes(a))).map(a=>a.actionId),excludedActionIds:(forcedKind&&!compareFixedPurposes?node.legalActions.filter(a=>a!==swapAction):excluded).filter(a=>a.actionId!==alternateIncome?.actionId).map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
 
@@ -5441,6 +5486,13 @@
         }
       }
       if (!row) return { hit: false, reason: "dependencies-changed" };
+      const income=resourcePlanning&&node.status==="decision"
+        &&stored.envelope?.session?.session?.queue[0]?.type===scienceSession.EFFECT_TYPES.INCOME
+        &&incomePaymentAlternative(node,stored,readPlanningState(stored));
+      // The original preparation proved the data placement, not both
+      // uses of the resulting currency. Reprice only this ready menu.
+      if(income&&row.actionId!==income.actionId&&row.roots.some(r=>r.actionId===income.actionId&&r.value==null))
+        return {hit:false,reason:"fixed-income-prefix-competing-payment"};
       if(node.status==="stable"&&row.actionId.startsWith("card_corner:")
         &&cardPickSpec(node)?.companySwap?.reason==="compare-funded-fourth-slot-energy")
         return {hit:false,reason:"fixed-corner-prefix-competing-income-swap"};

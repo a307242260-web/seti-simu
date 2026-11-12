@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v458";
+  const VERSION = "seti-complete-decision-search-v459";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -924,8 +924,9 @@
           const blindCount=(target.chongBlindCount??0)+chongBlindRank(index,edge);
           const blindRank=blindCount-(parent.chongBlindCount??0);
           const pickupRank=(target.pickupRank??0)-(parent.pickupRank??0);
-          const incomeTieRank=Number(edge===parent.electricIncomeTie)
-            -Number(Boolean(parent.best)&&parent.best===parent.electricIncomeTie);
+          const incomePayment=parent.resourcePolicy?.alternateIncome?.actionId;
+          const incomeRank=e=>Number(Boolean(e)&&(e===parent.electricIncomeTie||e.actionId===incomePayment));
+          const incomeTieRank=incomeRank(edge)-incomeRank(parent.best);
           const shorter=distance < parent.distance || (distance === parent.distance && edge.actionId < parent.best?.actionId);
           const salaryTie=Number.isFinite(target.salaryScore)&&Number.isFinite(parent.salaryScore)
             ?target.salaryScore-parent.salaryScore:0;
