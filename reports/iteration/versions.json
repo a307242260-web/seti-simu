@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-visible-analysis-income-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "免费分析后的已知展示牌收入",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-public-scan-suffix-20261113",
+      "head": "a1588be36",
+      "commits": [
+        "51e2618b3",
+        "a1588be36"
+      ],
+      "summary": "只计已公开展示牌能支付后的环绕收入。教师第141步同根白席完全自主，第三轮77→104，科技5→6；标准前三轮独立验收。",
+      "records": {
+        "229ebe96.a1588be3.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-public-scan-suffix-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
