@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-public-scan-suffix-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "公开牌扫描补扫与接续",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r4-blue-known-launch-20261113",
+      "head": "3a5ccf1cd",
+      "commits": [
+        "ba5b170b6",
+        "3a5ccf1cd"
+      ],
+      "summary": "同一公开牌扫描落点按独立补扫后的同值比较，冷恢复与计划复用一致。教师存档仅固定主行动为扫描，第三轮 84→104。标准自主前三轮独立回归。",
+      "records": {
+        "6e2785d7.3a5ccf1c.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r4-blue-known-launch-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
