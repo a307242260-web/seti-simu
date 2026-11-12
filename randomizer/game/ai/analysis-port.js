@@ -4231,6 +4231,38 @@
       // supplier. Its arrival must not reopen other data/corner purposes.
       const supplyPlans=plans.filter(p=>p.goal.kind==="blue-landing-supply");
       const compareFixedPurposes=Boolean(competingCash||preparation||cashColumn||cargoCorner||shipmentPlan||satellite);
+      // When all costs fit in the existing pool, settle the fixed currency
+      // slots before the blind income. This keeps the known gains on the
+      // current side of the information boundary without adding a branch.
+      let currencyBeforeBlindIncome=null;
+      const pendingDataSlot=node.status==="decision"&&source?.family==="place_data"&&session?.queue.length===1
+        &&session.queue[0].type===scienceSession.EFFECT_TYPES.PLACE_DATA;
+      const orderState=pendingDataSlot?preparationBase:node.status==="stable"&&forcedKind==="income"?state:null;
+      if(orderState&&incomeTail?.selected&&!swapAction&&!compareFixedPurposes
+        &&orderState.turn.roundNumber===3&&company?.activeAbilityId==="deepspace_swap_cards"
+        &&orderState.aliens.amiba?.revealInitialized&&!stored.intent?.path.length
+        &&orderState.turn.activePlayerIds.every(id=>id===seatId||orderState.turn.passedPlayerIds.includes(id))
+        &&!orderState.turn.cardTurnEventBonuses?.length&&!node.legalActions.some(a=>a.family==="complete_task")
+        &&Object.values(orderState.aliens.aliens).every(slot=>!slot.revealed||slot.alienId==="阿米巴")
+        &&hasTradeInertReservations(orderState,true)){
+        const p=orderState.players.players.find(x=>x.id===seatId),known=knownCards(envelope);
+        const income=plans.find(x=>x.goal.kind==="income"),
+          supplier=income&&p.hand.find(c=>c.id===income.goal.incomeCardId&&known.has(c.id));
+        const gain=supplier&&cards.getIncomeGainForCard(supplier);
+        if(p.mainActionCompleted&&!p.industryBorrowedTechTileId&&gain?.handSize===1&&Object.keys(gain).length===1
+          &&p.resources.availableData===p.dataState.poolTokens.length&&p.hand.every(c=>known.has(c.id))
+          &&orderState.cards.drawPileCardIds.length){
+          const computer=data.listComputerPlacedTokens(p).map(t=>t.placementSlot).sort((a,b)=>a-b);
+          const blue=data.listBluePlacementRequirements(p).filter(slot=>{
+            if(slot.requiredComputerSlot>=4)return false;
+            const reward=data.getBlueBonusPlacementReward(p,slot.blueSlot);
+            return reward?.type==="credits"&&reward.credits===1||reward?.type==="energy"&&reward.energy===1;
+          }).sort((a,b)=>a.requiredComputerSlot-b.requiredComputerSlot||a.blueSlot-b.blueSlot);
+          if(blue.length&&computer.length>=2&&computer.length<4&&computer.every((slot,i)=>slot===i+1)
+            &&p.resources.availableData>=4-computer.length+blue.length)
+            currencyBeforeBlindIncome=plans.find(x=>x.goal.kind==="blue-data"&&x.goal.blueSlot===blue[0].blueSlot);
+        }
+      }
       // A known ready transport that fits in the pool commutes with the
       // already funded computer-income prefix after a public analysis. Join
       // the collected state before replaying those same four placements.
@@ -4254,16 +4286,18 @@
         }
       }
       const alternateIncome=incomePaymentAlternative(node,stored,state);
+      const fixedPreparation=currencyBeforeBlindIncome||forcedKind&&!compareFixedPurposes;
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,
+        ...(currencyBeforeBlindIncome?{currencyBeforeBlindIncome:currencyBeforeBlindIncome.goal.blueSlot}:{}),
         ...(alternateIncome?{alternateIncome}:{}),
         ...(adjacentCargo?.paid&&plans.some(p=>p.goal===adjacentCargo)?{cargoCommittedMovement:true}:{}),
-        plans:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation||p===dataCargo)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation||p===dataCargo):plans,
+        plans:currencyBeforeBlindIncome?[currencyBeforeBlindIncome]:compareFixedPurposes?plans:swapAction?[...supplyPlans,...plans.filter(p=>p.goal.analysisPreparation||p===dataCargo)]:forcedKind?plans.filter(p=>p.goal.kind===forcedKind||p.goal.kind==="blue-landing-supply"||p.goal.analysisPreparation||p===dataCargo):plans,
         ...(scoredCorner?{scoredCorner}:{}),...(deferredCappedTask?{deferredCappedTask}:{}),...(protectedIncome?{protectedIncome:protectedIncome.proof}:{}),
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),...(computerTail?{fixedComputerTail:computerTail}:{}),
         ...(swapAction?{fixedCompanySwap:{goal:competingSwap.goal,netGain:swapGain,replaces:forcedKind,replacesGain:forcedGain}}:{}),
         ...(sharedDataFunding?{sharedDataFunding}:{}),...(deferColumn?{deferredBlueColumn:true}:{}),
         ...(recoveredDataOrder?{recoveredDataOrder:{income:recoveredDataOrder.income,blue:recoveredDataOrder.blue.netGain,selected:forcedKind}}:{}),
-        retainedActionIds:node.legalActions.filter(a=>a.actionId===alternateIncome?.actionId||(forcedKind&&!compareFixedPurposes?a===swapAction:!excluded.includes(a))).map(a=>a.actionId),excludedActionIds:(forcedKind&&!compareFixedPurposes?node.legalActions.filter(a=>a!==swapAction):excluded).filter(a=>a.actionId!==alternateIncome?.actionId).map(a=>a.actionId)});
+        retainedActionIds:node.legalActions.filter(a=>a.actionId===alternateIncome?.actionId||(fixedPreparation?a===swapAction:!excluded.includes(a))).map(a=>a.actionId),excludedActionIds:(fixedPreparation?node.legalActions.filter(a=>a!==swapAction):excluded).filter(a=>a.actionId!==alternateIncome?.actionId).map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
 
