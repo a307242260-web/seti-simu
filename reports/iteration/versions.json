@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-direct-transport-scored-corners-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第三轮固定运输移动角标",
+      "date": "2026-11-12",
+      "baseline": "ai-search-r3-blue-before-blind-income-20261113",
+      "head": "5a47269ba",
+      "commits": [
+        "c242b4bab",
+        "5a47269ba"
+      ],
+      "summary": "土星化石的既定路线按原生移动角标付款，保留两张已知移动牌各自印刷的额外分。",
+      "records": {
+        "6883c4f4.5a47269b.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-blue-before-blind-income-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
