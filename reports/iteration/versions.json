@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-staged-landing-full-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第三轮提前定位｜正式接续第一次验收（超时）",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-prepass-funded-landing-20261113",
+      "baselineEligible": false,
+      "head": "ae637106b",
+      "commits": [
+        "ae637106b"
+      ],
+      "summary": "第四轮第一个白席决定原生166次、711.8毫秒，动作未提交。保留失败记录。",
+      "records": {
+        "8fc18ed4.ae637106.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-prepass-funded-landing-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
