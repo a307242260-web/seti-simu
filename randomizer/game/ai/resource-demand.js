@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog,chong){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v27';
+  const VERSION='seti-goal-resource-preparation-v28';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -442,12 +442,51 @@
     if(immutable){if(!owners){owners=new WeakMap();immutableIncomeCardQuotes.set(state,owners);}if(!cardsByOwner){cardsByOwner=new WeakMap();owners.set(p,cardsByOwner);}if(!quotes){quotes=new Map();cardsByOwner.set(card,quotes);}quotes.set(projectedData,after);}
     return stateValue.sumValueParts([after,-beforeCapital]);
   }
+  // When the current turn has already spent its main action, preserve a
+  // uniquely funded next-turn research if the income choices pay identically.
+  // This is a tie break for the live income menu, not a score or search edge.
+  function preserveFundedResearchCorner(state,p,rows){
+    const t=state.turn;
+    if(t.roundNumber!==4||!p.mainActionCompleted||p.passCompletionPending||t.currentPlayerId!==p.id
+      ||!t.activePlayerIds.includes(p.id)||t.passedPlayerIds.includes(p.id)
+      ||t.activePlayerIds.some(id=>id!==p.id&&!t.passedPlayerIds.includes(id))
+      ||p.hand.some(c=>c.hidden||!c.cardId)||industry.shouldDoubleDiscardCornerRewards?.(p)
+      ||observes(state,p.id,'cardCorner')||observes(state,p.id,'placeData'))return null;
+    const slots=data.listComputerPlacedTokens(p).map(token=>token.placementSlot).sort((a,b)=>a-b);
+    const remaining=4-slots.length;
+    if(remaining<0||remaining>1||slots.some((n,i)=>n!==i+1)||p.resources.availableData!==2+remaining
+      ||p.dataState.poolTokens.length!==2+remaining)return null;
+    const prefix=remaining?incomeTailPrefix(p,remaining):null;
+    if(remaining&&!prefix)return null;
+    const prepared=prefix?{...p,...prefix}:p;
+    const ready=data.listBluePlacementRequirements(prepared);
+    if(ready.length!==1||ready[0].requiredComputerSlot!==5)return null;
+    const blue=data.getBlueBonusPlacementReward(prepared,ready[0].blueSlot);
+    if(blue?.type!=='publicity'||blue.publicity<=0)return null;
+    const missing=techResolver.getResearchPublicityCost(p)-prepared.resources.publicity-blue.publicity;
+    if(missing<=0||!techResolver.listTakeableTiles(state.tech,p.techState).length)return null;
+    const supplier=p.hand.filter(card=>{
+      const corner=cards.getDiscardActionRewardForCard(card);
+      return !corner?.dataCount&&corner?.gain?.publicity>=missing
+        &&Object.keys(corner.gain).every(k=>k==='publicity');
+    });
+    if(supplier.length!==1||supplier[0]!==rows[0].card)return null;
+    const gain=cards.getIncomeGainForCard(supplier[0]);
+    if(gain?.energy!==1||Object.keys(gain).length!==1)return null;
+    return rows.find(r=>{
+      const g=cards.getIncomeGainForCard(r.card);
+      return r.value===rows[0].value&&r.card!==supplier[0]&&g?.energy===1&&Object.keys(g).length===1;
+    })||null;
+  }
   // Keep the main rank intact. When its leading currency choices tie,
   // compare the same known landing paid from the one remaining salary plus
   // the immediate income reward. No new route or value is added to search.
   function rankIncomeChoices(state,p,rows){
     rows.sort((a,b)=>b.value-a.value||incomeOrder.compare(a.card,b.card));
     const t=state.turn;
+    if(rows.length>1&&rows[0].value===rows[1].value){
+      const funded=preserveFundedResearchCorner(state,p,rows);if(funded)return funded;
+    }
     if(rows.length<2||rows[0].value!==rows[1].value||t.roundNumber!==3||!p.mainActionCompleted
       ||p.resources.credits!==0||p.resources.energy!==0||p.passCompletionPending
       ||industry.getPlayerIndustryDefinition(p)?.activeAbilityId!=='deepspace_swap_cards'

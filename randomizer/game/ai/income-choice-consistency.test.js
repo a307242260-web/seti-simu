@@ -24,3 +24,29 @@ const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateAct
 try{submit(a=>a.family==='place_data');submit(a=>a.target?.target==='computer');const active=c.lifecycle.save().envelope.session.session.workingState,pick=demand.incomeChoice({state:active,seatId:seat,goal:initial,actions:legal()});submit(a=>a.actionId===pick.actionId);submit(a=>a.family==='place_data');submit(a=>a.target?.target==='blueBonus'&&a.target.blueSlot===2);submit(a=>a.family==='end_turn');assert.deepEqual(c.lifecycle.save().envelope,control.prefixes[6],'the new initial/pending fixed policy exactly reproduces the already-proven currency-income Native endpoint, including RNG');assert(c.lifecycle.restore(root).ok);assert.deepEqual(c.lifecycle.save().envelope,root);}finally{c.dispose();}
 assert.equal(nativeInputs,6);
 assert.equal(JSON.stringify(state),before);console.log(JSON.stringify({incomeChoiceConsistency:'passed',equalUtility:6,tieFixture:'case-062 player-blue',actualPublicityOpportunityValues:quotes.map(q=>({id:q.card.id,value:q.value})),preservedPrice:effects.getCardPrice(eligible.find(c=>c.id==='alien-amiba-9-5')),selected:'card-49-0',menuPermutationStable:true,explicitPurposeRespected:true,strictlyHigherValueRespected:true,noNewSearchBranches:true,nativeInputs,rootAndRngRestored:true,scalarAnalysisSupplierAligned:true}));
+
+// At the second income menu, losing the only +2 publicity corner can
+// make research unaffordable even though the immediate income is identical.
+{
+ const zlib=require('node:zlib');
+ const evidence=path.resolve(__dirname,'../../../reports/ai-foundation-20261113/prepass-funded-landing/r4-income-research-corner-20261113-v1.json.gz');
+ const rows=JSON.parse(zlib.gunzipSync(fs.readFileSync(evidence))).groups[0].rows;
+ for(const [name,supplier] of [['only-income-amiba9/b_111.webp','chong_8.webp'],['only-income-chong8/b_111.webp','amiba_9.webp']]){
+  const envelope=rows.find(row=>row.name===name).checkpoints[0][1];
+  const {workingState:s,queue}=envelope.session.session;
+  const actor=s.players.players.find(p=>p.id===seat);
+  const cards=require('../cards/deck'),data=require('../data');
+  const live=actor.hand.filter(c=>cards.getIncomeGainForCard(c)).map(c=>({family:'choose_card',actionId:c.id,target:{choiceId:'income:'+c.id,cardInstanceId:c.id}}));
+  const source=actor.hand.find(c=>c.cardId===supplier);
+  const pick=(sourceState,goal={required:{}},actions=live)=>demand.incomeChoice({state:sourceState,seatId:seat,goal,actions}).actionId;
+  assert.equal(queue.length,1);
+  assert.equal(data.listComputerPlacedTokens(actor).length,4);
+  assert.equal(actor.resources.availableData,2);
+  assert.notEqual(pick(s),source.id);
+  assert.equal(pick(s,{required:{}},[...live].reverse()),pick(s));
+  assert.equal(pick(s,{required:{},incomeCardId:source.id}),source.id,'an already assigned income cannot be replaced');
+  const noBlue=structuredClone(s);
+  noBlue.players.players.find(p=>p.id===seat).techState.disabledTiles.blue4=true;
+  assert.equal(pick(noBlue),source.id,'without the blue reward the retained corner cannot fund research');
+ }
+}
