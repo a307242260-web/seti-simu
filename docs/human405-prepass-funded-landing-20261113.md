@@ -445,3 +445,13 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 直接付款冷根 **400→254 次**，首选仍是虫族 3，约 335–355 毫秒。从这个存档开始，白席连续 34 个原生输入完全自主走到第三轮 PASS 前，与此前人工固定登陆的原生终点完全一致：117 分、8 科技、永久 7 钱／4 电、化石 01 在途，空手空池。隔离验证对两个根共 291 个预览输入，逐一比对实际规则状态、RNG、下一菜单与会话日志；仅忽略 AI 不会调用的撤销快照。筹资压力根 **2008→1935 次**，仍超预算，没有提交该决定。此候选尚未进入生产，未运行新整局或改实验中心基线。
 
 [候选补丁](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-tail-candidate-20261113-v1.patch) · [直接付款自主轨迹](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-autonomous-20261113-v1.json.gz) · [直接付款对照统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-exact-check-20261113-v5.json.gz) · [筹资压力对照统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-exact-stress-20261113-v1.json.gz)。
+
+## 第四格先付运输费：从公开收入菜单走到轮末
+
+原 1935 次压力根有两个实质不同的登陆目标：弃两张换钱打虫族 3（报价 197.5），以及弃两张换电、继续筹资后普通登陆土卫六（199）。普通登陆没有拾取化石的尾部，不能与虫族牌路径共用同一个规则状态。源头在更早的第四格收入菜单：虫族 3 此时已公开展示，探测器在土星，有两枚池数据可填满电脑并免费分析。插虫族 7 的钱收入可留 1 钱，插虫族 2 的牌收入则留 0 钱；分析和取得展示虫族 3 后，前者直接支付，不需要两张手牌换钱或普通登陆。这一对照固定收入选择，其余全由相同候选版决策；筹资路线仍在 1935 次处停止。
+
+隔离的固定收入候选从第四格菜单全自主走到第三轮末，共 43 个原生输入，峰值 **254 次／294 毫秒以内**，结果 **117 分、8 科技、7 钱／4 电、在途化石 01，空手空池**。候选根据公开展示牌、可填满的电脑、可取展示牌的蓝痕和已经到位的土卫六，选择能支付 1 钱的收入；没有读取补出的牌或化石。该窗口仍从教师中途存档开始，未证明能从正式 23 输入开局走到该收入菜单。原筹资压力根没有变得可执行，因此本次未合入生产或修改实验中心基线。
+
+从同一化石拾取后存档看，白席本有 **108 分、6 科技、7 钱／4 电、5 张牌和 2 池**；继续自主两次科研及后续换资才耗尽库存。立即结束回合并固定 PASS，保留五牌两池；先将两池变成一电脑格、一蓝槽和 1 电再固定 PASS，为 110 分且同样保留五牌。两条留存路线分别固定同一张 B111／B32，第四轮均自主到 **237 分**。继续研发的两个对照都在第四轮首个移动决定超限（379／380 次），没有可比较的终局成绩。不能从 237 推断「留存胜过继续」，也没有理由在第三轮强制 PASS；教师第三轮的三池及两蓝槽仍未对齐。
+
+[同菜单两种付款](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-funding-earlier-20261113-v1.json.gz) · [隔离候选自主轨迹](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-funded-auto-20261113-v1.json.gz) · [留存对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-stock-terminal-20261113-v1.json.gz) · [先填格再留存](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-stock-mid-terminal-20261113-v1.json.gz)。[收入候选补丁](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-income-funding-candidate-20261113-v1.patch)建立在上一节的确定结算候选上。两次对照均遵循单点门槛；六份原生证据已独立复放。

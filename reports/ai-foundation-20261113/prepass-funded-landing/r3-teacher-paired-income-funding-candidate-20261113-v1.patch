@@ -1,0 +1,88 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -3044,6 +3044,51 @@
+       // matters. On the first mark, compare every possible next color too.
+       return make(keep,"same-trace-effects-score-dominance",[...groups.entries()].map(([key,v])=>[key,v.map(x=>[x.a.actionId,x.v])]));
+     }
++    function pickupFeeIncomeChoice(node,stored,state){
++      if(node!==openedRoot||node.status!=="decision"||stored.resourceControl||stored.informationBarrier)return null;
++      const s=stored.envelope.session?.session,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
++      if(s?.queue.length!==1||s.queue[0].type!==scienceSession.EFFECT_TYPES.INCOME
++        ||s.interruptContext||s.failure||s.journal.actions[0]?.action.family!=="place_data"
++        ||t.roundNumber!==3||t.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
++        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
++        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
++        ||p.resources.credits||p.resources.energy||p.resources.availableData!==2
++        ||data.listComputerPlacedTokens(p).map(x=>x.placementSlot).sort().join()!=="1,2,3,4"
++        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds?.includes("deepspace_free_analyze"))return null;
++      const display=rootObservation.publicState.board.aliens.chongOffer,known=knownCards(stored.envelope);
++      if(!display||display.displayedCardIndex!==knownChongDisplayIndex||!knownRootAlienIds.has("虫")
++        ||p.hand.some(c=>!known.has(c.id))||p.reservedCards.some(c=>!known.has(c.id))
++        ||cardEffects.hasMatchingTrigger(p,{type:"alien_card_gain",playerId:seatId,alienId:"虫",source:"display"}))return null;
++      const card=chong.createAlienCard(display.displayedCardIndex,1),body=card&&cardEffects.buildPlayEffects(card);
++      if(body?.map(e=>e.type).join()!=="card_move,chong_land_for_pickup,chong_pickup_fossil"
++        ||body[1].options?.skipCost===false||cardEffects.getCardPlayCost(card).credits!==1)return null;
++      const trace=chong.getPositionsForTraceType("blue").filter(position=>{
++        if(chong.LOCKED_BLUE_POSITIONS.includes(position)||position===chong.PANEL_FOSSIL_INITIAL_POSITION)return false;
++        return chong.canPlaceChongTrace(state.aliens,display.slotId,"blue",position,p).ok
++          &&chong.getTraceReward(state.aliens,"blue",position)?.pickAlienCard;
++      });
++      if(!trace.length)return null;
++      const ships=state.pieces.rockets.filter(r=>r.playerId===seatId&&r.surface==="solar-board"&&!r.fossilId);
++      if(ships.length!==1)return null;
++      const routes=(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId).candidates;
++      if(!routes.some(c=>c.rocketId===ships[0].id&&c.endpointFamily==="land"&&c.path.length===0
++        &&c.endpointTarget?.satelliteId==="titan"
++        &&c.endpointFacts.rewards?.filter(r=>r.type==="alien_trace").length===2)
++        ||chong.getRemainingPlanetFossilCount(state.aliens,"saturn")===0)return null;
++      const rows=node.legalActions.map(a=>{
++        const payer=p.hand.find(c=>c.id===a.target?.cardInstanceId);
++        return a.target?.choiceId?.startsWith("income:")&&payer?{action:a,gain:cards.getIncomeGainForCard(payer)}:null;
++      });
++      if(rows.some(x=>!x?.gain)||!rows.some(x=>x.gain.handSize===1))return null;
++      const cash=rows.filter(x=>x.gain.credits===1&&Object.keys(x.gain).length===1);
++      // Prefer the wallet that pays the public pickup without consuming two
++      // additional cards; equally funded payers use existing income ordering.
++      if(!cash.length)return null;
++      return cash.sort((a,b)=>resourceDemand.incomeCardValue(state,seatId,p.hand.find(c=>c.id===b.action.target.cardInstanceId))
++        -resourceDemand.incomeCardValue(state,seatId,p.hand.find(c=>c.id===a.action.target.cardInstanceId))
++        ||a.action.actionId.localeCompare(b.action.actionId))[0].action.actionId;
++    }
++
+     const incomePaymentAlternatives=new WeakMap();
+     function incomePaymentAlternative(node,stored,state){
+       if(node!==openedRoot||node.status!=="decision"||stored.resourceControl||stored.informationBarrier)return null;
+@@ -3099,6 +3144,10 @@
+         knownChongDisplay:knownRootAlienIds.has("虫")?knownChongDisplayIndex:null,rankKnownFossilTraces,
+       });
+       if(!result&&resourcePlanning)result=pairedTracePickupPlan(node,stored,state)||quietScanTracePlan(node,stored,state);
++      const pickupIncome=!result&&resourcePlanning&&pickupFeeIncomeChoice(node,stored,state);
++      if(pickupIncome)result={kind:"fixed-data-choice",fixed:true,isEquivalence:false,selectedActionId:pickupIncome,
++        retainedActionIds:[pickupIncome],excludedActionIds:node.legalActions.filter(a=>a.actionId!==pickupIncome).map(a=>a.actionId),
++        reason:"income-funds-public-pickup"};
+       if(!result&&resourcePlanning){
+         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
+           ||resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
+@@ -4107,6 +4156,12 @@
+       }
+       if(cardPick?.fixed){resourceSpecs.set(node,null);return null;}
+       const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
++      const pickupIncome=pickupFeeIncomeChoice(node,stored,state);
++      if(pickupIncome){
++        const fixed=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:[],
++          retainedActionIds:[pickupIncome],excludedActionIds:node.legalActions.filter(a=>a.actionId!==pickupIncome).map(a=>a.actionId)});
++        resourceSpecs.set(node,fixed);return fixed;
++      }
+       let goals=[],source=null,operation={},incomeTail=null,blueTails=[],computerTail=null,protectedIncome=null;
+       if(stored.resourceControl){
+         const control=stored.resourceControl,step=resourceStep(node,control.goal,control.operation);
+@@ -6202,6 +6257,8 @@
+         }
+       }
+       if (!row) return { hit: false, reason: "dependencies-changed" };
++      const pickupIncome=resourcePlanning&&pickupFeeIncomeChoice(node,stored,readPlanningState(stored));
++      if(pickupIncome&&row.actionId!==pickupIncome)return {hit:false,reason:"income-pickup-funding-changed"};
+       const income=resourcePlanning&&node.status==="decision"
+         &&stored.envelope?.session?.session?.queue[0]?.type===scienceSession.EFFECT_TYPES.INCOME
+         &&incomePaymentAlternative(node,stored,readPlanningState(stored));
