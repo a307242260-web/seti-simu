@@ -709,3 +709,88 @@ if(mode==='cargo-inventory-stop'){
     write({source,groups:[{name:'same salary and transported fossil, third-round uses',root:origin,rows}]});
   }finally{env.dispose();}
 }
+if(mode==='cargo-third-pool'||mode==='cargo-third-pool-market'){
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync('reports/ai-foundation-20261113/'+f)));
+  const paired=read('prepass-funded-landing/r3-teacher-paired-stock-control-20261113-v1.json.gz').groups[0];
+  const cargo=read('r3-cargo-stock/human405-r3-cargo-stock-hidden-20261113-v1.json.gz').groups[0].rows[0].end;
+  const env=initialized(),template=env.createCheckpoint(),groups=[],terminal=[];
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  const save=()=>env.createCheckpoint().coreState.compositionEnvelope;
+  function fixed(fn,inputs){
+    const a=env.legalActions().find(fn);
+    assert(a,JSON.stringify(env.legalActions().map(x=>x.summary)));
+    assert(a.actorId===white);assert(env.step(a).ok);inputs.push(a);
+  }
+  const fam=f=>a=>a.family===f, card=id=>a=>a.family==='card_corner'&&a.summary.startsWith(id);
+  const stableRow=(name,inputs)=>{
+    const end=save(),result=assets(end,env.observe(white));
+    assert(env.legalActions().some(a=>a.family==='pass'&&a.actorId===white));
+    return {name,inputs,checkpoints:[],end,score:null,assets:result};
+  };
+  const checkSalary=result=>assert.deepEqual([result.income.credits,result.income.energy],[7,4]);
+  const show=result=>[result.score,result.resources.credits,result.resources.energy,result.resources.publicity,
+    result.resources.availableData,result.hand,result.computer,result.blue,result.probes,Object.keys(result.tech.ownedTiles)];
+  const marketOnly=mode==='cargo-third-pool-market';
+  try{
+    const variantsByRoot=marketOnly ? [
+      ['standard branch fossil 07',cargo,[
+        ['B9 publicity only',[card('b_9.webp')]],
+        ['B9 publicity, hold B60',[card('b_9.webp'),a=>a.target?.tradeId==='publicity-for-card',a=>a.summary==='b_60.webp']],
+        ['B9 publicity, hold DLC15',[card('b_9.webp'),a=>a.target?.tradeId==='publicity-for-card',a=>a.summary==='dlc_15.png']],
+      ]],
+    ] : [
+      ['teacher-origin fossil 01',paired.root,[
+        ['end and pass',[]],
+        ['DLC15 corner, end and pass',[card('dlc_15.png')]],
+        ['DLC15 corner, buy known DLC27, end and pass',[card('dlc_15.png'),a=>a.target?.tradeId==='publicity-for-card',a=>a.summary==='dlc_27.png']],
+      ]],
+      ['standard branch fossil 07',cargo,[
+        ['pass original',[]],
+        ['B9 publicity, buy B60 as known corner, pass',[card('b_9.webp'),a=>a.target?.tradeId==='publicity-for-card',a=>a.summary==='b_60.webp',card('b_60.webp')]],
+        ['B9 publicity, buy DLC15 as known corner, pass',[card('b_9.webp'),a=>a.target?.tradeId==='publicity-for-card',a=>a.summary==='dlc_15.png',card('dlc_15.png')]],
+      ]],
+    ];
+    for(const [name,origin,variants] of variantsByRoot){
+      const rows=[];
+      for(const [label,plan] of variants){
+        restore(origin);const inputs=[];
+        for(const step of plan)fixed(step,inputs);
+        if(name.startsWith('teacher'))fixed(fam('end_turn'),inputs);
+        const r=stableRow(label,inputs);checkSalary(r.assets);rows.push(r);
+        console.log(JSON.stringify({name,label,r3:show(r.assets),actions:inputs.map(a=>a.summary)}));
+        const suffix=[];
+        for(const reserve of ['b_111.webp','b_32.webp']){
+          restore(r.end);const actions=[],decisions=[],checkpoints=[];
+          fixed(fam('pass'),actions);
+          let stop,picked=false;
+          const started=performance.now();
+          for(let i=0;i<240;i++){
+            if(env.isTerminal()){stop='terminal';break;}
+            if(performance.now()-started>180000){stop='elapsed';break;}
+            const menu=env.legalActions();
+            if(!picked&&menu[0]?.actorId===white&&menu[0].target?.kind==='pass-reserve-card'){
+              if(!menu.some(a=>a.target.cardId===reserve)){stop='reserve unavailable';break;}
+              fixed(a=>a.target.cardId===reserve,actions);picked=true;continue;
+            }
+            let v;
+            try{v=take(env);}catch(e){
+              const q=e.search||e.cause?.search;if(!q)throw e;
+              decisions.push([q.diagnostics.nativeExecutions,q.rootAndSearchMilliseconds,false,q.stopReason]);
+              stop='decision gate';break;
+            }
+            if(v.searches[0]){const q=v.searches[0];decisions.push([q.diagnostics.nativeExecutions,q.rootAndSearchMilliseconds,true,v.a.summary]);}
+            actions.push(v.a);
+          }
+          assert(stop);
+          const end=save(),score=stop==='terminal'?JSON.parse(end.committedState).match.finalScores.find(x=>x.playerId===white).totalScore:null;
+          const peak=[Math.max(0,...decisions.map(x=>x[0])),Math.max(0,...decisions.map(x=>x[1]))];
+          suffix.push({name:reserve,inputs:actions,checkpoints,end,decisions,score,stop,peak});
+          console.log(JSON.stringify({label,reserve,score,stop,peak}));
+        }
+        terminal.push({name:name+'/'+label,root:r.end,rows:suffix});
+      }
+      groups.push({name,root:origin,rows});
+    }
+    write({source,groups:[...groups,...terminal]});
+  }finally{env.dispose();}
+}
