@@ -259,6 +259,24 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  }
 }
 
+// A refill preview inside a resource plan can keep the root-known data
+// action. Its menu must carry the preview's version, not the loaded parent.
+{
+ const envelope=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'quiet-scan-tail-continuation-20261113-v1.fixture.json.gz'))));
+ const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+ k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+ const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+ try{
+  const original=c.lifecycle.save().envelope,menu=actions(c);
+  const result=agent.createSearchAgent({seatId,analysisPort:port}).decide({seatId,legalActions:menu}).search;
+  assert(result.complete);
+  assert.equal(menu.find(a=>a.actionId===result.actionId).summary,'b_14.webp：弃牌角标');
+  assert.deepEqual(c.lifecycle.save().envelope,original);
+ }finally{port.close();c.dispose();}
+}
+
 // The last-round satellite setup is one funded plan. It preserves the paid
 // landing card, reaches the native end-of-turn boundary, and keeps the refill hidden.
 {

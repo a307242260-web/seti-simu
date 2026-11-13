@@ -2274,6 +2274,8 @@
       }
       const publicScan=previewQuietPublicScan(node,stored,requested);
       if(publicScan){
+        // An idle preview has no stored choice list; enumerate on its own state.
+        if(!publicScan.envelope.session)restoreEnvelope(publicScan.envelope);
         const child=finishChild({session:null},{irreversibleBarrier:publicScan.barrier},
           nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
         provedPublicScanChoices++;
