@@ -292,3 +292,97 @@ if(mode==='blue-hidden'){
     write({source,groups});
   }finally{env.dispose();}
 }
+if(mode==='cash-crossover'){
+  const path='reports/ai-foundation-20261113/r3-cash-analysis/r3-cash-analysis-quote-candidate-20261113-v2.json.gz';
+  const witness=JSON.parse(zlib.gunzipSync(fs.readFileSync(path))).groups[0];
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  try{
+    for(const start of witness.rows){
+      const origin=start.end, rows=[];
+      const p=JSON.parse(origin.committedState).players.players.find(p=>p.id===white);
+      const corner=cardId=>a=>a.family==='card_corner'&&a.target.cardInstanceId===p.hand.find(c=>c.cardId===cardId)?.id;
+      const cases=[['autonomous',[]],['force Amiba 0 corner', [corner('amiba_0.webp')]],
+        ['force Amiba 0 main',[a=>a.family==='play_card'&&a.summary==='amiba_0.webp']]];
+      if(p.hand.some(c=>c.cardId==='amiba_7.webp')){
+        cases.push(['force Amiba 7 main',[a=>a.family==='play_card'&&a.summary==='amiba_7.webp']]);
+        cases.push(['Amiba 7 corner then computer instead of blue',[corner('amiba_7.webp'),a=>a.family==='place_data',a=>a.target?.target==='computer']]);
+      }
+      for(const [name,plan] of cases){
+        env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:origin,committedState:origin.committedState},machineAI:{}});
+        const prior=[];
+        for(const select of plan){const a=env.legalActions().find(select);assert(a,name);assert(env.step(a).ok);prior.push(a);}
+        const r=run(env,{prior,forced:name});rows.push(r);
+        console.log(JSON.stringify({start:start.name,name,score:r.assets.score,income:r.assets.income,hand:r.assets.hand,pool:r.assets.resources.availableData,
+          tech:Object.keys(r.assets.tech.ownedTiles),probe:r.assets.probes,blue:r.assets.blue,stop:r.stop,peak:r.peak,first:r.inputs.slice(0,7).map(a=>a.summary)}));
+      }
+      groups.push({name:start.name,root:origin,rows});
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='income-menu'){
+  const record='reports/ai-foundation-20261113/r3-host-chain/human405-r3-host-chain-20261113-v1.json.gz';
+  const trace=JSON.parse(zlib.gunzipSync(fs.readFileSync(record))).groups[0].rows[0];
+  const env=initialized();
+  try{
+    for(const a of trace.inputs.slice(0,54))assert.deepEqual(take(env).a,a);
+    const host=env.createCheckpoint(), origin=host.coreState.compositionEnvelope;
+    const legal=env.legalActions(),rows=[];
+    assert(legal.every(a=>a.actorId===white&&a.target?.choiceId?.startsWith('income:')));
+    rows.push(run(env,{forced:'formal host plan'}));assert.deepEqual(rows[0].end,trace.end);
+    for(const a of legal.filter(a=>a.actionId!==rows[0].inputs[0].actionId)){
+      env.loadCheckpoint(host);assert(env.step(a).ok);
+      const r=run(env,{prior:[a],forced:a.summary});rows.push(r);
+    }
+    for(const r of rows) console.log(JSON.stringify({name:r.name,choice:r.inputs[0].summary,score:r.assets.score,income:r.assets.income,
+      hand:r.assets.hand,pool:r.assets.resources.availableData,tech:r.assets.tech,probe:r.assets.probes,peak:r.peak,stop:r.stop}));
+    write({source,groups:[{name:'actual fourth computer slot after first analysis',root:origin,agentCheckpoint:host.machineAI[white],rows}]});
+  }finally{env.dispose();}
+}
+if(mode==='cash-r4-cross'){
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
+  const base='reports/ai-foundation-20261113/';
+  const histories=[read(base+'r3-host-chain/human405-r3-host-terminal-20261113-v1.json.gz').groups[0],
+    read(base+'r3-host-income/human405-r3-host-income-terminal-20261113-v1.json.gz').groups[0]];
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  try{
+    for(const [path,history] of histories.entries()){
+      for(const [reserve,trace] of history.rows.entries()){
+        if(process.argv[4]==='reverse'&&(!path||!reserve))continue;
+        const action=reserve?(path?'发射':'b_9.webp'):path?'发射':'扫描';
+        const pivot=trace.inputs.findIndex(a=>a.actorId===white&&a.phase==='main'&&a.family!=='pass'&&(!reserve||a.summary!=='b_32.webp'));
+        assert(pivot>=0);
+        env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:history.root,committedState:history.root.committedState},machineAI:{}});
+        const prior=[];
+        for(const a of trace.inputs.slice(0,pivot)){
+          if(a.actorId===white&&a.target?.kind==='pass-reserve-card'){
+            const expected=env.legalActions().find(x=>x.actionId===a.actionId);assert.deepEqual(expected,a);assert(env.step(expected).ok);
+          }else assert.deepEqual(take(env).a,a);
+          prior.push(a);
+        }
+        const cp=env.createCheckpoint(), rows=[], menu=env.legalActions().filter(a=>a.phase==='main');
+        const forced=menu.find(a=>a.summary===action);
+        if(!forced){console.log(JSON.stringify({path,reserve,action,unavailable:menu.map(x=>x.summary)}));continue;}
+        assert(env.step(forced).ok);const inputs=[...prior,forced], decisions=[];
+        let stop;
+        const start=performance.now();
+        while(inputs.length<220){
+          if(env.isTerminal()){stop='terminal';break;}
+          if(performance.now()-start>180000){stop='elapsed';break;}
+          let v;
+          try{v=take(env);}catch(e){if(!e.search&&!String(e).includes('DECISION_GATE'))throw e;stop='decision gate';break;}
+          inputs.push(v.a);
+          if(v.searches[0])decisions.push({a:v.a.summary,n:v.searches[0].diagnostics.nativeExecutions,ms:v.searches[0].rootAndSearchMilliseconds});
+        }
+        assert(stop);
+        const end=env.createCheckpoint().coreState.compositionEnvelope;
+        const score=stop==='terminal'?JSON.parse(end.committedState).match.finalScores.find(x=>x.playerId===white).totalScore:null;
+        const peak=[Math.max(0,...decisions.map(d=>d.n)),Math.max(0,...decisions.map(d=>d.ms))];
+        rows.push({name:'force '+action,inputs,checkpoints:[[pivot,cp.coreState.compositionEnvelope]],end,score,peak,stop,decisions});
+        groups.push({name:`path ${path}/${trace.name}`,root:history.root,rows});
+        console.log(JSON.stringify({path,reserve,pivot,action,original:trace.score,score,stop,peak}));
+      }
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
