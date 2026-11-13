@@ -126,6 +126,7 @@
       || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
       cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning, finalMarkPlanning, scanPlanning]);
+    const publicScanCompletion=resourcePlanning&&scanPlanning&&realizationTies&&port.publicScanCompletionTieSource?.();
     const retainedRegionSource=resourcePlanning&&realizationTies&&scanOrbitBudget&&port.retainedRegionCardSource?.();
     const postScanShipment=planReuse&&resourcePlanning&&movementPlanning&&realizationTies&&scanOrbitBudget
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.postScanEarthShipmentSource?.():null;
@@ -133,7 +134,7 @@
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     const regionCashGoal="retained-region-cash-income";
     const reusedPlan = !reused?.hit && planReuse && planContinuation
-      && port.reusePlan(root, planContinuation, planKey, postScanShipment ? shipmentProof : retainedRegionSource ? regionCashGoal : null);
+      && !publicScanCompletion && port.reusePlan(root, planContinuation, planKey, postScanShipment ? shipmentProof : retainedRegionSource ? regionCashGoal : null);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
     if (hit && now() - startedAt < limits.milliseconds) return {
       schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0, preparationDebt:hit.preparationDebt??0,
@@ -1177,6 +1178,28 @@
         }
       }
     }
+    // Prefer a public placement that leaves a provably payable sector close
+    // next turn, only among identical same-card preparation and value ties.
+    let publicScanCompletionChoice=null;
+    if(complete&&!unresolved.length&&publicScanCompletion){
+      const entry=nodes[0],best=entry.best;
+      const next=entry.edges.find(e=>e.actionId===publicScanCompletion.actionId);
+      const actions=e=>e?.resourcePlan?.goal.kind==="scan-flow"&&e.goalStatus==="completed"&&!e.fallbackReason
+        ?resourceExecutions.get(e)?.prefixes.map(p=>p.action):null;
+      const a=actions(best),b=actions(next);
+      if(next&&best!==next&&a&&b&&a.length===b.length
+        &&a[0].target.cardInstanceId===b[0].target.cardInstanceId
+        &&a.slice(1).every((action,i)=>action.actionId===b[i+1].actionId)){
+        const old=nodes[best.target],other=nodes[next.target];
+        if(other.value===old.value&&other.realization===old.realization&&other.preparationDebt===old.preparationDebt
+          &&other.pickupRank===old.pickupRank&&other.landingCompanyRetained===old.landingCompanyRetained
+          &&Boolean(other.publicDataCard)===Boolean(old.publicDataCard)
+          &&(other.chongBlindCount??0)===(old.chongBlindCount??0)&&other.distance+next.cost===entry.distance){
+          const witness=port.publicScanCompletionTie?.(other.node,publicScanCompletion);
+          if(witness){entry.best=next;publicScanCompletionChoice={...witness,from:best.actionId,to:next.actionId};}
+        }
+      }
+    }
     // Keep a current scan that enables a complete, publicly funded scan
     // next round. It is only an exact tie-break over already closed edges.
     let heldScanSectorChoice=null;
@@ -1641,6 +1664,7 @@
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
       ...(accepted&&matchedNextPublicScan?{matchedNextPublicScan}:{}),
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
+      ...(accepted&&publicScanCompletionChoice?{publicScanCompletionChoice}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       ...(accepted&&heldScanSectorChoice?{heldScanSectorChoice}:{}),
       realization: accepted ? shipment?.realization ?? blueLaunchContinuation?.realization ?? (scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null) : null,

@@ -567,3 +567,34 @@ console.log("complete decision graph coverage, cycles, preparation chains and bu
     assert.deepEqual(composition.lifecycle.save().envelope, envelope);
   } finally { port.close(); composition.dispose(); }
 }
+
+// A tied public placement can leave one slot in an already won sector,
+// with the next scan payable from a currently legal blue placement.
+{
+  const fs = require("node:fs"), path = require("node:path"), zlib = require("node:zlib");
+  const { createSimulationRuleComposition } = require("../../training/simulation-rule-composition");
+  const { createSeededRandom } = require("../random");
+  const { buildRuleObservation } = require("../../app/rule-observation");
+  const { createAnalysisPort } = require("./analysis-port");
+  const { createSearchAgent } = require("./search-agent");
+  const file = path.resolve(__dirname, "../../../reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz");
+  const { groups: [{ root: envelope }] } = JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+  const seatId = "player-white", seed = JSON.parse(envelope.committedState).meta.seed;
+  const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,
+    trustedProjectionReader: true, projectCounterfactualState: (state, viewer) => buildRuleObservation(state, seed, viewer?.playerId, [],
+      { cheap: viewer?.cheap === true, valueOnly: viewer?.valueOnly === true }) });
+  kernel.newGame({ seed });
+  const c = kernel.composition;
+  try {
+    assert(c.lifecycle.restore(envelope).ok);
+    const menu = c.inspect().session.decision.choices;
+    const port = createAnalysisPort({ composition: c, seatId, maxCacheEntries: 0 });
+    const q = createSearchAgent({ seatId, analysisPort: port }).decide({ seatId, legalActions: menu }).search;
+    const id = sector => menu.find(a => a.target.nebulaId === sector && a.summary.startsWith("dlc_26")).actionId;
+    assert.equal(q.actionId, id("sector-1-a"));
+    assert.equal(q.value, q.roots.find(r => r.actionId === id("sector-2-a")).value);
+    assert.equal(q.publicScanCompletionChoice?.blueSlot, 2);
+    assert(q.complete && q.diagnostics.nativeExecutions <= 256);
+    assert.deepEqual(c.lifecycle.save().envelope, envelope);
+  } finally { c.dispose(); }
+}

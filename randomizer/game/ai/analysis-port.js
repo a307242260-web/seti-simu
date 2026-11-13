@@ -9907,6 +9907,51 @@
       return localPlans.quoteFundedScanAnalysis(readPlanningState(stored),seatId,node.planSummary.dataPlans,knownRootCardIds);
     }
 
+    function publicScanCompletionTieSource(){
+      const stored=nodes.get(openedRoot),session=stored?.envelope.session?.session,head=session?.queue[0];
+      if(!resourcePlanning||!scanPlanning||head?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP
+        ||head.payload.options?.mode!=="public"||session.journal.actions[0]?.action.family!=="scan")return null;
+      const state=readPlanningState(stored),t=state.turn;
+      if(t.roundNumber!==3||t.activePlayerCount!==4||t.passedPlayerIds.length!==3
+        ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length)return null;
+      const p=state.players.players.find(q=>q.id===seatId),cost=scanEffects.getStandardScanCost(p);
+      if(cost.credits!==1||cost.energy!==2||Object.keys(cost).length!==2||p.resources.credits!==0
+        ||p.resources.energy<cost.energy)return null;
+      const nextTurn={...t,turnNumber:t.turnNumber+1};
+      const scanType=scanEffects.buildScanEffectQueue(p,{turn:nextTurn})[0]?.type;
+      const source=scanType&&scienceSession.getPlanetScanSource(state,scanType);
+      if(!source)return null;
+      const ids=new Set(scienceSession.listNebulaChoices(state,source).map(a=>a.target.nebulaId));
+      const open=id=>data.listNebulaTokens(state.data,id).filter(t=>!t.replacedByPlayerId&&!t.replacedByPlayerColor);
+      const valid=openedRoot.legalActions.filter(a=>{
+        const id=a.target?.nebulaId;
+        if(!id||id===data.AOMOMO_NEBULA_ID||!ids.has(id)||open(id).length!==2)return false;
+        return data.getSectorRanking(state.data,id).find(r=>r.playerId===seatId)?.count>data.listNebulaTokens(state.data,id).length/2;
+      });
+      return valid.length===1?valid[0]:null;
+    }
+
+    function publicScanCompletionTie(node,action){
+      const stored=nodes.get(node);
+      if(!stored||node.status!=="stable"||stored.envelope.session)return null;
+      const state=readPlanningState(stored),p=state.players.players.find(q=>q.id===seatId),t=state.turn;
+      if(t.roundNumber!==3||!p.mainActionCompleted||p.passCompletionPending||t.currentPlayerId!==seatId
+        ||t.passedPlayerIds.length!==3||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length
+        ||p.resources.availableData<3||p.resources.energy<2||p.resources.credits!==0
+        ||p.reservedCards.some(c=>!knownRootCardIds.has(c.id))
+        ||Object.values(state.aliens.aliens).some(slot=>!slot.revealed&&alienState.isAlienReadyToReveal(slot))
+        ||localPlans.hasPendingFossilArrival(state)
+        ||["end_turn","end_turn_handoffs_started"].some(type=>cardEffects.hasMatchingTrigger(p,{type,playerId:seatId})))return null;
+      const cash=scienceSession.listPlaceDataChoices(state,seatId).filter(a=>a.target?.target==="blueBonus"
+        &&data.getBlueBonusPlacementReward(p,a.target.blueSlot)?.type==="credits");
+      if(cash.length!==1||cardEffects.hasMatchingTrigger(p,{type:"placeData",playerId:seatId,
+        placementKind:"blueBonus",blueSlot:cash[0].target.blueSlot}))return null;
+      const id=action.target.nebulaId;
+      const tokens=data.listNebulaTokens(state.data,id);
+      if(tokens.filter(t=>!t.replacedByPlayerId&&!t.replacedByPlayerColor).length!==1)return null;
+      return {sectorId:id,blueSlot:cash[0].target.blueSlot,credits:1,energy:2};
+    }
+
     function heldScanSectorTieSource(){
       const stored=nodes.get(openedRoot),s=stored?.envelope.session?.session;
       const head=s?.queue[0];
@@ -10456,7 +10501,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
