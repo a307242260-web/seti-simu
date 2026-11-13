@@ -1,0 +1,88 @@
+{
+  "base": "c5dd4223d",
+  "decision": 156,
+  "attempts": [
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 580.744375,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 589.8087089999999,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 592.706667,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 583.3711249999999,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": false,
+      "reason": "WHITE_ONLY_DECISION_GATE_EXCEEDED",
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 613.1835840000001,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    }
+  ],
+  "admitted": 4
+}

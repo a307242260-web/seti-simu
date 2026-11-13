@@ -2190,8 +2190,8 @@
     // platform clone for any unsupported input.
     const player={...owner,reservedCards:copyForkData(owner.reservedCards)};
     const sourceBoard=root.finalScoring;
-    const reuse=hasOnlyAomomoScanScoreBonus(turn,ownerId)
-      &&Array.isArray(sourceBoard.thresholds)&&["a","b","c","d"].every(id=>Array.isArray(sourceBoard.tiles?.[id]?.marks))
+    const reuse=Array.isArray(sourceBoard.thresholds)
+      &&["a","b","c","d"].every(id=>Array.isArray(sourceBoard.tiles?.[id]?.marks))
       &&sourceBoard.tileVariants;
     // This preview has already ruled out a reveal and a neutral milestone.
     // Final-board normalization writes only its own variant map on this shape.
