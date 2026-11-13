@@ -1,0 +1,45 @@
+{
+  "record": "reports/research/4a3f696b.276aec42.quick-400.json",
+  "previous": "reports/research/031a0313.1ae6c863.quick-400.json",
+  "scoreSemantics": "provisional-first-three-rounds-before-pass-card-and-next-income",
+  "steps": 261,
+  "decisions": 213,
+  "wallMs": 10638,
+  "peak": [
+    256,
+    217.648375
+  ],
+  "allNativeActionsAndFinalEnvelopeEqual": true,
+  "searchChoiceValueAndNativeCountEqual": true,
+  "rounds": [
+    {
+      "round": 1,
+      "score": 15,
+      "beforeInput": 61,
+      "checkpointSha256": "cf2a1f6f8cdfc7c8ad09a5e68aa2fd526b0bae4cffc7cc6af4b89e79b11e2125"
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "beforeInput": 128,
+      "checkpointSha256": "69dc47456d0490f4eafbfbbfe8a87de4a5940562198b93706e450f3d6088047b"
+    },
+    {
+      "round": 3,
+      "score": 118,
+      "beforeInput": 260,
+      "checkpointSha256": "afd9c56a0c6f4b35dceba37cc8dca2e7a0920963b6866696ad9a8eb1b109f3ec"
+    }
+  ],
+  "round4Replay": {
+    "record": "reports/research/0b3710e9.898b2c72.full.json",
+    "score": 272,
+    "whiteDecisions": 87,
+    "peak": [
+      102,
+      566.3670420000001
+    ]
+  },
+  "save": "seti-saves/seti-save-research-ai-search-r3-income-corner-20261113-276aec42-quick-400-v116.json",
+  "recordSha256": "6bcd63f72dab39536da3a1ec0a28082e1612682d81cc3c66af7dcd29e941e4b8"
+}

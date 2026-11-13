@@ -7,6 +7,37 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-income-corner-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-income-corner-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-state-buckets-20261113",
+      "head": "276aec42f",
+      "commits": [
+        "1a7ff856e",
+        "27d8b5666",
+        "017e820a8",
+        "b4b967111",
+        "15a4a8eab",
+        "ff70c4fd6",
+        "f0a52a81c",
+        "c5dd4223d",
+        "5e1ce513d",
+        "9193d9daa",
+        "609686786",
+        "b61f421e8",
+        "29c3892e2",
+        "276aec42f"
+      ],
+      "summary": "末轮同值收入策略准入后的标准前三轮回归",
+      "records": {
+        "4a3f696b.276aec42.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "free-analyze-milestone-20261113-11",
       "aiGeneration": "v2",
       "agentType": "search",
