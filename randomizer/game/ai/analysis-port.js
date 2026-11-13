@@ -351,6 +351,12 @@
         state.players.players.map(p=>[p.id,p.resources.score,p.resources.credits,p.resources.energy,
           p.resources.publicity,p.resources.availableData,p.resources.handSize,p.hand.map(c=>c.id),p.reservedCards.map(c=>c.id)]),
         state.pieces.rockets.map(r=>[r.id,r.sectorX,r.sectorY,r.surface]),
+        state.solarSystem.rotation.rotationCount,
+        state.players.players.map(p=>[
+          Object.keys(p.techState.ownedTiles).sort().map(id=>[id,p.techState.ownedTiles[id],p.techState.blueBoardSlots[id]]),
+          data.listComputerPlacedTokens(p).map(token=>token.placementSlot).sort((a,b)=>a-b),
+          data.listBlueBonusPlacedTokens(p).map(token=>token.blueSlot).sort((a,b)=>a-b),
+        ]),
         state.cards.publicCards.map(c=>c?.id),session?.queue.map(e=>[e.type,e.kind,e.ownerId])]);
     }
     function physicalCollisionKey(envelope){

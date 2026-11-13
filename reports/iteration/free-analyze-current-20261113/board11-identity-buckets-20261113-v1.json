@@ -1,0 +1,192 @@
+{
+  "source": "bdd12ee8c9ee3890977d5919e5950b6e203bc306",
+  "failedRecord": "reports/research/58347b55.5de10b3c.full.json",
+  "rows": [
+    {
+      "baseline": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 502.49295799999993,
+          "value": 74.5,
+          "identities": 647,
+          "bucketCollisions": 577
+        },
+        "step": 75
+      },
+      "candidate": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 470.13612500000005,
+          "value": 74.5,
+          "identities": 327,
+          "bucketCollisions": 467
+        },
+        "step": 75
+      }
+    },
+    {
+      "baseline": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 503.17829200000006,
+          "value": 74.5,
+          "identities": 647,
+          "bucketCollisions": 577
+        },
+        "step": 75
+      },
+      "candidate": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 473.557,
+          "value": 74.5,
+          "identities": 327,
+          "bucketCollisions": 467
+        },
+        "step": 75
+      }
+    },
+    {
+      "baseline": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 504.038791,
+          "value": 74.5,
+          "identities": 647,
+          "bucketCollisions": 577
+        },
+        "step": 75
+      },
+      "candidate": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 478.690625,
+          "value": 74.5,
+          "identities": 327,
+          "bucketCollisions": 467
+        },
+        "step": 75
+      }
+    },
+    {
+      "baseline": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 519.373542,
+          "value": 74.5,
+          "identities": 647,
+          "bucketCollisions": 577
+        },
+        "step": 75
+      },
+      "candidate": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 488.169208,
+          "value": 74.5,
+          "identities": 327,
+          "bucketCollisions": 467
+        },
+        "step": 75
+      }
+    },
+    {
+      "baseline": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 511.75091599999996,
+          "value": 74.5,
+          "identities": 647,
+          "bucketCollisions": 577
+        },
+        "step": 75
+      },
+      "candidate": {
+        "admitted": true,
+        "differences": [],
+        "saved": {
+          "n": 131,
+          "ms": 623.9503749999985
+        },
+        "cold": {
+          "n": 131,
+          "ms": 475.75358300000005,
+          "value": 74.5,
+          "identities": 327,
+          "bucketCollisions": 467
+        },
+        "step": 75
+      }
+    }
+  ],
+  "fullCoverage": {
+    "admitted": true,
+    "differences": [],
+    "saved": {
+      "n": 131,
+      "ms": 623.9503749999985
+    },
+    "cold": {
+      "n": 131,
+      "ms": 469.345459,
+      "value": 74.5,
+      "identities": 327,
+      "bucketCollisions": 467
+    },
+    "step": 75
+  }
+}
