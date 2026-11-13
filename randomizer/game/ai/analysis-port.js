@@ -5189,12 +5189,12 @@
           const model=cardEffects.getCardModel(card);
           return !knownRootCardIds.has(card.id)||!model||model.triggers?.length||model.temporaryTasks?.length;
         }))return null;
-      // Preserve data for a later turn, without crediting the analysis itself:
-      // the same final computer space must already be payable before delivery.
+      // The analysis must already be payable before delivery, either with a
+      // filled computer or by putting known pool data in its last space.
       const pool=p.resources.availableData,computer=data.canPlaceDataToComputer(p);
-      if(!computer.ok||computer.placementSlot!==6||pool!==p.dataState.poolTokens.length
-        ||pool<1||pool+2>players.RESOURCE_LIMITS.availableData
-        ||data.listBluePlacementRequirements(p).some(slot=>slot.requiredComputerSlot===6))return null;
+      if(!(data.isAnalyzeReady(p)||computer.ok&&computer.placementSlot===data.ANALYZE_REQUIRED_COMPUTER_SLOT)
+        ||pool!==p.dataState.poolTokens.length||pool<1||pool+2>players.RESOURCE_LIMITS.availableData
+        ||data.listBluePlacementRequirements(p).some(slot=>slot.requiredComputerSlot===data.ANALYZE_REQUIRED_COMPUTER_SLOT))return null;
       const jobs=Object.values(state.aliens.chong?.transportTasksByRocketId||{});
       if(jobs.length!==1||jobs[0].delivered)return null;
       const [job]=jobs,ship=visibleEarthCargo(state,p,job),reward=chong.getFossilReward(job.fossilId);

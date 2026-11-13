@@ -674,6 +674,8 @@ console.log("trusted analysis fork isolation and exact reuse passed");
   const file=path.resolve(__dirname,"../../../reports/ai-foundation-20261113/prepass-funded-landing/r3-fossil-retention-replay-20261113-v1.json.gz");
   const {check}=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
   const seatId="player-white";
+  const completeComputer=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname,
+    "fixtures/r4-complete-computer-paid-return-20261113-v1.json.gz")))).rows;
   for(const row of check){
     const seed=JSON.parse(row.root.committedState).meta.seed;
     const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,
@@ -717,6 +719,18 @@ console.log("trusted analysis fork isolation and exact reuse passed");
       assert.deepEqual(save(),row.afterFixed);
       assert(c.lifecycle.restore(row.nextRoot).ok);
       assert.equal(run().search.postScanEarthShipment,undefined);
+      const ready=completeComputer.find(variant=>variant.reserve===row.reserve);
+      assert(c.lifecycle.restore(ready.root).ok);
+      checkpoint=undefined;
+      for(const [index,expected] of ready.steps.entries()){
+        const q=run(checkpoint);
+        assert.deepEqual(q.action,expected);
+        assert.equal(q.search.diagnostics.nativeExecutions,index===0?6:0);
+        if(index===0)assert.equal(q.search.postScanEarthShipment.retainedData,2);
+        else assert(q.search.reusedCoverage);
+        apply(q.action);checkpoint=q.checkpoint;
+      }
+      assert.deepEqual(save(),ready.end);
     }finally{c.dispose();}
   }
 }
