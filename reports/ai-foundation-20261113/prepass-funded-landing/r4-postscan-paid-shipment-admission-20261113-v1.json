@@ -1,0 +1,589 @@
+{
+  "controlled": [
+    {
+      "reserve": "b_111.webp",
+      "variant": "bank",
+      "stop": "terminal",
+      "score": 268,
+      "peak": [
+        141,
+        378.37687500000015
+      ],
+      "decisions": 113,
+      "nativeReplayExact": true
+    },
+    {
+      "reserve": "b_111.webp",
+      "variant": "use",
+      "stop": "terminal",
+      "score": 268,
+      "peak": [
+        141,
+        357.0924580000001
+      ],
+      "decisions": 109,
+      "nativeReplayExact": true
+    },
+    {
+      "reserve": "b_32.webp",
+      "variant": "bank",
+      "stop": "terminal",
+      "score": 260,
+      "peak": [
+        112,
+        193.99841699999888
+      ],
+      "decisions": 124,
+      "nativeReplayExact": true
+    },
+    {
+      "reserve": "b_32.webp",
+      "variant": "use",
+      "stop": "terminal",
+      "score": 260,
+      "peak": [
+        112,
+        184.40937499999927
+      ],
+      "decisions": 120,
+      "nativeReplayExact": true
+    }
+  ],
+  "standardRound4": {
+    "rows": [
+      {
+        "step": 264,
+        "id": "move:23807efa",
+        "n": 87,
+        "ms": 493.46150000000006
+      },
+      {
+        "step": 265,
+        "id": "choose_payment:abbb51f1",
+        "n": 0,
+        "ms": 11.98862500000007
+      },
+      {
+        "step": 266,
+        "id": "land:d5ee03a2",
+        "n": 0,
+        "ms": 8.292874999999981
+      },
+      {
+        "step": 267,
+        "id": "choose_target:ecee356a",
+        "n": 0,
+        "ms": 14.106915999999956
+      },
+      {
+        "step": 268,
+        "id": "accept_optional_effect:a9aaa54b",
+        "n": 0,
+        "ms": 14.278874999999971
+      },
+      {
+        "step": 269,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 7.4740829999999505
+      },
+      {
+        "step": 270,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 10.836541000000011
+      },
+      {
+        "step": 271,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 7.4337920000000395
+      },
+      {
+        "step": 272,
+        "id": "choose_target:44b74627",
+        "n": 0,
+        "ms": 10.796959000000015
+      },
+      {
+        "step": 273,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 8.006416000000172
+      },
+      {
+        "step": 274,
+        "id": "choose_target:7be78a55",
+        "n": 0,
+        "ms": 10.696582999999919
+      },
+      {
+        "step": 275,
+        "id": "choose_card:f4e01d42",
+        "n": 0,
+        "ms": 11.580165999999963
+      },
+      {
+        "step": 276,
+        "id": "complete_task:ed0b038f",
+        "n": 2,
+        "ms": 11.329666999999972
+      },
+      {
+        "step": 277,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 7.165290999999797
+      },
+      {
+        "step": 282,
+        "id": "play_card:c93b59a4",
+        "n": 41,
+        "ms": 73.55208400000015
+      },
+      {
+        "step": 283,
+        "id": "complete_task:1275a12a",
+        "n": 0,
+        "ms": 9.381249999999909
+      },
+      {
+        "step": 284,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 7.899999999999864
+      },
+      {
+        "step": 285,
+        "id": "choose_target:dc72d0b3",
+        "n": 0,
+        "ms": 15.55099999999993
+      },
+      {
+        "step": 286,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 7.81091699999979
+      },
+      {
+        "step": 287,
+        "id": "play_card:8c65d747",
+        "n": 31,
+        "ms": 60.250084000000015
+      },
+      {
+        "step": 288,
+        "id": "choose_target:80112417",
+        "n": 0,
+        "ms": 14.807958999999983
+      },
+      {
+        "step": 289,
+        "id": "choose_card:707bed78",
+        "n": 0,
+        "ms": 14.29275000000007
+      },
+      {
+        "step": 290,
+        "id": "choose_card:a788702e",
+        "n": 0,
+        "ms": 15.464582999999948
+      },
+      {
+        "step": 291,
+        "id": "choose_target:dc7b078f",
+        "n": 0,
+        "ms": 17.041500000000042
+      },
+      {
+        "step": 292,
+        "id": "choose_target:50c45347",
+        "n": 12,
+        "ms": 63.2690419999999
+      },
+      {
+        "step": 293,
+        "id": "choose_target:f5d036ea",
+        "n": 0,
+        "ms": 22.938290999999936
+      },
+      {
+        "step": 294,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 9.078791999999794
+      },
+      {
+        "step": 295,
+        "id": "place_data:8fd12fd3",
+        "n": 28,
+        "ms": 84.00420799999984
+      },
+      {
+        "step": 296,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 11.809334000000035
+      },
+      {
+        "step": 297,
+        "id": "analyze:a5629aa3",
+        "n": 0,
+        "ms": 8.151834000000235
+      },
+      {
+        "step": 298,
+        "id": "choose_target:4c1465ee",
+        "n": 0,
+        "ms": 13.40124999999989
+      },
+      {
+        "step": 299,
+        "id": "choose_card:6d03126f",
+        "n": 0,
+        "ms": 14.872749999999996
+      },
+      {
+        "step": 300,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 10.835833000000093
+      },
+      {
+        "step": 301,
+        "id": "choose_target:29b5215c",
+        "n": 1,
+        "ms": 17.304999999999836
+      },
+      {
+        "step": 302,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 8.210708000000068
+      },
+      {
+        "step": 303,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 11.199791999999889
+      },
+      {
+        "step": 304,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 8.34762499999988
+      },
+      {
+        "step": 305,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 11.006750000000011
+      },
+      {
+        "step": 306,
+        "id": "card_corner:bf0cc13d",
+        "n": 0,
+        "ms": 7.581832999999733
+      },
+      {
+        "step": 307,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 9.52558399999998
+      },
+      {
+        "step": 308,
+        "id": "choose_target:29b5215c",
+        "n": 2,
+        "ms": 15.067749999999705
+      },
+      {
+        "step": 309,
+        "id": "choose_card:465f1d10",
+        "n": 0,
+        "ms": 12.242041999999856
+      },
+      {
+        "step": 310,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 8.772792000000209
+      },
+      {
+        "step": 311,
+        "id": "scan:2d21a323",
+        "n": 26,
+        "ms": 82.17779199999995
+      },
+      {
+        "step": 312,
+        "id": "choose_target:80112417",
+        "n": 0,
+        "ms": 12.331624999999804
+      },
+      {
+        "step": 313,
+        "id": "choose_card:c5dcf800",
+        "n": 0,
+        "ms": 13.745957999999973
+      },
+      {
+        "step": 314,
+        "id": "choose_target:314aec90",
+        "n": 0,
+        "ms": 16.65733399999999
+      },
+      {
+        "step": 315,
+        "id": "choose_card:9f33eea7",
+        "n": 0,
+        "ms": 18.699499999999716
+      },
+      {
+        "step": 316,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 10.92450000000008
+      },
+      {
+        "step": 317,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 15.16708299999982
+      },
+      {
+        "step": 318,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 8.081332999999631
+      },
+      {
+        "step": 319,
+        "id": "choose_target:44b74627",
+        "n": 0,
+        "ms": 12.785083000000213
+      },
+      {
+        "step": 320,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 7.665750000000116
+      },
+      {
+        "step": 321,
+        "id": "research_tech:806ccfc8",
+        "n": 92,
+        "ms": 189.98795800000016
+      },
+      {
+        "step": 322,
+        "id": "choose_target:70b9a53f",
+        "n": 0,
+        "ms": 11.580042000000049
+      },
+      {
+        "step": 323,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 10.565708000000086
+      },
+      {
+        "step": 324,
+        "id": "quick_trade:f385e2ac",
+        "n": 102,
+        "ms": 158.25679200000013
+      },
+      {
+        "step": 325,
+        "id": "quick_trade:a39c1a77",
+        "n": 0,
+        "ms": 8.617624999999862
+      },
+      {
+        "step": 326,
+        "id": "choose_payment:38132c71",
+        "n": 0,
+        "ms": 11.753208000000086
+      },
+      {
+        "step": 327,
+        "id": "choose_payment:027549ec",
+        "n": 0,
+        "ms": 12.613916999999674
+      },
+      {
+        "step": 328,
+        "id": "choose_payment:2cdde653",
+        "n": 0,
+        "ms": 13.353750000000218
+      },
+      {
+        "step": 329,
+        "id": "move:90134ba1",
+        "n": 0,
+        "ms": 8.194875000000138
+      },
+      {
+        "step": 330,
+        "id": "choose_payment:abbb51f1",
+        "n": 0,
+        "ms": 11.850625000000036
+      },
+      {
+        "step": 331,
+        "id": "move:90134ba1",
+        "n": 0,
+        "ms": 8.263417000000118
+      },
+      {
+        "step": 332,
+        "id": "choose_payment:098aae02",
+        "n": 0,
+        "ms": 11.958708000000115
+      },
+      {
+        "step": 333,
+        "id": "move:90134ba1",
+        "n": 0,
+        "ms": 8.508959000000687
+      },
+      {
+        "step": 334,
+        "id": "choose_payment:d732185c",
+        "n": 0,
+        "ms": 11.323624999999993
+      },
+      {
+        "step": 335,
+        "id": "land:d5ee03a2",
+        "n": 0,
+        "ms": 7.884750000000167
+      },
+      {
+        "step": 336,
+        "id": "choose_target:bd5bb450",
+        "n": 0,
+        "ms": 14.188000000000102
+      },
+      {
+        "step": 337,
+        "id": "choose_card:328816c7",
+        "n": 0,
+        "ms": 15.33087500000056
+      },
+      {
+        "step": 338,
+        "id": "place_data:8fd12fd3",
+        "n": 2,
+        "ms": 13.587958000000071
+      },
+      {
+        "step": 339,
+        "id": "choose_target:7be78a55",
+        "n": 0,
+        "ms": 11.5107909999997
+      },
+      {
+        "step": 340,
+        "id": "choose_card:34227cca",
+        "n": 0,
+        "ms": 12.010958000000755
+      },
+      {
+        "step": 341,
+        "id": "place_data:8fd12fd3",
+        "n": 0,
+        "ms": 8.69512500000019
+      },
+      {
+        "step": 342,
+        "id": "choose_target:dc72d0b3",
+        "n": 0,
+        "ms": 12.252666999999747
+      },
+      {
+        "step": 343,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 7.532791999999972
+      },
+      {
+        "step": 344,
+        "id": "card_corner:3da0ac4f",
+        "n": 12,
+        "ms": 29.364416999999776
+      },
+      {
+        "step": 345,
+        "id": "card_corner:f1e99595",
+        "n": 0,
+        "ms": 8.741874999999709
+      },
+      {
+        "step": 346,
+        "id": "research_tech:806ccfc8",
+        "n": 0,
+        "ms": 9.0600000000004
+      },
+      {
+        "step": 347,
+        "id": "choose_target:22eefebd",
+        "n": 0,
+        "ms": 11.741915999999947
+      },
+      {
+        "step": 348,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 9.269874999999956
+      },
+      {
+        "step": 349,
+        "id": "place_data:8fd12fd3",
+        "n": 4,
+        "ms": 12.982332999999926
+      },
+      {
+        "step": 350,
+        "id": "choose_target:29b5215c",
+        "n": 0,
+        "ms": 11.80712499999936
+      },
+      {
+        "step": 351,
+        "id": "analyze:a5629aa3",
+        "n": 0,
+        "ms": 8.385291999999936
+      },
+      {
+        "step": 352,
+        "id": "choose_target:411af34c",
+        "n": 0,
+        "ms": 12.303041000000121
+      },
+      {
+        "step": 353,
+        "id": "end_turn:b2f9b29d",
+        "n": 0,
+        "ms": 7.762542000000394
+      },
+      {
+        "step": 354,
+        "id": "pass:a1f33c73",
+        "n": 1,
+        "ms": 9.11054200000035
+      }
+    ],
+    "peak": [
+      102,
+      493.46150000000006
+    ],
+    "officialRecord": "0b3710e9.898b2c72.full.json",
+    "score": 272
+  },
+  "tests": {
+    "node": 8,
+    "browser": 3,
+    "valueAudit": true
+  }
+}

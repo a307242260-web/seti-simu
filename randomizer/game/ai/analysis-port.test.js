@@ -664,3 +664,59 @@ console.log("trusted analysis fork isolation and exact reuse passed");
   assert.notEqual(drawn[0],drawn[1]);assert.deepEqual(visible[0],visible[1]);
   assert.deepEqual(visible[0].map(row=>row.slice(0,2)),[[204.5,4],[205,5],[206,6]]);
 }
+
+// A settled scan can make an existing transport worth its paid route. The
+// earlier matching root must still prefer the scan; a saved plan pays the
+// two distinct native movement costs and claims the actual transport task.
+{
+  const fs=require("node:fs"), path=require("node:path"), zlib=require("node:zlib");
+  const {createSearchAgent}=require("./search-agent");
+  const file=path.resolve(__dirname,"../../../reports/ai-foundation-20261113/prepass-funded-landing/r3-fossil-retention-replay-20261113-v1.json.gz");
+  const {check}=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+  const seatId="player-white";
+  for(const row of check){
+    const seed=JSON.parse(row.root.committedState).meta.seed;
+    const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,
+      trustedProjectionReader:true,projectCounterfactualState:(state,viewer,context)=>buildRuleObservation(state,seed,viewer?.playerId,[],
+        {valueOnly:viewer?.valueOnly===true,trustedCommitted:context?.trustedCommitted===true})});
+    kernel.newGame({seed});
+    const c=kernel.composition,save=()=>c.lifecycle.save().envelope;
+    const menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
+    const run=(checkpoint)=>{
+      const before=save(),port=createAnalysisPort({composition:c,seatId});
+      const agent=createSearchAgent({seatId,analysisPort:port});
+      if(checkpoint)agent.loadCheckpoint(checkpoint);
+      const {actionId,search}=agent.decide({seatId,legalActions:menu()});
+      assert.deepEqual(save(),before);
+      return {action:menu().find(a=>a.actionId===actionId),search,checkpoint:agent.createCheckpoint()};
+    };
+    const apply=action=>{
+      const decision=c.inspect().session?.decision;
+      const result=decision?c.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:seatId,choice:action})
+        :action.phase==="quick"?c.inputPort.submitQuickAction(action):c.inputPort.submitAction(action);
+      assert(result.ok);
+    };
+    try{
+      assert(c.lifecycle.restore(row.entry).ok);
+      const opening=run();
+      assert.equal(opening.action.actionId,row.runs.use.inputs[row.checkpoints[2]].actionId);
+      assert.equal(opening.search.postScanEarthShipment,undefined);
+      assert(c.lifecycle.restore(row.postScan).ok);
+      let checkpoint;
+      for(const [index,expected] of row.fixedActions.entries()){
+        const q=run(checkpoint);
+        assert.deepEqual(q.action,expected);
+        assert.equal(q.search.diagnostics.nativeExecutions,index===0?6:0);
+        if(index===0){
+          assert.equal(q.search.postScanEarthShipment.value,q.search.postScanEarthShipment.visibleValue);
+          assert.equal(q.search.postScanEarthShipment.energy,3);
+          assert.equal(q.search.postScanEarthShipment.retainedData,2);
+        }else assert(q.search.reusedCoverage);
+        apply(q.action);checkpoint=q.checkpoint;
+      }
+      assert.deepEqual(save(),row.afterFixed);
+      assert(c.lifecycle.restore(row.nextRoot).ok);
+      assert.equal(run().search.postScanEarthShipment,undefined);
+    }finally{c.dispose();}
+  }
+}

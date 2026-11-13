@@ -127,10 +127,13 @@
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
       cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning, finalMarkPlanning, scanPlanning]);
     const retainedRegionSource=resourcePlanning&&realizationTies&&scanOrbitBudget&&port.retainedRegionCardSource?.();
+    const postScanShipment=planReuse&&resourcePlanning&&movementPlanning&&realizationTies&&scanOrbitBudget
+      &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.postScanEarthShipmentSource?.():null;
+    const shipmentProof="post-scan-paid-earth-shipment";
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     const regionCashGoal="retained-region-cash-income";
     const reusedPlan = !reused?.hit && planReuse && planContinuation
-      && port.reusePlan(root, planContinuation, planKey, retainedRegionSource ? regionCashGoal : null);
+      && port.reusePlan(root, planContinuation, planKey, postScanShipment ? shipmentProof : retainedRegionSource ? regionCashGoal : null);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
     if (hit && now() - startedAt < limits.milliseconds) return {
       schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value, realization: hit.realization ?? 0, preparationDebt:hit.preparationDebt??0,
@@ -1234,6 +1237,31 @@
     }
     let scanBeforeOrbit=null, retainRegionCard=null, retainedRegionPrefix=null, continuationNativeInputs=0;
     let visibleFossilTransport=null;
+    let shipment=null,shipmentPrefix=null;
+    if(postScanShipment&&complete&&!stopReason&&!unresolved.length&&nodes[0].best?.actionId===postScanShipment.endId){
+      const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
+      const before=port.getDiagnostics().submissionCount;
+      // Six native inputs: two moves and payments, claim, and handover.
+      // If the fixed work cannot fit, retain the already closed search.
+      const admit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs
+        &&transitions+inputs<limits.transitions&&nodes.length+certificateNodes+5<=limits.nodes&&inputs<6;
+      if(before+6<=scanOrbitBudget.nativeInputs&&admit(5,before+5)){
+        const proof=port.quotePostScanEarthShipment(postScanShipment,evaluate,admit);
+        const nativeInputs=port.getDiagnostics().submissionCount-before;
+        continuationNativeInputs+=nativeInputs;transitions+=nativeInputs;
+        if(proof?.value>=nodes[0].value&&proof.realization>=nodes[0].realization
+          &&proof.preparationDebt<=nodes[0].preparationDebt&&now()<deadline){
+          const {prefix,...value}=proof;
+          shipmentPrefix=prefix;
+          shipment={...value,actionId:prefix[0].action.actionId,visibleValue:nodes[0].value,nativeInputs};
+          const i=roots.findIndex(r=>r.actionId===shipment.actionId);
+          const row={actionId:shipment.actionId,value:shipment.value,completion:"proved-native-continuation",
+            valueType:"attained-lower-bound",proof:shipmentProof};
+          if(i<0)roots.push(row);else roots[i]=row;
+        }
+      }
+    }
+
     if(complete&&!stopReason&&!unresolved.length&&resourcePlanning&&realizationTies&&scanOrbitBudget
       &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)&&root.status==="decision"){
       const source=port.visibleFossilTransportSource?.();
@@ -1400,7 +1428,7 @@
     let planCertificate = null;
     // The existing certificate starts with the visible winner. A proved
     // override must let the real scan menu build a fresh continuation.
-    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass && !visibleFossilTransport && !blueLaunchContinuation) {
+    if (accepted && planReuse && nodes[0].best && !scanBeforeOrbit && !retainRegionCard && !scanBeforePass && !visibleFossilTransport && !blueLaunchContinuation && !shipment) {
       const entries = [];
       let current = 0;
       while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
@@ -1536,12 +1564,24 @@
       planCertificate=port.rememberPlan(entries,planKey,{searchVersion:VERSION,rootNode:0,
         nodeCount:nodes.length+certificateNodes,graphNodeCount:nodes.length,certificateNodeCount:certificateNodes,rootValue:value,proof});
     }
+    if(accepted&&shipmentPrefix){
+      const entries=shipmentPrefix.map(({node,action},i)=>({
+        node,actionId:action.actionId,value:shipment.value,realization:shipment.realization,preparationDebt:shipment.preparationDebt,
+        distance:shipmentPrefix.length-i,sourceNode:shipmentProof+":"+i,committedGoal:shipmentProof,
+        roots:node.legalActions.map(a=>({actionId:a.actionId,value:a.actionId===action.actionId?shipment.value:null,
+          valueType:a.actionId===action.actionId?"attained-lower-bound":"not-executed",completion:"fixed-plan-execution",proof:shipmentProof})),
+      }));
+      certificateNodes+=entries.length-1;
+      planCertificate=port.rememberPlan(entries,planKey,{searchVersion:VERSION,rootNode:0,nodeCount:nodes.length+certificateNodes,
+        graphNodeCount:nodes.length,certificateNodeCount:certificateNodes,rootValue:shipment.value,proof:shipmentProof});
+      if(now()>=scanOrbitBudget.deadline){stopReason="watchdog";accepted=false;}
+    }
     const elapsed = now() - startedAt;
     accepted = accepted && elapsed < limits.milliseconds;
     if (!accepted) certificate = null;
     return {
       schemaVersion: VERSION, complete: accepted,
-      actionId: accepted ? blueLaunchContinuation?.actionId || visibleFossilTransport?.actionId || retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
+      actionId: accepted ? shipment?.actionId || blueLaunchContinuation?.actionId || visibleFossilTransport?.actionId || retainRegionCard?.actionId || scanBeforeOrbit?.actionId || scanBeforePass?.actionId || nodes[0].best?.actionId || null : null,
       selectionPlan: accepted && nodes[0].best?.selectedIds ? {
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
@@ -1550,17 +1590,18 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? blueLaunchContinuation?.value ?? (retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value) : null,
+      value: accepted ? shipment?.value ?? blueLaunchContinuation?.value ?? (retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value) : null,
       ...(accepted&&blueLaunchContinuation?{blueLaunchContinuation}:{}),
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&visibleFossilTransport?{visibleFossilTransport}:{}),
+      ...(accepted&&shipment?{postScanEarthShipment:shipment}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       ...(accepted&&heldScanSectorChoice?{heldScanSectorChoice}:{}),
-      realization: accepted ? blueLaunchContinuation?.realization ?? (scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null) : null,
-      preparationDebt:accepted?blueLaunchContinuation?.preparationDebt ?? (scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null):null,
+      realization: accepted ? shipment?.realization ?? blueLaunchContinuation?.realization ?? (scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null) : null,
+      preparationDebt:accepted?shipment?.preparationDebt ?? blueLaunchContinuation?.preparationDebt ?? (scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null):null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,
