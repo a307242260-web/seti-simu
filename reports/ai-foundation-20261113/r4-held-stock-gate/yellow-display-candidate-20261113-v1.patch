@@ -1,0 +1,87 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1809 +1809,6 @@
+-      if(!pairedTrigger&&(s.queue.length>refillIndex+1+Number(Boolean(nextRefill))
++      const regionThenTrigger=region?.payload?.cardEffect?.options?.region==="orange"
++        &&s.journal.actions[0]?.action?.family==="land"&&s.queue.length===3&&tail?.type==="residual_card_decision"
++        &&tail.kind==="decision"&&tail.ownerId===seatId&&!tail.allowQuickActions
++        &&tail.payload.kind==="trigger"&&tail.payload.event?.traceType==="yellow"
++        &&tail.payload.matches?.length===1&&tail.payload.matches[0].ruleId==="amiba0-yellow-data";
++      if(!pairedTrigger&&!regionThenTrigger&&(s.queue.length>refillIndex+1+Number(Boolean(nextRefill))
+@@ -1831 +1836 @@
+-      const meta=fossil||trace||pairedTrigger?state.meta:quietSavedMeta(state.meta,s.baseVersion+1);
++      const meta=fossil||trace||pairedTrigger||regionThenTrigger?state.meta:quietSavedMeta(state.meta,s.baseVersion+1);
+@@ -1832,0 +1838 @@
++        ...(regionThenTrigger?{cards:{...state.cards,drawPileCardIds:[...state.cards.drawPileCardIds]}}:{}),
+@@ -1841 +1847 @@
+-      const regionResult=region&&residualSession.previewQuietAmibaRegion(next,region);
++      const regionResult=region&&residualSession.previewQuietAmibaRegion(next,region,regionThenTrigger);
+@@ -1843,0 +1850,8 @@
++      if(regionThenTrigger){
++        if(!regionResult?.irreversible)return null;
++        const choices=localPlans.residualCardChoices(next,tail);
++        if(choices.length!==2)return null;
++        return prepareQuietTailMenu(stored,action,{state:next,drained:2,choices,
++          barrier:{effectId:region.effectId,revision:s.revision+2,...regionResult.irreversible},
++          events:[...augmented.events,...regionResult.events],histories:[regionResult.history]});
++      }
+@@ -1938 +1952,3 @@
+-      if(!slot||target.fangzhouUnlock||!amibaCard&&(target.speciesId||target.position!==undefined
++      const amibaPlain=slot?.revealed&&slot.alienId==="阿米巴"&&target.speciesId==="amiba"
++        &&[1,2].includes(target.position)&&!target.stateExtra&&knownRootAlienIds.has("阿米巴");
++      if(!slot||target.fangzhouUnlock||!amibaCard&&!amibaPlain&&(target.speciesId||target.position!==undefined
+@@ -1943,2 +1959,2 @@
+-      const player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},reservedCards:copyForkData(p.reservedCards)};
+-      const state={...base,...(amibaCard?{meta:{...base.meta,sequences:{...base.meta.sequences}}}:{}),
++      const player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},reservedCards:copyForkData(p.reservedCards),...(amibaPlain?{hand:[...p.hand]}:{})};
++      const state={...base,...(amibaPlain?{cards:{...base.cards,drawPileCardIds:[...base.cards.drawPileCardIds]}}:{}),...(amibaCard||amibaPlain?{meta:{...base.meta,sequences:{...base.meta.sequences}}}:{}),
+@@ -1960,0 +1977,17 @@
++      if(amibaPlain){
++        const placed=scienceSession.applyPlainPinkTrace(state,head,action,true,false,"yellow");
++        if(!placed?.regionEffect||placed.cardEffect||placed.regionEffect.payload.cardEffect.options.region!=="orange")return null;
++        const first=residualSession.augmentEffectResult(state,{ok:true,events:placed.events,spawnedEffects:[{effect:placed.regionEffect}]},head);
++        if(first.events.length!==1||first.spawnedEffects.length!==2)return null;
++        const scratch={nextEffectSequence:s.nextEffectSequence,nextGroupSequence:s.nextGroupSequence,sessionId:s.sessionId};
++        const [region,trigger]=effectSession.normalizeSpawnedEffects(first.spawnedEffects,scratch,head);
++        if(region.type!==placed.regionEffect.type||trigger.type!=="residual_card_decision"
++          ||trigger.payload.matches?.length!==1||trigger.payload.matches[0].ruleId!=="amiba0-yellow-data")return null;
++        const settled=residualSession.previewQuietAmibaRegion(state,region,true);
++        if(!settled?.irreversible)return null;
++        const choices=localPlans.residualCardChoices(state,trigger);
++        if(choices.length!==2)return null;
++        return {state,events:[...first.events,...settled.events],histories:[settled.history],choices,
++          drainedEffects:[head,region],queue:[trigger],scratch,
++          barrier:{effectId:region.effectId,revision:s.revision+2,...settled.irreversible}};
++      }
+@@ -1982 +2015 @@
+-      const scratch={nextEffectSequence:s.nextEffectSequence,nextGroupSequence:s.nextGroupSequence,sessionId:s.sessionId};
++      const scratch=preview.scratch||{nextEffectSequence:s.nextEffectSequence,nextGroupSequence:s.nextGroupSequence,sessionId:s.sessionId};
+@@ -1985,2 +2018,2 @@
+-      const drained=preview.drained??s.queue.length;
+-      const queue=preview.drained?s.queue.slice(drained):effectSession.normalizeSpawnedEffects(spawned,scratch,pickup);
++      const drained=preview.drainedEffects?.length??preview.drained??s.queue.length;
++      const queue=preview.queue||(preview.drained?s.queue.slice(drained):effectSession.normalizeSpawnedEffects(spawned,scratch,pickup));
+@@ -1989 +2022 @@
+-      const effects=s.queue.slice(0,drained).map((e,i)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+1+i}));
++      const effects=(preview.drainedEffects||s.queue.slice(0,drained)).map((e,i)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+1+i}));
+@@ -2170,0 +2204 @@
++        if(landingTrace.drainedEffects)globalThis.__heldYellowCheck?.(stored.envelope,requested,prepared);
+@@ -2344,0 +2379 @@
++        if(alienDisplay.barrier?.code==="hidden_card_draw"&&alienDisplay.envelope.session)globalThis.__heldYellowCheck?.(stored.envelope,requested,alienDisplay);
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -2236 +2236 @@
+-  function previewQuietAmibaRegion(root, effect) {
++  function previewQuietAmibaRegion(root, effect, oneBlindDraw = false) {
+@@ -2240,0 +2241,2 @@
++    const blindCount = symbols.reduce((sum, {reward}) => sum + (reward?.drawCards || 0), 0);
++    if(blindCount && (!oneBlindDraw || blindCount !== 1 || !root.cards.drawPileCardIds.length)) return false;
+@@ -2242 +2244 @@
+-      ||Object.keys(reward).some(k=>k!=="gain"&&reward[k])
++      ||Object.keys(reward).some(k=>k!=="gain"&&!(blindCount&&k==="drawCards")&&reward[k])
+@@ -2246 +2248 @@
+-    if(!result.ok||result.irreversible)return false;
++    if(!result.ok||(result.irreversible?.code==="hidden_card_draw")!==Boolean(blindCount))return false;
+@@ -2250 +2252 @@
+-    return {events:settled.events,history:{type:"card_effect",effectId:card.id||null,
++    return {events:settled.events,...(blindCount?{irreversible:result.irreversible}:{}),history:{type:"card_effect",effectId:card.id||null,

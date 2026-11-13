@@ -9,8 +9,9 @@ if(process.env.SETI_HELD_POOL_PROFILE) {
  assert.notEqual(src,prior);
 }
 const residual=path.resolve('randomizer/game/effects/residual-domain-session.js');
+const resource=path.resolve('randomizer/game/ai/resource-demand.js');
 const old=Module._extensions['.js'];
-Module._extensions['.js']=(m,f)=>f===file?m._compile(src,f):f===residual&&process.env.SETI_HELD_POOL_RESIDUAL?m._compile(fs.readFileSync(process.env.SETI_HELD_POOL_RESIDUAL,'utf8'),f):old(m,f);
+Module._extensions['.js']=(m,f)=>f===file?m._compile(src,f):f===residual&&process.env.SETI_HELD_POOL_RESIDUAL?m._compile(fs.readFileSync(process.env.SETI_HELD_POOL_RESIDUAL,'utf8'),f):f===resource&&process.env.SETI_HELD_POOL_RESOURCE?m._compile(fs.readFileSync(process.env.SETI_HELD_POOL_RESOURCE,'utf8'),f):old(m,f);
 const from=n=>require(path.resolve(n)),white='player-white';
 const {createSimulationRuleComposition}=from('randomizer/training/simulation-rule-composition');
 const {buildRuleObservation}=from('randomizer/app/rule-observation');
@@ -51,7 +52,7 @@ for (const i of process.argv.slice(3).map(Number)){
    originCard:s?.journal.actions[0]?.action?.target?.cardInstanceId,shape:s?.queue.map(q=>q.type),barrier:s?.irreversibleBarrier?.code,e});
  try{
   const verified=[];
-  globalThis.__heldYellowCheck=(root,a,projected)=>verified.push({root,a,projected});
+  globalThis.__heldYellowCheck=process.env.SETI_HELD_POOL_SKIP_VERIFY?undefined:(root,a,projected)=>verified.push({root,a,projected});
   const q=m.automatic();assert.deepEqual(m.save(),end);
   for(const v of verified){
    m.restore(v.root);m.apply(v.a);

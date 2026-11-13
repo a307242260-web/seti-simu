@@ -1,0 +1,119 @@
+{
+  "source": "c0bb424e9",
+  "rows": [
+    {
+      "case": "hold-first-data/b_111.webp",
+      "baseline": [
+        293,
+        1846.611167
+      ],
+      "display": [
+        193,
+        1802.0335
+      ],
+      "displayAndMemo": [
+        193,
+        1768.504792
+      ],
+      "verified": 100,
+      "action": "amiba_2.webp：弃牌角标",
+      "value": 203.5,
+      "graph": 2466
+    },
+    {
+      "case": "hold-first-data/b_32.webp",
+      "baseline": [
+        338,
+        1652.5879580000003
+      ],
+      "display": [
+        238,
+        1589.7037500000001
+      ],
+      "displayAndMemo": [
+        238,
+        1560.643167
+      ],
+      "verified": 100,
+      "action": "amiba_2.webp：弃牌角标",
+      "value": 203.5,
+      "graph": 2519
+    },
+    {
+      "case": "hold-two-corners/b_111.webp",
+      "baseline": [
+        288,
+        1410.0302090000005
+      ],
+      "display": [
+        188,
+        1763.7573749999992
+      ],
+      "displayAndMemo": [
+        188,
+        1360.3942079999997
+      ],
+      "verified": 100,
+      "action": "b_111.webp：弃牌角标",
+      "value": 203.5,
+      "graph": 2455
+    },
+    {
+      "case": "hold-two-corners/b_32.webp",
+      "baseline": [
+        334,
+        1507.5658750000002
+      ],
+      "display": [
+        234,
+        1435.6339590000007
+      ],
+      "displayAndMemo": [
+        234,
+        1447.2930420000002
+      ],
+      "verified": 100,
+      "action": "b_32.webp：弃牌角标",
+      "value": 203.5,
+      "graph": 2519
+    },
+    {
+      "case": "cash-pickup-continue/b_111.webp",
+      "baseline": [
+        379,
+        696.4942080000001
+      ],
+      "display": [
+        379,
+        736.0762919999997
+      ],
+      "displayAndMemo": [
+        379,
+        702.8931249999996
+      ],
+      "verified": 0,
+      "action": "移动探测器 6 逆时针",
+      "value": 231,
+      "graph": 1267
+    },
+    {
+      "case": "cash-pickup-continue/b_32.webp",
+      "baseline": [
+        380,
+        616.0820830000002
+      ],
+      "display": [
+        380,
+        640.1154580000002
+      ],
+      "displayAndMemo": [
+        380,
+        617.6420420000004
+      ],
+      "verified": 0,
+      "action": "移动探测器 6 逆时针",
+      "value": 231,
+      "graph": 1196
+    }
+  ]
+}

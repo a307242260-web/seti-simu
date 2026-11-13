@@ -1,0 +1,13 @@
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -211,0 +212 @@
++  const r4CapitalByState = new WeakMap();
+@@ -215,0 +217,3 @@
++      const immutable=Object.isFrozen(state)&&Object.isFrozen(p)&&immutableCapitalInput(state)&&immutableCapitalInput(p);
++      let owners=immutable?r4CapitalByState.get(state):null;
++      if(owners?.has(p))return owners.get(p);
+@@ -217 +221,3 @@
+-      return mission.quote(p.hand,state.cards.publicCards);
++      const value=mission.quote(p.hand,state.cards.publicCards);
++      if(immutable){if(!owners){owners=new WeakMap();r4CapitalByState.set(state,owners);}owners.set(p,value);}
++      return value;
