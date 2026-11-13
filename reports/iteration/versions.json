@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-postscan-paid-shipment-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-postscan-paid-shipment-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-prepass-funded-landing-20261113",
+      "head": "ae579cc02",
+      "commits": [
+        "ae579cc02"
+      ],
+      "summary": "前三轮仍15／48／118，261个原生输入、轮末状态和RNG逐项一致。扫描后化石返程在四条受控接续中自主兑现。",
+      "records": {
+        "411f3f97.ae579cc0.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-staged-landing-lean-projection-20261113",
       "aiGeneration": "v2",
       "agentType": "search",

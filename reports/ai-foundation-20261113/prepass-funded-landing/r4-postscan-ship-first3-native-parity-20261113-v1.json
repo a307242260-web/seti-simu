@@ -1,0 +1,18 @@
+{
+  "record": "reports/research/411f3f97.ae579cc0.quick-400.json",
+  "source": "ae579cc02",
+  "control": "5135a5a0e",
+  "identicalInputs": 261,
+  "fullEnvelopesIdentical": true,
+  "decisions": 213,
+  "rounds": [
+    15,
+    48,
+    118
+  ],
+  "ms": 10539,
+  "peak": [
+    256,
+    213.56945799999994
+  ]
+}
