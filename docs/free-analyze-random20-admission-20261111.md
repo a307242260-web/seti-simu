@@ -35,3 +35,5 @@
 2026-11-13：四席回合收尾已排除中立标记和待揭示物种时，共享只读外星人盘面；终局板仍保留用于规则归一化的独立可写外层和变体表。第 11 盘同一点五次冷恢复 247 次，候选和完整图一致，约 581–613 毫秒，四次通过、一次超时。[冷恢复记录](../reports/iteration/free-analyze-current-20261113/board11-quiet-end-shared-board-20261113-v1.json)
 
 2026-11-13：一次回合收尾对整桌计算待选里程碑，已领取阈值只读取一次，保留原座位顺序和逐阈值规则。第 11 盘第 156 步连续五次冷恢复通过，均 247 次，585–590 毫秒；首选、报价和搜索图一致。[冷恢复记录](../reports/iteration/free-analyze-current-20261113/board11-milestone-single-pass-20261113-v1.json)
+
+2026-11-13：第 11 盘正式严格整局终局，白席 **141 分**，229 输入、11.881 秒。176 次搜索全部闭合；第 156 步为整局原生输入峰值 247 次，第 75 步为耗时峰值 585 毫秒。此盘结清已知性能阻塞，未将不同版本的单盘结果拼入 20 盘均分。[终局摘要](../reports/iteration/free-analyze-current-20261113/board11-strict-terminal-20261113-v1.json) · [实验中心行动记录](../reports/iteration/free-analyze-milestone-20261113-11/2ef0512a.9193d9da.full.action-log.html)

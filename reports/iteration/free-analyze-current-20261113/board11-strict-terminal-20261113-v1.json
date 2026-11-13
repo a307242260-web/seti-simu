@@ -1,0 +1,59 @@
+{
+  "version": "9193d9daa",
+  "seed": "seti-analyze-8cf6f23cc7c1",
+  "board": 11,
+  "scope": "white-only-full-game",
+  "record": "reports/research/2ef0512a.9193d9da.full.json",
+  "recordSha256": "862086d41911080a52f86eafc554ff4d27fc28d33fef029eefe0971e3b2285ef",
+  "save": "seti-saves/seti-save-research-free-analyze-milestone-20261113-11-9193d9da-full-v101.json",
+  "saveSha256": "0999b7ed9de67fcf59692d9e1c3b828674904a5929337229e55e879fff15c20c",
+  "stopReason": "terminal",
+  "steps": 229,
+  "wallMs": 11881,
+  "decisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600,
+    "enforcement": "reject-before-input"
+  },
+  "completedSearches": 176,
+  "maxNativeInputs": {
+    "step": 156,
+    "value": 247
+  },
+  "maxDecisionMs": {
+    "step": 75,
+    "value": 584.9877919999999
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "score": 20,
+      "beforeInput": 64,
+      "checkpointSha256": "0d383d61607adc0da69c88d2f59b24c6d473911438677b5a9b1b7425a654629b"
+    },
+    {
+      "round": 2,
+      "score": 29,
+      "beforeInput": 93,
+      "checkpointSha256": "2774ba4b67a63fd3fb7fa459b3b360b48312b3bbd355b743760365e1f09536b5"
+    },
+    {
+      "round": 3,
+      "score": 44,
+      "beforeInput": 134,
+      "checkpointSha256": "b7bc5a5d9ee286fbffa2386b7356a5dcf7a711f791ffd7a1155aa014eada8b9c"
+    },
+    {
+      "round": 4,
+      "score": 87,
+      "beforeInput": 229,
+      "checkpointSha256": "40aeed9b06294821c55bae30a29b3494774d7c365946f0a1e1839fbbb6ff07dd"
+    }
+  ],
+  "finalScores": {
+    "player-blue": 7,
+    "player-green": 5,
+    "player-brown": 7,
+    "player-white": 141
+  }
+}
