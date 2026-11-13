@@ -1,0 +1,37 @@
+{
+  "record": "reports/research/88de33a6.92b476c7.quick-400.json",
+  "control": "ae579cc02",
+  "source": "92b476c7e",
+  "identicalInputs": 261,
+  "roundEndCoreAndEffectSessionsIdentical": true,
+  "terminalPrefixEnvelopeIdentical": true,
+  "decisions": 213,
+  "rounds": [
+    15,
+    48,
+    118
+  ],
+  "ms": 10686,
+  "peak": [
+    256,
+    213.52374999999995
+  ],
+  "officialFourthRoundReplay": {
+    "sameActionsAndValues": 87,
+    "score": 272,
+    "peak": [
+      104,
+      523.236666
+    ],
+    "nativeCountDifferences": [
+      {
+        "step": 324,
+        "id": "quick_trade:f385e2ac",
+        "n": 104,
+        "ms": 168.15170799999987,
+        "value": 261,
+        "officialN": 102
+      }
+    ]
+  }
+}

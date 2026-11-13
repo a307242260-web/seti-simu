@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-ready-computer-return-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-ready-computer-return-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-postscan-paid-shipment-20261113",
+      "head": "92b476c7e",
+      "commits": [
+        "81b2a0a55",
+        "65681361d",
+        "92b476c7e"
+      ],
+      "summary": "扫描后电脑已可分析时，沿用已验证的定向化石返程；标准前三轮资产回归",
+      "records": {
+        "88de33a6.92b476c7.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-postscan-paid-shipment-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
