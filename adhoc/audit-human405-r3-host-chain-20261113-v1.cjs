@@ -804,7 +804,7 @@ if(mode==='cargo-third-pool'||mode==='cargo-third-pool-market'){
     write({source,groups:[...groups,...terminal]});
   }finally{env.dispose();}
 }
-if(['cargo-early-data-ledger','cargo-early-data-supplier','cargo-public-reward','cargo-public-fossil'].includes(mode)){
+if(['cargo-early-data-ledger','cargo-early-data-supplier','cargo-public-reward','cargo-public-fossil','cargo-research-reward','cargo-purple2-recovery','cargo-purple2-scan-menu'].includes(mode)){
   const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
   const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
   const ref=g.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
@@ -831,7 +831,95 @@ if(['cargo-early-data-ledger','cargo-early-data-supplier','cargo-public-reward',
     }
     const reference=states.map(({e,...s},i)=>({i,action:ref.inputs[i].summary,...s}));
     const groups=[];
-    if(mode==='cargo-public-fossil'){
+    if(mode==='cargo-purple2-scan-menu'){
+      const file=process.argv[4];
+      const evidence=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+      const original=evidence.groups[0].rows.find(r=>r.name.endsWith('chong_2.webp + b_16.webp'));
+      assert(original);
+      restore(states[22].e);
+      const start=original.inputs.findIndex(a=>a.family==='scan');
+      for(const old of original.inputs.slice(0,start+1)){const a=find(old);assert.deepEqual(a,old);put(a);}
+      const cp=env.createCheckpoint(),origin=cp.coreState.compositionEnvelope,groupsFound=[];
+      for(const earth of env.legalActions()){
+        env.loadCheckpoint(cp);
+        const a=find(earth);assert(a);put(a);
+        for(const publicChoice of env.legalActions().filter(x=>x.family==='choose_card')){
+          env.loadCheckpoint(cp);
+          put(find(earth));put(find(publicChoice));
+          const mercury=env.legalActions().filter(x=>x.target?.kind!=='skip'&&x.summary.startsWith('扫描 '));
+          for(const next of mercury){
+            env.loadCheckpoint(cp);
+            const fixed=[put(find(earth)),put(find(publicChoice)),put(find(next))];
+            const r=run(env,{prior:fixed,forced:[earth.summary,publicChoice.summary,next.summary].join(' / ')});
+            const p=r.assets;groupsFound.push(r);
+            console.log(JSON.stringify({name:r.name,score:p.score,income:[p.income.credits,p.income.energy],
+              pool:p.resources.availableData,hand:p.hand,probes:p.probes,peak:r.peak,stop:r.stop}));
+          }
+        }
+      }
+      assert(groupsFound.length>0);
+      groups.push({name:'paid purple2 scan landing options',root:origin,rows:groupsFound});
+    }else if(mode==='cargo-purple2-recovery'){
+      const start=22,origin=states[start].e,rows=[];
+      const suppliers=['chong_7.webp','chong_2.webp','b_16.webp','chong_9.webp'];
+      for(let i=0;i<suppliers.length;i++)for(let j=i+1;j<suppliers.length;j++){
+        const pair=[suppliers[i],suppliers[j]];
+        restore(origin);
+        const inputs=[],facts=[];
+        const force=(fn,required=true)=>{
+          const a=env.legalActions().find(fn);
+          if(!a){assert(!required,JSON.stringify(env.legalActions().map(a=>a.summary)));return false;}
+          inputs.push(put(a));return true;
+        };
+        const fam=f=>a=>a.family===f;
+        const name=n=>a=>a.summary===n;
+        const note=label=>{const {w,hand,market,computer,blue,income}=snapshot();facts.push({label,w,hand,market,computer,blue,income});};
+        force(a=>a.target?.tileId==='purple2');
+        force(fam('place_data'));force(a=>a.target?.target==='computer');
+        force(fam('place_data'));force(name('blue2 下方'));
+        force(a=>a.target?.tradeId==='cards-for-credit');
+        for(const id of pair)force(name(id));
+        force(a=>a.target?.confirm===true);
+        force(fam('end_turn'));
+        note('scan funded');
+        force(fam('scan'));
+        const scanMenu=env.legalActions().map(a=>a.summary);
+        const r=run(env,{prior:inputs,forced:'purple2 and cash exchange '+pair.join(' + ')});
+        const a=r.assets;
+        rows.push({...r,facts,scanMenu});
+        console.log(JSON.stringify({pair,scanMenu,facts,score:a.score,salary:[a.income.credits,a.income.energy],
+          pool:a.resources.availableData,hand:a.hand,probes:a.probes,stop:r.stop,peak:r.peak}));
+      }
+      groups.push({name:'purple2 research with deterministic credit payment',root:origin,rows});
+    }else if(mode==='cargo-research-reward'){
+      for(const start of [22,43,59]){
+        const origin=states[start].e;
+        restore(origin);
+        const choices=env.legalActions().filter(a=>a.target?.tileId&&a.actionId!==ref.inputs[start].actionId);
+        const rows=[];
+        for(const choice of choices){
+          restore(origin);
+          const inputs=[put(env.legalActions().find(a=>a.actionId===choice.actionId))];
+          const first=snapshot();
+          let failure=null;
+          for(let i=start+1;i<98;i++){
+            const old=ref.inputs[i],a=find(old);
+            if(!a){const {e,...visible}=snapshot();failure={i,expected:old.summary,...visible};break;}
+            inputs.push(put(a));
+          }
+          const checkpoint=env.createCheckpoint();
+          const r=failure?run(env,{prior:inputs,forced:choice.summary}):{
+            name:choice.summary,inputs,checkpoints:[],end:checkpoint.coreState.compositionEnvelope,score:null,
+            assets:assets(checkpoint.coreState.compositionEnvelope,env.observe(white)),stop:'matched prepass',peak:[0,0]};
+          rows.push({...r,first:{w:first.w,computer:first.computer,blue:first.blue},failure});
+          const a=r.assets;
+          console.log(JSON.stringify({start,choice:choice.summary,first:first.w,failure:failure&&[failure.i,failure.expected,failure.w],
+            score:a.score,income:[a.income.credits,a.income.energy],pool:a.resources.availableData,hand:a.hand,
+            computer:a.computer,blue:a.blue,probes:a.probes,peak:r.peak,stop:r.stop}));
+        }
+        groups.push({name:'research menu '+start,root:origin,rows});
+      }
+    }else if(mode==='cargo-public-fossil'){
       const start=71,origin=states[start].e,rows=[];
       for(const [label,fossil,skip] of [
         ['fossil 06, keep paid blue2','fossil_06',[]],
