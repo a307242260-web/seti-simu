@@ -1,0 +1,33 @@
+{
+  "source": "faac3a8e0",
+  "results": [
+    {
+      "label": "host-continuous",
+      "action": "移动探测器 1 逆时针",
+      "id": "move:b2f83963",
+      "nativeExecutions": 0,
+      "milliseconds": 7.469499999999925
+    },
+    {
+      "label": "host checkpoint",
+      "action": "移动探测器 1 逆时针",
+      "id": "move:b2f83963",
+      "nativeExecutions": 0,
+      "milliseconds": 6.894792000000052
+    },
+    {
+      "label": "isolated checkpoint",
+      "action": "扫描",
+      "id": "scan:2d21a323",
+      "nativeExecutions": 75,
+      "milliseconds": 148.66508299999998
+    },
+    {
+      "label": "no checkpoint",
+      "action": "扫描",
+      "id": "scan:2d21a323",
+      "nativeExecutions": 75,
+      "milliseconds": 131.35775000000012
+    }
+  ]
+}
