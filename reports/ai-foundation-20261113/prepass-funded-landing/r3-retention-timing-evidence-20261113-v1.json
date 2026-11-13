@@ -1,0 +1,827 @@
+{
+  "source": "08fbac0a8",
+  "official": 272,
+  "scope": "same historical opening; each controlled branch independently replayed; no new formal experiment",
+  "matched": [
+    {
+      "reserve": "b_111.webp",
+      "bankAndUseTerminalExact": true,
+      "unrealizedValue": 191.5,
+      "originalMove": "excluded-by-movement-policy",
+      "bank": 240,
+      "use": 240,
+      "deliverBeforeMain": 231,
+      "deliverAfterScan": 268,
+      "deliverAfterEndAndForcedOpponents": 268,
+      "before": {
+        "r": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 6,
+          "energy": 4,
+          "handSize": 7,
+          "publicity": 4,
+          "score": 123
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "score": 171,
+        "hand": [
+          "chong_7.webp",
+          "chong_9.webp",
+          "b_9.webp",
+          "b_111.webp",
+          "b_17.webp",
+          "amiba_5.webp",
+          "b_60.webp"
+        ],
+        "pool": 2,
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          3,
+          2
+        ]
+      },
+      "after": {
+        "r": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 8,
+          "energy": 1,
+          "handSize": 7,
+          "publicity": 4,
+          "score": 123
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "score": 171,
+        "hand": [
+          "chong_7.webp",
+          "chong_9.webp",
+          "b_9.webp",
+          "b_111.webp",
+          "b_17.webp",
+          "amiba_5.webp",
+          "b_60.webp"
+        ],
+        "pool": 4,
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          3,
+          2
+        ]
+      },
+      "proof": [
+        [
+          "move",
+          "移动探测器 7 向内",
+          "move:0febc073"
+        ],
+        [
+          "choose_payment",
+          "消耗 1 能量",
+          "choose_payment:abbb51f1"
+        ],
+        [
+          "move",
+          "移动探测器 7 向内",
+          "move:7db6ee90"
+        ],
+        [
+          "choose_payment",
+          "消耗 2 能量",
+          "choose_payment:d8bed80b"
+        ],
+        [
+          "complete_task",
+          "完成 chong_3.webp",
+          "complete_task:76904798"
+        ]
+      ],
+      "peak": [
+        141,
+        411.6541669999999
+      ]
+    },
+    {
+      "reserve": "b_32.webp",
+      "bankAndUseTerminalExact": true,
+      "unrealizedValue": 191.5,
+      "originalMove": "excluded-by-movement-policy",
+      "bank": 255,
+      "use": 255,
+      "deliverBeforeMain": 246,
+      "deliverAfterScan": 260,
+      "deliverAfterEndAndForcedOpponents": 260,
+      "before": {
+        "r": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 6,
+          "energy": 4,
+          "handSize": 7,
+          "publicity": 4,
+          "score": 123
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "score": 171,
+        "hand": [
+          "chong_7.webp",
+          "chong_9.webp",
+          "b_9.webp",
+          "b_32.webp",
+          "b_17.webp",
+          "amiba_5.webp",
+          "b_60.webp"
+        ],
+        "pool": 2,
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          3,
+          2
+        ]
+      },
+      "after": {
+        "r": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 8,
+          "energy": 1,
+          "handSize": 7,
+          "publicity": 4,
+          "score": 123
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "score": 171,
+        "hand": [
+          "chong_7.webp",
+          "chong_9.webp",
+          "b_9.webp",
+          "b_32.webp",
+          "b_17.webp",
+          "amiba_5.webp",
+          "b_60.webp"
+        ],
+        "pool": 4,
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blue": [
+          1,
+          3,
+          2
+        ]
+      },
+      "proof": [
+        [
+          "move",
+          "移动探测器 7 向内",
+          "move:0febc073"
+        ],
+        [
+          "choose_payment",
+          "消耗 1 能量",
+          "choose_payment:abbb51f1"
+        ],
+        [
+          "move",
+          "移动探测器 7 向内",
+          "move:7db6ee90"
+        ],
+        [
+          "choose_payment",
+          "消耗 2 能量",
+          "choose_payment:d8bed80b"
+        ],
+        [
+          "complete_task",
+          "完成 chong_3.webp",
+          "complete_task:76904798"
+        ]
+      ],
+      "peak": [
+        112,
+        205.40795799999978
+      ]
+    }
+  ],
+  "timing": [
+    [
+      "bank",
+      "移动探测器 7 向内",
+      "b_111.webp",
+      253,
+      [
+        234,
+        513.059667
+      ]
+    ],
+    [
+      "bank",
+      "移动探测器 7 向内",
+      "b_32.webp",
+      253,
+      [
+        234,
+        403.065834
+      ]
+    ],
+    [
+      "new-income",
+      "no-move",
+      "b_111.webp",
+      238,
+      [
+        176,
+        314.5278330000001
+      ]
+    ],
+    [
+      "new-income",
+      "移动探测器 7 向内",
+      "b_111.webp",
+      239,
+      [
+        231,
+        496.2159580000007
+      ]
+    ],
+    [
+      "new-income",
+      "no-move",
+      "b_32.webp",
+      259,
+      [
+        180,
+        279.5225410000021
+      ]
+    ],
+    [
+      "new-income",
+      "移动探测器 7 向内",
+      "b_32.webp",
+      252,
+      [
+        248,
+        457.9172499999986
+      ]
+    ],
+    [
+      "teacher",
+      "no-move",
+      "b_111.webp",
+      256,
+      [
+        138,
+        212.3814170000005
+      ]
+    ],
+    [
+      "teacher",
+      "移动探测器 6 向内",
+      "b_111.webp",
+      237,
+      [
+        91,
+        212.91587499999878
+      ]
+    ],
+    [
+      "teacher",
+      "no-move",
+      "b_32.webp",
+      237,
+      [
+        163,
+        217.80895800000144
+      ]
+    ],
+    [
+      "teacher",
+      "移动探测器 6 向内",
+      "b_32.webp",
+      242,
+      [
+        91,
+        176.4663750000036
+      ]
+    ]
+  ],
+  "supply": [
+    [
+      "A1-original",
+      "b_111.webp",
+      273,
+      [
+        102,
+        523.819583
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      []
+    ],
+    [
+      "A1-original",
+      "b_32.webp",
+      282,
+      [
+        111,
+        398.8082909999994
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      []
+    ],
+    [
+      "A1-repeat-before-analysis",
+      "b_111.webp",
+      251,
+      [
+        113,
+        327.2244579999988
+      ],
+      [
+        113,
+        0,
+        0,
+        2,
+        0
+      ],
+      [],
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      []
+    ],
+    [
+      "A1-repeat-before-analysis",
+      "b_32.webp",
+      258,
+      [
+        146,
+        345.7542080000003
+      ],
+      [
+        113,
+        0,
+        0,
+        2,
+        0
+      ],
+      [],
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      []
+    ],
+    [
+      "fossil07-bank-2-data",
+      "b_111.webp",
+      240,
+      [
+        78,
+        221.66995899999893
+      ],
+      [
+        112,
+        0,
+        0,
+        2,
+        2
+      ],
+      [
+        "chong_7.webp",
+        "chong_9.webp",
+        "b_9.webp"
+      ],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        1
+      ]
+    ],
+    [
+      "fossil07-bank-2-data",
+      "b_32.webp",
+      255,
+      [
+        125,
+        265.4176669999979
+      ],
+      [
+        112,
+        0,
+        0,
+        2,
+        2
+      ],
+      [
+        "chong_7.webp",
+        "chong_9.webp",
+        "b_9.webp"
+      ],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        1
+      ]
+    ],
+    [
+      "fossil07-use-2-data",
+      "b_111.webp",
+      240,
+      [
+        74,
+        138.0906670000004
+      ],
+      [
+        114,
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        "chong_7.webp",
+        "chong_9.webp",
+        "b_9.webp"
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    [
+      "fossil07-use-2-data",
+      "b_32.webp",
+      255,
+      [
+        125,
+        274.45620799999597
+      ],
+      [
+        114,
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        "chong_7.webp",
+        "chong_9.webp",
+        "b_9.webp"
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    [
+      "computer-3",
+      "b_111.webp",
+      null,
+      [
+        306,
+        1426.1065830000007
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "dlc_25.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      []
+    ],
+    [
+      "computer-3",
+      "b_32.webp",
+      null,
+      [
+        308,
+        1257.3929169999974
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "dlc_25.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      []
+    ],
+    [
+      "blue2",
+      "b_111.webp",
+      236,
+      [
+        106,
+        447.04779199999757
+      ],
+      [
+        117,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "dlc_25.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1
+      ]
+    ],
+    [
+      "blue2",
+      "b_32.webp",
+      236,
+      [
+        125,
+        510.94166699999914
+      ],
+      [
+        117,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "dlc_25.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1
+      ]
+    ],
+    [
+      "computer-3-swap",
+      "b_111.webp",
+      null,
+      [
+        278,
+        1355.3164170000018
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "dlc_14.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      []
+    ],
+    [
+      "computer-3-swap",
+      "b_32.webp",
+      null,
+      [
+        241,
+        1117.4054579999938
+      ],
+      [
+        119,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "dlc_14.png",
+        "dlc_15.png"
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      []
+    ]
+  ]
+}
