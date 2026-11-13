@@ -1,0 +1,17 @@
+{
+  "admitted": false,
+  "reason": "WHITE_ONLY_DECISION_GATE_EXCEEDED",
+  "differences": [],
+  "saved": {
+    "n": 445,
+    "ms": 669.919458999997
+  },
+  "cold": {
+    "n": 247,
+    "ms": 616.514,
+    "value": 117,
+    "identities": 412,
+    "bucketCollisions": 422
+  },
+  "step": 156
+}

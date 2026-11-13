@@ -312,6 +312,32 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  }finally{c.dispose();}
 }
 
+// Quiet card tails and the revealed Aomomo trace still produce the native
+// menu and projection, including the fossil and the already-public display.
+{
+ const rows=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'quiet-corner-aomomo-20261113-v1.fixture.json.gz'))));
+ for(const {key,root:envelope,action,end} of rows){
+  const seed=JSON.parse(envelope.committedState).meta.seed,seatId=action.actorId;
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+    projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+  k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+  const before=c.lifecycle.save().envelope,fast=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),
+   native=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{
+   const a=fast.openRoot(),b=native.openRoot();
+   fast.setResourcePlanning(true);fast.setCardPickPlanning(true);native.setCardPickPlanning(true);
+   const left=fast.expand(a,action.actionId),right=native.expand(b,action.actionId);
+   assert.equal(fast.getDiagnostics().submissionCount,0,key);
+   assert.deepEqual(left.observation,right.observation,key);
+   assert.deepEqual(left.legalActions,right.legalActions,key);
+   assert.equal(left.boundary,right.boundary,key);
+   assert.deepEqual(c.lifecycle.save().envelope,before);
+   submit(c,action.actionId);
+   assert.deepEqual(c.lifecycle.save().envelope,end);
+  }finally{native.close();fast.close();c.dispose();}
+ }
+}
+
 // The last-round satellite setup is one funded plan. It preserves the paid
 // landing card, reaches the native end-of-turn boundary, and keeps the refill hidden.
 {

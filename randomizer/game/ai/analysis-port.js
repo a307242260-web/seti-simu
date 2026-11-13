@@ -363,11 +363,11 @@
       const state=readIdentityState(envelope), board=state.aliens;
       // Equal canonical states have the same occupied positions and entity
       // sequences. They are a discriminator only; compare the full key on a hit.
-      const traceGrids=[board.amiba,board.chong].map(species=>[1,2].map(id=>{
+      const traceGrids=[board.amiba,board.chong,board.aomomo].map(species=>[1,2].map(id=>{
         const grid=species?.traceSlotsByAlienSlotId?.[id];
-        return grid&&["blue","pink","yellow"].map(color=>[1,2,3,4].map(position=>{
+        return grid&&["blue","pink","yellow"].map(color=>[1,2,3,4,5].map(position=>{
           const mark=grid[color]?.[position];
-          return mark&&[mark.sequence,mark.playerId];
+          return Array.isArray(mark)?mark.map(t=>[t.sequence,t.playerId]):mark&&[mark.sequence,mark.playerId];
         }));
       }));
       const symbols=board.amiba?.symbolSlots;
@@ -446,7 +446,7 @@
     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0, committedReferenceHits=0;
-    let rootObservation = null, knownChongDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
+    let rootObservation = null, knownChongDisplayIndex=null, knownAomomoDisplayIndex=null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
     let knownRootFossilIds = new Set();
     let planningStates = new WeakMap(), acquiredPlanningStates = new WeakMap();
     // Each immutable Native envelope owns one immutable knowledge context.
@@ -712,6 +712,7 @@
       knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
       knownRootTechIndices = new Map(Object.values(state.tech.stacks).map(stack=>[stack.tileId,stack.bonusIndex]));
       knownRootAlienIds = new Set((rootObservation.publicState.board.aliens.slots||[]).filter(a=>a.revealed).map(a=>a.alienId));
+      knownAomomoDisplayIndex=knownRootAlienIds.has("奥陌陌")?state.aliens.aomomo?.displayedCardIndex:null;
       knownRootFossilIds = new Set(actions.flatMap(action => action.target?.fossilId ? [action.target.fossilId] : []));
       const head=authoritative.session?.session?.queue?.[0];
       const offered=head?.type==="residual_alien_card_decision"&&head.ownerId===seatId&&head.payload?.speciesId==="chong"
@@ -1879,6 +1880,46 @@
       return envelope;
     }
 
+    function previewQuietCardCornerTail(node,stored,action){
+      const s=stored.envelope.session?.session,head=s?.queue[0],effect=head?.payload?.cardEffect;
+      if(!resourcePlanning||node.status!=="decision"||stored.informationBarrier||stored.resourceControl
+        ||s?.phase!=="awaiting_input"||s.queue.length!==1||s.failure||s.interruptContext||s.irreversibleBarrier||s.undoFrames.length
+        ||head.ownerId!==seatId||head.kind!=="decision"||head.allowQuickActions)return null;
+      const source=s.workingState,t=source.turn,p=source.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length||localPlans.hasPendingFossilArrival(source)
+        ||p.reservedCards.some(c=>!known.has(c.id)))return null;
+      const type=cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD;
+      const event=(e,extra={})=>({type:"card_effect",effectId:e?.id||null,effectType:e?.type||null,playerId:seatId,...extra});
+      const quiet=(next,e,fields)=>{const r=residualSession.augmentEffectResult(next,{ok:true,events:[event(e,fields)]},head);
+        return r.events.length===1&&!r.spawnedEffects.length;};
+      if(head.type==="card_play_domain_effect:decision:card_move"&&effect?.type==="card_move"
+        &&action.family==="choose_target"&&action.target?.skip===true&&action.target.choiceId==="skip"){
+        if(!quiet(source,effect,{skipped:true}))return null;
+        return {...source,meta:quietSavedMeta(source.meta,s.baseVersion+1)};
+      }
+      if(head.type!=="card_play_domain_effect:decision:"+type||effect?.type!==type||action.family!=="choose_card")return null;
+      const id=action.target?.cardInstanceId,card=known.has(id)&&p.hand.find(c=>c.id===id);
+      if(!card||cards.getDiscardActionMoveRewardForCard(card))return null;
+      const reward=cards.getDiscardActionRewardForCard(card);
+      if(!reward||![0,1].includes(reward.dataCount)
+        ||Object.keys(reward.gain).some(k=>!["score","credits","energy","publicity"].includes(k)))return null;
+      const player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},dataState:copyForkData(p.dataState),
+        reservedCards:copyForkData(p.reservedCards)};
+      const next={...source,meta:{...quietSavedMeta(source.meta,s.baseVersion+1),sequences:{...source.meta.sequences}},
+        players:{...source.players,players:source.players.players.map(q=>q===p?player:q)}};
+      if(!quiet(next,effect,{choiceId:action.target.choiceId}))return null;
+      for(const e of cards.buildRewardEffects(reward,`corner:${id}:0`)){
+        if(e.type==="gain_resources")players.gainResources(player,e.options.gain,"cardEffectScore");
+        else if(e.type==="gain_data"){
+          const result=data.gainData(player,{source:"play_card",root:next});
+          if(!result.ok&&!result.discarded)return null;
+        }else return null;
+        if(!quiet(next,e))return null;
+      }
+      return next;
+    }
+
     // The common trace slots have a printed, deterministic award. Keep
     // the native optional Amiba trigger as a separate decision.
     function previewQuietLandingTrace(node,stored,action){
@@ -2121,6 +2162,8 @@
       }
       const taskSession=stored.envelope.session?.session;
       const pairedTrace=taskSession&&pairedTracePickupScope(taskSession.workingState,taskSession);
+      const cornerTail=previewQuietCardCornerTail(node,stored,requested);
+      if(cornerTail)return rememberPrefix(key,node,actionId,remember(key,finishProvedCommittedState(node,stored,requested,cornerTail)));
       const landingTrace=previewQuietLandingTrace(node,stored,requested);
       if(landingTrace){
         const prepared=landingTrace.choices&&prepareQuietTailMenu(stored,requested,landingTrace);
@@ -2134,8 +2177,11 @@
           ||requested.target?.traceType==="yellow"&&taskSession.queue[0]?.payload?.cardEffect?.id==="b32-yellow-trace")
         &&knownCards(stored.envelope);
       const species=pinkTraceCards&&requested.target?.speciesId;
-      const knownDisplay=species&&(species==="chong"?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex);
-      const traceCard=pinkTraceCards&&cardPickPlanning&&["amiba","chong"].includes(species)
+      const knownDisplay=species&&(species==="chong"?knownChongDisplayIndex:
+        species==="aomomo"?knownAomomoDisplayIndex:
+          rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex);
+      const traceCard=pinkTraceCards&&cardPickPlanning&&(["amiba","chong"].includes(species)
+        ||species==="aomomo"&&taskSession.irreversibleBarrier?.code==="hidden_card_reveal")
         &&Number.isSafeInteger(knownDisplay)&&taskSession.workingState.aliens[species]?.displayedCardIndex===knownDisplay
         ?residualSession.previewPinkTraceCardMenu(taskSession,requested,pinkTraceCards,pairedTrace):null;
       const traceCardMenu=traceCard&&prepareDecisionContinuation(stored,traceCard.state,requested,traceCard,true);

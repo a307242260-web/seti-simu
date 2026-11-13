@@ -646,11 +646,11 @@
     players.gainResources(actor, reward.gain, `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`);
   }
 
-  function scoreOnlyTraceReward(reward, allowRegion = false, allowCard = false, anyRegion = false) {
+  function isDeterministicTraceReward(reward, allowRegion = false, allowCard = false, anyRegion = false, allowFossil = false) {
     return Boolean(reward && Object.keys(reward).every(key => key === "gain" || !reward[key]
         || allowRegion && key === "region" && (anyRegion||reward.region === "red")
         || allowCard && key === "pickAlienCard" && reward.pickAlienCard === true)
-      && Object.keys(reward.gain || {}).every(key => key === "score"));
+      && Object.keys(reward.gain || {}).every(key => key === "score" || allowFossil && key === "aomomoFossils"));
   }
 
   function amibaTraceRegionEffect(root, ownerId, region) {
@@ -686,8 +686,12 @@
         &&!(root.turn.roundNumber===4&&slot.alienId==="奥陌陌"))) return false;
     if (target.stateExtra) return Boolean(slot.traces?.[traceType]?.firstPlaced);
     const species = aliens.getSpeciesTraceApi(slot);
-    return target.speciesId === species?.speciesId
-      && scoreOnlyTraceReward(species.api.getTraceReward(root.aliens, traceType, target.position), allowRegion, allowCard, traceType!=="pink");
+    if (target.speciesId !== species?.speciesId) return false;
+    const aomomo = species.speciesId === "aomomo";
+    const reward = aomomo
+      ? species.api.getTraceReward(traceType, target.position)
+      : species.api.getTraceReward(root.aliens, traceType, target.position);
+    return isDeterministicTraceReward(reward, allowRegion, allowCard, traceType !== "pink", aomomo);
   }
 
   // The caller owns the writable slices and must settle any reported region
@@ -696,7 +700,7 @@
     if (!isPlainPinkTrace(root, choice, allowRegion, allowCard, traceType)) return null;
     const placed = placeAlienTrace(root, effect, choice);
     if (!placed?.ok) return null;
-    if (placed.reward && !scoreOnlyTraceReward(placed.reward, allowRegion, allowCard, traceType!=="pink")) return null;
+    if (placed.reward && !isDeterministicTraceReward(placed.reward, allowRegion, allowCard, traceType!=="pink", choice.target.speciesId==="aomomo")) return null;
     const region = placed.reward?.region || null;
     awardPrintedTraceResources(getActor(root, effect.ownerId), placed.reward, traceType);
     return { ok: true, regionEffect: amibaTraceRegionEffect(root, effect.ownerId, region),
