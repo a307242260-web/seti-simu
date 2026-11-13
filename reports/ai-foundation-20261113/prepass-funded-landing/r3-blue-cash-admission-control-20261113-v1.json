@@ -1,0 +1,768 @@
+{
+  "source": "8ecc92475",
+  "rootSource": "r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz",
+  "sha256": "2c8d58c4850daf5009ba76cf535e75f72f331623353899a2b325945d38c1c532",
+  "experiment": "At R3, before main action, computer five, no credits and one pool data: also admit the first already unlocked non-default credits blue slot. No change to evaluator. Temporary patch removed.",
+  "rows": [
+    {
+      "i": 97,
+      "original": {
+        "selected": "结束回合",
+        "n": 3,
+        "ms": 35.907332999999994,
+        "roots": [
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "结束回合",
+            "target": 1,
+            "value": 194.5,
+            "reason": "complete"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "结束回合",
+        "n": 3,
+        "ms": 35.85662500000001,
+        "roots": [
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "结束回合",
+            "target": 1,
+            "value": 194.5,
+            "reason": "complete"
+          }
+        ]
+      }
+    },
+    {
+      "i": 98,
+      "original": {
+        "selected": "放置数据",
+        "n": 16,
+        "ms": 41.29212499999994,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 190,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 2,
+            "value": 195,
+            "reason": "complete"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "放置数据",
+        "n": 16,
+        "ms": 42.57787499999995,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 190,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 2,
+            "value": 195,
+            "reason": "complete"
+          }
+        ]
+      }
+    },
+    {
+      "i": 99,
+      "original": {
+        "selected": "第一排放置位 5",
+        "n": 15,
+        "ms": 37.88579200000004,
+        "roots": [
+          {
+            "action": "第一排放置位 5",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 1,
+            "value": 195,
+            "reason": "complete"
+          },
+          {
+            "action": "blue3 下方",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 190.5,
+            "reason": "complete"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "第一排放置位 5",
+        "n": 15,
+        "ms": 38.29579199999989,
+        "roots": [
+          {
+            "action": "第一排放置位 5",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 1,
+            "value": 195,
+            "reason": "complete"
+          },
+          {
+            "action": "blue3 下方",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 190.5,
+            "reason": "complete"
+          }
+        ]
+      }
+    },
+    {
+      "i": 100,
+      "original": {
+        "selected": "放置数据",
+        "n": 16,
+        "ms": 25.596709000000374,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 191.5,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 2,
+            "value": 195,
+            "reason": "complete"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "放置数据",
+        "n": 26,
+        "ms": 37.452082999999675,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 191.5,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "放置数据",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 2,
+            "value": 195,
+            "reason": "complete"
+          }
+        ]
+      }
+    },
+    {
+      "i": 101,
+      "original": {
+        "selected": "第一排放置位 6",
+        "n": 15,
+        "ms": 34.56845799999974,
+        "roots": [
+          {
+            "action": "第一排放置位 6",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 1,
+            "value": 195,
+            "reason": "complete"
+          },
+          {
+            "action": "blue3 下方",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "blue1 下方",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "第一排放置位 6",
+        "n": 25,
+        "ms": 41.22908400000006,
+        "roots": [
+          {
+            "action": "第一排放置位 6",
+            "kind": "resource-goal-plan",
+            "goal": "analyze",
+            "target": 1,
+            "value": 195,
+            "reason": "complete"
+          },
+          {
+            "action": "blue3 下方",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 2,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "blue1 下方",
+            "kind": "resource-goal-plan",
+            "goal": "blue-data",
+            "target": 3,
+            "value": 192,
+            "reason": "complete"
+          }
+        ]
+      }
+    },
+    {
+      "i": 102,
+      "original": {
+        "selected": "PASS",
+        "n": 10,
+        "ms": 18.675000000000182,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "kind": "resource-goal-plan",
+            "goal": "launch",
+            "target": 2,
+            "value": 191,
+            "reason": "complete"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          }
+        ]
+      },
+      "admitted": {
+        "selected": "PASS",
+        "n": 10,
+        "ms": 16.271625000000313,
+        "roots": [
+          {
+            "action": "PASS",
+            "target": 1,
+            "value": 192,
+            "reason": "complete"
+          },
+          {
+            "action": "移动探测器 7 向外",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 顺时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 逆时针",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "移动探测器 7 向内",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "2张牌 → 1信用点",
+            "kind": "resource-goal-plan",
+            "goal": "launch",
+            "target": 2,
+            "value": 191,
+            "reason": "complete"
+          },
+          {
+            "action": "2张牌 → 1能量",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          },
+          {
+            "action": "2张牌 → 精选1张牌",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-card-pick-policy"
+          },
+          {
+            "action": "chong_7.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "chong_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-movement-policy"
+          },
+          {
+            "action": "b_9.webp：弃牌角标",
+            "target": null,
+            "value": null,
+            "reason": "excluded-by-resource-policy"
+          }
+        ]
+      }
+    }
+  ]
+}
