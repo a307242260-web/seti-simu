@@ -1926,9 +1926,9 @@
   }
 
   function listPendingFinalOwners(root) {
-    return (root.players.players || []).filter((player) => (
-      finalScoring.getPendingMarksForPlayer(root.finalScoring, player).length
-    ));
+    const roster=root.players.players||[];
+    const pending=new Set(finalScoring.listPendingMarks(root.finalScoring,roster).map(mark=>mark.playerId));
+    return roster.filter(player=>pending.has(player.id||player.color));
   }
 
   function amibaCardChoices(root, ownerId) {

@@ -1,0 +1,85 @@
+{
+  "base": "5e1ce513d",
+  "attempts": [
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 584.6669589999999,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 586.021333,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 589.9850419999999,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 586.283083,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 587.796958,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    }
+  ]
+}

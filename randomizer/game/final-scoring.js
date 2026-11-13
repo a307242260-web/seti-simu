@@ -125,20 +125,23 @@
     return Object.values(state.tiles).flatMap((tile) => tile.marks || []);
   }
 
-  function hasPlayerClaimedThreshold(state, playerId, threshold) {
-    return listMarks(state).some((mark) => (
-      mark.playerId === playerId && Number(mark.threshold) === Number(threshold)
-    ));
-  }
-
   function listPendingMarks(state, playerList = []) {
     ensureFinalScoringState(state);
+    const claimed = new Map();
+    for (const tile of Object.values(state.tiles)) {
+      for (const mark of tile.marks || []) {
+        let thresholds = claimed.get(mark.playerId);
+        if (!thresholds) claimed.set(mark.playerId, thresholds = new Set());
+        const threshold = Number(mark.threshold);
+        if (!Number.isNaN(threshold)) thresholds.add(threshold);
+      }
+    }
     const pendingMarks = [];
     for (const player of playerList) {
       const playerId = getPlayerId(player);
       if (!playerId) continue;
       for (const threshold of getReachedThresholds(getPlayerScore(player), state.thresholds)) {
-        if (hasPlayerClaimedThreshold(state, playerId, threshold)) continue;
+        if (claimed.get(playerId)?.has(Number(threshold))) continue;
         pendingMarks.push({
           id: `final-pending-${playerId}-${threshold}`,
           playerId,
