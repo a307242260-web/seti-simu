@@ -595,3 +595,74 @@ if(mode==='cargo-retain-or-deliver'){
     write({source,groups:[{name:'third-round fossil return payment',root:origin,agentCheckpoint:cp.machineAI[white],rows}]});
   }finally{env.dispose();}
 }
+if(mode==='cargo-electricity'){
+  const base='reports/ai-foundation-20261113/r3-cargo-entry/';
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(base+f)));
+  const g=read('human405-r3-cargo-entry-20261113-v1.json.gz').groups.find(g=>g.name==='input 10');
+  const ref=g.rows[1], env=initialized(),template=env.createCheckpoint();
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  function put(pred,inputs){const a=env.legalActions().find(pred);assert(a,JSON.stringify(env.legalActions().map(x=>x.summary)));assert(env.step(a).ok);inputs.push(a);}
+  try{
+    restore(g.root);put(a=>a.actionId===ref.inputs[0].actionId,[]);
+    for(const a of ref.inputs.slice(1,65))assert.deepEqual(take(env).a,a);
+    const host=env.createCheckpoint(),origin=host.coreState.compositionEnvelope;
+    const rows=[];
+    for(const policy of ['complete host plan','public DLC17 via publicity','public DLC17 via card payment']){
+      env.loadCheckpoint(host);
+      const prefix=[];
+      if(policy.endsWith('publicity')){
+        put(a=>a.family==='card_corner'&&a.summary.startsWith('chong_8.webp'),prefix);
+        put(a=>a.target?.tradeId==='publicity-for-card',prefix);
+      }
+      if(policy.endsWith('payment')){
+        put(a=>a.target?.tradeId==='cards-for-pick-card',prefix);
+        for(const c of ['chong_7.webp','chong_9.webp'])put(a=>a.family==='choose_payment'&&a.summary===c,prefix);
+        put(a=>a.target?.confirm,prefix);
+      }
+      let ready;
+      if(prefix.length){
+        put(a=>a.family==='choose_card'&&a.summary==='dlc_17.png',prefix);
+        put(a=>a.family==='card_corner'&&a.summary.startsWith('dlc_17.png'),prefix);
+        for(const i of [1,2,3,4]){
+          put(a=>a.family==='place_data',prefix);
+          put(a=>a.summary===`第一排放置位 ${i}`,prefix);
+        }
+        put(a=>a.summary==='收入 amiba_9.webp',prefix);
+        const cp=env.createCheckpoint();ready=assets(cp.coreState.compositionEnvelope,env.observe(white));
+        put(a=>a.actorId===white&&a.family==='end_turn',prefix);
+      }
+      const row=run(env,{prior:prefix,forced:policy});rows.push({...row,ready});
+      if(!ready)assert.deepEqual(row.end,ref.end);
+      console.log(JSON.stringify({policy,ready:ready&&[ready.score,ready.resources,ready.hand,ready.probes,ready.income],end:[row.stop,row.assets.score,row.assets.income,row.assets.hand,row.assets.resources.availableData,row.assets.probes,row.assets.blue],peak:row.peak}));
+    }
+    write({source,groups:[{name:'public alternative before post-analysis placement',root:origin,agentCheckpoint:host.machineAI[white],rows}]});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-electricity-hidden'){
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
+  const g=read(process.argv[4]).groups[0],env=initialized(),template=env.createCheckpoint(),groups=[];
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  restore(g.root);const visible=env.observe(white),legal=env.legalActions();
+  try{
+    for(const [i,j] of [[0,3],[0,6]]){
+      const state=JSON.parse(g.root.committedState),deck=state.cards.drawPileCardIds;
+      assert.notEqual(deck[i],deck[j]);const swap=[deck[i],deck[j]];[deck[i],deck[j]]=[deck[j],deck[i]];
+      const root={...g.root,committedState:JSON.stringify(state)},rows=[];
+      for(const reference of g.rows.slice(0,2)){
+        restore(root);assert.deepEqual(env.observe(white),visible);assert.deepEqual(env.legalActions(),legal);
+        const prior=[];
+        if(reference.ready){
+          const stop=reference.inputs.findIndex(a=>a.family==='end_turn');assert(stop>0);
+          for(const old of reference.inputs.slice(0,stop+1)){
+            const action=env.legalActions().find(a=>a.actionId===old.actionId);
+            assert.deepEqual(action,old);assert(env.step(action).ok);prior.push(action);
+          }
+        }
+        const r=run(env,{prior,forced:`${i}/${j} ${reference.name}`});rows.push(r);
+        console.log(JSON.stringify({swap,name:r.name,stop:r.stop,score:r.assets.score,income:r.assets.income,hand:r.assets.hand,pool:r.assets.resources.availableData,probe:r.assets.probes,peak:r.peak}));
+      }
+      groups.push({name:`ordinary pile ${i}/${j}`,root,swap,rows});
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
