@@ -10,7 +10,7 @@ const R4_ID='human405-white-v661-r4-candidate-v1';
 const R4_ADMISSION='reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json';
 const STAGED_LANDING_ID='human405-white-staged-landing-full-v1';
 const STAGED_LANDING_RECORD='reports/research/11ef28bc.5135a5a0.quick-400.json';
-const STAGED_LANDING_ADMISSION='reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json';
+const STAGED_LANDING_ADMISSIONS=['v2','v1'].map(v=>'reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-'+v+'.json');
 const IDS=Object.freeze([ID,V189_ID,V661_ID,R4_ID,STAGED_LANDING_ID]);
 const isGuarded=id=>id===R4_ID||id===STAGED_LANDING_ID;
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p))),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex');
@@ -63,7 +63,10 @@ function r4Continuation(){
   candidateAdmissionSha256:sha(R4_ADMISSION),policyContinuation:'restart-white-plan-at-verified-round4-boundary'}};
 }
 function stagedLandingContinuation(){
- const admission=read(STAGED_LANDING_ADMISSION),record=read(STAGED_LANDING_RECORD),save=read(record.savePath);
+ const runtime='randomizer/game/ai/analysis-port.js';
+ const admissionPath=STAGED_LANDING_ADMISSIONS.find(file=>read(file).runtimeHashes[runtime]===sha(runtime));
+ assert(admissionPath,'STAGED_LANDING_RUNTIME_DRIFT:'+runtime);
+ const admission=read(admissionPath),record=read(STAGED_LANDING_RECORD),save=read(record.savePath);
  assert.equal(admission.schemaVersion,'seti-staged-landing-continuation-v1');
  assert.equal(admission.scenario,STAGED_LANDING_ID);
  assert.equal(record.gitCommit,'5135a5a0e');
@@ -89,7 +92,7 @@ function stagedLandingContinuation(){
  return {record,save,provenance:{recordPath:STAGED_LANDING_RECORD,recordSha256:admission.recordSha256,
   savePath:record.savePath,saveSha256:admission.saveSha256,tracePath:record.agentTracePath,traceSha256:admission.traceSha256,
   sourceCommit:record.gitCommit,steps:record.steps,sourceCompletedRounds:3,sourceGameWallMs:record.wallMs,sourceRoundWallMs:record.wallMs,
-  candidateAdmissionPath:STAGED_LANDING_ADMISSION,candidateAdmissionSha256:sha(STAGED_LANDING_ADMISSION),
+  candidateAdmissionPath:admissionPath,candidateAdmissionSha256:sha(admissionPath),
   policyContinuation:'restart-white-plan-at-verified-round4-boundary'}};
 }
 function continuation(id=ID){

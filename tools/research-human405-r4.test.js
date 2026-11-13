@@ -8,12 +8,12 @@ const runner = require("./run_research_validation");
 const { createHash } = require("node:crypto");
 const admission = require("../reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json");
 const checkout = path.resolve(__dirname, "..");
-const staged = require("../reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json");
+const staged = ["v2", "v1"].map(v => require("../reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-" + v + ".json"));
 const hasDrift = manifest => Object.entries(manifest.runtimeHashes).some(([file, hash]) =>
   createHash("sha256").update(fs.readFileSync(path.join(checkout, file))).digest("hex") !== hash);
 if (hasDrift(admission)) assert.throws(() => scenario.continuation(scenario.R4_ID), /R4_CANDIDATE_SOURCE_DRIFT/);
-const id = hasDrift(staged) ? scenario.R4_ID : scenario.STAGED_LANDING_ID;
-if (hasDrift(staged)) assert.throws(() => scenario.continuation(scenario.STAGED_LANDING_ID), /STAGED_LANDING_RUNTIME_DRIFT/);
+const id = staged.every(hasDrift) ? scenario.R4_ID : scenario.STAGED_LANDING_ID;
+if (staged.every(hasDrift)) assert.throws(() => scenario.continuation(scenario.STAGED_LANDING_ID), /STAGED_LANDING_RUNTIME_DRIFT/);
 if (id === scenario.R4_ID && hasDrift(admission)) {
   console.log("Archived R4 continuations reject the changed runtime");
   return;

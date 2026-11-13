@@ -1246,16 +1246,29 @@
     function previewQuietSpecifiedScan(node,stored,action){
       if(!resourcePlanning||!scanPlanning||node.status!=="decision"||action.family!=="choose_target")return null;
       const checkpoint=stored.envelope.session,s=checkpoint?.session,types=scienceSession.EFFECT_TYPES;
-      const [head,finalize]=s?.queue||[],opts=head?.payload?.options;
+      const [head,next,purple,tail]=s?.queue||[],opts=head?.payload?.options;
+      const source=s?.journal.actions[0]?.action;
+      const standardPublic=o=>o?.mode==="public"&&o.consumeMarkers===true&&o.selected===0
+        &&Number.isSafeInteger(o.max)&&o.max>0&&Object.keys(o).length===4;
+      const toPublic=standardPublic(next?.payload?.options)&&next.type===types.SCAN_STEP&&next.kind==="effect"
+        &&purple?.type===types.SCAN_ACTION_4&&purple.kind==="decision"
+        &&["scan","play_card"].includes(source?.family);
+      const finalize=toPublic?tail:next;
+      const anySingle=opts?.mode==="any"&&opts.gainData===true&&opts.sameSectorRemaining===1
+        &&Object.keys(opts).every(k=>["mode","gainData","label","sameSectorRemaining"].includes(k));
       const simple=o=>o?.mode==="specified"&&o.gainData===true
         &&Object.keys(o).every(k=>["mode","sectorX","nebulaIds","gainData","label","skippable","cost"].includes(k))
         &&(!o.cost||Object.keys(o.cost).length===1&&o.cost.publicity===1);
       if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length
-        ||head.type!==types.SCAN_STEP||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions||!simple(opts)
+        ||head.type!==types.SCAN_STEP||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions||(!simple(opts)&&!anySingle)
         ||finalize?.type!==types.SCAN_FINALIZE||finalize.kind!=="effect"||finalize.ownerId!==seatId
         ||Object.keys(head.payload).length!==1)return null;
       const base=s.workingState,turn=base.turn,known=knownCards(stored.envelope);
       const owner=base.players.players.find(p=>p.id===seatId);
+      const knownB9=(toPublic||anySingle)&&source?.family==="play_card"&&known.has(source.target?.cardInstanceId)
+        &&base.cards.discardPile.some(c=>c.id===source.target.cardInstanceId&&c.cardId==="b_9.webp");
+      if(toPublic&&source.family!=="scan"&&!knownB9
+        ||anySingle&&(!knownB9||s.queue.length!==2||s.irreversibleBarrier?.code!=="hidden_card_reveal"))return null;
       if(turn.roundNumber!==4||turn.currentPlayerId!==seatId||turn.gameEnded||!owner.mainActionCompleted
         ||owner.passCompletionPending||turn.cardTurnEventBonuses?.length||turn.passedPlayerIds.includes(seatId)
         ||owner.reservedCards.some(c=>!known.has(c.id))||localPlans.hasPendingFossilArrival(base))return null;
@@ -1300,7 +1313,7 @@
         if(effect.ownerId!==seatId||effect.allowQuickActions)return null;
         if(effect.kind==="decision"){
           if(type===types.ALIEN_TRACE)choices=scienceSession.alienTraceDecisionChoices(state,effect);
-          else if(type===types.SCAN_STEP&&simple(effect.payload?.options)){
+          else if(type===types.SCAN_STEP&&(simple(effect.payload?.options)||toPublic&&standardPublic(effect.payload?.options))){
             choices=scienceSession.formalizeChoices(state,seatId,scienceSession.listScanStepChoices(state,actor,effect.payload.options));
           }else return null;
           break;
@@ -1314,6 +1327,10 @@
           const spawnedEffects=[{effect:delegated}];
           if(delegated.type===types.SCAN_STEP)spawnedEffects.push(scienceSession.scanFinalizeEffect(seatId));
           result={ok:true,spawnedEffects};
+        }else if(effect===next&&toPublic){
+          const o=effect.payload.options,raw=scienceSession.listScanStepChoices(state,actor,o);
+          if(!raw.some(a=>a.target?.cardInstanceId&&known.has(a.target.cardInstanceId)))return null;
+          result={ok:true,spawnedEffects:[scienceSession.scanDecisionEffect(types.SCAN_STEP,seatId,{options:o},"choose_card")]};
         }else if(type===types.SCAN_STEP&&simple(effect.payload?.options)){
           const o=effect.payload.options,raw=scienceSession.listScanStepChoices(state,actor,o);
           const forced=o.nebulaIds?.length===1&&!o.skippable&&!o.cost;
@@ -1844,9 +1861,64 @@
       return envelope;
     }
 
+    // The common trace slots have a printed, deterministic award. Keep
+    // the native optional Amiba trigger as a separate decision.
+    function previewQuietLandingTrace(node,stored,action){
+      const s=stored.envelope.session?.session,head=s?.queue[0],target=action.target;
+      if(!resourcePlanning||node.status!=="decision"||stored.resourceControl||stored.informationBarrier
+        ||action.family!=="choose_target"||target?.kind!=="planet-reward-alien-trace"||target.traceType!=="yellow"
+        ||s?.phase!=="awaiting_input"||s.queue.length!==1||s.interruptContext||s.irreversibleBarrier||s.failure||s.undoFrames.length
+        ||s.journal.actions[0]?.action?.family!=="land"||head.type!==scienceSession.EFFECT_TYPES.ALIEN_TRACE
+        ||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions||head.payload.traceType!=="yellow"
+        ||Object.keys(head.payload).some(k=>k!=="traceType"&&k!=="label"))return null;
+      const base=s.workingState,t=base.turn,p=base.players.players.find(p=>p.id===seatId);
+      const slot=alienState.getAlienSlot(base.aliens,target.alienSlotId);
+      const amibaCard=slot?.revealed&&slot.alienId==="阿米巴"&&target.speciesId==="amiba"
+        &&[3,4].includes(target.position)&&!target.stateExtra&&knownRootAlienIds.has("阿米巴");
+      if(!slot||target.fangzhouUnlock||!amibaCard&&(target.speciesId||target.position!==undefined
+        ||slot.revealed&&(target.stateExtra!==true||!slot.traces.yellow.firstPlaced))
+        ||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+        ||t.passedPlayerIds.includes(seatId)||t.cardTurnEventBonuses?.length||localPlans.hasPendingFossilArrival(base)
+        ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id)))return null;
+      const player={...p,resources:{...p.resources},scoreSources:{...p.scoreSources},reservedCards:copyForkData(p.reservedCards)};
+      const state={...base,...(amibaCard?{meta:{...base.meta,sequences:{...base.meta.sequences}}}:{}),
+        aliens:copyForkData(base.aliens),
+        players:{...base.players,players:base.players.players.map(q=>q===p?player:q)}};
+      if(amibaCard){
+        const knownIndex=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
+        if(!Number.isSafeInteger(knownIndex)||knownIndex!==base.aliens.amiba.displayedCardIndex)return null;
+        const placed=scienceSession.applyPlainPinkTrace(state,head,action,true,true,"yellow");
+        if(!placed?.cardEffect||placed.cardEffect.payload.speciesId!=="amiba")return null;
+        const spawnedEffects=[placed.cardEffect,...(placed.regionEffect?[placed.regionEffect]:[])].map(effect=>({effect}));
+        const result=residualSession.augmentEffectResult(state,{ok:true,events:placed.events,spawnedEffects},head);
+        const trigger=result.spawnedEffects.at(-1)?.effect;
+        if(result.events.length!==1||result.spawnedEffects.length!==spawnedEffects.length+1
+          ||trigger?.type!=="residual_card_decision"||trigger.payload?.matches?.length!==1
+          ||trigger.payload.matches[0].ruleId!=="amiba0-yellow-data")return null;
+        const choices=residualSession.alienCardChoices(state,seatId,"amiba");
+        return choices.length?{state,events:result.events,spawned:result.spawnedEffects,choices,histories:[]}:null;
+      }
+      const placed=aliens.placeTraceForActor(players,state.aliens,player,target.alienSlotId,"yellow",undefined,
+        {stateExtra:Boolean(target.stateExtra)});
+      if(!placed?.ok||placed.reward)return null;
+      const event={type:"alienTrace",playerId:seatId,traceType:"yellow",alienSlotId:target.alienSlotId,region:null};
+      const {events,spawnedEffects:spawned}=residualSession.augmentEffectResult(state,{ok:true,events:[event]},head);
+      if(events.length!==1||spawned.length>1)return null;
+      if(!spawned.length){
+        state.meta=quietSavedMeta(base.meta,s.baseVersion+1);
+        return {state};
+      }
+      const pending=spawned[0].effect;
+      if(pending?.type!=="residual_card_decision"||pending.kind!=="decision"||pending.ownerId!==seatId||pending.allowQuickActions
+        ||pending.payload?.kind!=="trigger"||pending.payload.matches?.length!==1
+        ||pending.payload.matches[0].ruleId!=="amiba0-yellow-data")return null;
+      const choices=localPlans.residualCardChoices(state,pending);
+      return choices.length===2?{state,events,spawned,choices,histories:[]}:null;
+    }
+
     function prepareQuietTailMenu(stored,action,preview){
       const checkpoint=stored.envelope.session,s=checkpoint.session,[head,...tail]=s.queue,j=s.journal;
-      const pickup=tail.at(-1),barrier=preview.barrier||s.irreversibleBarrier;
+      const pickup=tail.at(-1)||head,barrier=preview.barrier||s.irreversibleBarrier;
       const scratch={nextEffectSequence:s.nextEffectSequence,nextGroupSequence:s.nextGroupSequence,sessionId:s.sessionId};
       const spawned=preview.spawned||[{effect:{...pickup,effectId:null,source:null,
         type:"card_play_domain_effect:decision:chong_pickup_fossil",kind:"decision",decisionKind:"choose_target"}}];
@@ -1927,6 +1999,25 @@
         journal:{...j,decisions:[...j.decisions,decision],events:[...j.events,event],effects:[...j.effects,effect],
           replay:[...j.replay,{cursor,kind:"decision",confirmed:true,...decision}]}}});
       return {envelope:withEnvelopeSession(stored.envelope,session),inspection:{phase:"awaiting_input",session:{decision:{choices}}}};
+    }
+
+    function previewQuietEnergyExchange(node,stored,action){
+      if(!resourcePlanning||node.status!=="stable"||stored.envelope.session||stored.informationBarrier
+        ||action.family!=="quick_trade"||action.target?.tradeId!=="credits-for-energy")return null;
+      const base=readIdentityState(stored.envelope),t=base.turn,p=base.players.players.find(p=>p.id===seatId);
+      if(t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded||p.passCompletionPending
+        ||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length||localPlans.hasPendingFossilArrival(base)
+        ||p.reservedCards.some(c=>!knownCards(stored.envelope).has(c.id))
+        ||cardEffects.collectMatchingTriggers(p,{type:"quick_trade",tradeId:"credits-for-energy",playerId:seatId}).length)return null;
+      const trade=quickTrades.getTradeAction("credits-for-energy");
+      if(Object.keys(trade.cost).length!==1||trade.cost.credits!==2||Object.keys(trade.gain).length!==1
+        ||trade.gain.energy!==1||trade.moveStep)return null;
+      const player={...p,resources:{...p.resources},blueBonusResources:{...p.blueBonusResources}};
+      const next={...base,meta:quietSavedMeta(base.meta,base.meta.stateVersion+1),
+        match:{...base.match,decisionVersion:(Number(base.match.decisionVersion)||0)+1},
+        players:{...base.players,players:base.players.players.map(q=>q===p?player:q)}};
+      const paid=quickTrades.executeTrade(trade.id,next);
+      return paid.ok&&!paid.awaitingCardSelection&&!paid.awaitingDiscard&&!paid.awaitingMoveSelection?next:null;
     }
 
     function previewQuietCurrencyTrade(stored,action) {
@@ -2012,6 +2103,13 @@
       }
       const taskSession=stored.envelope.session?.session;
       const pairedTrace=taskSession&&pairedTracePickupScope(taskSession.workingState,taskSession);
+      const landingTrace=previewQuietLandingTrace(node,stored,requested);
+      if(landingTrace){
+        const prepared=landingTrace.choices&&prepareQuietTailMenu(stored,requested,landingTrace);
+        const child=prepared?finishChild({session:null},{},null,null,null,requested,stored,prepared)
+          :finishProvedCommittedState(node,stored,requested,landingTrace.state);
+        return rememberPrefix(key,node,actionId,remember(key,child));
+      }
       const pinkTraceCards=resourcePlanning&&node.status==="decision"&&!stored.resourceControl&&taskSession
         &&requested.family==="choose_target"&&(requested.target?.traceType==="pink"||pairedTrace&&requested.target?.traceType
           ||requested.target?.traceType==="blue"&&taskSession.journal.actions[0]?.action?.family==="analyze"
@@ -2283,7 +2381,7 @@
           control,stored.informationBarrier,requested,stored,currencySelection);
         return rememberPrefix(key,node,actionId,remember(key,child));
       }
-      const currencyTrade=previewQuietCurrencyTrade(stored,requested);
+      const currencyTrade=previewQuietEnergyExchange(node,stored,requested)||previewQuietCurrencyTrade(stored,requested);
       if(currencyTrade){
         const envelope=provedCommittedEnvelope(stored,currencyTrade);
         restoreEnvelope(envelope);
