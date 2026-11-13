@@ -112,9 +112,18 @@ if(mode==='fork') {
     write({source,groups});
   }finally{env.dispose();}
 }
-if(mode==='terminal'||mode==='terminal-keep') {
-  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups.flatMap(g=>g.rows.slice(0,3))
-    .filter(row=>mode!=='terminal-keep'||row.name!=='continue autonomously');
+if(mode==='terminal'||mode==='terminal-keep'||mode==='terminal-keep-selected') {
+  const files=mode==='terminal-keep-selected'?process.argv.slice(4).map(x=>x.split(':')):[[process.argv[4]]];
+  const forks=files.flatMap(([file,indexes])=>{
+    const witness=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+    if(!indexes)return witness.groups.flatMap(g=>g.rows.slice(0,3));
+    return indexes.split(',').map(pair=>{
+      const [g,r]=pair.split('/').map(Number);
+      const row=witness.groups[g]?.rows[r];
+      assert(row&&row.stop!=='decision gate',pair);
+      return row;
+    });
+  }).filter(row=>mode!=='terminal-keep'||row.name!=='continue autonomously');
   const env=initialized(),groups=[];
   const template=env.createCheckpoint();
   try{
@@ -123,7 +132,7 @@ if(mode==='terminal'||mode==='terminal-keep') {
       for(const reserve of ['b_111.webp','b_32.webp']){
         env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:origin,committedState:origin.committedState},machineAI:{}});
         const inputs=[],checkpoints=[],decisions=[];
-        if(mode==='terminal-keep'){
+        if(mode!=='terminal'){
           const pass=env.legalActions().find(a=>a.family==='pass'&&a.actorId===white);
           assert(pass);assert(env.step(pass).ok);inputs.push(pass);
         }
@@ -795,7 +804,7 @@ if(mode==='cargo-third-pool'||mode==='cargo-third-pool-market'){
     write({source,groups:[...groups,...terminal]});
   }finally{env.dispose();}
 }
-if(mode==='cargo-early-data-ledger'||mode==='cargo-early-data-supplier'){
+if(['cargo-early-data-ledger','cargo-early-data-supplier','cargo-public-reward','cargo-public-fossil'].includes(mode)){
   const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
   const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
   const ref=g.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
@@ -822,7 +831,76 @@ if(mode==='cargo-early-data-ledger'||mode==='cargo-early-data-supplier'){
     }
     const reference=states.map(({e,...s},i)=>({i,action:ref.inputs[i].summary,...s}));
     const groups=[];
-    if(mode==='cargo-early-data-supplier'){
+    if(mode==='cargo-public-fossil'){
+      const start=71,origin=states[start].e,rows=[];
+      for(const [label,fossil,skip] of [
+        ['fossil 06, keep paid blue2','fossil_06',[]],
+        ['fossil 06, keep DLC14','fossil_06',[89,90,91]],
+        ['fossil 06, use DLC14 only for data','fossil_06',[90,91]],
+        ['fossil 01, preserve original payments','fossil_01',[]],
+      ]){
+        restore(origin);
+        const a=env.legalActions().find(a=>a.summary.startsWith(fossil));
+        const inputs=[put(a)],checkpoints=[],market=[];
+        let failure=null;
+        for(let i=start+1;i<98;i++){
+          if(skip.includes(i))continue;
+          const old=ref.inputs[i];
+          const action=find(old);
+          if(!action){const {e,...visible}=snapshot();failure={i,expected:old.summary,...visible};break;}
+          inputs.push(put(action));
+          if([73,76,88,92,97].includes(i)){const {w,hand,market:cards}=snapshot();market.push({i,w,hand,cards});}
+        }
+        const before=env.createCheckpoint();
+        let r;
+        if(failure)r=run(env,{prior:inputs,forced:label});
+        else {
+          assert(env.legalActions().some(a=>a.actorId===white&&a.family==='pass'));
+          r={name:label,inputs,checkpoints,end:before.coreState.compositionEnvelope,score:null,
+            assets:assets(before.coreState.compositionEnvelope,env.observe(white)),stop:'matched prepass',peak:[0,0]};
+        }
+        rows.push({...r,failure,market});
+        const p=r.assets;console.log(JSON.stringify({label,miss:failure&&[failure.i,failure.expected],stop:r.stop,
+          score:p.score,income:[p.income.credits,p.income.energy],pool:p.resources.availableData,hand:p.hand,blue:p.blue,probes:p.probes,market}));
+      }
+      groups.push({name:'public fossil payment alternatives',root:origin,rows});
+    }else if(mode==='cargo-public-reward'){
+      const indexes=[15,18,38,68,77];
+      const selected=process.argv[4]?process.argv[4].split(',').map(Number):indexes;
+      assert(selected.every(i=>indexes.includes(i)));
+      for(const start of selected){
+        const origin=states[start].e;
+        restore(origin);
+        const choices=env.legalActions().filter(a=>a.family==='choose_target'&&a.actionId!==ref.inputs[start].actionId);
+        const rows=[];
+        for(const choice of choices){
+          restore(origin);
+          const inputs=[put(env.legalActions().find(a=>a.actionId===choice.actionId))];
+          const first=snapshot();
+          let failure=null;
+          for(let i=start+1;i<98;i++){
+            const old=ref.inputs[i],a=find(old);
+            if(!a){const {e,...visible}=snapshot();failure={i,expected:old.summary,...visible};break;}
+            inputs.push(put(a));
+          }
+          const cp=env.createCheckpoint();
+          const {e,...atHandoff}=snapshot();
+          let r;
+          if(failure)r=run(env,{prior:inputs,forced:choice.summary});
+          else {
+            assert(env.legalActions().some(a=>a.actorId===white&&a.family==='pass'));
+            r={name:choice.summary,inputs,checkpoints:[],end:cp.coreState.compositionEnvelope,
+              score:null,assets:assets(cp.coreState.compositionEnvelope,env.observe(white)),stop:'matched prepass',peak:[0,0]};
+          }
+          const p=r.assets;
+          rows.push({...r,firstWallet:first.w,failure,atHandoff});
+          console.log(JSON.stringify({start,choice:choice.summary,delta:first.w[4]-states[start].w[4],
+            miss:failure&&[failure.i,failure.expected],score:p.score,income:[p.income.credits,p.income.energy],
+            pool:p.resources.availableData,tech:Object.keys(p.tech.ownedTiles),hand:p.hand,computer:p.computer,blue:p.blue,probes:p.probes,stop:r.stop,peak:r.peak}));
+        }
+        groups.push({name:'fixed public reward '+start,root:origin,rows});
+      }
+    }else if(mode==='cargo-early-data-supplier'){
       const origin=states[47].e;restore(origin);
       const inputs=[put(env.legalActions().find(a=>a.summary==='dlc_20.png'))],comparison=[];
       for(let i=48;i<98;i++){
