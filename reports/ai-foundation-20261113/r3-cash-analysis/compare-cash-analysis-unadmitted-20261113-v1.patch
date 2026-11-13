@@ -1,0 +1,34 @@
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -591,6 +591,16 @@
+       }
+       if(placed(p)<6||Object.entries(requirements.analyzeCost).some(([k,v])=>p.resources[k]<v))
+         add({id:'data:analyze:6',kind:'analyze',targetComputerSlot:6,required:requirements.analyzeCost});
++      // One deterministic cash slot may be filled before the already funded
++      // free analysis. Require spare pool data; never add payment branches.
++      if(state.turn.roundNumber===3&&placed(p)>=4&&placed(p)<6
++        &&Object.keys(requirements.analyzeCost).length===0
++        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
++        &&p.resources.availableData>=7-placed(p)){
++        const blue=requirements.bluePlacements.filter(slot=>slot.requiredComputerSlot<=5
++          &&data.getBlueBonusPlacementReward(p,slot.blueSlot)?.type==='credits');
++        if(blue.length===1)add({id:'data:analyze:cash:'+blue[0].blueSlot,kind:'analyze',targetComputerSlot:6,required:{},preAnalysisCashSlot:blue[0].blueSlot});
++      }
+     }
+     // Income and free/card-sourced research enter as purpose plans too. The native
+     // effect queue still determines costs and every distinct research tile choice.
+@@ -1345,6 +1355,14 @@
+       return action?{kind:'fixed',actionId:action.actionId,reason:'known-analysis-publicity-source'}:{kind:'infeasible',reason:'analysis-publicity-source-unavailable'};
+     }
+     if(goal.kind==='blue-data'&&data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===goal.blueSlot))return{kind:'complete',reason:'blue-data-target-reached'};
++    if(goal.preAnalysisCashSlot&&!data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===goal.preAnalysisCashSlot)){
++      if(p.resources.availableData<7-placed(p)||p.mainActionCompleted)return{kind:'infeasible',reason:'cash-analysis-spare-data-unavailable'};
++      const wantBlue=placed(p)>=5&&bluePrerequisites(p,goal.preAnalysisCashSlot)===0;
++      const a=status==='stable'?actions.find(a=>a.family==='place_data')
++        :operation.placing?actions.find(a=>wantBlue?a.target?.blueSlot===goal.preAnalysisCashSlot:a.target?.target==='computer'):null;
++      return a?{kind:'fixed',actionId:a.actionId,placing:status==='stable',reason:'fixed-cash-before-funded-analysis'}
++        :{kind:'infeasible',reason:'cash-analysis-placement-unavailable'};
++    }
+     if(goal.kind==='computer-prefix'&&status==='stable'&&placed(p)>=goal.targetComputerSlot)return{kind:'complete',reason:'computer-prefix-target-reached'};
+     if(status==='decision'){
+       if(goal.kind==='route'){
