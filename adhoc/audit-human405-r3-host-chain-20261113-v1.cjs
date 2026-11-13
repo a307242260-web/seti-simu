@@ -508,3 +508,90 @@ if(mode==='cargo-supplier'){
     write({source,groups});
   }finally{env.dispose();}
 }
+if(mode==='cargo-entry'){
+  const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
+  const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
+  const ref=g.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  function fixed(old){const a=env.legalActions().find(x=>x.actionId===old.actionId);assert.deepEqual(JSON.parse(JSON.stringify(a)),old);assert(env.step(a).ok);return a;}
+  function summary(r){return{stop:r.stop,score:r.assets.score,income:r.assets.income,tech:Object.keys(r.assets.tech.ownedTiles),hand:r.assets.hand,pool:r.assets.resources.availableData,probe:r.assets.probes,peak:r.peak};}
+  try{
+    for(const index of [7,10,12,53,54]){
+      restore(g.root);ref.inputs.slice(0,index).forEach(fixed);
+      const cp=env.createCheckpoint(),e=cp.coreState.compositionEnvelope;
+      const rows=[run(env,{forced:'autonomous from boundary'})];
+      if([7,10,53].includes(index)){
+        env.loadCheckpoint(cp);
+        const end=index===7?11:index+1, prior=ref.inputs.slice(index,end).map(fixed);
+        rows.push(run(env,{prior,forced:index===7?'match scan through second-species pink':`fixed ${ref.inputs[index].summary}`}));
+      }
+      for(const r of rows){
+        const diffs=r.inputs.map((a,i)=>[i+index,a.summary,ref.inputs[i+index]?.summary]).filter(([i,a,b])=>a!==b).slice(0,3);
+        const acquired=r.inputs.filter(a=>a.summary.includes('展示的')||a.summary==='chong_3.webp'||a.summary.startsWith('fossil_'));
+        console.log(JSON.stringify({index,name:r.name,firstDiffs:diffs,acquired:acquired.map(a=>a.summary),...summary(r)}));
+      }
+      groups.push({name:`input ${index}`,root:e,rows});
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-reveal-types'){
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
+  const origin=read(process.argv[4]).groups.find(g=>g.name==='input 10').root;
+  const aliens=require('../randomizer/game/aliens'),{createSeededRandom}=require('../randomizer/game/random');
+  const keys=['chong','aomomo','banrenma','runezu','yichangdian','jiuzhe','fangzhou'];
+  const stable=o=>Array.isArray(o)?o.map(stable):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,stable(o[k])])):o;
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  restore(origin);const visible=env.observe(white),menu=env.legalActions();let signature;
+  try{
+    for(const key of keys){
+      const root=structuredClone(origin),s=JSON.parse(root.committedState),session=root.session.session;
+      if(key!=='chong'){
+        const config=aliens[key].createInitialConfiguration(createSeededRandom('seti-cargo-reveal-study:'+key),s.players.players);
+        for(const state of new Set([s,session.baseState,session.workingState,session.committedState,...session.undoFrames.map(x=>x.stateBefore)].filter(Boolean))){
+          const slot=state.aliens.aliens[2];assert(!slot.revealed);slot.assignedAlienId=aliens[key].ALIEN_ID;
+          for(const k of keys)state.aliens[k].initialConfiguration=k===key?structuredClone(config):null;
+        }
+        root.committedState=JSON.stringify(stable(s));
+      }
+      restore(root);assert.deepEqual(env.observe(white),visible);assert.deepEqual(env.legalActions(),menu);
+      const cp=env.createCheckpoint(), quoted=take(env).searches[0];
+      const sig=[quoted.actionId,quoted.value,quoted.diagnostics.nativeExecutions,quoted.roots.map(r=>[r.actionId,r.value,r.completion])];
+      if(signature)assert.deepEqual(sig,signature);else signature=sig;
+      const rows=[];
+      for(const reveal of [false,true]){
+        env.loadCheckpoint(cp);const prior=[];
+        if(reveal){const a=env.legalActions().find(a=>a.target?.alienSlotId===2&&a.target?.traceType==='pink');assert(a);assert(env.step(a).ok);prior.push(a);}
+        const r=run(env,{prior,forced:reveal?'reveal unknown species':'use known Amiba'});rows.push(r);
+        console.log(JSON.stringify({key,reveal,score:r.assets.score,income:r.assets.income,tech:Object.keys(r.assets.tech.ownedTiles).length,
+          hand:r.assets.hand.length,pool:r.assets.resources.availableData,probe:r.assets.probes,peak:r.peak,stop:r.stop}));
+      }
+      groups.push({name:key,root,rows});
+    }
+    write({source,signature,groups});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-retain-or-deliver'){
+  const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups.find(g=>g.name==='input 10');
+  const ref=g.rows[1],env=initialized(),template=env.createCheckpoint();
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  const put=a=>{assert(a);assert(env.step(a).ok);return a;};
+  try{
+    restore(g.root);
+    const reveal=env.legalActions().find(a=>a.actionId===ref.inputs[0].actionId);put(reveal);
+    for(const a of ref.inputs.slice(1,69))assert.deepEqual(take(env).a,a);
+    const cp=env.createCheckpoint(),origin=cp.coreState.compositionEnvelope,rows=[];
+    for(const stopMoving of [false,true]){
+      env.loadCheckpoint(cp);
+      if(!stopMoving){const r=run(env,{forced:'complete host plan'});assert.deepEqual(r.end,ref.end);rows.push(r);}
+      else{
+        const endTurn=put(env.legalActions().find(a=>a.actorId===white&&a.family==='end_turn'));
+        const r=run(env,{prior:[endTurn],forced:'end turn before paying fossil return'});rows.push(r);
+      }
+    }
+    for(const r of rows)console.log(JSON.stringify({name:r.name,score:r.assets.score,income:r.assets.income,tech:Object.keys(r.assets.tech.ownedTiles).length,hand:r.assets.hand,pool:r.assets.resources.availableData,blue:r.assets.blue,probe:r.assets.probes,stop:r.stop,peak:r.peak}));
+    write({source,groups:[{name:'third-round fossil return payment',root:origin,agentCheckpoint:cp.machineAI[white],rows}]});
+  }finally{env.dispose();}
+}
