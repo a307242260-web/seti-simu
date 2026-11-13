@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-staged-landing-lean-projection-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-staged-landing-lean-projection-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-prepass-funded-landing-20261113",
+      "head": "898b2c721",
+      "commits": [
+        "898b2c721"
+      ],
+      "summary": "白席同开局自然终局 272 分，累计 16.708 秒，300 次决策全部闭合并通过 256／600 门槛。独立原生复放一致。",
+      "records": {
+        "0b3710e9.898b2c72.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-staged-landing-full-exact-20261113",
       "aiGeneration": "v2",
       "agentType": "search",

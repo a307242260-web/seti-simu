@@ -1,0 +1,144 @@
+{
+  "source": "898b2c721",
+  "sourcePrefix": "5135a5a0e",
+  "scenario": "human405-white-staged-landing-full-v1",
+  "record": "reports/research/0b3710e9.898b2c72.full.json",
+  "score": 272,
+  "whiteRoundScores": [
+    15,
+    48,
+    118,
+    192
+  ],
+  "oldHistorical": 216,
+  "referenceManual": 405,
+  "round4Assets": {
+    "turn": 13,
+    "wallet": [
+      192,
+      1,
+      0,
+      0,
+      0
+    ],
+    "income": [
+      7,
+      4,
+      3,
+      1
+    ],
+    "established": 272,
+    "computer": [],
+    "blue": [],
+    "tech": [
+      "blue1",
+      "blue2",
+      "blue3",
+      "orange1",
+      "orange2",
+      "orange3",
+      "purple1",
+      "purple4"
+    ],
+    "probes": [],
+    "hand": [
+      "dlc_6.png"
+    ],
+    "market": [
+      "b_140.webp",
+      "b_137.webp",
+      "dlc_2.png"
+    ],
+    "amibaOffer": 8,
+    "chongOffer": 4
+  },
+  "finalPlayer": {
+    "baseScore": 192,
+    "cardScore": 6,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 0
+      },
+      {
+        "cardId": "amiba_5.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "pink"
+        },
+        "score": 6
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 272,
+    "runezuSymbolScore": 0,
+    "tileScore": 74,
+    "tileScoresById": {
+      "a": 22,
+      "b": 24,
+      "c": 0,
+      "d": 28
+    },
+    "tiles": [
+      {
+        "baseValue": 2,
+        "formulaId": "a2",
+        "multiplier": 11,
+        "score": 22,
+        "slotIndex": 1,
+        "tileId": "a",
+        "variant": 2
+      },
+      {
+        "baseValue": 3,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 24,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 4,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 28,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 272
+  },
+  "steps": 354,
+  "replayInputs": 331,
+  "additionalInputs": 93,
+  "decisions": [
+    300,
+    87
+  ],
+  "peak": [
+    256,
+    574.3187500000004
+  ],
+  "peakRound4": [
+    102,
+    574.3187500000004
+  ],
+  "ms": [
+    16708,
+    5744
+  ],
+  "openingExact": true
+}
