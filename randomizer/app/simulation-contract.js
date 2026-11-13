@@ -158,7 +158,7 @@ function sanitizeSelfPlayer(player, turn = {}, pendingEffectOwnerIds = []) {
   });
 }
 
-function sanitizeAlienPublicState(state) {
+function sanitizeAlienPublicState(state, { shareFrozen = false } = {}) {
   if (!state || typeof state !== "object") return {};
   const source = state.aliens || state.slots || state.alienSlots || {};
   const slots = Object.entries(source).map(([slotId, slot]) => ({
@@ -166,9 +166,9 @@ function sanitizeAlienPublicState(state) {
     slotId: slot?.slotId ?? (Array.isArray(source) ? null : Number(slotId)),
     revealed: Boolean(slot?.revealed),
     alienId: slot?.revealed ? (slot.alienId || slot.assignedAlienId || null) : null,
-    traces: clone(slot?.traces || {}),
+    traces: shareFrozen ? slot?.traces || {} : clone(slot?.traces || {}),
   }));
-  const symbols=amiba.getPublicSymbolState(state),traces=amiba.getPublicTraceState(state);
+  const symbols=amiba.getPublicSymbolState(state,{readOnly:shareFrozen}),traces=amiba.getPublicTraceState(state,{readOnly:shareFrozen});
   const chongSlot=slots.find(slot=>slot.revealed&&slot.alienId==="虫");
   const chongOffer=chongSlot?{slotId:chongSlot.slotId,displayedCardIndex:state.chong?.displayedCardIndex??null}:null;
   return { slots, ...(symbols ? { amiba: symbols } : {}), ...(traces ? { amibaTraces: traces } : {}),
@@ -190,13 +190,14 @@ function sanitizeTechSupply(state) {
   };
 }
 
-function sanitizeFinalScoringState(state) {
+function sanitizeFinalScoringState(state, { shareFrozen = false } = {}) {
   if (!state || typeof state !== "object") return {};
+  const copy = shareFrozen ? value => value : clone;
   return compactObject({
-    tiles: clone(state.tiles || state.boards || []),
-    marks: clone(state.marks || state.playerMarks || {}),
+    tiles: copy(state.tiles || state.boards || []),
+    marks: copy(state.marks || state.playerMarks || {}),
     // 板块变体（1/2）决定公式（a1 vs a2），是公开盘面信息，策略选择终局标记时需要。
-    tileVariants: clone(state.tileVariants || {}),
+    tileVariants: copy(state.tileVariants || {}),
   });
 }
 

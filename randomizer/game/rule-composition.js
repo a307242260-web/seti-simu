@@ -600,7 +600,7 @@
         options.allowTrustedForkLifecycle === true ? state : clone(state),
         clone(viewer),
         null,
-        { stateVersion: state.meta.stateVersion },
+        { stateVersion: state.meta.stateVersion, trustedCommitted: options.allowTrustedForkLifecycle === true },
       );
       // 搜索中间观测（cheap）只读且不跨节点持有：跳过 deepFreeze 整树遍历，
       // 完整冻结观测只在叶/根/宿主路径构建。

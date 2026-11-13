@@ -113,7 +113,7 @@
         stateVersion: root.meta?.stateVersion ?? 0,
         decisionVersion: root.match?.decisionVersion ?? 0,
       },
-      getPlanetLocations: () => solar.createSolarSnapshot(solarSystemState).planetLocations,
+      getPlanetLocations: () => solar.collectPlanetLocations(solarSystemState),
     };
     context.getEarthSectorCoordinate = () => {
       const earth = context.getPlanetLocations().find((planet) => planet.planetId === "earth");
@@ -130,6 +130,7 @@
     return fail("PROBE_TURN_SESSION_REQUIRED", "探测器与回合行动必须由 Effect Session 执行");
   }
   function createActionDefinitions() {
+    const directionOrder = new Map((abilities.rocket.MOVE_DIRECTIONS || []).map((direction, index) => [direction.id, index]));
     const definitions = [];
     definitions.push(standardAction.createOptionDefinition("launch", {
       label: "发射",
@@ -167,23 +168,17 @@
           return fail("PROBE_MOVE_AFTER_PASS", "PASS 后不能执行移动");
         }
         const actionCtx = actionContext(root, player.id);
-        const directionOrder = new Map(
-          (abilities.rocket.MOVE_DIRECTIONS || []).map((direction, index) => [direction.id, index]),
-        );
-        // 统一移动入口：与卡牌/紫4/快速交易/残余域共用 listPlayerMoveChoices
-        const choices = abilities.rocket.listPlayerMoveChoices(actionCtx, player, {
-          maxPoints: Number.MAX_SAFE_INTEGER,
-        })
+        const maxPoints = Number(player.resources?.energy || 0)
+          + (player.hand || []).filter(isMovePaymentCard).length;
+        if (maxPoints < 1) return fail("PROBE_MOVE_UNAVAILABLE", "没有合法移动目标");
+        const choices = abilities.rocket.listPlayerMoveChoices(actionCtx, player, { maxPoints })
           .sort((left, right) => (
-            String(left.rocketId).localeCompare(String(right.rocketId), undefined, { numeric: true })
+            (left.rocketId === right.rocketId ? 0
+              : String(left.rocketId).localeCompare(String(right.rocketId), undefined, { numeric: true }))
             || (directionOrder.get(left.directionId) ?? Number.MAX_SAFE_INTEGER)
             - (directionOrder.get(right.directionId) ?? Number.MAX_SAFE_INTEGER)
           ))
-          .filter((move) => (
-            Number(player.resources?.energy || 0)
-            + (player.hand || []).filter(isMovePaymentCard).length
-            >= move.requiredMovePoints
-          ))
+          .filter(move => maxPoints >= move.requiredMovePoints)
           .map((move) => ({
             target: { rocketId: move.rocketId, deltaX: move.deltaX, deltaY: move.deltaY },
             payload: { direction: move.directionId, requiredMovePoints: move.requiredMovePoints },

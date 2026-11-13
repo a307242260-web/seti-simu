@@ -139,12 +139,17 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   // facts (including geometry and pending mark), without building public
   // scores for other seats or the setup presentation.
   const valueOnly=options.valueOnly===true&&Boolean(perspectivePlayerId);
-  // The fork's ordinary-data copier still owns all returned geometry and
-  // falls back to the platform clone for unsupported data.
+  // Only the private committed fork projection owns an immutable snapshot.
+  // A live session and ordinary observation still detach their geometry.
+  const shareGeometry=valueOnly&&options.trustedCommitted===true;
   const copyValueSlice=valueOnly?stateStore.copyForkData:clone;
+  const geometry=shareGeometry ? value=>value : copyValueSlice;
   // Scoring normalizes the same board for each seat. A private copy for the
   // whole projection keeps those writes off the authoritative state.
-  const scoringBoard = copyValueSlice(state.finalScoring);
+  const board=state.finalScoring;
+  const scoringBoard = shareGeometry && board?.tiles && Object.values(board.tiles).every(t=>Array.isArray(t?.marks))
+    ? { ...board, tiles: { ...board.tiles }, tileVariants: { ...board.tileVariants } }
+    : copyValueSlice(board);
   const selfPlayer=(playersState.players||[]).find(player=>player.id===perspectivePlayerId)||null;
   const selfState=sanitizeSelfPlayer(selfPlayer,turn,state.pendingEffectOwnerIds||[]);
   if(selfState)selfState.traceCounts=endGameScoring.getPlayerTraceCounts(selfPlayer,state.aliens);
@@ -190,18 +195,18 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
         };
       }),
       board: {
-        rockets: copyValueSlice(state.pieces?.rockets || []),
+        rockets: geometry(state.pieces?.rockets || []),
         ...(cheap ? {} : {
-          planets: copyValueSlice(state.planets || {}),
-          data: copyValueSlice(state.data || {}),
-          solarSystem: copyValueSlice(state.solarSystem || {}),
-          finalScoring: sanitizeFinalScoringState(state.finalScoring),
+          planets: geometry(state.planets || {}),
+          data: geometry(state.data || {}),
+          solarSystem: geometry(state.solarSystem || {}),
+          finalScoring: sanitizeFinalScoringState(state.finalScoring,{shareFrozen:shareGeometry}),
         }),
         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
         discardCount: (state.cards?.discardPile || []).length,
         ordinaryDrawCount: Array.isArray(state.cards?.drawPileCardIds) ? state.cards.drawPileCardIds.length : null,
         techSupply: sanitizeTechSupply(state.tech),
-        aliens: sanitizeAlienPublicState(state.aliens),
+        aliens: sanitizeAlienPublicState(state.aliens,{shareFrozen:shareGeometry}),
       },
       ...(!valueOnly?{resident: {
         initialSetup: {

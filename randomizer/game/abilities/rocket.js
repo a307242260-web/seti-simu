@@ -334,26 +334,19 @@
   }
 
   function listMoveRequirements(context, player, rocketId, options = {}) {
-    return MOVE_DIRECTIONS
-      .filter((direction) => (
-        rockets.canMoveRocket?.(
-          context.pieces,
-          rocketId,
-          direction.deltaX,
-          direction.deltaY,
-        )?.ok
-      ))
-      .map((direction) => ({
-        ...direction,
-        requiredMovePoints: getRequiredMovePoints(
-          context,
-          player,
-          rocketId,
-          direction.deltaX,
-          direction.deltaY,
-          options,
-        ),
-      }));
+    const rocket = context.pieces.rockets.find(item => item.id === rocketId);
+    const from = rockets.getRocketSectorCoordinate(rocket);
+    if (!from) return [];
+    const choices = [];
+    let requiredMovePoints;
+    const canMove=rockets.createStaticCoordinateMoveQuery(context.pieces,rocketId);
+    for (const direction of MOVE_DIRECTIONS) {
+      if (!canMove(from, direction.deltaX, direction.deltaY).ok) continue;
+      // All moves from this coordinate have the same exit cost.
+      requiredMovePoints ??= getRequiredMovePointsFromCoordinate(context, player, from, options);
+      choices.push({ ...direction, requiredMovePoints });
+    }
+    return choices;
   }
 
   function resolveProvidedMovePoints(options, cost) {

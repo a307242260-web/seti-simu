@@ -591,7 +591,6 @@ function prepareProbeRoutes(workingState, requestedPlayerId, session) {
     probeMovement: readProbeMovementContext(workingState, player, session),
     getPlanetLocations: () => solar.collectPlanetLocations(workingState.solarSystem),
   };
-  const earth = getEarthCoordinate(workingState);
   const activeRockets = rockets.getRocketsForPlayer(workingState.pieces, player.id)
     .filter((rocket) => rocket.surface === "solar-board");
   const sources = activeRockets.map((rocket) => ({
@@ -600,25 +599,16 @@ function prepareProbeRoutes(workingState, requestedPlayerId, session) {
     launchRequired: false,
     coordinate: rockets.getRocketSectorCoordinate(rocket),
   }));
-  const activeCount = rocketAbility.getActiveRocketCountForPlayer
-    ? rocketAbility.getActiveRocketCountForPlayer(workingState.pieces, player.id)
-    : activeRockets.length;
-  const launchSlotAvailable = rockets.findAvailableSlotIndex(
-    workingState.pieces,
-    earth.x,
-    earth.y,
-  ) !== null;
-  if (
-    activeRockets.length === 0
-    && activeCount < rocketAbility.getRocketLimitForPlayer(player, context)
-    && launchSlotAvailable
-  ) {
-    sources.push({
-      sourceId: "launch",
-      rocketId: null,
-      launchRequired: true,
-      coordinate: earth,
-    });
+  if (!activeRockets.length) {
+    const activeCount = rocketAbility.getActiveRocketCountForPlayer
+      ? rocketAbility.getActiveRocketCountForPlayer(workingState.pieces, player.id)
+      : 0;
+    if (activeCount < rocketAbility.getRocketLimitForPlayer(player, context)) {
+      const earth = getEarthCoordinate(workingState);
+      if (rockets.findAvailableSlotIndex(workingState.pieces, earth.x, earth.y) !== null) {
+        sources.push({ sourceId: "launch", rocketId: null, launchRequired: true, coordinate: earth });
+      }
+    }
   }
 
   return { player, context, sources };
@@ -1720,7 +1710,7 @@ function createProductionHostComposition(options = {}) {
         );
       }
       return typeof options.projectCounterfactualState === "function" && viewer?.role !== "simulation"
-        ? options.projectCounterfactualState(projectedState, clone(viewer))
+        ? options.projectCounterfactualState(projectedState, clone(viewer), projectionContext)
         : projectedState;
     },
     createCounterfactualFork: options.counterfactualEnabled === false

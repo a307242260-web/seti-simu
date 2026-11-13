@@ -5392,11 +5392,17 @@
       return [];
     }
 
+    function canContinueKnownPostMain(envelope,state,anonymousHand=false){
+      if(!resourcePlanning||state.turn.gameEnded)return false;
+      const owner=state.players.players.find(p=>p.id===seatId),known=knownCards(envelope);
+      return owner.mainActionCompleted&&owner.reservedCards.every(card=>known.has(card.id))
+        &&(owner.privateAlienCards||[]).every(card=>known.has(card.id))
+        &&(anonymousHand||owner.hand.every(card=>known.has(card.id)));
+    }
+
     function knownPostMainActions(envelope, actions, anonymousHand = false) {
-      const state=readIdentityState(envelope),owner=state.players.players.find(p=>p.id===seatId);
-      if(!resourcePlanning||state.turn.gameEnded||!owner.mainActionCompleted||actions.some(a=>a.actorId!==seatId)
-        ||[...owner.reservedCards,...(owner.privateAlienCards||[])].some(card=>!knownCards(envelope).has(card.id))
-        ||!anonymousHand&&owner.hand.some(card=>!knownCards(envelope).has(card.id)))return [];
+      const state=readIdentityState(envelope);
+      if(!canContinueKnownPostMain(envelope,state,anonymousHand)||actions.some(a=>a.actorId!==seatId))return [];
       function known(value,key="") {
         if(value==null)return true;
         if(key==="cardInstanceId"||key==="cardId")return knownCards(envelope).has(value);
@@ -5461,10 +5467,13 @@
         && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
         const satelliteScan=inspection.phase==="awaiting_input"&&isKnownSatelliteScanAfterBlindDraw(envelope,barrier);
         const known=knownAlienAcquisition||["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code);
-        if(known||satelliteScan){
+        // Idle boundaries have no reward menu. If the exact knowledge
+        // check already rejects their post-main actions, skip enumeration.
+        const hasDecision=inspection.phase==="awaiting_input";
+        if(satelliteScan||known&&(hasDecision||canContinueKnownPostMain(envelope,childState))){
           const nativeActions=legalActions(comp,inspection);
           if(known)postMainActions=knownPostMainActions(envelope,nativeActions);
-          if(inspection.phase==="awaiting_input")knownRewardActions=knownRewardChoices(envelope,nativeActions,satelliteScan);
+          if(hasDecision)knownRewardActions=knownRewardChoices(envelope,nativeActions,satelliteScan);
         }
       }
       const continueKnown = postMainActions.length > 0 || knownRewardActions.length > 0;

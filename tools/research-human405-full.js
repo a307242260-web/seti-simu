@@ -10,7 +10,7 @@ const R4_ID='human405-white-v661-r4-candidate-v1';
 const R4_ADMISSION='reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json';
 const STAGED_LANDING_ID='human405-white-staged-landing-full-v1';
 const STAGED_LANDING_RECORD='reports/research/11ef28bc.5135a5a0.quick-400.json';
-const STAGED_LANDING_ADMISSIONS=['v2','v1'].map(v=>'reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-'+v+'.json');
+const STAGED_LANDING_ADMISSIONS=['v3','v2','v1'].map(v=>'reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-'+v+'.json');
 const IDS=Object.freeze([ID,V189_ID,V661_ID,R4_ID,STAGED_LANDING_ID]);
 const isGuarded=id=>id===R4_ID||id===STAGED_LANDING_ID;
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p))),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex');
@@ -83,6 +83,15 @@ function stagedLandingContinuation(){
  assert.equal(evidence.originalReserve,'b_111.webp');
  assert.equal(evidence.coldRoots,20);
  assert(evidence.complete&&evidence.unchangedRoots&&evidence.agreesWithNativeReplay&&evidence.native<=256&&evidence.ms<=600);
+ if(admissionPath===STAGED_LANDING_ADMISSIONS[0]){
+  const gate=admission.hostGate;
+  assert.equal(sha(gate.path),gate.sha256,'STAGED_LANDING_HOST_GATE_DRIFT');
+  const proof=read(gate.path);
+  assert.equal(proof.failedRootInput,264);
+  assert.equal(proof.auditMode,'real-runner-stop-before-white-submit');
+  assert(proof.candidate.length>=5&&proof.candidate.every(row=>row.native<=256&&row.ms<=600&&row.closed&&row.unchangedRoot&&row.equalQuotes),
+    'STAGED_LANDING_HOST_GATE_NOT_ADMITTED');
+ }
  for(const file of Object.keys(read(R4_ADMISSION).runtimeHashes))
   assert(Object.hasOwn(admission.runtimeHashes,file),'STAGED_LANDING_RUNTIME_MISSING:'+file);
  for(const [file,hash] of Object.entries(admission.runtimeHashes))

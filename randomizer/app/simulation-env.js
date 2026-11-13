@@ -401,12 +401,12 @@ function createSimulationEnv(options = {}) {
         random: seededRandom,
         rngState: { algorithm: RNG_ALGORITHM, state: seededRandom.getState() },
         trustedProjectionReader: true,
-        projectCounterfactualState: (state, viewer) => buildObservation(
+        projectCounterfactualState: (state, viewer, projectionContext) => buildObservation(
           state,
           seed,
           viewer?.playerId || null,
           [],
-          { cheap: viewer?.cheap === true, valueOnly: viewer?.valueOnly === true },
+          { cheap: viewer?.cheap === true, valueOnly: viewer?.valueOnly === true, trustedCommitted: projectionContext?.trustedCommitted === true },
         ),
       });
       composition = kernel.composition;

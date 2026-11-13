@@ -33,7 +33,7 @@
       throw new Error("createBrowserRuleComposition requires explicit Browser projection owners");
     }
 
-    function projectBrowserState(canonicalState, viewer, inspection) {
+    function projectBrowserState(canonicalState, viewer, inspection, projectionContext) {
       const finalReadModelOwner = browserProjection.getFinalReadModelOwner();
       const browserReadModelOwner = browserProjection.getBrowserReadModelOwner();
       if (!finalReadModelOwner?.project || !browserReadModelOwner?.project) {
@@ -45,7 +45,7 @@
         role: "spectator",
       };
       if(resolvedViewer.valueOnly===true&&resolvedViewer.role==="player"){
-        return ruleObservation.buildRuleObservation(canonicalState,context.seed||null,resolvedViewer.playerId,[],{valueOnly:true});
+        return ruleObservation.buildRuleObservation(canonicalState,context.seed||null,resolvedViewer.playerId,[],{valueOnly:true,trustedCommitted:projectionContext?.trustedCommitted===true});
       }
       const visible = browserProjection.visibilityPolicy(
         canonicalState,

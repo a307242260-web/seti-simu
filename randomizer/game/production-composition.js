@@ -144,6 +144,11 @@
       };
     }
 
+    function moveRequirements(root, player) {
+      return typeof rocketAbility?.listPlayerMoveChoices === "function"
+        ? rocketAbility.listPlayerMoveChoices(root, player, { maxPoints: 1 }) : [];
+    }
+
     function openMoveSelection(root, input = {}) {
       const player = input.player
         || root.players?.players?.find((entry) => entry.id === input.playerId)
@@ -159,7 +164,7 @@
         tradeId: input.tradeId,
         playerId: player.id,
       };
-      if (!moveChoices(root, decisionContext).length) {
+      if (!moveRequirements(root, resolvePlayer(root, decisionContext)).length) {
         return { ok: false, code: "QUICK_TRADE_MOVE_UNAVAILABLE", message: "没有可在1移动点内到达的方向" };
       }
       return {
@@ -173,9 +178,7 @@
       const player = resolvePlayer(root, pending);
       if (!player) return [];
       // 统一移动入口：与卡牌/紫4/probe turn/残余域共用 listPlayerMoveChoices
-      const moves = typeof rocketAbility?.listPlayerMoveChoices === "function"
-        ? rocketAbility.listPlayerMoveChoices(root, player, { maxPoints: 1 })
-        : [];
+      const moves = moveRequirements(root, player);
       return moves.map((move) => ({
         target: {
           kind: "quick-move",

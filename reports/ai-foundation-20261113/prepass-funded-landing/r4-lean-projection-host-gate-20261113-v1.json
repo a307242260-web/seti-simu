@@ -1,0 +1,817 @@
+{
+  "auditMode": "real-runner-stop-before-white-submit",
+  "failedRootInput": 264,
+  "committedPrefix": 263,
+  "scope": "runner 恢复 261 个输入并执行棕席两次必选。白席使用实际候选源码，完成搜索后在提交之前停止。前后原生信封与旧失败根逐项相同。",
+  "control": [
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 544.1176250000001,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 48.12221600000066
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 530.664542,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 47.09821200000056
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 530.6511669999999,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 45.4663850000004
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 531.870125,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 52.9133699999976
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 539.7436670000001,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 47.72370199999841
+    }
+  ],
+  "candidate": [
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 501.26525,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 32.04849299999984
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 495.46758400000004,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 31.462700000000382
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 493.7777080000001,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 30.66192400000051
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 512.2501669999999,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 32.6074629999996
+    },
+    {
+      "action": "move:23807efa",
+      "value": 203.5,
+      "native": 87,
+      "ms": 493.38304099999993,
+      "closed": true,
+      "unchangedRoot": true,
+      "equalQuotes": true,
+      "observationMs": 31.432210999999597
+    }
+  ],
+  "rootQuotes": [
+    {
+      "actionId": "launch:c94cda79",
+      "target": 1,
+      "value": 184.5,
+      "realization": -10,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "scan:2d21a323",
+      "target": 11,
+      "value": 192,
+      "realization": -10,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "scan:sector:sector-2-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-2-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "resourceGoalCount": 6,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:1d27665c",
+      "target": 2,
+      "value": 186,
+      "realization": -9.5,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:8c65d747",
+      "target": 3,
+      "value": 195.5,
+      "realization": -10,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:c93b59a4",
+      "target": 4,
+      "value": 192,
+      "realization": -10,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "pass:a1f33c73",
+      "target": 5,
+      "value": 164,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "move:c16025a6",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v6",
+      "chosenGoal": {
+        "id": "rocket:6:land:saturn:planet:",
+        "kind": "land",
+        "label": "land saturn",
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "timing": "current-turn",
+        "planetId": "saturn",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 6
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "move:bde97b72",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v6",
+      "chosenGoal": {
+        "id": "rocket:6:land:saturn:planet:",
+        "kind": "land",
+        "label": "land saturn",
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "timing": "current-turn",
+        "planetId": "saturn",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 6
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "move:23807efa",
+      "target": 9,
+      "value": 203.5,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "rocket:6:land:saturn:planet:",
+        "kind": "route",
+        "family": "land",
+        "rocketId": 6,
+        "planetId": "saturn",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 6
+        },
+        "endpointCost": {
+          "energy": 2
+        },
+        "benefit": {
+          "score": 8,
+          "incomeCount": 0,
+          "dataCount": 2,
+          "grossEquivalentValue": 10.5,
+          "rewardSummary": "首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记",
+          "source": "planetRewards.land:saturn"
+        },
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "path": [
+          {
+            "from": {
+              "x": 4,
+              "y": 3
+            },
+            "to": {
+              "x": 3,
+              "y": 3
+            },
+            "deltaX": -1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          }
+        ],
+        "movementPoints": 1,
+        "required": {
+          "credits": 0
+        }
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    {
+      "actionId": "move:a36e0e84",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v6",
+      "chosenGoal": {
+        "id": "rocket:6:land:saturn:planet:",
+        "kind": "land",
+        "label": "land saturn",
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "timing": "current-turn",
+        "planetId": "saturn",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 6
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:f385e2ac",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:49c75492",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v17",
+      "goal": {
+        "kind": "move",
+        "id": "rocket:6:orbit:neptune:planet:",
+        "amount": 1,
+        "priority": 4,
+        "required": {
+          "credits": 1,
+          "energy": 5,
+          "movementSteps": 4,
+          "movementPoints": 4,
+          "paidMovementPoints": 4
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:12411a2c",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:a39c1a77",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:37140fcf",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v17",
+      "goal": {
+        "kind": "move",
+        "id": "rocket:6:orbit:neptune:planet:",
+        "amount": 1,
+        "priority": 4,
+        "required": {
+          "credits": 1,
+          "energy": 5,
+          "movementSteps": 4,
+          "movementPoints": 4,
+          "paidMovementPoints": 4
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:122c43fc",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v17",
+      "goal": {
+        "kind": "move",
+        "id": "rocket:6:orbit:neptune:planet:",
+        "amount": 1,
+        "priority": 4,
+        "required": {
+          "credits": 1,
+          "energy": 5,
+          "movementSteps": 4,
+          "movementPoints": 4,
+          "paidMovementPoints": 4
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:df811f99",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:be9dd0cd",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v6",
+      "chosenGoal": {
+        "id": "rocket:6:land:saturn:planet:",
+        "kind": "land",
+        "label": "land saturn",
+        "coordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "timing": "current-turn",
+        "planetId": "saturn",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 6
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "industry:e887dc52",
+      "target": 6,
+      "value": 203.5,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "card_corner:bf0cc13d",
+      "target": 8,
+      "value": 203.5,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "data:blue:1",
+        "kind": "blue-data",
+        "blueSlot": 1,
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "resourceGoalCount": 2,
+      "completion": "complete"
+    },
+    {
+      "actionId": "card_corner:0c840bb2",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "card_corner:f0c6e7b8",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v27",
+      "isEquivalence": false
+    }
+  ],
+  "endpoints": [
+    {
+      "reserve": "b_32.webp",
+      "roots": [
+        {
+          "index": 4,
+          "agrees": true,
+          "closed": true,
+          "native": 106,
+          "ms": 601.6939160000001,
+          "value": 203.5
+        },
+        {
+          "index": 6,
+          "agrees": true,
+          "closed": true,
+          "native": 156,
+          "ms": 477.047917,
+          "value": 203.5
+        },
+        {
+          "index": 17,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 9.880332999999837,
+          "value": 203.5
+        },
+        {
+          "index": 22,
+          "agrees": true,
+          "closed": true,
+          "native": 46,
+          "ms": 85.62020800000005,
+          "value": 215
+        },
+        {
+          "index": 25,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 9.870958999999857,
+          "value": 215
+        },
+        {
+          "index": 26,
+          "agrees": true,
+          "closed": true,
+          "native": 108,
+          "ms": 165.19824999999992,
+          "value": 221.5
+        },
+        {
+          "index": 30,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 10.76150000000007,
+          "value": 221.5
+        },
+        {
+          "index": 37,
+          "agrees": true,
+          "closed": true,
+          "native": 38,
+          "ms": 68.63554199999999,
+          "value": 226.5
+        },
+        {
+          "index": 39,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 11.785916999999927,
+          "value": 226.5
+        },
+        {
+          "index": 40,
+          "agrees": true,
+          "closed": true,
+          "native": 42,
+          "ms": 87.36249999999973,
+          "value": 239.5
+        },
+        {
+          "index": 58,
+          "agrees": true,
+          "closed": true,
+          "native": 2,
+          "ms": 12.376332999999704,
+          "value": 249.5
+        },
+        {
+          "index": 59,
+          "agrees": true,
+          "closed": true,
+          "native": 28,
+          "ms": 95.59345799999983,
+          "value": 253
+        },
+        {
+          "index": 61,
+          "agrees": true,
+          "closed": true,
+          "native": 2,
+          "ms": 15.428625000000011,
+          "value": 253
+        },
+        {
+          "index": 69,
+          "agrees": true,
+          "closed": true,
+          "native": 20,
+          "ms": 45.3987089999996,
+          "value": 269.5
+        },
+        {
+          "index": 78,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 8.12645799999973,
+          "value": 269.5
+        },
+        {
+          "index": 82,
+          "agrees": true,
+          "closed": true,
+          "native": 9,
+          "ms": 16.00695799999994,
+          "value": 271.5
+        },
+        {
+          "index": 84,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 8.541334000000006,
+          "value": 271.5
+        },
+        {
+          "index": 85,
+          "agrees": true,
+          "closed": true,
+          "native": 7,
+          "ms": 14.643415999999888,
+          "value": 271.5
+        },
+        {
+          "index": 90,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 7.651666999999634,
+          "value": 271.5
+        },
+        {
+          "index": 91,
+          "agrees": true,
+          "closed": true,
+          "native": 1,
+          "ms": 9.117749999999887,
+          "value": 269
+        }
+      ],
+      "over": [
+        4
+      ]
+    },
+    {
+      "reserve": "b_111.webp",
+      "roots": [
+        {
+          "index": 4,
+          "agrees": true,
+          "closed": true,
+          "native": 87,
+          "ms": 398.6859589999999,
+          "value": 203.5
+        },
+        {
+          "index": 6,
+          "agrees": true,
+          "closed": true,
+          "native": 137,
+          "ms": 364.6170000000002,
+          "value": 203.5
+        },
+        {
+          "index": 17,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 7.701791999999841,
+          "value": 203.5
+        },
+        {
+          "index": 22,
+          "agrees": true,
+          "closed": true,
+          "native": 41,
+          "ms": 64.31687499999998,
+          "value": 211
+        },
+        {
+          "index": 26,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 9.965625000000273,
+          "value": 211
+        },
+        {
+          "index": 27,
+          "agrees": true,
+          "closed": true,
+          "native": 31,
+          "ms": 49.50737499999968,
+          "value": 217.5
+        },
+        {
+          "index": 34,
+          "agrees": true,
+          "closed": true,
+          "native": 1,
+          "ms": 11.822541999999885,
+          "value": 217.5
+        },
+        {
+          "index": 37,
+          "agrees": true,
+          "closed": true,
+          "native": 27,
+          "ms": 78.73808300000019,
+          "value": 224
+        },
+        {
+          "index": 50,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 10.656082999999853,
+          "value": 234
+        },
+        {
+          "index": 51,
+          "agrees": true,
+          "closed": true,
+          "native": 26,
+          "ms": 80.6303339999995,
+          "value": 239.5
+        },
+        {
+          "index": 60,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 10.848915999999917,
+          "value": 239.5
+        },
+        {
+          "index": 61,
+          "agrees": true,
+          "closed": true,
+          "native": 92,
+          "ms": 188.8368330000003,
+          "value": 245.5
+        },
+        {
+          "index": 63,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 13.036000000000058,
+          "value": 245.5
+        },
+        {
+          "index": 75,
+          "agrees": true,
+          "closed": true,
+          "native": 59,
+          "ms": 78.24191699999938,
+          "value": 261
+        },
+        {
+          "index": 83,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 8.679041999999754,
+          "value": 261
+        },
+        {
+          "index": 86,
+          "agrees": true,
+          "closed": true,
+          "native": 5,
+          "ms": 82.96208399999978,
+          "value": 269.5
+        },
+        {
+          "index": 88,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 11.052500000000691,
+          "value": 269.5
+        },
+        {
+          "index": 91,
+          "agrees": true,
+          "closed": true,
+          "native": 3,
+          "ms": 12.861917000000176,
+          "value": 274
+        },
+        {
+          "index": 93,
+          "agrees": true,
+          "closed": true,
+          "native": 0,
+          "ms": 8.757958999999573,
+          "value": 274
+        },
+        {
+          "index": 94,
+          "agrees": true,
+          "closed": true,
+          "native": 1,
+          "ms": 9.335834000000432,
+          "value": 272
+        }
+      ],
+      "over": []
+    }
+  ],
+  "auditSource": "runtime files read directly; instrumentation limited to the experiment runner"
+}

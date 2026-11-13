@@ -106,7 +106,7 @@
       decisionVersion: authority.decisionVersion,
       target,
       payload,
-      decision: clone(descriptor?.decision || null),
+      decision: descriptor?.decision ? clone(descriptor.decision) : null,
       summary: descriptor?.summary || definition.label || definition.family,
       // 决策展示信息（卡面、禁用原因等）随 descriptor 透传；action 枚举投影
       // 只挑选已知字段，不受影响；sameAction 不比较这些字段。
