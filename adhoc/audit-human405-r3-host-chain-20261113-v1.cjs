@@ -386,3 +386,125 @@ if(mode==='cash-r4-cross'){
     write({source,groups});
   }finally{env.dispose();}
 }
+if(mode==='cargo-scan-stock'){
+  const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
+  const sourceGroup=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
+  const witness=sourceGroup.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  function restore(e){env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});}
+  function apply(a){const actual=env.legalActions().find(x=>x.actionId===a.actionId);assert.deepEqual(JSON.parse(JSON.stringify(actual)),a);assert(env.step(actual).ok);return actual;}
+  try{
+    restore(sourceGroup.root);witness.inputs.slice(0,93).forEach(apply);
+    const host=env.createCheckpoint(),origin=host.coreState.compositionEnvelope;
+    const seen=new Set(JSON.parse(origin.committedState).cards.publicCards.map(c=>c.cardId));
+    const rows=[],infeasible=[];
+    for(const target of ['室女座61','绘架座β','南河三'])for(const desired of ['dlc_16.png → 天狼星A','dlc_16.png → 南河三','dlc_15.png → 天狼星A','dlc_15.png → 南河三','b_16.webp → 室女座61','b_16.webp → 开普勒22']){
+      env.loadCheckpoint(host);const inputs=[],decisions=[];
+      const force=pred=>{const a=env.legalActions().find(pred);if(!a)return false;assert(env.step(a).ok);inputs.push(a);return true;};
+      assert(force(a=>a.family==='scan'));assert(force(a=>a.summary==='扫描 '+target));
+      if(!force(a=>a.summary===desired)){
+        infeasible.push([target,desired]);continue;
+      }
+      let boundary,notable=[];
+      for(let i=0;i<40;i++){
+        const cp=env.createCheckpoint(),m=env.legalActions();
+        if(!cp.coreState.compositionEnvelope.session){
+          if(!inputs.some(a=>a.family==='end_turn'))assert(force(a=>a.family==='end_turn'));
+          else {boundary=cp.coreState.compositionEnvelope;break;}
+        }else if(force(a=>a.summary==='结束公共牌扫描'||a.summary==='跳过'))continue;
+        else{
+          if(m.some(a=>a.summary.includes('盲抽')||a.summary.startsWith('获得展示的'))){
+            const display=m.find(a=>a.summary.startsWith('获得展示的'));
+            if(display){assert(force(a=>a.actionId===display.actionId));notable.push(display.summary);continue;}
+            if(force(a=>a.summary==='取消'))continue;
+            break;
+          }
+          const v=take(env);inputs.push(v.a);const q=v.searches[0];
+          if(q)decisions.push([q.diagnostics.nativeExecutions,q.rootAndSearchMilliseconds]);
+        }
+      }
+      assert(boundary,JSON.stringify([target,desired,env.legalActions().map(a=>a.summary)]));
+      const end=boundary, result=assets(end,env.observe(white));
+      rows.push({name:`${target}/${desired}`,inputs,end,score:null,checkpoints:[],assets:result,decisions,notable});
+      console.log(JSON.stringify({target,desired,seen:[...seen],wallet:result.resources,hand:result.hand,computer:result.computer,blue:result.blue,probe:result.probes,notable,actions:inputs.map(a=>a.summary)}));
+    }
+    groups.push({name:'public signal combination at funded fossil round end',root:origin,rows,infeasible});
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-hidden'){
+  const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
+  const sourceGroup=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
+  const witness=sourceGroup.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  function restore(e){env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});}
+  function put(a){assert(a);assert(env.step(a).ok);return a;}
+  try{
+    restore(sourceGroup.root);
+    witness.inputs.slice(0,65).forEach(old=>put(env.legalActions().find(a=>a.actionId===old.actionId)));
+    const root=env.createCheckpoint().coreState.compositionEnvelope, visible=env.observe(white), legal=env.legalActions();
+    for(const pair of [null,[0,3],[0,4],[1,5]]){
+      const state=JSON.parse(root.committedState),pile=state.cards.drawPileCardIds;
+      let swap=null;
+      if(pair){const [i,j]=pair;swap=[pile[i],pile[j]];assert.notEqual(...swap);[pile[i],pile[j]]=[pile[j],pile[i]];}
+      const origin={...root,committedState:JSON.stringify(state)};
+      restore(origin);assert.deepEqual(env.observe(white),visible);assert.deepEqual(env.legalActions(),legal);
+      const inputs=[],checkpoints=[],decisions=[];
+      let diverged=null;
+      const fixed=witness.inputs.slice(65,98);
+      for(const [i,old] of fixed.entries()){
+        const current=env.legalActions().find(a=>a.actionId===old.actionId);
+        if(!current||JSON.stringify(current.target)!==JSON.stringify(old.target)||current.summary!==old.summary){
+          diverged={index:i+65,old:old.summary,menu:env.legalActions().map(a=>a.summary)};break;
+        }
+        inputs.push(put(current));
+      }
+      let r;
+      if(diverged)r=run(env,{prior:inputs,forced:'match then autonomous'});
+      else{
+        const end=env.createCheckpoint().coreState.compositionEnvelope;
+        assert(env.legalActions().some(a=>a.family==='pass'&&a.actorId===white));
+        r={name:'matched then leave inventory',inputs,checkpoints,decisions,end,score:null,assets:assets(end,env.observe(white)),stop:'prepass',peak:[0,0]};
+      }
+      r.diverged=diverged;
+      groups.push({name:pair?.join('/')||'original',root:origin,swap,rows:[r]});
+      console.log(JSON.stringify({swap,diverged,stop:r.stop,score:r.assets.score,tech:Object.keys(r.assets.tech.ownedTiles),income:r.assets.income,
+        hand:r.assets.hand,pool:r.assets.resources.availableData,computer:r.assets.computer,blue:r.assets.blue,probe:r.assets.probes,peak:r.peak}));
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-supplier'){
+  const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
+  const hidden=read(process.argv[4]);
+  const original=hidden.groups[0].rows[0];
+  const env=initialized(),template=env.createCheckpoint(),groups=[];
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  const put=a=>{assert(a);assert(env.step(a).ok);return a;};
+  try{
+    for(const g of hidden.groups.slice(1,3)){
+      restore(g.root);
+      const inputs=[];
+      for(const old of original.inputs.slice(0,24)){
+        const a=env.legalActions().find(x=>x.actionId===old.actionId);assert.deepEqual(a,old);inputs.push(put(a));
+      }
+      const cp=env.createCheckpoint();
+      const force=fn=>inputs.push(put(env.legalActions().find(fn)));
+      force(a=>a.family==='card_corner'&&a.summary.startsWith('b_9.webp'));
+      force(a=>a.family==='quick_trade'&&a.target?.tradeId==='publicity-for-card');
+      force(a=>a.summary==='dlc_15.png');
+      force(a=>a.family==='card_corner'&&a.summary.startsWith('dlc_15.png'));
+      for(const old of original.inputs.slice(25)){
+        const a=env.legalActions().find(x=>x.actionId===old.actionId&&x.summary===old.summary);
+        assert(a,JSON.stringify([old.summary,env.legalActions().map(x=>x.summary)]));inputs.push(put(a));
+      }
+      const end=env.createCheckpoint().coreState.compositionEnvelope;
+      assert(env.legalActions().some(a=>a.family==='pass'&&a.actorId===white));
+      const result=assets(end,env.observe(white));
+      const row={name:'public DLC15 substituted after reveal',inputs,end,score:null,checkpoints:[[24,cp.coreState.compositionEnvelope]],assets:result,stop:'prepass',peak:[0,0]};
+      groups.push({name:g.name,root:g.root,rows:[row]});
+      console.log(JSON.stringify({name:g.name,wallet:result.resources,hand:result.hand,computer:result.computer,blue:result.blue,probe:result.probes}));
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
