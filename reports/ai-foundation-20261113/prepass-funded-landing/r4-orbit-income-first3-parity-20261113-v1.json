@@ -1,0 +1,18 @@
+{
+  "record": "reports/research/688e6730.fef545ca.quick-400.json",
+  "source": "fef545ca0",
+  "compared": "reports/research/142a0f3c.6406060a.quick-400.json",
+  "steps": 261,
+  "scores": [
+    15,
+    48,
+    118
+  ],
+  "wallMs": 10745,
+  "decisionCount": 213,
+  "peak": [
+    256,
+    235.18679199999997
+  ],
+  "inputsAndRoundEndsMatch": true
+}

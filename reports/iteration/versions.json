@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-earth-orbit-income-first3-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-earth-orbit-income-first3-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-funded-public-sector-tie-first3-20261113",
+      "head": "fef545ca0",
+      "commits": [
+        "03b2645bb",
+        "efc85efc6",
+        "1facaac3b",
+        "1d463e42d",
+        "18bb4308d",
+        "fef545ca0"
+      ],
+      "summary": "末轮地球发射的可付公开环绕计入现有收入板块；正式前三轮回归",
+      "records": {
+        "688e6730.fef545ca.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-funded-public-sector-tie-first3-20261113",
       "aiGeneration": "v2",
       "agentType": "search",

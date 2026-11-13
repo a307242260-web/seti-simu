@@ -425,3 +425,5 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 | 教学盘标准接续 | 272 | 272（原生动作不变） |
 
 四盘候选最高 229 次／233 毫秒以内；教学盘接续峰值 107 次／531 毫秒以内。教师共同起点第三轮三个发射反事实分别到 84／85／87 分，永久电仅 2／3／2，均未保住教师的收入及库存；不把第四轮的收益外推成第三轮提前发射规则。[教师与同环绕反事实](../reports/ai-foundation-20261113/prepass-funded-landing/r3-r4-launch-initiative-20261113-v1.json.gz) · [四盘自主对照](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-fourboard-earth-20261113-v1.json.gz) · [教学盘接续](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-standard-earth-resume-20261113-v1.json.gz)。三份原生证据独立复放共 511 输入。估值输入审计通过；`probe-travel-tail` 的紧预算断言在原代码亦失败。
+
+源码 `fef545ca0` 的唯一正式前三轮复验为 **15／48／118**，261 个输入、213 次白席决策，峰值 256 次／236 毫秒；原生动作、三个轮末信封、首选报价和原生输入次数均与上一登记版一致。登记 V2 实验中心，保留正式 272 与 V41。[前三轮复验](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-first3-parity-20261113-v1.json)。
