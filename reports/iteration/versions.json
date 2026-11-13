@@ -7,6 +7,35 @@
   },
   "versions": [
     {
+      "id": "ai-search-dlc9-publicity-task-first3-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-dlc9-publicity-task-first3-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-fixed-route-20261113",
+      "head": "ec51f7390",
+      "commits": [
+        "c201ec91a",
+        "45278206f",
+        "446b1de68",
+        "8c38f2cad",
+        "02c1056bf",
+        "6b8d74d1a",
+        "71c2969e9",
+        "eabed5624",
+        "924656e03",
+        "fd62774ff",
+        "fbb639d71",
+        "ec51f7390"
+      ],
+      "summary": "复用末轮已知宣传任务结算；标准前三轮资产回归",
+      "records": {
+        "2a5b250f.ec51f739.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-fixed-route-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
