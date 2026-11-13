@@ -46,7 +46,8 @@ function run(env,{compare=false, prior=[], forced=null}={}) {
       if(menu[0]?.actorId===white&&!envelope.session)turns.push({offset:inputs.length,assets:assets(envelope,env.observe(white))});
     }
     let v;
-    try{v=take(env);}catch(e){if(!e.search && !String(e).includes('DECISION_GATE'))throw e;stop='decision gate';break;}
+    try{v=take(env);}catch(e){const q=e.search||e.cause?.search;if(!q)throw e;
+      decisions.push({i:inputs.length,n:q.diagnostics.nativeExecutions,ms:q.rootAndSearchMilliseconds,submitted:false});stop='decision gate';break;}
     const {a,searches}=v, q=searches[0], i=inputs.length;
     if(q){
       const selected=q.roots?.find(x=>x.actionId===a.actionId&&x.value!=null);
@@ -792,5 +793,94 @@ if(mode==='cargo-third-pool'||mode==='cargo-third-pool-market'){
       groups.push({name,root:origin,rows});
     }
     write({source,groups:[...groups,...terminal]});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-early-data-ledger'||mode==='cargo-early-data-supplier'){
+  const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
+  const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0];
+  const ref=g.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
+  const env=initialized(),template=env.createCheckpoint();
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  const snapshot=()=>{
+    const e=env.createCheckpoint().coreState.compositionEnvelope;
+    const s=e.session?.session?.workingState||JSON.parse(e.committedState);
+    const p=s.players.players.find(x=>x.id===white);
+    return {e,w:[p.resources.score,p.resources.credits,p.resources.energy,p.resources.publicity,p.resources.availableData],
+      income:p.income,hand:p.hand.map(c=>c.cardId),market:s.cards.publicCards.map(c=>c?.cardId??null),
+      computer:data.listComputerPlacedTokens(p).map(c=>c.placementSlot),blue:data.listBlueBonusPlacedTokens(p).map(c=>c.blueSlot),
+      menu:env.legalActions().map(a=>({family:a.family,summary:a.summary,target:a.target,payload:a.payload}))};
+  };
+  const find=old=>env.legalActions().find(a=>a.family===old.family&&a.summary===old.summary
+    &&JSON.stringify(a.target)===JSON.stringify(old.target)&&JSON.stringify(a.payload)===JSON.stringify(old.payload));
+  const put=a=>{assert(a);assert(env.step(a).ok);return a;};
+  try{
+    restore(g.root);
+    const states=[];
+    for(let i=0;i<=98;i++){
+      states.push(snapshot());
+      if(i<98){const a=find(ref.inputs[i]);assert.deepEqual(a,ref.inputs[i]);put(a);}
+    }
+    const reference=states.map(({e,...s},i)=>({i,action:ref.inputs[i].summary,...s}));
+    const groups=[];
+    if(mode==='cargo-early-data-supplier'){
+      const origin=states[47].e;restore(origin);
+      const inputs=[put(env.legalActions().find(a=>a.summary==='dlc_20.png'))],comparison=[];
+      for(let i=48;i<98;i++){
+        if([48,51,52,53].includes(i))continue;
+        const old=ref.inputs[i],a=find(old);
+        if(!a){
+          const {e,...visible}=snapshot();
+          const row=run(env,{prior:inputs,forced:'company picks known DLC20 directly'});
+          const failure={i,expected:old.summary,...visible};
+          groups.push({name:'source DLC20 through company instead of blue3',root:origin,rows:[{...row,failure}]});
+          console.log(JSON.stringify({failure:[i,old.summary,visible.w],assets:row.assets,stop:row.stop,peak:row.peak}));
+          break;
+        }
+        inputs.push(put(a));
+        const {w,computer,blue}=snapshot();comparison.push({i,actual:w,reference:states[i+1].w,computer,blue});
+      }
+      if(!groups.length){
+        const boundary=env.createCheckpoint(), prefix=inputs.slice();
+        const row=run(env,{prior:inputs,forced:'company picks known DLC20 directly'});
+        env.loadCheckpoint(boundary);
+        const held={name:'company picks DLC20 directly; hold the remaining data',inputs:prefix,checkpoints:[],
+          end:boundary.coreState.compositionEnvelope,score:null,assets:assets(boundary.coreState.compositionEnvelope,env.observe(white))};
+        assert(env.legalActions().some(a=>a.family==='pass'&&a.actorId===white));
+        held.comparison=comparison;
+        assert.deepEqual([held.assets.income.credits,held.assets.income.energy],[7,4]);
+        groups.push({name:'source DLC20 through company instead of blue3',root:origin,rows:[row,held]});
+      }
+    }else if(!process.argv.includes('--ledger-only')){
+      for(const [label,start,skip,replacement] of [
+        ['keep data instead of placing blue3',51,[51,52],null],
+        ['keep data instead of placing blue1',60,[60,61],null],
+        ['replace blue3 placement by saving its data',52,[52],m=>m.find(a=>a.summary==='取消'||a.summary==='跳过')],
+        ['keep early data instead of placing blue2',32,[32,33],null],
+        ['keep post-income data instead of placing blue2',90,[90,91],null],
+      ]){
+        const origin=states[start].e;restore(origin);
+        const inputs=[];let failure=null;
+        if(replacement){const action=replacement(env.legalActions());if(!action)continue;inputs.push(put(action));}
+        for(let i=start;i<98;i++){
+          if(skip.includes(i))continue;
+          const old=ref.inputs[i],a=find(old);
+          if(!a){const {e,...visible}=snapshot();failure={i,expected:old.summary,...visible};break;}
+          inputs.push(put(a));
+        }
+        const end=snapshot();
+        let row={name:label,inputs,checkpoints:[],end:end.e,score:null,matched:!failure,failure};
+        if(failure){
+          row={...run(env,{prior:inputs,forced:label+' then autonomous'}),failure};
+        }
+        const finish=assets(row.end,env.observe(white));
+        console.log(JSON.stringify({label,start,failure:failure&&[failure.i,failure.expected,failure.w],
+          end:[finish.score,finish.resources.availableData,finish.resources.energy,finish.income.credits,finish.income.energy,finish.hand,finish.blue,finish.probes],stop:row.stop,peak:row.peak}));
+        groups.push({name:label,root:origin,rows:[row]});
+      }
+    }
+    for(const i of [32,47,48,49,51,52,53,55,57,60,61,63,65,67,68,69,70,71,72,74,76,77,78,79,89,90,91,93,98]){
+      const v=reference[i];console.log(JSON.stringify([i,v.action,v.w,v.hand,v.market,v.menu.filter(x=>x.family==='choose_target'||x.family==='accept_optional_effect'||x.family==='choose_card').map(x=>x.summary)]));
+    }
+    write({source,reference,groups});
   }finally{env.dispose();}
 }
