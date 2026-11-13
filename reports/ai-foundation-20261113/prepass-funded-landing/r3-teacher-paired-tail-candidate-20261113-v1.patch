@@ -1,0 +1,191 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -1792,7 +1792,7 @@
+       if(stored.envelope.session?.session?.queue[0]?.payload?.speciesId==="aomomo")
+         return previewQuietAomomoCard(node,stored,action);
+       if(!resourcePlanning||!cardPickPlanning||node.status!=="decision"||action.family!=="choose_card"
+-        ||action.target?.source!=="display")return null;
++        ||!["display","blind","cancel"].includes(action.target?.source))return null;
+       const s=stored.envelope.session?.session,head=s?.queue[0],species=head?.payload?.speciesId;
+       if(s?.phase!=="awaiting_input"||s.failure||s.interruptContext||s.undoFrames.length
+         ||head?.type!=="residual_alien_card_decision"||head.kind!=="decision"||head.ownerId!==seatId||head.allowQuickActions
+@@ -1802,7 +1802,9 @@
+         &&pairedTracePickupScope(s.workingState,s);
+       const region=species==="amiba"&&pending?.type==="card_play_domain_effect:effect:amiba_resolve_region_reward"?pending:null;
+       const refillIndex=region?2:1,tail=s.queue[refillIndex];
+-      const fossil=region&&tail?.type==="card_play_domain_effect:effect:chong_pickup_fossil";
++      const pairedPickup=tail?.type==="card_play_domain_effect:effect:chong_pickup_fossil"&&pairedTracePickupScope(s.workingState,s);
++      const fossil=(region||pairedPickup)&&tail?.type==="card_play_domain_effect:effect:chong_pickup_fossil";
++      if(action.target.source!=="display"&&!pairedPickup&&!pairedTrigger)return null;
+       const trace=tail?.type===scienceSession.EFFECT_TYPES.ALIEN_TRACE&&tail.kind==="decision"
+         &&tail.ownerId===seatId&&!tail.allowQuickActions;
+       const nextRefill=trace&&s.queue[refillIndex+1];
+@@ -1816,13 +1818,14 @@
+       const state=s.workingState,t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+       const knownIndex=species==="chong"?knownChongDisplayIndex:rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
+       const known=knownCards(stored.envelope),deck=state.aliens[species];
+-      if(t.roundNumber!==4&&!pairedTrigger||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
++      if(t.roundNumber!==4&&!pairedTrigger&&!pairedPickup||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
+         ||t.cardTurnEventBonuses?.length||t.passedPlayerIds.includes(seatId)
+-        ||!Number.isSafeInteger(knownIndex)||knownIndex!==deck?.displayedCardIndex||knownIndex!==action.target.cardIndex
++        ||(!pairedPickup&&!pairedTrigger&&(!Number.isSafeInteger(knownIndex)||knownIndex!==action.target.cardIndex))
++        ||action.target.source==="display"&&deck?.displayedCardIndex!==action.target.cardIndex
+         ||!knownRootAlienIds.has(species==="chong"?"虫":"阿米巴")
+         ||p.reservedCards.some(c=>!known.has(c.id))||localPlans.hasPendingFossilArrival(state))return null;
+-      const pick=cardPickSpec(node),pair=pairedTrigger&&pairedTracePickupPlan(node,stored,readPlanningState(stored));
+-      if((!pick?.fixed||pick.selectedActionId!==action.actionId)
++      const pick=cardPickSpec(node),pair=(pairedTrigger||pairedPickup)&&pairedTracePickupPlan(node,stored,readPlanningState(stored));
++      if(!pairedPickup&&!pairedTrigger&&(!pick?.fixed||pick.selectedActionId!==action.actionId)
+         &&(pair?.retainedActionIds?.length!==1||pair.retainedActionIds[0]!==action.actionId))return null;
+       // Production consumes the shown card and advances its real deck. Only
+       // the inherited public identity may enter the search after either refill.
+@@ -1834,13 +1837,14 @@
+         aliens:{...state.aliens,[species]:region?structuredClone(deck):{...deck,cardDeck:[...deck.cardDeck]}}};
+       let usedRandom=false;
+       const result=residualSession.resolveAlienCardSelection(next,head,action,()=>{usedRandom=true;return 0;});
+-      if(!result.ok||usedRandom||result.irreversible?.code!=="hidden_alien_card"
+-        ||result.events.length!==1||result.events[0].type!=="alien_card_gain")return null;
++      const takesCard=action.target.source!=="cancel";
++      if(!result.ok||usedRandom||(result.irreversible?.code==="hidden_alien_card")!==takesCard
++        ||(result.events?.length||0)!==Number(takesCard)||takesCard&&result.events[0].type!=="alien_card_gain")return null;
+       const augmented=residualSession.augmentEffectResult(next,result,head);
+-      if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
++      if(augmented.spawnedEffects.length||augmented.events.length!==Number(takesCard))return null;
+       const regionResult=region&&residualSession.previewQuietAmibaRegion(next,region);
+       if(region&&!regionResult)return null;
+-      const barrier={effectId:head.effectId,revision:s.revision+1,...result.irreversible};
++      const barrier=takesCard?{effectId:head.effectId,revision:s.revision+1,...result.irreversible}:s.irreversibleBarrier;
+       if(pairedTrigger){
+         const choices=localPlans.residualCardChoices(next,pending);
+         if(!choices.length)return null;
+@@ -1852,8 +1856,8 @@
+         const opened=residualSession.augmentEffectResult(next,offer.result,tail);
+         if(opened.spawnedEffects.length!==1||opened.events.length!==1)return null;
+         return prepareQuietTailMenu(stored,action,{state:next,barrier,spawned:opened.spawnedEffects,
+-          events:[...augmented.events,...regionResult.events,...opened.events],
+-          histories:[regionResult.history,...offer.result.history],
++          events:[...augmented.events,...(regionResult?.events||[]),...opened.events],
++          histories:[...(regionResult?[regionResult.history]:[]),...offer.result.history],
+           choices:scienceSession.formalizeChoices(next,seatId,offer.picks)});
+       }
+       if(trace){
+@@ -1976,6 +1980,46 @@
+       return choices.length===2?{state,events,spawned,choices,histories:[]}:null;
+     }
+
++    function previewPairedDataTrigger(node,stored,action,session){
++      const state=session.workingState,[head,tail]=session.queue,match=head.payload?.matches?.[0];
++      if(!resourcePlanning||node.status!=="decision"||stored.resourceControl||stored.intent
++        ||!pairedTracePickupScope(state,session)||session.queue.length<2||session.queue.length>3||session.phase!=="awaiting_input"||session.undoFrames.length
++        ||head.type!=="residual_card_decision"||head.kind!=="decision"||head.payload.kind!=="trigger"
++        ||head.payload.matches?.length!==1||head.payload.event?.type!=="alienTrace"||head.payload.event.traceType!=="yellow"
++        ||match?.ruleId!=="amiba0-yellow-data"||action.family!=="accept_optional_effect"||action.actorId!==seatId)return null;
++      const p=state.players.players.find(q=>q.id===seatId),known=knownCards(stored.envelope);
++      if(!p.mainActionCompleted||p.passCompletionPending||p.reservedCards.some(c=>!known.has(c.id)))return null;
++      const card=p.reservedCards.find(c=>c.id===match.cardInstanceId);
++      const printed=cardEffects.getCardModel(card)?.triggers?.find(t=>t.id===match.ruleId)?.effect;
++      if(card?.cardId!=="amiba_0.webp"||printed?.type!=="gain_data"||printed.options?.count!==1
++        ||(printed.options.repeat??1)!==1)return null;
++      const player={...p,resources:{...p.resources},reservedCards:copyForkData(p.reservedCards),dataState:copyForkData(p.dataState)};
++      const next={...state,meta:{...state.meta,sequences:{...state.meta.sequences}},
++        cards:{...state.cards,drawPileCardIds:[...state.cards.drawPileCardIds],removedFromGameCardIds:[...(state.cards.removedFromGameCardIds||[])]},
++        players:{...state.players,players:state.players.players.map(q=>q===p?player:q)}};
++      const settled=residualSession.resolveCardSettlement(next,head,action);
++      if(!settled.ok||settled.irreversible||settled.spawnedEffects?.length)return null;
++      const trigger=residualSession.augmentEffectResult(next,settled,head);
++      if(trigger.spawnedEffects.length||trigger.events.length!==1)return null;
++      if(session.queue.length===3){
++        const reward=tail.payload?.reward;
++        if(tail.type!=="probe_turn_reward"||tail.kind!=="effect"||reward?.type!=="alien_trace"
++          ||reward.options?.traceType!==null)return null;
++        const descriptor={type:scienceSession.EFFECT_TYPES.ALIEN_TRACE,kind:"decision",decisionKind:"choose_target",
++          ownerId:seatId,payload:{traceType:null,label:reward.label}};
++        const choices=scienceSession.alienTraceDecisionChoices(next,descriptor);
++        if(!choices.length)return null;
++        return prepareQuietTailMenu(stored,action,{state:next,drained:2,spawned:[{effect:descriptor}],
++          events:trigger.events,histories:[],choices});
++      }
++      const offer=quietFossilOffer(next,tail,session,known);
++      if(!offer)return null;
++      const opened=residualSession.augmentEffectResult(next,offer.result,tail);
++      if(opened.spawnedEffects.length!==1||opened.events.length!==1)return null;
++      return prepareQuietTailMenu(stored,action,{state:next,spawned:opened.spawnedEffects,events:[...trigger.events,...opened.events],
++        histories:offer.result.history,choices:scienceSession.formalizeChoices(next,seatId,offer.picks)});
++    }
++
+     function prepareQuietTailMenu(stored,action,preview){
+       const checkpoint=stored.envelope.session,s=checkpoint.session,[head,...tail]=s.queue,j=s.journal;
+       const pickup=tail.at(-1)||head,barrier=preview.barrier||s.irreversibleBarrier;
+@@ -1983,10 +2027,11 @@
+       const spawned=preview.spawned||[{effect:{...pickup,effectId:null,source:null,
+         type:"card_play_domain_effect:decision:chong_pickup_fossil",kind:"decision",decisionKind:"choose_target"}}];
+       const drained=preview.drained??s.queue.length;
+-      const queue=preview.drained?s.queue.slice(drained):effectSession.normalizeSpawnedEffects(spawned,scratch,pickup);
+-      const revision=s.revision+drained;
++      const region=preview.traceRegion&&effectSession.normalizeSpawnedEffects([{effect:preview.traceRegion}],scratch,head)[0];
++      const queue=preview.drained&&!preview.spawned?s.queue.slice(drained):[...effectSession.normalizeSpawnedEffects(spawned,scratch,preview.drained?tail[0]||pickup:pickup),...s.queue.slice(drained)];
++      const revision=s.revision+drained+Number(Boolean(region));
+       const decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+-      const effects=s.queue.slice(0,drained).map((e,i)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+1+i}));
++      const effects=(region?[head,region,...tail]:s.queue.slice(0,drained)).map((e,i)=>({effectId:e.effectId,groupId:e.groupId,groupKind:e.groupKind,type:e.type,revision:s.revision+1+i}));
+       const cursor=j.replay.length;
+       const session=freeze({...checkpoint,replayCursor:cursor+1,session:{...s,workingState:preview.state,queue,
+         nextEffectSequence:scratch.nextEffectSequence,nextGroupSequence:scratch.nextGroupSequence,revision,irreversibleBarrier:barrier,
+@@ -2165,6 +2210,12 @@
+       const pairedTrace=taskSession&&pairedTracePickupScope(taskSession.workingState,taskSession);
+       const cornerTail=previewQuietCardCornerTail(node,stored,requested);
+       if(cornerTail)return rememberPrefix(key,node,actionId,remember(key,finishProvedCommittedState(node,stored,requested,cornerTail)));
++      const pairedData=pairedTrace&&previewPairedDataTrigger(node,stored,requested,taskSession);
++      if(pairedData){
++        const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},{},null,null,
++          stored.informationBarrier,requested,stored,pairedData);
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
+       const landingTrace=previewQuietLandingTrace(node,stored,requested);
+       if(landingTrace){
+         const prepared=landingTrace.choices&&prepareQuietTailMenu(stored,requested,landingTrace);
+diff --git a/randomizer/game/effects/residual-domain-session.js b/randomizer/game/effects/residual-domain-session.js
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -1765,6 +1765,7 @@
+     if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
+     if(allowCard)return placed.cardEffect?{state,events:augmented.events,
+       spawnedEffects:[placed.cardEffect,...(placed.regionEffect?[placed.regionEffect]:[])].map(effect=>({effect}))}:null;
++    if(paired&&allowRegion&&!allowCard&&placed.regionEffect)return {state,player,events:augmented.events,regionEffect:placed.regionEffect};
+     if(placed.regionEffect&&!previewQuietAmibaRegion(state,placed.regionEffect))return null;
+     return {state,player,events:augmented.events,regionSettled:Boolean(placed.regionEffect)};
+   }
+@@ -1798,9 +1799,21 @@
+       ||pickup.type!=="card_play_domain_effect:effect:chong_pickup_fossil"||pickup.kind!=="effect"
+       ||pickup.ownerId!==head.ownerId||pickup.allowQuickActions||card?.type!==chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL
+       ||!paired&&!knownCards.has(cardInstanceId))return null;
+-    const trace=previewPlainPinkTrace(session,selected,knownCards,false,false,paired);
++    const trace=previewPlainPinkTrace(session,selected,knownCards,paired,false,paired);
+     if(!trace)return null;
+-    const {state,player,events}=trace;
++    const {state,player,events,regionEffect}=trace;
++    if(regionEffect){
++      const region=previewQuietAmibaRegion(state,regionEffect);
++      if(!region)return null;
++      const choices=science.formalizeChoices(state,player.id,chong.listPickupChoices(state,card,player));
++      if(!choices.length)return null;
++      const effect={effectId:card.id||null,effectType:card.type};
++      const event={type:"card_effect",...effect,playerId:player.id,awaitingDecision:true,legalChoiceCount:choices.length};
++      const augmented=augmentEffectResult(state,{ok:true,events:[event]},pickup);
++      if(augmented.spawnedEffects.length||augmented.events.length!==1)return null;
++      return {state,choices,traceRegion:regionEffect,events:[...events,...region.events,...augmented.events],
++        histories:[region.history,{type:"card_effect",...effect,executorId:"card_play:executor:v1"}]};
++    }
+     const choices=science.formalizeChoices(state,player.id,chong.listPickupChoices(state,card,player));
+     if(!choices.length)return null;
+     const effect={effectId:card.id||null,effectType:card.type};
+@@ -2674,7 +2687,7 @@
+     EFFECT_TYPES,
+     SPECIES_IDS,
+     queryCardSettlement: findCardSettlement,
+-    resolveAlienCardSelection,
++    resolveAlienCardSelection,resolveCardSettlement,
+     previewQuietAmibaRegion,
+     previewQuietEndHandoffs,
+     hasOnlyAomomoScanScoreBonus,

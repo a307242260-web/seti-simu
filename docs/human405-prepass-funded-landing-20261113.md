@@ -437,3 +437,11 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 固定同一个收入选择的公开展示线，在稍晚也实际取得虫族 3；这时有 1 钱、0 电，已在土星，卡牌是原生合法候选。2008 次的失败点由 **958 次外星痕迹、589 次外星选牌、424 次触发确认** 主导；固定同一收入后，已持牌的直接付款点仍为 **400 次**（178／120／68），两处均无相同完整信封与动作的重复。仅用原生菜单人工执行「虫族 3 → 结束移动 → 土卫六」三个输入，再交回 AI，得到 **117 分、8 科技、7 钱／4 电、化石 01 在途**，但空手空池；后续自主决策峰值 206 次／330 毫秒以内。该结果证明公开路线可达、超限集中在登陆后两枚痕迹的组合处理，不能把人工前缀计作通过门槛的自主决定。
 
 [扫描与分析](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-scan-analysis-causality-20261113-v1.json.gz) · [扫描与研究](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-scan-research-causality-20261113-v1.json.gz) · [同付款配对](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pickup-payment-control-20261113-v1.json.gz) · [盲抽时机](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pickup-blind-cost-control-20261113-v1.json.gz) · [暗牌对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-blind-deck-isolation-20261113-v1.json.gz) · [公开登陆证据](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-known-pickup-feasibility-20261113-v1.json.gz) · [2008 次统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pink-budget-profile-20261113-v1.json.gz) · [400 次统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pink-direct-pay-profile-20261113-v1.json.gz)。六份原生轨迹共 31 条、1014 个输入已独立重放。本次不改变生产策略、V2 正式记录或 V41 基线。
+
+## 土卫六结算预览：直接付款通过，筹资压力点未通过
+
+隔离候选只在既有的第三轮双痕迹、随后拾取化石的场景复用原生规则：展示／盲抽／取消照旧比较；区域奖励照原顺序执行；阿米巴 0 的领取和跳过均保留。外星新牌、补位及化石身份仍由现有信息边界遮蔽。预览使用原生规则函数，遇到额外触发、需用 RNG 或不支持的队列则回落到实际提交。未新增方向搜索、估值或候选删除。
+
+直接付款冷根 **400→254 次**，首选仍是虫族 3，约 335–355 毫秒。从这个存档开始，白席连续 34 个原生输入完全自主走到第三轮 PASS 前，与此前人工固定登陆的原生终点完全一致：117 分、8 科技、永久 7 钱／4 电、化石 01 在途，空手空池。隔离验证对两个根共 291 个预览输入，逐一比对实际规则状态、RNG、下一菜单与会话日志；仅忽略 AI 不会调用的撤销快照。筹资压力根 **2008→1935 次**，仍超预算，没有提交该决定。此候选尚未进入生产，未运行新整局或改实验中心基线。
+
+[候选补丁](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-tail-candidate-20261113-v1.patch) · [直接付款自主轨迹](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-autonomous-20261113-v1.json.gz) · [直接付款对照统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-exact-check-20261113-v5.json.gz) · [筹资压力对照统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-exact-stress-20261113-v1.json.gz)。
