@@ -1,0 +1,18 @@
+{
+  "source": "1ae6c8637",
+  "record": "reports/research/031a0313.1ae6c863.quick-400.json",
+  "control": "92b476c7e",
+  "inputs": 261,
+  "decisions": 213,
+  "rounds": [
+    15,
+    48,
+    118
+  ],
+  "peak": [
+    256,
+    220.56400000000008
+  ],
+  "ms": 10710,
+  "exactActionsGraphsAndState": true
+}

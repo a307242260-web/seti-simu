@@ -1,0 +1,20 @@
+{
+  "source": "1ae6c8637",
+  "record": "b414efb6.1ae6c863.full.json",
+  "step": 156,
+  "acceptedPreviousStep": 576.5605420000011,
+  "currentRound": [
+    20,
+    29,
+    44
+  ],
+  "actionId": "place_data:8fd12fd3",
+  "value": 117,
+  "complete": true,
+  "nativeInputs": 445,
+  "ms": 669.919458999997,
+  "graphNodes": 1128,
+  "resourcePreparationSteps": 1261,
+  "decisionAdmitted": false,
+  "failedDecisionCommitted": false
+}

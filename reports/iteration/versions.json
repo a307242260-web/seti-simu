@@ -7,6 +7,28 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-state-buckets-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-state-buckets-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-ready-computer-return-20261113",
+      "head": "1ae6c8637",
+      "commits": [
+        "9410bbaee",
+        "c7547d0b9",
+        "5de10b3cf",
+        "bdd12ee8c",
+        "1ae6c8637"
+      ],
+      "summary": "状态分组减少完整身份构建，标准前三轮回归",
+      "records": {
+        "031a0313.1ae6c863.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "free-analyze-current-20261113-14",
       "aiGeneration": "v2",
       "agentType": "search",
