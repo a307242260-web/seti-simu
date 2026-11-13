@@ -424,6 +424,16 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 | 免电盘 9 | 89 | 111 |
 | 教学盘标准接续 | 272 | 272（原生动作不变） |
 
-四盘候选最高 229 次／233 毫秒以内；教学盘接续峰值 107 次／531 毫秒以内。教师共同起点第三轮三个发射反事实分别到 84／85／87 分，永久电仅 2／3／2，均未保住教师的收入及库存；不把第四轮的收益外推成第三轮提前发射规则。[教师与同环绕反事实](../reports/ai-foundation-20261113/prepass-funded-landing/r3-r4-launch-initiative-20261113-v1.json.gz) · [四盘自主对照](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-fourboard-earth-20261113-v1.json.gz) · [教学盘接续](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-standard-earth-resume-20261113-v1.json.gz)。三份原生证据独立复放共 511 输入。估值输入审计通过；`probe-travel-tail` 的紧预算断言在原代码亦失败。
+四盘候选最高 229 次／233 毫秒以内；教学盘接续峰值 107 次／531 毫秒以内。教师共同起点第三轮三个发射反事实分别到 84／85／87 分，永久电仅 2／3／2，均未保住教师的收入及库存；不把第四轮的收益外推成第三轮提前发射规则。[教师与同环绕反事实](../reports/ai-foundation-20261113/prepass-funded-landing/r3-r4-launch-initiative-20261113-v1.json.gz) · [四盘自主对照](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-fourboard-earth-20261113-v1.json.gz) · [教学盘接续](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-standard-earth-resume-20261113-v1.json.gz)。三份原生证据独立复放共 544 输入。估值输入审计通过；`probe-travel-tail` 的紧预算断言在原代码亦失败。
 
 源码 `fef545ca0` 的唯一正式前三轮复验为 **15／48／118**，261 个输入、213 次白席决策，峰值 256 次／236 毫秒；原生动作、三个轮末信封、首选报价和原生输入次数均与上一登记版一致。登记 V2 实验中心，保留正式 272 与 V41。[前三轮复验](../reports/ai-foundation-20261113/prepass-funded-landing/r4-orbit-income-first3-parity-20261113-v1.json)。
+
+## 教师扫描、盲抽与土卫六：隔离能主动做出的选择
+
+沿用教师第三轮合法轨迹的实际输入位置，不改前两轮。索引 73 只改回教师的 DLC24，第三轮仍是 104 分、6 科技、永久 6 钱／4 电，留一张牌，无池和探测器；只改回教师的紫 4 向外移动，保住一架普通探测器，但轮末降到 95 分。索引 77 只固定填格与分析，或在索引 84 改给第二物种蓝痕，仍没有手牌与池库存。索引 104 单独固定橙 4，达到 103 分、6 科技、永久 6 钱／4 电和 2 张牌，但无探测器、无池；再固定下一次扫描到粉痕菜单，随即交回 AI，则为 105 分、7 科技、永久 7 钱／4 电，只有 1 牌和普通探测器。这些不等同于教师 105 分、6 科技、永久 7 钱／4 电、3 牌、3 池和在途化石。
+
+索引 113 的菜单只有展示虫族 9、盲抽和取消，报价分别 **159／153.5／158**。教师历史盲抽得到虫族 3；只固定这一输入，AI 自主达到 **119 分、8 科技、永久 7 钱／4 电、2 牌、无池、化石 01 在途**，峰值 220 次／215 毫秒。它没有复现教师库存，也不能把当时未知的虫族 3 作为选择盲抽的已知收益。将原暗堆首张分别换成其余五张，展示牌、三个报价、合法菜单及源 RNG 保持；抽到 5 或 6 仍能运输，轮末都是 118 分、6 科技、7 钱／5 电、空手空池；抽到 1、4、8 的分支均在后续超过单点门槛，不能从完成分支估算盲抽期望。
+
+固定同一个收入选择的公开展示线，在稍晚也实际取得虫族 3；这时有 1 钱、0 电，已在土星，卡牌是原生合法候选。2008 次的失败点由 **958 次外星痕迹、589 次外星选牌、424 次触发确认** 主导；固定同一收入后，已持牌的直接付款点仍为 **400 次**（178／120／68），两处均无相同完整信封与动作的重复。仅用原生菜单人工执行「虫族 3 → 结束移动 → 土卫六」三个输入，再交回 AI，得到 **117 分、8 科技、7 钱／4 电、化石 01 在途**，但空手空池；后续自主决策峰值 206 次／330 毫秒以内。该结果证明公开路线可达、超限集中在登陆后两枚痕迹的组合处理，不能把人工前缀计作通过门槛的自主决定。
+
+[扫描与分析](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-scan-analysis-causality-20261113-v1.json.gz) · [扫描与研究](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-scan-research-causality-20261113-v1.json.gz) · [同付款配对](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pickup-payment-control-20261113-v1.json.gz) · [盲抽时机](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pickup-blind-cost-control-20261113-v1.json.gz) · [暗牌对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-blind-deck-isolation-20261113-v1.json.gz) · [公开登陆证据](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-known-pickup-feasibility-20261113-v1.json.gz) · [2008 次统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pink-budget-profile-20261113-v1.json.gz) · [400 次统计](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-pink-direct-pay-profile-20261113-v1.json.gz)。六份原生轨迹共 31 条、1014 个输入已独立重放。本次不改变生产策略、V2 正式记录或 V41 基线。
