@@ -1,0 +1,159 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -5439,6 +5439,92 @@
+     // Compare two closed current-turn lines with the same bounded public scan.
+     // This conditional quote holds the board fixed across the handover; it
+     // consumes no unknown identity and is never a bound on an opponent's turn.
++    function quoteRepeatCornerScans(leaf, evaluate, admit, paymentRoot=openedRoot) {
++      const root=nodes.get(openedRoot),session=nodes.get(paymentRoot)?.envelope.session?.session,head=session?.queue?.[0];
++      const tail=leaf?.planSummary,stored=tail&&nodes.get(turnTailBase(leaf));
++      if(!stored||stored.informationBarrier||!tail.publicAmibaCurrencyTail||tail.kind!=="blue-end-turn"
++        ||tail.dataPlans?.length!==1||tail.markedTiles.length>1||paymentRoot.legalActions.length!==2
++        ||head?.payload?.cardEffect?.type!=="card_discard_card_corner_repeat"||head.payload.cardEffect.options.cornerRepeat!==3)return null;
++      const s0=readIdentityState(stored.envelope),p=s=>s.players.players.find(p=>p.id===seatId),t0=s0.turn,cost=scanEffects.getStandardScanCost(p(s0));
++      const plan=tail.dataPlans[0],slots=data.listComputerPlacedTokens(p(s0)).map(x=>x.placementSlot);
++      if(t0.roundNumber!==3||t0.currentPlayerId!==seatId||!t0.activePlayerIds.every(id=>id===seatId||t0.passedPlayerIds.includes(id))
++        ||cost.credits!==1||cost.energy!==2||p(s0).resources.credits!==1||p(s0).resources.energy!==3
++        ||p(s0).hand.length||p(s0).resources.availableData!==1||slots.join(",")!=="1,2,3,4"
++        ||plan.computerPlacements||plan.dataCornerId||plan.incomeCardId
++        ||data.getBlueBonusPlacementReward(p(s0),plan.blueSlot)?.type!=="energy")return null;
++      const types=scanEffects.EFFECT_TYPES;
++      if(scanEffects.buildScanEffectQueue(p(s0),{turn:t0}).map(e=>e.type).join(",")!==
++        [types.EARTH_SECTOR_SCAN,types.PUBLIC_CARD_SCAN,types.SCAN_ACTION_4,types.MERCURY_SECTOR_SCAN].join(","))return null;
++      const comp=fork.composition||fork,previous=loadedEnvelope||root.envelope,start=submissionCount;
++      let envelope=stored.envelope;
++      const state=()=>readIdentityState(envelope),rng=s=>quietSavedMeta(s.meta).rngState;
++      const reveals=s=>Object.values(s.aliens.aliens).map(a=>a.revealed?a.alienId:null);
++      const menu=()=>{restoreEnvelope(envelope,true);return legalActions(comp)||[];};
++      const knownDisplay=rootObservation.publicState.board.aliens.amibaTraces?.displayedCardIndex;
++      const used=[];
++      function input(f,test=()=>true){
++        if(submissionCount-start>=28||!admit(submissionCount-start,submissionCount))return false;
++        const a=menu().find(x=>x.actorId===seatId&&x.family===f&&test(x));
++        if(!a||a.target?.source==="blind"||a.target?.cardInstanceId&&!knownCards(envelope).has(a.target.cardInstanceId))return false;
++        const old=envelope;restoreEnvelope(envelope,true);const {result}=executeCurrent(a);envelope=snapshot(comp);
++        inheritCardKnowledge(envelope,{envelope:old},a);
++        const barrier=result.irreversibleBarrier;
++        if(ruleComposition.isHiddenInformationBarrier(barrier)&&!["hidden_card_reveal","hidden_alien_card"].includes(barrier.code))return false;
++        used.push(a.actionId);
++        return exactClaimState(rng(state()),rng(s0))&&exactClaimState(reveals(state()),reveals(s0));
++      }
++      const next=offset=>!envelope.session&&state().turn.roundNumber===3&&state().turn.currentPlayerId===seatId
++        &&state().turn.turnNumber===t0.turnNumber+offset&&!p(state()).mainActionCompleted;
++      const blanks=id=>data.listNebulaTokens(state().data,id).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor);
++      const place=(target,blueSlot)=>input("place_data")&&input("choose_target",a=>a.target.target===target
++        &&(blueSlot==null||a.target.blueSlot===blueSlot));
++      function sweep(second,sector){
++        if(!input("scan"))return null;
++        const choices=menu(),target=choices[0]?.target?.nebulaId;
++        if(choices.length!==1||!target||target===data.AOMOMO_NEBULA_ID||second&&target!==sector)return null;
++        const slots=data.listNebulaTokens(state().data,target);
++        if(blanks(target).length!==(second?1:3)||slots.filter(x=>x.replacedByPlayerId===seatId).length<=slots.length/2-1
++          ||!input("choose_target",a=>a.target.nebulaId===target))return null;
++        const offers=menu().filter(a=>knownRootCardIds.has(a.target?.cardInstanceId)
++          &&(second?a.target.nebulaId!==target&&blanks(a.target.nebulaId).length>=2:a.target.nebulaId===target));
++        const offer=offers.sort((a,b)=>String(a.target.cardInstanceId).localeCompare(String(b.target.cardInstanceId))
++          ||a.target.nebulaId.localeCompare(b.target.nebulaId))[0];
++        if(!offer||!input("choose_card",a=>a.actionId===offer.actionId)||!input("choose_card",a=>a.target.done===true))return null;
++        const ss=envelope.session?.session;
++        const move=goalMovement.plan({state:planningState(state(),{code:"hidden_card_reveal"},knownCards(envelope)),seatId,actions:menu(),status:"decision",session:ss,
++          routeCache:movementRouteCache,compareTiming:timingForOneGoalQuery(state()),
++          endpoints:()=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(state(),seatId)?.candidates||[]});
++        if(!input("choose_target",a=>a.actionId===move?.selectedActionId&&a.target.mode==="move"))return null;
++        const mercury=menu().filter(a=>a.target.nebulaId);
++        if(mercury.length!==1||mercury[0].target.nebulaId===target||blanks(mercury[0].target.nebulaId).length<2
++          ||!input("choose_target",a=>a.actionId===mercury[0].actionId))return null;
++        return target;
++      }
++      try{
++        restoreEnvelope(envelope);
++        if(!place("blueBonus",plan.blueSlot)||!input("end_turn"))return null;
++        if(envelope.session){
++          if(tail.markedTiles.length!==1||!input("choose_target",a=>a.target?.tileKey===tail.markedTiles[0]
++            ||a.target?.tileId===tail.markedTiles[0]||a.target?.finalTileKey===tail.markedTiles[0]))return null;
++        }
++        if(!next(1)||p(state()).resources.energy!==4)return null;
++        const sector=sweep(false);
++        if(!sector||envelope.session||blanks(sector).length!==1)return null;
++        const cash=data.listBluePlacementRequirements(p(state())).filter(x=>data.getBlueBonusPlacementReward(p(state()),x.blueSlot)?.type==="credits");
++        if(cash.length!==1||!place("blueBonus",cash[0].blueSlot)||!input("end_turn")||!next(2)||!sweep(true,sector))return null;
++        if(!input("choose_target",a=>a.target.speciesId==="amiba"&&a.target.traceType==="pink"&&a.target.position===4)
++          ||!input("choose_card",a=>a.target.choiceId===`amiba:display:${knownDisplay}`))return null;
++        if(envelope.session){
++          const choices=menu().filter(a=>a.family==="accept_optional_effect"&&a.target.ruleId&&knownRootCardIds.has(a.target.cardInstanceId));
++          if(choices.length!==1||!input("accept_optional_effect",a=>a.actionId===choices[0].actionId))return null;
++        }
++        if(envelope.session||!p(state()).hand.every(c=>knownCards(envelope).has(c.id))
++          ||data.listComputerPlacedTokens(p(state())).length+p(state()).resources.availableData<6)return null;
++        const value=evaluate(observeEnvelope(envelope,{code:"hidden_card_reveal"},true));
++        return {value,sector,inputs:used};
++      }finally{restoreEnvelope(previous);}
++    }
++
+     function quoteMatchedNextPublicScan(first, second, played, evaluate, admit) {
+       const root=nodes.get(openedRoot),initial=root&&readIdentityState(root.envelope),t=initial?.turn;
+       if(t?.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded
+@@ -10501,7 +10587,7 @@
+       return Boolean(stored.intent);
+     }
+ 
+-    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
++    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quoteRepeatCornerScans, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
+       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+   }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -1419,9 +1419,44 @@
+                 visibleValue:nodes[0].value,currentTurnValue:scanRoot.value,nativeInputs:continuationNativeInputs};
+             }
+             if(now()>=deadline)stopReason="watchdog";
++          }
++        }
++      }
++    }
++    let repeatCornerScan=null;
++    if(complete&&!stopReason&&!unresolved.length&&realizationTies&&resourcePlanning&&scanPlanning&&scanOrbitBudget
++      &&root.observation.publicState.roundNumber===3&&port.quoteRepeatCornerScans){
++      const before=port.getDiagnostics().submissionCount,deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline);
++      const admit=(inputs,total)=>now()<deadline-25&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions
++        &&nodes.length+certificateNodes+inputs<limits.nodes;
++      const candidates=root.status==="decision"?[{entry:nodes[0],prefix:null}]:nodes[0].edges.flatMap(prefix=>{
++        if(!root.legalActions.some(a=>a.actionId===prefix.actionId&&a.family==="play_card"))return [];
++        const entry=nodes[prefix.target];
++        return entry.node.status==="decision"?[{entry,prefix}]:[];
++      });
++      if(before+28<=scanOrbitBudget.nativeInputs&&admit(0,before)){
++        for(const {entry,prefix} of candidates){
++          if(entry.node.legalActions.length!==2||!entry.node.legalActions.every(a=>a.family==="choose_card"))continue;
++          for(const edge of entry.edges){
++            if(edge===entry.best)continue;
++            let e=nodes[edge.target];
++            while(e.best&&nodes[e.best.target].distance<e.distance)e=nodes[e.best.target];
++            if(e.node.status!=="turn-tail-value")continue;
++            const proof=port.quoteRepeatCornerScans(e.node,evaluate,admit,entry.node);
++            if(proof?.value>nodes[0].value&&now()<deadline){
++              repeatCornerScan={...proof,actionId:prefix?.actionId??edge.actionId,previousActionId:nodes[0].best.actionId,previousValue:nodes[0].value};
++              const select=(parent,child)=>{parent.best=child;parent.value=nodes[child.target].value;
++                parent.distance=nodes[child.target].distance+child.cost;
++                parent.realization=nodes[child.target].realization;parent.preparationDebt=nodes[child.target].preparationDebt;};
++              select(entry,edge);
++              if(prefix)select(nodes[0],prefix);
++              break;
++            }
+           }
++          if(repeatCornerScan)break;
+         }
+       }
++      const used=port.getDiagnostics().submissionCount-before;transitions+=used;continuationNativeInputs+=used;
+     }
+     let matchedNextPublicScan=null;
+     if(complete&&!stopReason&&!unresolved.length&&realizationTies&&resourcePlanning&&scanPlanning&&scanOrbitBudget
+@@ -1662,6 +1697,7 @@
+       ...(accepted&&shipment?{postScanEarthShipment:shipment}:{}),
+       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
+       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
++      ...(accepted&&repeatCornerScan?{repeatCornerScan}:{}),
+       ...(accepted&&matchedNextPublicScan?{matchedNextPublicScan}:{}),
+       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
+       ...(accepted&&publicScanCompletionChoice?{publicScanCompletionChoice}:{}),
