@@ -1050,3 +1050,114 @@ if(['cargo-early-data-ledger','cargo-early-data-supplier','cargo-public-reward',
     write({source,reference,groups});
   }finally{env.dispose();}
 }
+if(['cargo-opening-signals','cargo-opening-signal-handoff','cargo-opening-yellow'].includes(mode)){
+  const file='reports/ai-foundation-20261113/prepass-funded-landing/r3-cargo-early-release-and-blue-slot-20261113-v1.json.gz';
+  const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0],ref=g.rows.find(r=>JSON.stringify(r.name)==='[101,102]');
+  const official=JSON.parse(fs.readFileSync('reports/research/688e6730.fef545ca.quick-400.json'));
+  const saved=JSON.parse(fs.readFileSync(official.savePath));
+  const meta=scenario.describe({...config,flags:{scenario:scenario.FIRST_THREE_ROUNDS_ID}});
+  const env=scenario.createEnvironment({},meta);
+  const native=()=>env.createCheckpoint().coreState.compositionEnvelope;
+  const apply=(predicate,inputs)=>{
+    const a=env.legalActions().find(predicate);
+    assert(a,JSON.stringify(env.legalActions().map(x=>x.summary)));
+    assert(env.step(a).ok);inputs.push(a);return a;
+  };
+  const bySummary=n=>a=>a.summary===n;
+  const publicFacts=()=>{
+    const e=native(),s=e.session?.session?.workingState||JSON.parse(e.committedState);
+    const p=s.players.players.find(x=>x.id===white);
+    return {wallet:p.resources,income:p.income,hand:p.hand.map(c=>c.cardId),
+      market:s.cards.publicCards.map(c=>c?.cardId??null),computer:data.listComputerPlacedTokens(p).map(x=>x.placementSlot),
+      aliens:Object.entries(s.aliens.aliens).map(([slot,v])=>[slot,v.revealed,Boolean(v.traces?.pink?.firstPlaced)]),
+      wins:s.data.sectorSettlements.winsByPlayerId[white]};
+  };
+  try{
+    const setup=scenario.initialize(env,config,meta);
+    assert.equal(setup.length,23);
+    for(let i=setup.length;i<171;i++){
+      const old=saved.replaySteps[i].action;
+      const a=apply(a=>a.actionId===old.actionId,[]);
+      assert.deepEqual(JSON.parse(JSON.stringify(a)),old);
+    }
+    assert.deepEqual(native(),g.root);
+    const start=env.createCheckpoint(),groups=[];
+    if(mode==='cargo-opening-signal-handoff'||mode==='cargo-opening-yellow'){
+      const evidence=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4])));
+      for(const [i,g] of evidence.groups.entries()){
+        env.loadCheckpoint(start);
+        for(const old of g.prepare)apply(a=>a.actionId===old.actionId,[]);
+        assert.deepEqual(native(),g.root);
+        const checkpoint=env.createCheckpoint();
+        for(const row of g.rows.filter(r=>r.reveal&&r.name==='扫描 开普勒22 / 扫描 开普勒22')){
+          env.loadCheckpoint(checkpoint);
+          for(const old of row.inputs)apply(a=>a.actionId===old.actionId,[]);
+          assert.deepEqual(native(),row.end);
+          if(mode==='cargo-opening-yellow'){
+            const setup=[];
+            apply(a=>a.family==='end_turn',setup);
+            if(env.legalActions().some(bySummary('标记 B')))apply(bySummary('标记 B'),setup);
+            apply(a=>a.family==='play_card'&&a.summary==='amiba_3.webp',setup);
+            const before=env.createCheckpoint(), results=[];
+            for(const label of ['粉色痕迹 1号位','黄色痕迹 1号位']){
+              env.loadCheckpoint(before);
+              const prior=[];
+              apply(bySummary(label),prior);
+              apply(a=>a.family==='end_turn',prior);
+              const r=run(env,{prior,forced:label});
+              results.push(r);
+              const v=r.assets;
+              console.log(JSON.stringify({i,label,stop:r.stop,score:v.score,income:v.income,pool:v.resources.availableData,hand:v.hand,probes:v.probes,peak:r.peak}));
+            }
+            groups.push({name:g.name+' Kepler Amiba 3 symbol',root:before.coreState.compositionEnvelope,rows:results,setup});
+            continue;
+          }
+          const before=env.createCheckpoint(),results=[];
+          const close=env.legalActions().find(a=>a.family==='end_turn');
+          assert(close);
+          for(const forced of [false,true]){
+            env.loadCheckpoint(before);
+            const prior=[];
+            if(forced)apply(a=>a.actionId===close.actionId,prior);
+            const r=run(env,{prior,forced:forced?'end current turn before handoff':'immediate handoff'});
+            const v=r.assets;results.push(r);
+            console.log(JSON.stringify({i,forced,stop:r.stop,score:v.score,income:v.income,pool:v.resources.availableData,hand:v.hand,probes:v.probes,peak:r.peak}));
+          }
+          groups.push({name:g.name+' Kepler',root:before.coreState.compositionEnvelope,rows:results});
+        }
+      }
+      write({source,groups});
+    }else{
+      for(const prepared of [false,true]){
+        env.loadCheckpoint(start);
+        const prepare=[];
+        if(prepared)for(const old of ref.inputs.slice(0,7))apply(a=>a.actionId===old.actionId,prepare);
+        const root=native(),beforeCard=env.createCheckpoint();
+        apply(bySummary('dlc_19.png'),[]);
+        const first=env.legalActions().map(a=>a.summary);
+        const rows=[];
+        for(const a of first){
+          env.loadCheckpoint(beforeCard);
+          apply(bySummary('dlc_19.png'),[]);apply(bySummary(a),[]);
+          const second=env.legalActions().map(a=>a.summary);
+          for(const b of second){
+            env.loadCheckpoint(beforeCard);
+            const inputs=[];
+            for(const label of ['dlc_19.png',a,b])apply(bySummary(label),inputs);
+            const menu=env.legalActions(),reveal=menu.find(x=>x.summary==='外星人 2 粉色痕迹');
+            if(reveal){
+              apply(x=>x.actionId===reveal.actionId,inputs);
+              const pending=env.legalActions().find(x=>x.family==='accept_optional_effect'&&x.summary==='结算 amiba_0.webp');
+              if(pending)apply(x=>x.actionId===pending.actionId,inputs);
+            }
+            const facts=publicFacts();
+            rows.push({name:a+' / '+b,inputs,checkpoints:[],end:native(),score:null,facts,reveal:!!reveal});
+          }
+        }
+        groups.push({name:prepared?'prepared full computer':'standard first decision',root,rows,prepare});
+        console.log(JSON.stringify({prepared,total:rows.length,reachable:rows.filter(r=>r.reveal).map(r=>[r.name,r.facts])}));
+      }
+      write({source,groups});
+    }
+  }finally{env.dispose();}
+}
