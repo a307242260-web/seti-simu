@@ -455,3 +455,21 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 从同一化石拾取后存档看，白席本有 **108 分、6 科技、7 钱／4 电、5 张牌和 2 池**；继续自主两次科研及后续换资才耗尽库存。立即结束回合并固定 PASS，保留五牌两池；先将两池变成一电脑格、一蓝槽和 1 电再固定 PASS，为 110 分且同样保留五牌。两条留存路线分别固定同一张 B111／B32，第四轮均自主到 **237 分**。继续研发的两个对照都在第四轮首个移动决定超限（379／380 次），没有可比较的终局成绩。不能从 237 推断「留存胜过继续」，也没有理由在第三轮强制 PASS；教师第三轮的三池及两蓝槽仍未对齐。
 
 [同菜单两种付款](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-funding-earlier-20261113-v1.json.gz) · [隔离候选自主轨迹](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-funded-auto-20261113-v1.json.gz) · [留存对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-stock-terminal-20261113-v1.json.gz) · [先填格再留存](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-stock-mid-terminal-20261113-v1.json.gz)。[收入候选补丁](../reports/ai-foundation-20261113/prepass-funded-landing/r3-teacher-paired-income-funding-candidate-20261113-v1.patch)建立在上一节的确定结算候选上。两次对照均遵循单点门槛；六份原生证据已独立复放。
+
+## 正式开局能否进入公开运输，以及末次分析的取舍
+
+从正式 23 输入开局复放已登记的 261 个输入，第三轮 123 个白席输入逐项核对。正式第 136 步前，第二物种已有蓝、黄首痕，缺粉；直到第三轮 PASS 前没有改变。三个收入菜单（168／203／256）均没有公开虫族展示牌，原生回放与旧正式终点相同，隔离的运输收入候选在这些菜单均未改变动作。教师路径则在原生第 95 个输入前已揭示虫族。故正式线的缺口在公开前提，不在第四格的付款选择。
+
+第 214 步是本轮可改投第二物种的一个粉痕入口。七个未揭示身份的旧配对用同一原生根和同一留牌 B111，复放 1666 个输入，14 个终局信封一致；只重新检查一次每个冷根，没有重跑整批。当前隔离候选在七种隐藏身份下的根观察、合法菜单、RNG、报价与 14 次原生输入一致：已有阿米巴牌的粉痕报 168，未知物种报 164.5。旧配对中，改揭示的终局七组均低 11–39 分；虫族组为 239→207，第三轮虽有 127 分和一枚化石，但永久电从 4 降为 3。该组是受控旧续局，并非正式 272 的复验。证据不支持为进入运输路线而在这里优先揭示，也不推断所有揭示时机都应回避。
+
+从正式第 242 步（最后一次分析前）补同源、同留牌终局对照：
+
+| 第三轮收尾 | 第三轮资产 | 留 B111 | 留 B32 |
+| --- | --- | ---: | ---: |
+| 原分析、填格插电、向外定位 | 118 分，6 科技，7 钱／4 电，4 电脑格，空手空池 | 272 | 249 |
+| 暂缓分析直接 PASS | 109 分，6 科技，7 钱／3 电，3 手、6 电脑格、3 蓝槽 | 274 | 248 |
+| 先分析，保留 2–4 张牌和 1–3 池 | 113–114 分，6 科技，7 钱／3 电 | 首个决定超限 | 首个决定超限 |
+
+延后分析的两条第四轮都先登陆土星，用已持牌支付移动，随后才分析；与原线相比，收益方向随留牌变化。提前分析再留牌的六条续局，在首步达 288–363 次／1.49–1.85 秒，均未提交。不能因为其中一条 274 就替换正式 272，也不能给第三轮统一延后分析加分。若继续比较库存，优先修复实际有 1–3 池的第四轮首点，补齐同留牌结果；不再扩大本轮未知物种揭示范围。
+
+[正式与教师公开前提](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-public-transport-reachability-20261113-v1.json.gz) · [七种揭示配对](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-transport-reveal-audit-20261113-v1.json.gz) · [原路线同留牌](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-baseline-20261113-v1.json.gz) · [末次分析对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-stock-20261113-v1.json.gz) · [保留池数据门槛](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-partial-20261113-v1.json.gz)。四份带原生动作的对照用同一复放脚本验证；生产策略、正式记录与 V41 不变。
