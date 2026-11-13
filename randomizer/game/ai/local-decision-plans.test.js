@@ -277,6 +277,41 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  }finally{port.close();c.dispose();}
 }
 
+// Two already closed turns get the same bounded scan comparison. Swapping
+// hidden refill cards cannot affect the winning current-turn plan.
+{
+ const envelope=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'matched-next-public-scan-20261113-v1.fixture.json.gz'))));
+ const seed=JSON.parse(envelope.committedState).meta.seed,seatId='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+ k.newGame({seed});const c=k.composition;
+ const altered=JSON.parse(envelope.committedState);
+ altered.cards.drawPileCardIds.reverse();
+ let previous;
+ try{
+  for(const e of [envelope,{...envelope,committedState:JSON.stringify(altered)}]){
+   assert(c.lifecycle.restore(e).ok);
+   const before=c.lifecycle.save().envelope,menu=actions(c);
+   const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+   const bot=agent.createSearchAgent({seatId,analysisPort:port});
+   const q=bot.decide({seatId,legalActions:menu}).search;
+   assert.equal(menu.find(a=>a.actionId===q.actionId).family,'card_corner');
+   assert.equal(q.matchedNextPublicScan.challenger,102);
+   assert(q.matchedNextPublicScan.incumbent<q.matchedNextPublicScan.challenger);
+   assert(q.complete&&q.diagnostics.nativeExecutions<=256&&q.matchedNextPublicScan.nativeInputs<=28);
+   if(previous)assert.deepEqual(q.matchedNextPublicScan,previous);
+   previous=q.matchedNextPublicScan;
+   assert.deepEqual(c.lifecycle.save().envelope,before);
+   const checkpoint=bot.createCheckpoint();
+   assert(checkpoint);
+   submit(c,q.actionId);
+   const cold=agent.createSearchAgent({seatId,analysisPort:createAnalysisPort({composition:c,seatId,maxCacheEntries:0})});
+   cold.loadCheckpoint(checkpoint);
+   assert.equal(actions(c).find(a=>a.actionId===cold.decide({seatId,legalActions:actions(c)}).actionId).family,'place_data');
+  }
+ }finally{c.dispose();}
+}
+
 // The last-round satellite setup is one funded plan. It preserves the paid
 // landing card, reaches the native end-of-turn boundary, and keeps the refill hidden.
 {

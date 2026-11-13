@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v459";
+  const VERSION = "seti-complete-decision-search-v460";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1393,6 +1393,41 @@
         }
       }
     }
+    let matchedNextPublicScan=null;
+    if(complete&&!stopReason&&!unresolved.length&&realizationTies&&resourcePlanning&&scanPlanning&&scanOrbitBudget
+      &&!shipment&&!blueLaunchContinuation&&!retainRegionCard&&!scanBeforeOrbit
+      &&root.status==="stable"&&root.observation.publicState.roundNumber===4
+      &&stateValue?.isDefaultStateValueEvaluator?.(evaluate)&&port.quoteMatchedNextPublicScan){
+      const winner=nodes[0].best,playing=root.legalActions.find(a=>a.actionId===winner?.actionId&&a.family==="play_card");
+      const analyzing=playing&&nodes[0].edges.find(e=>e.resourcePlan?.goal.kind==="analyze"&&e.goalStatus==="completed"
+        &&Number.isFinite(nodes[e.target].value)&&nodes[0].value-nodes[e.target].value<=1
+        &&e.actionId!==winner.actionId);
+      const boundary=edge=>{
+        let entry=nodes[edge.target];
+        while(entry.best&&nodes[entry.best.target].distance<entry.distance)entry=nodes[entry.best.target];
+        return entry.node.status==="turn-boundary"||entry.node.status==="other-owner"?entry.node:null;
+      };
+      if(analyzing){
+        const first=boundary(analyzing),second=boundary(winner);
+        const deadline=Math.min(startedAt+limits.milliseconds,scanOrbitBudget.deadline),before=port.getDiagnostics().submissionCount;
+        const admit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs
+          &&transitions+inputs<limits.transitions&&nodes.length+certificateNodes+inputs<limits.nodes;
+        if(first&&second&&before+28<=scanOrbitBudget.nativeInputs&&admit(0,before)){
+          const quote=port.quoteMatchedNextPublicScan(first,second,playing,evaluate,admit);
+          const used=port.getDiagnostics().submissionCount-before;
+          transitions+=used;continuationNativeInputs+=used;
+          if(quote&&quote.challenger>quote.incumbent&&quote.challenger>nodes[0].value&&now()<deadline){
+            nodes[0].best=analyzing;
+            nodes[0].distance=nodes[analyzing.target].distance+analyzing.cost;
+            nodes[0].value=nodes[analyzing.target].value;
+            nodes[0].realization=nodes[analyzing.target].realization;
+            nodes[0].preparationDebt=nodes[analyzing.target].preparationDebt;
+            matchedNextPublicScan={...quote,scope:"conditional-no-intervening-board-change",actionId:analyzing.actionId,
+              previousActionId:winner.actionId,nativeInputs:used};
+          }
+        }
+      }
+    }
     // PASS gives up every remaining turn of this round. In round two,
     // compare that opportunity only after the current-turn search closes.
     // This is a policy preference, not a bound on future scan rewards.
@@ -1597,6 +1632,7 @@
       ...(accepted&&shipment?{postScanEarthShipment:shipment}:{}),
       ...(accepted&&retainRegionCard?{retainRegionCard}:{}),
       ...(accepted&&scanBeforePass?{scanBeforePass}:{}),
+      ...(accepted&&matchedNextPublicScan?{matchedNextPublicScan}:{}),
       ...(accepted&&fundedScanOverBareLaunch?{fundedScanOverBareLaunch}:{}),
       ...(accepted&&publicBluePairChoice?{publicBluePairChoice}:{}),
       ...(accepted&&heldScanSectorChoice?{heldScanSectorChoice}:{}),
