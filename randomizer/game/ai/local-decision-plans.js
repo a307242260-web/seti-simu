@@ -1720,12 +1720,15 @@
       :Object.values(state.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered))
     ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles).some(t=>t.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
   const card=p.reservedCards.find(c=>c.id===payload.cardInstanceId), model=card&&effects.getCardModel(card);
-  const supported={"b117-orbit-land-count-task":"credits","b60-jupiter-task":"publicity"}, currency=supported[payload.ruleId];
+  const publicityOnly=payload.ruleId==='dlc9-three-sector-wins';
+  const supported={"b117-orbit-land-count-task":"credits","b60-jupiter-task":"publicity",
+    "dlc9-three-sector-wins":"publicity"}, currency=supported[payload.ruleId];
   const task=model?.tasks?.length===1&&model.tasks[0], reward=task?.rewards?.length===1&&task.rewards[0];
   const gain=reward?.options?.gain;
   if(!currency||!card||card.hidden||model.cardType!==2||model.endGameScoring||model.triggers?.length||model.temporaryTasks?.length
     ||task?.id!==payload.ruleId||reward?.type!=='gain_resources'||(reward.options.repeat??1)!==1
-    ||!gain||Object.keys(gain).length!==2||!Number.isSafeInteger(gain.score)||gain.score<=0
+    ||!gain||Object.keys(gain).length!==(publicityOnly?1:2)
+    ||(!publicityOnly&&(!Number.isSafeInteger(gain.score)||gain.score<=0))
     ||!Number.isSafeInteger(gain[currency])||gain[currency]<=0
     ||p.resources[currency]+gain[currency]>(players.RESOURCE_LIMITS[currency]??Infinity))return null;
   const event={type:eventType,playerId:seatId,cardInstanceId:card.id,ruleId:task.id,
@@ -1737,6 +1740,9 @@
   if(session.queue.length!==2||session.interruptContext||session.irreversibleBarrier
     ||session.journal.actions[0]?.action?.family!=='end_turn'||advance?.type!=='probe_turn_advance'
     ||advance.ownerId!==seatId||advance.payload?.didPass!==false||actions.length!==2)return null;
+  // The publicity-only task is previewable, but keep both choices:
+  // claiming now and keeping it for later can have different value.
+  if(payload.ruleId==='dlc9-three-sector-wins')return null;
   const known=knownFinalPositiveTask({state,seatId,payload,knownCards,eventType:'card_rule_settled'});
   if(!known)return null;
   const {card,task,gain}=known;
@@ -1767,9 +1773,22 @@
   const head=session.queue[0],payload=head?.payload;
   if(head?.type!=='residual_card_decision'||head.ownerId!==seatId||payload?.kind!=='task'
     ||owner(state,seatId).reservedCards.some(c=>!knownCards.has(c.id)))return null;
-  const fixed=fixedFinalEndTask({state,seatId,actions,session,payload,knownCards});
-  if(fixed?.selectedActionId!==action.actionId)return null;
+  if(payload.ruleId==='dlc9-three-sector-wins'){
+   const advance=session.queue[1];
+   if(session.queue.length!==2||session.interruptContext||session.irreversibleBarrier
+     ||session.journal.actions[0]?.action?.family!=='end_turn'||advance?.type!=='probe_turn_advance'
+     ||advance.ownerId!==seatId||advance.payload?.didPass!==false||actions.length!==2
+     ||session.failure||session.undoFrames?.length)return null;
+  }else if(fixedFinalEndTask({state,seatId,actions,session,payload,knownCards})?.selectedActionId!==action.actionId)return null;
   const known=knownFinalPositiveTask({state,seatId,payload,knownCards,eventType:'card_rule_settled'});
+  if(!known)return null;
+  if(payload.ruleId==='dlc9-three-sector-wins'){
+   const id=`task:${known.card.id}:${known.task.id}`;
+   if(!actions.some(a=>a.target?.choiceId===`confirm:${id}`)||!actions.some(a=>a.target?.choiceId===`skip:${id}`))return null;
+   if(action.target?.choiceId===`skip:${id}`)
+    return previewForeignTurnAfterQuietHandoffs(state,seatId,session.baseVersion+1,known.sameSeat);
+   if(action.target?.choiceId!==`confirm:${id}`)return null;
+  }
   const next=previewKnownPositiveTaskSettlement(state,seatId,known,session.baseVersion+1);
   if(!next)return null;
   return next&&previewForeignTurnAfterQuietHandoffs(next,seatId,session.baseVersion+1,known.sameSeat);
