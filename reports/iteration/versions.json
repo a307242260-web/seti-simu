@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-staged-landing-full-exact-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "第三轮提前定位｜精确结算后整局验收（超时）",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-prepass-funded-landing-20261113",
+      "baselineEligible": false,
+      "head": "270b8664b",
+      "commits": [
+        "270b8664b"
+      ],
+      "summary": "同一第四轮首点原生166→87次、711.8→633.2毫秒，动作未提交。",
+      "records": {
+        "bb7edc89.270b8664.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-staged-landing-full-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
