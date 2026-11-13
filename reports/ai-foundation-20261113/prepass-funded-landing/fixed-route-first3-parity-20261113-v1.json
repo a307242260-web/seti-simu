@@ -1,0 +1,181 @@
+{
+  "record": "reports/research/4bb5b62d.0d2f087a.quick-400.json",
+  "previous": "reports/research/4a3f696b.276aec42.quick-400.json",
+  "steps": 261,
+  "decisions": 213,
+  "wallMs": 10557,
+  "peak": [
+    256,
+    218.3984999999999
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "score": 15,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "checkpointPath": "reports/research/4bb5b62d.0d2f087a.quick-400.json.round-end-1.checkpoint.json"
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "blue3": true,
+          "purple4": true
+        }
+      },
+      "checkpointPath": "reports/research/4bb5b62d.0d2f087a.quick-400.json.round-end-2.checkpoint.json"
+    },
+    {
+      "round": 3,
+      "score": 118,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "checkpointPath": "reports/research/4bb5b62d.0d2f087a.quick-400.json.round-end-3.checkpoint.json"
+    }
+  ],
+  "actionsValuesNativeAndEnvelopesEqual": true,
+  "recordSha256": "85b58b565a55b2c2ec73e1b245700c244d61b3e9c31ca9c1751a651a59130f6b",
+  "round4CheckpointReplay": {
+    "record": "reports/research/0b3710e9.898b2c72.full.json",
+    "score": 272,
+    "all300ActionsAndValuesEqual": true,
+    "peak": [
+      256,
+      419.20395799999915
+    ],
+    "differences": [
+      {
+        "step": 264,
+        "new": [
+          "移动探测器 6 逆时针",
+          203.5,
+          85
+        ],
+        "old": [
+          "移动探测器 6 逆时针",
+          203.5,
+          87
+        ]
+      },
+      {
+        "step": 282,
+        "new": [
+          "b_60.webp",
+          211,
+          31
+        ],
+        "old": [
+          "b_60.webp",
+          211,
+          41
+        ]
+      },
+      {
+        "step": 295,
+        "new": [
+          "放置数据",
+          224,
+          25
+        ],
+        "old": [
+          "放置数据",
+          224,
+          28
+        ]
+      },
+      {
+        "step": 311,
+        "new": [
+          "扫描",
+          239.5,
+          23
+        ],
+        "old": [
+          "扫描",
+          239.5,
+          26
+        ]
+      },
+      {
+        "step": 321,
+        "new": [
+          "研究科技",
+          245.5,
+          82
+        ],
+        "old": [
+          "研究科技",
+          245.5,
+          92
+        ]
+      },
+      {
+        "step": 324,
+        "new": [
+          "2信用点 → 1能量",
+          261,
+          107
+        ],
+        "old": [
+          "2信用点 → 1能量",
+          261,
+          102
+        ]
+      }
+    ]
+  }
+}
