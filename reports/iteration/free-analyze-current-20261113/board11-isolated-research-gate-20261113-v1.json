@@ -1,0 +1,91 @@
+{
+  "base": "ff70c4fd6",
+  "decision": 156,
+  "attempts": [
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 596.276458,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": true,
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 598.9259999999999,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": false,
+      "reason": "WHITE_ONLY_DECISION_GATE_EXCEEDED",
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 602.53675,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": false,
+      "reason": "WHITE_ONLY_DECISION_GATE_EXCEEDED",
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 602.218958,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    },
+    {
+      "admitted": false,
+      "reason": "WHITE_ONLY_DECISION_GATE_EXCEEDED",
+      "differences": [],
+      "saved": {
+        "n": 445,
+        "ms": 669.919458999997
+      },
+      "cold": {
+        "n": 247,
+        "ms": 601.98175,
+        "value": 117,
+        "identities": 412,
+        "bucketCollisions": 422
+      },
+      "step": 156
+    }
+  ],
+  "medianMs": 601.98175,
+  "admitted": 2
+}

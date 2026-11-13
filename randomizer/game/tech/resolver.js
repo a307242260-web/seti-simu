@@ -383,14 +383,16 @@
     };
   }
 
-  function executeTakeTech(context, options = {}) {
+  function executeTakeTech(context, options = {}, { isolatedPreview = false } = {}) {
     const currentPlayerBefore = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
-    const snapshots = {
+    // The isolated caller owns and discards the entire preview on failure.
+    const snapshots = isolatedPreview ? null : {
       player: currentPlayerBefore ? structuredClone(currentPlayerBefore) : null,
       board: context.tech ? structuredClone(context.tech) : null,
       solarSystem: context.solarSystem ? structuredClone(context.solarSystem) : null,
     };
     function restoreSnapshots() {
+      if (!snapshots) return;
       const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
       if (currentPlayer && snapshots.player) {
         for (const key of Object.keys(currentPlayer)) delete currentPlayer[key];

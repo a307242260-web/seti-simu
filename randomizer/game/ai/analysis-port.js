@@ -1703,7 +1703,8 @@
         ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id))))return null;
       // Rotation and research can write several rule slices. Give the same
       // Production resolver an isolated copy; only deterministic exits qualify.
-      const next=scanTail?copyForkData(state):structuredClone(state),result=scienceSession.resolveResearchSelection(next,head,action);
+      const next=copyForkData(state);
+      const result=scienceSession.resolveResearchSelection(next,head,action,{isolatedPreview:true});
       if(!result.ok||result.events.length!==1||result.events[0].type!=="researchTech"
         ||JSON.stringify(next.meta.rngState)!==JSON.stringify(state.meta.rngState)
         ||localPlans.hasPendingFossilArrival(next))return null;

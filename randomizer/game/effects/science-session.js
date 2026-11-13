@@ -126,7 +126,7 @@
     return (playersState.players || []).find((player) => player.id === resolvedId) || null;
   }
 
-  function createActionContext(root, actorId) {
+  function createActionContext(root, actorId, { captureRotationSnapshots = true } = {}) {
     const playersState = getWorkingSlice(root, "players");
     const solarSystemState = getWorkingSlice(root, "solarSystem");
     const context = {
@@ -162,6 +162,7 @@
         context,
         before,
         solarSystemState.rotation,
+        { captureSnapshots: captureRotationSnapshots },
       );
     };
     // 统一抽牌上下文：drawBasicCardToPlayer 共用 cards.createCardDrawContext
@@ -374,12 +375,12 @@
     events.push({ type: "industry_helios_passive_reward", playerId: actor.id, slotId });
   }
 
-  function executeResearchChoice(root, actorId, choice, options = {}) {
+  function executeResearchChoice(root, actorId, choice, options = {}, isolatedPreview = false) {
     const actor = getActor(root, actorId);
     const legal = listResearchChoices(root, actorId, options)
       .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
     if (!actor || !legal) return fail("SCIENCE_TECH_CHOICE_STALE", "科技选择已失效");
-    const context = createActionContext(root, actor.id);
+    const context = createActionContext(root, actor.id, { captureRotationSnapshots: !isolatedPreview });
     const takeOptions = {
       tileId: legal.target.tileId,
       blueSlot: legal.target.blueSlot,
@@ -420,7 +421,7 @@
         }
       }
     } else {
-      result = tech.resolver.executeTakeTech(context, takeOptions);
+      result = tech.resolver.executeTakeTech(context, takeOptions, { isolatedPreview });
     }
     if (!result?.ok) return result;
     const events = [{
@@ -1035,12 +1036,13 @@
     };
   }
 
-  function resolveResearchSelection(root, effect, choice) {
+  function resolveResearchSelection(root, effect, choice, { isolatedPreview = false } = {}) {
     const result = executeResearchChoice(
       root,
       effect.ownerId,
       choice,
       effect.payload?.options || {},
+      isolatedPreview,
     );
     if (!result.ok) return result;
     const actor = getActor(root, effect.ownerId);
