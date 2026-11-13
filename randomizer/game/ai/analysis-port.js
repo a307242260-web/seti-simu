@@ -4700,11 +4700,88 @@
         excludedDirectionCount:directions.length,routingNodes:0});
     }
 
+    // Pay one step before PASS only when it makes a funded, productive
+    // landing adjacent after the next first PASS rotation, with no extra energy
+    // overall. The same target must also remain funded without rotation.
+    // Never assume an opponent passes or open a future turn tree.
+    function prePassLandingPrefix(node,stored,state){
+      const t=state.turn,p=state.players.players.find(q=>q.id===seatId);
+      if(node!==openedRoot||node.status!=="stable"||stored.intent||stored.resourceControl||stored.informationBarrier
+        ||t.roundNumber!==3||t.currentPlayerId!==seatId||t.gameEnded||p.mainActionCompleted||p.passCompletionPending
+        ||!t.activePlayerIds.every(id=>id===seatId||t.passedPlayerIds.includes(id))
+        ||p.resources.energy!==1||p.resources.credits||p.resources.availableData||p.hand.length||p.income.energy<2
+        ||p.industryBorrowedTechTileId||t.cardTurnEventBonuses?.length||t.type1TriggerEvents?.length
+        ||localPlans.hasPendingFossilArrival(state)
+        ||!node.legalActions.some(a=>a.family==="pass")
+        ||!node.legalActions.every(a=>["pass","move"].includes(a.family)||a.target?.tradeId==="energy-for-move"))return null;
+      const owned=state.pieces.rockets.filter(r=>r.playerId===seatId&&rockets.isControllablePlayerRocket(r));
+      if(owned.length!==1||(owned[0].kind||"standard")!=="standard"||owned[0].fossilId)return null;
+      const ship=owned[0],from=rockets.getRocketSectorCoordinate(ship),native=productionKernel||globalThis.SetiProductionKernel;
+      const preview=(action,rotate)=>{
+        const next={...state,solarSystem:{...state.solarSystem},pieces:copyForkData(state.pieces),
+          players:{...state.players,players:state.players.players.map(q=>({...q,resources:{...q.resources}}))}};
+        const player=next.players.players.find(q=>q.id===seatId);
+        if(action){
+          const moved=rocketAbilities.moveProbe(scienceSession.createActionContext(next,seatId),
+            {...action.target,cost:{energy:1},movementPoints:1,source:"move"});
+          if(!moved.ok||moved.events.some(e=>!["move","visitAsteroid"].includes(e.type)||cardEffects.hasMatchingTrigger(p,e))
+            ||!exactClaimState(player.resources,{...p.resources,energy:0}))return null;
+        }
+        const to=rockets.getRocketSectorCoordinate(next.pieces.rockets.find(r=>r.id===ship.id));
+        if(rotate){
+          const rotated=turnFlow.rotateSolarSystem(next,1,seatId,{captureSnapshots:false});
+          if(!rotated.ok||rotated.events?.length||!exactClaimState(player.resources,{...p.resources,energy:action?0:1}))return null;
+        }
+        next.turn={...t,roundNumber:4,turnNumber:1,actionCycleNumber:1,passedPlayerIds:[],completedTurnPlayerIds:[],
+          cardTurnEventBonuses:[],visitedPlanetsByPlayerId:{}};
+        player.resources.energy+=p.income.energy;
+        player.resources.credits+=p.income.credits;
+        const targets=(native.getProbeRouteRequirements(next,seatId)?.candidates||[]).filter(c=>
+          c.rocketId===ship.id&&c.endpointFamily==="land"&&c.endpointTarget?.type==="planet");
+        return {to,targets,energy:player.resources.energy,credits:player.resources.credits};
+      };
+      const wait=preview(null,true),waitNow=preview(null,false);
+      if(!wait||!waitNow)return null;
+      const candidates=[];
+      for(const action of node.legalActions.filter(a=>a.family==="move"&&a.target.rocketId===ship.id)){
+        const early=preview(action,true),earlyNow=preview(action,false);
+        if(!early||!earlyNow)continue;
+        for(const c of early.targets){
+          const prior=wait.targets.find(q=>q.requirementId===c.requirementId),cost=c.endpointFacts.cost;
+          const steps=c.required.paidMovementPoints,score=c.targetBenefit.score,stock=c.targetBenefit.dataCount;
+          const same=earlyNow.targets.find(q=>q.requirementId===c.requirementId);
+          const noRotation=waitNow.targets.find(q=>q.requirementId===c.requirementId);
+          if(!same||!noRotation||same.required.paidMovementPoints+1>noRotation.required.paidMovementPoints
+            ||(same.endpointFacts.cost.energy||0)+same.required.paidMovementPoints>earlyNow.energy
+            ||(same.endpointFacts.cost.credits||0)>earlyNow.credits
+            ||steps!==1||c.path.length!==1||stock<2||!prior||prior.required.paidMovementPoints<2
+            ||steps+1>prior.required.paidMovementPoints||!exactClaimState(cost,prior.endpointFacts.cost)
+            ||!exactClaimState(c.targetBenefit,prior.targetBenefit)
+            ||(cost.energy||0)+steps>early.energy||(cost.credits||0)>early.credits)continue;
+          candidates.push({action,c,to:early.to,net:score+.5*stock-(cost.energy||0)-(cost.credits||0)-steps-1});
+        }
+      }
+      candidates.sort((a,b)=>b.net-a.net||a.action.actionId.localeCompare(b.action.actionId));
+      if(!candidates.length||candidates[0].net<=0||candidates[1]?.net===candidates[0].net)return null;
+      const {action,c,to}=candidates[0];
+      const goal={id:c.requirementId,kind:"land",planetId:c.planetId,timing:"advance-before-rotation",
+        coordinate:to,endpointCost:c.endpointFacts.cost,endpointTarget:c.endpointTarget};
+      const path=[{from,to,deltaX:action.target.deltaX,deltaY:action.target.deltaY,requiredMovePoints:1}];
+      return freeze({policy:"seti-prepass-funded-landing-v1",isEquivalence:false,reason:"funded-landing-after-pass-rotation",
+        chosenGoal:goal,plan:{kind:"goal-plan",objective:goal,route:path,execution:"deterministic-native-route"},
+        intent:{goal,rocketId:ship.id,path,startedTurn:t.turnNumber,startedRound:t.roundNumber,free:false,prefixOnly:true},
+        selectedActionId:action.actionId,retainedActionIds:[action.actionId],
+        excludedActionIds:node.legalActions.filter(a=>a!==action).map(a=>a.actionId),
+        excludedDirectionCount:node.legalActions.filter(a=>a!==action&&goalMovement.isDirection(a)).length,routingNodes:0});
+    }
+
     function goalMovementSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (movementPolicies.has(node)) return movementPolicies.get(node);
       const state = readPlanningState(stored);
+      const staging=prePassLandingPrefix(node,stored,state);
+      if(staging){movementPolicies.set(node,staging);return staging;}
       const stay=stayForFreePickupLanding(node,stored,state);
       if(stay){movementPolicies.set(node,stay);return stay;}
       if(node.status==="stable"&&!stored.intent&&node.legalActions.some(a=>a.family==="end_turn")){
