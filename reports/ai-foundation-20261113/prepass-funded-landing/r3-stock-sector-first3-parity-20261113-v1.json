@@ -1,0 +1,19 @@
+{
+  "source": "6406060a2",
+  "prior": "ec51f7390",
+  "steps": 261,
+  "rounds": [
+    15,
+    48,
+    118
+  ],
+  "identicalInputs": true,
+  "identicalRoundAndFinalEnvelopes": true,
+  "identicalDecisions": true,
+  "decisions": 213,
+  "wallMs": 10822,
+  "peak": [
+    256,
+    230.3684169999999
+  ]
+}

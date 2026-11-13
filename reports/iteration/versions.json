@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-funded-public-sector-tie-first3-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-funded-public-sector-tie-first3-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-dlc9-publicity-task-first3-20261113",
+      "head": "6406060a2",
+      "commits": [
+        "a388d48d6",
+        "6406060a2"
+      ],
+      "summary": "同值公开扫描保留已筹资的扇区结算；标准前三轮资产回归",
+      "records": {
+        "142a0f3c.6406060a.quick-400.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-dlc9-publicity-task-first3-20261113",
       "aiGeneration": "v2",
       "agentType": "search",
