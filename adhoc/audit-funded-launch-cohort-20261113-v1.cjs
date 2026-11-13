@@ -201,9 +201,137 @@ function v189() {
   return {head, origin, prefix, opening, offset, groups:[{name:'V189 exact round-3 white opening', root, rows}]};
 }
 
+function crossover(late = false) {
+  const directory = 'reports/ai-foundation-20261113/funded-launch-cohort/';
+  const load = (file, name) => {
+    const witness = packed(directory+file);
+    execFileSync('git', ['diff','--exit-code', witness.head, head, '--', 'randomizer','tools']);
+    return witness.groups.find(g => g.name === name);
+  };
+  const b11 = load('seti-funded-launch-cohort-pairs-20261113-v1.json.gz', '11/130');
+  const b18 = load('seti-funded-launch-cohort-r4-pairs-20261113-v1.json.gz', '18/179');
+  const old = load('seti-v189-current-r3-20261113-v1.json.gz', 'V189 exact round-3 white opening');
+  const results = [];
+  function branch(group, label, row, count, choice, targetRound, overrides = []) {
+    const m = open(group.root), inputs = [], decisions = [], checkpoints = [], main = [];
+    let checkpoint, stop;
+    const start = performance.now();
+    const put = a => {
+      if (a.actorId === white && a.phase === 'main') main.push(a.summary);
+      inputs.push(m.put(a));
+    };
+    try {
+      for (const expected of group.rows[row].inputs.slice(0,count)) {
+        const a = m.menu().find(x => x.actionId === expected.actionId);
+        same(a, expected);
+        put(a);
+      }
+      const before = m.save(), legal = m.menu(), q = m.pick();
+      assert(ok(q), label+' control gate');
+      const options = legal.map(a => [a.actionId, a.family, a.summary, q.quotes.find(([id]) => id === a.actionId)?.[1]]);
+      const a = choice(legal);
+      const rootFacts = facts(m.state(), true);
+      if (a) {
+        assert(a.actorId === white);
+        put(a);
+      }
+      const pivot = a ? [a.actionId, a.summary] : null;
+      for (let i = 0; i < 320; i++) {
+        if (m.state().turn.gameEnded && !m.c.inspect().session) { stop = 'terminal'; break; }
+        if (performance.now() - start >= 180000) { stop = 'elapsed-gate'; break; }
+        if (m.menu()[0]?.actorId !== white) { put(m.opposition()); continue; }
+        const q = m.pick(checkpoint);
+        decisions.push({action:q.action?.summary, n:q.n, ms:q.ms, v:q.v, passes:!!ok(q)});
+        if (!ok(q)) { stop = 'decision-gate'; break; }
+        const override = overrides[0]?.(m.menu());
+        const selected = override || q.action;
+        if (override) overrides.shift();
+        if (selected.family === 'pass') {
+          checkpoints.push([inputs.length, m.save()]);
+          if (targetRound === m.state().turn.roundNumber) { stop = 'before-pass'; break; }
+        }
+        put(selected); checkpoint = override ? null : q.checkpoint;
+      }
+      assert(stop); assert.equal(overrides.length, 0);
+      const state = m.state();
+      return {name:label, inputs, checkpoints, decisions, main, stop, end:m.save(), assets:facts(state, true), before,
+        rootFacts, options, pivot, originalChoice:q.action.summary,
+        score:stop === 'terminal' ? state.match.finalScores.find(x => x.playerId === white).totalScore : null,
+        peak:[Math.max(0,...decisions.map(d => d.n)), Math.max(0,...decisions.map(d => d.ms))]};
+    } finally { m.c.dispose(); }
+  }
+  const family = family => legal => legal.find(a => a.family === family);
+  const none = () => null;
+  const choose = fn => legal => { const a = fn(legal); assert(a, JSON.stringify(legal.map(x => [x.family,x.summary]))); return a; };
+  const board18Move = legal => legal.find(a => a.family === 'choose_target' && a.summary === '移动 2 向外');
+  const b52 = legal => legal.find(a => a.family === 'play_card' && a.summary === 'b_52.webp');
+  const scanLaunch = legal => legal.find(a => a.target?.mode === 'launch');
+  const buyEnergy = legal => legal.find(a => a.family === 'quick_trade' && a.summary === '2信用点 → 1能量');
+  const variantsByGroup = late ? [
+    [b18, [['buy energy, scan, then use purple launch',0,0,choose(buyEnergy),undefined,[family('scan'),scanLaunch]]]],
+    [old, [['historic route through Tianwei III landing',0,19,none,3]]],
+  ] : [
+    [b11, [['B9 then inspect next main menu',0,12,none],['launch but skip immediate positioning',1,1,choose(family('end_turn'))]]],
+    [b18, [['scan then launch instead of income',0,9,family('launch')],
+      ['launch plus original scan: take its free move',1,10,choose(board18Move)],
+      ['launch plus original scan: no outward move',1,10,choose(legal => legal.find(a => a.summary === '跳过' || a.target?.kind === 'skip'))],
+      ['asteroid: take the known B52 use one main action sooner',1,12,choose(b52)]]],
+    [old, [['after launch no fixed move',1,1,none,3],['after launch fixed first outward move',0,3,none,3],
+      ['historical first move and B101 research',0,10,none,3]]],
+  ];
+  for (const [group, variants] of variantsByGroup) {
+    const rows = variants.map(args => {
+      const row = branch(group, ...args);
+      console.log(JSON.stringify({group:group.name, name:row.name, score:row.score, stop:row.stop,
+        r3:row.assets.round===3 ? row.assets : undefined, main:row.main, peak:row.peak}));
+      return row;
+    });
+    results.push({name:group.name, root:group.root, rows});
+  }
+  return {head, groups:results};
+}
+
+function hiddenPairs() {
+  const directory = 'reports/ai-foundation-20261113/funded-launch-cohort/';
+  const groups = [];
+  const scope = [
+    ['seti-funded-launch-cohort-pairs-20261113-v1.json.gz', '11/130'],
+    ['seti-funded-launch-cohort-r4-pairs-20261113-v1.json.gz', '18/179'],
+  ];
+  const view = root => {
+    const m = open(root);
+    try {
+      const q = m.pick();
+      assert(ok(q));
+      return {observation:m.c.projection({role:'player',playerId:white}).state, menu:m.menu(), selected:q.action.actionId, quotes:q.quotes, inputs:q.n};
+    } finally { m.c.dispose(); }
+  };
+  for (const [file, name] of scope) {
+    const source = packed(directory+file);
+    execFileSync('git',['diff','--exit-code',source.head,head,'--','randomizer','tools']);
+    const g = source.groups.find(x => x.name === name);
+    const original = view(g.root);
+    const launch = original.menu.find(a => a.family === 'launch');
+    for (const [i,j] of [[0,3],[0,6],[1,4]]) {
+      const state = JSON.parse(g.root.committedState), deck = state.cards.drawPileCardIds;
+      assert(deck[i] && deck[j]); assert.notEqual(deck[i],deck[j]);
+      [deck[i],deck[j]] = [deck[j],deck[i]];
+      const root = {...g.root,committedState:JSON.stringify(state)};
+      assert.deepEqual(view(root),original);
+      const rows = [finish({root,launch},false),finish({root,launch},true)];
+      const n = name+' hidden ordinary '+i+'/'+j;
+      groups.push({name:n,root,rows});
+      console.log(JSON.stringify({name:n, results:rows.map(r => [r.score,r.stop,r.peak,r.main])}));
+    }
+  }
+  return {head, groups};
+}
+
 let data;
 if (mode === 'screen') data = screen();
 else if (mode === 'v189') data = v189();
+else if (mode === 'cross' || mode === 'cross-late') data = crossover(mode === 'cross-late');
+else if (mode === 'hidden') data = hiddenPairs();
 else {
   assert.equal(mode, 'pair');
   const s = packed(source);
