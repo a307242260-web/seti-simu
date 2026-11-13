@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const scenario = require('../tools/research-human405-round1');
 const data = require('../randomizer/game/data');
+const cards = require('../randomizer/game/cards/deck');
 const white = 'player-white', seed = 'seti-free-analyze-v1';
 const config = { agentType: 'search', seed, activePlayerCount: 4, compactReplay: true };
 const metadata = scenario.describe({ ...config, flags: { scenario: scenario.THIRD_ROUND_ID } });
@@ -111,11 +112,11 @@ if(mode==='fork') {
   }finally{env.dispose();}
 }
 if(mode==='terminal') {
-  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups[0];
+  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups.flatMap(g=>g.rows.slice(0,3));
   const env=initialized(),groups=[];
   const template=env.createCheckpoint();
   try{
-    for(const row of forks.rows.slice(0,3)){
+    for(const row of forks){
       const origin=row.end,rows=[];
       for(const reserve of ['b_111.webp','b_32.webp']){
         env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:origin,committedState:origin.committedState},machineAI:{}});
@@ -179,6 +180,114 @@ if(mode==='hidden') {
         console.log(JSON.stringify({order,before,policy,score:r.assets.score,tech:Object.keys(r.assets.tech.ownedTiles),income:r.assets.income,hand:r.assets.hand,peak:r.peak,stop:r.stop}));
       }
       groups.push(group);
+    }
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='income'||mode==='income-tail') {
+  const baseline=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups[0].rows[0];
+  const env=initialized(),groups=[];
+  try{
+    for(const a of baseline.inputs.slice(0,39))assert.deepEqual(take(env).a,a);
+    const host=env.createCheckpoint(), origin=host.coreState.compositionEnvelope;
+    const p=JSON.parse(origin.committedState).players.players.find(p=>p.id===white);
+    console.log(JSON.stringify({wallet:p.resources,income:p.income,computer:data.listComputerPlacedTokens(p).map(t=>t.placementSlot),hand:p.hand.map(x=>x.cardId)}));
+    const variants=[['place fifth then available blue slot',a=>a.target?.target==='blueBonus'],['play Amiba 0',a=>a.family==='play_card'&&a.summary==='amiba_0.webp'],['play Amiba 9',a=>a.family==='play_card'&&a.summary==='amiba_9.webp'],['play Amiba 9 then insert B14',a=>a.family==='play_card'&&a.summary==='amiba_9.webp'],['play B14',a=>a.family==='play_card'&&a.summary==='b_14.webp']];
+    const rows=[];
+    for(const [label,select] of (mode==='income-tail'?variants.filter(([n])=>n.startsWith('place')||n.includes('insert')):variants)){
+      env.loadCheckpoint(host);const prior=[];
+      const force=fn=>{const a=env.legalActions().find(fn);if(!a)return false;assert(env.step(a).ok);prior.push(a);return true;};
+      if(label.startsWith('place')){
+        assert(force(a=>a.family==='place_data'));assert(force(a=>a.summary==='第一排放置位 5'));
+        assert(force(a=>a.family==='place_data'));
+      }
+      if(!force(select)){
+        console.log(JSON.stringify({label,unavailable:env.legalActions().map(a=>[a.summary,a.target])}));continue;
+      }
+      const menus=[];
+      if(label.includes('insert')){
+        for(let i=0;i<36;i++){
+          const offer=env.legalActions().filter(a=>a.actorId===white&&a.target?.choiceId?.startsWith('income:'));
+          if(offer.length){
+            const c=env.createCheckpoint(),w=c.coreState.compositionEnvelope.session?.session?.workingState;
+            const p=w.players.players.find(x=>x.id===white);
+            menus.push({i,offers:offer.map(a=>[a.summary,cards.getIncomeGainForCard(p.hand.find(x=>x.id===a.target.cardInstanceId))]),income:p.income,resources:p.resources});
+            assert(force(a=>a.summary==='收入 b_14.webp'));break;
+          }
+          prior.push(take(env).a);
+        }
+        assert.equal(menus.length,1);
+      }
+      const r=run(env,{prior,forced:label});r.menus=menus;rows.push(r);
+      console.log(JSON.stringify({label,stop:r.stop,score:r.assets.score,tech:Object.keys(r.assets.tech.ownedTiles),income:r.assets.income,computer:r.assets.computer,blue:r.assets.blue,pool:r.assets.resources.availableData,hand:r.assets.hand,probe:r.assets.probes,menus:r.menus,peak:r.peak}));
+    }
+    groups.push({name:'allocation before first analysis',root:origin,agentCheckpoint:host.machineAI[white],rows});
+    write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='income-scan'){
+  const witness=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups[0];
+  const row=witness.rows.find(r=>r.name.includes('insert B14'));
+  const env=initialized(),groups=[];
+  const original=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[5]))).groups[0].rows[0];
+  try{
+    for(const a of original.inputs.slice(0,39))assert.deepEqual(take(env).a,a);
+    const host=env.createCheckpoint();
+    const native=a=>{const found=env.legalActions().find(x=>x.actionId===a.actionId);assert.deepEqual(found,a);assert(env.step(found).ok);return found;};
+    function forceTest(label,marks){
+      env.loadCheckpoint(host);
+      const prior=[], roots=[];
+      for(const [i,a] of row.inputs.slice(0,30).entries()){
+        const auto=i>0&&i<21||i>21;
+        if(auto)assert.deepEqual(take(env).a,a);else native(a);
+        prior.push(a);
+      }
+      const menu=env.legalActions();
+      assert(menu[0]?.target?.choiceId?.startsWith('final:'));
+      const a=menu.find(a=>a.summary===('标记 '+marks));assert(a);
+      prior.push(native(a));
+      const pool=assets(env.createCheckpoint().coreState.compositionEnvelope,env.observe(white));
+      const options=env.legalActions();
+      roots.push({pool,menu:options.map(a=>a.summary)});
+      if(label.includes('scan')){
+        const a=options.find(a=>a.family==='scan');
+        if(!a){console.log(JSON.stringify({label,unavailable:roots.map(x=>[x.pool.resources,x.menu])}));return null;}
+        prior.push(native(a));
+      }
+      const r=run(env,{prior,forced:label});r.fork=roots;
+      console.log(JSON.stringify({label,score:r.assets.score,tech:r.assets.tech,income:r.assets.income,hand:r.assets.hand,pool:r.assets.resources.availableData,probe:r.assets.probes,peak:r.peak,stop:r.stop}));
+      return r;
+    }
+    const rows=[forceTest('mark C', 'C'),forceTest('mark A then scan','A'),forceTest('mark C then scan','C')].filter(Boolean);
+    groups.push({name:'Amiba 9 then B14, next actual public objective',root:witness.root,rows});
+    write({source,groups});
+  }finally{env.dispose();}
+}
+
+if(mode==='blue-hidden'){
+  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))), origin=forks.groups[0].root;
+  const env=initialized(), template=env.createCheckpoint(),groups=[];
+  function restore(e){env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});}
+  try{
+    restore(origin);
+    const visible=env.observe(white),menu=env.legalActions();
+    for(const [i,j] of [[0,3],[1,4]]){
+      const state=JSON.parse(origin.committedState),pile=state.cards.drawPileCardIds;
+      const swap=[pile[i],pile[j]];assert.notEqual(...swap);
+      [pile[i],pile[j]]=[pile[j],pile[i]];
+      const root={...origin,committedState:JSON.stringify(state)}, rows=[];
+      for(const blue of [false,true]){
+        restore(root);assert.deepEqual(env.observe(white),visible);assert.deepEqual(env.legalActions(),menu);
+        const prior=[];
+        if(blue){
+          for(const before of forks.groups[0].rows[0].inputs.slice(0,4)){
+            const a=env.legalActions().find(a=>a.actionId===before.actionId);assert.deepEqual(a,before);assert(env.step(a).ok);prior.push(a);
+          }
+        }
+        const r=run(env,{prior,forced:`${i}/${j}: ${blue?'blue first':'autonomous'}`});rows.push(r);
+        console.log(JSON.stringify({label:r.name,swap,score:r.assets.score,income:r.assets.income,blue:r.assets.blue,peak:r.peak}));
+      }
+      groups.push({name:`ordinary deck ${i}/${j}`,root,swap,rows});
     }
     write({source,groups});
   }finally{env.dispose();}
