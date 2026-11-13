@@ -9,4 +9,4 @@
 
 以上把原标准线上可变的数据时机与必需付款分开。最后第四格不存在一枚可直接挪用的盈余；下一步只保留能新增独立数据来源、同时验证不牺牲原收入与科技的候选，不再为同一枚数据重试排列。
 
-[痕迹与放置顺序](../reports/ai-foundation-20261113/standard-data-retention/order-20261113-v1.json.gz) · [扫描奖励](../reports/ai-foundation-20261113/standard-data-retention/scan-payout-20261113-v1.json.gz) · [末次领奖的暗牌对照](../reports/ai-foundation-20261113/standard-data-retention/final-pick-20261113-v1.json.gz) · [同留牌终局](../reports/ai-foundation-20261113/standard-data-retention/order-terminal-20261113-v1.json.gz)。四份证据可用 `node adhoc/replay-r3-public-cargo-frontier-20261113-v1.cjs <证据文件>` 独立复放，共 436 个原生输入；实际自主峰值 107 次／509 毫秒以内。未修改生产策略或正式记录。
+[痕迹与放置顺序](../reports/ai-foundation-20261113/standard-data-retention/order-20261113-v1.json.gz) · [扫描奖励](../reports/ai-foundation-20261113/standard-data-retention/scan-payout-20261113-v1.json.gz) · [末次领奖的暗牌对照](../reports/ai-foundation-20261113/standard-data-retention/final-pick-20261113-v1.json.gz) · [同留牌终局](../reports/ai-foundation-20261113/standard-data-retention/order-terminal-20261113-v1.json.gz)。四份证据可用 `node adhoc/replay-r3-public-cargo-frontier-20261113-v1.cjs <证据文件>` 独立复放，共 442 个原生输入；实际自主峰值 107 次／509 毫秒以内。未修改生产策略或正式记录。
