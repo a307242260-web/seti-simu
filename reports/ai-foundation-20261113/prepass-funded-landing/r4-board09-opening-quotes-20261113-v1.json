@@ -1,0 +1,168 @@
+{
+  "source": "1d463e42dbfee60043bae6922623f13d6ddc408c",
+  "board": 9,
+  "rows": [
+    {
+      "name": "analyze-now",
+      "assets": {
+        "turn": 2,
+        "wallet": [
+          61,
+          6,
+          4,
+          4,
+          0
+        ],
+        "income": [
+          4,
+          4,
+          1,
+          1
+        ],
+        "established": 61,
+        "computer": [
+          1
+        ],
+        "blue": [
+          1
+        ],
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "probes": [],
+        "hand": [
+          "b_78.webp",
+          "b_98.webp"
+        ],
+        "market": [
+          "b_40.webp",
+          "dlc_5.png",
+          "b_134.webp"
+        ]
+      },
+      "action": "b_78.webp：弃牌角标",
+      "n": 9,
+      "ms": 110.42733299999998,
+      "quotes": [
+        {
+          "action": "发射",
+          "family": "launch",
+          "value": 80.5
+        },
+        {
+          "action": "扫描",
+          "family": "scan",
+          "value": 77
+        },
+        {
+          "action": "b_78.webp",
+          "family": "play_card",
+          "value": 74
+        },
+        {
+          "action": "b_98.webp",
+          "family": "play_card",
+          "value": 79.5
+        },
+        {
+          "action": "PASS",
+          "family": "pass",
+          "value": 61
+        },
+        {
+          "action": "b_78.webp：弃牌角标",
+          "family": "card_corner",
+          "value": 83
+        }
+      ]
+    },
+    {
+      "name": "defer-analysis",
+      "assets": {
+        "turn": 2,
+        "wallet": [
+          56,
+          6,
+          4,
+          1,
+          2
+        ],
+        "income": [
+          4,
+          4,
+          1,
+          1
+        ],
+        "established": 56,
+        "computer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "blue": [],
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "probes": [],
+        "hand": [
+          "b_78.webp",
+          "b_98.webp"
+        ],
+        "market": [
+          "b_40.webp",
+          "dlc_5.png",
+          "b_134.webp"
+        ]
+      },
+      "action": "发射",
+      "n": 31,
+      "ms": 93.66624999999999,
+      "quotes": [
+        {
+          "action": "发射",
+          "family": "launch",
+          "value": 77
+        },
+        {
+          "action": "扫描",
+          "family": "scan",
+          "value": 72.5
+        },
+        {
+          "action": "分析",
+          "family": "analyze",
+          "value": 75.5
+        },
+        {
+          "action": "b_78.webp",
+          "family": "play_card",
+          "value": 69.5
+        },
+        {
+          "action": "b_98.webp",
+          "family": "play_card",
+          "value": 76
+        },
+        {
+          "action": "PASS",
+          "family": "pass",
+          "value": 56
+        },
+        {
+          "action": "放置数据",
+          "family": "place_data",
+          "value": 77
+        }
+      ]
+    }
+  ]
+}
