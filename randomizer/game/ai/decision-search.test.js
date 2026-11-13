@@ -535,3 +535,35 @@ console.log("complete decision graph coverage, cycles, preparation chains and bu
   assert.equal(ambiguous.quotes, 0);
   assert.equal(ambiguous.result.actionId, "trade");
 }
+
+// A fixed, already funded landing must remain comparable to an unrelated
+// orbit funded by an exchange, even when the first move was filtered out.
+{
+  const fs = require("node:fs"), path = require("node:path"), zlib = require("node:zlib");
+  const file = path.resolve(__dirname, "../../../reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz");
+  const { groups: [{ root: envelope }] } = JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+  const { createSimulationRuleComposition } = require("../../training/simulation-rule-composition");
+  const { createSeededRandom } = require("../random");
+  const { buildRuleObservation } = require("../../app/rule-observation");
+  const { createAnalysisPort } = require("./analysis-port");
+  const seatId = "player-white", seed = JSON.parse(envelope.committedState).meta.seed;
+  const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,
+    trustedProjectionReader: true, projectCounterfactualState: (state, viewer) => buildRuleObservation(state, seed, viewer?.playerId) });
+  kernel.newGame({ seed });
+  const composition = kernel.composition;
+  assert(composition.lifecycle.restore(envelope).ok);
+  const port = createAnalysisPort({ composition, seatId, maxCacheEntries: 0 });
+  try {
+    const root = port.openRoot();
+    const result = searchDecision({ root, port, evaluate: createStateValueEvaluator(seatId), movementPlanning: true,
+      resourcePlanning: true, cardPickPlanning: true, finalMarkPlanning: true, scanPlanning: true, budget: unlimited });
+    assert(result.complete);
+    const landing = result.roots.find(row => row.actionId === result.actionId);
+    assert.equal(landing.plan.objective.planetId, "neptune");
+    assert.equal(landing.plan.objective.kind, "land");
+    assert(result.roots.some(row => row.goal?.planetId === "venus" && Number.isFinite(row.value)));
+    assert.equal(result.roots.filter(row => root.legalActions.find(a => a.actionId === row.actionId)?.family === "move"
+      && Number.isFinite(row.value)).length, 1, "do not expand other movement directions");
+    assert.deepEqual(composition.lifecycle.save().envelope, envelope);
+  } finally { port.close(); composition.dispose(); }
+}

@@ -430,12 +430,19 @@
         movementPolicyNodes += 1; movementDirectionsExcluded += movementPolicy.excludedDirectionCount;
         routeGeometryNodes += movementPolicy.routingNodes;
       }
+      // A funded fixed route and a different resource-funded endpoint are
+      // alternatives. Suppress only an identical goal already in resource plans.
+      const fixedRoute = resourcePolicy && !resourcePolicy.bound && movementPolicy?.plan
+        && movementPolicy.intent?.path.length && movementPolicy.chosenGoal?.timing === "current-turn"
+        && ["orbit", "land"].includes(movementPolicy.chosenGoal.kind)
+        && !resourcePolicy.plans.some(plan => plan.goal.id === movementPolicy.chosenGoal.id)
+        ? movementPolicy.selectedActionId : null;
       const retainedActions = node.legalActions.filter(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (!movementPolicy || movementPolicy.retainedActionIds.includes(action.actionId))
         && (!pickPolicy || pickPolicy.retainedActionIds.includes(action.actionId))
         // A selected urgent movement prefix supersedes the greedy resource tail.
         // Suppressing its plans must also stop its filter from deleting this move.
-        && (!resourcePolicy || movementPolicy?.forceExecution || resourcePolicy.retainedActionIds.includes(action.actionId))
+        && (!resourcePolicy || movementPolicy?.forceExecution || action.actionId === fixedRoute || resourcePolicy.retainedActionIds.includes(action.actionId))
         && (!decisionPolicy||decisionPolicy.retainedActionIds.includes(action.actionId)));
       if (!boundary && !retainedActions.length && (!resourcePolicy?.plans.length || movementPolicy?.forceExecution) && !resourcePolicy?.bound) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
       const alternatives = selection ? port.selectionPlans(node)
