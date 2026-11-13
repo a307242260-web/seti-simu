@@ -361,8 +361,9 @@
     if(state.turn.roundNumber!==4)throw new TypeError('PROBE_FINAL_SWAP_ROUND_INVALID');
     const inactive=state.turn.gameEnded||player.passCompletionPending||(state.passingPlayerIds||state.turn.passedPlayerIds).includes(player.id);
     if(inactive||!ownedProbes(state.pieces?.rockets,player).length)return {sensitive:false,quote:()=>0};
-    const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income};
-    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,
+    const wallet={...player.resources,id:player.id,color:player.color,techState:player.techState,income:player.income,
+      companyBaseIncome:endScoring.getPlayerCompanyBaseIncome(player)};
+    const board={rockets:state.pieces.rockets,solarSystem:state.solarSystem,planets:state.planets,data:state.data,finalScoring:state.finalScoring,
       ordinaryDrawCount:Array.isArray(state.cards.drawPileCardIds)?state.cards.drawPileCardIds.length:null,
       aliens:{slots:Object.entries(state.aliens.aliens).map(([id,slot])=>({slotId:Number(id),revealed:Boolean(slot.revealed),alienId:slot.revealed?(slot.alienId||slot.assignedAlienId||null):null,traces:slot.traces}))}};
     const active=state.turn.activePlayerIds,passed=state.passingPlayerIds||state.turn.passedPlayerIds||[];
@@ -462,6 +463,17 @@
     return gain;
   }
 
+  // Salary is over, but an already marked income tile still scores every
+  // actual permanent increase. Use only the known card and current mark.
+  function markedIncomeTile(board, player) {
+    const tile=board?.tiles?.a,mark=tile?.marks?.find(m=>m.playerId===player.id);
+    if(!mark)return null;
+    const formula=endScoring.getFormulaId('a',board.tileVariants?.a);
+    if(formula!=='a1'&&formula!=='a2')return null;
+    const multiplier=endScoring.getSlotMultiplier(formula,mark.slotIndex);
+    return {formula,multiplier};
+  }
+
   function evaluateMission(facts, weights, scalarOnly, readOnlyTraces=false, finalSwap=null) {
     const player = facts.player, seatId = player.id, planningRound = facts.round + Number(facts.passing);
     if (facts.terminal || planningRound >= 4 && !(facts.round === 4 && !facts.passing)
@@ -477,6 +489,13 @@
     // A finite supplied baseline requires no investment callback. With no
     // affordable endpoint there is also no later mission portfolio to price.
     const prepared=finalSwap?.prepared??(scalarOnly&&Number.isFinite(facts.initialInvestmentCapital)?preparedFundedGoals(goals,player,weights):null);
+    // Price the launch-to-orbit window. A probe already en route can have
+    // competing data, card or landing uses that this income quote omits.
+    const marked=facts.round===4?markedIncomeTile(facts.board.finalScoring,player):null;
+    const ships=marked?ownedProbes(facts.board.rockets,player):[];
+    const at=ships.length===1&&rockets.getRocketSectorCoordinate(ships[0]);
+    const earth=at&&solar.collectPlanetLocations(facts.board.solarSystem).find(p=>p.planetId==='earth');
+    const incomeTile=earth&&at.x===earth.x&&at.y===earth.y?marked:null;
     let portfolio=null;
     if(cardRoute){
       if(prepared)portfolio=preparedHeldLandings(goals,prepared,player,cardRoute.cost.credits,weights);
@@ -528,6 +547,8 @@
       const wallet = { credits: player.credits - payment.spend.credits, energy: player.energy - payment.spend.energy,
         publicity: player.publicity, availableData: player.availableData };
       const income = { ...player.income };
+      const directOrbitIncomeTile=goal.endpointFamily==='orbit'&&payment.energyPurchases===0&&payment.creditPurchases===0
+        &&!payment.cornerCardIds?incomeTile:null;
       let delta = -payment.value - (card ? weights.handSize : 0), unknownCount = facts.hand.length - knownHand.length + facts.extraUnknownCount, supported = true;
       let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = scalarOnly ? null : [];
@@ -546,9 +567,12 @@
         for(const [key,amount]of Object.entries(gain))nextIncome[key]=(nextIncome[key]||0)+amount;
         const remaining=availableHand.filter(c=>c!==card);
         const after=capital(remaining,nextWallet,nextIncome,traceSlots);
-        const linear=weighted(immediate)+weighted(gain)*(4-planningRound)-weights.handSize;
+        const finalTileDelta=directOrbitIncomeTile&&(gain.credits||gain.energy||gain.handSize)
+          ?(endScoring.getFormulaBaseValue(directOrbitIncomeTile.formula,{income:nextIncome,companyBaseIncome:player.companyBaseIncome},{})
+            -endScoring.getFormulaBaseValue(directOrbitIncomeTile.formula,{income,companyBaseIncome:player.companyBaseIncome},{}))*directOrbitIncomeTile.multiplier:0;
+        const linear=weighted(immediate)+weighted(gain)*(4-planningRound)-weights.handSize+finalTileDelta;
         const following=facts.dataContinuation?facts.dataContinuation({hand:scalarOnly?remaining:availableHand.filter(c=>c!==card),wallet:nextWallet,income:nextIncome,traceSlots}):null;
-        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:arithmetic.sum([linear,after,following?.value||0,-(commonCapital??capital(availableHand,wallet,income,traceSlots))],weights)};
+        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,finalTileDelta,value:arithmetic.sum([linear,after,following?.value||0,-(commonCapital??capital(availableHand,wallet,income,traceSlots))],weights)};
       };
       for (let index = 0; index < effects.length && supported; index++) {
         const effect = effects[index], options = effect.options || {};
@@ -618,7 +642,7 @@
           const linear = chosen.linear;
           const handPurposeCost=ledger ? arithmetic.sum([before,-capital(hand, wallet, income,traceSlots)],weights) : undefined;
           delta += linear; ledger?.push({ type: effect.type, cardId: chosen.card.cardId, gain: chosen.gain, value: linear,
-            handPurposeCost });
+            handPurposeCost,...(chosen.finalTileDelta?{finalTileDelta:chosen.finalTileDelta}:{}) });
         } else if (['scan_planet_sector', 'choose_nebula_scan', 'choose_colored_nebula_scan'].includes(effect.type)) {
           const opts = effect.type === 'scan_planet_sector' ? { mode: 'planet', planetId: options.planetId }
             : effect.type === 'choose_colored_nebula_scan' ? { mode: 'color', color: options.color }

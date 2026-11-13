@@ -316,3 +316,52 @@ for(const {file,value,spend,moveCount,creditExchanges} of [
     assert(c.lifecycle.restore(root).ok);assert.deepEqual(c.lifecycle.save().envelope,root);
   }finally{c.dispose();}
 }
+
+// Fourth-round salary does not pay again. A known orbit income card can
+// still complete a set on a tile already marked by the player.
+{
+  const recorded = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname,
+    '../../../reports/ai-foundation-20261113/prepass-funded-landing/r3-defer-final-analysis-board09-crossover-20261113-v1.json.gz'))));
+  const row = recorded.groups[0].rows[0], [offset, start] = row.checkpoints[1];
+  const state = JSON.parse(start.committedState), id = 'player-white', seed = state.meta.seed;
+  const k = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4 });
+  k.newGame({ seed }); const c = k.composition;
+  assert(c.lifecycle.restore(start).ok);
+  const apply = expected => {
+    const d = c.inspect().session?.decision;
+    const a = (d?.choices || c.inputPort.enumerateActions({})).find(a => a.actionId === expected.actionId);
+    assert(a, expected.summary);
+    const result = d ? c.inputPort.submitDecision({ decisionId: d.decisionId, decisionVersion: d.decisionVersion, ownerId: d.ownerId, choice: a })
+      : a.phase === 'quick' ? c.inputPort.submitQuickAction(a) : c.inputPort.submitAction(a);
+    assert(result.ok, expected.summary);
+  };
+  try {
+    const first = row.inputs[offset];
+    assert.equal(first.family, 'launch'); apply(first);
+    const afterLaunch = c.lifecycle.save().envelope, launched = JSON.parse(afterLaunch.committedState);
+    const observation = buildRuleObservation(launched, seed, id, []);
+    const facts = probe.factsFromObservation(observation, id);
+    const quote = next => probe.quote({ ...next, investment: () => 0 }, values.DEFAULT_WEIGHTS);
+    const venus = next => quote(next).candidates.find(x => x.family === 'orbit' && x.planet === 'venus');
+    const withMark = venus(facts);
+    assert.equal(withMark.ledger.find(e => e.type === 'income').cardId, 'b_78.webp');
+    const board = structuredClone(facts.board); board.finalScoring.tiles.a.marks = [];
+    assert.equal(withMark.value - venus({ ...facts, board }).value, 11);
+    const masked = { ...facts, hand: facts.hand.map(c => ({ id: c.id, hidden: true })) };
+    assert.equal(venus(masked).ledger.some(e => e.finalTileDelta), false);
+    assert.equal(values.evaluateStateValue(observation, id).components.probePotential, quote(facts).value);
+    assert.deepEqual(c.lifecycle.save().envelope, afterLaunch);
+
+    for (const a of row.inputs.slice(offset + 1)) {
+      apply(a);
+      if (a.summary !== '收入 b_78.webp') continue;
+      const settled = JSON.parse(c.lifecycle.save().envelope.committedState);
+      assert.deepEqual(settled.meta.rngState, launched.meta.rngState);
+      const before = observation.publicState.players.find(p => p.playerId === id);
+      const after = buildRuleObservation(settled, seed, id, []).publicState.players.find(p => p.playerId === id);
+      assert.equal((after.finalScore - after.score) - (before.finalScore - before.score), withMark.ledger.find(e => e.type === 'income').finalTileDelta);
+      return;
+    }
+    assert.fail('recorded orbit did not settle its known income');
+  } finally { c.dispose(); }
+}
