@@ -8,22 +8,26 @@ const runner = require("./run_research_validation");
 const { createHash } = require("node:crypto");
 const admission = require("../reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json");
 const checkout = path.resolve(__dirname, "..");
-const drift = Object.entries(admission.runtimeHashes).find(([file, hash]) =>
+const staged = require("../reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json");
+const hasDrift = manifest => Object.entries(manifest.runtimeHashes).some(([file, hash]) =>
   createHash("sha256").update(fs.readFileSync(path.join(checkout, file))).digest("hex") !== hash);
-if (drift) {
-  assert.throws(() => scenario.continuation(scenario.R4_ID), /R4_CANDIDATE_SOURCE_DRIFT/);
-  console.log("Archived R4 continuation rejects the changed runtime");
+if (hasDrift(admission)) assert.throws(() => scenario.continuation(scenario.R4_ID), /R4_CANDIDATE_SOURCE_DRIFT/);
+const id = hasDrift(staged) ? scenario.R4_ID : scenario.STAGED_LANDING_ID;
+if (hasDrift(staged)) assert.throws(() => scenario.continuation(scenario.STAGED_LANDING_ID), /STAGED_LANDING_RUNTIME_DRIFT/);
+if (id === scenario.R4_ID && hasDrift(admission)) {
+  console.log("Archived R4 continuations reject the changed runtime");
   return;
 }
+const openingInputs = id === scenario.R4_ID ? 259 : 261;
 
-const options = { full: true, config: { agentType: "search", scenario: scenario.R4_ID, compactReplay: true } };
+const options = { full: true, config: { agentType: "search", scenario: id, compactReplay: true } };
 const identity = runner.buildIdentity(options);
-assert.equal(identity.scenario.openingInputs, 259);
+assert.equal(identity.scenario.openingInputs, openingInputs);
 assert.equal(identity.scenario.originalOpeningInputs, 23);
 assert.equal(identity.scenario.decisionGate.enforcement, "reject-before-input");
 assert.throws(() => runner.buildIdentity({ ...options, full: false }), /REQUIRES_FULL/);
 assert.throws(() => scenario.continuation(scenario.V661_ID), /V661_CONTINUATION_SOURCE_DRIFT/);
-const source = scenario.continuation(scenario.R4_ID);
+const source = scenario.continuation(id);
 assert(source.save.machineAI["player-white"], "fixture must contain an old plan to invalidate");
 const env = scenario.createEnvironment({}, identity.scenario);
 let beforeWhite;
@@ -60,7 +64,7 @@ try {
     }};
   `);
   const args = ["tools/run_research_validation.js", "--name", "r4-admission-gate-unit", "--config",
-    `agentType=search,scenario=${scenario.R4_ID},compactReplay=true`, "--full", "--no-save", "--records-dir", dir];
+    `agentType=search,scenario=${id},compactReplay=true`, "--full", "--no-save", "--records-dir", dir];
   const run = () => spawnSync(process.execPath, args, { cwd: root, encoding: "utf8",
     env: { ...process.env, NODE_OPTIONS: `${process.env.NODE_OPTIONS || ""} --require=${preload}` } });
   const attempt = run();
@@ -72,8 +76,8 @@ try {
   assert.equal(record.failure.searchGraphClosed, true);
   assert.equal(record.metrics.searches.at(-1).committed, false);
   assert.equal(record.metrics.searches.at(-1).diagnostics.nativeExecutions, 257);
-  assert.equal(record.steps, 261);
-  assert.equal(record.resumeStep, 259);
+  assert.equal(record.steps, openingInputs + 2);
+  assert.equal(record.resumeStep, openingInputs);
   assert.deepEqual(record.roundEnds.map(r => [r.round, r.score]), [[1, 15], [2, 48], [3, 118]]);
   const cp = JSON.parse(fs.readFileSync(path.resolve(root, record.failure.checkpointPath)));
   assert.deepEqual(cp.coreState.compositionEnvelope, beforeWhite.coreState.compositionEnvelope);

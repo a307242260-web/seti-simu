@@ -66,6 +66,11 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 
 每个新白席决策提交前执行 256 原生输入／600 毫秒门槛；超出即留存失败根与尝试，不提交该动作、不替代为 PASS，也不重跑同版本实验。180 秒计入原 13.028 秒前三轮和本次接续实际用时。只有合法自然终局可记终局分；不改变 V41 及原 V661 记录。
 
+## 第三轮定位后接续到终局（2026-11-13）
+
+`robot_iterate run --name ai-search-r3-staged-landing-full-20261113 --full --config agentType=search,scenario=human405-white-staged-landing-full-v1,compactReplay=true`
+沿用 261 次已核验输入，包括白席自主选定的第三轮留牌。验证前三轮记录、原生存档、决策流及源码哈希，冷开第四轮白席策略。单点提交前硬限 256 次原生输入、600 毫秒；总用时含前三轮，限 180 秒。旧接续入口与 V41 基线保留。
+
 ## 固定 20 盘白席验收
 
 \`robot_iterate run --full --seed <原清单种子> --config agentType=search,scenario=free-analyze-random20-guarded-v1,compactReplay=true\` 使用原 20 个免电分析盘面和开局选择规则，白席自主，其他三席只 PASS 和完成强制选择。新场景在提交输入前拒绝超过 256 次原生输入或 600 毫秒的决定；中断留失败检查点，整局达到 180 秒亦判失败。旧场景和旧记录保留。统计使用白席自然终局分；未满 20 个自然终局不能宣告整批达标，仍应报告失败数和位置。

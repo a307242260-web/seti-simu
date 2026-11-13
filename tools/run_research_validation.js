@@ -421,7 +421,7 @@ function runValidation(options) {
   const scenario = random20.IDS.includes(identity.scenario?.id) ? random20 : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const fullWhite = scenario === whiteFull || scenario === random20;
   const pinnedContinuation = scenario === whiteFull;
-  const guardedR4 = identity.scenario?.id === whiteFull.R4_ID;
+  const guardedR4 = whiteFull.isGuarded(identity.scenario?.id);
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
   let nextRoundToRecord = 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;

@@ -8,7 +8,11 @@ const V661_ID='human405-white-v661-full-v1',V661_DIR='reports/ai-foundation-2026
 const V661_SOURCE='reports/research/815da7fc.de3eb34e.quick-400.json',V661_PROOF=V661_DIR+'v661-first3-native-development-20261109-v1.json';
 const R4_ID='human405-white-v661-r4-candidate-v1';
 const R4_ADMISSION='reports/ai-foundation-20261110/v661-r4-amiba1-v1/r4-resume-admission-20261110-v1.json';
-const IDS=Object.freeze([ID,V189_ID,V661_ID,R4_ID]);
+const STAGED_LANDING_ID='human405-white-staged-landing-full-v1';
+const STAGED_LANDING_RECORD='reports/research/11ef28bc.5135a5a0.quick-400.json';
+const STAGED_LANDING_ADMISSION='reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json';
+const IDS=Object.freeze([ID,V189_ID,V661_ID,R4_ID,STAGED_LANDING_ID]);
+const isGuarded=id=>id===R4_ID||id===STAGED_LANDING_ID;
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p))),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex');
 function v189Continuation(){
  const record=read(V189_SOURCE),proof=read(V189_PROOF),save=read(record.savePath),state=JSON.parse(save.committedState);
@@ -58,7 +62,38 @@ function r4Continuation(){
  return {...source,provenance:{...source.provenance,candidateAdmissionPath:R4_ADMISSION,
   candidateAdmissionSha256:sha(R4_ADMISSION),policyContinuation:'restart-white-plan-at-verified-round4-boundary'}};
 }
+function stagedLandingContinuation(){
+ const admission=read(STAGED_LANDING_ADMISSION),record=read(STAGED_LANDING_RECORD),save=read(record.savePath);
+ assert.equal(admission.schemaVersion,'seti-staged-landing-continuation-v1');
+ assert.equal(admission.scenario,STAGED_LANDING_ID);
+ assert.equal(record.gitCommit,'5135a5a0e');
+ assert.equal(record.scenario.id,firstRound.FIRST_THREE_ROUNDS_ID);
+ assert.equal(record.stopReason,'first-three-rounds-settled');
+ assert.equal(record.steps,261);assert(!record.terminal);assert.equal(save.session,null);
+ assert.equal(JSON.parse(save.committedState).turn.roundNumber,4);
+ assert.equal(save.replaySteps.length,record.steps);
+ assert.deepEqual(record.roundEnds.map(r=>[r.round,r.score]),[[1,15],[2,48],[3,118]]);
+ for(const [file,hash] of [[STAGED_LANDING_RECORD,admission.recordSha256],[record.savePath,admission.saveSha256],
+  [record.agentTracePath,admission.traceSha256],...record.roundEnds.map(r=>[r.checkpointPath,r.checkpointSha256])])
+  assert.equal(sha(file),hash,'STAGED_LANDING_PREFIX_DRIFT:'+file);
+ const evidence=admission.admission;
+ assert.equal(evidence.originalReserve,'b_111.webp');
+ assert.equal(evidence.coldRoots,20);
+ assert(evidence.complete&&evidence.unchangedRoots&&evidence.agreesWithNativeReplay&&evidence.native<=256&&evidence.ms<=600);
+ for(const file of Object.keys(read(R4_ADMISSION).runtimeHashes))
+  assert(Object.hasOwn(admission.runtimeHashes,file),'STAGED_LANDING_RUNTIME_MISSING:'+file);
+ for(const [file,hash] of Object.entries(admission.runtimeHashes))
+  assert.equal(sha(file),hash,'STAGED_LANDING_RUNTIME_DRIFT:'+file);
+ assert.deepEqual(save.replaySteps.slice(0,23).map(e=>[e.actorPlayerId,e.action]),
+  firstRound.opening().checkpoint.replaySteps.map(e=>[e.actorPlayerId,e.action]));
+ return {record,save,provenance:{recordPath:STAGED_LANDING_RECORD,recordSha256:admission.recordSha256,
+  savePath:record.savePath,saveSha256:admission.saveSha256,tracePath:record.agentTracePath,traceSha256:admission.traceSha256,
+  sourceCommit:record.gitCommit,steps:record.steps,sourceCompletedRounds:3,sourceGameWallMs:record.wallMs,sourceRoundWallMs:record.wallMs,
+  candidateAdmissionPath:STAGED_LANDING_ADMISSION,candidateAdmissionSha256:sha(STAGED_LANDING_ADMISSION),
+  policyContinuation:'restart-white-plan-at-verified-round4-boundary'}};
+}
 function continuation(id=ID){
+ if(id===STAGED_LANDING_ID)return stagedLandingContinuation();
  if(id===R4_ID)return r4Continuation();
  if(id===V661_ID)return v661Continuation();
  if(id===V189_ID)return v189Continuation();
@@ -73,15 +108,15 @@ function describe(identity,options={}){
  if(!IDS.includes(identity.flags?.scenario))throw Error('RESEARCH_SCENARIO_UNKNOWN');
  if(!options.full)throw Error('WHITE_ONLY_FULL_REQUIRES_FULL_MODE');
  if(identity.agentType!=='search'||identity.activePlayerCount!==4||identity.seed!=='seti-free-analyze-v1')throw Error('WHITE_ONLY_FULL_CONFIGURATION_INVALID');
- const source=continuation(identity.flags.scenario);return{id:identity.flags.scenario,learnerSeat:'player-white',learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',opponentPolicyVersion:source.record.scenario.opponentPolicyVersion,roles:source.record.scenario.roles,opponentReserveRule:source.record.scenario.opponentReserveRule,openingInputs:source.provenance.steps,originalOpeningInputs:23,openingCheckpointSha256:firstRound.opening().sha256,continuation:source.provenance,stopAfterRound:null,comparisonScope:'white-only-full-game',scoreSemantics:'terminal-score-with-passive-opponents',...(identity.flags.scenario!==ID?{roundEndPhase:'before-pass-card-and-income'}:{}),decisionGate:{nativeInputs:256,milliseconds:600,enforcement:identity.flags.scenario===R4_ID?'reject-before-input':'measure-only'},gameMillisecondsTarget:180000};
+ const source=continuation(identity.flags.scenario);return{id:identity.flags.scenario,learnerSeat:'player-white',learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',opponentPolicyVersion:source.record.scenario.opponentPolicyVersion,roles:source.record.scenario.roles,opponentReserveRule:source.record.scenario.opponentReserveRule,openingInputs:source.provenance.steps,originalOpeningInputs:23,openingCheckpointSha256:firstRound.opening().sha256,continuation:source.provenance,stopAfterRound:null,comparisonScope:'white-only-full-game',scoreSemantics:'terminal-score-with-passive-opponents',...(identity.flags.scenario!==ID?{roundEndPhase:'before-pass-card-and-income'}:{}),decisionGate:{nativeInputs:256,milliseconds:600,enforcement:isGuarded(identity.flags.scenario)?'reject-before-input':'measure-only'},gameMillisecondsTarget:180000};
 }
 function createEnvironment(options={},metadata={}){
- if(metadata.id===R4_ID)return firstRound.createEnvironment(options,metadata);
+ if(isGuarded(metadata.id))return firstRound.createEnvironment(options,metadata);
  return createSimulationEnv({...options,agentFactory:context=>context.seatId==='player-white'?search.createSearchAgent({seatId:context.seatId,analysisPort:context.analysisPort}):firstRound.passiveAgent(context.seatId)});}
 function initialize(env,config,metadata,{checkpointFromSave}={}){
  const source=continuation(metadata.id);assert.deepEqual(metadata.continuation,source.provenance,'FULL_CONTINUATION_PROVENANCE_DRIFT');assert.equal(typeof checkpointFromSave,'function');
  let save=source.save;
- if(metadata.id===R4_ID){
+ if(isGuarded(metadata.id)){
   // The native state and accepted prefix are exact. A plan from a different
   // policy identity must not select the new candidate's first action.
   const machineAI={...save.machineAI};
@@ -98,4 +133,4 @@ function roundSummary(env,round,elapsedMs){
  const state=JSON.parse(envelope.committedState),observation=env.observe('player-white');
  return{round,nextRound:state.turn.roundNumber,terminal:env.isTerminal(),steps:inputCount(checkpoint),elapsedMs,players:state.players.players.map(p=>{const visible=observation.publicState.players.find(x=>x.playerId===p.id);return{seat:p.id,score:p.resources.score,finalScore:visible.finalScore??null,technology:Object.keys(p.techState.ownedTiles).filter(id=>p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]),income:p.income,resources:p.resources,handCount:p.hand.length,reservedCount:p.reservedCards.length,...(p.id==='player-white'?{hand:p.hand.map(c=>c.cardId),reserved:p.reservedCards.map(c=>c.cardId)}:{})};})};
 }
-module.exports={ID,V189_ID,V661_ID,R4_ID,IDS,describe,continuation,createEnvironment,initialize,settled,roundSummary,inputCount};
+module.exports={ID,V189_ID,V661_ID,R4_ID,STAGED_LANDING_ID,isGuarded,IDS,describe,continuation,createEnvironment,initialize,settled,roundSummary,inputCount};
