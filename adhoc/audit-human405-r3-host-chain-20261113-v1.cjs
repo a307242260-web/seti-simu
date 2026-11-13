@@ -111,8 +111,9 @@ if(mode==='fork') {
     write({source,groups});
   }finally{env.dispose();}
 }
-if(mode==='terminal') {
-  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups.flatMap(g=>g.rows.slice(0,3));
+if(mode==='terminal'||mode==='terminal-keep') {
+  const forks=JSON.parse(zlib.gunzipSync(fs.readFileSync(process.argv[4]))).groups.flatMap(g=>g.rows.slice(0,3))
+    .filter(row=>mode!=='terminal-keep'||row.name!=='continue autonomously');
   const env=initialized(),groups=[];
   const template=env.createCheckpoint();
   try{
@@ -121,6 +122,10 @@ if(mode==='terminal') {
       for(const reserve of ['b_111.webp','b_32.webp']){
         env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:origin,committedState:origin.committedState},machineAI:{}});
         const inputs=[],checkpoints=[],decisions=[];
+        if(mode==='terminal-keep'){
+          const pass=env.legalActions().find(a=>a.family==='pass'&&a.actorId===white);
+          assert(pass);assert(env.step(pass).ok);inputs.push(pass);
+        }
         let picked=false,stop;
         const start=performance.now();
         while(inputs.length<240){
@@ -664,5 +669,43 @@ if(mode==='cargo-electricity-hidden'){
       groups.push({name:`ordinary pile ${i}/${j}`,root,swap,rows});
     }
     write({source,groups});
+  }finally{env.dispose();}
+}
+if(mode==='cargo-inventory-stop'){
+  const file='reports/ai-foundation-20261113/r3-cargo-electricity/human405-r3-cargo-electricity-20261113-v1.json.gz';
+  const g=JSON.parse(zlib.gunzipSync(fs.readFileSync(file))).groups[0],ref=g.rows[1];
+  const env=initialized(),template=env.createCheckpoint();
+  const restore=e=>env.loadCheckpoint({...template,coreState:{...template.coreState,compositionEnvelope:e,committedState:e.committedState},machineAI:{}});
+  function put(action){assert(action);assert(env.step(action).ok);return action;}
+  try{
+    restore(g.root);
+    const cut=ref.inputs.findIndex(a=>a.family==='end_turn')+1;
+    for(const old of ref.inputs.slice(0,cut)){
+      const a=env.legalActions().find(x=>x.actionId===old.actionId);assert.deepEqual(a,old);put(a);
+    }
+    const host=env.createCheckpoint(),origin=host.coreState.compositionEnvelope,rows=[];
+    function record(name,inputs,decisions=[]){
+      assert(env.legalActions().some(a=>a.family==='pass'&&a.actorId===white));
+      const end=env.createCheckpoint().coreState.compositionEnvelope;
+      const row={name,inputs,end,checkpoints:[],score:null,stop:'prepass',assets:assets(end,env.observe(white)),decisions,
+        peak:[Math.max(0,...decisions.map(d=>d[0])),Math.max(0,...decisions.map(d=>d[1]))]};
+      rows.push(row);return row;
+    }
+    record('leave two known movement cards',[]);
+    const automatic=run(env,{forced:'continue autonomously'});assert.deepEqual(automatic.end,ref.end);rows.push(automatic);
+    env.loadCheckpoint(host);
+    const scanPrefix=ref.inputs.slice(cut,ref.inputs.findIndex((a,i)=>i>=cut&&a.family==='scan'));
+    for(const old of scanPrefix)assert.deepEqual(take(env).a,old);
+    const ready=env.createCheckpoint();
+    env.loadCheckpoint(ready);
+    const inputs=[...scanPrefix],decisions=[];
+    for(const a of ref.inputs.slice(cut+scanPrefix.length)){
+      const v=take(env);assert.deepEqual(v.a,a);inputs.push(v.a);
+      for(const q of v.searches)decisions.push([q.diagnostics.nativeExecutions,q.rootAndSearchMilliseconds]);
+      if(v.a.family==='end_turn')break;
+    }
+    record('exact scan, no further analysis',inputs,decisions);
+    for(const r of rows){const a=r.assets;console.log(JSON.stringify({name:r.name,score:a.score,tech:Object.keys(a.tech.ownedTiles).length,income:a.income,hand:a.hand,pool:a.resources.availableData,blue:a.blue,computer:a.computer,probe:a.probes,peak:r.peak}));}
+    write({source,groups:[{name:'same salary and transported fossil, third-round uses',root:origin,rows}]});
   }finally{env.dispose();}
 }
