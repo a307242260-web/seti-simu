@@ -2104,9 +2104,9 @@
     }
 
     function finishProvedCommittedState(node, stored, action, state) {
-      restoreEnvelope(provedCommittedEnvelope(stored, state), true);
+      const envelope=provedCommittedEnvelope(stored,state);
       return finishChild({session:null}, {}, movementPlanning ? nextMovementIntent(node, action) : null,
-        null, stored.informationBarrier, action, stored);
+        null, stored.informationBarrier, action, stored,{envelope,inspection:{phase:"idle",session:null}});
     }
 
     function finishProvedTurnBoundary(stored, action, state) {
@@ -2210,7 +2210,6 @@
       const pinkRefill=pinkBeforeRefill&&prepareQuietPublicRefill(stored,taskSession,pinkBeforeRefill.state,
         1,Number(pinkBeforeRefill.regionSettled),2);
       if(pinkRefill){
-        restoreEnvelope(pinkRefill.envelope,true);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
           {irreversibleBarrier:pinkRefill.barrier},movementPlanning?nextMovementIntent(node,requested):null,
           null,stored.informationBarrier,requested,stored,pinkRefill);
@@ -2321,8 +2320,6 @@
       }
       const publicScan=previewQuietPublicScan(node,stored,requested);
       if(publicScan){
-        // An idle preview has no stored choice list; enumerate on its own state.
-        if(!publicScan.envelope.session)restoreEnvelope(publicScan.envelope);
         const child=finishChild({session:null},{irreversibleBarrier:publicScan.barrier},
           nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
         provedPublicScanChoices++;
@@ -2333,7 +2330,6 @@
         let prepared=scanAction.prepared;
         if(!prepared){
           const envelope=provedCommittedEnvelope(stored,scanAction.next);
-          restoreEnvelope(envelope);
           prepared={envelope,inspection:{phase:"idle",session:null}};
         }
         const child=finishChild({session:{irreversibleBarrier:null}},{irreversibleBarrier:scanAction.barrier},
@@ -2346,7 +2342,6 @@
       }
       const alienDisplay=previewQuietAlienDisplay(node,stored,requested);
       if(alienDisplay){
-        restoreEnvelope(alienDisplay.envelope);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
           {irreversibleBarrier:alienDisplay.barrier},movementPlanning?nextMovementIntent(node,requested):null,
           stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
@@ -2356,7 +2351,6 @@
       }
       const fixedScan=previewQuietSpecifiedScan(node,stored,requested);
       if(fixedScan){
-        restoreEnvelope(fixedScan.envelope);
         const child=finishChild({session:{irreversibleBarrier:taskSession.irreversibleBarrier}},
           {irreversibleBarrier:fixedScan.barrier},movementPlanning?nextMovementIntent(node,requested):null,
           stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
@@ -2376,7 +2370,6 @@
         let prepared=research?.prepared;
         if(!prepared){
           const envelope=provedCommittedEnvelope(stored,research?.state||emptyAmibaResearch);
-          restoreEnvelope(envelope,true);
           prepared={envelope,inspection:{phase:"idle",session:null}};
         }
         const child=finishChild(before,{irreversibleBarrier:barrier},movementPlanning?nextMovementIntent(node,requested):null,
@@ -5745,9 +5738,25 @@
       }
       if (!prepared) loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
+      const childTurn=childState.turn;
+      const turnChanged=JSON.stringify([childTurn.roundNumber,childTurn.turnNumber,childTurn.actionCycleNumber])!==rootTurnKey;
+      // A committed, nonterminal handover already identifies the next seat.
+      // It has no decision session to override the current player authority.
+      if(turnChanged&&!newBarrier&&!envelope.session&&inspection.phase==="idle"
+        &&!childTurn.gameEnded&&childTurn.activePlayerIds.includes(childTurn.currentPlayerId)
+        &&!childTurn.passedPlayerIds.includes(childTurn.currentPlayerId)){
+        const own=childTurn.currentPlayerId===seatId;
+        return createNode(envelope,null,[],own?"turn-boundary":"other-owner",own?{code:"own-turn-complete"}:null);
+      }
       // A refill does not end a root-known post-main plan. Unknown owned
       // identities, alien reveals, other owners and actual turn changes still close it.
       let knownRewardActions = [], postMainActions = [];
+      // Prepared decision menus are complete. Load a prepared checkpoint only
+      // when its idle legal actions actually have to be enumerated.
+      const readActions=()=>{
+        if(prepared&&inspection.phase==="idle")restoreEnvelope(envelope);
+        return legalActions(comp,inspection);
+      };
       // A proved acquired displayed alien card is root-known; only the replacement
       // stays hidden. Carry this permission through the same turn, but a new
       // alien-card barrier must itself prove a new public acquisition.
@@ -5755,20 +5764,23 @@
       const knownAlienAcquisition=barrier?.code==="hidden_alien_card"&&acquired
         &&(!revealed||acquired!==cardKnowledgeKey(source?.envelope));
       if (newBarrier && cardPickPlanning
-        && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
+        && !turnChanged) {
         const satelliteScan=inspection.phase==="awaiting_input"&&isKnownSatelliteScanAfterBlindDraw(envelope,barrier);
         const known=knownAlienAcquisition||["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code);
         // Idle boundaries have no reward menu. If the exact knowledge
         // check already rejects their post-main actions, skip enumeration.
         const hasDecision=inspection.phase==="awaiting_input";
-        if(satelliteScan||known&&(hasDecision||canContinueKnownPostMain(envelope,childState))){
-          const nativeActions=legalActions(comp,inspection);
+        const reward=hasDecision&&(head?.type===scienceSession.EFFECT_TYPES.PICK_CARD
+          ||head?.type===scienceSession.EFFECT_TYPES.INCOME
+          ||head?.type===scienceSession.EFFECT_TYPES.SCAN_STEP&&head.payload?.options?.mode==="specified");
+        if(satelliteScan||known&&(reward||canContinueKnownPostMain(envelope,childState))){
+          const nativeActions=readActions();
           if(known)postMainActions=knownPostMainActions(envelope,nativeActions);
           if(hasDecision)knownRewardActions=knownRewardChoices(envelope,nativeActions,satelliteScan);
         }
       }
       const continueKnown = postMainActions.length > 0 || knownRewardActions.length > 0;
-      const actions = postMainActions.length ? postMainActions : knownRewardActions.length ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
+      const actions = postMainActions.length ? postMainActions : knownRewardActions.length ? knownRewardActions : newBarrier ? [] : readActions();
       // Native terminal state closes the window even if the host still lists
       // residual controls. A pending required Decision must still be completed.
       const terminal = childState.turn.gameEnded === true && inspection.phase !== "awaiting_input";
@@ -5776,15 +5788,15 @@
       if (observation && observation.terminal !== true) {
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
-      const turnChanged = JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber]) !== rootTurnKey;
       const status = continueKnown ? inspection.phase==="awaiting_input"?"decision":"stable" : newBarrier ? "information-barrier"
         : terminal ? "terminal"
           : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
             : turnChanged ? "turn-boundary"
               : inspection.phase === "awaiting_input" ? "decision" : "stable";
-      if(status==="information-barrier"&&!turnChanged){
-        if (prepared) restoreEnvelope(envelope);
+      if(status==="information-barrier"&&!turnChanged&&resourcePlanning&&cardPickPlanning
+        &&["hidden_card_draw","hidden_card_reveal","hidden_alien_card","tech_bonus_reveal"].includes(barrier?.code)){
+        if (prepared && inspection.phase==="idle")restoreEnvelope(envelope);
         const knownTail=knownPostdrawTailView(envelope,inspection,barrier,intent,resourceControl,sourceAction);
         if(knownTail)return knownTail;
         const knownData=knownPostdrawDataView(envelope,inspection,barrier,intent,resourceControl);
