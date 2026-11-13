@@ -1770,10 +1770,23 @@
   }
 
   function previewLastPlainPinkTrace(session, selected, knownCards) {
-    if(session.queue.length!==1||(!["land","analyze"].includes(session.journal.actions[0]?.action?.family)&&session.queue[0]?.payload?.cardEffect?.id!=="b32-yellow-trace"))return null;
+    if(session.queue.length!==1)return null;
+    const origin=session.journal.actions[0]?.action,head=session.queue[0],barrier=session.irreversibleBarrier;
+    // A known card's scan may already have refilled the public row. A final
+    // score-only trace cannot use that new information or start another effect.
+    const afterPublicScan=origin?.family==="play_card"&&knownCards.has(origin.target?.cardInstanceId)
+      &&head.payload?.traceType==="pink"&&barrier?.code==="hidden_card_reveal"
+      &&session.journal.effects.some(e=>e.effectId===barrier.effectId&&e.type===science.EFFECT_TYPES.PUBLIC_REFILL)
+      &&!listFossilArrivalEvents(session.workingState).length;
+    if(!afterPublicScan&&!["land","analyze"].includes(origin?.family)
+      &&head.payload?.cardEffect?.id!=="b32-yellow-trace")return null;
     const trace=previewPlainPinkTrace(session,selected,knownCards,true);
     if(!trace)return null;
     trace.state.meta.stateVersion=session.baseVersion+1;
+    if(trace.state.meta.rngState?.branch===true){
+      trace.state.meta.rngState={...trace.state.meta.rngState};
+      delete trace.state.meta.rngState.branch;
+    }
     return trace.state;
   }
 

@@ -1416,10 +1416,10 @@
       // prefix still stops at the native Purple 4 menu, before sector settlement.
       const quietAmiba=source==="scan"&&quietR3AmibaPostMain(root,p);
       const quietRoundThree=quietAmiba||source==="scan"&&(isUnrevealedRoundThree(root)||quietEarlySameSeatHandover(root));
-      // A repeat can be reused before the next public choice, but ending
-      // a scan without the Purple 4 menu would also settle the sector.
-      if(repeatOnly&&(!quietAmiba||finalize.kind!=="effect"||Object.keys(finalize.payload).length
-        ||action.target?.done||opts.selected+1>=opts.max))return null;
+      // With no ready sector, the last public scan input can also drain
+      // the forced finalize/settle/refill tail. Live settlements stay native.
+      if(repeatOnly&&(!(quietAmiba||source==="scan"&&t.roundNumber===4)
+        ||finalize.kind!=="effect"||Object.keys(finalize.payload).length))return null;
       if((t.roundNumber!==4&&!quietRoundThree)||t.currentPlayerId!==seatId||t.gameEnded||!p.mainActionCompleted||p.passCompletionPending
         ||t.cardTurnEventBonuses?.length&&!aomomoScan||t.type1TriggerEvents?.length
         ||(mercury?localPlans.hasPendingFossilArrival(root):Object.values(root.aliens.chong?.transportTasksByRocketId||{}).some(job=>!job.delivered)&&!knownStationaryCargoForScan(root))
@@ -1449,7 +1449,19 @@
         if(adjusted.spawnedEffects.length||adjusted.events.length!==events.length)return null;
         events=adjusted.events;
       }
-      if(repeatOnly&&!repeat||events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+      if(events.some(event=>cardEffects.collectMatchingTriggers(player,event).length))return null;
+      if(repeatOnly&&!repeat){
+        if(t.roundNumber!==4||localPlans.hasPendingFossilArrival(state)
+          ||data.NEBULA_IDS.some(id=>data.isSectorReadyToSettle(state.data,id)))return null;
+        const scratch={...s},flow=scienceSession.finalizeScanFlow(state,finalize);
+        const queue=effectSession.normalizeSpawnedEffects(flow.spawnedEffects,scratch,finalize);
+        if(queue.length===2&&queue[0].type===types.SETTLE&&queue[1].type===types.PUBLIC_REFILL){
+          return prepareQuietPublicRefill(stored,{...s,queue:[head,...queue]},state,2,1,3);
+        }
+        if(queue.length!==1||queue[0].type!==types.SETTLE)return null;
+        state.meta=quietSavedMeta(state.meta,s.baseVersion+1);
+        return {envelope:provedCommittedEnvelope(stored,state),inspection:{phase:"idle",session:null}};
+      }
       const offset=Number(Boolean(repeat)),revision=s.revision+1;
       const nextEffectSequence=s.nextEffectSequence+offset,nextGroupSequence=s.nextGroupSequence+offset;
       const queue=s.queue.slice(1);
@@ -2262,7 +2274,8 @@
       }
       const publicScan=previewQuietPublicScan(node,stored,requested);
       if(publicScan){
-        const child=finishChild({session:null},{},nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
+        const child=finishChild({session:null},{irreversibleBarrier:publicScan.barrier},
+          nextMovementIntent(node,requested),null,null,requested,stored,publicScan);
         provedPublicScanChoices++;
         return rememberPrefix(key,node,actionId,remember(key,child));
       }

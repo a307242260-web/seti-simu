@@ -225,6 +225,40 @@ console.log(JSON.stringify({localFinalMarkAndScan:'passed',nativeMarkOptions:4,r
  }
 }
 
+// Closing a public scan without a completed sector refills the market and
+// preserves the boundary. A last pink trace after refill has native parity.
+{
+ const witnesses=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(__dirname,'quiet-scan-tail-20261113-v1.fixture.json.gz'))));
+ for(const {kind,root:envelope,action,end,barrier} of witnesses){
+  const seed=JSON.parse(envelope.committedState).meta.seed,seatId=action.actorId;
+  const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true})});
+  k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(envelope).ok);
+  const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),native=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});
+  try{
+   const before=c.lifecycle.save().envelope,s=before.session.session;
+   if(kind==='trace'){
+    const known=new Set([s.journal.actions[0].action.target.cardInstanceId,
+     ...s.workingState.players.players.find(p=>p.id===seatId).reservedCards.map(card=>card.id)]);
+    assert.deepEqual(s.irreversibleBarrier,barrier);
+    assert.equal(plans.previewLastPlainPinkTrace(s,action,new Set()),null);
+    assert.deepEqual(plans.previewLastPlainPinkTrace(s,action,known),JSON.parse(end.committedState));
+   }else{
+    const root=port.openRoot(),control=native.openRoot();
+    port.setResourcePlanning(true);port.setDecisionPlanning({scanPlanning:true});
+    const actual=port.expand(root,action.actionId),expected=native.expand(control,action.actionId);
+    assert.equal(port.getDiagnostics().provedPublicScanChoices,1);
+    assert.equal(actual.boundary,barrier.code);
+    assert.deepEqual(actual.observation,expected.observation);
+    assert.deepEqual(actual.legalActions,expected.legalActions);
+   }
+   assert.deepEqual(c.lifecycle.save().envelope,before);
+   submit(c,action.actionId);
+   assert.deepEqual(c.lifecycle.save().envelope,end);
+  }finally{native.close();port.close();c.dispose();}
+ }
+}
+
 // The last-round satellite setup is one funded plan. It preserves the paid
 // landing card, reaches the native end-of-turn boundary, and keeps the refill hidden.
 {
