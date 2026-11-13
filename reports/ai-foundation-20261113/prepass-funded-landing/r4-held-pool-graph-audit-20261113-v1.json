@@ -1,0 +1,420 @@
+{
+  "source": "fef545ca0 valuation with current committed search code",
+  "root": "hold-two-corners/b_111.webp",
+  "n": 288,
+  "ms": 1820.933458,
+  "diag": {
+    "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+    "valueEvaluations": 992,
+    "valueCacheHits": 2287,
+    "finalMarkPlanning": true,
+    "scanPlanning": true,
+    "resourcePlanning": "goal-bound-greedy-preparation",
+    "cardPickPlanning": "purpose-bound-fixed-plan",
+    "movementPlanning": "goal-directed-policy",
+    "movementPolicyNodes": 787,
+    "movementDirectionsExcluded": 3423,
+    "routeGeometryNodes": 288,
+    "incomePlanProofs": 0,
+    "provedIncomeInputs": 0,
+    "turnTailProofs": 597,
+    "provedTurnTailInputs": 1442,
+    "movementValuePrunes": 0,
+    "dataPrimaryBoundPrunes": 0,
+    "winningIncomePlans": 0,
+    "winningIncomeInputs": 0,
+    "deferredMovementPlans": 0,
+    "nativeExecutions": 288,
+    "logicalResourceInputs": 4083,
+    "sharedResourceInputHits": 284,
+    "sharedResourceInternalStates": 2772,
+    "localFinalMarkStates": 0,
+    "localFinalMarkExcluded": 0,
+    "fixedDataChoiceStates": 0,
+    "fixedDataChoicesExcluded": 0,
+    "branchingStates": 615,
+    "singleAlternativeStates": 797,
+    "disabledBorrowStarts": 0,
+    "disabledRemoveTechIncomeStarts": 0,
+    "scanPurposePlans": 164,
+    "resourceGoalPlans": 1007,
+    "resourcePreparationInputs": 4083,
+    "resourceFallbacks": 7,
+    "resourceExcludedActions": 13803,
+    "transitions": 5507,
+    "nodes": 6033,
+    "graphNodes": 2455,
+    "certificateNodes": 3578,
+    "postMainOptimalPlans": 0,
+    "postMainOptimalPlanSteps": 0,
+    "equivalents": 52,
+    "selectionMacros": 0,
+    "peakFrontier": 71,
+    "dominancePrunes": 0,
+    "resourceDominance": "disabled-for-movement-policy",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "disabled-for-movement-policy",
+    "postMainValuePrunes": 0,
+    "scanValuePrunes": 0,
+    "scanActionPrunes": 0,
+    "cardTradePrunes": 0,
+    "cardTradePruning": "disabled-for-selection-certificate",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "postMainBorrowProofNodes": 0,
+    "postMainBorrowExcludedChoices": 0,
+    "postMainBorrowMacros": 0,
+    "cardChoiceProofNodes": 0,
+    "cardChoiceExcludedActions": 0,
+    "cardCornerProofNodes": 0,
+    "cardCornerExcludedActions": 0,
+    "preMainDataProofNodes": 0,
+    "preMainDataExcludedActions": 0,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v71\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "not-requested",
+    "milliseconds": 1801.266708,
+    "limits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    }
+  },
+  "rows": [
+    {
+      "first": "发射",
+      "v": 184.5,
+      "graph": 6,
+      "edges": 5,
+      "native": 19,
+      "planned": 2,
+      "types": {
+        "stable": 4,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "dlc_25.png",
+      "v": 186,
+      "graph": 5,
+      "edges": 4,
+      "native": 15,
+      "planned": 2,
+      "types": {
+        "stable": 3,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "b_111.webp",
+      "v": 185.5,
+      "graph": 7,
+      "edges": 6,
+      "native": 16,
+      "planned": 3,
+      "types": {
+        "stable": 4,
+        "other-owner": 2,
+        "information-barrier": 1
+      },
+      "goals": {
+        "computer-prefix": 1,
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "b_9.webp",
+      "v": 193.5,
+      "graph": 72,
+      "edges": 71,
+      "native": 219,
+      "planned": 48,
+      "types": {
+        "decision": 2,
+        "stable": 50,
+        "turn-tail-value": 18,
+        "information-barrier": 2
+      },
+      "goals": {
+        "scan-flow": 8,
+        "income": 10,
+        "computer-prefix": 10,
+        "blue-data": 20
+      }
+    },
+    {
+      "first": "b_60.webp",
+      "v": 191,
+      "graph": 13,
+      "edges": 14,
+      "native": 38,
+      "planned": 5,
+      "types": {
+        "stable": 8,
+        "other-owner": 2,
+        "turn-tail-value": 2,
+        "information-barrier": 1
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 4
+      }
+    },
+    {
+      "first": "PASS",
+      "v": 160,
+      "graph": 1,
+      "edges": 0,
+      "native": 0,
+      "planned": 0,
+      "types": {
+        "other-owner": 1
+      },
+      "goals": {}
+    },
+    {
+      "first": "深空探测 1x 行动",
+      "v": 203.5,
+      "graph": 812,
+      "edges": 830,
+      "native": 2394,
+      "planned": 350,
+      "types": {
+        "stable": 446,
+        "decision": 27,
+        "other-owner": 55,
+        "information-barrier": 90,
+        "turn-tail-value": 194
+      },
+      "goals": {
+        "analyze": 1,
+        "blue-data": 163,
+        "income": 23,
+        "effect-purpose": 14,
+        "route": 4,
+        "scan-flow": 60,
+        "computer-prefix": 85
+      }
+    },
+    {
+      "first": "b_111.webp：弃牌角标",
+      "goal": "data:analyze:6",
+      "v": 192,
+      "graph": 7,
+      "edges": 6,
+      "native": 6,
+      "planned": 0,
+      "types": {
+        "decision": 1,
+        "stable": 3,
+        "turn-tail-value": 3
+      },
+      "goals": {}
+    },
+    {
+      "first": "放置数据",
+      "goal": "data:blue:1",
+      "v": 202.5,
+      "graph": 909,
+      "edges": 919,
+      "native": 2623,
+      "planned": 337,
+      "types": {
+        "stable": 467,
+        "decision": 33,
+        "other-owner": 46,
+        "information-barrier": 124,
+        "turn-tail-value": 239
+      },
+      "goals": {
+        "blue-data": 141,
+        "income": 13,
+        "effect-purpose": 14,
+        "route": 5,
+        "scan-flow": 64,
+        "analyze": 2,
+        "computer-prefix": 98
+      }
+    },
+    {
+      "first": "b_111.webp：弃牌角标",
+      "goal": "data:income:4",
+      "v": 203.5,
+      "graph": 825,
+      "edges": 832,
+      "native": 1813,
+      "planned": 298,
+      "types": {
+        "stable": 431,
+        "decision": 29,
+        "other-owner": 55,
+        "information-barrier": 112,
+        "turn-tail-value": 198
+      },
+      "goals": {
+        "analyze": 3,
+        "blue-data": 147,
+        "effect-purpose": 14,
+        "route": 5,
+        "scan-flow": 46,
+        "computer-prefix": 83
+      }
+    },
+    {
+      "first": "dlc_15.png",
+      "goal": "effect:tech:card:card-67-0",
+      "v": 198,
+      "graph": 33,
+      "edges": 32,
+      "native": 122,
+      "planned": 16,
+      "types": {
+        "decision": 1,
+        "stable": 22,
+        "turn-tail-value": 10
+      },
+      "goals": {
+        "effect-purpose": 6,
+        "computer-prefix": 2,
+        "blue-data": 8
+      }
+    },
+    {
+      "first": "2信用点 → 1能量",
+      "goal": "rocket:6:land:mercury:planet:",
+      "v": 200,
+      "graph": 59,
+      "edges": 58,
+      "native": 176,
+      "planned": 16,
+      "types": {
+        "decision": 3,
+        "information-barrier": 12,
+        "stable": 28,
+        "other-owner": 8,
+        "turn-tail-value": 8
+      },
+      "goals": {
+        "computer-prefix": 4,
+        "blue-data": 12
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-1-a",
+      "v": 188,
+      "graph": 7,
+      "edges": 6,
+      "native": 19,
+      "planned": 4,
+      "types": {
+        "stable": 5,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2,
+        "computer-prefix": 1
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-2-a",
+      "v": 190,
+      "graph": 7,
+      "edges": 6,
+      "native": 19,
+      "planned": 4,
+      "types": {
+        "stable": 5,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2,
+        "computer-prefix": 1
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-2-b",
+      "v": 189.5,
+      "graph": 6,
+      "edges": 5,
+      "native": 23,
+      "planned": 3,
+      "types": {
+        "stable": 4,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-3-a",
+      "v": 189.5,
+      "graph": 6,
+      "edges": 5,
+      "native": 23,
+      "planned": 3,
+      "types": {
+        "stable": 4,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-4-a",
+      "v": 187.5,
+      "graph": 6,
+      "edges": 5,
+      "native": 23,
+      "planned": 3,
+      "types": {
+        "stable": 4,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2
+      }
+    },
+    {
+      "first": "扫描",
+      "goal": "scan:sector:sector-4-b",
+      "v": 189.5,
+      "graph": 6,
+      "edges": 5,
+      "native": 23,
+      "planned": 3,
+      "types": {
+        "stable": 4,
+        "turn-tail-value": 2
+      },
+      "goals": {
+        "income": 1,
+        "blue-data": 2
+      }
+    }
+  ]
+}

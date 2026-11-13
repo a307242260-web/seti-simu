@@ -473,3 +473,24 @@ B111 的直接 PASS 路线进入第四轮后用两次兑换、原探测器和轮
 延后分析的两条第四轮都先登陆土星，用已持牌支付移动，随后才分析；与原线相比，收益方向随留牌变化。提前分析再留牌的六条续局，在首步达 288–363 次／1.49–1.85 秒，均未提交。不能因为其中一条 274 就替换正式 272，也不能给第三轮统一延后分析加分。若继续比较库存，优先修复实际有 1–3 池的第四轮首点，补齐同留牌结果；不再扩大本轮未知物种揭示范围。
 
 [正式与教师公开前提](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-public-transport-reachability-20261113-v1.json.gz) · [七种揭示配对](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-transport-reveal-audit-20261113-v1.json.gz) · [原路线同留牌](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-baseline-20261113-v1.json.gz) · [末次分析对照](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-stock-20261113-v1.json.gz) · [保留池数据门槛](../reports/ai-foundation-20261113/prepass-funded-landing/r3-standard-last-analysis-partial-20261113-v1.json.gz)。四份带原生动作的对照用同一复放脚本验证；生产策略、正式记录与 V41 不变。
+
+## 标准三池留存：第四轮首步的开销和真实终局
+
+取第 242 步的原生分叉，固定第三轮先分析、两次角标换数据并留 3 池、2 手、7 钱／3 电收入。留 B111 时第四轮首点冷测 288 次、约 1.83 秒；图共 6033 个节点（2455 图节点，3578 证明用节点），4083 次逻辑资源准备。公司换牌、第四格收入、蓝 2 补电的子图各约 812／825／909 个节点（有交集，不能相加）。288 个原生输入以外星痕迹 62、外星选牌 50、打牌 44、登陆 25 为主，仅发现一次严格相同信封与动作重复。主要问题是不同准备状态各自重开后续计划，不是简单重复提交同一个状态。
+
+两张留牌均从同一首点开始，只固定表中的主行动或其付款前缀，后续由同一个已提交的生产策略自主继续。两种土星付款均走同一两步路径并登陆主星；不是对第四轮全部策略的穷举。
+
+| 第四轮控制 | B111 | B32 |
+| --- | ---: | ---: |
+| 诊断用超限搜索的推荐序列，人工固定后交回 AI | 221 | 221 |
+| 公司换 DLC16 付移动，登陆土星 | 220 | 220 |
+| 用 2 钱补 1 电，登陆同一土星 | 242 | 242 |
+| 填蓝 2 补 1 电，登陆同一土星 | 242 | 242 |
+| 先填第四格插电，登陆同一土星 | 234 | 234 |
+| 先打 DLC15 科研 | 239 | 239 |
+| 先标准扫描 | 234 | 244 |
+| 第三轮原分析和插电路线（上一节同留牌） | 272 | 249 |
+
+补现金与补蓝槽的登陆后状态不同，但同一留牌最终规则信封、会话和 RNG 完全相同。诊断的推荐序列消耗留牌、插电、换入移动牌，再走更远路线；最终虽把首回合估值做到 203.5，真实终局却只有 221。其首点仍未通过门槛，表中 221 只用于诊断，不是自主验收。十四条原生续局均独立复放，所有交回 AI 后的决定均在预算内。现有对照没有一条超过同留牌的原分析和插电路线，先收束这条存 3 池的专用提速；不能据此否定更早积累的、不损失永久电的库存路线。生产和正式成绩未改。
+
+[首点图分布](../reports/ai-foundation-20261113/prepass-funded-landing/r4-held-pool-graph-audit-20261113-v1.json) · [原生输入分布](../reports/ai-foundation-20261113/prepass-funded-landing/r4-standard-held-pool-profile-20261113-v1.json.gz) · [登陆付款配对](../reports/ai-foundation-20261113/prepass-funded-landing/r4-held-pool-public-landing-funded-control-20261113-v1.json.gz) · [补蓝槽与插收入](../reports/ai-foundation-20261113/prepass-funded-landing/r4-held-pool-payments-control-20261113-v1.json.gz) · [科研和扫描](../reports/ai-foundation-20261113/prepass-funded-landing/r4-held-pool-other-main-control-20261113-v1.json.gz) · [超限首选的固定诊断](../reports/ai-foundation-20261113/prepass-funded-landing/r4-held-pool-winner-witness-20261113-v1.json.gz)。
