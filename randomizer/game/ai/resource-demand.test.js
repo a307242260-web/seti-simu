@@ -149,3 +149,32 @@ console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,pro
   for(const prefix of result.prefixes){const cold=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});cold.setResourcePlanning(true);cold.setCardPickPlanning(true);try{const n=cold.openRoot(),recovered=cold.resourceSpec(n).plans.find(p=>p.goal.id===plan.goal.id);assert(recovered,'recover the purpose after every actual atomic input');const continuation=cold.expandResourcePlan(n,recovered,()=>null);assert(continuation.complete);assert.equal(continuation.prefixes[0].action.actionId,prefix.action.actionId);const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===prefix.action.actionId);assert(a);const applied=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(applied.ok);}finally{cold.close();}}
  }finally{p.close();c.dispose();}
 }
+// Once Venus orbit has been paid, the mandatory income choice closes the
+// route even when the remaining wallet cannot pay for another orbit.
+{
+ const file=path.resolve(__dirname,'../../../reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz');
+ const {groups:[{root,rows:[{inputs,checkpoints}]}]}=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(file)));
+ const seed=JSON.parse(root.committedState).meta.seed,seat='player-white';
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});
+ k.newGame({seed});const c=k.composition;
+ try{
+  assert(c.lifecycle.restore(root).ok);assert(c.inputPort.submitQuickAction(inputs[0]).ok);
+  const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+  try{
+   p.setMovementPlanning(true);p.setResourcePlanning(true);p.setCardPickPlanning(true);
+   const node=p.openRoot(),route=p.resourceSpec(node).plans.find(x=>x.goal.kind==='route'&&x.goal.family==='orbit'&&x.goal.planetId==='venus');
+   assert(route,'retain the concrete payable Venus route');
+   const result=p.expandResourcePlan(node,route,()=>null);
+   assert.equal(result.goalStatus,'completed');
+   assert.deepEqual(result.prefixes.map(x=>x.action.actionId),inputs.slice(1,7).map(x=>x.actionId));
+   assert.deepEqual(c.lifecycle.save().envelope,before);
+   for(const {action:a} of result.prefixes){
+    const d=c.inspect().session?.decision;
+    const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a})
+     :a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);
+    assert(r.ok,JSON.stringify(r));
+   }
+   assert.deepEqual(c.lifecycle.save().envelope,checkpoints[0][1]);
+  }finally{p.close();}
+ }finally{c.dispose();}
+}

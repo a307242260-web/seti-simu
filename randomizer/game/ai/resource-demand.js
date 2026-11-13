@@ -1358,7 +1358,11 @@
       }
 
       const pay=fixedPayment({state,seatId,goal,actions,session,discardIds:operation.discardIds});if(pay)return pay;
-      const income=incomeChoice({state,seatId,goal,actions});if(income)return income;
+      // A mandatory income reward after orbit has no remaining route cost.
+      // Keep the native menu's fixed income rank without funding the spent endpoint again.
+      const incomeGoal=goal.kind==='route'&&operation.targetStarted
+        ?{kind:'route-income-reward',required:{}}:goal;
+      const income=incomeChoice({state,seatId,goal:incomeGoal,actions});if(income)return income;
       if(operation.placing&&operation.resourceBlueSlot){
         const a=actions.find(a=>a.family==='choose_target'&&a.target?.target===(operation.finalResourceBlue?'blueBonus':'computer')
           &&(!operation.finalResourceBlue||a.target.blueSlot===operation.resourceBlueSlot));
