@@ -27,7 +27,9 @@ for (const group of groups) {
         const decision = c.inspect().session?.decision;
         const action = (decision?.choices || c.inputPort.enumerateActions({}))
           .find(choice => choice.actionId === expected.actionId);
-        assert.deepEqual(action, expected);
+        assert(action);
+        // Persisted JSON omits optional fields whose native value is undefined.
+        assert.deepEqual(JSON.parse(JSON.stringify(action)), expected);
         if (action.actorId !== white) assert(['pass', 'choose_card', 'choose_payment'].includes(action.family));
         const result = decision
           ? c.inputPort.submitDecision({
