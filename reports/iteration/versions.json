@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-r3-prepass-funded-landing-20261113",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-r3-prepass-funded-landing-20261113",
+      "date": "2026-11-13",
+      "baseline": "ai-search-r3-direct-transport-scored-corners-20261113",
+      "baselineEligible": false,
+      "head": "5135a5a0e",
+      "commits": [
+        "5135a5a0e"
+      ],
+      "summary": "第三轮只剩一电时，为可支付的下一轮登陆提前定位，保留前两轮及第三轮原有科技与永久收入",
+      "records": {
+        "11ef28bc.5135a5a0.quick-400.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-r3-direct-transport-scored-corners-20261113",
       "aiGeneration": "v2",
       "agentType": "search",

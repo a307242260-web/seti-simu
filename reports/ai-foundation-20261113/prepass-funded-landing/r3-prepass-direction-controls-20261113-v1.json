@@ -1,0 +1,404 @@
+{
+  "source": "5a47269ba",
+  "scope": "original deck order, fixed reserve by pair, R4 replay, not a registered full-game result",
+  "rows": [
+    {
+      "label": "no-move",
+      "reserve": "b_32.webp",
+      "score": 253,
+      "stop": "terminal",
+      "peak": [
+        190,
+        540.98875
+      ],
+      "position": [
+        [
+          4,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 4,
+          "cost": 5,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 5
+        },
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 5
+        },
+        {
+          "target": "rocket:6:land:mars:planet:",
+          "steps": 3,
+          "cost": 5,
+          "gain": 6,
+          "data": 1,
+          "direct": true,
+          "net": 1.5
+        },
+        {
+          "target": "rocket:6:orbit:mercury:planet:",
+          "steps": 4,
+          "cost": 5,
+          "gain": 3,
+          "data": 0,
+          "direct": true,
+          "net": -3
+        }
+      ],
+      "replayInputs": 93
+    },
+    {
+      "label": "no-move",
+      "reserve": "b_111.webp",
+      "score": 239,
+      "stop": "terminal",
+      "peak": [
+        171,
+        405.1383340000002
+      ],
+      "position": [
+        [
+          4,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 4,
+          "cost": 5,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 5
+        },
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 5
+        },
+        {
+          "target": "rocket:6:land:mars:planet:",
+          "steps": 3,
+          "cost": 5,
+          "gain": 6,
+          "data": 1,
+          "direct": true,
+          "net": 1.5
+        },
+        {
+          "target": "rocket:6:orbit:mercury:planet:",
+          "steps": 4,
+          "cost": 5,
+          "gain": 3,
+          "data": 0,
+          "direct": true,
+          "net": -3
+        }
+      ],
+      "replayInputs": 89
+    },
+    {
+      "label": "移动探测器 6 向外",
+      "reserve": "b_32.webp",
+      "score": 269,
+      "stop": "terminal",
+      "peak": [
+        185,
+        443.0115829999995
+      ],
+      "position": [
+        [
+          4,
+          3,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 6
+        },
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 1,
+          "cost": 3,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 6
+        }
+      ],
+      "replayInputs": 92
+    },
+    {
+      "label": "移动探测器 6 向外",
+      "reserve": "b_111.webp",
+      "score": 272,
+      "stop": "terminal",
+      "peak": [
+        166,
+        436.7103330000009
+      ],
+      "position": [
+        [
+          4,
+          3,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 6
+        },
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 1,
+          "cost": 3,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 6
+        }
+      ],
+      "replayInputs": 95
+    },
+    {
+      "label": "移动探测器 6 顺时针",
+      "reserve": "b_32.webp",
+      "score": 253,
+      "stop": "terminal",
+      "peak": [
+        240,
+        428.098750000001
+      ],
+      "position": [
+        [
+          5,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 6
+        },
+        {
+          "target": "rocket:6:land:mars:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 6,
+          "data": 1,
+          "direct": true,
+          "net": 2.5
+        },
+        {
+          "target": "rocket:6:orbit:mercury:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 3,
+          "data": 0,
+          "direct": true,
+          "net": -2
+        }
+      ],
+      "replayInputs": 91
+    },
+    {
+      "label": "移动探测器 6 顺时针",
+      "reserve": "b_111.webp",
+      "score": 239,
+      "stop": "terminal",
+      "peak": [
+        221,
+        391.22191699999894
+      ],
+      "position": [
+        [
+          5,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:uranus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 11,
+          "data": 0,
+          "direct": true,
+          "net": 6
+        },
+        {
+          "target": "rocket:6:land:mars:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 6,
+          "data": 1,
+          "direct": true,
+          "net": 2.5
+        },
+        {
+          "target": "rocket:6:orbit:mercury:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 3,
+          "data": 0,
+          "direct": true,
+          "net": -2
+        }
+      ],
+      "replayInputs": 87
+    },
+    {
+      "label": "移动探测器 6 逆时针",
+      "reserve": "b_32.webp",
+      "score": null,
+      "stop": "gate",
+      "peak": [
+        232,
+        679.0417499999967
+      ],
+      "position": [
+        [
+          3,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 5
+        }
+      ],
+      "replayInputs": 4
+    },
+    {
+      "label": "移动探测器 6 逆时针",
+      "reserve": "b_111.webp",
+      "score": null,
+      "stop": "gate",
+      "peak": [
+        203,
+        610.0197919999991
+      ],
+      "position": [
+        [
+          3,
+          2,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:land:saturn:planet:",
+          "steps": 2,
+          "cost": 4,
+          "gain": 8,
+          "data": 2,
+          "direct": true,
+          "net": 5
+        }
+      ],
+      "replayInputs": 4
+    },
+    {
+      "label": "移动探测器 6 向内",
+      "reserve": "b_32.webp",
+      "score": 240,
+      "stop": "terminal",
+      "peak": [
+        245,
+        389.76929200000086
+      ],
+      "position": [
+        [
+          4,
+          1,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:venus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 9,
+          "data": 0,
+          "direct": true,
+          "net": 4
+        }
+      ],
+      "replayInputs": 79
+    },
+    {
+      "label": "移动探测器 6 向内",
+      "reserve": "b_111.webp",
+      "score": 225,
+      "stop": "terminal",
+      "peak": [
+        226,
+        364.2230000000018
+      ],
+      "position": [
+        [
+          4,
+          1,
+          null
+        ]
+      ],
+      "knownDirect": [
+        {
+          "target": "rocket:6:orbit:venus:planet:",
+          "steps": 3,
+          "cost": 4,
+          "gain": 9,
+          "data": 0,
+          "direct": true,
+          "net": 4
+        }
+      ],
+      "replayInputs": 87
+    }
+  ]
+}
