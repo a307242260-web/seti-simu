@@ -1,0 +1,953 @@
+{
+  "head": "5de10b3cf478bae21e58bce4ed377a0acf907c85",
+  "scenario": "free-analyze-random20-guarded-v1",
+  "rows": [
+    {
+      "board": 2,
+      "record": "9fd646a1.5de10b3c.full.json",
+      "terminal": true,
+      "score": 140,
+      "rounds": [
+        11,
+        39,
+        64,
+        94
+      ],
+      "wallMs": 10952,
+      "peak": [
+        248,
+        339.69437500000095
+      ],
+      "steps": 235,
+      "failure": null,
+      "save": "seti-saves/seti-save-research-free-analyze-current-20261113-02-5de10b3c-full-v97.json"
+    },
+    {
+      "board": 11,
+      "record": "58347b55.5de10b3c.full.json",
+      "terminal": false,
+      "score": null,
+      "rounds": [
+        20
+      ],
+      "wallMs": 3040,
+      "peak": [
+        44,
+        119.1763749999991
+      ],
+      "steps": 74,
+      "failure": {
+        "code": "SCENARIO_FAILED",
+        "message": "MACHINE_PLAYER_DECISION_FAILED: 座位 player-white 决策函数抛错: WHITE_ONLY_DECISION_GATE_EXCEEDED",
+        "checkpointPath": "reports/research/58347b55.5de10b3c.full.json.failed-checkpoint.json",
+        "attemptTracePath": "reports/research/58347b55.5de10b3c.full.json.attempts.jsonl",
+        "searchGraphClosed": false,
+        "decisionAdmitted": false,
+        "failedDecisionCommitted": false
+      },
+      "save": "seti-saves/seti-save-research-free-analyze-current-20261113-11-5de10b3c-full-failed-v29.json"
+    },
+    {
+      "board": 14,
+      "record": "2a189f5a.5de10b3c.full.json",
+      "terminal": true,
+      "score": 116,
+      "rounds": [
+        13,
+        51,
+        53,
+        94
+      ],
+      "wallMs": 9310,
+      "peak": [
+        203,
+        331.4112499999992
+      ],
+      "steps": 201,
+      "failure": null,
+      "save": "seti-saves/seti-save-research-free-analyze-current-20261113-14-5de10b3c-full-v86.json"
+    }
+  ],
+  "openingGate": {
+    "source": "5de10b3cf478bae21e58bce4ed377a0acf907c85",
+    "scenario": "free-analyze-random20-guarded-v1",
+    "catalog": "239799d9128900f67d0d847283e5133d56826ec9e23dbeab6ab00f3d5ed6cda3",
+    "rows": [
+      {
+        "board": 1,
+        "step": 26,
+        "action": "launch:c94cda79",
+        "n": 48,
+        "ms": 118.89829200000003,
+        "status": "pass"
+      },
+      {
+        "board": 2,
+        "step": 27,
+        "action": "industry:e887dc52",
+        "n": 248,
+        "ms": 179.36374999999998,
+        "status": "pass"
+      },
+      {
+        "board": 3,
+        "step": 25,
+        "action": "play_card:b3f820b1",
+        "n": 29,
+        "ms": 30.632708999999977,
+        "status": "pass"
+      },
+      {
+        "board": 4,
+        "step": 24,
+        "action": "industry:e887dc52",
+        "n": 172,
+        "ms": 156.51,
+        "status": "pass"
+      },
+      {
+        "board": 5,
+        "step": 25,
+        "action": "launch:c94cda79",
+        "n": 46,
+        "ms": 62.462957999999844,
+        "status": "pass"
+      },
+      {
+        "board": 6,
+        "step": 28,
+        "action": "card_corner:17a0f8a8",
+        "n": 95,
+        "ms": 104.23658299999988,
+        "status": "pass"
+      },
+      {
+        "board": 7,
+        "step": 23,
+        "action": "launch:c94cda79",
+        "n": 32,
+        "ms": 43.76329100000021,
+        "status": "pass"
+      },
+      {
+        "board": 8,
+        "step": 23,
+        "action": "play_card:9dbce981",
+        "n": 53,
+        "ms": 53.58804199999986,
+        "status": "pass"
+      },
+      {
+        "board": 9,
+        "step": 24,
+        "action": "play_card:124d76d3",
+        "n": 60,
+        "ms": 81.22487499999988,
+        "status": "pass"
+      },
+      {
+        "board": 10,
+        "step": 26,
+        "action": "launch:c94cda79",
+        "n": 46,
+        "ms": 57.763124999999945,
+        "status": "pass"
+      },
+      {
+        "board": 11,
+        "step": 24,
+        "action": "launch:c94cda79",
+        "n": 44,
+        "ms": 42.633166000000074,
+        "status": "pass"
+      },
+      {
+        "board": 12,
+        "step": 27,
+        "action": "launch:c94cda79",
+        "n": 101,
+        "ms": 83.76825000000008,
+        "status": "pass"
+      },
+      {
+        "board": 13,
+        "step": 27,
+        "action": "industry:e887dc52",
+        "n": 72,
+        "ms": 74.9750839999997,
+        "status": "pass"
+      },
+      {
+        "board": 14,
+        "step": 23,
+        "action": "industry:e887dc52",
+        "n": 203,
+        "ms": 183.61224999999922,
+        "status": "pass"
+      },
+      {
+        "board": 15,
+        "step": 24,
+        "action": "launch:c94cda79",
+        "n": 65,
+        "ms": 71.89837500000067,
+        "status": "pass"
+      },
+      {
+        "board": 16,
+        "step": 25,
+        "action": "play_card:ec208193",
+        "n": 90,
+        "ms": 109.66279100000065,
+        "status": "pass"
+      },
+      {
+        "board": 17,
+        "step": 25,
+        "action": "industry:e887dc52",
+        "n": 50,
+        "ms": 52.692041999999674,
+        "status": "pass"
+      },
+      {
+        "board": 18,
+        "step": 27,
+        "action": "launch:c94cda79",
+        "n": 54,
+        "ms": 46.425500000000284,
+        "status": "pass"
+      },
+      {
+        "board": 19,
+        "step": 25,
+        "action": "industry:e887dc52",
+        "n": 128,
+        "ms": 130.9719580000001,
+        "status": "pass"
+      },
+      {
+        "board": 20,
+        "step": 24,
+        "action": "launch:c94cda79",
+        "n": 78,
+        "ms": 112.25616699999955,
+        "status": "pass"
+      }
+    ]
+  },
+  "board11SingleDecision": {
+    "admitted": true,
+    "differences": [],
+    "saved": {
+      "n": 131,
+      "ms": 623.9503749999985
+    },
+    "cold": {
+      "n": 131,
+      "ms": 562.831042,
+      "value": 74.5
+    },
+    "step": 75
+  },
+  "oldThirdRoundAssets": {
+    "source": "463fc44230e5cdc8b29765a0a109a73ae367bb48",
+    "rows": [
+      {
+        "board": 1,
+        "score": 134,
+        "points": 73,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 2,
+          "score": 73
+        },
+        "tech": [
+          "blue1",
+          "blue2",
+          "blue4",
+          "purple1",
+          "purple4"
+        ],
+        "computer": 5,
+        "blue": 3,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "2fd1e1354ed7e543988a71b64f5f3c3cbb5f89e11ec1d730ee854dcf911267f4"
+      },
+      {
+        "board": 2,
+        "score": 140,
+        "points": 64,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 3,
+          "score": 64
+        },
+        "tech": [
+          "blue1",
+          "blue3",
+          "blue4",
+          "orange4",
+          "purple1",
+          "purple4"
+        ],
+        "computer": 3,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "0568004cf8675e8b0d12488ae716fe6d50579b355d444b278359c1233cb88761"
+      },
+      {
+        "board": 3,
+        "score": 138,
+        "points": 78,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 0,
+          "score": 78
+        },
+        "tech": [
+          "blue2",
+          "orange4",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 1,
+        "probes": 1,
+        "cargo": 0,
+        "hash": "5cc74abbaf1298a3cdb4be1d806a3360e47d049cc0bc9357a07027b73cc5d72b"
+      },
+      {
+        "board": 4,
+        "score": 141,
+        "points": 75,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 3,
+          "score": 75
+        },
+        "tech": [
+          "blue1",
+          "orange1",
+          "orange4",
+          "purple4"
+        ],
+        "computer": 2,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "bcec0d680afa27653197d56169a9b531b31b361b41473d10e83ebf17276a73d8"
+      },
+      {
+        "board": 5,
+        "score": 135,
+        "points": 63,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 2,
+          "score": 63
+        },
+        "tech": [
+          "blue2",
+          "orange1",
+          "orange3",
+          "purple4"
+        ],
+        "computer": 0,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "0c4d464e70ad842101ab2a2e966870ba6c1157e6eaebfcbda518e3d1bc67d667"
+      },
+      {
+        "board": 6,
+        "score": 159,
+        "points": 71,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 1,
+          "credits": 3,
+          "energy": 6,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 0,
+          "score": 71
+        },
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "computer": 0,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "786f40b557a12c51432f52da23d5981b6d33828fef7d4f9cf32922487eb8e074"
+      },
+      {
+        "board": 7,
+        "score": 135,
+        "points": 61,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 2,
+          "score": 61
+        },
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 2,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "088f8d112d187c82bfcd9bf7f16ee66b9a0b201c722484806be2641bbfa0dbcf"
+      },
+      {
+        "board": 8,
+        "score": 164,
+        "points": 80,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 2,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 80
+        },
+        "tech": [
+          "blue2",
+          "orange4",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "2e9b2bdbabd2a70fc50a97395446a67ffefc70f6a18e9fa794f509cd0c0f2dc7"
+      },
+      {
+        "board": 9,
+        "score": 89,
+        "points": 61,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 4,
+          "score": 61
+        },
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "computer": 1,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "ffe35efd219f0ed18500c7a7338ec794ecffa6fccd537fa1ebf17485de62a294"
+      },
+      {
+        "board": 10,
+        "score": 129,
+        "points": 66,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 7,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 66
+        },
+        "tech": [
+          "blue2",
+          "blue4",
+          "orange1",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 2,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "e2f34db055a76ecbed6145c8cff1eac589a8049a4cb6ac4bf986a35642886b06"
+      },
+      {
+        "board": 11,
+        "score": 113,
+        "points": 41,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 41
+        },
+        "tech": [
+          "blue1",
+          "blue2",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "a2bc4b70d474e73a4691be04d7c7f01aaeb4749d0155d563452e4fed9d18f143"
+      },
+      {
+        "board": 12,
+        "score": 153,
+        "points": 83,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 1,
+          "score": 83
+        },
+        "tech": [
+          "blue2",
+          "blue3",
+          "purple4"
+        ],
+        "computer": 0,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "6bfb4498aa856af49e8a3609426b924fe6c6b097b72a5d6a2a9e470c54a9a6f1"
+      },
+      {
+        "board": 13,
+        "score": 141,
+        "points": 53,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 3,
+          "score": 53
+        },
+        "tech": [
+          "blue1",
+          "orange1",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 0,
+        "probes": 1,
+        "cargo": 0,
+        "hash": "69b73c0a9d6dfc56c27503fb70f3e9c2f0364231ed0f0c6ec7ea1ef6da212520"
+      },
+      {
+        "board": 14,
+        "score": 116,
+        "points": 53,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 5,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 53
+        },
+        "tech": [
+          "blue2",
+          "blue3",
+          "blue4",
+          "purple4"
+        ],
+        "computer": 5,
+        "blue": 3,
+        "probes": 1,
+        "cargo": 0,
+        "hash": "7ee07f073cbefc338a7bccf719e780a4198c643cf25e9a2f2e913515eed9ef84"
+      },
+      {
+        "board": 15,
+        "score": 107,
+        "points": 62,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 3,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 0,
+          "score": 62
+        },
+        "tech": [
+          "blue4",
+          "orange2",
+          "purple4"
+        ],
+        "computer": 4,
+        "blue": 1,
+        "probes": 1,
+        "cargo": 0,
+        "hash": "384e8fc58e98cf25bb08f3f278796188f524aed2cd4c72f5fd13751fd60cb499"
+      },
+      {
+        "board": 16,
+        "score": 121,
+        "points": 76,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 1,
+          "credits": 3,
+          "energy": 3,
+          "handSize": 3,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 0,
+          "score": 76
+        },
+        "tech": [
+          "blue4",
+          "orange1",
+          "orange3",
+          "purple4"
+        ],
+        "computer": 1,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "a7ab1d2b992337deebcc96128dcb8aaac455b913b7bf7adcc933dfde1a3070f2"
+      },
+      {
+        "board": 17,
+        "score": 157,
+        "points": 77,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 2,
+          "handSize": 0,
+          "publicity": 2,
+          "score": 77
+        },
+        "tech": [
+          "blue2",
+          "blue4",
+          "orange3",
+          "purple4"
+        ],
+        "computer": 3,
+        "blue": 2,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "d65778f678067f52c17736d2f904a89963e5e722a2b66873d8942990d1f9ee1a"
+      },
+      {
+        "board": 18,
+        "score": 122,
+        "points": 72,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 72
+        },
+        "tech": [
+          "blue1",
+          "orange4",
+          "purple4"
+        ],
+        "computer": 2,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "9608edf3f37eacc1b37cda9e8fc601c0b32a8ab87b19cae956165f1531b26ba1"
+      },
+      {
+        "board": 19,
+        "score": 119,
+        "points": 64,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 64
+        },
+        "tech": [
+          "blue2",
+          "blue4",
+          "orange1",
+          "purple4"
+        ],
+        "computer": 0,
+        "blue": 0,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "38ae2fcb1697efc9e7d8769cd14e22a3000d0dc22b3ae29a9a3ab4128e674fa5"
+      },
+      {
+        "board": 20,
+        "score": 113,
+        "points": 65,
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 5,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 65
+        },
+        "tech": [
+          "blue4",
+          "orange3",
+          "purple4"
+        ],
+        "computer": 2,
+        "blue": 1,
+        "probes": 0,
+        "cargo": 0,
+        "hash": "ef16276f85c2c358a0da43448e477fbbc0059b86d3753537155cffc30d08e5a6"
+      }
+    ]
+  },
+  "complete": false,
+  "all20Average": null,
+  "unrunBoards": [
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ]
+}
