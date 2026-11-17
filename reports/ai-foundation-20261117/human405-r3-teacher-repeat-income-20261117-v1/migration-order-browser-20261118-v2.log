@@ -1,0 +1,3 @@
+PASS production-amiba-legacy-trace-replay-order http://127.0.0.1:51407/randomizer/index.html
+PASS production-replay-steps-recorded http://127.0.0.1:51407/randomizer/index.html
+SUMMARY browserSmoke passed=2 failed=0 total=2

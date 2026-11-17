@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "seti-current-full-baseline-proof-v1",
+  "date": "2026-11-18",
+  "source": "5fabd6213",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v71/human405-white-current-full-v1/seti-human405-pass-only-v1",
+  "record": "reports/research/2170d824.5fabd621.full.json",
+  "save": "seti-saves/seti-save-research-ai-search-current-full-baseline-20261118-5fabd621-full-v163.json",
+  "report": "reports/iteration/ai-search-current-full-baseline-20261118/2170d824.5fabd621.full.action-log.html",
+  "game": {
+    "terminal": true,
+    "inputs": 354,
+    "wallMs": 16100,
+    "whiteFinal": 272,
+    "base": 192,
+    "tile": 74,
+    "card": 6,
+    "autonomousOpeningInputs": 23,
+    "comparisonScope": "white-only-current-full-game"
+  },
+  "searches": {
+    "count": 300,
+    "allClosed": true,
+    "peakNative": 256,
+    "peakMs": 391.4143750000003,
+    "budgetHits": []
+  },
+  "firstThreeRoundRegression": {
+    "control": "reports/research/48b4f3bf.87f4c296.quick-400.json",
+    "sameNativeActions": 261,
+    "allThreePrePassAssetsEqual": true
+  },
+  "checkpoints": [
+    {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-end-1.checkpoint.json",
+      "sha256": "89ab892ba2ae9bb792d06c62a36f8a4a3d43106b06c7cacd98217b8c9c9c416d",
+      "verified": true
+    },
+    {
+      "round": 2,
+      "phase": "before-pass-card-and-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-end-2.checkpoint.json",
+      "sha256": "2339c71c374e11d4622489440c8c0b98b205569fa1a9bde9b6324888436febbe",
+      "verified": true
+    },
+    {
+      "round": 3,
+      "phase": "before-pass-card-and-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-end-3.checkpoint.json",
+      "sha256": "075ffb5d47334c9c6df77c480a66fb19cc01f2b0c6d45b174b0b30ea36d01a46",
+      "verified": true
+    },
+    {
+      "round": 4,
+      "phase": "before-pass-card-and-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-end-4.checkpoint.json",
+      "sha256": "5edfdb944772fa0dbfa90db0d8cd6be41fbcd8a46f9b2fb91b1a5f1de79ba598",
+      "verified": true
+    },
+    {
+      "round": 1,
+      "phase": "after-settlement-and-next-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-1.checkpoint.json",
+      "sha256": "0d6afee82d26b26d30928d6aa38171ce5246394e6c91c2c2134d8fea82c9e08f",
+      "verified": true
+    },
+    {
+      "round": 2,
+      "phase": "after-settlement-and-next-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-2.checkpoint.json",
+      "sha256": "5ba69afc1efcd3f22a96994f5c8724b6c4d7e897823cb767d3ca2cfebd532b8d",
+      "verified": true
+    },
+    {
+      "round": 3,
+      "phase": "after-settlement-and-next-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-3.checkpoint.json",
+      "sha256": "f445b7d1c8dbcf62753f35e4199f72d3a06b42d04ee1258b4a2688d4db86a5ee",
+      "verified": true
+    },
+    {
+      "round": 4,
+      "phase": "after-settlement-and-next-income",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-4.checkpoint.json",
+      "sha256": "41e15cf290ff3454581566364224a414c8d64f7b293535432ccd251b548d992e",
+      "verified": true
+    }
+  ],
+  "reportGeneration": {
+    "mode": "only-this-save-native-replay",
+    "inputs": 354,
+    "registryRefreshedOnlyVersion": "ai-search-current-full-baseline-20261118",
+    "allHistoricalReportsRegenerated": false
+  },
+  "terminalCanonicalReplay": "reports/research/2170d824.5fabd621.replay.json",
+  "originalSourceReplay": {
+    "nativeStateEqual": false,
+    "sessionEqual": true,
+    "rngEqual": true,
+    "onlyDifference": {
+      "path": "aliens.amiba.traceSlotsByAlienSlotId.1.blue.1.sequence",
+      "replayed": 8,
+      "recorded": 6
+    },
+    "firstDifferentInput": 186
+  },
+  "correctedSourceReplay": {
+    "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+    "nativeStateEqual": true,
+    "sessionEqual": true,
+    "rngEqual": true,
+    "inputs": 354,
+    "reranAI": false
+  },
+  "limitations": [
+    "仅1个固定盘面，其他3席仅PASS及强制选择",
+    "272是本次完整终局参照，前三轮与前次118分路径完全一致，不能宣称局部修复新增154分",
+    "未重跑20盘，不代表平均分超过200",
+    "教师历史405分未在本次报告中当成当前规则整局的同口径对照",
+    "共享工作树有其他未提交改写，本次运行与核验均使用5fabd621隔离源码快照"
+  ]
+}

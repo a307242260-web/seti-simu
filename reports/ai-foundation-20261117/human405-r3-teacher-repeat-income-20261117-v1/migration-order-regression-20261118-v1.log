@@ -1,0 +1,21 @@
+{"detachedValueObservation":true,"fullValueParity":true,"canonicalStatePreserved":true}
+{"knownDataScanCycle":true,"valueChecks":190,"futureChecks":8,"rows":[{"name":"beforePlay","index":0,"n":81,"extra":38,"ms":99.25124999999997,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":1,"n":81,"extra":38,"ms":93.55937499999993,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":3,"n":81,"extra":38,"ms":83.83950000000004,"value":143.25,"previous":141.58333333333334},{"name":"beforeDiscard","index":0,"n":42,"extra":37,"ms":36.43624999999997,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":1,"n":42,"extra":37,"ms":35.201917000000094,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":3,"n":42,"extra":37,"ms":34.95987500000024,"value":143.25,"previous":138.16666666666666}]}
+amiba.test.js: all tests passed
+aliens/reveal-card-grants.test.js ok
+card play domain production composition tests passed
+residual-domain-session production proofs passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"currentFullOpening":23,"nativeRootAndRngPreserved":true,"passiveOpponents":true,"decisionAndTimeRejectedBeforeInput":true,"failedFullDeduplicated":true,"historicalContinuationsSeparate":true}
+SUMMARY unit passed=7 failed=0 total=7 time=5.27s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1
+OWNER architecture/projection tests=1
+OWNER policy/decision-search tests=1
+OWNER rules/aliens tests=2
+OWNER rules/cards tests=1
+OWNER training/reporting tests=1

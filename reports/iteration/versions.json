@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "ai-search-current-full-baseline-20261118",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "当前策略整局基准·仅白席",
+      "date": "2026-11-18",
+      "baseline": "ai-search-public-analysis-first3-20261118",
+      "head": "5fabd6213",
+      "commits": [
+        "42b22bd09",
+        "652e4dde0",
+        "93756aa02",
+        "dc741eccd",
+        "76e26052f",
+        "5fabd6213"
+      ],
+      "summary": "当前Production同23输入开局，白席自主至自然终局272分（盘面192＋终局板块74＋卡牌6），16.100秒、354输入；逐轮盘面15/48/118/192，科技2/3/6/8。300次搜索全部闭合，峰值256输入/392ms。前261动作及前三轮轮末资产与87f4c296完全一致；仅白席场景，不替代V41四AI基线，不代表20盘均分。",
+      "records": {
+        "2170d824.5fabd621.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "ai-search-public-analysis-first3-20261118",
       "aiGeneration": "v2",
       "agentType": "search",

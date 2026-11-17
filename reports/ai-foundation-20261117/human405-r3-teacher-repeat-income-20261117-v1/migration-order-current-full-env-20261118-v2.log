@@ -1,0 +1,4 @@
+{"currentFullOpening":23,"nativeRootAndRngPreserved":true,"passiveOpponents":true,"decisionAndTimeRejectedBeforeInput":true,"failedFullDeduplicated":true,"historicalContinuationsSeparate":true}
+SUMMARY unit passed=1 failed=0 total=1 time=1.24s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=1
