@@ -47,6 +47,7 @@ const { createStepProgressReporter } = require("./progress");
 const { buildWorldIdentity } = require("./fixed-world-identity");
 const whiteRound1 = require("./research-human405-round1");
 const whiteFull = require("./research-human405-full");
+const whiteCurrentFull = require("./research-human405-current-full");
 const random20 = require("./research-free-analyze-random20");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
@@ -131,7 +132,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = (random20.IDS.includes(config.scenario) ? random20 : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
+    identity.scenario = (random20.IDS.includes(config.scenario) ? random20 : whiteCurrentFull.IDS.includes(config.scenario) ? whiteCurrentFull : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -418,8 +419,9 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const scenario = random20.IDS.includes(identity.scenario?.id) ? random20 : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
-  const fullWhite = scenario === whiteFull || scenario === random20;
+  const scenario = random20.IDS.includes(identity.scenario?.id) ? random20 : whiteCurrentFull.IDS.includes(identity.scenario?.id) ? whiteCurrentFull : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
+  const freshFull = scenario === whiteCurrentFull;
+  const fullWhite = scenario === whiteFull || scenario === random20 || freshFull;
   const pinnedContinuation = scenario === whiteFull;
   const guardedR4 = whiteFull.isGuarded(identity.scenario?.id);
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
@@ -451,7 +453,7 @@ function runValidation(options) {
           ownedSlots: bucket.tokens.filter(t => t.replacedByPlayerId === owner.id).map(t => t.slotIndex),
           capacity: bucket.tokens.length })).filter(p => p.ownedSlots.length),
         alienTraceSlots: observation.publicState.board.aliens.slots,
-        ...((identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID || identity.scenario.id === whiteFull.V661_ID || guardedR4 || scenario === random20) ? {
+        ...((identity.scenario.id === whiteRound1.FIRST_THREE_ROUNDS_ID || identity.scenario.id === whiteFull.V661_ID || guardedR4 || scenario === random20 || freshFull) ? {
           aliens: observation.publicState.board.aliens, finalScoring: state.finalScoring,
           projectedFinalScore: observation.publicState.players.find(p => p.playerId === owner.id).finalScore,
         } : {}) };
@@ -551,6 +553,9 @@ function runValidation(options) {
       if (guardedR4 && Date.now() - startedAt + identity.scenario.continuation.sourceGameWallMs >= identity.scenario.gameMillisecondsTarget) {
         throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
       }
+      if (freshFull && Date.now() - startedAt >= identity.scenario.gameMillisecondsTarget) {
+        throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
+      }
       if (scenario === random20 && Date.now() - startedAt >= identity.scenario.gameMillisecondsTarget) {
         throw Object.assign(new Error("RANDOM20_GAME_TIME_LIMIT"), {code:"RANDOM20_GAME_TIME_LIMIT"});
       }
@@ -600,6 +605,9 @@ function runValidation(options) {
     const wallMs = Date.now() - startedAt;
     if (scenario === random20 && identity.scenario.decisionGate.enforcement === "reject-before-input" && wallMs >= identity.scenario.gameMillisecondsTarget) {
       throw Object.assign(new Error("RANDOM20_GAME_TIME_LIMIT"), {code:"RANDOM20_GAME_TIME_LIMIT"});
+    }
+    if (freshFull && wallMs > identity.scenario.gameMillisecondsTarget) {
+      throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
     }
     if (guardedR4 && wallMs + identity.scenario.continuation.sourceGameWallMs > identity.scenario.gameMillisecondsTarget) {
       throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
@@ -676,7 +684,7 @@ function runValidation(options) {
         fs.mkdirSync(SAVES_DIR, { recursive: true });
         fs.writeFileSync(path.join(__dirname, "..", savePath), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
       }
-      const rejectedSearch = error.search || (guardedR4 ? failedTrace?.search : null);
+      const rejectedSearch = error.search || (guardedR4 || freshFull ? failedTrace?.search : null);
       if (rejectedSearch) {
         collectBudgetHits(collector, steps + 1, { policyDecision: { seatId: failedTrace?.context?.seatId || "player-white", actionId: null }, searches: [rejectedSearch] });
         collector.searches.at(-1).committed = false;
@@ -694,7 +702,7 @@ function runValidation(options) {
         metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
           whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,
           revealEvents: collector.revealEvents, budgetHits: collector.budgetHits, searches: collector.searches },
-        failure: { code: error.code || (guardedR4 ? failedTrace?.reasonCode : null) || "SCENARIO_FAILED", message: error.message,
+        failure: { code: error.code || (guardedR4 || freshFull ? failedTrace?.reasonCode : null) || "SCENARIO_FAILED", message: error.message,
           checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
           attemptTracePath: fs.existsSync(failedAttemptsPath) ? path.relative(path.join(__dirname, ".."), failedAttemptsPath) : null,
           searchGraphClosed: rejectedSearch?.complete === true,

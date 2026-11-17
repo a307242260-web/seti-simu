@@ -31,6 +31,17 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 构建产物中的 `generations.v1` / `generations.v2` 分别保存排行榜和基线；
 `versions[].aiGeneration` 标记列表归属。顶层 `bestOf` / `currentBaseline` 对应默认 V2。
 
+## 当前策略从原开局跑完整局（2026-11-18）
+
+`robot_iterate run --full --config agentType=search,scenario=human405-white-current-full-v1,compactReplay=true`
+从同一已验证23输入开局开始，四轮均由当前Production白席搜索行动，其他三席只PASS及强制选择。
+它有独立场景指纹，不能复用v123/v189/v661等冻结策略续跑入口，也不替换V41四AI基线。
+
+白席每次决策必须在原生输入256次、根与搜索600ms门槛内，超限不提交该动作；完整局不得超过180秒。
+失败保存原生检查点、未提交搜索及已确认输入，同源码同实验不得重跑。每轮PASS前记录完整资产，
+选牌和下一轮收入均不计入该轮末；另存结算后检查点供恢复。正式成绩只取自然终局观察，
+不能用最后一次PASS前的盘面分代替。增加本入口不放宽任何历史冻结续跑的源码或存档校验。
+
 ## 仅白席第一轮教师对照（2026-10-30）
 
 `robot_iterate run --config agentType=search,scenario=human405-white-round1-v1,compactReplay=true --steps 200`使用已归档且验证SHA的23输入开局：白席走共享Production搜索，其他三席只PASS并完成强制弃牌/保留牌。保留牌优先沿用教师公开牌，缺失则稳定排序；未知强制选择直接报错。该对照不使用四AI对局成绩口径。
