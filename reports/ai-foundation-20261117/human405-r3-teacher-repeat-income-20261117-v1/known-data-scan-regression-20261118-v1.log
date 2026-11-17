@@ -1,0 +1,12 @@
+{"detachedValueObservation":true,"fullValueParity":true,"canonicalStatePreserved":true}
+standard full-flow v2 passed
+{"analysisBeforeOrbit":true,"hiddenWorlds":3,"valueChecks":104,"futureValueChecks":5,"rows":[{"index":0,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":47.621624999999995},{"index":1,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":39.995750000000044},{"index":3,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":39.51237500000002}]}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"knownDataScanCycle":true,"valueChecks":190,"futureChecks":8,"rows":[{"name":"beforePlay","index":0,"n":81,"extra":38,"ms":98.759792,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":1,"n":81,"extra":38,"ms":90.95337500000005,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":3,"n":81,"extra":38,"ms":83.4915840000001,"value":143.25,"previous":141.58333333333334},{"name":"beforeDiscard","index":0,"n":42,"extra":37,"ms":36.16554199999996,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":1,"n":42,"extra":37,"ms":36.08683300000007,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":3,"n":42,"extra":37,"ms":35.27620900000011,"value":143.25,"previous":138.16666666666666}]}
+{"knownIncomeAfterBlindDraw":true,"hiddenWorlds":4,"results":[{"hiddenIndex":0,"value":126.83333333333333,"native":13,"ms":97.34004100000001,"actualInputs":11},{"hiddenIndex":1,"value":126.83333333333333,"native":13,"ms":50.640417000000014,"actualInputs":11},{"hiddenIndex":3,"value":126.83333333333333,"native":13,"ms":46.38583299999999,"actualInputs":11},{"hiddenIndex":8,"value":126.83333333333333,"native":13,"ms":43.52366699999993,"actualInputs":11}]}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+SUMMARY unit passed=6 failed=0 total=6 time=4.73s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.49s
+OWNER architecture/projection tests=1
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=5
