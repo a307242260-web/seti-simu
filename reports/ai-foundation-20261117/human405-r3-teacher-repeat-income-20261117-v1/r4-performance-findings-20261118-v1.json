@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "seti-r4-profile-findings-v1",
+  "date": "2026-11-18",
+  "source": "32e6e33c61c25ea74c806c23127b60f2ee6433bb",
+  "profiles": {
+    "normalized-state-context-profile-20261118-v1.json": {
+      "purpose": "instrument-only identity-cache variants, not timing admission",
+      "source": "32e6e33c6",
+      "value": 216.5,
+      "native": 141,
+      "ms": 814.3657499999999,
+      "variantMisses": 13,
+      "maxStateVariants": 2,
+      "identities": 1647,
+      "materializations": 327
+    },
+    "legal-menu-duplication-profile-20261118-v1.json": {
+      "purpose": "count only, not admission",
+      "source": "32e6e33c6",
+      "native": 141,
+      "value": 216.5,
+      "ms": 901.356166,
+      "menus": {
+        "calls": 724,
+        "duplicates": 38,
+        "keyBytes": 61956936,
+        "unique": 686
+      }
+    }
+  },
+  "trials": {
+    "target-menu-guard": {
+      "sourceBefore": "32e6e33c6",
+      "roots": 16,
+      "allActionsValuesCompleteGraphsAndNativeCountsEqual": true,
+      "point272NativeInputs": 141,
+      "beforeMs": 653.1949160000004,
+      "afterMs": 643.2669999999998,
+      "promoted": false
+    },
+    "bound-guard": {
+      "sourceBefore": "32e6e33c6",
+      "roots": 16,
+      "allActionsValuesCompleteGraphsAndNativeCountsEqual": true,
+      "point272NativeInputs": 141,
+      "beforeMs": 639.1788750000001,
+      "afterMs": 637.8483339999998,
+      "promoted": false
+    },
+    "combined-bound-stable-guard": {
+      "sourceBefore": "32e6e33c6",
+      "roots": 16,
+      "allActionsValuesCompleteGraphsAndNativeCountsEqual": true,
+      "point272NativeInputs": 141,
+      "beforeMs": 639.1014579999996,
+      "afterMs": 607.2913749999998,
+      "promoted": false
+    }
+  },
+  "otherRejectedPrototypes": {
+    "singletonCatalogCache": "0 hits and415 misses; timing differences not attributed to cache",
+    "allImmutableSubtreeMemo": "15436 hits but61086 stores; pilot still695ms; no admission or production promotion"
+  },
+  "productionAnalysisPortUnchanged": true,
+  "interpretation": "No broad exact-state cache added; complete immutable-state and source-context differences prevent useful hits. Small picker guards preserve semantics but do not solve600ms. Recover complete Native plans before changing valuations."
+}

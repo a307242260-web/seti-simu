@@ -28,4 +28,6 @@ for(const n of ['teacher-r4-fixed-replay-20261118-v1.json.gz','teacher-r4-adapte
 }
 const control=read('teacher-r4-first-plan-control-20261118-v1.json.gz');
 for(const c of control.cases)cases.push(verify(c.kind,control.root,c.rows,c.end,null));
-console.log(JSON.stringify({source:'838395727df8ae4e4734b101028485aef59dc1b3',cases,reranAI:false}));
+const turn=read('teacher-r4-point265-plan-control-20261118-v1.json.gz');
+for(const c of turn.cases)cases.push(verify(c.kind,turn.root,c.rows,c.end,null));
+console.log(JSON.stringify({source:'32e6e33c61c25ea74c806c23127b60f2ee6433bb',cases,reranAI:false}));

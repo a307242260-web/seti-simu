@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v3",
+  "date": "2026-11-18",
+  "source": "32e6e33c61c25ea74c806c23127b60f2ee6433bb",
+  "snapshot": "/private/tmp/seti-current-full-z97c_km1",
+  "previous": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-learning-checkpoint-20261118-v2.json",
+  "teacherLegalReference": {
+    "score": 384,
+    "inputs": 474,
+    "archive": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json",
+    "allStateSessionRngEqual": true
+  },
+  "AIFormalScoreUnchanged": 272,
+  "lastTurnClassification": "progress: published reference384, retained timing failures, Native complete-turn265 comparison disproves unsupported premature-discard diagnosis",
+  "point265": {
+    "aiScore": 142,
+    "teacherScore": 114,
+    "NativeInputs": [
+      18,
+      7
+    ],
+    "fullRoundCompared": false,
+    "witness": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-r4-point265-plan-control-20261118-v1.json.gz"
+  },
+  "performanceFindings": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-performance-findings-20261118-v1.json",
+  "openGate": {
+    "teacherInput": 272,
+    "nativeInputs": 141,
+    "milliseconds": 629,
+    "passed": false
+  },
+  "next": [
+    "优先定位固定准备的逻辑状态及Native枚举/复制开销；一般精确缓存机会不足，避免重试已否定方向",
+    "第265步沿完整计划比较后续发展，不凭弃虫6首步差异给保牌奖励；必要时先还原第272步的最优完整计划",
+    "单点预算门槛未过，不运行新整局或20盘；AI正式成绩仍272",
+    "不覆盖共享未提交源码；继续在32e6e33c6隔离快照验证；源策略修复已推送，V41四AI基线保留"
+  ],
+  "goalStatus": "active"
+}
