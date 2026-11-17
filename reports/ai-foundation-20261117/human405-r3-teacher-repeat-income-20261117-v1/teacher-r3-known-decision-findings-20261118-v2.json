@@ -1,0 +1,753 @@
+{
+  "date": "2026-11-18",
+  "sourceCommit": "87f4c296a1a421d7bec364bf4a99f1c3bbbb5723",
+  "kind": "diagnosis-and-controlled-continuation-not-new-policy-performance",
+  "audit": {
+    "teacherReplayExact": true,
+    "whiteDecisions": 126,
+    "differences": 45,
+    "maxNative": 235,
+    "maxMs": 302.9637500000008,
+    "allPassed": true,
+    "source": "teacher-r3-decision-audit-87f4c-20261118-v1.json.gz"
+  },
+  "firstLanding": {
+    "beforeInput": 113,
+    "publicKnowledge": "Both species unrevealed; future alien-card identities unavailable.",
+    "values": {
+      "paidLand": 102.25,
+      "knownLandCard": 102.25
+    },
+    "finding": "Equal current model values and worse forced-card continuation do not justify preferring teacher action."
+  },
+  "firstAlienCardChoice": {
+    "beforeInput": 162,
+    "controlledBlindOutcomeScore": 104,
+    "controlledDisplayedOutcomeScore": 104,
+    "source": "teacher-first-blind-choice-control-87f4c-20261118-v1.json.gz",
+    "limitation": "Current AI discards/uses both outcomes differently and eventually reaches the same assets; this does not prove luck has no value along the original teacher continuation."
+  },
+  "am7Retention": {
+    "beforeInput": 164,
+    "forcePlayScore": 80,
+    "automaticScore": 104,
+    "source": "teacher-am7-retention-control-87f4c-20261118-v1.json.gz",
+    "finding": "Do not globally protect or force this card based on its apparent end-score potential."
+  },
+  "threeCornerChoice": {
+    "beforeInput": 169,
+    "effect": "card_discard_card_corner_repeat",
+    "cornerRepeat": 3,
+    "dataSupplier": "dlc_32.png",
+    "publicitySupplier": "dlc_25.png",
+    "dataValue": 131.83333333333334,
+    "publicityValue": 138.16666666666666,
+    "source": "teacher-dlc20-discard-control-87f4c-20261118-v2.json.gz",
+    "branches": [
+      {
+        "choice": "discard-dlc32-data",
+        "actualGain": {
+          "availableData": 3
+        },
+        "r3": {
+          "round": 3,
+          "turn": 18,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 104
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ]
+          ],
+          "reserved": [
+            "b_117.webp",
+            "dlc_9.png",
+            "dlc_31.png",
+            "amiba_0.webp",
+            "b_101.webp",
+            "amiba_7.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue3": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "orange2": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 1,
+          "market": [
+            [
+              "card-61-0",
+              "dlc_24.png"
+            ],
+            [
+              "card-65-0",
+              "dlc_17.png"
+            ],
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [],
+          "traces": {
+            "blue": 3,
+            "pink": 2,
+            "yellow": 1
+          },
+          "alienDisplay": 2,
+          "final": 150,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        },
+        "peak": [
+          116,
+          124.07141700000011
+        ],
+        "nativeReplay": true
+      },
+      {
+        "choice": "discard-dlc25-publicity",
+        "actualGain": {
+          "publicity": 3
+        },
+        "r3": {
+          "round": 3,
+          "turn": 15,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 80
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "reserved": [
+            "b_117.webp",
+            "dlc_9.png",
+            "dlc_31.png",
+            "amiba_0.webp",
+            "b_101.webp",
+            "amiba_7.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1,
+              "blue3": 3
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "blue3": true,
+              "orange2": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 1,
+          "market": [
+            [
+              "card-61-0",
+              "dlc_24.png"
+            ],
+            [
+              "card-63-0",
+              "dlc_19.png"
+            ],
+            [
+              "card-59-0",
+              "dlc_26.png"
+            ]
+          ],
+          "computer": [
+            1,
+            2
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [],
+          "traces": {
+            "blue": 2,
+            "pink": 1,
+            "yellow": 1
+          },
+          "alienDisplay": 9,
+          "final": 117,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        },
+        "peak": [
+          32,
+          61.03579200000013
+        ],
+        "nativeReplay": true
+      }
+    ],
+    "finding": "Current ranking prefers publicity by 6.3333 despite data continuation ending +24 board points, +33 projected final points, +1 energy income, with the same six tech tiles. This is a reproducible continuation counterexample, not proof of a universally better resource weight."
+  },
+  "next": [
+    "Before changing weights, measure whether a bounded shared scan/resource followup prices the retained funding without double-counting analysis and research. Use the existing fixed data plans and one public continuation, not a new round-wide branching tree.",
+    "Use the matched full-computer states as regressions for opportunity cost and executability; preserve the currently legal research forecast instead of deleting it to force a preferred answer.",
+    "Continue native same-root audits of second-species trace preparation and movement purpose, then verify the admitted policy on unique formal experiments."
+  ],
+  "unchangedFormalScores": {
+    "teacherRoot": 95,
+    "autonomousFirst3": [
+      15,
+      48,
+      118
+    ]
+  },
+  "policyChanged": false,
+  "matchedKnownScan": {
+    "source": "three-corner-matched-scan-witness-87f4c-20261118-v1.json.gz",
+    "scope": "Same known market cards, specified sector, skip movement and Mercury scan; fixed computer fill, cash-blue placement if funded, existing greedy final mark. No unknown input, new species or RNG change.",
+    "rows": [
+      {
+        "choice": "discard-dlc32-data",
+        "inputs": 13,
+        "facts": {
+          "round": 3,
+          "turn": 14,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 73
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "b_117.webp",
+            "dlc_9.png",
+            "dlc_31.png",
+            "amiba_1.webp",
+            "amiba_0.webp",
+            "b_101.webp",
+            "amiba_7.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 0,
+          "market": [
+            [
+              "card-63-0",
+              "dlc_19.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ],
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 170.1,
+              "color": "white",
+              "id": 5,
+              "launchGrid": {
+                "x": 5,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 5,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 5,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 2,
+            "pink": 1,
+            "yellow": 1
+          },
+          "alienDisplay": 9,
+          "final": 99,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 127.5,
+          "components": {
+            "realizedScore": 73,
+            "currentEndGameBonus": 26,
+            "resources": 4.5,
+            "hand": 0,
+            "income": 11.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 3.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      },
+      {
+        "choice": "discard-dlc25-publicity",
+        "inputs": 16,
+        "facts": {
+          "round": 3,
+          "turn": 14,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 5,
+            "score": 73
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [],
+          "reserved": [
+            "b_117.webp",
+            "dlc_9.png",
+            "dlc_31.png",
+            "amiba_1.webp",
+            "amiba_0.webp",
+            "b_101.webp",
+            "amiba_7.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 0,
+          "market": [
+            [
+              "card-63-0",
+              "dlc_19.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ],
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "blue": [
+            1
+          ],
+          "probes": [
+            {
+              "angleDegrees": 170.1,
+              "color": "white",
+              "id": 5,
+              "launchGrid": {
+                "x": 5,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 5,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 5,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 2,
+            "pink": 1,
+            "yellow": 1
+          },
+          "alienDisplay": 9,
+          "final": 99,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 135.5,
+          "components": {
+            "realizedScore": 73,
+            "currentEndGameBonus": 26,
+            "resources": 3.5,
+            "hand": 0,
+            "income": 10.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 13.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        }
+      }
+    ],
+    "continuation": {
+      "source": "three-corner-matched-scan-continuation-87f4c-20261118-v1.json.gz",
+      "rows": [
+        {
+          "choice": "discard-dlc32-data",
+          "r3": {
+            "round": 3,
+            "turn": 18,
+            "main": false,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 0,
+              "energy": 0,
+              "handSize": 0,
+              "publicity": 1,
+              "score": 104
+            },
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 6,
+              "energy": 4,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "hand": [],
+            "reserved": [
+              "b_117.webp",
+              "dlc_9.png",
+              "dlc_31.png",
+              "amiba_0.webp",
+              "b_101.webp",
+              "amiba_7.webp"
+            ],
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1,
+                "blue4": 3
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "blue4": true,
+                "orange2": true,
+                "purple2": true,
+                "purple4": true
+              }
+            },
+            "taskCount": 1,
+            "market": [
+              [
+                "card-63-0",
+                "dlc_19.png"
+              ],
+              [
+                "card-65-0",
+                "dlc_17.png"
+              ],
+              [
+                "card-64-0",
+                "b_16.webp"
+              ]
+            ],
+            "computer": [
+              1,
+              2,
+              3
+            ],
+            "blue": [
+              1,
+              2
+            ],
+            "probes": [],
+            "traces": {
+              "blue": 3,
+              "pink": 2,
+              "yellow": 1
+            },
+            "alienDisplay": 2,
+            "final": 139,
+            "rng": {
+              "algorithm": "seti-simulation-mulberry32-v1",
+              "state": 3171573311
+            }
+          },
+          "peak": [
+            86,
+            132.682625
+          ],
+          "nativeReplay": true
+        },
+        {
+          "choice": "discard-dlc25-publicity",
+          "r3": {
+            "round": 3,
+            "turn": 16,
+            "main": false,
+            "wallet": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 0,
+              "energy": 1,
+              "handSize": 1,
+              "publicity": 0,
+              "score": 78
+            },
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 6,
+              "energy": 3,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "hand": [
+              [
+                "card-58-0",
+                "dlc_27.png"
+              ]
+            ],
+            "reserved": [
+              "b_117.webp",
+              "dlc_9.png",
+              "dlc_31.png",
+              "amiba_1.webp",
+              "amiba_0.webp",
+              "b_101.webp",
+              "amiba_7.webp"
+            ],
+            "tech": {
+              "blueBoardSlots": {
+                "blue1": 2,
+                "blue2": 1,
+                "blue3": 3
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue1": true,
+                "blue2": true,
+                "blue3": true,
+                "orange2": true,
+                "purple2": true,
+                "purple4": true
+              }
+            },
+            "taskCount": 0,
+            "market": [
+              [
+                "card-63-0",
+                "dlc_19.png"
+              ],
+              [
+                "card-65-0",
+                "dlc_17.png"
+              ],
+              [
+                "card-64-0",
+                "b_16.webp"
+              ]
+            ],
+            "computer": [],
+            "blue": [],
+            "probes": [
+              {
+                "angleDegrees": 125.1,
+                "color": "white",
+                "id": 5,
+                "launchGrid": {
+                  "x": 5,
+                  "y": 1
+                },
+                "launchSectorCoordinate": {
+                  "x": 5,
+                  "y": 1
+                },
+                "playerId": "player-white",
+                "playerSequence": 1,
+                "radius": 69.42,
+                "sectorX": 4,
+                "sectorY": 1,
+                "slotIndex": 2,
+                "surface": "solar-board"
+              }
+            ],
+            "traces": {
+              "blue": 3,
+              "pink": 1,
+              "yellow": 1
+            },
+            "alienDisplay": 9,
+            "final": 111,
+            "rng": {
+              "algorithm": "seti-simulation-mulberry32-v1",
+              "state": 3171573311
+            }
+          },
+          "peak": [
+            8,
+            26.109833000000208
+          ],
+          "nativeReplay": true
+        }
+      ]
+    }
+  },
+  "diagnosis": {
+    "confirmed": [
+      "Both repeated-corner candidates enter the actual current-turn search; this is not a missing-candidate case.",
+      "The publicity branch keeps 10 more analysis-purpose value after the same known scan because first-blue publicity can fund research. That path is legally payable.",
+      "The data branch instead secures one extra energy income, one credit, one energy and one pool datum at the matched full-computer boundary.",
+      "The same current policy still scores the publicity state 8 higher, while its subsequent R3 continuation ends 26 board points lower."
+    ],
+    "notProven": [
+      "A generally better global data/publicity weight.",
+      "That the publicity forecast is an arithmetic bug: its Native funding is real.",
+      "Longer-game superiority: no new complete terminal comparison has been run."
+    ]
+  }
+}
