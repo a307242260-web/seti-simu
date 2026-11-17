@@ -1,0 +1,12 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4501,7 +4501,8 @@
+       }
+       while(true){
+         if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
+-        const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
++        // A fixed acquisition can only consume a pending Native choice menu.
++        const spec=current.status==="decision"?cardPickSpec(current):null,tail=targetReached?localDecisionSpec(current):null;
+         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
+         const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup","data-funded-cargo"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+           :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);

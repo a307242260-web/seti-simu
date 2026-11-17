@@ -1,0 +1,33 @@
+{
+  "source": "32e6e33c61c25ea74c806c23127b60f2ee6433bb",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v484/seti-purpose-capital-state-value-v71",
+  "teacherInput": 269,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_target",
+    "phase": "conditional",
+    "actionId": "choose_target:f4c617ab",
+    "actorId": "player-white",
+    "stateVersion": 108,
+    "decisionVersion": 1,
+    "target": {
+      "choiceId": "scan4:move:7:out",
+      "mode": "move",
+      "rocketId": 7,
+      "deltaX": 0,
+      "deltaY": 1
+    },
+    "payload": {
+      "requiredMovePoints": 1
+    },
+    "decision": null,
+    "summary": "移动 7 向外"
+  },
+  "value": 207,
+  "nativeInputs": 4,
+  "milliseconds": 73.177333,
+  "complete": true,
+  "rootAndRngUnchanged": true,
+  "oldV483CheckpointFixture": "randomizer/game/ai/fixtures/free-scan-funded-prefix-20261118-v1.json.gz",
+  "gateScope": "this root only; teacher272 existing timing failure is not cleared"
+}

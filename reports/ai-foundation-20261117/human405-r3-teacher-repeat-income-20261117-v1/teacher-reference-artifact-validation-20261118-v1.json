@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-18",
+  "source": "32e6e33c61c25ea74c806c23127b60f2ee6433bb",
+  "teacherTerminal": 384,
+  "autonomousAI": false,
+  "nativeInputs": 474,
+  "completeSeedReplayVerified": true,
+  "allReportLinksExist": true,
+  "saveSha256": "b8d6e45acb87828a8e2b0113323a69f3aea90f3a649287972137d344e42ab03e",
+  "actionReportSha256": "2b527b7194ef03cdaaea8170a5e2a74166ca017b12f1f206c6c362424a69fbee",
+  "retention": {
+    "activeResearch": true,
+    "historicalEssential": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json",
+    "saveAndHtmlRebuildableBy": "generate-teacher-legal-report-20261118.cjs"
+  },
+  "limitations": [
+    "旧宿主策略断言在原源码同样失败，未修改断言",
+    "教师272步629ms失败未清除；未运行新整局或20盘",
+    "AI正式整局仍272，384是修订教师参考"
+  ]
+}

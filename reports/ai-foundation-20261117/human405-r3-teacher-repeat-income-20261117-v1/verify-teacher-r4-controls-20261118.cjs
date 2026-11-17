@@ -22,7 +22,7 @@ function verify(label,initial,rows,expected,failure){
  }finally{c.dispose()}
 }
 const cases=[];
-for(const n of ['teacher-r4-fixed-replay-20261118-v1.json.gz','teacher-r4-adapted-replay-20261118-v2.json.gz','teacher-r4-adapted-replay-20261118-v3.json.gz','teacher-r4-adapted-replay-20261118-v4.json.gz']){
+for(const n of ['teacher-r4-fixed-replay-20261118-v1.json.gz','teacher-r4-adapted-replay-20261118-v2.json.gz','teacher-r4-adapted-replay-20261118-v3.json.gz','teacher-r4-adapted-replay-20261118-v4.json.gz','teacher-r4-data-repair-20261118-v1.json.gz','teacher-r4-retain-final-cards-20261118-v1.json.gz','teacher-r4-retain-final-cards-20261118-v2.json.gz']){
  const d=read(n);cases.push(verify(n,d.initial,d.rows,d.end,d.failure));
  if(d.adaptations)assert(d.adaptations.every(a=>a.rootUnchanged!==false));
 }
