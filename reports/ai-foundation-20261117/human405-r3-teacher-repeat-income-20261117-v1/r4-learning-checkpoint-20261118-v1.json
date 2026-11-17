@@ -1,0 +1,373 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v1",
+  "date": "2026-11-18",
+  "source": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "fullReference": {
+    "record": "reports/research/2170d824.5fabd621.full.json",
+    "terminal": 272,
+    "replayVerified": true,
+    "sourceRun": "5fabd6213"
+  },
+  "teacherReplay": {
+    "strict": {
+      "file": "teacher-r4-fixed-replay-20261118-v1.json.gz",
+      "legalInputs": 53,
+      "firstObsoleteInput": 298
+    },
+    "adapted": {
+      "file": "teacher-r4-adapted-replay-20261118-v4.json.gz",
+      "legalInputs": 186,
+      "obsoleteSymbolGroups": [
+        [
+          298,
+          300
+        ],
+        [
+          414,
+          416
+        ],
+        [
+          419,
+          419
+        ],
+        [
+          429,
+          431
+        ]
+      ],
+      "nextUnreachableInput": 441,
+      "reason": "availableData=0; teacher requests place_data",
+      "terminal": false,
+      "projectedFinalAtInterruption": 311,
+      "projectedValueIsNotTerminalScore": true
+    }
+  },
+  "firstPoint": {
+    "file": "teacher-r4-first-point-20261118-v1.json.gz",
+    "teacherInput": 249,
+    "nativeInputs": 45,
+    "milliseconds": 191.34179200000003,
+    "complete": true,
+    "rootAndRngUnchanged": true,
+    "selectedPurpose": "discard chong8 for publicity, research orange1, choose current public card",
+    "selectedValue": 198.5,
+    "teacherLaunchValue": 181
+  },
+  "firstTurnControl": {
+    "file": "teacher-r4-first-plan-control-20261118-v1.json.gz",
+    "cases": [
+      {
+        "kind": "teacher-launch",
+        "inputs": 2,
+        "facts": {
+          "round": 4,
+          "turn": 3,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 5,
+            "publicity": 5,
+            "score": 105
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-8-12",
+              "chong_8.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ]
+          ],
+          "reserved": [
+            "b_117.webp",
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 2,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ],
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 80.1,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 3,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 3,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 3,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 162,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      },
+      {
+        "kind": "ai-orange1-research",
+        "inputs": 5,
+        "facts": {
+          "round": 4,
+          "turn": 3,
+          "main": false,
+          "wallet": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 5,
+            "publicity": 1,
+            "score": 107
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "hand": [
+            [
+              "alien-chong-2-8",
+              "chong_2.webp"
+            ],
+            [
+              "alien-chong-4-14",
+              "chong_4.webp"
+            ],
+            [
+              "card-30-pass-3-1",
+              "b_111.webp"
+            ],
+            [
+              "card-67-0",
+              "dlc_15.png"
+            ],
+            [
+              "card-58-0",
+              "dlc_27.png"
+            ]
+          ],
+          "reserved": [
+            "b_117.webp",
+            "dlc_31.png",
+            "amiba_1.webp",
+            "b_101.webp",
+            "amiba_7.webp",
+            "chong_3.webp"
+          ],
+          "tech": {
+            "blueBoardSlots": {
+              "blue1": 2,
+              "blue2": 1
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue1": true,
+              "blue2": true,
+              "orange1": true,
+              "orange2": true,
+              "orange4": true,
+              "purple2": true,
+              "purple4": true
+            }
+          },
+          "taskCount": 2,
+          "market": [
+            [
+              "card-66-0",
+              "dlc_16.png"
+            ],
+            [
+              "card-74-0",
+              "dlc_8.png"
+            ],
+            [
+              "card-64-0",
+              "b_16.webp"
+            ]
+          ],
+          "computer": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blue": [
+            1,
+            2
+          ],
+          "probes": [
+            {
+              "angleDegrees": 67.5,
+              "cargo": null,
+              "color": "white",
+              "fossilId": "fossil_07",
+              "id": 6,
+              "kind": "chong-fossil",
+              "launchGrid": {
+                "x": 3,
+                "y": 3
+              },
+              "launchSectorCoordinate": {
+                "x": 3,
+                "y": 3
+              },
+              "playerId": "player-white",
+              "radius": 227.66,
+              "sectorX": 3,
+              "sectorY": 3,
+              "slotIndex": 4,
+              "surface": "solar-board"
+            },
+            {
+              "angleDegrees": 35.1,
+              "color": "white",
+              "id": 7,
+              "launchGrid": {
+                "x": 2,
+                "y": 1
+              },
+              "launchSectorCoordinate": {
+                "x": 2,
+                "y": 1
+              },
+              "playerId": "player-white",
+              "playerSequence": 1,
+              "radius": 69.42,
+              "sectorX": 2,
+              "sectorY": 1,
+              "slotIndex": 2,
+              "surface": "solar-board"
+            }
+          ],
+          "traces": {
+            "blue": 3,
+            "pink": 3,
+            "yellow": 3
+          },
+          "alienDisplay": 9,
+          "final": 164,
+          "rng": {
+            "algorithm": "seti-simulation-mulberry32-v1",
+            "state": 3171573311
+          }
+        }
+      }
+    ]
+  },
+  "next": [
+    "核对教师第441步缺数据的原因与当前规则下合法补足成本；不补资源、不冒用旧405分",
+    "比较同根保留虫8的已知登陆/化石完整目的与现行筹宣传研究橙1路线，先证明真实取舍再改估值",
+    "未知未来虫牌和补牌不得倒灌首个决策；所有移动仍只作为计划一部分",
+    "新增策略先过256原生输入/600ms及前三轮回归，再允许唯一正式整局或批量实验"
+  ],
+  "goalStatus": "active"
+}
