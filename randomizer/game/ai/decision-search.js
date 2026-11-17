@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v460";
+  const VERSION = "seti-complete-decision-search-v482";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -1384,12 +1384,22 @@
       }
     }
     if(complete&&!unresolved.length&&realizationTies&&scanOrbitBudget&&orbitGoal?.family==="orbit"
-      &&root.status==="stable"&&root.observation.publicState.roundNumber===4&&port.quoteScanBeforeOrbit){
+      &&root.status==="stable"&&([3,4].includes(root.observation.publicState.roundNumber))&&port.quoteScanBeforeOrbit){
+      const analysisFirst=root.observation.publicState.roundNumber===3;
       const scanAction=root.legalActions.find(a=>a.family==="scan");
       const scanRoot=scanAction&&roots.find(r=>r.actionId===scanAction.actionId);
+      const funding=analysisFirst&&!scanAction&&root.legalActions.find(a=>a.actionId===visibleBest.actionId
+        &&a.family==="quick_trade"&&a.target?.tradeId==="credits-for-energy");
       const scanEdges=scanRoot?.completion==="complete"?nodes[0].edges.filter(e=>e.actionId===scanAction.actionId
-        &&e.target===scanRoot.target&&e.goalStatus==="completed"&&e.resourcePlan?.goal.kind==="scan-flow"):[];
-      const scanEdge=scanEdges.length===1?scanEdges[0]:null;
+        &&e.target===scanRoot.target&&e.goalStatus==="completed"&&e.resourcePlan?.goal.kind==="scan-flow"
+        &&(!analysisFirst||e.resourcePlan.goal.id===scanRoot.goal?.id)):[];
+      // The winning movement and the scan may share the very same payment.
+      // Re-evaluate at the paid root; never issue an orbit reuse certificate
+      // for a payment whose proved continuation is a scan.
+      const fundedScan=funding&&nodes[0].edges.filter(e=>e.actionId===funding.actionId&&e.goalStatus==="completed"
+        &&e.resourcePlan?.goal.kind==="scan-flow"&&Number.isFinite(nodes[e.target].value))
+        .sort((a,b)=>nodes[b.target].value-nodes[a.target].value||a.resourcePlan.goal.id.localeCompare(b.resourcePlan.goal.id))[0];
+      const scanEdge=scanEdges.length===1?scanEdges[0]:fundedScan;
       const quietTail=edge=>{
         let index=edge.target;
         for(let i=0;i<16;i++){
@@ -1410,13 +1420,15 @@
         const maySubmit=(inputs,total)=>now()<deadline-15&&total<scanOrbitBudget.nativeInputs&&transitions+inputs<limits.transitions;
         if(scanTail&&orbitTail){
           const before=port.getDiagnostics().submissionCount;
-          if(maySubmit(0,before)){
-            const proof=port.quoteScanBeforeOrbit(scanTail,orbitTail,orbitGoal,maySubmit);
+          if(maySubmit(0,before)&&(!analysisFirst||before+14<=scanOrbitBudget.nativeInputs)){
+            const proof=analysisFirst&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+              ?port.quoteAnalysisBeforeOrbit?.(scanTail,orbitTail,orbitGoal,evaluate,maySubmit)
+              :analysisFirst?null:port.quoteScanBeforeOrbit(scanTail,orbitTail,orbitGoal,maySubmit);
             continuationNativeInputs=port.getDiagnostics().submissionCount-before;
             transitions+=continuationNativeInputs;
-            if(proof?.score>nodes[0].value&&now()<deadline){
-              scanBeforeOrbit={...proof,actionId:scanAction.actionId,visibleActionId:visibleBest.actionId,
-                visibleValue:nodes[0].value,currentTurnValue:scanRoot.value,nativeInputs:continuationNativeInputs};
+            if((proof?.value??proof?.score)>nodes[0].value&&now()<deadline){
+              scanBeforeOrbit={...proof,actionId:(scanAction||funding).actionId,visibleActionId:visibleBest.actionId,
+                visibleValue:nodes[0].value,currentTurnValue:nodes[scanEdge.target].value,nativeInputs:continuationNativeInputs};
             }
             if(now()>=deadline)stopReason="watchdog";
           }
@@ -1655,7 +1667,7 @@
       planContinuation: accepted ? planCertificate?.token || null : null,
       planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
-      value: accepted ? shipment?.value ?? blueLaunchContinuation?.value ?? (retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value) : null,
+      value: accepted ? shipment?.value ?? blueLaunchContinuation?.value ?? scanBeforeOrbit?.value ?? (retainedRegionPrefix ? retainRegionCard.value : visibleFossilTransport?.value ?? scanBeforePass?.scanValue ?? nodes[0].value) : null,
       ...(accepted&&blueLaunchContinuation?{blueLaunchContinuation}:{}),
       ...(accepted&&scanBeforeOrbit?{scanBeforeOrbit}:{}),
       ...(accepted&&visibleFossilTransport?{visibleFossilTransport}:{}),
@@ -1670,7 +1682,7 @@
       realization: accepted ? shipment?.realization ?? blueLaunchContinuation?.realization ?? (scanBeforePass ? scanBeforePass.realization : nodes[0].realization ?? null) : null,
       preparationDebt:accepted?shipment?.preparationDebt ?? blueLaunchContinuation?.preparationDebt ?? (scanBeforePass ? scanBeforePass.preparationDebt : nodes[0].preparationDebt??null):null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
-      scope,
+      scope: scope+(accepted&&scanBeforeOrbit?.scope==="public-analysis-then-same-orbit"?"+conditional-known-analysis-before-orbit":""),
       roots, lines, unresolved,
       ...(resourcePlanning?{sharedPrefixGraph:port.getResourcePrefixGraph?.()||null}:{}),
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}

@@ -5552,6 +5552,75 @@
 
     // Spend the remaining decision budget on one already closed scan line.
     // The real current-turn graph and its fork checkpoints stay unchanged.
+    function quoteAnalysisBeforeOrbit(scanLeaf,orbitLeaf,goal,evaluate,admit){
+      const root=nodes.get(openedRoot),initial=readPlanningState(root),t=initial.turn;
+      const scan=nodes.get(turnTailBase(scanLeaf)),orbit=nodes.get(turnTailBase(orbitLeaf));
+      const owner=s=>s.players.players.find(p=>p.id===seatId),p=owner(initial);
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.mainActionCompleted||p.passCompletionPending
+        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||goal.family!=="orbit"||goal.endpointTarget?.type!=="planet"||goal.movementPoints!==1
+        ||!p.techState.ownedTiles.purple4||data.listComputerPlacedTokens(p).length!==5||p.resources.availableData
+        ||p.hand.length!==1||!knownRootCardIds.has(p.hand[0].id)
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes("deepspace_free_analyze")
+        ||localPlans.hasPendingFossilArrival(initial)||orbit.informationBarrier
+        ||scan.informationBarrier?.code!=="hidden_card_reveal")return null;
+      const ownedShips=initial.pieces.rockets.filter(r=>r.playerId===seatId&&r.surface==="solar-board");
+      if(ownedShips.length!==1||ownedShips[0].id!==goal.rocketId||ownedShips[0].fossilId)return null;
+      const afterScan=readPlanningState(scan),q=owner(afterScan),r=owner(readPlanningState(orbit));
+      if(q.resources.credits!==goal.endpointCost.credits||q.resources.energy!==0||q.resources.availableData!==1
+        ||q.hand.length!==1||q.hand[0].id!==p.hand[0].id||data.listComputerPlacedTokens(q).length!==5
+        ||players.canAfford(r,scanEffects.getStandardScanCost(r)))return null;
+      const rng=quietSavedMeta(initial.meta).rngState;
+      const species=s=>Object.values(s.aliens.aliens).map(a=>a.revealed?a.alienId:null);
+      const visible=species(initial);
+      const comp=fork.composition||fork,previous=loadedEnvelope||root.envelope,first=submissionCount;
+      let e=scan.envelope;
+      const current=()=>readIdentityState(e);
+      const menu=()=>{
+        restoreEnvelope(e,true);
+        const i=comp.inspect();
+        if(i.session?.decision?.ok===false)throw Error(i.session.decision.message);
+        return legalActions(comp,i);
+      };
+      function input(family,test=()=>true){
+        if(submissionCount-first>=14||!admit(submissionCount-first,submissionCount))return false;
+        const a=menu().find(x=>x.actorId===seatId&&x.family===family&&test(x));
+        if(!a||a.target?.source==="blind"||a.target?.cardInstanceId&&!knownRootCardIds.has(a.target.cardInstanceId))return false;
+        const {result}=executeCurrent(a);
+        const barrier=result.irreversibleBarrier;
+        if(ruleComposition.isHiddenInformationBarrier(barrier)&&barrier.code!=="tech_bonus_reveal")return false;
+        e=snapshot(comp);
+        return exactClaimState(quietSavedMeta(current().meta).rngState,rng)
+          &&exactClaimState(species(current()),visible);
+      }
+      function next(n){
+        if(!input("end_turn")||e.session)return false;
+        const at=current().turn;
+        return at.roundNumber===t.roundNumber&&at.turnNumber===t.turnNumber+n&&at.currentPlayerId===seatId;
+      }
+      try{
+        if(!next(1)||!input("place_data")||!input("choose_target",a=>a.target?.target==="computer")
+          ||!input("analyze"))return null;
+        const neutral=menu().filter(a=>a.family==="choose_target"&&a.target?.traceType==="blue"
+          &&a.target?.alienSlotId!=null&&current().aliens.aliens[a.target.alienSlotId]?.revealed===false);
+        // Only the generic contribution is used. A newly revealed alien is
+        // an information barrier, even if that reveal would be favorable.
+        if(neutral.length!==1||!input("choose_target",a=>a.actionId===neutral[0].actionId)||!next(2))return null;
+        const card=p.hand[0],bonus=cards.getDiscardActionRewardForCard(card);
+        if(!(bonus?.gain.publicity>0)||Object.keys(bonus.gain).length!==1||bonus.dataCount
+          ||!input("card_corner",a=>a.target?.cardInstanceId===card.id)||!input("research_tech"))return null;
+        const target=menu().find(a=>{
+          const id=a.target?.tileId,stack=current().tech.stacks[id];
+          return a.family==="choose_target"&&id?.startsWith("orange")&&!stack?.bonusHidden
+            &&stack?.bonusIndex===knownRootTechIndices.get(id)&&stack?.bonusId==="bonus_1p";
+        });
+        if(!target||!input("choose_target",a=>a.actionId===target.actionId)||e.session||!next(3)
+          ||!input("orbit",a=>a.target?.rocketId===goal.rocketId&&a.target?.planetId===goal.planetId)||e.session||!next(4))return null;
+        return {value:evaluate(observeEnvelope(e,{code:"hidden_card_reveal"},true)),scope:"public-analysis-then-same-orbit",
+          orbitGoalId:goal.id,tileId:target.target.tileId};
+      }finally{restoreEnvelope(previous);}
+    }
+
     function quoteScanBeforeOrbit(scanLeaf, orbitLeaf, goal, admit) {
       const root=nodes.get(openedRoot), scan=nodes.get(turnTailBase(scanLeaf)), orbit=nodes.get(turnTailBase(orbitLeaf));
       const state=readIdentityState(root.envelope),t=state.turn;
@@ -10516,7 +10585,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteAnalysisBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

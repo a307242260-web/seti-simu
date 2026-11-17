@@ -2,6 +2,37 @@
 
 const smokes = [
   Object.freeze({
+    id: "production-analysis-before-orbit",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
+    actionExpression: `(async () => {
+      const response=await fetch('/randomizer/game/ai/fixtures/analysis-before-orbit-20261118-v1.json.gz');
+      if(!response.ok)throw Error('missing analysis-before-orbit fixture');
+      const text=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text();
+      const envelope=JSON.parse(text).root,seed=JSON.parse(envelope.committedState).meta.seed,seat='player-white';
+      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,
+        random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+        projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],
+          {cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
+      k.newGame({seed});const c=k.composition;
+      if(!c.lifecycle.restore(envelope).ok)throw Error('analysis-before-orbit restore failed');
+      const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+      try {
+        const q=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p})
+          .decide({seatId:seat,legalActions:c.inputPort.enumerateActions({})}).search;
+        if(!q.complete||q.actionId!=='scan:2d21a323'||q.value!==151
+          ||q.scanBeforeOrbit?.scope!=='public-analysis-then-same-orbit'
+          ||q.scanBeforeOrbit.nativeInputs!==12||q.diagnostics.nativeExecutions>256
+          ||q.rootAndSearchMilliseconds>600)throw Error('public analysis-before-orbit plan differs in Browser');
+        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('analysis-before-orbit changed root or RNG');
+        window.__analysisBeforeOrbitSmoke={ok:true,native:q.diagnostics.nativeExecutions};
+      } finally {p.close();c.dispose();}
+    })()`,
+    successExpression: "window.__analysisBeforeOrbitSmoke?.ok === true",
+    obligation: "Browser用同一原生证据比较公开分析后再环绕，预算完整计费且权威状态不变",
+    counterexample: "只在Node生效、漏装配已有规则能力、少计模拟或改变当前局状态",
+  }),
+  Object.freeze({
     id: "production-detached-value-observation",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiProductionKernel && window.SetiRuleObservation && window.SetiStateValue)",
