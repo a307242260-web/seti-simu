@@ -69,4 +69,32 @@ const amiba9Play = cardEffects.getCardModel("amiba_9.webp").playEffects;
 assert.equal(amiba9Play[0].type, "launch");
 assert.equal(amiba9Play[1].type, amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD);
 
+
+// Restoring canonical JSON may reorder object keys. Legacy trace IDs must
+// depend on trace type, not on whether the host has saved/restored the root.
+const migrationOrders = [
+  ["blue", "pink", "yellow"], ["blue", "yellow", "pink"],
+  ["pink", "blue", "yellow"], ["pink", "yellow", "blue"],
+  ["yellow", "blue", "pink"], ["yellow", "pink", "blue"],
+];
+let canonicalMigration = null;
+for (const order of migrationOrders) {
+  const legacy = createState();
+  legacy.aliens[1].traces = Object.fromEntries(order.map(type => [type, {
+    firstPlaced: true, ownerPlayerColor: "white", extraCount: 0,
+  }]));
+  amiba.initializeAmibaReveal(legacy, 1, white, () => 0);
+  let sequence = 6;
+  assert.equal(amiba.migrateLegacyTraces(legacy, 1, { takeSequence: () => sequence++ }), 3);
+  const migrated = Object.fromEntries(["blue", "pink", "yellow"].map(type => [type,
+    amiba.listTraceEntries(legacy, 1, type).find(entry => entry.position === 1),
+  ]));
+  assert.deepEqual(Object.fromEntries(Object.entries(migrated).map(([type, entry]) => [type, entry.sequence])),
+    { blue: 6, pink: 7, yellow: 8 }, `migration key order ${order}`);
+  if (canonicalMigration) assert.deepEqual(migrated, canonicalMigration);
+  else canonicalMigration = migrated;
+  assert.equal(amiba.migrateLegacyTraces(legacy, 1, { takeSequence: () => { throw Error("idempotent migration allocated an ID"); } }), 0);
+  assert.equal(sequence, 9);
+}
+
 console.log("amiba.test.js: all tests passed");

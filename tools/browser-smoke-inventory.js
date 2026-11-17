@@ -2,6 +2,29 @@
 
 const smokes = [
   Object.freeze({
+    id: "production-amiba-legacy-trace-replay-order",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAlienAmiba)",
+    actionExpression: `(() => {
+      const api=window.SetiAlienAmiba,white={id:'player-white',color:'white'};
+      const orders=[['blue','pink','yellow'],['blue','yellow','pink'],['pink','blue','yellow'],['pink','yellow','blue'],['yellow','blue','pink'],['yellow','pink','blue']];
+      for(const order of orders){
+        const state={aliens:{1:{revealed:true,alienId:api.ALIEN_ID,assignedAlienId:api.ALIEN_ID,
+          traces:Object.fromEntries(order.map(type=>[type,{firstPlaced:true,ownerPlayerColor:'white',extraCount:0}]))}},
+          amiba:{...api.createAmibaState(),initialConfiguration:api.createInitialConfiguration(()=>0)}};
+        api.initializeAmibaReveal(state,1,white,()=>0);let next=6;
+        if(api.migrateLegacyTraces(state,1,{takeSequence:()=>next++})!==3)throw Error('legacy migration omitted a trace');
+        const ids=['blue','pink','yellow'].map(type=>api.listTraceEntries(state,1,type).find(e=>e.position===1)?.sequence);
+        if(JSON.stringify(ids)!=='[6,7,8]'||next!==9)throw Error('legacy IDs depend on object key order');
+        if(api.migrateLegacyTraces(state,1,{takeSequence:()=>{throw Error('migration repeated')}})!==0)throw Error('migration not idempotent');
+      }
+      window.__amibaReplayOrder={ok:true,cases:orders.length};
+    })()`,
+    successExpression: "window.__amibaReplayOrder?.ok === true",
+    obligation: "阿米巴旧痕迹在Browser中按稳定类型顺序分配实体编号，保存恢复不改变结果",
+    counterexample: "对象键插入顺序导致同种子同行动的痕迹编号不同或重复迁移分配编号",
+  }),
+  Object.freeze({
     id: "production-known-data-scan-cycle",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",

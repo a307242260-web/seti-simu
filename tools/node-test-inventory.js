@@ -255,7 +255,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/tech/tech.test.js", "rules/tech", "科技供应、取得、蓝槽与 owner 规则", "被占/被封锁科技仍取得"),
     entry("randomizer/game/tech/bonuses.test.js", "rules/tech", "科技奖励按 tile/slot 唯一结算", "重复触发或错误颜色奖励"),
 
-    entry("randomizer/game/aliens/amiba.test.js", "rules/aliens", "阿米巴物种奖励与机会规则", "未满足条件仍产生物种收益"),
+    entry("randomizer/game/aliens/amiba.test.js", "rules/aliens", "阿米巴物种奖励与机会规则；旧痕迹编号在全部键顺序和保存恢复后保持一致", "未满足条件仍产生物种收益或同种子同行动产生不同实体编号"),
     entry("randomizer/game/aliens/aomomo.test.js", "rules/aliens", "奥陌陌物种轨迹与奖励规则", "非法轨迹或重复奖励成功"),
     entry("randomizer/game/aliens/banrenma.test.js", "rules/aliens", "半人马物种机会与目标规则", "非 owner 或未知目标被接受"),
     entry("randomizer/game/aliens/chong.test.js", "rules/aliens", "虫族任务、化石选择与蓝1–7完整奖励解析", "未达任务或 stale 选择领奖、蓝7只有化石标签无正式奖励"),

@@ -340,7 +340,8 @@
     const grid = ensureTraceGrid(alienState, alienSlotId);
     const slotTraces = alienState.aliens?.[key]?.traces || {};
     let migratedCount = 0;
-    for (const traceType of Object.keys(slotTraces)) {
+    // Canonical save/restore sorts object keys; allocation must use the same order.
+    for (const traceType of Object.keys(slotTraces).sort()) {
       const trace = slotTraces[traceType];
       if (!trace?.firstPlaced) continue;
       if (!grid[traceType] || grid[traceType][1]) continue;
