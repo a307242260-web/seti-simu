@@ -7,6 +7,7 @@ function entry(file, owner, obligation, counterexample) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
+    entry("randomizer/game/ai/free-scan-funded-prefix.test.js", "policy/decision-search", "末轮独席免费移动绑定当前已筹资的多步登陆目的；剩余费用原生兑现且无虚构旋转", "因不存在的旋转改向、借未来资源、隐藏牌堆影响移动或将未知登陆牌当作已持有"),
     entry("randomizer/game/ai/known-data-scan-cycle.test.js", "policy/decision-search", "已知三数据供应、货币收入和两次扫描闭合公开星区目标，逐步计费且不看新补牌", "遗漏数据的可支付连续用途、透视未来牌、未计模拟或复用旧准备计划"),
     entry("randomizer/game/ai/analysis-before-orbit.test.js", "policy/decision-search", "无人争抢时比较可支付的扫描分析研究与同一环绕，已知原生证据逐步计费且隐藏补牌不影响策略", "为眼前环绕遗漏可兑现发展、偷看补牌、少计模拟或把对手未来盘面当成保证"),
     entry("randomizer/app/value-observation.test.js", "architecture/projection", "完整观察与单席估值观察保持同值且返回几何和计分板隔离于原生状态", "估值复制调用失效、共享引用污染权威状态或两种观察估值分歧"),

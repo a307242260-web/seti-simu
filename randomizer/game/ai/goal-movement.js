@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiGoalMovement=api;
 })(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players,data){
   "use strict";
-  const VERSION='seti-goal-movement-policy-v6';
+  const VERSION='seti-goal-movement-policy-v7';
   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
@@ -165,6 +165,27 @@
       if(!mandatoryPrefix&&!owner.mainActionCompleted&&((cost.credits||0)>owner.resources.credits||(cost.energy||0)>owner.resources.energy
         ||!free&&(route?.cost||0)+(cost.energy||0)>allowance))continue;
       const benefit=candidate.targetBenefit;if(!benefit)throw new Error('GOAL_MOVEMENT_ENDPOINT_BENEFIT_MISSING');
+      // With no intervening owner or rotation, one free step can begin a
+      // longer landing plan. The held card pays the actual landing fee;
+      // reserve every remaining movement point from current energy alone.
+      if(pickup&&route?.path.length>1&&route.path[0].requiredMovePoints===allowance
+        &&candidate.endpointFamily==='land'&&candidate.endpointTarget?.type==='satellite'
+        &&['jupiter','saturn'].includes(candidate.planetId)&&!ship.fossilId
+        &&candidate.endpointFacts.rewards.every(e=>['gain_resources','choose_colored_nebula_scan'].includes(e.type))
+        &&(objectiveOnly||moving.some(a=>matches(a,ship.id,route.path[0])))){
+        const remaining=route.cost-allowance,price=pickup.cost.credits+1+remaining;
+        const gross=benefit.score+benefit.dataCount*.5;
+        if(remaining>0&&owner.resources.energy>=remaining&&gross>price){
+          hasFundedPickup=true;
+          nextTurn.push({goal:{id:candidate.requirementId,kind:'land',label:`用已知牌登陆 ${candidate.planetId}`,
+            timing:'funded-next-own-turn',coordinate:route.path[0].to,targetCoordinate:coordinate,
+            planetId:candidate.planetId,endpointTarget:{...candidate.endpointTarget},
+            endpointCost:pickup.cost,cardId:pickup.card.id,remainingPaidMovementPoints:remaining},rocketId:ship.id,
+            path:route.path.slice(0,1),cost:allowance,net:gross-price,
+            selected:moving.find(a=>matches(a,ship.id,route.path[0])),
+            startedTurn:state.turn.turnNumber,startedRound:state.turn.roundNumber,free:true,prefixOnly:true});
+        }
+      }
       if(pickup&&route?.path.length===1&&route.cost===allowance
         &&(objectiveOnly||moving.some(a=>matches(a,ship.id,route.path[0])))){
         const eligible=candidate.endpointFamily==='land'&&candidate.endpointTarget?.type==='satellite'
@@ -193,8 +214,8 @@
     const compare=(a,b)=>b.net-a.net||a.cost-b.cost||a.path.length-b.path.length||(a.goal.id<b.goal.id?-1:1);
     if(hasFundedPickup){
       // No opponent acts and no rotation occurs before the next own turn.
-      // Compare funded endpoints reachable with this free move, not a route
-      // that needs more paid movement or a hypothetical intervening rotation.
+      // Include only an endpoint reached now or a prefix whose remaining
+      // movement and held landing fee are already funded. No future rotation.
       const chosen=[...nextTurn,...goals.filter(g=>g.goal.kind==='visit')].sort(compare)[0];
       return objectiveOnly?{routingNodes,intent:{goal:chosen.goal,rocketId:chosen.rocketId,path:chosen.path,
         startedTurn:chosen.startedTurn,startedRound:chosen.startedRound,free:true,prefixOnly:true}}

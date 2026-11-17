@@ -2,6 +2,30 @@
 
 const smokes = [
   Object.freeze({
+    id: "production-free-scan-funded-prefix",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
+    actionExpression: `(async () => {
+      const response=await fetch('/randomizer/game/ai/fixtures/free-scan-funded-prefix-20261118-v1.json.gz');
+      if(!response.ok)throw Error('funded prefix fixture missing');
+      const f=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text()),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';
+      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+        projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
+      k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.root).ok)throw Error('funded prefix restore failed');
+      const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+      try{
+        const q=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p}).decide({seatId:seat,legalActions:c.inspect().session.decision.choices}).search;
+        const a=c.inspect().session.decision.choices.find(a=>a.actionId===q.actionId);
+        if(!q.complete||a?.target.deltaX!==0||a.target.deltaY!==1||q.diagnostics.nativeExecutions>256||q.rootAndSearchMilliseconds>600)throw Error('Browser funded direction or budget differs');
+        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('funded prefix changed root/RNG');
+        window.__freeScanFundedPrefix={ok:true,native:q.diagnostics.nativeExecutions};
+      }finally{p.close();c.dispose()}
+    })()`,
+    successExpression: "window.__freeScanFundedPrefix?.ok === true",
+    obligation: "Browser免费扫描移动选择已筹资的土星登陆前缀，不预支旋转或隐藏牌",
+    counterexample: "Browser仍绕向海王星、增加方向搜索、超预算或污染原根",
+  }),
+  Object.freeze({
     id: "production-amiba-legacy-trace-replay-order",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && window.SetiAlienAmiba)",
