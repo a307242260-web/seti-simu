@@ -2,6 +2,33 @@
 
 const smokes = [
   Object.freeze({
+    id: "production-detached-value-observation",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiProductionKernel && window.SetiRuleObservation && window.SetiStateValue)",
+    actionExpression: `(() => {
+      const seed='seti-value-observation-20261118',seat='player-white';
+      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,
+        random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4});
+      k.newGame({seed});
+      try {
+        const state=JSON.parse(k.composition.lifecycle.save().envelope.committedState),before=JSON.stringify(state);
+        const build=window.SetiRuleObservation.buildRuleObservation;
+        const full=build(state,seed,seat),value=build(state,seed,seat,[],{valueOnly:true});
+        const evaluate=o=>JSON.stringify(window.SetiStateValue.evaluateStateValue(o,seat));
+        if(evaluate(full)!==evaluate(value))throw Error('full/value-only observation value differs');
+        for(const key of ['rockets','planets','data','solarSystem','finalScoring']){
+          value.publicState.board[key].isolationProbe=true;
+          if(full.publicState.board[key].isolationProbe!==undefined||JSON.stringify(state)!==before)
+            throw Error('value observation shares mutable geometry: '+key);
+        }
+        window.__detachedValueObservationSmoke={ok:true};
+      } finally {k.composition.dispose();}
+    })()`,
+    successExpression: "window.__detachedValueObservationSmoke?.ok === true",
+    obligation: "Browser完整观察与单席估值观察同值，返回计分板和几何与原生状态隔离",
+    counterexample: "估值复制器未装配、Browser与Simulation估值分歧或返回引用污染源状态",
+  }),
+  Object.freeze({
     id: "production-start-button",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",

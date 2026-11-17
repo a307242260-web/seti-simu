@@ -5855,6 +5855,13 @@
       if(!actions.length)return null;
       const pending=envelope.session?.session;
       if(pending){
+        if(inspection.phase==="awaiting_input"&&pending.queue.length===1
+          &&pending.queue[0].type===scienceSession.EFFECT_TYPES.INCOME
+          &&pending.journal?.actions?.[0]?.action?.family==="place_data"){
+          const income=actions.filter(a=>a.family==="choose_card"&&a.target?.choiceId?.startsWith("income:")
+            &&known.has(a.target.cardInstanceId)&&currencyIncome(a.target.cardInstanceId));
+          return income.length?createNode(envelope,null,income,"decision",barrier):null;
+        }
         if(inspection.phase!=="awaiting_input"||pending.queue.length!==1
           ||pending.queue[0].type!==scienceSession.EFFECT_TYPES.PLACE_DATA
           ||pending.journal?.actions?.[0]?.action?.family!=="place_data"
@@ -5868,6 +5875,10 @@
       if(plan&&policy.retainedActionIds.length===0
         &&actions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data")){
         const projected=readPlanningState(nodes.get(view));
+        if(plan.goal.kind==="income"&&known.has(plan.goal.incomeCardId)&&currencyIncome(plan.goal.incomeCardId)){
+          const proof=resourceDemand.previewIncomeTail({state:projected,seatId,goal:plan.goal});
+          if(proof.available)return view;
+        }
         const proof=plan.goal.kind==="computer-prefix"?localPlans.computerCompletion({state:projected,seatId,goal:plan.goal})
           :plan.goal.kind==="blue-data"?localPlans.blueCompletion({state:projected,seatId,goal:plan.goal}):null;
         if(proof?.available&&!proof.dataCornerId&&!proof.incomeCardId)return view;
@@ -5875,6 +5886,10 @@
       if(policy?.plans.length===0&&policy.retainedActionIds.every(id=>actions.find(a=>a.actionId===id)?.family==="end_turn")
         &&turnTailSummary(view,"end-turn"))return view;
       return null;
+      function currencyIncome(id){
+        const gain=cards.getIncomeGainForCard(owner.hand.find(c=>c.id===id));
+        return gain&&Object.keys(gain).length>0&&Object.keys(gain).every(k=>k==="credits"||k==="energy");
+      }
     }
 
     function knownPostdrawTailView(envelope,inspection,barrier,intent,resourceControl,sourceAction){

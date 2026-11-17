@@ -3,11 +3,10 @@
   const common = typeof module === "object" && module.exports;
   const api = factory(common ? require("./simulation-contract") : root.SetiSimulationContract,
     common ? require("../game/end-game-scoring") : root.SetiEndGameScoring,
-    common ? require("../game/cards/effects") : root.SetiCardEffects,
-    common ? require("../game/state/state-store") : root.SetiStateStore);
+    common ? require("../game/cards/effects") : root.SetiCardEffects);
   if (common) module.exports = api;
   else root.SetiRuleObservation = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects, stateStore) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects) {
 "use strict";
 
 // 共享规则观察构建器（Browser/Simulation 同源信息层）。
@@ -142,7 +141,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   // Only the private committed fork projection owns an immutable snapshot.
   // A live session and ordinary observation still detach their geometry.
   const shareGeometry=valueOnly&&options.trustedCommitted===true;
-  const copyValueSlice=valueOnly?stateStore.copyForkData:clone;
+  const copyValueSlice=clone;
   const geometry=shareGeometry ? value=>value : copyValueSlice;
   // Scoring normalizes the same board for each seat. A private copy for the
   // whole projection keeps those writes off the authoritative state.

@@ -7,6 +7,8 @@ function entry(file, owner, obligation, counterexample) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
+    entry("randomizer/app/value-observation.test.js", "architecture/projection", "完整观察与单席估值观察保持同值且返回几何和计分板隔离于原生状态", "估值复制调用失效、共享引用污染权威状态或两种观察估值分歧"),
+    entry("randomizer/game/ai/known-income-after-blind-draw.test.js", "policy/decision-search", "盲抽后仍原生完成已有数据支付的已知货币收入计划，隐藏牌堆不影响候选估值", "读取或消费未知牌、遗漏已公开收入计划或改变原根与RNG"),
     entry("randomizer/game/ai/decision-search.test.js", "policy/decision-search", "完整决策图保留准备链、条件选择及回边，弃牌等价出口有正式后继对照且按真实次数计费；未闭合拒绝选择", "一步估值遗漏准备收益、DFS回边误判无解、错误合并有序出口或宏步绕过预算冒充覆盖完成"),
     entry("randomizer/game/ai/plan-prefix-reuse.test.js", "policy/decision-search", "闭合窗口的真实最优前缀逐输入复用，完整状态和合法信封绑定；冷算与恢复保持动作、值和最短距离", "根假设重抽、资源变化或信息公开后仍沿用旧计划，或用合法下一步冒充整个竞争集完成"),
     entry("randomizer/game/ai/known-card-money.test.js", "policy/decision-search", "已知卡牌DSL在钱电独立条件下允许钱包模拟，真实后期全部单行动条件链及小完整窗口保持最优", "零资源条件、隐藏可再打出牌或未知DSL选项破坏钱包单调性，仍省略较穷分支"),
