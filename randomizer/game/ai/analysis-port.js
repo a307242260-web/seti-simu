@@ -5550,6 +5550,122 @@
       }finally{restoreEnvelope(previous);}
     }
 
+    // One known data supplier funds income, two scans and a public sector win.
+    // This is a single greedy witness, not another turn graph or a search bound.
+    function quoteKnownDataScans(evaluate,admit){
+      const root=nodes.get(openedRoot),initial=readPlanningState(root),t=initial.turn;
+      const owner=s=>s.players.players.find(p=>p.id===seatId),p=owner(initial),session=root.envelope.session?.session;
+      if(t.roundNumber!==3||t.currentPlayerId!==seatId||p.passCompletionPending||t.gameEnded
+        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
+        ||!industryCatalog.getPlayerIndustryDefinition(p)?.passiveIds.includes('deepspace_free_analyze')
+        ||data.listComputerPlacedTokens(p).length||data.listBlueBonusPlacedTokens(p).length
+        ||p.resources.availableData!==2||p.resources.energy!==2||p.resources.additionalPublicScan!==1
+        ||!p.techState.ownedTiles.purple2||!p.techState.ownedTiles.purple4||p.techState.disabledTiles.purple2||p.techState.disabledTiles.purple4
+        ||p.hand.some(c=>!knownRootCardIds.has(c.id))||localPlans.hasPendingFossilArrival(initial))return null;
+      const cost=scanEffects.getStandardScanCost(p);
+      if(cost.credits!==1||cost.energy!==2||Object.keys(cost).length!==2)return null;
+      const repeated=e=>e?.type==='card_discard_card_corner_repeat'&&e.options?.cornerRepeat===3&&e.options?.excludeAlienCards===true;
+      const pending=session?.queue?.[0]?.payload?.cardEffect;
+      const plays=!session&& !p.mainActionCompleted?openedRoot.legalActions.filter(a=>{
+        const card=p.hand.find(c=>c.id===a.target?.cardInstanceId),body=card&&cardEffects.buildPlayEffects(card);
+        return a.family==='play_card'&&body?.length===2&&body[0].type==='gain_resources'
+          &&Object.keys(body[0].options?.gain||{}).length===1&&body[0].options.gain.publicity===1&&repeated(body[1]);
+      }):[];
+      if(session?!repeated(pending)||!p.mainActionCompleted:plays.length!==1)return null;
+      const played=plays[0],held=p.hand.filter(c=>c.id!==played?.target.cardInstanceId);
+      const suppliers=held.filter(c=>{
+        const r=cards.getDiscardActionRewardForCard(c);return r?.dataCount===1&&!Object.keys(r.gain).length&&!c.set?.startsWith('alien:');
+      });
+      if(held.length!==2||suppliers.length!==1)return null;
+      const supplier=suppliers[0],income=held.find(c=>c!==supplier),gain=cards.getIncomeGainForCard(income);
+      if(gain?.energy!==1||Object.keys(gain).length!==1)return null;
+      const blue=Object.entries(p.techState.blueBoardSlots).flatMap(([id,slot])=>{
+        const bonus=data.getBlueTileDataBonus(id);return p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]&&bonus
+          ?[{slot,required:data.getRequiredComputerSlotForBlueBonus(slot),bonus}]:[];
+      });
+      const energy=blue.filter(b=>b.required===1&&b.bonus.type==='energy'&&b.bonus.energy===1);
+      const cash=blue.filter(b=>b.required===3&&b.bonus.type==='credits'&&b.bonus.credits===1);
+      const offer=rootObservation.publicState.board.aliens.amibaTraces;
+      if(energy.length!==1||cash.length!==1||!offer?.displayedCardAvailable||!Number.isSafeInteger(offer.displayedCardIndex))return null;
+      const queue=scanEffects.buildScanEffectQueue(p,{turn:t}),source=scienceSession.getPlanetScanSource(initial,queue[0]?.type);
+      const targets=source&&scienceSession.listNebulaChoices(initial,source);
+      const remaining=(s,id)=>data.listNebulaTokens(s.data,id).filter(x=>!x.replacedByPlayerId&&!x.replacedByPlayerColor).sort((a,b)=>a.slotIndex-b.slotIndex);
+      if(targets?.length!==1||targets[0].target.nebulaId===data.AOMOMO_NEBULA_ID||remaining(initial,targets[0].target.nebulaId).length!==3)return null;
+      const sector=targets[0].target.nebulaId;
+      const publicChoices=scienceSession.listPublicScanChoices(initial).filter(a=>knownRootCardIds.has(a.target.cardInstanceId)&&a.target.nebulaId!==data.AOMOMO_NEBULA_ID);
+      const matches=publicChoices.filter(a=>a.target.nebulaId===sector);
+      if(matches.length!==1)return null;
+      const match=matches[0],others=[],used=new Set([match.target.cardInstanceId]),marked=new Map();
+      const rank=a=>data.getNebulaSlotScoreReward(a.target.nebulaId,remaining(initial,a.target.nebulaId)[marked.get(a.target.nebulaId)||0]?.slotIndex);
+      for(let i=0;i<2;i++){
+        const choices=publicChoices.filter(a=>!used.has(a.target.cardInstanceId)&&a.target.nebulaId!==sector
+          &&remaining(initial,a.target.nebulaId).length-(marked.get(a.target.nebulaId)||0)>1)
+          .sort((a,b)=>rank(b)-rank(a)||a.target.cardInstanceId.localeCompare(b.target.cardInstanceId)||a.target.nebulaId.localeCompare(b.target.nebulaId));
+        if(!choices.length)return null;
+        const a=choices[0];others.push(a);used.add(a.target.cardInstanceId);marked.set(a.target.nebulaId,(marked.get(a.target.nebulaId)||0)+1);
+      }
+      const comp=fork.composition||fork,previous=loadedEnvelope||root.envelope,start=submissionCount;
+      const rng=quietSavedMeta(initial.meta).rngState,reveals=s=>Object.values(s.aliens.aliens).map(a=>a.revealed?a.alienId:null),visible=reveals(initial);
+      const steps=[];let e=root.envelope,firstActionId;
+      const state=()=>readIdentityState(e),menu=()=>{restoreEnvelope(e,true);return legalActions(comp,comp.inspect());};
+      function input(family,test=()=>true){
+        if(submissionCount-start>=48||!admit(submissionCount-start,submissionCount))return false;
+        const a=menu().find(a=>a.actorId===seatId&&a.family===family&&test(a));
+        if(!a||a.target?.source==='blind'||a.target?.cardInstanceId&&!knownRootCardIds.has(a.target.cardInstanceId))return false;
+        const {result}=executeCurrent(a);e=snapshot(comp);firstActionId??=a.actionId;steps.push(a);
+        return (!ruleComposition.isHiddenInformationBarrier(result.irreversibleBarrier)||result.irreversibleBarrier.code==='hidden_card_reveal')
+          &&exactClaimState(quietSavedMeta(state().meta).rngState,rng)&&exactClaimState(reveals(state()),visible);
+      }
+      const place=(target,blueSlot)=>input('place_data')&&input('choose_target',a=>a.target?.target===target&&(blueSlot==null||a.target.blueSlot===blueSlot));
+      function end(n){
+        if(!input('end_turn'))return false;
+        if(e.session){
+          const fixed=localPlans.finalMark({state:state(),seatId,actions:menu()});
+          if(!fixed||!input('choose_target',a=>a.actionId===fixed.selectedActionId))return false;
+        }
+        return !e.session&&state().turn.roundNumber===t.roundNumber&&state().turn.turnNumber===t.turnNumber+n&&state().turn.currentPlayerId===seatId;
+      }
+      function scan(picks){
+        if(!input('scan')||!input('choose_target',a=>a.target.nebulaId===sector))return false;
+        for(const pick of picks)if(!input('choose_card',a=>a.target.cardInstanceId===pick.target.cardInstanceId&&a.target.nebulaId===pick.target.nebulaId))return false;
+        if(menu().some(a=>a.family==='choose_card'&&a.target.done)&&!input('choose_card',a=>a.target.done))return false;
+        if(!input('choose_target',a=>a.target.mode==='skip'))return false;
+        const mercury=menu().find(a=>a.target.nebulaId&&remaining(state(),a.target.nebulaId).length>1);
+        return mercury&&input('choose_target',a=>a.actionId===mercury.actionId);
+      }
+      try{
+        if(played&&!input('play_card',a=>a.actionId===played.actionId))return null;
+        if(!input('choose_card',a=>a.target.cardInstanceId===supplier.id)||e.session)return null;
+        const funded=owner(state());
+        if(funded.resources.credits!==1||funded.resources.energy!==2||funded.resources.availableData!==5)return null;
+        for(let i=0;i<4;i++){
+          if(!place('computer'))return null;
+          if(i===3&&!input('choose_card',a=>a.target.cardInstanceId===income.id))return null;
+        }
+        if(!place('blueBonus',energy[0].slot)||!end(1)||!scan([match])||e.session)return null;
+        if(!place('computer')||!place('computer')||!place('blueBonus',cash[0].slot)||!end(2)||!scan(others))return null;
+        const trace=menu().filter(a=>a.target.speciesId==='amiba'&&a.target.traceType==='pink').flatMap(a=>{
+          const r=aliens.amiba.getTraceReward(initial.aliens,'pink',a.target.position,{readOnlyRewards:true});
+          return r.pickAlienCard&&!r.drawCards&&!r.dataCount?[{a,score:r.gain?.score||0}]:[];
+        }).sort((a,b)=>b.score-a.score||a.a.actionId.localeCompare(b.a.actionId))[0];
+        if(!trace||!input('choose_target',a=>a.actionId===trace.a.actionId)
+          ||!input('choose_card',a=>a.target.source==='display'&&a.target.cardIndex===offer.displayedCardIndex))return null;
+        if(e.session){
+          const choices=menu(),optional=choices.find(a=>{
+            const card=p.reservedCards.find(c=>c.id===a.target.cardInstanceId);
+            return a.family==='accept_optional_effect'&&card&&knownRootCardIds.has(card.id)
+              &&cardEffects.getCardModel(card)?.triggers?.some(r=>r.id===a.target.ruleId&&r.event.type==='alienTrace'
+                &&r.event.traceType==='pink'&&r.effect.type==='gain_data');
+          });
+          if(!optional||!input('accept_optional_effect',a=>a.actionId===optional.actionId))return null;
+        }
+        if(e.session||!end(3))return null;
+        return {value:evaluate(observeEnvelope(e,{code:'hidden_card_reveal'},true)),actionId:firstActionId,
+          scope:'known-income-funded-two-scan-sector-completion',sectorId:sector,dataCardId:supplier.id,incomeCardId:income.id,
+          publicCardIds:[match,...others].map(a=>a.target.cardInstanceId),nativeInputs:submissionCount-start,steps};
+      }finally{restoreEnvelope(previous);}
+    }
+
     // Spend the remaining decision budget on one already closed scan line.
     // The real current-turn graph and its fork checkpoints stay unchanged.
     function quoteAnalysisBeforeOrbit(scanLeaf,orbitLeaf,goal,evaluate,admit){
@@ -10585,7 +10701,7 @@
       return Boolean(stored.intent);
     }
 
-    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteAnalysisBeforeOrbit, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, blueLaunchContinuationSource, quoteBlueLaunchContinuation, hasMovementIntent, releaseBoundaryObservation, valueObservation, quietFinalValue, finalDataSalarySource, finalDataSalaryQuote, landingCompanyRetained, deferredSectorPublicityEnabled, deferredSectorPublicityQuote, deferredCargoEnabled, quoteDeferredCargo, researchDataPurpose, quoteResearchDataPurpose, researchTransportPurpose, quoteResearchTransport, displayedAnalysisTransportSource, quoteDisplayedAnalysisTransport, transportPreparationPurpose, displayedTransportPurpose, displayedTransportTailRelevant, quoteDisplayedTransport, upstreamTransportEnabled:()=>Boolean(upstreamTransportSource()), quoteTransportPreparation, amibaRegionPurpose, quoteAmibaRegionPurpose, amibaRegionNeedsNativeTail, canDeferCompanyIncomeForScan, deferredComputerIncomeSource, quoteDeferredComputerIncome, researchScanPurpose, quoteResearchScanPurpose, publicScanCompletionTieSource, publicScanCompletionTie, heldScanSectorTieSource, heldScanSectorTie, scanTimingPurpose, quoteScanTimingPurpose, fundedScanAnalysisSource, quoteFundedScanAnalysis, analysisFundingSource, quoteAnalysisFunding,analysisFundingEnd,matchedAnalysisScanSource,matchedAnalysisScanEnd,quoteMatchedAnalysisScan, quoteScanBeforeOrbit, quoteAnalysisBeforeOrbit, quoteKnownDataScans, quoteMatchedNextPublicScan, postScanEarthShipmentSource, quotePostScanEarthShipment, visibleFossilTransportSource, quoteVisibleFossilTransport, retainedRegionCardSource, quoteRetainedRegionCard, sameElectricityIncomeTie, tiedKnownEnergySwap, retainedPublicDataCard, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass, knownPickupFundingEnabled, quoteKnownPickupFunding,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound,movementPlanValueBound,redundantCargoClaim,redundantQuietFinalClaim,proveDeferredFinalDataClaim, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, chongTaskPeekBoundary, pairedChongClaimBoundary, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

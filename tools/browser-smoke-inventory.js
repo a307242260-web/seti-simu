@@ -2,6 +2,37 @@
 
 const smokes = [
   Object.freeze({
+    id: "production-known-data-scan-cycle",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
+    actionExpression: `(async () => {
+      const response=await fetch('/randomizer/game/ai/fixtures/known-data-scan-cycle-20261118-v1.json.gz');
+      if(!response.ok)throw Error('missing known data scan fixture');
+      const text=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text();
+      const envelope=JSON.parse(text).beforeDiscard,seed=JSON.parse(envelope.committedState).meta.seed,seat='player-white';
+      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,
+        random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+        projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],
+          {cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
+      k.newGame({seed});const c=k.composition;
+      if(!c.lifecycle.restore(envelope).ok)throw Error('known data scan restore failed');
+      const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+      try {
+        const agent=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p});
+        const q=agent.decide({seatId:seat,legalActions:c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({})}).search;
+        if(!q.complete||q.actionId!=='choose_card:11e736f6'||q.value!==143.25
+          ||q.knownDataScans?.nativeInputs!==37||q.diagnostics.nativeExecutions>256
+          ||q.rootAndSearchMilliseconds>600||agent.createCheckpoint()!==null)
+          throw Error('known funded data scan plan differs in Browser');
+        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('known data scan changed root or RNG');
+        window.__knownDataScanSmoke={ok:true,native:q.diagnostics.nativeExecutions};
+      } finally {p.close();c.dispose();}
+    })()`,
+    successExpression: "window.__knownDataScanSmoke?.ok === true",
+    obligation: "Browser以相同内核核对收入供电、两次已知扫描和星区完成，额外输入完整计费且不复用旧计划",
+    counterexample: "只在Node生效、遗漏执行成本、权威状态变化或付款后仍执行旧计划",
+  }),
+  Object.freeze({
     id: "production-analysis-before-orbit",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
