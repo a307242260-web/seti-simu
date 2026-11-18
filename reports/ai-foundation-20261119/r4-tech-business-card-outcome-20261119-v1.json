@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "seti-business-diagnostic-outcome-v1",
+  "date": "2026-11-19",
+  "question": "Explain fourth-round technology development gap and choose the next falsifiable same-state control.",
+  "facts": {
+    "formalAI": 272,
+    "teacherCurrentLegalReference": 384,
+    "r4NewTechnology": {
+      "ai": 2,
+      "teacher": 5,
+      "aiRegularResearchActions": 2,
+      "teacherRegularResearchActions": 4,
+      "teacherCardGrantedTechnology": 1
+    },
+    "r3StartingCapitalForR4": {
+      "boundary": "before-round3-pass-card-and-next-income",
+      "ai": {
+        "score": 118,
+        "publicity": 1,
+        "availableData": 0,
+        "handCount": 0,
+        "techCount": 6,
+        "handIncome": 2
+      },
+      "teacher": {
+        "score": 105,
+        "publicity": 5,
+        "availableData": 3,
+        "handCount": 3,
+        "techCount": 6,
+        "handIncome": 1
+      },
+      "sameTechnologySet": false,
+      "note": "Same technology count does not mean same technology, funding cost or carried assets."
+    },
+    "r4AIResearch311": {
+      "researchDirectlyLegal": true,
+      "bestResearchRootValue": 236,
+      "selectedScanValue": 239.5,
+      "researchRootComplete": true,
+      "storedResearchContinuationIncludesEndTurn": true,
+      "candidateOmissionProven": false
+    },
+    "r4AIPublicityFlow": {
+      "start": 1,
+      "gainedBetweenSuccessiveWhiteObservations": 11,
+      "spent": 12,
+      "end": 0
+    },
+    "b101": {
+      "cardName": "远射计划",
+      "cardId": "b_101.webp",
+      "instanceId": "card-29-pass-2-5",
+      "legalPlayCredits": 3,
+      "ai136": {
+        "walletCredits": 6,
+        "techCardRootValue": 107,
+        "selectedScanValue": 111.5,
+        "techPurposeExplicit": true
+      },
+      "ai160": {
+        "walletCredits": 5,
+        "techCardRootValue": 118,
+        "selectedWholePlanValue": 132,
+        "selectedPlan": "prepare Mars landing with held DLC31"
+      },
+      "ai163": "B101 remains affordable, but an already selected goal plan commits execution to DLC31; no independent new comparison claimed.",
+      "ai168": "B101 is the only remaining hand card and is selected for income.",
+      "ai169": "Hand income1->2, B101 leaves hand and an immediate drawn card is present.",
+      "teacherR3": "Input136 plays this same instance,137 selects orange2; current-legal Native reference verifies the trajectory."
+    }
+  },
+  "diagnosis": {
+    "ruledOutAtSpecificPoints": [
+      "Research missing from candidate list at AI311.",
+      "B101 unavailable, unaffordable or unrecognized as a technology purpose at AI136/160.",
+      "An arbitrary choice between multiple remaining income cards at AI168."
+    ],
+    "supported": "The current model prefers scan / DLC31 plans, then commits the remaining B101 to income. The correct intervention point is the earlier whole-plan comparison, not blindly altering the later income picker.",
+    "unknown": [
+      "Whether B101 beats the recorded scan or DLC31 plan from the same actual AI state through a common Native boundary.",
+      "How much of the final112-point gap each earlier decision causes.",
+      "Whether fixed plan construction, valuation decomposition or horizon produces the wrong preference."
+    ],
+    "noStrategyChangeJustifiedYet": true
+  },
+  "nextMinimalControl": {
+    "root": "Actual AI input160 from formal272, not a different teacher state.",
+    "branches": [
+      "Saved best B101 technology plan, including its actual selected technology and full forced rewards.",
+      "Saved selected DLC31/Mars plan, including funding, data and B101 income consumption."
+    ],
+    "boundary": "Same own-turn completion, compare score, exact tech/slots, income, wallet, hand, computer/blue data, probes and reserved-card/preinvestment effects.",
+    "requiredBeforeExecuting": "Restore exact baseline source, canonical root and RNG from existing seed/decisions; verify state identity. Reuse old controls only if same root/knowledge.",
+    "notExecuted": true,
+    "success": "Attribute a concrete asset/model discrepancy, or show a justified trade-off; do not force the teacher action.",
+    "searchOrPolicyChange": false
+  },
+  "priorEvidenceReviewed": [
+    "docs/ai-design.md B101 teacher-root order controls and V198/V256 outcomes",
+    "docs/human405-research-comparison-learning-20261107.md; B101 supports constrained tech targets and funding windows"
+  ],
+  "priorEvidenceLimit": "Earlier B101 work is not a new mechanism discovery and uses other teacher/source roots; this card locates its fate in the current formal272 trace.",
+  "sources": {
+    "reports/ai-foundation-20261119/r4-tech-business-card-20261119-v2.json": "371f227b63098e02b5133941b0b4dbbe644fd10a963f849f77df1fbaa5e8fd7b",
+    "reports/ai-foundation-20261119/r4-tech-step311-existing-evidence-20261119-v1.json.gz": "3281cd0bc6320ec9ab8e084a9de2fdc8475cd264b927cf9738210deb11a18f44",
+    "reports/ai-foundation-20261119/r3-b101-existing-evidence-20261119-v1.json.gz": "363a50f43dc062d99126bf05a4fbf46285703b2b369165089171d5225f75cc54"
+  },
+  "methodTrial": {
+    "wallMinutesToClose": 19.950217282772066,
+    "originalDeadlineRetained": true,
+    "finishedBeforeDeadline": true,
+    "schemaInspectionFailuresRetained": 2,
+    "recoveries": "Two explicitly recorded manual recoveries of read-only reader errors; same deadline and attempt history retained, no automatic experiment retry.",
+    "commandGateGlobalBypassPreventionProven": false,
+    "businessDiagnosticDelivered": true,
+    "AIQualityImprovementProven": false
+  },
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "previousGoalTurnClassification": "progress: command guard and10 behavior controls validated within fixed wall window",
+  "thisGoalTurnClassification": "progress: formal272/teacher tech acquisition, publicity and B101 trajectory linked; current same-state control selected without strategy patch"
+}

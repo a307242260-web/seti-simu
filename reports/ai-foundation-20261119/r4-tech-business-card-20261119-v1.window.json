@@ -1,0 +1,355 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "scope": "One read-only business diagnostic using formal272 and teacher replay; no v514 implementation, AI search, Native input or autonomous game",
+  "startedEpochSeconds": 1795026279.0,
+  "deadlineEpochSeconds": 1795028079.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import subprocess,json,pathlib; r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); print(\"RECORD_KEYS\",list(r)); print(\"METRICS_KEYS\",list(r.get(\"metrics\",{}))); print(\"ROUND_END_COUNT\",len(r.get(\"roundEnds\",[]))); print(\"ROUND0_KEYS\",list(r.get(\"roundEnds\",[{}])[0])); print(\"DECISION0\",str(r.get(\"metrics\",{}).get(\"decisions\",[])[:1])[:2500]); print(\"SEARCH0\",str(r.get(\"metrics\",{}).get(\"searches\",[])[:1])[:2500]); t=json.loads(pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_EXPECTED_KEYS\",list(t[\"expected\"])); print(\"TEACHER_ACTION0\",str(t[\"actions\"][0])[:2000]); print(\"TEACHER_DECISION0\",str(t[\"decisions\"][0])[:1800]); print(\"TEACHER_EXPECTED\",str(t[\"expected\"])[:3500])"
+      ],
+      "startedEpochSeconds": 1795026306.396734,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 59932,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795026306.4744372,
+      "stdoutSha256": "a3a8d066989ef14163146e426b5b734f00a68a6df8aa5e2fa5cdc05f46daabbc",
+      "stderrSha256": "e7a01a03f0a8e1c408b243a2d77ca03de766f770f85563b379e21bbcedffd326"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import subprocess,json,pathlib; r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); print(\"SCENARIO\",r[\"scenario\"]); print(\"ROUND_ENDS\",json.dumps([{k:e[k] for k in [\"round\",\"beforeInput\",\"score\",\"resources\",\"income\",\"technology\",\"probes\"]} for e in r[\"roundEnds\"]],ensure_ascii=False)[:8500]); print(\"ROUND_SUMMARIES\",str(r[\"rounds\"])[:3000]); print(\"RESEARCH_STEPS\",r[\"metrics\"][\"whiteResearchSteps\"]); print(\"TRACE\",r[\"agentTracePath\"]); t=json.loads(pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_ACTION_COUNT\",len(t[\"actions\"])); print(\"TEACHER_VERIFICATION\",str(t[\"verification\"])[:2500]); print(\"TEACHER_PROVENANCE\",str(t[\"provenance\"])[:1800]); print(\"TEACHER_RESEARCH\",[(i+1,a[\"action\"]) for i,a in enumerate(t[\"actions\"]) if a[\"action\"][\"family\"]==\"research_tech\"])"
+      ],
+      "startedEpochSeconds": 1795026354.455998,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 61124,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026354.534434,
+      "stdoutSha256": "91e0b4716e1bfe8e15592cdf306bbe43cb43acfb3641d85a5304adb2cfb0011d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,subprocess; root=pathlib.Path.cwd(); r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); print(\"ARCHIVE\",r[\"archiveRetention\"]); p=root/r[\"agentTracePath\"]; print(\"TRACE_SIZE\",p.stat().st_size if p.exists() else \"absent\"); print(\"TRACE_FIRST\",p.open().readline()[:1800] if p.exists() else \"absent\"); print(\"ROUND3_END_KEYS\",list(r[\"roundEnds\"][2])); print(\"ROUND3_NEXT_WHITE\",[x for x in r[\"rounds\"][2][\"players\"] if x[\"seat\"]==\"player-white\"]); t=json.loads((root/\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_WHITE_PASS\",[(i+1,x[\"action\"][\"actionId\"]) for i,x in enumerate(t[\"actions\"]) if x[\"action\"].get(\"actorId\")==\"player-white\" and x[\"action\"][\"family\"]==\"pass\"]); print(\"TEACHER_TECH_SELECTIONS\",[(i+1,x[\"action\"]) for i,x in enumerate(t[\"actions\"]) if \"tech\" in x[\"action\"][\"family\"] and x[\"action\"][\"family\"]!=\"research_tech\"]); print(\"REPLAY_PATH\",r[\"savePath\"]); print(\"R4_RECORDED_SEARCHES\",[(x[\"step\"],x[\"action\"],x[\"value\"]) for x in r[\"metrics\"][\"searches\"] if x[\"step\"]>=261])"
+      ],
+      "startedEpochSeconds": 1795026381.424717,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 61523,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026381.502885,
+      "stdoutSha256": "5594f8eb1653fba9ee14b493d7e167ae26343550777260e8ef176cdcb697cbd3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; p=pathlib.Path(\"reports/research/2170d824.5fabd621.full.json.decisions.jsonl\"); first=json.loads(p.open().readline()); print(\"TRACE_KEYS\",list(first)); print(\"TRACE_NONCONTEXT\",{k:str(v)[:1600] for k,v in first.items() if k!=\"context\"}); print(\"CONTEXT_KEYS\",list(first.get(\"context\",{}))); t=json.loads(pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_R4_RESEARCH_CONTEXT\",[(i+1,x) for i,x in enumerate(t[\"actions\"]) if any(a<=i+1<=b for a,b in [(310,319),(370,390),(445,455)])]); print(\"TEACHER_TARGET_TECH\",[(i+1,x[\"action\"]) for i,x in enumerate(t[\"actions\"]) if any(\"tech\" in k.lower() for k in x[\"action\"].get(\"target\",{}))])"
+      ],
+      "startedEpochSeconds": 1795026408.13819,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 62113,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795026408.178957,
+      "stdoutSha256": "594f9687f9957c0702510828f1559461f4175069888eddd964ad9c5de4597780",
+      "stderrSha256": "0dbc283befe2bc690c940a75b2c5f3a58912110e95f0286933a34c8d25522819"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/analyze-r4-tech-business-card-20261119.py",
+        "reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.json"
+      ],
+      "startedEpochSeconds": 1795026520.585814,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 64510,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026521.080611,
+      "stdoutSha256": "8a560d4c70f96b5b41c8c37cef34171b9c8709b1d12b09c65e3a4eddd7c2ffc8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json; d=pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1\"); s=json.loads((d/\"current-strategy-status-data-20261118-v1.json\").read_text()); print(\"STATUS_KEYS\",list(s)); print(\"STATUS_TEACHER\",{k:str(v)[:4500] for k,v in s.items() if \"teacher\" in k.lower() or \"compar\" in k.lower()}); t=json.loads((d/\"teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_FREE_TECH_CONTEXT\",[(i+1,x) for i,x in enumerate(t[\"actions\"]) if 343<=i+1<=356]); p=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.json\").read_text()); print(\"STEP311_ROOTS\",[x for x in p[\"r4ResearchWindows\"] if x[\"input\"]==311]); print(\"TEACHER_INPUT_243\",t[\"actions\"][242])"
+      ],
+      "startedEpochSeconds": 1795026566.8234408,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 65376,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026566.864635,
+      "stdoutSha256": "37b2db112e362ead00746017c3ca13b287fcb2482045fd03af1c722b2ca9e919",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; d=pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1\"); t=json.loads((d/\"teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"PROVENANCE_KEYS\",list(t[\"provenance\"])); print(\"PROVENANCE_SMALL\",{k:v for k,v in t[\"provenance\"].items() if k!=\"r4SemanticAdaptations\"}); first=json.loads(pathlib.Path(\"reports/research/2170d824.5fabd621.full.json.decisions.jsonl\").open().readline()); print(\"HAND_SHAPE\",str(first[\"context\"][\"observation\"][\"selfState\"].get(\"hand\"))[:1000]); print(\"BOARD_KEYS\",list(first[\"context\"][\"observation\"][\"publicState\"][\"board\"]))"
+      ],
+      "startedEpochSeconds": 1795026617.889309,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 66169,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026617.930209,
+      "stdoutSha256": "55e87e67d108871a44756d95fee2f439782d4310b0a7255ab360a7dbeb3a1ab1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg --files reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1 | rg \"teacher.*(384|current-legal|terminal|round-end|r4.*end)\" | head -25"
+      ],
+      "startedEpochSeconds": 1795026618.221824,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 66269,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026618.295815,
+      "stdoutSha256": "a74255ee8eb55792f2e298cf24fa4bf77fc3312d8b2d093a2c5497b2bdbc43cc",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json; d=pathlib.Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1\"); p=d/\"teacher-current-legal-reference-proof-20261118-v1.json\"; print(p.read_text()[:9000]); p=d/\"teacher-current-legal-reference-verification-20261118-v1.log\"; print(\"VERIFICATION_LOG\",p.read_text()[-1800:]); p=d/\"native-orbit-teacher384-fixed-replay-20261118-v2.log\"; print(\"REPLAY_LOG\",p.read_text()[-1500:])"
+      ],
+      "startedEpochSeconds": 1795026625.841708,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 66434,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026625.883109,
+      "stdoutSha256": "3d4133fb4e80717657e73ac24878fcdf07584ae7354c82e6d59a3e2cd9f6b16c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/analyze-r4-tech-business-card-20261119.py",
+        "reports/ai-foundation-20261119/r4-tech-business-card-20261119-v2.json"
+      ],
+      "startedEpochSeconds": 1795026767.089143,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 69040,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026767.552572,
+      "stdoutSha256": "fc9e1ce0ba344f5fc853be83ee0e2627f60984b673ebc32b9f234a1c7c6466d0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; p=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-business-card-20261119-v2.json\").read_text()); print(\"PUBLICITY_ACCOUNTING\",p[\"r4PublicityAccounting\"]); print(\"PUBLICITY_EVENTS\",p[\"r4PublicityObservedDeltas\"]); print(\"R3_AI\",{k:p[\"round3AssetComparison\"][\"ai\"].get(k) for k in [\"score\",\"resources\",\"income\",\"technology\",\"hand\",\"playedCards\",\"data\",\"probes\",\"alienTraceSlots\"]}); print(\"R3_TEACHER\",{k:p[\"round3AssetComparison\"][\"teacher\"].get(k) for k in [\"score\",\"resources\",\"income\",\"technology\",\"hand\",\"reserved\",\"data\",\"probes\"]})"
+      ],
+      "startedEpochSeconds": 1795026789.465722,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 69564,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026789.507539,
+      "stdoutSha256": "df920c4eaba704d11e3a3f9552911e0ede2e036108b07f97e9495555b0bcc57b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json; p=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-business-card-20261119-v2.json\").read_text()); step=311; traces=[json.loads(line) for line in pathlib.Path(\"reports/research/2170d824.5fabd621.full.json.decisions.jsonl\").read_text().splitlines() if line.strip()]; white=[t for t in traces if t[\"context\"][\"seatId\"]==\"player-white\"]; import subprocess; r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); t=next(t for t,s in zip(white,r[\"metrics\"][\"searches\"]) if s[\"step\"]==step); q=t[\"search\"]; print(\"SEARCH_KEYS\",list(q)); print(\"LINE_KEYS\",[(i,list(x)) for i,x in enumerate((q.get(\"lines\") or [])[:4])]); print(\"CHOSEN_ROOT\",[x for x in q[\"roots\"] if x[\"actionId\"]==t[\"actionId\"]]); print(\"RESEARCH_ROOT\",[x for x in q[\"roots\"] if x[\"actionId\"].startswith(\"research_tech:\")]); print(\"LEGAL_ACTIONS_AND_KNOWN_CARDS\",len(t[\"context\"][\"legalActions\"]),t[\"context\"][\"observation\"][\"selfState\"][\"hand\"])"
+      ],
+      "startedEpochSeconds": 1795026835.29834,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 70755,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026835.7069619,
+      "stdoutSha256": "a61f3cfcabc76eb0e948dd1f8dd62d5c2eb87596a6ea307952019f6695003c98",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n \"researchPublicityCost|research.*6|6.*宣传|宣传.*6\" randomizer/game/industry/catalog.js randomizer/game/effects/science-session.js docs/mechanics-reference.md | head -25"
+      ],
+      "startedEpochSeconds": 1795026835.993391,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 70856,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026836.0710819,
+      "stdoutSha256": "2aabd665bf5dd764ec488d53b0afe2a06dbd827f2da152c95269b5e1251aaaba",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,gzip,hashlib,subprocess; root=pathlib.Path.cwd(); base=root/\"reports/ai-foundation-20261119\"; d=json.loads((base/\"r4-tech-business-card-20261119-v2.json\").read_text()); r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); pos=next(i for i,s in enumerate(r[\"metrics\"][\"searches\"]) if s[\"step\"]==311); traces=[json.loads(line) for line in (root/r[\"agentTracePath\"]).read_text().splitlines() if line.strip()]; white=[t for t in traces if t[\"context\"][\"seatId\"]==\"player-white\"]; t=white[pos]; assert t[\"actionId\"]==\"scan:2d21a323\" and t[\"context\"][\"requestId\"]==\"agent:player-white:140:2\"; out=base/\"r4-tech-step311-existing-evidence-20261119-v1.json.gz\"; assert not out.exists(); out.write_bytes(gzip.compress(json.dumps({\"sourceTrace\":d[\"sources\"][r[\"agentTracePath\"]],\"input\":311,\"trace\":t},ensure_ascii=False).encode(),mtime=0)); print(\"SAVED_POINT_BYTES\",out.stat().st_size); lines={x[\"node\"]:x for x in t[\"search\"][\"lines\"]}; roots=[x for x in t[\"search\"][\"roots\"] if x[\"actionId\"].startswith((\"research_tech:\",\"scan:\"))]; print(\"ROOT_NODE_BOUNDARIES\",[{\"root\":x[\"actionId\"],\"target\":x[\"target\"],\"status\":lines[x[\"target\"]][\"status\"],\"boundary\":lines[x[\"target\"]][\"boundary\"],\"value\":x[\"value\"],\"distance\":lines[x[\"target\"]].get(\"distance\")} for x in roots]); print(\"POINT_SHA256\",hashlib.sha256(out.read_bytes()).hexdigest())"
+      ],
+      "startedEpochSeconds": 1795027004.016905,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 73488,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027004.4253042,
+      "stdoutSha256": "970ab34e871ae11a918ebafa0e6b50a6e0b40066c1dbf857fa3659c4898ffc6b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,gzip; d=json.loads(gzip.decompress(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-step311-existing-evidence-20261119-v1.json.gz\").read_bytes())); q=d[\"trace\"][\"search\"]; lines={x[\"node\"]:x for x in q[\"lines\"]}; print(\"RESEARCH_NODE\",json.dumps(lines[11],ensure_ascii=False)[:6000]); print(\"SCAN_NODE\",json.dumps(lines[21],ensure_ascii=False)[:2300]); print(\"RESEARCH_CHILDREN\",[lines[e[\"target\"]] for e in lines[11][\"edges\"] if e.get(\"target\") in lines]); print(\"BOUNDARY_COUNTS\",{b:sum(x.get(\"boundary\")==b for x in q[\"lines\"]) for b in sorted({str(x.get(\"boundary\")) for x in q[\"lines\"]})})"
+      ],
+      "startedEpochSeconds": 1795027030.135186,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-15.stderr.log",
+      "pid": 73931,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027030.176297,
+      "stdoutSha256": "538202b971422708a9c36b0cd21c5339e100a13b7badd8338a2af6463ef8741c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; root=pathlib.Path.cwd(); teacher=json.loads((root/\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json\").read_text()); print(\"TEACHER_R3_TECH_CARD_CONTEXT\",[(i+1,x) for i,x in enumerate(teacher[\"actions\"]) if 129<=i+1<=138]); sightings=[]; alltraces=[json.loads(line) for line in (root/\"reports/research/2170d824.5fabd621.full.json.decisions.jsonl\").read_text().splitlines() if line.strip()]; white=[t for t in alltraces if t[\"context\"][\"seatId\"]==\"player-white\"]; import subprocess; record=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); assert len(white)==len(record[\"metrics\"][\"searches\"]); rows=[]\nfor t,s in zip(white,record[\"metrics\"][\"searches\"]):\n o=t[\"context\"][\"observation\"]; public=o[\"publicState\"]; board=public[\"board\"]; zones={\"hand\":o[\"selfState\"].get(\"hand\") or [],\"reserved\":o[\"selfState\"].get(\"reservedCards\") or [],\"public\":board.get(\"publicCards\") or []}\n for zone,cards in zones.items():\n  for card in cards:\n   if isinstance(card,dict) and card.get(\"cardId\")==\"b_101.webp\": rows.append({\"input\":s[\"step\"],\"round\":public[\"roundNumber\"],\"zone\":zone,\"id\":card.get(\"id\"),\"selectedAction\":t[\"actionId\"],\"wallet\":next({k:p[k] for k in [\"credits\",\"energy\",\"publicity\"]} for p in public[\"players\"] if p[\"playerId\"]==\"player-white\")})\nprint(\"B101_VISIBLE\",rows); model=json.loads((root/\"assets/cards/card_model.json\").read_text()); print(\"CATALOG_TYPE\",type(model).__name__); print(\"CATALOG_KEYS\",list(model)[:8] if isinstance(model,dict) else len(model)); data=model if isinstance(model,list) else model.get(\"cards\",[]); print(\"B101_MODEL\",[c for c in data if isinstance(c,dict) and c.get(\"card_id\")==\"b_101.webp\"])"
+      ],
+      "startedEpochSeconds": 1795027151.3695848,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-16.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-16.stderr.log",
+      "pid": 76111,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027151.7746549,
+      "stdoutSha256": "f31bf35bfbd02fff2fdac775eb7178134d7e0e2f137a0a16944123f666ff3bac",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib,gzip,subprocess; root=pathlib.Path.cwd(); r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); alltraces=[json.loads(line) for line in (root/r[\"agentTracePath\"]).read_text().splitlines() if line.strip()]; white=[t for t in alltraces if t[\"context\"][\"seatId\"]==\"player-white\"]; pairs={s[\"step\"]:t for t,s in zip(white,r[\"metrics\"][\"searches\"])}; summaries=[]; kept=[]\nfor step in [136,160,163,168,169]:\n t=pairs.get(step)\n if t is None: continue\n ctx=t[\"context\"]; o=ctx[\"observation\"]; owner=next(p for p in o[\"publicState\"][\"players\"] if p[\"playerId\"]==\"player-white\"); a=next(a for a in ctx[\"legalActions\"] if a[\"actionId\"]==t[\"actionId\"]); b101=[a for a in ctx[\"legalActions\"] if (a.get(\"target\") or {}).get(\"cardInstanceId\")==\"card-29-pass-2-5\"]; roots=[x for x in (t.get(\"search\") or {}).get(\"roots\",[]) if any(x.get(\"actionId\")==a[\"actionId\"] for a in b101)]; summaries.append({\"input\":step,\"selected\":a,\"selectedValue\":(t.get(\"search\") or {}).get(\"value\"),\"wallet\":{k:owner.get(k) for k in [\"credits\",\"energy\",\"publicity\"]},\"income\":owner[\"income\"],\"b101LegalActions\":b101,\"b101Roots\":roots,\"hand\":[c[\"cardId\"] for c in o[\"selfState\"][\"hand\"]],\"reserved\":[c[\"cardId\"] for c in o[\"selfState\"].get(\"reservedCards\",[])]});kept.append({\"input\":step,\"trace\":t})\nout=root/\"reports/ai-foundation-20261119/r3-b101-existing-evidence-20261119-v1.json.gz\"; assert not out.exists();out.write_bytes(gzip.compress(json.dumps({\"sourceRecord\":r[\"fingerprint\"],\"cases\":kept,\"summaries\":summaries},ensure_ascii=False).encode(),mtime=0)); print(json.dumps(summaries,ensure_ascii=False));print(\"SAVED_BYTES\",out.stat().st_size)"
+      ],
+      "startedEpochSeconds": 1795027222.058632,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-17.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-17.stderr.log",
+      "pid": 77843,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027222.514219,
+      "stdoutSha256": "05dc11093c1c97465646edc8b664676e06ac5e5e1f24eff82384cc79f731d310",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -m 3 \"b_101|card-29-pass-2-5|B101|第136|第160\" reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/*findings*.json docs/ai-design.md docs/human405-research-comparison-learning-20261107.md docs/free-analyze-r3-scan-before-research-20261112.md || test \"$?\" = 1"
+      ],
+      "startedEpochSeconds": 1795027348.13639,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-18.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-18.stderr.log",
+      "pid": 79371,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027348.177421,
+      "stdoutSha256": "2f85cc47bd685098483c66d009919b9d811399febcc378ced14f34e4d9116a7b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n --max-columns 300 --max-columns-preview \"B101|b_101\" docs/ai-design.md | tail -8; sed -n \"1,90p\" docs/human405-research-comparison-learning-20261107.md"
+      ],
+      "startedEpochSeconds": 1795027366.841959,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-19.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.window.attempt-19.stderr.log",
+      "pid": 79796,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027366.862677,
+      "stdoutSha256": "2db406614cb54aa66ef4d069bd14ac78c0cc6403ad9848946b4ec48f4744a3f5",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "hypotheses": [
+    "The fourth-round technology gap may be explained by different starting resources and already-developed assets rather than a faulty action selection.",
+    "At least one recorded affordable research opportunity may be displaced by a specific competing plan; distinguish candidate omission from value/coverage uncertainty without assuming teacher optimality."
+  ],
+  "success": "Identify one concrete comparable decision/asset fact or explicitly classify missing evidence; no open-ended task queue",
+  "recoveries": [
+    {
+      "observedEpochSeconds": 1795026354.1267169,
+      "reason": "Read-only schema inspection indexed empty compact teacher decisions; no AI/native input executed. Next command reads existing actions and recorded roundEnds; no retry of a game or search.",
+      "priorAttempt": 1,
+      "originalDeadlineRetained": true
+    },
+    {
+      "observedEpochSeconds": 1795026494.3099148,
+      "reason": "Second inspection encountered documented nullable Standard Action target. Replace inline schema exploration with one saved reader that handles absent/nullable compact fields explicitly; no AI/native/game rerun.",
+      "priorAttempt": 3,
+      "originalDeadlineRetained": true
+    }
+  ],
+  "closedEpochSeconds": 1795027476.013037,
+  "closeReason": "One read-only business diagnosis complete; no strategy, Native control or game started",
+  "evidenceArchive": "reports/ai-foundation-20261119/r4-tech-business-card-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "ef7972258c2b8fdf57342c6afcb67a152a5d0e509eaa4ba5fe69f2082530a4e2"
+}
