@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-18",
+  "workUnitStartedAt": "2026-11-18 12:29:54 UTC",
+  "hypotheses": ["Share identical post-income mission preparation across suppliers", "Reuse quiet value quotes when the exact Native envelope and full evaluation context repeat"],
+  "firstScreen": "Existing CPU samples put the complete income evaluation at49.914ms but only29.955ms in planningCapital; shareable preparation is smaller still. Do not count the full49.914ms as removable or implement it as the sole600ms path.",
+  "missingEvidence": "Saved graph lacks leaf Native-envelope identities. Existing CPU samples cannot establish duplicate quotes.",
+  "minimalDiagnostic": "One v513 decision with a wrapper that only observes quietFinalValue input identities, full source/context hashes, result hashes and uncached block costs. No result reuse or policy change. Compare the entire saved graph and roots to the original final-source decision.",
+  "identity": "First count exact envelope object plus status, boundary, card-knowledge key and barrier object; separately count exact serialized Native envelope plus full context. Never infer state equivalence from equal values.",
+  "budgetsAndCoverage": "Existing all-null runtime budgets and complete necessary graph remain; no branch, depth, per-root or beam cap.69 complete Native submissions expected by graph parity, not a new cutoff. No game or batch.",
+  "success": "A sufficient repeated cost with a cheap exact key permits one scoped cache proposal. Zero or insufficient repetition rejects caching before implementation. Diagnostic timings cannot replace the existing639.7ms admission result.",
+  "stop": "At most60 minutes active work or the two listed hypotheses; no chained unrelated optimization."
+}

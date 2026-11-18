@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-18",
+  "sources": {
+    "r4-main-owned-point289-v513-20261118-v1.json.gz": "d41dd918e17b419d28decbcebf8a462c4a6fd965ee54ccff180a56043c244276",
+    "r4-main-owned-v513-cpu-20261118-v1.json.gz": "977e911b00d8eaf65a3f4be0af0c26d9c966327a3459a94ce637a49f233bce76",
+    "v513-quiet-reuse-diagnostic-20261118-v1.json.gz": "f8afce67d05693ace8d61e2b04787d3994536e03c188272930de678a1403652d"
+  },
+  "hypothesisOne": {
+    "proposal": "Share the post-income prepared mission among suppliers",
+    "sampleMilliseconds": {
+      "search": 615.5,
+      "income": 49.914,
+      "capital": 29.955,
+      "prepare": 4.458,
+      "quote": 23.997
+    },
+    "optimisticRootMillisecondsIfPreparationFree": 635.0691632043508,
+    "optimisticRootMillisecondsIfAllIncomeCapitalFree": 608.5695797809179,
+    "decision": "Reject as sole600ms path before implementation; the whole49.914ms income block is not shareable preparation.",
+    "limit": "A proportional CPU-sample screening estimate, not a measured speedup or a universal lower bound. This does not reject all future income evaluation changes."
+  },
+  "hypothesisTwo": {
+    "proposal": "Cache quiet value on the exact immutable Native envelope and evaluation context",
+    "calls": 285,
+    "exactObjectContextRepeats": 0,
+    "exactSerializedContextRepeats": 0,
+    "availableQuotes": 182,
+    "decision": "Reject before implementation; neither cheap exact identity nor full exact source equality offers reuse at this point.",
+    "limit": "Equal output values do not establish equal relevant inputs. Narrower dependency-based reuse would require a separate read/write and value-decomposition proof."
+  },
+  "diagnostic": {
+    "newDiagnosticSearches": 1,
+    "nativeSubmissions": 69,
+    "completeGraphAndRootsExact": true,
+    "rootAndRngPreservedByHarness": true,
+    "value": 239.5,
+    "logicalNodes": 601,
+    "newAdmissionTiming": false,
+    "timingInterpretation": "Wrapper serialization and identity bookkeeping perturb runtime. Do not substitute its timing for the existing639.702459ms gate failure."
+  },
+  "workUnitExit": "Both predeclared hypotheses screened and rejected; no cache or other AI patch follows in this unit.",
+  "formal": {
+    "runtime": "v485/valuev71",
+    "completeGameScore": 272,
+    "candidate": "v513",
+    "candidatePromoted": false,
+    "candidateMilliseconds": 639.702459,
+    "singlePointPassed": false,
+    "newGames": 0
+  },
+  "nextQuestion": "Can the fixed known cargo continuation be evaluated more cheaply while preserving exact Native outcomes for all six fossils and every distinct wallet/hand? First audit its read/write dependencies and attainable benefit; do not assume distinct states or equal values are equivalent."
+}

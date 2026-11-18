@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v27",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v26.json",
+  "publishedParent": "fea8b31e8c0c45177d28966f7e07f1d73ef9366e",
+  "goalStatus": "active",
+  "phase": "bounded cost screen closed: two proposals rejected without AI patch",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "lastUnpromotedCandidate": "v513/resourcev29/movementv8/valuev71",
+  "candidateLocalEvidence": {
+    "versions": [
+      "v512",
+      "v513"
+    ],
+    "sameRootAndRng": true,
+    "intentionalStrategyChange": true,
+    "interpretation": "Preparations retain the declared beneficiary/purpose. This changes policy coverage; it is not a proof that all removed off-purpose continuations are equivalent.",
+    "completeRuleSubmissions": [
+      209,
+      69
+    ],
+    "logicalNodes": [
+      1949,
+      601
+    ],
+    "milliseconds": [
+      1573.717125,
+      639.702459
+    ],
+    "wallReductionFraction": 0.593508611657257,
+    "value": 239.5,
+    "actionId": "play_card:975c7a35",
+    "nativePurposeControls": 24,
+    "sixPreservedPayoffs": [
+      242,
+      249,
+      239.5,
+      239.5,
+      242,
+      244
+    ],
+    "limit": "One measurement per distinct runtime, not a latency distribution or new game score. Changes to two validation tools after timing are explicitly recorded; measured runtime is unchanged."
+  },
+  "admission": {
+    "singlePointPassed": false,
+    "millisecondsOverLimit": 39.702458999999976,
+    "nodeDistinctPassed": 11,
+    "nodeKnownFailure": "line39 root-edge count9 vs8",
+    "valueInputAuditPassed": 68,
+    "browserPlanned": 9,
+    "browserPassed": 2,
+    "browserFailed": 1,
+    "browserNotRun": 6,
+    "browserFailure": "production-known-post-main-cargo: first claim overwrote independent cargo",
+    "browserFailureClassification": "stale validation invariant; not evidence of a Native overwrite",
+    "fullRegressionPassed": false,
+    "candidatePromoted": false,
+    "browserFailureCorrectedInIsolatedOverlay": true,
+    "browserSavedNativeReplayPassed": 1,
+    "browserSavedNativeNegativeControlsPassed": 2,
+    "browserAIRecheckRun": false,
+    "browserOriginalBatchCountsHistorical": true
+  },
+  "methodAssessment": {
+    "diagnosisAndRejectionUseful": true,
+    "localChangeDemonstrated": true,
+    "wholeGameQualityImproved": false,
+    "openEndedImplementationAllowed": false,
+    "finding": "Previous process can produce local evidence but does not bound how long local work may postpone whole-goal acceptance. Add an explicit work-unit limit and stop at unresolved admission rather than automatically generating another patch."
+  },
+  "nextWorkUnit": {
+    "question": "Can the fixed known cargo continuation be evaluated more cheaply while preserving exact Native outcomes for all six fossils and every distinct wallet/hand? First audit its read/write dependencies and attainable benefit; do not assume distinct states or equal values are equivalent.",
+    "beforeCode": "Read/write and value-decomposition audit first; use existing CPU source for an attainable end-to-end benefit. Distinct Native states cannot be merged because scalar values match.",
+    "limit": "At most60 minutes active work or two falsifiable hypotheses; no chained implementation or new game.",
+    "remainingAdmission": "v513639.7ms still exceeds600ms. Full Browser/Node regression and original whole-goal asset outcomes remain incomplete."
+  },
+  "thisReviewNewSearches": {
+    "instrumentedDiagnostic": 1,
+    "newAdmissionDecisions": 0
+  },
+  "thisReviewNativeSubmissions": {
+    "diagnosticSearch": 69,
+    "newGames": 0
+  },
+  "thisReviewBrowserRuns": 0,
+  "thisReviewNewGames": 0,
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v2.json",
+  "workflow": "docs/ai-research-workflow.md",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "scope": "Original teaching alignment goal stays active. This delivery only consolidates methodology and freezes unaccepted prior local work; it does not start a new strategy experiment or claim a new score.",
+  "previousGoalTurnClassification": "progress: corrected cargo Browser assertion and verified exact12-input replay plus two damaged-task counterexamples",
+  "thisGoalTurnClassification": "progress: existing CPU separates4.458ms preparation from49.914ms income block; unique diagnostic proves285 exact-context value calls have zero duplicates, preserving complete graph/roots. Both insufficient reuse proposals rejected before implementation.",
+  "methodPilot": "reports/ai-foundation-20261118/v513-cost-screen-findings-20261118-v1.json",
+  "verificationOnlyOverlay": "reports/ai-foundation-20261118/r4-browser-cargo-checks-source-20261118-v1.json"
+}
