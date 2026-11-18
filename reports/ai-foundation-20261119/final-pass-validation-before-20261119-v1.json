@@ -1,0 +1,34 @@
+{
+  "parent": "948f8607a8346546b1025423ad0be6d88e424058",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "fixtures": [
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "sha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "sha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "sha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "sha256": "b436e02d566778ecd7e87a45e9e2cfca705a51e5ab3b2893ebfedcda2ce94be9"
+    }
+  ],
+  "checks": {
+    "randomizer/game/ai/known-card-money.test.js": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:assert:150\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at compareSingleActions (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/randomizer/game/ai/known-card-money.test.js:31:10)\n    at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/randomizer/game/ai/known-card-money.test.js:48:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 0,\n  expected: 2,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    },
+    "randomizer/game/ai/pre-main-data-plan.test.js": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: 第4轮不能把插收入假定为优于用角标避免强制弃牌\n    at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/randomizer/game/ai/pre-main-data-plan.test.js:92:20)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    }
+  }
+}

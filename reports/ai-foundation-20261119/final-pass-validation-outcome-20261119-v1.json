@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "seti-final-pass-validation-outcome-v1",
+  "parent": "948f8607a8346546b1025423ad0be6d88e424058",
+  "testContractFixVerified": true,
+  "strategyChanged": false,
+  "newAutonomousGames": 0,
+  "formalFullGame": {
+    "points": 272,
+    "seconds": 16.1,
+    "newMeasurement": false
+  },
+  "checks": {
+    "head": {
+      "exitCode": 0,
+      "registeredUnitTestsPassed": 3
+    },
+    "v72": {
+      "exitCode": 0,
+      "registeredUnitTestsPassed": 3
+    }
+  },
+  "coverage": {
+    "nativeCompletedFinalPassComparisons": 15,
+    "nativeActiveWalletComparisons": 3053,
+    "round2IncomePlanDelta": 1,
+    "round3IncomePlanDelta": 0,
+    "round4OfficialScoreDelta": 0,
+    "pendingPassContractRetained": true
+  },
+  "evidence": "final-pass-validation-after-20261119-v1.json",
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "goalComplete": false,
+  "candidateAdmitted": false,
+  "remaining": "Candidate public-income upper-bound proof and remaining admission failures are unresolved; no new game or batch result."
+}

@@ -12,7 +12,7 @@ const fixtures=["062","105","152"].map(id=>JSON.parse(fs.readFileSync(path.resol
 const results=[];
 const paired=[];
 function compareSingleActions(port,rich,poor,seatId){
- const evaluate=createStateValueEvaluator(seatId),queue=[],seen=new Set(),deadline=Date.now()+30000;let inputs=0,leaves=0,extraStops=0;
+ const evaluate=createStateValueEvaluator(seatId),queue=[],seen=new Set(),deadline=Date.now()+30000;let inputs=0,leaves=0,extraStops=0,scoreOnlyStates=0,activeWalletStates=0;
  const submit=(node,id)=>{inputs+=1;assert(inputs<=8192,"单行动对照使用统一8192输入预算");return port.expand(node,id);};
  for(const action of poor.legalActions){assert(rich.legalActions.some(a=>a.actionId===action.actionId));queue.push([submit(rich,action.actionId),submit(poor,action.actionId)]);}
  for(let cursor=0;cursor<queue.length;cursor+=1){
@@ -28,13 +28,18 @@ function compareSingleActions(port,rich,poor,seatId){
   const ax=ap.find(p=>p.playerId===seatId),bx=bp.find(p=>p.playerId===seatId);
   assert.equal(ax.credits-bx.credits,1);assert.equal(ax.energy-bx.energy,1);const missionDelta=probePotential(av,seatId)-probePotential(bv,seatId);
   assert(missionDelta>=0,'more money cannot decrease the funded mission forecast');
-  assert.equal(evaluate(av)-evaluate(bv),2+missionDelta);
+  const scoreOnly=o=>o.terminal===true||o.publicState.roundNumber===4&&o.publicState.passedPlayerIds?.includes(seatId)===true;
+  assert.equal(scoreOnly(av),scoreOnly(bv));
+  if(scoreOnly(av)){
+   assert.equal(evaluate(av),ax.finalScore);assert.equal(evaluate(bv),bx.finalScore);
+   assert.equal(evaluate(av)-evaluate(bv),ax.finalScore-bx.finalScore,'completed final PASS uses official score, not unused-wallet value');scoreOnlyStates++;
+  }else{assert.equal(evaluate(av)-evaluate(bv),2+missionDelta);activeWalletStates++;}
   ax.credits=bx.credits=0;ax.energy=bx.energy=0;assert.deepEqual(ap,bp);assert.deepEqual(av.selfState,bv.selfState);assert.deepEqual(av.publicState.board,bv.publicState.board);
   if(b.status!=="decision"){leaves+=1;continue;}
   const key=port.identity(b);if(seen.has(key))continue;seen.add(key);
   for(const action of b.legalActions){assert(a.legalActions.some(x=>x.actionId===action.actionId));queue.push([submit(a,action.actionId),submit(b,action.actionId)]);}
  }
- assert(leaves>0);return {inputs,leaves,extraStops};
+ assert(leaves>0);return {inputs,leaves,extraStops,scoreOnlyStates,activeWalletStates};
 }
 for(const f of fixtures){
  const seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
@@ -88,4 +93,6 @@ for(const [cardId,place] of [["dlc_27.png","hand"],["dlc_28.png","hand"],["b_13.
  const port=createAnalysisPort({composition:comp,seatId:f.seatId});assert.equal(port.knownCardMoneyOrder(port.openRoot()),null,`${cardId}/${place}`);port.close();comp.dispose();
 }
 assert(paired.some(row=>row.extraStops>0),"真实DLC17须覆盖较富侧额外停止支付的条件步骤");
+assert(paired.some(row=>row.scoreOnlyStates>0),'Native controls must include completed final PASS');
+assert(paired.some(row=>row.activeWalletStates>0),'Native controls must retain active or pending wallet valuation');
 console.log(JSON.stringify({knownCardMoney:"passed",results,paired}));

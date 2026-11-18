@@ -1,0 +1,34 @@
+{
+  "parent": "948f8607a8346546b1025423ad0be6d88e424058",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "ownedPaths": [
+    "randomizer/game/ai/known-card-money.test.js",
+    "randomizer/game/ai/pre-main-data-plan.test.js"
+  ],
+  "checks": {
+    "head": {
+      "exitCode": 0,
+      "stdout": "{\"knownCardMoney\":\"passed\",\"results\":[{\"raw\":483,\"pruned\":417,\"value\":36},{\"raw\":489,\"pruned\":477,\"value\":28.5},{\"raw\":237,\"pruned\":231,\"value\":21}],\"paired\":[{\"inputs\":1576,\"leaves\":278,\"extraStops\":0,\"scoreOnlyStates\":0,\"activeWalletStates\":788},{\"inputs\":2745,\"leaves\":472,\"extraStops\":1,\"scoreOnlyStates\":0,\"activeWalletStates\":1372},{\"inputs\":1816,\"leaves\":185,\"extraStops\":0,\"scoreOnlyStates\":15,\"activeWalletStates\":893}]}\n{\"preMainDataPlan\":\"passed\",\"rows\":[{\"label\":\"one-cash-round2\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"one-cash-round4-with-probe\",\"raw\":34,\"pruned\":34,\"value\":17},{\"label\":\"one-cash-round4-without-probe\",\"raw\":34,\"pruned\":14,\"value\":17},{\"label\":\"cash-and-move\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"main-return\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"alien-composed\",\"raw\":32,\"pruned\":32,\"value\":null}],\"passRows\":[{\"round\":2,\"delta\":1,\"oldInputs\":2,\"replacementInputs\":10},{\"round\":3,\"delta\":0,\"oldInputs\":2,\"replacementInputs\":10},{\"round\":4,\"delta\":0,\"oldInputs\":2,\"replacementInputs\":10}]}\nindependent state value accounting and strict inputs passed\nSUMMARY unit passed=3 failed=0 total=3 time=10.84s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER policy/decision-search tests=2\nOWNER policy/state-value tests=1\n",
+      "stderr": ""
+    },
+    "v72": {
+      "runtime": "/private/tmp/seti-v72-final-pass-validation-20261119-mmjl_f81",
+      "exitCode": 0,
+      "stdout": "{\"knownCardMoney\":\"passed\",\"results\":[{\"raw\":483,\"pruned\":417,\"value\":36},{\"raw\":489,\"pruned\":477,\"value\":28.5},{\"raw\":237,\"pruned\":231,\"value\":21}],\"paired\":[{\"inputs\":1576,\"leaves\":278,\"extraStops\":0,\"scoreOnlyStates\":0,\"activeWalletStates\":788},{\"inputs\":2745,\"leaves\":472,\"extraStops\":1,\"scoreOnlyStates\":0,\"activeWalletStates\":1372},{\"inputs\":1816,\"leaves\":185,\"extraStops\":0,\"scoreOnlyStates\":15,\"activeWalletStates\":893}]}\n{\"preMainDataPlan\":\"passed\",\"rows\":[{\"label\":\"one-cash-round2\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"one-cash-round4-with-probe\",\"raw\":34,\"pruned\":34,\"value\":17},{\"label\":\"one-cash-round4-without-probe\",\"raw\":34,\"pruned\":14,\"value\":17},{\"label\":\"cash-and-move\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"main-return\",\"raw\":32,\"pruned\":32,\"value\":null},{\"label\":\"alien-composed\",\"raw\":32,\"pruned\":32,\"value\":null}],\"passRows\":[{\"round\":2,\"delta\":1,\"oldInputs\":2,\"replacementInputs\":10},{\"round\":3,\"delta\":0,\"oldInputs\":2,\"replacementInputs\":10},{\"round\":4,\"delta\":0,\"oldInputs\":2,\"replacementInputs\":10}]}\nindependent state value accounting and strict inputs passed\nSUMMARY unit passed=3 failed=0 total=3 time=10.83s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER policy/decision-search tests=2\nOWNER policy/state-value tests=1\n",
+      "stderr": ""
+    }
+  },
+  "strategyChanged": false,
+  "newAutonomousGames": 0,
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "ownedHashes": {
+    "randomizer/game/ai/known-card-money.test.js": "4230675c74198313f521f42ffd33f0c39d4173683baad45a5df8d45d021c5741",
+    "randomizer/game/ai/pre-main-data-plan.test.js": "34333e4727dff522c7215fb2f8ddfaa1346820413dca8d51063d2be1c1126205"
+  },
+  "passed": true
+}

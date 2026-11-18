@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795043303.2525382,
+  "deadlineEpochSeconds": 1795043903.2525382,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043303.613097,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/final-pass-validation-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/final-pass-validation-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 57744,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043311.731756
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/fix-final-pass-validation-20261119.py"
+      ],
+      "startedEpochSeconds": 1795043469.225861,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/final-pass-validation-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/final-pass-validation-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 59169,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043491.279932
+    }
+  ],
+  "scope": "Test-only maintenance: completed final PASS uses official score, pending PASS keeps resource value; retain current Native comparisons and fail-closed budgets. No AI strategy or autonomous game.",
+  "closedEpochSeconds": 1795043681.5931609,
+  "outcome": "final-pass-validation-outcome-20261119-v1.json",
+  "passed": true
+}

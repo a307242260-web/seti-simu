@@ -89,7 +89,14 @@ for (const round of [2, 3, 4]) {
   const delta = evaluate(newPass.observation) - evaluate(oldPass.observation);
   if (round === 2) assert(delta > 0);
   if (round === 3) assert.equal(delta, 0, "同值但原角标+PASS只有2输入，现金替代10输入，不能删除最短路径");
-  if (round === 4) assert(delta < 0, "第4轮不能把插收入假定为优于用角标避免强制弃牌");
+  if (round === 4) {
+    const settled=o=>o.publicState.passedPlayerIds.includes(f.seatId);
+    assert(settled(oldPass.observation)&&settled(newPass.observation),'both Native alternatives must have completed final PASS');
+    const official=o=>o.publicState.players.find(p=>p.playerId===f.seatId).finalScore;
+    assert.equal(evaluate(oldPass.observation),official(oldPass.observation));assert.equal(evaluate(newPass.observation),official(newPass.observation));
+    assert.equal(delta,official(newPass.observation)-official(oldPass.observation));
+    assert.equal(delta,0,'this recorded final-PASS control ties in official score; unused currency is not a score penalty or bonus');
+  }
   assert.deepEqual(k.composition.lifecycle.save().envelope, before); passRows.push({ round, delta, oldInputs: 2, replacementInputs: 10 });
   port.close(); k.composition.dispose();
 }
