@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-19",
+  "scope": "method command-deadline enforcement only",
+  "sourceHashes": {
+    "adhoc/research-deadline-guard-20261119.py": "a3f92babac4a788f366139761063263ce1a4a6a880b3c9e5f988028dbae8b5a0",
+    "adhoc/verify-research-deadline-20261119.py": "bc9a7ef8b45ba3856b33e0f64f00d84e574abefff641234b018bec0f10d7ff1c"
+  },
+  "verification": "reports/ai-foundation-20261119/method-deadline-verification-20261119-v1.json",
+  "controlsPassed": 10,
+  "controlsFailed": 0,
+  "window": "reports/ai-foundation-20261119/method-deadline-pilot-20261119-v1.window.json",
+  "startedEpochSeconds": 1795025666.0,
+  "deadlineEpochSeconds": 1795027466.0,
+  "closedEpochSeconds": 1795026190.524435,
+  "wallMinutesToArchive": 8.742073917388916,
+  "originalDeadlineRetainedAcrossActualCommands": true,
+  "independentSourceSnapshotVerified": true,
+  "commandGatePassed": true,
+  "wholeResearchRouteEffectivenessProven": false,
+  "agentReasoningTimeMechanicallyLimited": false,
+  "limitations": [
+    "Only commands launched through the guard are controlled; manual bypass/checkpoint edits are not prevented.",
+    "Wall time includes waiting; active reasoning time is not measured.",
+    "v514 remains frozen; this new window does not reset its exhausted research allowance."
+  ],
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newBrowserRuns": 0,
+  "newAutonomousGames": 0,
+  "formalScoreUnchanged": 272,
+  "productionRuntimeChanged": false,
+  "wholeGoalComplete": false,
+  "previousGoalTurnClassification": "progress: complete-source and required-regression evidence, candidate frozen; declared time requirement failed",
+  "thisGoalTurnClassification": "progress: persistent command deadline implemented and verified by10 subprocess controls; no AI improvement claimed"
+}

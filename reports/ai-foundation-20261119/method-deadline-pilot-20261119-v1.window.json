@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "scope": "Method deadline guard only; v514 stays frozen; no AI/native/game commands",
+  "startedEpochSeconds": 1795025666.0,
+  "deadlineEpochSeconds": 1795027466.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-deadline-guard-snapshot-20261119-uv8cosnt/verify-research-deadline-20261119.py",
+        "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-deadline-verification-20261119-v1.json"
+      ],
+      "startedEpochSeconds": 1795025954.554121,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-deadline-pilot-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-deadline-pilot-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 52002,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795025956.450989
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path; import json,hashlib; root=Path.cwd(); proof=json.loads(Path(\"/private/tmp/seti-v514-route-close-20261119-manifest-published.json\").read_text()); digest=lambda b:hashlib.sha256(b).hexdigest(); assert digest((root/\".git/index\").read_bytes())==proof[\"sharedIndexSha256\"]; assert all(digest((root/p).read_bytes())==h for p,h in proof[\"sharedCoreSha256\"].items()); d=json.loads((root/\"reports/ai-foundation-20261118/v514-route-admission-20261118-v1.json\").read_text()); assert d[\"state\"]==\"frozen-not-admitted\" and not d[\"admissionDecision\"][\"nextGameAllowed\"]; v=json.loads((root/\"reports/ai-foundation-20261119/method-deadline-verification-20261119-v1.json\").read_text()); assert v[\"passed\"] and len(v[\"controls\"])==10; assert digest((root/\"adhoc/research-deadline-guard-20261119.py\").read_bytes())==v[\"guardSha256\"]; assert digest((root/\"adhoc/verify-research-deadline-20261119.py\").read_bytes())==v[\"verificationSha256\"]; print(\"VERIFIED: independent snapshot controls10; source hashes exact; v514 frozen; shared index and AI runtime unchanged\")"
+      ],
+      "startedEpochSeconds": 1795026118.235295,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-deadline-pilot-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-deadline-pilot-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 55291,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795026118.275917
+    }
+  ],
+  "closedEpochSeconds": 1795026190.524435,
+  "closeReason": "command guard verified; no AI work resumed"
+}

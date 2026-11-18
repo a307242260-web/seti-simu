@@ -1,0 +1,11 @@
+PASS fresh-process resume keeps original deadline and separate output evidence
+PASS expired checkpoint refuses command before input
+PASS running deadline stops own process and preserves partial stdout stderr
+PASS child failure remains explicit and cannot silently restart the window
+PASS kernel lock refuses concurrent duplicate command
+PASS unresolved running receipt fails closed without assuming the job stopped
+PASS deadline kills remaining process group after leader exits
+PASS existing evidence is never overwritten or treated as a new attempt
+PASS command launch failure is persisted and returned
+PASS historical frozen route cannot be mistaken for a fresh work window
+SUMMARY controls passed=10 failed=0

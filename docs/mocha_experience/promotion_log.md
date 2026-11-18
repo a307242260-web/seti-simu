@@ -103,3 +103,26 @@
 
 - followup_evaluation_20261119: 准入评审实际执行必需回归，181项unit与唯一full-flow有通过证据，91项unit仍未通过；部分旧断言由Native端点和预算计费对照归类，原测试未改，候选冻结、无自主新局。但墙钟已超过60／120分钟且未完整分开主动／等待时间，期限执行未通过；keep_or_revise改为revise，不恢复该路线第二单元。记录包含诊断console误报零搜索的更正：实际保留了两个先行fixture的六次搜索，另有三次预算诊断，未重跑替换证据。
 - followup_evidence_20261119: reports/ai-foundation-20261118/v514-route-admission-20261118-v1.json。
+
+## SETI-METHOD-20261119-04：有限推广命令期限门禁
+
+- source: SETI-METHOD-20261118-03的期限执行失败；reports/ai-foundation-20261119/method-deadline-verification-20261119-v1.json。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 已限定研究单元的命令启动、续接与超时收口
+- target_file: docs/ai-research-workflow.md §1.3；adhoc/research-deadline-guard-20261119.py
+- remote_skill_id: none
+- change: 复用持久绝对截止时间，命令前拒绝过期、执行中停止自有进程组，实时保存输出和退出状态，禁止并发与未核实的重复启动。
+- applied_change: 增加单一Python标准库守卫及独立快照行为验证；工作流只推广命令门禁，不修改规则、AI、搜索预算、全局规则或长期记忆。
+- expected_effect: 防止实验／诊断命令跨轮续期或到期继续运行，提供明确失败证据，减少口头时限失效后的继续投入。
+- evaluation_window: 本次30分钟固定墙钟窗口及其十项子进程控制；后续第一个有明确业务范围的有限单元另验整体时限。
+- success_signal: 十项真实行为控制通过，快照源码SHA一致，检查点期限跨进程不变；本轮归档在原截止前完成。整体研究或AI效果不由此推断。
+- rollback_condition: 存在过期启动、续接重置期限、未停止自有子进程、日志丢失或覆盖；暂停使用门禁并保留失败，不恢复AI实验来检验基础设施。
+- risk: 不能中断模型思考，也不能阻止绕过脚本或人为改期限；采用墙钟会从严计入等待。仍需在每个工具边界检查截止，不能宣传为平台级强制时限。
+- evidence_before: v514单元和路线墙钟均超限，主动／等待未分开，期限执行未通过；正式成绩272不变。
+- owner_or_agent_decision: 按方法论优先要求修复有证据的执行缺口，仅有限推广命令门禁；v514继续冻结。
+- applied_at: 2026-11-19
+- verification: python3 adhoc/verify-research-deadline-20261119.py <新验证输出路径>；实际运行独立快照中的同一源码，十项控制通过。
+- observed_outcome: 命令层期限、失败和续接行为已验证；本轮无AI搜索、原生输入或新自主整局，整体质量仍未验证。
+- keep_or_revise: keep（命令层有限推广）；下一次业务工作单元继续核查整体时限和交付，不能重开耗尽路线。
