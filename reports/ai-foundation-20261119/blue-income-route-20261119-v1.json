@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "public-income-prepared-analysis-20261119",
+  "status": "frozen",
+  "startedEpochSeconds": 1795036489.0,
+  "deadlineEpochSeconds": 1795043689.0,
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-admission-20261119-v1.window.json"
+  ],
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "reason": "Required admission incomplete after the two existing work units. Whole-route wall cutoff has elapsed. Do not restart by opening another child window.",
+  "legacyExtraReview": "reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.json",
+  "legacyReviewStartedAfterRouteDeadlineSeconds": 58.514365911483765,
+  "earlierSummedUnitMinutesDoNotProveWholeRouteDeadline": true,
+  "sourceSha256": {
+    "blue-income-forecast-prototype-20261119-v1.window.json": "a99cc3d36675513158448dca683dc7d29fa9ca03ad22631d8f0690d86214d534",
+    "blue-income-admission-20261119-v1.window.json": "f9fb9ab4f0031b43612c62d2e1e3507f6aecfbbc9d3a14273191dddca9acf1c2",
+    "blue-income-bound-review-20261119-v1.window.json": "fd18df28abcf6b123f31b58141c4b1f4be3988df62f1bef019431cd45873dcc5"
+  },
+  "formalCompletedScoreUnchanged": 272,
+  "newAutonomousGames": 0
+}

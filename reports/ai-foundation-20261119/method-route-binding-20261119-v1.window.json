@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795043950,
+  "deadlineEpochSeconds": 1795044850,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795044227.10614,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 68206,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795044230.494349
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795044252.307221,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 68514,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795044252.385383
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795044339.563741,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 69314,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795044342.88011
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795044489.9641411,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-route-binding-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 70714,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795044490.052589
+    }
+  ],
+  "scope": "Methodology repair only: bind research command windows to one parent route cutoff and two-unit limit. Real subprocess controls, no candidate edits, AI search, Native inputs or games.",
+  "closedEpochSeconds": 1795044528.7996511,
+  "outcome": "method-route-binding-outcome-20261119-v1.json",
+  "passed": true
+}

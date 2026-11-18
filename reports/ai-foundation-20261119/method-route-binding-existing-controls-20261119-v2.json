@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "controls": [
+    {
+      "case": "fresh-process resume keeps original deadline and separate output evidence",
+      "passed": true
+    },
+    {
+      "case": "expired checkpoint refuses command before input",
+      "passed": true
+    },
+    {
+      "case": "running deadline stops own process and preserves partial stdout stderr",
+      "passed": true
+    },
+    {
+      "case": "child failure remains explicit and cannot silently restart the window",
+      "passed": true
+    },
+    {
+      "case": "kernel lock refuses concurrent duplicate command",
+      "passed": true
+    },
+    {
+      "case": "unresolved running receipt fails closed without assuming the job stopped",
+      "passed": true
+    },
+    {
+      "case": "deadline kills remaining process group after leader exits",
+      "passed": true
+    },
+    {
+      "case": "existing evidence is never overwritten or treated as a new attempt",
+      "passed": true
+    },
+    {
+      "case": "command launch failure is persisted and returned",
+      "passed": true
+    },
+    {
+      "case": "historical frozen route cannot be mistaken for a fresh work window",
+      "passed": true
+    }
+  ],
+  "guardSha256": "7938fff523297c313386d281d02372a932d946fc67b30d18609c9910d1862423",
+  "verificationSha256": "bc9a7ef8b45ba3856b33e0f64f00d84e574abefff641234b018bec0f10d7ff1c",
+  "scope": "Command wall-clock enforcement only; not agent reasoning or AI policy quality",
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0
+}

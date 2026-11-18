@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "controls": [
+    {
+      "case": "new child window cannot restart a frozen parent route",
+      "passed": true
+    },
+    {
+      "case": "v2 research window requires an explicit parent route",
+      "passed": true
+    },
+    {
+      "case": "fresh child cannot renew the expired route deadline",
+      "passed": true
+    },
+    {
+      "case": "two durable units share one cutoff and third unit is denied",
+      "passed": true
+    },
+    {
+      "case": "canonical window identity preserves resume across a symlink alias",
+      "passed": true
+    },
+    {
+      "case": "parent cutoff stops a running child without rewriting its own deadline",
+      "passed": true
+    },
+    {
+      "case": "route lock excludes simultaneous commands from different child windows",
+      "passed": true
+    },
+    {
+      "case": "ordinary work window cannot masquerade as a route ledger",
+      "passed": true
+    },
+    {
+      "case": "missing route ledger fails before command launch",
+      "passed": true
+    },
+    {
+      "case": "route-duration cannot exceed the existing 120 or 60 minute limit",
+      "passed": true
+    },
+    {
+      "case": "unit-duration cannot exceed the existing 120 or 60 minute limit",
+      "passed": true
+    }
+  ],
+  "guardSha256": "7938fff523297c313386d281d02372a932d946fc67b30d18609c9910d1862423",
+  "verificationSha256": "80cfcf130a73588ecd82fbf27615665edb7d3fb6abc6eb3979dc35f79b37b1db",
+  "scope": "Command route ledger only; cannot prevent bypassing the guard or editing ledger files.",
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0
+}

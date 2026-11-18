@@ -1,5 +1,6 @@
 """Run one command under an existing, non-renewing research wall-clock window."""
 import fcntl
+from contextlib import ExitStack
 import json
 import math
 import os
@@ -49,18 +50,73 @@ def terminate_group(child):
     child.wait()
 
 
+def route_deadline(path, record, start, deadline, locks):
+    reference = record.get('routeCheckpoint')
+    if reference is None:
+        if record['schemaVersion'] == 'seti-research-wall-window-v2':
+            raise ValueError('WORK_ROUTE_REQUIRED')
+        return 0, deadline
+    if not isinstance(reference, str) or not reference:
+        raise ValueError('WORK_ROUTE_REFERENCE_INVALID')
+    parent = (path.parent / reference).resolve()
+    if parent == path:
+        raise ValueError('WORK_ROUTE_SELF_REFERENCE')
+    lock = locks.enter_context(parent.with_name(parent.name + '.lock').open('a'))
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print('WORK_ROUTE_BUSY: another unit holds the route lock', file=sys.stderr)
+        return 2, deadline
+    route = json.loads(parent.read_text())
+    if route['schemaVersion'] != 'seti-research-route-v1':
+        raise ValueError('WORK_ROUTE_SCHEMA_INVALID')
+    began, cutoff = route['startedEpochSeconds'], route['deadlineEpochSeconds']
+    if not all(isinstance(x, (int, float)) and not isinstance(x, bool)
+               and math.isfinite(x) for x in [began, cutoff]) or cutoff <= began or start < began:
+        raise ValueError('WORK_ROUTE_DEADLINE_INVALID')
+    if cutoff - began > 120 * 60 or deadline - start > 60 * 60:
+        raise ValueError('WORK_ROUTE_DURATION_LIMIT')
+    if route['status'] != 'open':
+        print('WORK_ROUTE_CLOSED: ' + route['status'], file=sys.stderr)
+        return 2, deadline
+    now = time.time()
+    if now >= cutoff:
+        route.update(status='expired', observedEpochSeconds=now)
+        save(parent, route)
+        print('WORK_ROUTE_EXPIRED: command not started', file=sys.stderr)
+        return 124, deadline
+    units = route['workUnits']
+    if not isinstance(units, list) or any(not isinstance(unit, str) for unit in units):
+        raise ValueError('WORK_ROUTE_UNITS_INVALID')
+    if len(units) > 2 or len(set(units)) != len(units):
+        raise ValueError('WORK_ROUTE_UNITS_INVALID')
+    identity = str(path)
+    if identity not in units:
+        if len(units) >= 2:
+            print('WORK_ROUTE_UNIT_LIMIT: two units already admitted', file=sys.stderr)
+            return 2, deadline
+        units.append(identity)
+        save(parent, route)
+    def finish_route():
+        if time.time() >= cutoff:
+            route.update(status='expired', observedEpochSeconds=time.time())
+            save(parent, route)
+    locks.callback(finish_route)
+    return 0, min(deadline, cutoff)
+
+
 def main(arguments):
     if len(arguments) < 3 or arguments[1] != '--':
         raise ValueError('usage: guard.py checkpoint.json -- command [arguments]')
     path = Path(arguments[0]).resolve()
-    with path.with_name(path.name + '.lock').open('a') as lock:
+    with path.with_name(path.name + '.lock').open('a') as lock, ExitStack() as route_locks:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             print('WORK_WINDOW_BUSY: an existing guard holds the lock', file=sys.stderr)
             return 2
         record = json.loads(path.read_text())
-        if record['schemaVersion'] != 'seti-research-wall-window-v1':
+        if record['schemaVersion'] not in ['seti-research-wall-window-v1', 'seti-research-wall-window-v2']:
             raise ValueError('WORK_WINDOW_SCHEMA_INVALID')
         start, deadline = record['startedEpochSeconds'], record['deadlineEpochSeconds']
         if not all(isinstance(x, (int, float)) and not isinstance(x, bool)
@@ -77,8 +133,12 @@ def main(arguments):
             save(path, record)
             print('WORK_WINDOW_EXPIRED: command not started', file=sys.stderr)
             return 124
+        code, deadline = route_deadline(path, record, start, deadline, route_locks)
+        if code:
+            return code
         command = arguments[2:]
-        attempt = {'command': command, 'startedEpochSeconds': now, 'status': 'starting'}
+        attempt = {'command': command, 'startedEpochSeconds': time.time(), 'status': 'starting',
+                   'effectiveDeadlineEpochSeconds': deadline}
         number = len(record['attempts']) + 1
         prefix = path.with_name(path.stem + '.attempt-' + str(number))
         stdout = prefix.with_name(prefix.name + '.stdout.log')

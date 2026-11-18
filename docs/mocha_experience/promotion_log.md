@@ -126,3 +126,26 @@
 - verification: python3 adhoc/verify-research-deadline-20261119.py <新验证输出路径>；实际运行独立快照中的同一源码，十项控制通过。
 - observed_outcome: 命令层期限、失败和续接行为已验证；本轮无AI搜索、原生输入或新自主整局，整体质量仍未验证。
 - keep_or_revise: keep（命令层有限推广）；下一次业务工作单元继续核查整体时限和交付，不能重开耗尽路线。
+
+## SETI-METHOD-20261119-05：绑定路线台账，拒绝跨窗口续期
+
+- source: exploratory_research.md中SETI-METHOD-20261119-05；公开收入原型、准入及上界复查窗口的原始时间戳；method-route-binding-before-20261119-v1.json。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 同一候选跨工作单元的命令准入与期限归属
+- target_file: docs/ai-research-workflow.md §1.4；adhoc/research-deadline-guard-20261119.py
+- remote_skill_id: none
+- change: v2子窗口必须绑定路线台账；冻结／过期路线、第三个单元及并发子单元拒绝启动；实际期限取父子较早值，保留120／60分钟上限。
+- applied_change: 修改标准库守卫，增加独立实际子进程验证；登记已存在公开收入路线为冻结，不恢复候选或更改AI、规则及搜索预算。
+- expected_effect: 阻止以新窗口或维护名义继续同一冻结路线；避免分窗口求和漏掉间隔。
+- evaluation_window: 本次15分钟方法修复窗口及随后第一个符合§1.1准入的新业务路线；不重启v514或公开收入候选试验。
+- success_signal: 旧源码实际启动冻结路线目标的红测成立；新源码11项路线控制及原有10项控制通过；真实冻结台账拒绝新子窗口且目标未执行。
+- rollback_condition: 经守卫执行仍能跨冻结父路线启动、续期、突破两单元或丢失日志；保留失败并修订守卫，不能通过降低AI验收要求处理。
+- risk: 路线归属仍需agent正确声明；无法阻止绕过守卫、直接改台账或模型继续思考。墙钟从严计入等待，不声称已验证整体AI收敛。
+- evidence_before: 公开收入候选未准入；分窗口累计116.1分钟不能证明整条路线时限，上界复查开始已晚于原型起算120分钟截止58.5秒；正式272不变。
+- owner_or_agent_decision: 执行用户的方法论优先指令，有限推广已通过实际控制的路线绑定；结束同一候选的自动补证明及准入维护队列。
+- applied_at: 2026-11-19
+- verification: python3 adhoc/verify-research-route-binding-20261119.py adhoc/research-deadline-guard-20261119.py <新输出路径>；python3 adhoc/verify-research-deadline-20261119.py <新输出路径>；method-route-binding-frozen-candidate-check-20261119-v1.json。
+- observed_outcome: 新增11项与原有10项控制均通过，真实冻结路线拒绝启动；没有AI搜索、原生输入、新整局或分数变化。
+- keep_or_revise: keep（路线级命令限制）；下一次业务研究须核对原始共同截止，不能以继续方法维护替代AI业务判断。

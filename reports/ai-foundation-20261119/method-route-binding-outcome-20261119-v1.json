@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "seti-research-route-binding-outcome-v1",
+  "date": "2026-11-19",
+  "parent": "16ea54c673c5bf934a2750834c64570f60c14c9e",
+  "methodOnly": true,
+  "oldGuardStartedFrozenRouteCommand": true,
+  "newGuardSha256": "7938fff523297c313386d281d02372a932d946fc67b30d18609c9910d1862423",
+  "routeControlsPassed": 11,
+  "existingCommandControlsPassed": 10,
+  "actualFrozenCandidateStartRefused": true,
+  "historicalAccountingCorrection": {
+    "earliestStartUsed": "prototype window; earlier diagnosis omitted, so cutoff is a latest permissible bound",
+    "routeDeadlineEpochSeconds": 1795043689,
+    "legacyReviewStartedEpochSeconds": 1795043747.514366,
+    "lateSeconds": 58.514365911483765,
+    "summedWindowMinutesNotValidWholeRouteClock": true
+  },
+  "frozenRoutes": [
+    "v514",
+    "public-income-prepared-analysis-20261119"
+  ],
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0,
+  "AIModelChanged": false,
+  "formalCompletedScoreUnchanged": 272,
+  "previouslyMeasuredFormalGameSeconds": 16.1,
+  "wholeGoalComplete": false,
+  "sharedOwnedBeforeSha256": {
+    "adhoc/research-deadline-guard-20261119.py": "a3f92babac4a788f366139761063263ce1a4a6a880b3c9e5f988028dbae8b5a0",
+    "adhoc/verify-research-route-binding-20261119.py": null,
+    "docs/ai-research-workflow.md": "e9ec6bcd6f71cc75217fef5b40eee3ad7fa4c179c0ff93170fea72775b64b5e5",
+    "docs/mocha_experience/exploratory_research.md": "616b2033522854b4883518513e9e94c56dc87d63c65cad72600fef49283b3691",
+    "docs/mocha_experience/promotion_log.md": "f62ae40746a63ccd9fc393b0c90a117bda5bcb53ab1730e78688e9127894e3c5"
+  },
+  "sharedOwnedAfterSha256": {
+    "adhoc/research-deadline-guard-20261119.py": "7938fff523297c313386d281d02372a932d946fc67b30d18609c9910d1862423",
+    "adhoc/verify-research-route-binding-20261119.py": "80cfcf130a73588ecd82fbf27615665edb7d3fb6abc6eb3979dc35f79b37b1db",
+    "docs/ai-research-workflow.md": "fae2c522901edde0fe91358fcaa44c2f29d9e5f86334182ad48c7bd97cc143de",
+    "docs/mocha_experience/exploratory_research.md": "0cb67f0ed15ead1082cb45744ec106fbcdce069df97a6abbab72f831daa2b206",
+    "docs/mocha_experience/promotion_log.md": "5c0b3de518f32a7ba0dc2cab116d11e8c27458002cca50bd6cc8d24ce6b37e39"
+  },
+  "limits": "Requires correct declared parent route. Does not prevent direct execution outside the guard, ledger edits or model reasoning. AI quality and research convergence remain unverified.",
+  "sourceEvidence": {
+    "method-route-binding-before-20261119-v1.json": "ffc88c5477cbd6175c889fae1ff17c32820e2829546758a221f7beeec5fc8784",
+    "method-route-binding-after-20261119-v2.json": "1f6536b93cf2365ee4a48bdaf6c60b8204dab0b01a65f6ddb6623832b416db6d",
+    "method-route-binding-existing-controls-20261119-v2.json": "eb411a12e3d019f5bd29c5b4366d1593368b6733b578b9e992fada9170b18974",
+    "method-route-binding-frozen-candidate-check-20261119-v1.json": "fbaffc819c5060091779f4bb8dff741ea9c006f3dd355f2aee3601bed4722c74"
+  }
+}

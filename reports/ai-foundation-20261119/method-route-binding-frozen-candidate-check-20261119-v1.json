@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "exitCode": 2,
+  "stderr": "WORK_ROUTE_CLOSED: frozen\n",
+  "markerAbsent": true,
+  "frozenLedgerUnchanged": true,
+  "noAttemptsStarted": true,
+  "routeDeadlineEpochSeconds": 1795043689.0,
+  "legacyReviewStartEpochSeconds": 1795043747.514366,
+  "legacyReviewStartedAfterDeadlineSeconds": 58.514365911483765,
+  "guardSha256": "7938fff523297c313386d281d02372a932d946fc67b30d18609c9910d1862423",
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0
+}

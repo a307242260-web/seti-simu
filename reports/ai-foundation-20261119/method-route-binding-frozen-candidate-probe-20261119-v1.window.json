@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "blue-income-route-20261119-v1.json",
+  "startedEpochSeconds": 1795044342.793161,
+  "deadlineEpochSeconds": 1795044352.793161,
+  "status": "closed",
+  "attempts": [],
+  "reason": "guard refused frozen parent; verification complete",
+  "closedEpochSeconds": 1795044342.81982
+}
