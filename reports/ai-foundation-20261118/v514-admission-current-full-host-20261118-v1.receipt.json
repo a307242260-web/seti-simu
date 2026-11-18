@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "tools/run_node_tests.js",
+    "--match",
+    "tools/research-human405-current-full.test.js"
+  ],
+  "exitCode": 0,
+  "wallSeconds": 1.2068099975585938,
+  "logSha256": "c3f6563d4da4d3fd655f6679ced6f34fcb32399c8fcfd6229a30667157021551",
+  "runtimeCodeUnchanged": true,
+  "actualAutonomousFullGames": 0,
+  "faultInjectedGuardRecordsAreNotGameTrials": true
+}

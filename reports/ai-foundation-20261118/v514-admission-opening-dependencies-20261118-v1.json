@@ -1,0 +1,26 @@
+{
+  "kind": "exact fixed opening host-test dependencies only",
+  "runtime": "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v514-standalone-20261118-kyog1z0g",
+  "restored": [
+    {
+      "path": "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.json",
+      "gitCommit": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+      "sha256": "9ba1ecef66185351b6cbb0e462d640ca2000f231fe86fb54c11c8451f29c3bac",
+      "bytes": 16799
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.checkpoint.json",
+      "gitCommit": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+      "sha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+      "bytes": 144991
+    },
+    {
+      "path": "seti-saves/seti-save-537-merged.json",
+      "gitCommit": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+      "sha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+      "bytes": 746161
+    }
+  ],
+  "runtimeCodeChanged": false,
+  "newAutonomousGames": 0
+}

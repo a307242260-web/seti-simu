@@ -100,3 +100,6 @@
 - verification: 只读校验路线复核的来源SHA及Git中正式完整局，独立快照检查文档链接、证据与具体数值；不运行AI、规则重放或浏览器。
 - observed_outcome: 五项既有工作裁决清楚，下一项更新为v514准入评审；没有新分数或整局质量结论。
 - keep_or_revise: keep（试行累计投入约束）；等待后续方法试验的路线结果，不宣称已解决长期收敛问题。
+
+- followup_evaluation_20261119: 准入评审实际执行必需回归，181项unit与唯一full-flow有通过证据，91项unit仍未通过；部分旧断言由Native端点和预算计费对照归类，原测试未改，候选冻结、无自主新局。但墙钟已超过60／120分钟且未完整分开主动／等待时间，期限执行未通过；keep_or_revise改为revise，不恢复该路线第二单元。记录包含诊断console误报零搜索的更正：实际保留了两个先行fixture的六次搜索，另有三次预算诊断，未重跑替换证据。
+- followup_evidence_20261119: reports/ai-foundation-20261118/v514-route-admission-20261118-v1.json。

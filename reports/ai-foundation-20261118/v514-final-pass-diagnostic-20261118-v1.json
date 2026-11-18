@@ -1,0 +1,54 @@
+{
+  "oldPass": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 17,
+    "purposePreparationDebt": 0,
+    "components": {
+      "realizedScore": 17,
+      "currentEndGameBonus": 0,
+      "resources": 0,
+      "hand": 0,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false
+  },
+  "newPass": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 17,
+    "purposePreparationDebt": 0,
+    "components": {
+      "realizedScore": 17,
+      "currentEndGameBonus": 0,
+      "resources": 0,
+      "hand": 0,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false
+  },
+  "actualDelta": 0,
+  "oldExpectation": "delta<0",
+  "successfulNativeSubmissions": 12,
+  "rootAndRngExact": true,
+  "round": 4,
+  "alreadyPassed": true,
+  "aiSearches": 0,
+  "originalTestSha256": "69cc2044cd42da8fc55b2cdadd41a74ee0f62468805a46a7b09c67e689b8e20e",
+  "diagnosticSourceSha256": "d35fc24c86ee7d53c70fe80ad86b74eed58fd1adc9bb2246ffee162fff7172a8",
+  "kind": "Native-only same-state final-PASS assertion diagnosis; test/runtime unchanged"
+}

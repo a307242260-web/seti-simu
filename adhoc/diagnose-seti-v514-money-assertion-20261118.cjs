@@ -1,0 +1,25 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),Module=require('node:module'),zlib=require('node:zlib');
+const root='/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-v514-standalone-20261118-kyog1z0g';
+const target=path.join(root,'randomizer/game/ai/known-card-money.test.js');
+const destination='/Users/bilibili/code/seti-simu/reports/ai-foundation-20261118/v514-money-assertion-diagnostic-20261118-v1.json.gz';
+if(fs.existsSync(destination))throw Error('reuse existing diagnostic');
+let source=fs.readFileSync(target,'utf8');
+const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const originalHash=sha(source);
+source=source.replace('const results=[];','const results=[];let activeFixtureIndex=-1;');
+source=source.replace('const {createStateValueEvaluator,probePotential}=require("./state-value");','const {createStateValueEvaluator,probePotential,evaluateStateValue}=require("./state-value");');
+const needle='assert.equal(evaluate(av)-evaluate(bv),2+missionDelta);';
+if(!source.includes(needle))throw Error('diagnostic target changed');
+source=source.replace(needle,`if(evaluate(av)-evaluate(bv)!==2+missionDelta)return {mismatch:true,fixtureIndex:activeFixtureIndex,successfulNativeSubmissions:port.getDiagnostics().submissionCount,rich:evaluateStateValue(av,seatId),poor:evaluateStateValue(bv,seatId),expectedDelta:2+missionDelta,missionDelta,richObservation:av,poorObservation:bv};`);
+const outer='paired.push(compareSingleActions(port,root,poor,f.seatId));assert.deepEqual(comp.lifecycle.save().envelope,pairBefore);';
+if(!source.includes(outer))throw Error('diagnostic boundary changed');
+source=source.replace(outer,`activeFixtureIndex=fixtures.indexOf(f);const observed=compareSingleActions(port,root,poor,f.seatId);assert.deepEqual(comp.lifecycle.save().envelope,pairBefore);if(observed.mismatch){globalThis.__setiDiagnostic={...observed,rootAndRngExact:true};port.close();comp.dispose();throw new Error('EXPECTED_DIAGNOSTIC_CAPTURE');}paired.push(observed);`);
+const child=new Module(target,module);child.filename=target;child.paths=Module._nodeModulePaths(path.dirname(target));
+try{child._compile(source,target);throw Error('no mismatch captured');}catch(error){if(error.message!=='EXPECTED_DIAGNOSTIC_CAPTURE')throw error;}
+const value=globalThis.__setiDiagnostic;delete globalThis.__setiDiagnostic;
+value.kind='Native-only first-assertion diagnosis; not a changed test or AI search';value.originalTestSha256=originalHash;value.diagnosticSourceSha256=sha(source);value.fixture=['062','105','152'][value.fixtureIndex];
+const seat=value.richObservation.selfState.playerId;
+if(value.richObservation.publicState.roundNumber!==4||!value.richObservation.publicState.passedPlayerIds.includes(seat))throw Error('final PASS hypothesis false');
+if(value.rich.components.resources!==0||value.poor.components.resources!==0||value.rich.total!==value.poor.total)throw Error('official-score-only semantics not observed');
+fs.writeFileSync(destination,zlib.gzipSync(JSON.stringify(value)));console.log(JSON.stringify({fixture:value.fixture,successfulNativeSubmissions:value.successfulNativeSubmissions,round:4,alreadyPassed:true,richValue:value.rich.total,poorValue:value.poor.total,expectedOldDelta:value.expectedDelta,actualDelta:value.rich.total-value.poor.total,rootAndRngExact:value.rootAndRngExact,aiSearches:0}));
