@@ -77,3 +77,26 @@
 
 - followup_evaluation_bounded_cargo_20261118: 首个有限单元以5次实际回放确认Browser错误保留了已交付F07的任务5；真正独立的F06任务7完整保留。完整存档与旧7输入续运起点一致，复用旧证据而不运行AI或续运。归因后收口，未接策略补丁；Browser及性能准入仍未通过。先前诊断序列化失败及推定重复成本明确留档；方法能形成有限结论，不能据此宣布整体AI提升。
 - followup_bounded_cargo_evidence: reports/ai-foundation-20261118/r4-browser-cargo-findings-20261118-v1.json；adhoc/audit-r4-browser-cargo-diagnosis-20261118-v1.py。
+
+## SETI-METHOD-20261118-03：按整条路线累计投入并强制裁决
+
+- source: 当前用户的方法论优先指令；SETI-METHOD-20261118-02后续记录；reports/ai-foundation-20261118/methodology-review-20261118-v3.json。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 候选从归因到采用／拒绝／冻结的完整研究路线
+- target_file: docs/ai-research-workflow.md §1.3
+- remote_skill_id: none
+- change: 将投入限制从单项提升到整条路线；试行累计最多两个60分钟单元，评审后在原有准入满足时运行唯一自主整局，结束必须裁决，不因新阻塞续期。
+- applied_change: 更新§1.2历史状态并新增§1.3；只改变研究流程，正式AI、隔离候选、规则、预算、共享index及现有实验记录不变。
+- expected_effect: 阻止局部改进不断推迟业务验收，尽早交付可比整局与逐轮资产结论，或明确结束无可行验收路径的投入。
+- evaluation_window: 方法试验中的v514完整路线，累计主动工作最多120分钟；本次只读方法整理不启动实验，不额外增加用户审批。
+- success_signal: 在限额内完成既有准入和唯一自主整局并作资产裁决，或明确冻结未通过的路线、不自动串接新补丁；冻结仅验证止损，不证明棋力提高。
+- rollback_condition: 改名／拆分子项重置累计投入，超时仍继续补丁，或将局部通过、冻结包装为整体有效；立即停止当前路线并修订流程。必要验证未完成不得通过。
+- risk: 两小时试行限额可能无法收完复杂候选，应冻结而非降低正确性／性能门槛；只有一个教学盘的完整结果仍不能证明20盘泛化。
+- evidence_before: v512在目标决策修复遗漏但1573.7ms，v513为639.7ms，v514为572.910541ms；均没有新完整局，正式272未变。既有单项时限未覆盖候选全生命周期。
+- owner_or_agent_decision: 按用户要求继续方法整理，冻结策略修改和新实验；推广累计收口约束，前瞻效果保持未验证。
+- applied_at: 2026-11-18
+- verification: 只读校验路线复核的来源SHA及Git中正式完整局，独立快照检查文档链接、证据与具体数值；不运行AI、规则重放或浏览器。
+- observed_outcome: 五项既有工作裁决清楚，下一项更新为v514准入评审；没有新分数或整局质量结论。
+- keep_or_revise: keep（试行累计投入约束）；等待后续方法试验的路线结果，不宣称已解决长期收敛问题。
