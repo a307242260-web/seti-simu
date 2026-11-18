@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v23",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v22.json",
+  "publishedParent": "0041cccc642525bbc088edb4aa8d8955110678ca",
+  "goalStatus": "active",
+  "scope": "Original teaching/asset alignment goal remains intact. Current user instruction changes the phase to methodology review and validation before further AI implementation.",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续。",
+  "phase": "structural performance diagnosis; main-goal-owned preparation design",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "lastUnpromotedCandidate": "v512/movementv8/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "previousGoalTurnClassification": "progress: v512 destination matching/whole suffix correction improves two of six cases and changes teacher289 to239.5; independent source47 files,7 related checks pass,1 old failure;1573.7ms still fails admission",
+  "thisGoalTurnClassification": "progress: existing graph identifies700 company-swap and803 income-prefixed nodes; one valid timing diagnostic attributes68.4% actual work to those disjoint subgraphs.48 Native control inputs confirm the best main witness can commute with each fixed prefix under existing state identity. New-card main branch is identified as mandatory to retain. No strategy implementation/game/batch.",
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v1.json",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "methodologyStatus": "Two causal dossiers yielded a targeted no-regression strategy correction and stopped invalid expansion; whole-game quality and performance unproven",
+  "resumeGate": [
+    "One same-start causal decision dossier identifies a specific reproducible missing/incorrect candidate, greedy plan, boundary, valuation, execution or reuse issue, or demonstrates a justified equivalent tradeoff and selects the next genuine unresolved case.",
+    "State an observation that would falsify the proposed cause and the expected corrected action/assets; hidden seed outcomes are not public knowledge.",
+    "Provide a plausible quantified computation path under existing constraints. Do not resume the previously queued cargo-copy/identity/menu micro-optimization loop merely because its local checks can pass."
+  ],
+  "next": [
+    "Audit the Native read/write and reachability contract for deferred income and fixed company swap, including resource unlocking, incoming-card main action, consumed beneficiary, overflow, triggers, hidden market draws and nested preparations. Two commuting witnesses do not prove a general scheduler.",
+    "Develop a bounded main-goal-owned preparation prototype only when those obligations specify what can be postponed and what remains before main. Preserve source/RNG, v512239.5 and six known payoffs; no seed-specific omission or branch cap.",
+    "The new plan must remove about90% of the measured1068.8ms block while adding roughly<=100ms scheduling work. If that is not supported, reject it as sole600ms path before coding.",
+    "Keep runtime v485 and formal272 unchanged; v512 is still unpromoted. No game/20-board until the original256/600ms and regression requirements pass."
+  ],
+  "methodPilot": "reports/ai-foundation-20261118/r4-preparation-structure-findings-20261118-v1.json"
+}

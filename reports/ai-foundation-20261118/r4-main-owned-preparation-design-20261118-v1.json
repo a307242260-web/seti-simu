@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-18",
+  "phase": "design only; implementation contract incomplete and strategy work held",
+  "evidence": "r4-preparation-structure-findings-20261118-v1.json",
+  "problem": "An unbound preparation completes and then restarts the whole main-action catalog. Repetition includes another preparation ordering, not merely its fixed Native input sequence.",
+  "scope": [
+    "Root main goals continue to include directly payable card/scan/research/landing goals and resource/acquisition-bound plans.",
+    "A preparation that unlocks payment or acquires the main card remains before that main action.",
+    "Only independently certified final-turn preparations may be scheduled within the chosen main plan and postponed; supported known prefixes retain exact outgoing/incoming cards, income choice, slot and knowledge.",
+    "All noncommuting or unaudited cases remain on their original supported path. No additional hidden outcome, direction or all-task-order enumeration."
+  ],
+  "stateOwnership": {
+    "Native": "All game rules, wallet/data/card/market/task and RNG state remain authoritative in Production.",
+    "planner": "A postponed fixed preparation is policy state, with its exact beneficiary/selection/funding dependencies and source contract.",
+    "dedup": "Existing Native identity remains unchanged, including existing data-pool display equivalence. A pending preparation must enter policy identity and durable plan dependency checks; do not merge different wallets/cards or share proof across changed caps/knowledge."
+  },
+  "obligations": [
+    {
+      "name": "Income commutation",
+      "known": "One Ch8 witness plus fixed F06 pickup and computer-income prefix:24 Native inputs, same assets/RNG, only3 display positions differ, existing forward identity equal.",
+      "missing": "All allowed main effects must be income-independent except audited terminal scoring; data/hand capacity and task triggers cannot change a Native result."
+    },
+    {
+      "name": "Company commutation",
+      "known": "One Ch8 witness plus exact swap:24 Native inputs, complete Native states equal.",
+      "missing": "Preserve incoming/outgoing identity, ordinary market/deck refill and company quota; guard unknown draws/public market changes and hand-sensitive triggers."
+    },
+    {
+      "name": "Required preparation",
+      "known": "Swap creates an additional playable main card (2-node witness); Neptune needs extra energy. Income and swap can consume the same Ch6 beneficiary.",
+      "missing": "Keep incoming-card/payment goals before main; incompatible card commitments cannot be promised simultaneously; quantify retained work."
+    },
+    {
+      "name": "Native execution and recovery",
+      "known": "No new scheduling code yet.",
+      "missing": "Bounded plan must execute all real inputs, preserve full Native endpoint and RNG, reject changed dependencies and survive cold recovery."
+    }
+  ],
+  "costScreen": {
+    "measuredBlockMs": 1068.842063999999,
+    "measuredOtherMs": 492.71026900000106,
+    "requiredBlockReductionFraction": 0.8996205944604375,
+    "extraSchedulingBudgetApproxMs": 100,
+    "status": "Enough theoretical space to investigate; no measured optimization and no600ms claim."
+  },
+  "budgets": {
+    "runtime": "Existing transitions/nodes/frontier/time settings remain null. No new beam/leaf caps.",
+    "localAdmission": "<=256 full rule submissions and<=600ms total; preview/graph/value work remains inside wall time.",
+    "game": "<=180s; no new game or20-board before local admission and required regression."
+  },
+  "acceptance": [
+    "Specify sound applicability and counterexamples before coding.",
+    "Preserve v512 target239.5 and all six prior complete Native payoffs; inspect every prior best, not only a minimum test threshold.",
+    "Measure the new complete decision once per source/experiment, with all preserved choices closed.",
+    "Only after genuine admission run the broader original fixed-root/first-two-round and full-goal validation."
+  ],
+  "rejection": "If sound guards leave too much of the68.4% block or proposed overhead exceeds the remaining budget, reject this as sole route to600ms; do not keep adding local exceptions or lower original requirements."
+}

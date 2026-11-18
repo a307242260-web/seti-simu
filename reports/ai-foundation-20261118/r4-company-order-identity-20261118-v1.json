@@ -1,0 +1,18 @@
+{
+  "sourceSha256": "8dbad8962effaa799a57b86558e1a3e6742696acbaf25e5a9a1ca50c4a71473f",
+  "receiptSha256": "cb0c3455ef8cae42b0de9c6a7cc5582f33937ac1af4f93aea7f8350aeac6a3a0",
+  "existingForwardStateKeyEqual": true,
+  "commonKeySha256": "b766da244303ce181b77407fe7cd7763ee3cb82eca5242cfe18b46f486eef042",
+  "fullStateDifferenceCount": 0,
+  "actualNativeInputs": 24,
+  "additionalNativeInputs": 0,
+  "additionalAISearches": 0,
+  "rngEqual": true,
+  "observedAssetsEqual": true,
+  "currentValues": [
+    221,
+    221
+  ],
+  "scope": "Measured best Ch8 witness and its fixed preparation compared under the existing production forward-state identity. Opaque interned tokens from separate ports were not compared. No new equivalence or general ordering rule is introduced.",
+  "implementation": "Read-only in-memory export of existing forwardIdentity only; no runtime files or Native state changed."
+}

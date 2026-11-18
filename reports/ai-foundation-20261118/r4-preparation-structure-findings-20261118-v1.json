@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-18",
+  "kind": "Structural preparation diagnosis; no strategy implementation or new game",
+  "sources": {
+    "r4-cargo-suffix-final-point289-v512-20261118-v1.json.gz": "0b91975ddaefa851da0579e978d1082c06c0a179e245e73617c038e6061a2b5e",
+    "r4-prefix-cost-attribution-20261118-v2.json": "b247016a3ea02fd566f67f4205a557d1c2d34cbb9f6102eaa2bc9e8b0f42c810",
+    "r4-income-order-control-20261118-v1.receipt.json.gz": "82839c9e1f64e366a871532af38754c0f5ca88c7922c68343b930326e2522771",
+    "r4-income-order-identity-20261118-v1.json": "9bedfb25d5d07e92cf491b73298b1a2bea86f813e6d37790dfb418aeaec3738d",
+    "r4-company-order-control-20261118-v1.receipt.json.gz": "cb0c3455ef8cae42b0de9c6a7cc5582f33937ac1af4f93aea7f8350aeac6a3a0",
+    "r4-company-order-identity-20261118-v1.json": "5e506cc0004450d9879f2ee8b17b3f4ff3ad6e9120f10b3531f56c033e89bd9b"
+  },
+  "previousTurn": "progress: v512 fixes destination matching and remaining cargo dependency; six cases retained, two+4; teacher289 changes to239.5 but1573.7ms fails admission",
+  "graph": {
+    "nodes": 1949,
+    "swapSubgraph": 700,
+    "incomeSubgraph": 803,
+    "disjointUnion": 1503,
+    "unionNodeFraction": 0.7711646998460749,
+    "sixWayBranchingNodes": 165,
+    "companyThenIncomeSubgraph": 337
+  },
+  "measuredCosts": {
+    "instrumentedDecisionMilliseconds": 1561.552333,
+    "swapMilliseconds": 497.06718199999887,
+    "incomeMilliseconds": 571.7748820000002,
+    "blockMilliseconds": 1068.842063999999,
+    "fraction": 0.6844740591860772,
+    "otherMilliseconds": 492.71026900000106,
+    "requiredRemovalInsideBlockToReach600": 0.8996205944604375,
+    "estimatedMillisecondsIfBlockFree": 496.5485764406068,
+    "interpretation": "About68.4% actual cost belongs to two preparation-prefixed repetitions of the main-action graph. Reaching600ms requires eliminating about90% of that block plus keeping new scheduling overhead within about100ms. Node counts alone were not treated as timing.",
+    "limit": "Instrumented single-root cost attribution, not measured optimization or proof all selected work is removable."
+  },
+  "nativeControls": {
+    "actualSubmissions": 48,
+    "newAISearches": 0,
+    "income": {
+      "sameAssetsAndRng": true,
+      "currentValues": [
+        220.5,
+        220.5
+      ],
+      "fullStateDifferences": "Only3 pool token display slotIndex fields",
+      "existingForwardStateKeyEqual": true
+    },
+    "companySwap": {
+      "completeNativeStatesEqual": true,
+      "currentValues": [
+        221,
+        221
+      ],
+      "existingForwardStateKeyEqual": true
+    },
+    "scope": "Two orders of the existing best Ch8 witness, fixed actually revealed F06 pickup; no foreknowledge valuation, next-round income or PASS cards. One witness per operation does not prove general commutation."
+  },
+  "mustRetain": {
+    "acquireThenPlayNewCard": {
+      "actionId": "play_card:45e50d92",
+      "nodes": 2,
+      "value": 217,
+      "observedQueuedMilliseconds": 1.8178749999999582
+    },
+    "resourceUnlock": "Unfunded main goals still require their demand-bound preparation first, e.g observed Neptune energy deficit.",
+    "beneficiaryConflict": "Both generic income and swap consume Ch6 here; income-prefix node8 no longer permits playing Ch6. New scheduling cannot promise incompatible card uses.",
+    "overflowAndTriggers": "Any income-sensitive/card-sensitive effect, data/resource cap, market/deck draw, hidden boundary or event trigger can invalidate ordering; keep the original order unless proved independent.",
+    "nestedPreparation": "Company-first graph contains a337-node income-first continuation; coupled preparation choices are part of the structural duplication."
+  },
+  "designDecision": "Pursue main-goal-owned preparations and certified postponement of independent final-turn preparations. Preserve preparation that enables a new main card or resources, and keep all noncommuting fallbacks. No blanket deletion of1503 states, global beam cap or seed-specific choice.",
+  "implementationGate": "Before coding, audit Native read/write and reachability obligations for both operations, test resource-unlock/card-conflict/overflow/trigger/market counterexamples, state dedup and total budget. Reject the design as a sole600ms route if the provably removable share cannot approach90% of the measured block.",
+  "diagnosticCorrections": {
+    "timing": "First timing search ended but compared in-memory undefined/-0 with JSON reference and failed before checkpoint. Corrected observer persists timing immediately and compares entire serialized graph/root hashes. Two diagnostic searches total, each209 full submissions; only the corrected run supplies cost estimates.",
+    "incomeIdentity": "First Native branch completed12 inputs before trying to serialize an opaque identity token. Reused that saved endpoint; only the other12 inputs were executed. Exact production forwardIdentity was exposed read-only in memory, no new equivalence.",
+    "companyPath": "Initial copied driver had an invalid source directory; failed before any Native inputs, corrected and retained log."
+  },
+  "formalScoreUnchanged": 272,
+  "newGames": 0,
+  "newBatches": 0,
+  "sharedRuntimeChanged": false,
+  "sourceCandidateUnchanged": "v512/movementv8/valuev71"
+}

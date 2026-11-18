@@ -1,0 +1,15 @@
+{
+  "kind": "One diagnostic timing run; no strategy implementation, game or batch",
+  "question": "Do the two preparation-prefixed copies of the main-action graph account for enough actual work to be a plausible600ms path?",
+  "reference": "r4-cargo-suffix-final-point289-v512-20261118-v1.json.gz",
+  "offlineEvidence": "Company swap root6 reaches700 nodes and computer-income root8 reaches803; disjoint, together1503/1949. Counts alone do not imply time savings or removable choices.",
+  "measurement": "Clone the47-file sealed v512 runtime, add only try/finally wall timers around each existing queued-node expansion. Attribute construction work to its source queued node, classify by reference reachability. Assert the entire resulting graph, roots, choice, value,209 submissions and source/RNG remain unchanged. Retain per-node totals; do not use instrumented timing as admission.",
+  "newSearchCount": 1,
+  "whyNecessary": "Existing CPU stacks have no root lineage; existing graph has no per-root timings. Neither can establish the cost share of duplicated preparation prefixes.",
+  "candidateArchitecture": "Main-goal-owned preparation and deferred independent end-turn preparations, rather than repeating every main action behind an unbound preparation. Known plans must remain attainable and all noncommuting cases retained.",
+  "stateEquivalenceAndReachability": "No new equivalence, pruning or goal ordering is implemented. Future ordering change requires Native commutation/reachability controls including resource-unlocking, consumed beneficiary cards, hidden boundaries and triggers. No direction or all-task-permutation enumeration.",
+  "budget": "Existing runtime null budgets unchanged; diagnostic preserves the reference209 full rule submissions.600ms remains admission for an actual candidate, not this instrumented observation.",
+  "passScreen": "Measured block share must cover the required61.9% total reduction; a plausible realizable reduction still needs Native controls and implementation measurement. If smaller or graph differs, reject this path as sole solution.",
+  "stop": "No strategy implementation on the strength of node count or cost fraction alone. No return to the rejected28.8% micro-hotspot main line.",
+  "diagnosticCorrection": "v1 completed search but compared in-memory graph with JSON-restored reference: undefined optional fields and negative zero differ before JSON serialization. It threw before persisting timing. v2 persists timing and graph hashes immediately, then compares complete wire graphs and roots by SHA. No rule/strategy change. Failed v1 log retained compressed; two diagnostic runs total, not a repeated timing estimate or admission."
+}

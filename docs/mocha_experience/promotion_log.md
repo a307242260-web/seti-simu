@@ -48,3 +48,6 @@
 
 - followup_evaluation_20261118: 第二张因果卡确认完整Native续运，v512六例不退步、两例+4且改变第289步选择；诊断／对照流程继续保留。47文件及卡牌目录独立还原，历史测试输入单独登记；缺依赖和旧断言失败显式保留。7项相关检查通过、1项历史失败。1573.7ms未准入，整体AI质量未完成，不恢复整局或低收益微优化。
 - followup_evidence: reports/ai-foundation-20261118/r4-cargo-suffix-findings-20261118-v1.json
+
+- followup_evaluation_structural_20261118: 按既定收益空间筛选，定位两个准备前缀下重复主行动的68.4%实际成本，并用48次原生输入确认两个具体可交换端点；同时保留取牌解锁新主行动的反例。未推广通用重排或修改运行时。下一设计需证明足够适用范围，不能把理论上限当作达标。
+- followup_structural_evidence: reports/ai-foundation-20261118/r4-preparation-structure-findings-20261118-v1.json；reports/ai-foundation-20261118/r4-main-owned-preparation-design-20261118-v1.json。

@@ -1,0 +1,18 @@
+{
+  "sourceSha256": "8dbad8962effaa799a57b86558e1a3e6742696acbaf25e5a9a1ca50c4a71473f",
+  "receiptSha256": "82839c9e1f64e366a871532af38754c0f5ca88c7922c68343b930326e2522771",
+  "existingForwardStateKeyEqual": true,
+  "commonKeySha256": "162efaa29226584fb396f50e651b5c91d9597363e2b6b490bdfc2b8a49278ee3",
+  "onlyThreePoolDisplaySlotsDiffer": true,
+  "actualNativeInputs": 24,
+  "additionalNativeInputs": 0,
+  "additionalAISearches": 0,
+  "rngEqual": true,
+  "observedAssetsEqual": true,
+  "currentValues": [
+    220.5,
+    220.5
+  ],
+  "scope": "The measured best Ch8 witness commutes with this fixed income prefix under the existing production forward-state identity. Opaque interned tokens from separate ports were not compared. No new equivalence or general ordering rule is introduced.",
+  "implementation": "Read-only in-memory export of existing forwardIdentity only; no runtime files or Native state changed."
+}
