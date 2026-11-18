@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795028974.0,
+  "deadlineEpochSeconds": 1795030774.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 14 -B 3 \"amiba1-\\|amiba_1\" randomizer/game/cards/play-domain.js randomizer/game/aliens/amiba.js assets/aliens/阿米巴/implementation.md assets/aliens/阿米巴/face_detail.md | head -100"
+      ],
+      "startedEpochSeconds": 1795029001.126156,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 12245,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029001.150186,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "08149ade1f9c7eef7c344d2ccac4d5899953964f893a7f523e0c2aeaae322f44"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 10 -B 2 \"amiba1-|amiba_1\" randomizer/game/cards/play-domain.js randomizer/game/aliens/amiba.js assets/aliens/阿米巴/implementation.md; rg --files assets/aliens/阿米巴"
+      ],
+      "startedEpochSeconds": 1795029043.925514,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 13122,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029043.9699452,
+      "stdoutSha256": "a2d409c372706eb0bdbaa17f5a8f72768e704f210dc45b2f5bc1e37b5d8c8499",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/trace-amiba1-plan-comparison-20261119.py",
+        "reports/ai-foundation-20261119/r3-amiba1-plan-evidence-20261119-v1.json.gz"
+      ],
+      "startedEpochSeconds": 1795029044.3000362,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 13224,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029044.750638,
+      "stdoutSha256": "145f86d999babab03defcd008d65ae2c39eb3cc68d21c6c965d51f1211e9eb5d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 12 -B 3 \"安全协议|自动分析|1号|1 号|amiba1\" assets/aliens/阿米巴/implementation.md randomizer/game/cards/effects.js randomizer/game/cards/alien-effects.js randomizer/game/effects/science-session.js; sed -n \"1,125p\" assets/aliens/阿米巴/implementation.md"
+      ],
+      "startedEpochSeconds": 1795029126.945378,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 14400,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029126.969676,
+      "stdoutSha256": "afdf8f81e978214e1c82248fcbd2e09871fdcf3ef281f221d7aee55d1879aa46",
+      "stderrSha256": "b4c8101f39c2abd710fe8917cf4a40488a2d9db664859a4b1d18e6c3744017c5"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "sed -n \"1150,1230p\" randomizer/game/cards/effects.js; sed -n \"1278,1300p\" randomizer/game/cards/effects.js; rg -n \"amiba1|amiba_1|safety|research.*trigger|amibaTech\" randomizer/game/ai/state-value.js randomizer/game/ai/research* randomizer/game/ai/analysis* | head -35"
+      ],
+      "startedEpochSeconds": 1795029133.940136,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 14558,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029133.964544,
+      "stdoutSha256": "022d70b3171f088b0bd57def31a6699e0958df036db7dd398107fea4939fabdd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text()); save=json.loads((pathlib.Path(m[\"runtime\"])/m[\"savePath\"]).read_text()); print(\"BASELINE203_230\",[(i+1,x[\"action\"]) for i,x in enumerate(save[\"replaySteps\"]) if 203<=i+1<=230]); print(\"AMIBA1_RULE_TAIL\",pathlib.Path(\"randomizer/game/cards/effects.js\").read_text()[pathlib.Path(\"randomizer/game/cards/effects.js\").read_text().index(\"\\\"amiba_1.webp\\\": withSource\"):][:2800])"
+      ],
+      "startedEpochSeconds": 1795029271.251787,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 16503,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029271.3007889,
+      "stdoutSha256": "d5d8c5b5326fa858f30b21563fa6e84b615f82823f6c7fd07ec9e58ebdf4b133",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,subprocess; r=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); ts=[json.loads(l) for l in pathlib.Path(r[\"agentTracePath\"]).read_text().splitlines() if l.strip()]; white=[t for t in ts if t[\"context\"][\"seatId\"]==\"player-white\"]; result=[]\nfor t,s in zip(white,r[\"metrics\"][\"searches\"]):\n if s[\"step\"] in [203,204,210,211,218,219,222,225,226,228] or (s[\"step\"]>203 and any(a[\"actionId\"]==t[\"actionId\"] and a.get(\"family\")==\"play_card\" and (a.get(\"target\") or {}).get(\"cardInstanceId\")==\"alien-amiba-5-11\" for a in t[\"context\"][\"legalActions\"])):\n  p=next(p for p in t[\"context\"][\"observation\"][\"publicState\"][\"players\"] if p[\"playerId\"]==\"player-white\");result.append({\"input\":s[\"step\"],\"selected\":t[\"actionId\"],\"wallet\":{k:p[k] for k in [\"credits\",\"energy\",\"publicity\"]},\"hand\":[c[\"cardId\"] for c in t[\"context\"][\"observation\"][\"selfState\"][\"hand\"]]})\nprint(json.dumps(result))"
+      ],
+      "startedEpochSeconds": 1795029400.576473,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 18354,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029400.967325,
+      "stdoutSha256": "12807c3b15c5918475b21307a2123c2b4ec72fc7778b842b301cb6e44c562d3c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-amiba1-income-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795029636.729801,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 20983,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029637.771519,
+      "stdoutSha256": "3d2461bfb32115331a9002ab9050abcf0ef49647ae96e3458647befd82e10a63",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-amiba1-research-payoff-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795029803.943697,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 22785,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029804.3827891,
+      "stdoutSha256": "8fb5f904bfc715a1f6fcde292a4ddd5f9e60f309a3422d2d01252544caf70a7e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "-e",
+        "const fs=require(\"fs\"),z=require(\"zlib\"),p=require(\"path\"); const dir=\"reports/ai-foundation-20261119\",m=JSON.parse(fs.readFileSync(dir+\"/r3-b101-native-control-preflight-20261119-v1.json\")),cards=require(p.join(m.runtime,\"randomizer/game/cards/deck\")),e=JSON.parse(z.gunzipSync(fs.readFileSync(dir+\"/r3-amiba1-before-input203-native-20261119-v1.json.gz\"))).envelope,s=JSON.parse(e.committedState),owner=s.players.players.find(p=>p.id===\"player-white\");console.log(JSON.stringify(owner.hand.map(card=>({id:card.id,card:card.cardId,income:cards.getIncomeGainForCard(card),corner:cards.getDiscardActionRewardForCard(card),price:cards.getCardPrice(card)}))));"
+      ],
+      "startedEpochSeconds": 1795029948.997408,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 24320,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795029949.0816152,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "fb656b3e81f33c66244eee7b474f625c7c94ad2204c14ab2095b0d4b7a8f3c1a"
+    },
+    {
+      "command": [
+        "node",
+        "-e",
+        "const fs=require(\"fs\"),z=require(\"zlib\"),p=require(\"path\"); const dir=\"reports/ai-foundation-20261119\",m=JSON.parse(fs.readFileSync(dir+\"/r3-b101-native-control-preflight-20261119-v1.json\")),cards=require(p.join(m.runtime,\"randomizer/game/cards/deck\")),e=JSON.parse(z.gunzipSync(fs.readFileSync(dir+\"/r3-amiba1-before-input203-native-20261119-v1.json.gz\"))).envelope,s=JSON.parse(e.committedState),owner=s.players.players.find(p=>p.id===\"player-white\");console.log(JSON.stringify(owner.hand.map(card=>({id:card.id,card:card.cardId,income:cards.getIncomeGainForCard(card),corner:cards.getDiscardActionRewardForCard(card),price:card.price}))));"
+      ],
+      "startedEpochSeconds": 1795029970.0374742,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 24619,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795029970.122447,
+      "stdoutSha256": "03d9b8f8a485c71bcbaa67dc471b49bb26d27cadc1a0ae9dad49632c8ebe2947",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-amiba1-research-payoff-b16-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030060.7954292,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 25692,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030061.054594,
+      "stdoutSha256": "e014411970d9f7767ca0cc78347b84543135d5ff2dd4f35375bdfb4844f94c3a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,subprocess; rec=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); ts=[json.loads(l) for l in pathlib.Path(rec[\"agentTracePath\"]).read_text().splitlines() if l.strip()]; white=[t for t in ts if t[\"context\"][\"seatId\"]==\"player-white\"]; t=white[next(i for i,s in enumerate(rec[\"metrics\"][\"searches\"]) if s[\"step\"]==211)]; print([(a[\"target\"],a.get(\"payload\")) for a in t[\"context\"][\"legalActions\"] if a[\"family\"]==\"quick_trade\"])"
+      ],
+      "startedEpochSeconds": 1795030233.991866,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 27464,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030234.374918,
+      "stdoutSha256": "64c9ce9fb443ae3dcf9c40ce16c87ed3a45b2656c538777a814aec82c0be857b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "One Amiba1 engine-vs-income diagnosis/control from actual baseline; use existing Native checkpoint, no new AI search, policy edit or full game",
+  "hypotheses": [
+    "The engine is available but loses a whole-plan comparison rather than being absent from candidates.",
+    "The chosen income plan may omit known remaining research-trigger capital; compare Native payoff under a declared common continuation instead of judging only immediate income."
+  ],
+  "nativeBranchInputCap": 64,
+  "failurePolicy": "Persist full Native checkpoint after each actual input; keep failures and do not replay successful prefixes",
+  "recoveries": [
+    {
+      "reason": "Static reward probe called getCardPrice on deck instead of effects. Read already-present canonical price; no Native input or AI search occurred. Original deadline retained.",
+      "observedEpochSeconds": 1795029970.008138
+    }
+  ],
+  "closedEpochSeconds": 1795030443.075485,
+  "closeReason": "Bounded Native income and visible orange-research controls complete; no demonstrated policy improvement; no new search/game",
+  "evidenceArchive": "reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "e36c2da22c7fa1f01211251bec706c8a94128c797b44434b95a398cce0cc0716"
+}

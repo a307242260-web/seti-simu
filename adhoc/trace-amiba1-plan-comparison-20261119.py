@@ -1,0 +1,14 @@
+"""Inspect existing formal272 traces only; no simulation or AI."""
+from pathlib import Path
+import json,gzip,hashlib,subprocess,sys,math
+R=Path(__file__).resolve().parents[1];M=R/'reports/ai-foundation-20261119';out=Path(sys.argv[1]);assert not out.exists()
+raw=subprocess.check_output(['git','show','aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json'],cwd=R);record=json.loads(raw);sha=lambda b:hashlib.sha256(b).hexdigest();trace=(R/record['agentTracePath']).read_bytes();allrows=[json.loads(x) for x in trace.splitlines() if x.strip()];white=[t for t in allrows if t['context']['seatId']=='player-white'];assert len(white)==len(record['metrics']['searches']) and all(t['actionId']==s['action'] for t,s in zip(white,record['metrics']['searches']))
+rows=[];cases=[];instance='alien-amiba-1-2'
+for t,s in zip(white,record['metrics']['searches']):
+ ctx=t['context'];o=ctx['observation'];hand=o['selfState']['hand'];legal=ctx['legalActions'];selected=next(a for a in legal if a['actionId']==t['actionId']);has=any(c['id']==instance for c in hand);uses=(selected.get('target') or {}).get('cardInstanceId')==instance
+ if not has and not uses:continue
+ owner=next(p for p in o['publicState']['players'] if p['playerId']=='player-white');options=[a for a in legal if (a.get('target') or {}).get('cardInstanceId')==instance];play=next((a for a in options if a['family']=='play_card'),None);q=t.get('search') or {};roots=[r for r in q.get('roots',[]) if any(r['actionId']==a['actionId'] for a in options)];free=not owner['mainActionCompleted'] and play is not None and any(isinstance(r.get('value'),(float,int)) and math.isfinite(r['value']) for r in roots)
+ if free or uses or (not owner['mainActionCompleted'] and play is not None):
+  rows.append({'input':s['step'],'round':o['publicState']['roundNumber'],'turn':o['publicState']['turnNumber'],'wallet':{k:owner[k] for k in ['credits','energy','publicity']},'income':owner['income'],'mainActionCompleted':owner['mainActionCompleted'],'selected':selected,'selectedValue':q.get('value'),'amiba1Play':play,'amiba1Roots':roots,'reusedCoverage':q.get('reusedCoverage'),'hand':[c['cardId'] for c in hand],'reserved':[c['cardId'] for c in o['selfState'].get('reservedCards',[])],'allLegalIncomeOptions':[a for a in legal if a['family']=='choose_card' and str((a.get('target') or {}).get('choiceId','')).startswith('income:')]});cases.append({'input':s['step'],'trace':t})
+result={'sourceRecord':{'gitCommit':'aad43e42ab5be10e8c645a8001eb2c9ede0579d0','path':'reports/research/2170d824.5fabd621.full.json','sha256':sha(raw)},'sourceTrace':{'path':record['agentTracePath'],'sha256':sha(trace)},'instanceId':instance,'rows':rows,'cases':cases,'newNativeInputs':0,'newAISearches':0}
+out.write_bytes(gzip.compress(json.dumps(result,ensure_ascii=False).encode(),mtime=0));print(json.dumps({'rows':rows,'savedBytes':out.stat().st_size},ensure_ascii=False))

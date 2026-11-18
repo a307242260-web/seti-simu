@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "seti-amiba1-native-business-control-v1",
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "sourceFilesVerified": 533,
+  "formalCompletedScoreUnchanged": 272,
+  "formalGameWallSeconds": 16.1,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "candidateDiagnosis": {
+    "input172": {
+      "engineValue": 134.5,
+      "selectedDlc19Value": 151
+    },
+    "input179": {
+      "engineValue": 147.5,
+      "selectedAmiba0Value": 176.5
+    },
+    "finding": "Amiba1 was legal and actually evaluated in both affordable free-action windows, not missing from candidates."
+  },
+  "income203Control": {
+    "choices": [
+      "Amiba1 credit income",
+      "B16 credit income, retain Amiba1"
+    ],
+    "nativeInputsPerBranch": 8,
+    "sameFollowingActionsThroughOriginalInput": 210,
+    "sameEconomyIncomeDataTechnologyAndRng": true,
+    "retainedHandDifference": "B16 versus Amiba1",
+    "stateValueBoth": 159.5,
+    "allValueComponentsExactlyEqual": true,
+    "baselineOfficialObservationExactlyReproducedBeforeInput211": true
+  },
+  "paidOrangeResearchWitness": {
+    "scope": "Declare immediate orange1 after common income endpoints; engine installation adds one own setup turn. Both branches finish same orange research and mandatory effects. Actual baseline scan211 is intentionally not executed.",
+    "pairedB16Baseline": {
+      "score": 92,
+      "projectedFinalScore": 125,
+      "credits": 1,
+      "energy": 2,
+      "publicity": 0,
+      "stateValue": 156.5,
+      "nativeInputs": 5
+    },
+    "retainedEngine": {
+      "score": 92,
+      "projectedFinalScore": 125,
+      "credits": 0,
+      "energy": 2,
+      "publicity": 1,
+      "stateValue": 156,
+      "nativeInputs": 8,
+      "extraOwnSetupTurns": 1
+    },
+    "sameRemainingHandIncomeTechnologyDataAndRng": true,
+    "engineOrangeReward": {
+      "policy": "fixed highest printed score, then data/publicity; blind draw last",
+      "target": {
+        "choiceId": "symbol:orange_3",
+        "slotId": "orange_3",
+        "region": "orange",
+        "symbolId": "symbol_1"
+      }
+    },
+    "unusedEngineTriggers": [
+      "purple",
+      "blue"
+    ]
+  },
+  "interpretation": {
+    "supported": [
+      "The conditional income choice ties the current value model despite different retained cards.",
+      "The declared immediate-orange witness does not show an obvious engine advantage: one credit and one setup turn purchase one net publicity and the remaining blue/purple engine rights.",
+      "The model already forecasts active engine research rewards; absence of all trigger valuation is not established."
+    ],
+    "notProven": [
+      "Income Amiba1 is globally optimal.",
+      "Retaining Amiba1 improves full round or final score.",
+      "The orange symbol reward in this witness equals the reward after actual scan211, which changes the symbol arrangement.",
+      "A tied current state value itself proves a policy bug."
+    ]
+  },
+  "methodResult": {
+    "nativeInputs": 65,
+    "prefixInputs": 31,
+    "incomeBranches": 16,
+    "firstPayoffBranches": 13,
+    "pairedBaseline": 5,
+    "repeatedSuccessfulNativeInputs": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0,
+    "allBranchesColdRestoreExact": true,
+    "fullCheckpointAfterEveryNativeInput": true,
+    "wallMinutesToEvidenceClosure": 24.484591416517894,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "AIQualityImprovementProven": false,
+    "diagnosticFailure": "One static card-price getter used wrong module; no Native inputs occurred. Corrected from canonical price; failure logs retained."
+  },
+  "nextQuestion": {
+    "scope": "If continuing the same engine question, compare installation plus a genuinely affordable scan/research continuation under the actual symbol movement and resource budget.",
+    "why": "The immediate-research witness deliberately skipped scan211, so it cannot establish the real round3 opportunity cost.",
+    "guard": "One declared root and shared boundary, fixed Native input/time cap, full checkpoints; no new full game or policy change until a causal gain is established.",
+    "executed": false
+  },
+  "sources": {
+    "reports/ai-foundation-20261119/r3-amiba1-income-native-20261119-v1.json": "3ca7e31eb9b4c6a76b2f5d49d6496cb383ea5451ea8e3478a6e536336ffd6227",
+    "reports/ai-foundation-20261119/r3-amiba1-research-payoff-20261119-v1.json": "dca3045d7f33332e303d6113f8c1b1ffa568b5788d458670a2dec7b1841f70be",
+    "reports/ai-foundation-20261119/r3-amiba1-research-payoff-b16-20261119-v1.json": "d9abf673c275ed5f59dfbda0cdffa7f30d39082d2c4093db58749614559176f0",
+    "reports/ai-foundation-20261119/r3-amiba1-prefix-checkpoint-20261119-v1.json.gz": "d029b3f4300345ae3bbf442872bce458047c497a26d7c3cbe7e0b80ffc312d3c",
+    "reports/ai-foundation-20261119/r3-amiba1-before-input203-native-20261119-v1.json.gz": "4833010428c3f569e015f700b8a429fdab865ec81fafd3bc14ea520b86e3148a",
+    "reports/ai-foundation-20261119/r3-amiba1-income-amiba1-checkpoint-20261119-v1.json.gz": "cfdc565d2c84a289972d8534cc0c75a0bffb6fdeb75f8e5643e3de03333a001a",
+    "reports/ai-foundation-20261119/r3-amiba1-income-b16-checkpoint-20261119-v1.json.gz": "e15cea960930c9ebba31d26eb7ee4eb28006c385ed12c5e4c14feea525494778",
+    "reports/ai-foundation-20261119/r3-amiba1-payoff-baseline-checkpoint-20261119-v1.json.gz": "7cd910bc24ff7cbb0ac443761fdc3032451d6c3f011eacb77f8f9624425ddb9d",
+    "reports/ai-foundation-20261119/r3-amiba1-payoff-engine-checkpoint-20261119-v1.json.gz": "fddf43ba84ccd37196a8921b26b0b83d7ba999490769dace6fb41d88af8b9f93",
+    "reports/ai-foundation-20261119/r3-amiba1-payoff-b16-baseline-checkpoint-20261119-v1.json.gz": "d3820daace22c45783a7285bdf287a7501dd6faefbf91a3dfcacd55e1db51e26",
+    "reports/ai-foundation-20261119/r3-amiba1-plan-evidence-20261119-v1.json.gz": "8fa685ad9f9a488387eb3e42a70def7c5050d77da32913f33f666aa0d1e383e9"
+  }
+}
