@@ -1,0 +1,8 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+{"positiveTaskCopy":"passed","fullNativeStateExact":true,"rootAndRngPreserved":true,"frozenReuse":true,"mutableAndShallowFrozenFallback":true}
+{"yellowTraceQueue":"passed","cases":62,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":44,"nativeFallbackInputs":18}
+SUMMARY unit passed=4 failed=0 total=4 time=12.41s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=4

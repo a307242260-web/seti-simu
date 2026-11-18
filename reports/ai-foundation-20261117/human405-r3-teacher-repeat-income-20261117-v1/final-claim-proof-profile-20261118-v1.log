@@ -1,0 +1,1 @@
+{"kind":"single-decision B117 timing proof profiling; no game or admission","sourceSha256":"725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e","native":278,"value":235.5,"summary":{"reject-4":{"calls":1,"ms":0.8201249999999618,"native":0},"proved":{"calls":639,"ms":373.40699199999915,"native":0},"reject-1":{"calls":10,"ms":0.02404000000024098,"native":0}}}

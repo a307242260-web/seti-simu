@@ -1,0 +1,12 @@
+{
+  "base": "851d9b769a78aa7b79ddc5aa989edc56bae815f1",
+  "candidate": "v496/movementv8/valuev71",
+  "sourceFilesVerified": 29,
+  "unchangedBaseFiles": 524,
+  "sealedRoot": "/private/tmp/seti-yellow-task-sealed-20261118-vh27hdg9",
+  "testDependenciesRestoredFromBase": [
+    "reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz",
+    "reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz"
+  ],
+  "runtimePromoted": false
+}

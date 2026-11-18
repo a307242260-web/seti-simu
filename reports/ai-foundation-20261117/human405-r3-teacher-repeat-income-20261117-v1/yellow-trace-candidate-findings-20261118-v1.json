@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v496/movementv8/valuev71",
+  "promoted": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "scope": "Positive ordinary task copy ownership and fixed yellow trace continuation; no policy/value change or full/batch games",
+  "taskTimingProfile": {
+    "calls": 650,
+    "proved": 639,
+    "inclusiveMs": 373.407,
+    "uniqueNodes": 650,
+    "evidence": "final-claim-proof-profile-20261118-v1.json.gz",
+    "conclusion": "different states; a node-key cache does not remove this work"
+  },
+  "positiveTaskCopy": {
+    "before": {
+      "native": 278,
+      "ms": 2455.324167,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e",
+        "local-decision-plans": "b08b2e5a73a9d48b1e69f10de4440e26881fc7ac8b4eca56d4e075ff9b9ce0eb",
+        "decision-search": "94a0ac283386762857378c3eeaf8e8a3e3fd73c2aaf41efdb615b5920f5fe5f6"
+      }
+    },
+    "after": {
+      "native": 278,
+      "ms": 2290.305584,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "f5c65b082d6bd74b2462b99ebb572bcd0c45699888bed97d246c50d15ba462f8"
+      }
+    },
+    "logicalGraphsAndRootValuesExact": true,
+    "evidence": "positive-task-copy-point289-comparison-20261118-v1.json.gz",
+    "allInvokedPreviewChecks": {
+      "previewFinalPositiveTaskClaim": {
+        "calls": 751,
+        "supported": 741,
+        "sharedAliens": 741
+      },
+      "previewFinalPositiveEndTask": {
+        "calls": 660,
+        "supported": 640,
+        "sharedAliens": 640
+      }
+    },
+    "completeStateEqualsOriginalPrivateNativeCopy": true,
+    "representativeFullProductionStateExact": true,
+    "guards": [
+      "only frozen alien facts with normalized Chong shape and audited reserved task queries",
+      "Amiba theory tasks, other revealed species, mutable or shallow frozen alien domains retain original private copy"
+    ]
+  },
+  "yellowTraceQueue": {
+    "cases": 62,
+    "completeNativeEnvelopesExact": true,
+    "provedInputs": 44,
+    "nativeFallbackInputs": 18,
+    "before": {
+      "native": 278,
+      "ms": 2411.706458,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "f5c65b082d6bd74b2462b99ebb572bcd0c45699888bed97d246c50d15ba462f8"
+      }
+    },
+    "after": {
+      "native": 234,
+      "ms": 2305.0703329999997,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "d7990e3a2e9a06cca82a80c6c8de8ea966476f45741d0cd6f368183be480ae85",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "78767a931415fdda75b0f71a944f62ec8bb073eac29dfb9dc99139004caae1af"
+      }
+    },
+    "logicalGraphsAndRootValuesExact": true,
+    "evidence": "yellow-trace-point289-comparison-20261118-v1.json.gz",
+    "fixture": "candidate-yellow-trace-queue-20261118-v1.json.gz",
+    "rootAndRngPreserved": true
+  },
+  "gate": {
+    "nativeLimit": 256,
+    "nativeActual": 234,
+    "nativePassed": true,
+    "millisecondsLimit": 600,
+    "millisecondsActual": 2305.0703329999997,
+    "timePassed": false,
+    "allPassed": false,
+    "timingScope": "single-process before/after pairs, not a promise for every cold run"
+  },
+  "verification": {
+    "node": 22,
+    "browserHeadless": 11,
+    "valueInputAudit": 67,
+    "sealedIndependentTests": 5,
+    "restoredSourceFiles": 29,
+    "unchangedBaseFiles": 524,
+    "extraTheoryTaskFallbackTest": true
+  },
+  "source": "yellow-trace-candidate-source-20261118-v1.json",
+  "cpu": "yellow-trace-cpu-summary-20261118-v1.json",
+  "next": [
+    "Profile repeated known-cargo future valuation and private cloning, following current approximately246ms inclusive evidence.",
+    "Reduce state/identity construction and repeated task-timing proof work with explicit dependency/ownership guarantees.",
+    "Keep search candidates and required branches; after the single-decision time gate passes, revalidate fixed roots then resume autonomous R4 alignment and assets comparison."
+  ]
+}

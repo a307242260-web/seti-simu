@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v12",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v11.json",
+  "publishedParent": "851d9b769a78aa7b79ddc5aa989edc56bae815f1",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v496/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets; fixed budgets and reproducibility remain required.",
+  "previousGoalTurnClassification": "progress: Native reward queues plus full transaction/graph proof reduced481 to278 inputs; exact current state revalidated",
+  "thisGoalTurnClassification": "progress: shared frozen alien facts preserve 1381 supported Native task preview states, yellow trace62 transaction oracles yield44 fewer inputs; 234 now below Native gate, time still fails",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "yellow-trace-candidate-findings-20261118-v1.json",
+  "gate": {
+    "nativeLimit": 256,
+    "nativeActual": 234,
+    "nativePassed": true,
+    "millisecondsLimit": 600,
+    "millisecondsActual": 2305.0703329999997,
+    "timePassed": false,
+    "allPassed": false,
+    "timingScope": "single-process before/after pairs, not a promise for every cold run"
+  },
+  "remainingNativeDistribution": "yellow-trace-cpu-summary-20261118-v1.json#fallbackDistribution",
+  "next": [
+    "Profile repeated known-cargo future valuation and private cloning, following current approximately246ms inclusive evidence.",
+    "Reduce state/identity construction and repeated task-timing proof work with explicit dependency/ownership guarantees.",
+    "Keep search candidates and required branches; after the single-decision time gate passes, revalidate fixed roots then resume autonomous R4 alignment and assets comparison."
+  ]
+}

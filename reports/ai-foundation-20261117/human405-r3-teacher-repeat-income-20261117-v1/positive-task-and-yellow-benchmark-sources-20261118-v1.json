@@ -1,0 +1,19 @@
+{
+  "finalSource": "yellow-trace-candidate-source-20261118-v1.json",
+  "v494Source": "native-queue-candidate-source-20261118-v1.json",
+  "v495Overrides": {
+    "positive-task-benchmark-v495-analysis-port-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/analysis-port.js",
+      "uncompressedSha256": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e"
+    },
+    "positive-task-benchmark-v495-local-decision-plans-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/local-decision-plans.js",
+      "uncompressedSha256": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385"
+    },
+    "positive-task-benchmark-v495-decision-search-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/decision-search.js",
+      "uncompressedSha256": "f5c65b082d6bd74b2462b99ebb572bcd0c45699888bed97d246c50d15ba462f8"
+    }
+  },
+  "noRuntimePromoted": true
+}
